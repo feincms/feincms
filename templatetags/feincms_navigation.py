@@ -30,4 +30,18 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
 register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
 
+class ParentLinkNode(SimpleNodeWithVarAndArgs):
+	def what(self, page, args):
+		level = int(args.get('level', 1))
+
+		if page.level+1 == level:
+			return page.get_absolute_url()
+		elif page.level+1 < level:
+			return '#'
+
+		try:
+			return page.get_ancestors()[level-1].get_absolute_url()
+		except IndexError:
+			return '#'
+register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(ParentLinkNode))
 
