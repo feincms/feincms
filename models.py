@@ -33,7 +33,7 @@ class Template(models.Model):
         return self.blocks.split(',')
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.title, self.path)
+        return self.title
 
 
 class PageManager(models.Manager):
