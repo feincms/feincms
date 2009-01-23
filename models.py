@@ -220,5 +220,10 @@ class PageContent(models.Model):
         return u'%s on %s, ordering %s' % (self.region, self.page, self.ordering)
 
     def render(self):
+        render_fn = getattr(self, 'render_%s' % self.region.key, None)
+
+        if render_fn:
+            return render_fn()
+
         raise NotImplementedError
 
