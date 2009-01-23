@@ -161,6 +161,9 @@ class Page(models.Model):
 
     @property
     def content_title(self):
+        if not self._content_title:
+            return self.title
+
         try:
             return self._content_title.splitlines()[0]
         except IndexError:
