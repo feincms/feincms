@@ -31,17 +31,31 @@ register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_h
 
 
 class ParentLinkNode(SimpleNodeWithVarAndArgs):
-	def what(self, page, args):
-		level = int(args.get('level', 1))
+    """
+    {% feincms_parentlink of page level=1 %}
+    """
 
-		if page.level+1 == level:
-			return page.get_absolute_url()
-		elif page.level+1 < level:
-			return '#'
+    def what(self, page, args):
+        level = int(args.get('level', 1))
 
-		try:
-			return page.get_ancestors()[level-1].get_absolute_url()
-		except IndexError:
-			return '#'
+        if page.level+1 == level:
+            return page.get_absolute_url()
+        elif page.level+1 < level:
+            return '#'
+
+        try:
+            return page.get_ancestors()[level-1].get_absolute_url()
+        except IndexError:
+            return '#'
 register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(ParentLinkNode))
+
+
+class BestMatchNode(SimpleAssignmentNodeWithVar):
+    """
+    {% feincms_bestmatch for request.path as page %}
+    """
+
+    def what(self, path):
+        return Page.objects.best_match_for_path(path)
+register.tag('feincms_bestmatch', do_simple_assignment_node_with_var_helper(BestMatchNode))
 
