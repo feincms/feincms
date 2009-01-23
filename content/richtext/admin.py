@@ -15,7 +15,3 @@ PageAdmin.inlines.append(RichTextContentInline)
 admin.site.unregister(Page)
 admin.site.register(Page, PageAdmin)
 
-admin.site.register(models.RichTextContent,
-    list_display=('page', 'region', 'ordering',),
-    list_filter=('page', 'region'),
-    )
