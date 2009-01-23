@@ -43,10 +43,9 @@ class PageManager(models.Manager):
     def page_for_path(self, path):
         """
         Return a page for a path.
-
-        Note: Pass the path _without_ leading or trailing slashes.
         """
-        tokens = path.split('/')
+
+        tokens = path.strip('/').split('/')
         count = len(tokens)
 
         filters = {'%sisnull' % ('parent__' * count): True}
@@ -71,6 +70,19 @@ class PageManager(models.Manager):
         except self.model.DoesNotExist:
             from django.http import Http404
             raise Http404
+
+    def best_match_for_path(self, path):
+        """
+        Return the best match for a path.
+        """
+
+        tokens = path.strip('/').split('/')
+
+        for count in range(len(tokens), -1, -1):
+            try:
+                return self.page_for_path('/'.join(tokens[:count]))
+            except self.model.DoesNotExist:
+                pass
 
     def in_navigation(self):
         return self.active().filter(in_navigation=True)
