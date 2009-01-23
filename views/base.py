@@ -8,6 +8,6 @@ def handler(request, path):
     page = Page.objects.page_for_path_or_404(path)
 
     return render_to_response(page.template.path, {
-        'page': page,
+        'feincms_page': page,
         }, context_instance=RequestContext(request))
 

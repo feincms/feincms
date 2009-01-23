@@ -8,7 +8,7 @@ register = template.Library()
 class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
     """
     Example:
-    {% feincms_navigation of page as sublevel level=2 %}
+    {% feincms_navigation of feincms_page as sublevel level=2 %}
     {% for p in sublevel %}
         <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
     {% endfor %}
@@ -32,7 +32,7 @@ register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_h
 
 class ParentLinkNode(SimpleNodeWithVarAndArgs):
     """
-    {% feincms_parentlink of page level=1 %}
+    {% feincms_parentlink of feincms_page level=1 %}
     """
 
     def what(self, page, args):
@@ -52,7 +52,7 @@ register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(Paren
 
 class BestMatchNode(SimpleAssignmentNodeWithVar):
     """
-    {% feincms_bestmatch for request.path as page %}
+    {% feincms_bestmatch for request.path as feincms_page %}
     """
 
     def what(self, path):
