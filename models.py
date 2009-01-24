@@ -177,21 +177,45 @@ mptt.register(Page)
 
 
 class ContentProxy(object):
+    """
+    This proxy offers attribute-style access to the page contents of regions.
+
+    Example:
+    >>> page = Page.objects.all()[0]
+    >>> page.content.main
+    [A list of all page contents which are assigned to the region with key 'main']
+    """
+
     def __init__(self, page, template):
         self.page = page
-	self.template = template
+        self.template = template
 
     def __getattr__(self, attr):
+        """
+        Get all page content instances for the specified page and region
+
+        If no page contents could be found for the current page and the region
+        has the inherited flag set, this method will go up the ancestor chain
+        until either some page contents have found or no ancestors are left.
+        """
+
         try:
             region = self.__dict__['template'].regions.get(key=attr)
         except Region.DoesNotExist:
             return []
 
-	contents = []
-        for cls in PageContent.types:
-            queryset = getattr(self.__dict__['page'], '%s_set' % cls.__name__.lower())
-	    contents += list(queryset.filter(region=region))
+        def collect_items(page):
+            contents = []
+            for cls in PageContent.types:
+                queryset = getattr(page, '%s_set' % cls.__name__.lower())
+                contents += list(queryset.filter(region=region))
 
+            if not contents and page.parent_id and region.inherited:
+                return collect_items(page.parent)
+
+            return contents
+
+        contents = collect_items(self.__dict__['page'])
         contents.sort(key=lambda c: c.ordering)
         return contents
 
