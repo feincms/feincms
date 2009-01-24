@@ -5,7 +5,10 @@ from django.template import RequestContext
 from feincms.models import Page
 
 
-def handler(request, path):
+def handler(request, path=None):
+    if path is None:
+        path = request.path
+
     page = Page.objects.page_for_path_or_404(path)
 
     if page.override_url:
