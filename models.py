@@ -101,7 +101,8 @@ class Page(models.Model):
     slug = models.SlugField()
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
     in_navigation = models.BooleanField(_('in navigation'), default=True)
-    override_url = models.CharField(_('override URL'), max_length=200, blank=True)
+    override_url = models.CharField(_('override URL'), max_length=200, blank=True,
+        help_text=_('Override the target URL for the navigation and automatic redirects.'))
 
     # content
     _content_title = models.TextField(_('content title'), blank=True,
@@ -131,7 +132,7 @@ class Page(models.Model):
         return u'%s (%s)' % (self.title, self.get_absolute_url())
 
     def get_absolute_url(self):
-        if self.override_url != '':
+        if self.override_url:
             return self.override_url
         if self.is_root_node():
             return u'/%s/' % (self.slug)
