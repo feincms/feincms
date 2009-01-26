@@ -8,6 +8,7 @@ import mptt
 
 class Region(models.Model):
     key = models.CharField(_('key'), max_length=20, unique=True)
+    title = models.CharField(_('title'), max_length=50, unique=True)
     inherited = models.BooleanField(_('inherited'), default=False,
         help_text=_('Check this if content of this region should be inherited by subpages.'))
 

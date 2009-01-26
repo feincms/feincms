@@ -1,0 +1,207 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_modify adminmedia %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="../../../jsi18n/"></script>
+<script type="text/javascript" src="/media/feincms/jquery-1.3.min.js"></script>
+<script type="text/javascript" src="/media/feincms/jquery.ui.all.js"></script>
+<script type="text/javascript" src="/media/feincms/jquery.layout.js"></script>
+<script type="text/javascript" src="/media/feincmis/jquery.form.js"></script>
+<script type="text/javascript" src="/media/feincms/jquery.cookie.js"></script>
+<script type="text/javascript" src="/media/feincms/jquery.dimensions.js"></script>
+<script type="text/javascript" src="/media/feincms/jquery.livequery.js"></script>
+<script type="text/javascript" src="/media/feincms/jquery.alerts.js"></script>
+
+<script type="text/javascript" src="/media/feincms/helper.js"></script>
+<script type="text/javascript" src="/media/feincms/listener.js"></script>
+<script type="text/javascript">
+    IMG_ARROW_DOWN_PATH = "/media/img/admin/arrow_down.gif";
+    IMG_ARROW_RIGHT_PATH = "/media/img/admin/arrow_right.gif";
+    IMG_CIRCLE_PATH = "/media/img/admin/circle.gif";
+
+    REGIONS = [];
+    {% for region in page.template.regions.all %}
+        REGIONS[{{ forloop.counter0 }}] = '{{ region.key }}'; 
+    {% endfor %}
+    ACTIVE_REGION = 0;
+
+    $(document).ready(function(){
+        //$("#richtextcontent_set").children().children().hide().siblings("textarea").show();
+        //$("#latestprojectcontent_set").children().children().hide();
+        //$("#projectcontent_set").children().children().hide().siblings("select:last").show();
+        
+        {% for content_name, content_type in content_types %}
+            $("#{{ content_type }}_set").children().each(function(){
+                if ($(this).hasClass("header")) {
+                    
+                }
+                else {
+                    $(this).children("label").hide();
+                    $(this).children("select[name$=region]").addClass("region-choice-field").hide();
+                    $(this).children("input[name$=DELETE]").addClass("delete-field").hide();
+                    $(this).children("input[name$=ordering]").addClass("order-field").hide();
+                    
+                    var region_id = parseInt($(this).children(".region-choice-field").val()) - 1;
+                    region_append(region_id,$(this),"{{ content_name }}");
+                }
+            });
+        {% endfor %}
+        $(".order-machine").each(function(){
+                for (var i=0;i<$(this).children().length;i++) {
+                    var item = $(this).children(".order-item").children(".item-content").children()
+                        .children(".order-field[value="+i+"]")
+                        .parent().parent().parent();
+                    $(this).append(item);
+                }
+        });
+        
+        $(".order-machine").sortable({handle : '.handle'});
+        $(".machine-control").hide();
+        
+        ORIGINAL = $("#main").html();
+    });
+    
+    
+</script>
+
+<link rel="stylesheet" type="text/css" href="/media/feincms/css/layout.css" />
+<link rel="stylesheet" type="text/css" href="/media/feincms/css/jquery.alerts.css" media="screen" />
+
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+     <a href="../../../">{% trans "Home" %}</a> &rsaquo;
+     <a href="../../">{{ opts.app_label|capfirst|escape }}</a> &rsaquo; 
+     <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo; 
+     {{ page.title|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+{% for error in page_form.non_field_errors %}
+    {{ error }}<br/>
+{% endfor %}   
+{% for formset in inline_formsets %}
+    {% for form in formset.forms %}
+        {% for error in form.non_field_errors %}
+            {{ error }}<br/>
+        {% endfor %}
+    {% endfor %}
+{% endfor %}
+
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form">
+
+<div id="overview">
+        {{ page_form.title.label_tag }} 
+        <span>{{ page_form.title }}{{ page_form.title.errors }}</span>
+        
+         {{ page_form.active.label_tag }} 
+        <span>{{ page_form.active }}{{ page_form.active.errors }}</span>
+        
+         {{ page_form.in_navigation.label_tag }} 
+        <span>{{ page_form.in_navigation }}{{ page_form.in_navigation.errors }}</span>
+        
+        <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
+        
+        <hr/>
+        
+        {{ page_form.template.label_tag }} 
+        <span>{{ page_form.template }}{{ page_form.template.errors }}</span>
+        
+        <input type="button" class="cancel" value="{% trans 'Change Template' %}" />
+        <span>{% trans 'CAREFUL: All changes to content will be lost' %}</span>
+        
+        <hr/>
+</div>
+<div>
+    <div class="navi_tab tab_active" id="settings_tab" key="settings" nr="0">Settings</div>
+    {% for region in page.template.regions.all %}
+        <div class="navi_tab tab_inactive" id="{{ region.key }}_tab">{{ region.title }}</div>
+    {% endfor %}
+    <div id="main">
+        <div id="settings_body">
+            <table>
+                <tr>
+                    <th> {{ page_form.slug.label_tag }}</th>
+                    <td><span>{{ page_form.slug }}{{ page_form.slug.errors }}</span></td>
+                </tr>
+                <tr>
+                    <th> {{ page_form.language.label_tag }}</th>
+                    <td><span>{{ page_form.language }}{{ page_form.language.errors }}</span></td>
+                </tr>
+                <tr>
+                    <th> {{ page_form.translations.label_tag }}</th>
+                    <td><span>{{ page_form.translations }}{{ page_form.translations.errors }}</span></td>
+                </tr>
+                <tr>
+                    <th> {{ page_form.meta_keywords.label_tag }}</th>
+                    <td><span>{{ page_form.meta_keywords }}{{ page_form.meta_keywords.errors }}</span></td>
+                </tr>
+                <tr>
+                    <th> {{ page_form.meta_description.label_tag }}</th>
+                    <td><span>{{ page_form.meta_description }}{{ page_form.meta_description.errors }}</span></td>
+                </tr>
+            </table>
+        </div>
+        {% for region in page.template.regions.all %}
+            <div id="{{ region.key }}_body" class="panel">
+                <div class="order-machine">
+                </div>
+                
+                <div class="machine-control">
+                    <div class="control-unit">
+                        <span>Add New item:</span> <br/>
+                        <select name="order-machine-add-select">
+                        {% for n,v  in content_types %}
+                            <option value="{{ v }}">{{ n }}</option>
+                        {% endfor %}
+                        </select> 
+                        <input type="button" class="order-machine-add-button button" value="OK" />
+                    </div>
+                    <div class="control-unit">
+                        <span>Move selected item to:</span>  <br/>
+                        <select name="order-machine-move-select">
+                        {% for r in page.template.regions.all %}
+                            {% ifnotequal region r %}
+                                <option value="{{ r.key }}">{{ r.title }}</option>
+                            {% endifnotequal %}
+                        {% endfor %}
+                        </select> 
+                        <input type="button" class="order-machine-move-button button" value="OK" />
+                    </div>
+                </div>
+             </div>
+        {% endfor %}
+    </div>
+    
+    
+</div>
+
+
+<div id="inlines" style="display:none"> 
+{% for formset in inline_formsets %}
+    <div id="{{ formset.rel_name }}"> 
+        <div class="header">
+            {{ formset.management_form }}
+            <h3>{{ formset.rel_name }}</h3>
+        </div>
+        {% for form in formset.forms %}
+            <div id="{{ formset.rel_name }}_item_{{ forloop.counter0 }}">
+            {% for field in form %}
+                {{ field.label_tag }} 
+                {{ field }} 
+                {{ field.errors }}
+            {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+</div>
+
+</form>
+{% endblock %}
+
+
+
