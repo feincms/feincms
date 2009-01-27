@@ -1,6 +1,7 @@
 import re
 
 from django import forms, template
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
 from django.forms.formsets import all_valid
@@ -11,6 +12,9 @@ from django.utils.functional import update_wrapper
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.models import Region, Template, Page, PageContent
+
+
+FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
 
 
 class PageForm(forms.ModelForm):
@@ -127,6 +131,7 @@ class PageAdmin(admin.ModelAdmin):
             'inline_formsets': inline_formsets,
             'content_types': content_types,
             'settings_fieldset': settings_fieldset,
+            'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
         }
 
         return render_to_response("admin/feincms/page/change_form_edit.html",
