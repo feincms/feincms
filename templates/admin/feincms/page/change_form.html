@@ -21,26 +21,24 @@
 
     REGIONS = [];
     {% for region in page.template.regions.all %}
-        REGIONS[{{ forloop.counter0 }}] = '{{ region.key }}'; 
+        REGIONS[{{ forloop.counter0 }}] = '{{ region.key }}';
     {% endfor %}
     ACTIVE_REGION = 0;
 
     $(document).ready(function(){
-        //$("#richtextcontent_set").children().children().hide().siblings("textarea").show();
-        //$("#latestprojectcontent_set").children().children().hide();
-        //$("#projectcontent_set").children().children().hide().siblings("select:last").show();
-        
+        $(".empty-machine-msg").hide();
+
         {% for content_name, content_type in content_types %}
             $("#{{ content_type }}_set").children().each(function(){
                 if ($(this).hasClass("header")) {
-                    
+
                 }
                 else {
                     $(this).children("label").hide();
                     $(this).children("select[name$=region]").addClass("region-choice-field").hide();
                     $(this).children("input[name$=DELETE]").addClass("delete-field").hide();
                     $(this).children("input[name$=ordering]").addClass("order-field").hide();
-                    
+
                     var region_id = parseInt($(this).children(".region-choice-field").val()) - 1;
                     region_append(region_id,$(this),"{{ content_name }}");
                 }
@@ -53,15 +51,16 @@
                         .parent().parent().parent();
                     $(this).append(item);
                 }
+                if ($(this).children(":visible").length == 0) {
+                    $(this).siblings(".empty-machine-msg").show();
+                }
         });
-        
+
         $(".order-machine").sortable({handle : '.handle'});
         $(".machine-control").hide();
-        
-        ORIGINAL = $("#main").html();
     });
-    
-    
+
+
 </script>
 
 <link rel="stylesheet" type="text/css" href="/media/feincms/css/layout.css" />
@@ -72,8 +71,8 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
      <a href="../../../">{% trans "Home" %}</a> &rsaquo;
-     <a href="../../">{{ opts.app_label|capfirst|escape }}</a> &rsaquo; 
-     <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo; 
+     <a href="../../">{{ opts.app_label|capfirst|escape }}</a> &rsaquo;
+     <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
      {{ page.title|truncatewords:"18" }}
 </div>
 {% endblock %}
@@ -82,7 +81,7 @@
 
 {% for error in page_form.non_field_errors %}
     {{ error }}<br/>
-{% endfor %}   
+{% endfor %}
 {% for formset in inline_formsets %}
     {% for form in formset.forms %}
         {% for error in form.non_field_errors %}
@@ -94,28 +93,27 @@
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form">
 
 <div id="overview">
-        {{ page_form.title.label_tag }} 
+        {{ page_form.title.label_tag }}
         <span>{{ page_form.title }}{{ page_form.title.errors }}</span>
-        
-         {{ page_form.active.label_tag }} 
+
+         {{ page_form.active.label_tag }}
         <span>{{ page_form.active }}{{ page_form.active.errors }}</span>
-        
-         {{ page_form.in_navigation.label_tag }} 
+
+         {{ page_form.in_navigation.label_tag }}
         <span>{{ page_form.in_navigation }}{{ page_form.in_navigation.errors }}</span>
-        
+
         <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
-        
+
         <hr/>
-        
-        {{ page_form.template.label_tag }} 
+
+        {{ page_form.template.label_tag }}
         <span>{{ page_form.template }}{{ page_form.template.errors }}</span>
-        
+
         <input type="button" class="cancel" value="{% trans 'Change Template' %}" />
-        <span>{% trans 'CAREFUL: All changes to content will be lost' %}</span>
-        
+
         <hr/>
 </div>
-<div>
+<div id="main_wrapper">
     <div class="navi_tab tab_active" id="settings_tab" key="settings" nr="0">Settings</div>
     {% for region in page.template.regions.all %}
         <div class="navi_tab tab_inactive" id="{{ region.key }}_tab">{{ region.title }}</div>
@@ -147,9 +145,13 @@
         </div>
         {% for region in page.template.regions.all %}
             <div id="{{ region.key }}_body" class="panel">
+                <div class="empty-machine-msg">
+                    Region empty
+                </div>
+
                 <div class="order-machine">
                 </div>
-                
+
                 <div class="machine-control">
                     <div class="control-unit">
                         <span>Add New item:</span> <br/>
@@ -157,7 +159,7 @@
                         {% for n,v  in content_types %}
                             <option value="{{ v }}">{{ n }}</option>
                         {% endfor %}
-                        </select> 
+                        </select>
                         <input type="button" class="order-machine-add-button button" value="OK" />
                     </div>
                     <div class="control-unit">
@@ -168,21 +170,21 @@
                                 <option value="{{ r.key }}">{{ r.title }}</option>
                             {% endifnotequal %}
                         {% endfor %}
-                        </select> 
+                        </select>
                         <input type="button" class="order-machine-move-button button" value="OK" />
                     </div>
                 </div>
              </div>
         {% endfor %}
     </div>
-    
-    
+
+
 </div>
 
 
-<div id="inlines" style="display:none"> 
+<div id="inlines" style="display:none">
 {% for formset in inline_formsets %}
-    <div id="{{ formset.rel_name }}"> 
+    <div id="{{ formset.rel_name }}">
         <div class="header">
             {{ formset.management_form }}
             <h3>{{ formset.rel_name }}</h3>
@@ -190,8 +192,8 @@
         {% for form in formset.forms %}
             <div id="{{ formset.rel_name }}_item_{{ forloop.counter0 }}">
             {% for field in form %}
-                {{ field.label_tag }} 
-                {{ field }} 
+                {{ field.label_tag }}
+                {{ field }}
                 {{ field.errors }}
             {% endfor %}
             </div>
