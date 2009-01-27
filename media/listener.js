@@ -13,6 +13,8 @@ $(document).ready(function(){
             $(".machine-control").hide();
         else
             $(".machine-control").show();
+
+        window.location.hash = '#'+tab_str;
     });
 
     $(".order-machine-add-button").livequery('click', function(){
@@ -84,6 +86,8 @@ $(document).ready(function(){
 
     $(".submit_form").livequery('click',function(){
         zucht_und_ordnung();
+        var form = $(this).parents('form');
+        form.attr('action', form.attr('action')+window.location.hash);
         return true;
     });
 

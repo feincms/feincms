@@ -101,6 +101,10 @@
         $(".machine-control").hide();
 
         init_pagecontent();
+
+        if(window.location.hash) {
+            $(window.location.hash+'_tab').trigger('click');
+        }
     });
 </script>
 
@@ -131,7 +135,7 @@
     {% endfor %}
 {% endfor %}
 
-<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form">
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="." method="post" id="{{ opts.module_name }}_form">
 
 <div id="overview">
         {{ page_form.title.label_tag }}
