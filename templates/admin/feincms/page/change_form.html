@@ -24,9 +24,14 @@
         REGIONS[{{ forloop.counter0 }}] = '{{ region.key }}';
     {% endfor %}
     ACTIVE_REGION = 0;
+    REGION_MAP = []
 
     $(document).ready(function(){
-        $(".empty-machine-msg").hide();
+
+        $("select[name$=region]:first").children("option").each(function(){
+            if ($(this).val() != "")
+            REGION_MAP[REGION_MAP.length] = $(this).val();
+        });
 
         {% for content_name, content_type in content_types %}
             $("#{{ content_type }}_set").children().each(function(){
@@ -39,7 +44,8 @@
                     $(this).children("input[name$=DELETE]").addClass("delete-field").hide();
                     $(this).children("input[name$=ordering]").addClass("order-field").hide();
 
-                    var region_id = parseInt($(this).children(".region-choice-field").val()) - 1;
+                    var region_id = $(this).children(".region-choice-field").val();
+                    region_id = REGION_MAP.indexOf(region_id);
                     region_append(region_id,$(this),"{{ content_name }}");
                 }
             });
