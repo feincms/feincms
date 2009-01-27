@@ -12,7 +12,40 @@
 
 <script type="text/javascript" src="/media/feincms/helper.js"></script>
 <script type="text/javascript" src="/media/feincms/listener.js"></script>
+
+<script type="text/javascript" src="/media/sys/feinheit/tinymce/tiny_mce.js"></script>
+
 <script type="text/javascript">
+
+    tinyMCE.init({
+        mode: "none",
+        theme: "advanced",
+        language: "en",
+        theme_advanced_toolbar_location: "top",
+        theme_advanced_toolbar_align: "left",
+        theme_advanced_statusbar_location: "bottom",
+        theme_advanced_buttons1: "fullscreen,|,formatselect,image,media,code,|,cut,copy,paste,|,bold,italic,|,bullist,numlist,|,link,unlink",
+        theme_advanced_buttons2: "",
+        theme_advanced_buttons3: "",
+        theme_advanced_path: false,
+        theme_advanced_blockformats: "p,h2,h3",
+        theme_advanced_resizing: true,
+        width: '650',
+        height: '300',
+        content_css: "/path_to_your_media/css/preview.css",
+        plugins: "advimage,advlink,fullscreen,table,preview,media,inlinepopups",
+        advimage_update_dimensions_onchange: true,
+        //file_browser_callback: "CustomFileBrowser",
+        relative_urls: false
+    });
+
+    function init_pagecontent() {
+        // handle special page content type needs
+        // this is not really extensible, but it works for now
+        $('.order-machine textarea[name*=richtext]:visible').each(function(){
+            tinyMCE.execCommand('mceAddControl', true, this.id);
+        });
+    }
 
     IMG_ARROW_DOWN_PATH = "/media/feincms/img/arrow_down.gif";
     IMG_ARROW_RIGHT_PATH = "/media/feincms/img/arrow_right.gif";
@@ -64,9 +97,9 @@
 
         $(".order-machine").sortable({handle : '.handle'});
         $(".machine-control").hide();
+
+        init_pagecontent();
     });
-
-
 </script>
 
 <link rel="stylesheet" type="text/css" href="/media/feincms/layout.css" />

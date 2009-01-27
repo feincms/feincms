@@ -29,6 +29,8 @@ $(document).ready(function(){
             region_append(ACTIVE_REGION, form, modname, modvar);
 
             $(this).parent().parent().siblings(".empty-machine-msg").hide();
+
+            init_pagecontent();
     });
 
 
