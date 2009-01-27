@@ -23,12 +23,17 @@ class PageForm(forms.ModelForm):
 
 
 class PageSettingsFieldset(forms.ModelForm):
+    # This form class is used solely for presentation, the data will be saved
+    # by the PageForm above
+
     class Meta:
         model = Page
         exclude = ('active', 'template', 'title', 'in_navigation')
 
 
 class PageAdmin(admin.ModelAdmin):
+    # the fieldsets config here is used for the add_view, it has no effect
+    # for the change_view which is completely customized anyway
     fieldsets = (
         (None, {
             'fields': ('active', 'in_navigation', 'template', 'title', 'slug',
@@ -47,7 +52,6 @@ class PageAdmin(admin.ModelAdmin):
     prepopulated_fields={
         'slug': ('title',),
         }
-    inlines = []
 
     def get_urls(self):
         from django.conf.urls.defaults import patterns, url
@@ -87,7 +91,6 @@ class PageAdmin(admin.ModelAdmin):
 
 
     def change_view(self, request, object_id, extra_context=None):
-
         opts = self.model._meta
         page = self.model._default_manager.get(pk=unquote(object_id))
 
@@ -121,7 +124,7 @@ class PageAdmin(admin.ModelAdmin):
         content_types = []
         for content_type in PageContent.types:
             content_name = content_type._meta.verbose_name
-            content_types.append((content_name[:-8], content_name.replace(' ','')))
+            content_types.append((content_name, content_name.replace(' ','')))
 
         context = {
             'has_file_field': True, # FIXME - but isn't fixed in django either
@@ -136,16 +139,6 @@ class PageAdmin(admin.ModelAdmin):
 
         return render_to_response("admin/feincms/page/change_form_edit.html",
             context, context_instance=template.RequestContext(request))
-
-
-def all(obj):
-    if type(obj) == type([]):
-        for item in obj:
-            if not(all(item)):
-                return False
-    elif (not(obj)):
-        return False
-    return True
 
 
 admin.site.register(Region,

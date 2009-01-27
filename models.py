@@ -140,14 +140,6 @@ class Page(models.Model):
         else:
             return u'/%s/%s/' % ('/'.join([page.slug for page in self.get_ancestors()]), self.slug)
 
-    def contents_ordered(self):
-        contents = []
-        for cls in PageContent.types:
-            contents += list(getattr(self, '%s_set' % cls.__name__.lower()).all())
-
-        contents.sort(key=lambda c: c.ordering)
-        return contents
-
     @property
     def content(self):
         if not hasattr(self, '_content_proxy'):

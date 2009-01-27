@@ -44,7 +44,6 @@
 }
 
 
-lab { font-weight: bold; margin-right:5px;}
 span { margin-right: 5px;}
 
 .order-machine {
@@ -73,7 +72,7 @@ span { margin-right: 5px;}
     position:absolute;
 }
 .item-content {
-    padding: 0px 10px 0px 15px;
+    padding: 0px 10px 10px 15px;
     margin-right:5px;
     clear:both;
     margin-left:10px;
@@ -114,6 +113,7 @@ span { margin-right: 5px;}
 
 textarea {
     width: 100%;
+    height: 80px;
 }
 
 .item-minimize {
