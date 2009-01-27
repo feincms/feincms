@@ -5,7 +5,7 @@ from feincms.content.image import models
 from feincms.models import Page
 
 
-class ImageContentInline(admin.StackedInline):
+class ImageContentInline(admin.TabularInline):
     model = models.ImageContent
     extra = 1
 
