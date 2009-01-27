@@ -5,7 +5,7 @@
     margin:10px 0px 0px 10px;
 }
 
-#content {
+#content-main {
     background-color:#fff;
     margin-bottom:0px;
     width:730px;
@@ -40,7 +40,7 @@
 .panel {
      display:none;
      position:relative;
-     padding-bottom:50px;
+     padding-bottom:70px;
 }
 
 
@@ -114,8 +114,6 @@ span { margin-right: 5px;}
 
 textarea {
     width: 100%;
-    margin-top:5px;
-    margin-bottom:5px;
 }
 
 .item-minimize {
@@ -138,10 +136,10 @@ textarea {
     padding: 5px 0px 5px 0px;
     border: 1px solid #678;
     background-color:#ddd;
-    width:728px;
+    width:700px;
     position:absolute;
-    left:-11px;
-    bottom:-21px;
+    left:5px;
+    bottom:5px;
 }
 
 .control-unit {

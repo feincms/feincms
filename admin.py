@@ -1,37 +1,28 @@
-from django import forms, template
-from django.contrib import admin
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
-from django.utils.functional import update_wrapper
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.admin.util import unquote, flatten_fieldsets
-from django.forms.models import modelform_factory, inlineformset_factory
-from django.contrib.admin import helpers
-from django.db import models, transaction
-from django.utils.encoding import force_unicode
-from django.utils.safestring import mark_safe
-from django.contrib.contenttypes.models import ContentType
-from django.forms.formsets import all_valid
-from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponseRedirect
 import re
 
+from django import forms, template
+from django.contrib import admin
+from django.contrib.admin.util import unquote
+from django.forms.formsets import all_valid
+from django.forms.models import inlineformset_factory
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.utils.functional import update_wrapper
+from django.utils.translation import ugettext_lazy as _
 
-from feincms.models import Region, Template, PageManager, Page, PageContent
-from projects.models import Project
-from feincms.content.richtext.models import RichTextContent
+from feincms.models import Region, Template, Page, PageContent
 
-class ProjectForm(forms.ModelForm):
-    class Meta:
-        model = Project
 
 class PageForm(forms.ModelForm):
     class Meta:
         model = Page
 
-class RichTextContentForm(forms.ModelForm):
+
+class PageSettingsFieldset(forms.ModelForm):
     class Meta:
-        model = RichTextContent
+        model = Page
+        exclude = ('active', 'template', 'title', 'in_navigation')
+
 
 class PageAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -85,7 +76,10 @@ class PageAdmin(admin.ModelAdmin):
         return urlpatterns
 
 
-    inline_formset_types = [(content_type, inlineformset_factory(Page, content_type, extra=1)) for content_type in PageContent.types]
+    inline_formset_types = [(
+        content_type,
+        inlineformset_factory(Page, content_type, extra=1)
+        ) for content_type in PageContent.types]
 
 
     def change_view(self, request, object_id, extra_context=None):
@@ -100,20 +94,25 @@ class PageAdmin(admin.ModelAdmin):
             page_form = PageForm(request.POST, instance=page)
 
             inline_formsets = [
-                formset_class(request.POST, instance=page, prefix=content_type.__name__.lower()) for content_type, formset_class in self.inline_formset_types
-            ]
+                formset_class(request.POST, instance=page,
+                    prefix=content_type.__name__.lower())
+                for content_type, formset_class in self.inline_formset_types]
 
-            if page_form.is_valid() and all([subform.is_valid() for subform in [formset for formset in inline_formsets]]):
+            if page_form.is_valid() and all_valid(inline_formsets):
                 page_form.save()
                 for formset in inline_formsets:
                     formset.save()
                 return HttpResponseRedirect(".")
+
+            settings_fieldset = PageSettingsFieldset(request.POST, instance=page)
+            settings_fieldset.is_valid()
         else:
             page_form = PageForm(instance=page)
             inline_formsets = [
-                formset_class(instance=page, prefix=content_type.__name__.lower()) for content_type, formset_class in self.inline_formset_types
-            ]
+                formset_class(instance=page, prefix=content_type.__name__.lower())
+                for content_type, formset_class in self.inline_formset_types]
 
+            settings_fieldset = PageSettingsFieldset(instance=page)
 
         content_types = []
         for content_type in PageContent.types:
@@ -121,12 +120,13 @@ class PageAdmin(admin.ModelAdmin):
             content_types.append((content_name[:-8], content_name.replace(' ','')))
 
         context = {
-            'has_file_field': False,
+            'has_file_field': True, # FIXME - but isn't fixed in django either
             'opts': opts,
             'page': page,
             'page_form': page_form,
             'inline_formsets': inline_formsets,
             'content_types': content_types,
+            'settings_fieldset': settings_fieldset,
         }
 
         return render_to_response("admin/feincms/page/change_form_edit.html",
