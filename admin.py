@@ -36,24 +36,19 @@ class RichTextContentForm(forms.ModelForm):
 class PageAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('active', 'template', 'title', 'parent'),
-        }),
-        (_('Content'), {
-            #'classes': ('collapse',),
-            'fields': ('_content_title',),
-        }),
-        (_('Language settings'), {
-            #'classes': ('collapse',),
-            'fields': ('language', 'translations'),
+            'fields': ('active', 'in_navigation', 'template', 'title', 'slug',
+                'parent', 'language'),
         }),
         (_('Other options'), {
             'classes': ('collapse',),
-            'fields': ('slug', 'in_navigation', '_page_title', 'override_url', 'meta_keywords', 'meta_description'),
+            'fields': ('override_url', 'meta_keywords', 'meta_description'),
         }),
         )
-    list_display=('__unicode__', 'title', 'active', 'in_navigation', 'language', 'template')
+    list_display=('__unicode__', 'active', 'in_navigation',
+        'language', 'template')
     list_filter=('active', 'in_navigation', 'language', 'template')
-    search_fields = ('title', '_content_title')
+    search_fields = ('title', 'slug', '_content_title', '_page_title',
+        'meta_keywords', 'meta_description')
     prepopulated_fields={
         'slug': ('title',),
         }
@@ -96,7 +91,6 @@ class PageAdmin(admin.ModelAdmin):
     def change_view(self, request, object_id, extra_context=None):
 
         opts = self.model._meta
-        #page = get_object_or_404(Page, pk=object_id)
         page = self.model._default_manager.get(pk=unquote(object_id))
 
         if not self.has_change_permission(request, page):
@@ -135,7 +129,8 @@ class PageAdmin(admin.ModelAdmin):
             'content_types': content_types,
         }
 
-        return render_to_response("admin/feincms/page/change_form.html", context, context_instance=template.RequestContext(request))
+        return render_to_response("admin/feincms/page/change_form_edit.html",
+            context, context_instance=template.RequestContext(request))
 
 
 def all(obj):
