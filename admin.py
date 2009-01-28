@@ -98,10 +98,10 @@ class PageAdmin(admin.ModelAdmin):
             raise PermissionDenied
 
         if request.method == 'POST':
-            page_form = PageForm(request.POST, instance=page)
+            page_form = PageForm(request.POST, request.FILES, instance=page)
 
             inline_formsets = [
-                formset_class(request.POST, instance=page,
+                formset_class(request.POST, request.FILES, instance=page,
                     prefix=content_type.__name__.lower())
                 for content_type, formset_class in self.inline_formset_types]
 
