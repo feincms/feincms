@@ -46,7 +46,15 @@ class PageManager(models.Manager):
         Return a page for a path.
         """
 
-        tokens = path.strip('/').split('/')
+        stripped = path.strip('/')
+
+        try:
+            return self.active().filter(override_url='/%s/' % stripped)[0]
+        except IndexError:
+            pass
+
+        tokens = stripped.split('/')
+
         count = len(tokens)
 
         filters = {'%sisnull' % ('parent__' * count): True}
