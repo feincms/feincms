@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.http import Http404
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 import mptt
@@ -41,7 +43,7 @@ class PageManager(models.Manager):
     def active(self):
         return self.filter(active=True)
 
-    def page_for_path(self, path):
+    def page_for_path(self, path, raise404=False):
         """
         Return a page for a path.
         """
@@ -65,22 +67,18 @@ class PageManager(models.Manager):
         try:
             return self.active().filter(**filters)[0]
         except IndexError:
+            if raise404:
+                raise Http404
             raise self.model.DoesNotExist
 
     def page_for_path_or_404(self, path):
         """
         Wrapper for page_for_path which raises a Http404 if no page
         has been found for the passed path.
-
-        Note: Pass the path _without_ leading or trailing slashes.
         """
-        try:
-            return self.page_for_path(path)
-        except self.model.DoesNotExist:
-            from django.http import Http404
-            raise Http404
+        return self.page_for_path(path, raise404=True)
 
-    def best_match_for_path(self, path):
+    def best_match_for_path(self, path, raise404=False):
         """
         Return the best match for a path.
         """
@@ -93,11 +91,28 @@ class PageManager(models.Manager):
             except self.model.DoesNotExist:
                 pass
 
+        if raise404:
+            raise Http404
+        return None
+
     def in_navigation(self):
         return self.active().filter(in_navigation=True)
 
     def toplevel_navigation(self):
         return self.in_navigation().filter(parent__isnull=True)
+
+    def from_request(self, request, raise404=False):
+        page = self.page_for_path(request.path, raise404)
+        page.setup_request(request)
+        return page
+
+    def from_request_or_404(self, request):
+        return self.page_for_path_or_404(request.path, raise404=True)
+
+    def best_match_from_request(self, request, raise404=False):
+        page = self.best_match_for_path(request.path, raise404)
+        page.setup_request(request)
+        return page
 
 
 class Page(models.Model):
@@ -176,6 +191,10 @@ class Page(models.Model):
     @property
     def content_subtitle(self):
         return u'\n'.join(self._content_title.splitlines()[1:])
+
+    def setup_request(self, request):
+        translation.activate(self.language)
+        request.LANGUAGE_CODE = translation.get_language()
 
 mptt.register(Page)
 
