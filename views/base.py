@@ -11,8 +11,8 @@ def handler(request, path=None):
 
     page = Page.objects.page_for_path_or_404(path)
 
-    if page.override_url:
-        return HttpResponseRedirect(page.override_url)
+    if page.redirect_to:
+        return HttpResponseRedirect(page.redirect_to)
 
     return render_to_response(page.template.path, {
         'feincms_page': page,

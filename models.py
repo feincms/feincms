@@ -111,7 +111,9 @@ class Page(models.Model):
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
     in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=200, blank=True,
-        help_text=_('Override the target URL for the navigation and automatic redirects.'))
+        help_text=_('Override the target URL for the navigation.'))
+    redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
+        help_text=_('Target URL for automatic redirects.'))
 
     # content
     _content_title = models.TextField(_('content title'), blank=True,
