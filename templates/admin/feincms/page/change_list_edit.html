@@ -1,0 +1,299 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_modify adminmedia mptt_tags %}
+
+{% block title %}{{ block.super }}{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+{% full_tree_for_model feincms.Page as pages %}
+<script type="text/javascript" src="../../../jsi18n/"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.min.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.ui.all.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.livequery.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
+
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}helper.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}listener.js"></script>
+
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.treeTable.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.json-1.3.js"></script>
+<script type="text/javascript">
+
+
+
+    ancestors = [];
+    {% for page, structure in pages|tree_info %}
+        {% if page.parent %}
+            ancestors[{{ forloop.counter0 }}] = '{{ page.parent.id }}';
+        {% else %}
+            ancestors[{{ forloop.counter0 }}] = '0';
+        {% endif %}
+    {% endfor %}
+
+    tablestr = [];
+    {% for page, structure in pages|tree_info %}
+        tablestr = tablestr + '<tr id="node-{{ forloop.counter }}" ';
+        tablestr = tablestr + 'class="page-id-{{ page.id }} ';
+        {% if page.parent %}
+        tablestr = tablestr + 'child-of-node-'+ancestors.indexOf("{{ page.parent.id }}");
+        {% endif %}
+        tablestr = tablestr + '">';
+        //tablestr = tablestr + '<td style="width:20px;">&nbsp;</td>';
+        tablestr = tablestr + '<td><div class="wrap nohover">';
+        tablestr = tablestr + '<div class="insert-as-child"></div>';
+        tablestr = tablestr + '<span class="title-col"><a href="{{ page.id }}"><strong>{{ page.title }}</strong></a><img class="move-node" src="{{ FEINCMS_ADMIN_MEDIA }}images/icon_move.gif" /></span>';
+        tablestr = tablestr + '<div class="insert-as-sibling"></div>';
+        tablestr = tablestr + '</div></td>';
+        tablestr = tablestr + '<td>{{ page.active }}</td>';
+        tablestr = tablestr + '<td>{{ page.in_navigation }}</td></tr>';
+    {% endfor %}
+
+    $(document).ready(function()  {
+            $("#sitetree tbody").append(tablestr);
+            $("#sitetree").treeTable();
+
+            // Configure draggable nodes
+            $("#sitetree .title-col").draggable({
+              helper:  function(){ return $(this).parent().clone(); } ,
+              handle: ".move-node",
+              opacity: .75,
+              refreshPositions: true, // Performance?
+              revert: "invalid",
+              revertDuration: 300,
+              scroll: true
+            });
+
+            // Configure droppable rows
+            $("#sitetree .insert-as-child").each(function() {
+              $(this).droppable({
+                accept: ".title-col",
+                tolerance: "intersect",
+                drop: function(e, ui) {
+                    $(this).parent().removeClass("hover-as-child").addClass("nohover");
+                    var ancestorNames = $.map(ancestorsOf_jQuery($(this).parents("tr")), function(a) { return a.attr("id"); });
+                    if ((parent!=null) && $(ui.draggable).parents("tr").attr("id") != $(this).parents("tr").attr("id") && $.inArray($(ui.draggable).parents("tr").attr("id"), ancestorNames) == -1) {
+                        manage_tree($(ui.draggable), $(this),"child");
+                        $(ui.draggable).parents("tr").appendBranchTo($(this).parents("tr"));
+                        $(ui.draggable).parent().switchClass("nohover","flash",0)
+                                                .switchClass("flash","nohover",500);
+                    }
+
+                },
+                over: function(e, ui) {
+                  // Make the droppable branch expand when a draggable node is moved over it.
+                  //if(this.id != ui.draggable.parents("tr")[0].id && !$(this).is(".expanded")) {
+                  //  $(this).expand();
+                  //}
+                  $(this).parent().removeClass("nohover").addClass("hover-as-child");
+                },
+                out: function(e, ui) {
+                  $(this).parent().removeClass("hover-as-child").addClass("nohover");
+                }
+              });
+            });
+
+
+            $("#sitetree .insert-as-sibling").each(function() {
+              $(this).droppable({
+                accept: ".title-col",
+                tolerance: "intersect",
+                drop: function(e, ui) {
+                  $(this).parent().prev().remove();
+                  manage_tree($(ui.draggable), $(this),"sibling");
+                  $(ui.draggable).parents("tr").insertBranchBefore($(this).parents("tr"));
+                  $(ui.draggable).parent().switchClass("nohover","flash",0)
+                                                .switchClass("flash","nohover",200);
+                },
+                over: function(e, ui) {
+                  // Make the droppable branch expand when a draggable node is moved over it.
+                  //if(this.id != ui.draggable.parents("tr")[0].id && !$(this).is(".expanded")) {
+                  //  $(this).expand();
+                  //}
+                  var row = '<div style="background-color:#bcf; height:4px; width:100%; margin:-8px 0px 4px -5px; position:relative; z-index:10;"></div>'
+                  $(row).insertBefore($(this).parent());
+                },
+                out: function(e, ui) {
+                  $(this).parent().prev().remove();
+                }
+              });
+            });
+
+            // Make visible that a row is clicked
+            $("table#sitetree tbody tr").mousedown(function() {
+              $("tr.selected").removeClass("selected"); // Deselect currently selected rows
+              $(this).addClass("selected");
+            });
+
+            // Make sure row is selected when span is clicked
+            $("table#sitetree tbody tr span").mousedown(function() {
+              $($(this).parents("tr")[0]).trigger("mousedown");
+            });
+
+            $(".wrap").live('click',function() {
+                if ($(this).find(".expander").length > 0)
+                    $(this).parents("tr").toggleBranch();
+            });
+
+            function parentOf_jQuery(node) {
+                var classNames = node.attr("class").split(' ');
+
+                for(key in classNames) {
+                  if(classNames[key].match("child-of-")) {
+                    return $("#" + classNames[key].substring(9));
+                  }
+                }
+                return null;
+              };
+
+            function ancestorsOf_jQuery(node) {
+                var ancestors = [];
+                while(node = parentOf_jQuery(node)) {
+                  ancestors[ancestors.length] = node;
+                }
+                return ancestors;
+            };
+
+            $(".save_tree").click(build_json_tree);
+
+    });
+
+    function manage_tree(source,dest,method) {
+        var classNames = source.parents("tr").attr("class").split(' ');
+        var source_child_id = "";
+        for(key in classNames) {
+          if(classNames[key].match("child-of-"))
+            source_child_id = classNames[key];
+        }
+        var dest_child_id = "child-of-" + dest.parents("tr").attr("id");
+
+        if (source_child_id != "" && $("."+source_child_id).length - 1 == 0) {
+            var parent_id = "#" + source_child_id.substring(9);
+            $(parent_id).removeClass("parent");
+            if ($(parent_id).hasClass("expanded"))
+                $(parent_id).removeClass("expanded").addClass("collapsed");
+            $(parent_id+" .title-col span").removeClass("expander");
+        }
+        if (method=="child") {
+            if ($("."+dest_child_id).length == 0) {
+                var parent_id = "#" + dest_child_id.substring(9);
+                $(parent_id).addClass("parent");
+                $(parent_id+" .title-col span").addClass("expander");
+            }
+
+            if (!dest.parents("tr").hasClass("expanded"))
+                dest.parents("tr").expand();
+        }
+    }
+
+    function build_json_tree() {
+        var send_tree = new Array();
+
+       // prepare tree
+        var i = 0;
+        var ancestor_tree_ids = [];
+        var ancestor_indeces = [];
+        var tree_id = 0;
+        $("#sitetree tbody tr").each(function(){
+            var tobj = new Array();
+            // 0 = page_id, 1 = parent_id, 2 = tree_id, 3 = level, 4 = left, 5 = right
+            var classNames = $(this).attr("class").split(' ');
+            var is_child = false; var is_parent = false;
+            var parent_id = "";
+            tobj[1] = null;
+            // gather information
+            for (key in classNames) {
+                if(classNames[key].match("page-id-"))
+                    tobj[5] = parseInt(classNames[key].substring(8));
+                if(classNames[key].match("parent"))
+                    is_parent = true;
+                if(classNames[key].match("child-of-")) {
+                    is_child = true;
+                    var parent_id = parseInt(classNames[key].substring(14));
+                    tobj[1] = parent_id;
+                }
+            }
+            // save info
+            while ( ( !is_parent && is_child && ancestor_tree_ids.indexOf(parent_id) < ancestor_tree_ids.length - 1 ) || ( !is_child && ancestor_tree_ids.length > 0 ) ) {
+                send_tree[ancestor_indeces.pop()][3] = i++;
+                ancestor_tree_ids.pop();
+            }
+            if (!is_child) {
+                tree_id++;
+                i = 0;
+            }
+            tobj[0] = tree_id;
+            tobj[4] = ancestor_tree_ids.length;
+            tobj[2] = i++;
+            if (is_parent) {
+                ancestor_tree_ids.push($(this).attr("id"));
+                ancestor_indeces.push(send_tree.length);
+            } else {
+                tobj[3] = i++;
+            }
+            send_tree.push(tobj);
+        });
+        while (ancestor_tree_ids.length>0) {
+            send_tree[ancestor_indeces.pop()][3] = i++;
+            ancestor_tree_ids.pop();
+        }
+
+        // send tree to url
+        $.post("save-pagetree/",
+            {'tree': $.toJSON(send_tree)},
+                function(responseData) {
+                    $("body").append('<span style="margin-left:40px;">'+responseData+'</span>');
+                }
+            );
+    }
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}css/layout.css" />
+<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}css/jquery.alerts.css" media="screen" />
+<link href="{{ FEINCMS_ADMIN_MEDIA }}css/jquery.treeTable.css" rel="stylesheet" type="text/css" />
+
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+    {% block object-tools %}
+    {% if has_add_permission %}
+    <ul class="object-tools"><li><a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">{% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}</a></li></ul>
+    {% endif %}
+    {% endblock %}
+</div>
+
+<input type="button" value="save tree" class="save_tree" style="margin: 20px 5px -10px 460px;"/>
+
+<div id="sitetree-wrapper">
+<table id="sitetree" border="1">
+    <thead>
+    <tr id="table_header">
+        <th width="400">{% trans  "Page" %}</th>
+        <th>{% trans  "active" %}</th>
+        <th>{% trans  "in navi" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

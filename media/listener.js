@@ -13,8 +13,6 @@ $(document).ready(function(){
             $(".machine-control").hide();
         else
             $(".machine-control").show();
-
-        window.location.hash = '#'+tab_str;
     });
 
     $(".order-machine-add-button").livequery('click', function(){
@@ -31,11 +29,16 @@ $(document).ready(function(){
             region_append(ACTIVE_REGION, form, modname, modvar);
 
             $(this).parent().parent().siblings(".empty-machine-msg").hide();
-
-            init_pagecontent();
     });
 
+    $(".order-machine-move-button").livequery('click', function(){
+            var moveTo = $(this).prev().val();
+            move_item(REGIONS.indexOf(moveTo),$(".active-item"));
 
+            $("#"+moveTo+"_body").children(".empty-machine-msg").hide();
+            if ($(this).parent().parent().siblings(".order-machine").children(":visible").length == 0)
+                $(this).parent().parent().siblings(".empty-machine-msg").show();
+    });
 
     $(".item-delete").livequery('click',function(){
         popup_bg = '<div class="popup_bg"></div>';
@@ -45,8 +48,6 @@ $(document).ready(function(){
             if (r==true) {
                 set_item_field_value(item,"delete-field","checked");
                 item.fadeOut(200);
-                if (item.siblings(":visible").length == 0)
-                    item.parent().siblings(".empty-machine-msg").show();
             }
             $(".popup_bg").remove();
         });
@@ -86,18 +87,7 @@ $(document).ready(function(){
 
     $(".submit_form").livequery('click',function(){
         zucht_und_ordnung();
-        var form = $(this).parents('form');
-        form.attr('action', form.attr('action')+window.location.hash);
         return true;
-    });
-
-    $(".order-machine-move-button").livequery('click', function(){
-        var moveTo = $(this).prev().val();
-        move_item(REGIONS.indexOf(moveTo),$(".active-item"));
-
-        $("#"+moveTo+"_body").children(".empty-machine-msg").hide();
-        if ($(this).parent().parent().siblings(".order-machine").children(":visible").length == 0)
-            $(this).parent().parent().siblings(".empty-machine-msg").show();
     });
 
 });
