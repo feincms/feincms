@@ -32,6 +32,17 @@ function get_item_field_value(item,field) {
         return item.children(".item-content").children().children("."+field).val();
 }
 
+function set_item_field_value(item,field, value) {
+    // item: DOM object created by 'region_append' function
+    // field: "order-field" | "delete-field" | "region-field"
+    if (field=="delete-field")
+        item.children(".item-content").children().children("."+field).attr("checked",value);
+    else if (field=="region-choice-field")
+        item.children(".item-content").children().children("."+field).val(REGION_MAP[value]);
+    else
+        item.children(".item-content").children().children("."+field).val(value);
+}
+
 function zucht_und_ordnung() {
     for (var i=0; i<REGIONS.length;i++) {
         var container = $("#"+REGIONS[i]+"_body .order-machine");
@@ -42,18 +53,4 @@ function zucht_und_ordnung() {
     }
 }
 
-function move_item(region_id, item) {
-    $("#"+REGIONS[region_id]+"_body").children(".order-machine").append(item);
-    set_item_field_value(item, "region-choice-field", region_id);
-}
 
-function set_item_field_value(item,field, value) {
-    // item: DOM object created by 'region_append' function
-    // field: "order-field" | "delete-field" | "region-choice-field"
-    if (field=="delete-field")
-        item.children(".item-content").children().children("."+field).attr("checked",value);
-    else if (field=="region-choice-field")
-        item.children(".item-content").children().children("."+field).val(REGION_MAP[value]);
-    else
-        item.children(".item-content").children().children("."+field).val(value);
-}
