@@ -4,20 +4,20 @@ from django import forms, template
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
+from django.core import serializers
+from django.db import connection, transaction
 from django.forms.formsets import all_valid
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
+from django.utils import simplejson
 from django.utils.functional import update_wrapper
 from django.utils.translation import ugettext_lazy as _
-from django.core import serializers
-from django.utils import simplejson
-from django.db import connection, transaction
 
 from feincms.models import Region, Template, Page, PageContent
 
 
-FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/feincms/')
+FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
 
 
 class PageForm(forms.ModelForm):
@@ -178,24 +178,6 @@ class PageAdmin(admin.ModelAdmin):
         return render_to_response("admin/feincms/page/change_list_edit.html",
             context, context_instance=template.RequestContext(request))
 
-    """
-    @never_cache
-    @staff_member_required
-    def widget(request):
-        if request.method == 'POST':
-            mptt_nsw_bridge.process_store_tree(Page, request)
-            return HttpResponse('OK')
-
-        return HttpResponse(mptt_nsw_bridge.process_read_tree(Page,
-            (('Page', '__unicode__'),
-            ('ID', 'pk'),
-            ('Template', 'template'),
-            ('State', 'state'),
-            ('Navigation', 'in_navigation'),
-            ('Commands', 'id'))),
-            mimetype='text/plain')
-    """
-
     def save_pagetree(self, request):
         pagetree = simplejson.loads(request.POST['tree'])
         # 0 = page_id, 1 = parent_id, 2 = tree_id, 3 = level, 4 = left, 5 = right
@@ -212,75 +194,6 @@ class PageAdmin(admin.ModelAdmin):
         transaction.commit_unless_managed()
 
         return HttpResponse("Data saved successfully!", mimetype="text/plain")
-
-
-def process_store_tree(cls, request):
-	structure = simplejson.loads(request.POST.get('nested-sortable-widget'))
-	store_tree(cls, structure.get('items'))
-
-def process_read_tree(cls, fields):
-	resp = {}
-	resp['requestFirstIndex'] = resp['firstIndex'] = 0
-	resp['count'] = resp['totalCount'] = cls.objects.count()
-	resp['columns'] = [item[0] for item in fields]
-	resp['items'] = _return_array(cls.tree.root_nodes(), [item[1] for item in fields])
-
-	return simplejson.dumps(resp)
-
-def _left_right(structure, counter=1, parent=None, level=0):
-	# id tree_id parent left right
-	ret = []
-	for elem in structure:
-		item = [_left_right.tree, parent, counter, 0, level, int(elem['id'])]
-		children = elem.get('children')
-		counter += 1
-
-		if children:
-			arr, counter = _left_right(children, counter, int(elem['id']), level+1)
-			ret += arr
-
-		item[3] = counter
-		counter += 1
-		ret.append(item)
-
-		if parent == 'NULL':
-			_left_right.tree += 1
-			counter = 1
-
-	return ret, counter
-
-def _store_tree(cls, tree):
-	_left_right.tree = 1
-	mptt_tree, counter = _left_right(tree)
-	cursor = connection.cursor()
-
-	sql = "UPDATE %s SET %s=%%s, %s_id=%%s, %s=%%s, %s=%%s, %s=%%s WHERE %s=%%s" % (
-		cls._meta.db_table,
-		cls._meta.tree_id_attr,
-		cls._meta.parent_attr,
-		cls._meta.left_attr,
-		cls._meta.right_attr,
-		cls._meta.level_attr,
-		cls._meta.pk.column)
-
-	cursor.executemany(sql, mptt_tree)
-	transaction.commit_unless_managed()
-
-def _return_array(struct, fieldlist):
-	ret = []
-	for elem in struct:
-		dic = {}
-		dic['id'] = elem.id
-		dic['info'] = [smart_unicode(get_dynamic_attr(elem, field, elem)) for field in fieldlist]
-
-		children = elem.get_children()
-
-		if not elem.is_leaf_node():
-			dic['children'] = _return_array(elem.get_children(), fieldlist)
-
-		ret.append(dic)
-
-	return ret
 
 
 admin.site.register(Region,
