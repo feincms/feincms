@@ -231,7 +231,8 @@ class ContentProxy(object):
             contents = []
             for cls in PageContent.types:
                 queryset = getattr(page, '%s_set' % cls.__name__.lower())
-                contents += list(queryset.filter(region=region))
+                contents += list(queryset.filter(region=region).select_related(
+                    'page', 'region'))
 
             if not contents and page.parent_id and region.inherited:
                 return collect_items(page.parent)
