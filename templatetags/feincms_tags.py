@@ -59,3 +59,23 @@ class BestMatchNode(SimpleAssignmentNodeWithVar):
         return Page.objects.best_match_for_path(path)
 register.tag('feincms_bestmatch', do_simple_assignment_node_with_var_helper(BestMatchNode))
 
+
+@register.simple_tag
+def feincms_render_region(page, region, request):
+    """
+    {% feincms_render_region feincms_page "main" request %}
+    """
+
+    contents = getattr(page.content, region)
+
+    return u''.join(content.render(request=request) for content in contents)
+
+
+@register.simple_tag
+def feincms_render_content(content, request):
+    """
+    {% feincms_render_content pagecontent request %}
+    """
+
+    return content.render(request=request)
+
