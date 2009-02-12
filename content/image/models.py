@@ -25,7 +25,7 @@ class ImageContent(PageContent):
     image = models.ImageField(_('image'), upload_to='imagecontent')
     position = models.CharField(max_length=10, choices=POSITION_CHOICES, default=BLOCK)
 
-    def render(self):
+    def render(self, **kwargs):
         return mark_safe(u'<img src="%s" alt="" style="%s" />' % (
             self.image.url,
             self.CSS_SPEC[self.position]))

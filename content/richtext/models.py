@@ -8,5 +8,5 @@ from feincms.models import PageContent
 class RichTextContent(PageContent):
     text = models.TextField(_('text'), blank=True)
 
-    def render(self):
+    def render(self, **kwargs):
         return mark_safe(self.text)
