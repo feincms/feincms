@@ -9,10 +9,16 @@ import mptt
 
 
 class Region(models.Model):
+    """
+    A template region which will be a container for several page contents.
+
+    Often used regions might be "main" and "sidebar"
+    """
+
     key = models.CharField(_('key'), max_length=20, unique=True)
     title = models.CharField(_('title'), max_length=50, unique=True)
     inherited = models.BooleanField(_('inherited'), default=False,
-        help_text=_('Check this if content of this region should be inherited by subpages.'))
+        help_text=_('Should the content be inherited by subpages if they do not define any content for this region?'))
 
     class Meta:
         verbose_name = _('region')
@@ -23,6 +29,10 @@ class Region(models.Model):
 
 
 class Template(models.Model):
+    """
+    A template file on the disk which can be used by pages to render themselves.
+    """
+
     title = models.CharField(max_length=200)
     path = models.CharField(max_length=200)
     regions = models.ManyToManyField(Region, related_name='templates')
@@ -31,9 +41,6 @@ class Template(models.Model):
         ordering = ['title']
         verbose_name = _('template')
         verbose_name_plural = _('templates')
-
-    def get_blocks(self):
-        return self.blocks.split(',')
 
     def __unicode__(self):
         return self.title
@@ -46,6 +53,9 @@ class PageManager(models.Manager):
     def page_for_path(self, path, raise404=False):
         """
         Return a page for a path.
+
+        Example:
+        Page.objects.page_for_path(request.path)
         """
 
         stripped = path.strip('/')

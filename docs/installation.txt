@@ -1,0 +1,45 @@
+=================================
+FeinCMS Installation Instructions
+=================================
+
+Installation
+============
+
+This document describes the steps needed to get FeinCMS up and running.
+
+FeinCMS is based on Django, so you need a working Django_ installation
+first. I'm developing FeinCMS using a Subversion_ checkout of Django_,
+but any version which is at least 1.0 should work currently. If it does
+not, this is considered a bug and I'd be happy to hear about it.
+
+Since there are no official releases of FeinCMS yet, you need to download
+a development snapshot. The following command will download the latest
+version of FeinCMS using the Git_ version control system:
+
+::
+
+    $ git clone git://github.com/matthiask/feincms.git
+
+In addition, you will need a django-mptt_ installation.
+
+
+.. _Django: http://www.djangoproject.com/
+.. _Git: http://git-scm.com/
+.. _Subversion: http://subversion.tigris.org/
+.. _django-mptt: http://code.google.com/p/django-mptt/
+
+
+
+Configuration
+=============
+
+There isn't much left to do apart from adding FeinCMS to INSTALLED_APPS.
+The customized administration interface needs some media and javascript
+libraries, which you have to make available to the browser. You should
+publish the files in the folder `feincms/media/` somewhere on your site
+and set the FEINCMS_ADMIN_MEDIA to the location. You can do this either
+by copying the media files into your media folder or by installing a
+symlink to the correct place.
+
+That's it! You have successfully installed FeinCMS now.
+
