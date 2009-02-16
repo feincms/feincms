@@ -1,0 +1,37 @@
+================================
+Integrating FeinCMS on your site
+================================
+
+With FeinCMS come a set of standard views which you might want to check
+out before starting to write your own. Included is a standard view for
+pages, and a set of generic view drop-in replacements which know about
+the CMS.
+
+
+Default page handler
+====================
+
+The default CMS handler view is feincms.views.base.handler. You can
+add the following as last line in your `urls.py` to make a catch-all
+for any pages which were not matched before:
+
+::
+
+    urlpatterns += patterns('',
+        url(r'^(.*)$, 'feincms.views.base.handler'),
+    )
+
+
+Generic views replacements
+==========================
+
+FeinCMS does not force you to leave the awesome generic views of Django
+behind. To the contrary, the exactly same code can be used by simply
+replacing `django.views.generic` with `feincms.views.generic` (if you
+want to use CMS content of course, if you do not want that then you can
+use Django's generic views like you already know it).
+
+The only thing the FeinCMS views additionally do is finding the best
+matching page for the current request and add it as `feincms_page` to
+the `extra_context` argument for the generic view.
+

@@ -49,7 +49,7 @@ CMS without being forced to use whatever the developers deemed best:
     from feincms.models import PageContent
     from django.contrib.markup.templatetags.markup import textile
 
-    class MarkdownPageContent(PageContent):
+    class TextilePageContent(PageContent):
         content = models.TextField()
 
         def render(self, **kwargs):
