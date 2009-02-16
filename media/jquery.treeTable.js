@@ -97,35 +97,26 @@
   };
 
   $.fn.insertBranchBefore = function(destination) {
-    var node = $(this);
-    var parent = parentOf(node);
-    var dest_parent = parentOf($(destination));
+        var node = $(this);
+        var parent = parentOf_jQuery(node);
+        var dest_parent = parentOf_jQuery(destination);
 
-    if ($(this).attr("id")==$(destination).attr("id"))
-        return false;
+        if ($(this).attr("id")==destination.attr("id"))
+            return false;
 
-    var ancestorNames = $.map(ancestorsOf($(destination)), function(a) { return a.id; });
+        var ancestorNames = $.map(ancestorsOf_jQuery(destination), function(a) { return a.id; });
 
-    // Conditions:
-    // 1: +node+ should not be inserted in a location in a branch if this would
-    //    result in +node+ being an ancestor of itself.
-    // 2: +node+ should not have a parent OR the destination should not be the
-    //    same as +node+'s current parent (this last condition prevents +node+
-    //    from being moved to the same location where it already is).
-    // 3: +node+ should not be inserted as a child of +node+ itself.
-    if($.inArray(node[0].id, ancestorNames) == -1 && (!parent || (destination.id != parent[0].id)) && destination.id != node[0].id) {
-      indent(node, ancestorsOf(node).length * options.indent * -1); // Remove indentation
+        indent(node, ancestorsOf_jQuery(node).length * options.indent * -1); // Remove indentation
 
-      if(parent) { node.removeClass(options.childPrefix + parent[0].id); }
+        if(parent) { node.removeClass(options.childPrefix + parent[0].id); }
 
-      if (dest_parent)
+        if (dest_parent)
         node.addClass(options.childPrefix + dest_parent.attr("id"));
 
-      moveBefore(node, $(destination)); // Recursively move nodes to new location
-      indent(node, (ancestorsOf(node).length * options.indent));
-    }
+        moveBefore(node, destination); // Recursively move nodes to new location
+        indent(node, (ancestorsOf_jQuery(node).length * options.indent));
 
-    return this;
+        return this;
   };
 
   // Add reverse() function from JS Arrays
@@ -227,10 +218,8 @@
   };
 
   function parentOf(node) {
-    if (node instanceof jQuery)
-        var classNames = node.attr("class").split(' ');
-    else
-        var classNames = node[0].className.split(' ');
+
+    var classNames = node[0].className.split(' ');
 
     for(key in classNames) {
       if(classNames[key].match("child-of-")) {
@@ -239,3 +228,149 @@
     }
   };
 })(jQuery);
+
+// public functions
+function handle_drop_event(source, dest, method){
+    var ancestorNames = $.map(ancestorsOf_jQuery(dest), function(a) { return a.attr("id"); });
+    if (method=="child")
+        dest.find(".wrap").removeClass("hover-as-child").addClass("nohover");
+    else // method == "sibling"
+        dest.find("div:first").remove();
+    // do not drop on itself or its own children, if method == "child"
+    if ( (method == "sibling") || (source.attr("id") != dest.attr("id") && $.inArray(source.attr("id"), ancestorNames) == -1) ) {
+        var source_child_of = null;
+        if (source.attr("class").match(/child-of-node-(\d+)/))
+            source_child_of = source.attr("class").match(/child-of-node-(\d+)/)[0];
+        var dest_child_of = "child-of-" + dest.attr("id");
+        if (source_child_of && $("."+source_child_of).length - 1 == 0) {
+            var parent_id = "#" + source_child_of.substring(9);
+            $(parent_id).removeClass("parent");
+            if ($(parent_id).hasClass("expanded"))
+                $(parent_id).removeClass("expanded").addClass("collapsed");
+            $(parent_id+" .title-col span").removeClass("expander");
+        }
+        if (method=="child") {
+            if ($("."+dest_child_of).length == 0) {
+                var parent_id = "#" + dest_child_of.substring(9);
+                $(parent_id).addClass("parent").find(".title-col span").addClass("expander");
+            }
+            if (!dest.hasClass("expanded"))
+                dest.expand();
+            // *** INSERT ***
+            source.appendBranchTo(dest);
+        } else // method == "sibling"
+            source.insertBranchBefore(dest);
+    }
+    source.find(".wrap").switchClass("nohover","flash",0).switchClass("flash","nohover",500);
+}
+
+function handle_page_delete(node, url) {
+    var page_id = node.attr("class").match(/page-id-(\d+)/)[1];
+    var parent_id = null;
+    if (node.attr("class").match(/child-of-node-(\d+)/))
+        parent_id = node.attr("class").match(/child-of-node-(\d+)/)[1];
+    var popup_bg = '<div class="popup_bg"></div>';
+    $("body").append(popup_bg);
+    if (node.hasClass("parent")){
+        jAlert('Cannot delete page, because it is parent of at least one other page.',
+            'Cannot delete page', function(){
+                $(".popup_bg").remove();
+        });
+    } else {
+        jConfirm('Really delete page?', 'Confirm to delete page', function(r) {
+            if (r==true) {
+                $.post(url, {'page-id': page_id}, function(data){
+                    if (data == "OK") {
+                        if (parent_id && $(".child-of-node-"+parent_id).length == 1) {
+                            $("#node-"+parent_id).removeClass("parent")
+                                .removeClass("expanded").addClass("collapsed")
+                                .find(".expander").removeClass("expander");
+                        }
+                        node.remove();
+                    }
+                });
+            }
+            $(".popup_bg").remove();
+        });
+    }
+}
+
+function parentOf_jQuery(node) {
+    if (node.attr("class").match(/child-of-node-(\d+)/)) {
+        var parent_id = node.attr("class").match(/child-of-node-(\d+)/)[1];
+        return $("#node-"+parent_id);
+    }
+    return null;
+};
+
+function ancestorsOf_jQuery(node) {
+    var ancestors = [];
+    while(node = parentOf_jQuery(node)) {
+      ancestors[ancestors.length] = node;
+    }
+    return ancestors;
+};
+
+function save_page_tree(url) {
+    var send_tree = new Array();
+
+   // prepare tree
+    var i = 0;
+    var ancestor_tree_ids = [];
+    var ancestor_indeces = [];
+    var tree_id = 0;
+    $("#sitetree tbody tr").each(function(){
+        var tobj = new Array();
+        // 0 = page_id, 1 = parent_id, 2 = tree_id, 3 = level, 4 = left, 5 = right
+        var classNames = $(this).attr("class").split(' ');
+        var is_child = false; var is_parent = false;
+        var parent_id = "";
+        tobj[1] = null;
+        // gather information
+        for (key in classNames) {
+            if(classNames[key].match("page-id-"))
+                tobj[5] = parseInt(classNames[key].substring(8));
+            if(classNames[key].match("parent"))
+                is_parent = true;
+            if(classNames[key].match("child-of-")) {
+                is_child = true;
+                var parent_id = parseInt(classNames[key].substring(14));
+                tobj[1] = parent_id;
+            }
+        }
+        // save info
+        while ( ( !is_parent && is_child && ancestor_tree_ids.indexOf(parent_id) < ancestor_tree_ids.length - 1 ) || ( !is_child && ancestor_tree_ids.length > 0 ) ) {
+            send_tree[ancestor_indeces.pop()][3] = i++;
+            ancestor_tree_ids.pop();
+        }
+        if (!is_child) {
+            tree_id++;
+            i = 0;
+        }
+        tobj[0] = tree_id;
+        tobj[4] = ancestor_tree_ids.length;
+        tobj[2] = i++;
+        if (is_parent) {
+            ancestor_tree_ids.push($(this).attr("id"));
+            ancestor_indeces.push(send_tree.length);
+        } else {
+            tobj[3] = i++;
+        }
+        send_tree.push(tobj);
+    });
+    while (ancestor_tree_ids.length>0) {
+        send_tree[ancestor_indeces.pop()][3] = i++;
+        ancestor_tree_ids.pop();
+    }
+
+    // send tree to url
+    $.post(url, {'tree': $.toJSON(send_tree)}, function(data){
+        if (data == "OK") {
+            var popup_bg = '<div class="popup_bg"></div>';
+            $("body").append(popup_bg);
+            jAlert("Page tree saved successfully.", "Tree saved.", function(){
+                    $(".popup_bg").remove();
+            });
+        }
+    });
+}

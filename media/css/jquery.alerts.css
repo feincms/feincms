@@ -23,21 +23,21 @@
 }
 
 #popup_content {
-	background: 16px 16px no-repeat url(../img/info.gif);
+	background: 16px 16px no-repeat url(/media/img/admin/info.gif);
 	padding: 1em 1.75em;
 	margin: 0em;
 }
 
 #popup_content.alert {
-	background-image: url(../img/info.gif);
+	background-image: url(/media/img/admin/info.gif);
 }
 
 #popup_content.confirm {
-	background-image: url(../img/important.gif);
+	background-image: url(/media/img/admin/important.gif);
 }
 
 #popup_content.prompt {
-	background-image: url(../img/help.gif);
+	background-image: url(/media/img/admin/help.gif);
 }
 
 #popup_message {

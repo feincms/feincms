@@ -16,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms.models import Region, Template, Page, PageContent
 
+from django.contrib.admin.options import IncorrectLookupParameters
 
 FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
 
@@ -80,6 +81,7 @@ class PageAdmin(admin.ModelAdmin):
                 wrap(self.delete_view),
                 name='%sadmin_%s_%s_delete' % info),
             url(r'^save-pagetree/$', wrap(self.save_pagetree)),
+            url(r'^delete-page-ajax/$', wrap(self.delete_page_ajax)),
             url(r'^(.+)/$',
                 wrap(self.change_view),
                 name='%sadmin_%s_%s_change' % info),
@@ -190,10 +192,19 @@ class PageAdmin(admin.ModelAdmin):
             Page._meta.level_attr,
             Page._meta.pk.column)
 
+        #import pdb
+        #pdb.set_trace()
+
         connection.cursor().executemany(sql, pagetree)
         transaction.commit_unless_managed()
 
-        return HttpResponse("Data saved successfully!", mimetype="text/plain")
+        return HttpResponse("OK", mimetype="text/plain")
+
+    def delete_page_ajax(self, request):
+        page_id = request.POST['page-id']
+        obj = self.model._default_manager.get(pk=unquote(page_id))
+        obj.delete()
+        return HttpResponse("OK", mimetype="text/plain")
 
 
 admin.site.register(Region,
