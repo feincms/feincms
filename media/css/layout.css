@@ -22,7 +22,7 @@
 .tab_active {
     height:16px;
     font-weight: bold;
-    background-image:url('/media/img/admin/default-bg.gif');
+    background-image:url('../img/default-bg.gif');
     color: white;
 }
 .tab_inactive {
@@ -101,7 +101,7 @@ span { margin-right: 5px;}
 .button {
     margin:5px; padding:5px;
     font-weight: bold;
-    background-image:url('/media/img/admin/nav-bg.gif');
+    background-image:url('../img/nav-bg.gif');
     cursor:pointer;
     border: 1px solid #678;
     width:30px;

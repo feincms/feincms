@@ -15,11 +15,11 @@
 }
 
 .treeTable tr.collapsed td .expander {
-  background-image: url(/media/feincms/images/toggle-expand-dark.png);
+  background-image: url(../img/toggle-expand-dark.png);
 }
 
 .treeTable tr.expanded td .expander {
-  background-image: url(/media/feincms/images/toggle-collapse-dark.png);
+  background-image: url(../img/toggle-collapse-dark.png);
 }
 
 /* jquery.treeTable.sortable
@@ -34,11 +34,11 @@
 }
 
 .treeTable tr.collapsed.selected td .expander, .treeTable tr.collapsed.accept td .expander {
-  /*background-image: url(/media/feincms/images/toggle-expand-light.png);*/
+  /*background-image: url(../img/toggle-expand-light.png);*/
 }
 
 .treeTable tr.expanded.selected td .expander, .treeTable tr.expanded.accept td .expander {
-  /*background-image: url(/media/feincms/images/toggle-collapse-light.png);*/
+  /*background-image: url(../img/toggle-collapse-light.png);*/
 }
 
 .treeTable .ui-draggable-dragging {

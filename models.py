@@ -127,8 +127,8 @@ class Page(models.Model):
     in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=200, blank=True,
         help_text=_('Override the target URL for the navigation.'))
-    #redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
-    #    help_text=_('Target URL for automatic redirects.'))
+    redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
+        help_text=_('Target URL for automatic redirects.'))
 
     # content
     _content_title = models.TextField(_('content title'), blank=True,
