@@ -3,6 +3,7 @@ import re
 from django import forms, template
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.admin.options import IncorrectLookupParameters
 from django.contrib.admin.util import unquote
 from django.core import serializers
 from django.db import connection, transaction
@@ -15,8 +16,6 @@ from django.utils.functional import update_wrapper
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.models import Region, Template, Page, PageContent
-
-from django.contrib.admin.options import IncorrectLookupParameters
 
 FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
 
@@ -169,7 +168,6 @@ class PageAdmin(admin.ModelAdmin):
         context = {
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
             'title': cl.title,
-            #'pages_old': Page.objects.all().order_by('parent__id'),
             'is_popup': cl.is_popup,
             'cl': cl,
             'has_add_permission': self.has_add_permission(request),

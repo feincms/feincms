@@ -18,18 +18,12 @@
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.json-1.3.js"></script>
 <script type="text/javascript">
 
-    ancestors = [];
-    {% for page, structure in pages|tree_info %}
-        {% if page.parent %}ancestors[{{ forloop.counter0 }}] = '{{ page.parent.id }}';{% else %}ancestors[{{ forloop.counter0 }}] = '0';{% endif %}
-    {% endfor %}
 
-    tablestr = [];
-    {% for page, structure in pages|tree_info %}
-        {% if page.parent %}
-            tablestr += add_row({{ forloop.counter }},{{ page.id }},"{{ page.title }}","{{ page.active }}","{{ page.in_navigation }}","{{ page.parent.id }}" )
-        {% else %}
-            tablestr += add_row({{ forloop.counter }},{{ page.id }},"{{ page.title }}","{{ page.active }}","{{ page.in_navigation }}",-1)
-        {% endif %}
+
+    ancestors = [{% for page in pages %}'{{ page.parent_id|default_if_none:"0" }}'{% if not forloop.last %},{% endif %} {% endfor %}];
+
+    tablestr = '';
+    {% for page in pages %}tablestr += add_row({{ forloop.counter }}, {{ page.id }}, "{{ page.title }}", "{{ page.active }}", "{{ page.in_navigation }}", "{{ page.parent_id|default_if_none:"-1" }}");
     {% endfor %}
 
     function add_row(node_id, page_id, page_title, is_active, in_navi, parent_id) {
@@ -39,12 +33,12 @@
         str += '">';
         str += '<td><div class="wrap nohover">';
         str += '<div class="insert-as-child"></div>';
-        str += '<span class="title-col"><a href="'+page_id+'"><strong>'+page_title+'</strong></a><img class="move-node" src="{{ FEINCMS_ADMIN_MEDIA }}images/icon_move.gif" /></span>';
+        str += '<span class="title-col"><a href="'+page_id+'"><strong>'+page_title+'</strong></a><img class="move-node" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif" /></span>';
         str += '<div class="insert-as-sibling"></div>';
         str += '</div></td>';
         str += '<td>'+is_active+'</td>';
         str += '<td>'+in_navi+'</td>';
-        str += '<td><img class="del-page" src="{{ FEINCMS_ADMIN_MEDIA }}images/icon_deletelink.gif"/></td></tr>';
+        str += '<td><img class="del-page" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif"/></td></tr>';
         return str;
     }
 

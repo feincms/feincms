@@ -1,0 +1,121 @@
+=========================
+Working with page content
+=========================
+
+You will learn how to add your own page content types and how you can
+render them in a template.
+
+
+Rendering page contents in your templates
+=========================================
+
+Simple:
+
+::
+
+    <div id="content">
+        {% block content %}
+        {% for content in feincms_page.content.main %}
+            {{ content.render }}
+        {% endfor %}
+        {% endblock %}
+    </div>
+
+    <div id="sidebar">
+        {% block content %}
+        {% for content in feincms_page.content.sidebar %}
+            {{ content.render }}
+        {% endfor %}
+        {% endblock %}
+    </div>
+
+
+Implementing your own content types
+===================================
+
+FeinCMS offers an abstract base class, `PageContent`, which provides
+references to `Page` and `Region`. The ordering attribute is used to
+order page content blocks of different types.
+
+
+Implementing a textile content block
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Without further ado, here's the first example:
+
+::
+
+    from feincms.models import PageContent
+    from django.contrib.markup.templatetags.markup import textile
+
+    class TextilePageContent(PageContent):
+        content = models.TextField()
+
+        def render(self, **kwargs):
+            return textile(self.content)
+
+
+
+
+Customizing the render method for different regions
+===================================================
+
+The default `render` method uses the region key to find a render method
+in your page content subclass and calls it. This allows you to customize
+the output depending on the region; you might want to show the same
+content differently in a sidebar and in the main region for example.
+If no matching method has been found a NotImplementedError is raised.
+
+This `render` method tries to be a sane default, nothing more. You can
+simply override it and put your own code there if you do not any
+differentiation, or if you want to do it differently.
+
+All `render` methods should accept `**kwargs`. Some render methods might
+need the request, for example to determine the correct Google Maps API
+key depending on the current domain without resorting to ugly hacks.
+
+The example above could be rewritten like this:
+
+::
+
+   {% load feincms_tags %}
+
+    <div id="content">
+        {% block content %}
+        {% for content in feincms_page.content.main %}
+            {% feincms_render_content content request %}
+        {% endfor %}
+        {% endblock %}
+    </div>
+
+    <div id="sidebar">
+        {% block content %}
+        {% for content in feincms_page.content.sidebar %}
+            {% feincms_render_content content request %}
+        {% endfor %}
+        {% endblock %}
+    </div>
+
+
+Or even like this:
+
+::
+
+   {% load feincms_tags %}
+
+    <div id="content">
+        {% block content %}
+        {% feincms_render_region feincms_page "main" request %}
+        {% endblock %}
+    </div>
+
+    <div id="sidebar">
+        {% block content %}
+        {% feincms_render_region feincms_page "main" request %}
+        {% endblock %}
+    </div>
+
+
+This does exactly the same, but you do not have to loop over the page content
+blocks yourself.
+
