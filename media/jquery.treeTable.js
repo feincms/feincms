@@ -321,7 +321,7 @@ function save_page_tree(url) {
     var tree_id = 0;
     $("#sitetree tbody tr").each(function(){
         var tobj = new Array();
-        // 0 = page_id, 1 = parent_id, 2 = tree_id, 3 = level, 4 = left, 5 = right
+        // 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = page_id
         var classNames = $(this).attr("class").split(' ');
         var is_child = false; var is_parent = false;
         var parent_id = "";
@@ -334,12 +334,14 @@ function save_page_tree(url) {
                 is_parent = true;
             if(classNames[key].match("child-of-")) {
                 is_child = true;
-                var parent_id = parseInt(classNames[key].substring(14));
+                var node_parent_id = classNames[key].substring(9);
+                var parent_id = parseInt($("#"+node_parent_id).attr("class").match(/page-id-(\d+)/)[1])
                 tobj[1] = parent_id;
             }
         }
         // save info
-        while ( ( !is_parent && is_child && ancestor_tree_ids.indexOf(parent_id) < ancestor_tree_ids.length - 1 ) || ( !is_child && ancestor_tree_ids.length > 0 ) ) {
+        var inArray = ancestor_tree_ids.indexOf(parent_id);
+        while ( ( is_child && inArray < ancestor_tree_ids.length - 1 && inArray >= 0) || ( !is_child && ancestor_tree_ids.length > 0 ) ) {
             send_tree[ancestor_indeces.pop()][3] = i++;
             ancestor_tree_ids.pop();
         }
@@ -351,7 +353,7 @@ function save_page_tree(url) {
         tobj[4] = ancestor_tree_ids.length;
         tobj[2] = i++;
         if (is_parent) {
-            ancestor_tree_ids.push($(this).attr("id"));
+            ancestor_tree_ids.push(tobj[5]);
             ancestor_indeces.push(send_tree.length);
         } else {
             tobj[3] = i++;

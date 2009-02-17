@@ -182,7 +182,7 @@ class PageAdmin(admin.ModelAdmin):
 
     def save_pagetree(self, request):
         pagetree = simplejson.loads(request.POST['tree'])
-        # 0 = page_id, 1 = parent_id, 2 = tree_id, 3 = level, 4 = left, 5 = right
+        # 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = page_id
         sql = "UPDATE %s SET %s=%%s, %s_id=%%s, %s=%%s, %s=%%s, %s=%%s WHERE %s=%%s" % (
             Page._meta.db_table,
             Page._meta.tree_id_attr,
@@ -191,9 +191,6 @@ class PageAdmin(admin.ModelAdmin):
             Page._meta.right_attr,
             Page._meta.level_attr,
             Page._meta.pk.column)
-
-        #import pdb
-        #pdb.set_trace()
 
         connection.cursor().executemany(sql, pagetree)
         transaction.commit_unless_managed()
