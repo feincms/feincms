@@ -158,7 +158,7 @@ class Page(models.Model):
     translations = models.ManyToManyField('self', blank=True)
 
     class Meta:
-        ordering = ['lft']
+        ordering = ['tree_id', 'lft']
         verbose_name = _('page')
         verbose_name_plural = _('pages')
 
