@@ -20,6 +20,8 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         if level <= 1:
             return Page.objects.toplevel_navigation()
 
+        # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
+        # of the current page, we have to add 2 to the mptt level
         if instance.level+2 == level:
             return instance.children.in_navigation()
 
