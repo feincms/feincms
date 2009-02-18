@@ -8,9 +8,15 @@ from django.utils.translation import ugettext_lazy as _
 import mptt
 
 
-def get_object(path):
+def get_object(path, fail_silently=False):
     dot = path.rindex('.')
-    return getattr(__import__(path[:dot], {}, {}, ['']), path[dot+1:])
+    try:
+        return getattr(__import__(path[:dot], {}, {}, ['']), path[dot+1:])
+    except ImportError:
+        if not fail_silently:
+            raise
+
+    return None
 
 
 class TypeRegistryMetaClass(type):
@@ -252,10 +258,11 @@ class Page(models.Model):
         if not self.navigation_extension:
             return []
 
-        cls = get_object(self.navigation_extension)
-        obj = cls()
+        cls = get_object(self.navigation_extension, fail_silently=True)
+        if not cls:
+            return []
 
-        return obj.children(self)
+        return cls().children(self)
 
 
 mptt.register(Page)
