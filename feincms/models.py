@@ -8,6 +8,23 @@ from django.utils.translation import ugettext_lazy as _
 import mptt
 
 
+def get_object(path):
+    dot = path.rindex('.')
+    return getattr(__import__(path[:dot], {}, {}, ['']), path[dot+1:])
+
+
+class TypeRegistryMetaClass(type):
+    """
+    You can access the list of subclasses as <BaseClass>.types
+    """
+
+    def __init__(cls, name, bases, attrs):
+        if not hasattr(cls, 'types'):
+            cls.types = []
+        else:
+            cls.types.append(cls)
+
+
 class Region(models.Model):
     """
     A template region which will be a container for several page contents.
@@ -44,6 +61,23 @@ class Template(models.Model):
 
     def __unicode__(self):
         return self.title
+
+
+class PagePretender(object):
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    def get_absolute_url(self):
+        return self.url
+
+
+class NavigationExtension(object):
+    __metaclass__ = TypeRegistryMetaClass
+    name = _('navigation extension')
+
+    def children(self, page, **kwargs):
+        raise NotImplementedError
 
 
 class PageManager(models.Manager):
@@ -140,6 +174,13 @@ class Page(models.Model):
     redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
         help_text=_('Target URL for automatic redirects.'))
 
+    # navigation extensions
+    NE_CHOICES = [(
+        '%s.%s' % (cls.__module__, cls.__name__), cls.name) for cls in NavigationExtension.types]
+    navigation_extension = models.CharField(_('navigation extension'),
+        choices=NE_CHOICES, blank=True, max_length=50,
+        help_text=_('Select the module providing subpages for this page if you need to customize the navigation.'))
+
     # content
     _content_title = models.TextField(_('content title'), blank=True,
         help_text=_('The first line is the main title, the following lines are subtitles.'))
@@ -206,6 +247,17 @@ class Page(models.Model):
         translation.activate(self.language)
         request.LANGUAGE_CODE = translation.get_language()
 
+
+    def extended_navigation(self):
+        if not self.navigation_extension:
+            return []
+
+        cls = get_object(self.navigation_extension)
+        obj = cls()
+
+        return obj.children(self)
+
+
 mptt.register(Page)
 
 
@@ -254,16 +306,8 @@ class ContentProxy(object):
         return contents
 
 
-class PageContentRegistry(models.base.ModelBase):
-    """
-    You can access the list of PageContent subclasses as PageContent.types
-    """
-
-    def __init__(cls, name, bases, attrs):
-        if not hasattr(cls, 'types'):
-            cls.types = []
-        else:
-            cls.types.append(cls)
+class PageContentRegistry(models.base.ModelBase, TypeRegistryMetaClass):
+    pass
 
 
 class PageContent(models.Model):
