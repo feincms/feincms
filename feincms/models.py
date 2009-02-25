@@ -38,8 +38,8 @@ class Region(models.Model):
     Often used regions might be "main" and "sidebar"
     """
 
-    key = models.CharField(_('key'), max_length=20, unique=True)
     title = models.CharField(_('title'), max_length=50, unique=True)
+    key = models.CharField(_('key'), max_length=20, unique=True)
     inherited = models.BooleanField(_('inherited'), default=False,
         help_text=_('Should the content be inherited by subpages if they do not define any content for this region?'))
 
@@ -48,7 +48,7 @@ class Region(models.Model):
         verbose_name_plural = _('regions')
 
     def __unicode__(self):
-        return self.key
+        return self.title
 
 
 class Template(models.Model):
