@@ -7,7 +7,7 @@ function region_append(region, obj, modname) {
     else
         wrp[wrp.length] = '<div class="item-minimize-disabled"><img src="'+IMG_CIRCLE_PATH+'" /></div>';
     wrp[wrp.length] = '<span>' + modname + '</span>';
-    wrp[wrp.length] = '<img class="item-delete" src="/media/img/admin/icon_deletelink.gif" />';
+    wrp[wrp.length] = '<img class="item-delete" src="'+IMG_DELETELINK_PATH+'" />';
 
     wrp[wrp.length] = '</div><div class="item-content"></div></div>';
 
