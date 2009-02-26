@@ -1,3 +1,5 @@
+import copy
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -6,17 +8,6 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 import mptt
-
-
-def get_object(path, fail_silently=False):
-    dot = path.rindex('.')
-    try:
-        return getattr(__import__(path[:dot], {}, {}, ['']), path[dot+1:])
-    except ImportError:
-        if not fail_silently:
-            raise
-
-    return None
 
 
 class TypeRegistryMetaClass(type):
@@ -69,205 +60,6 @@ class Template(models.Model):
         return self.title
 
 
-class PagePretender(object):
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-    def get_absolute_url(self):
-        return self.url
-
-
-class NavigationExtension(object):
-    __metaclass__ = TypeRegistryMetaClass
-    name = _('navigation extension')
-
-    def children(self, page, **kwargs):
-        raise NotImplementedError
-
-
-class PageManager(models.Manager):
-    def active(self):
-        return self.filter(active=True)
-
-    def page_for_path(self, path, raise404=False):
-        """
-        Return a page for a path.
-
-        Example:
-        Page.objects.page_for_path(request.path)
-        """
-
-        stripped = path.strip('/')
-
-        try:
-            return self.active().filter(override_url='/%s/' % stripped)[0]
-        except IndexError:
-            pass
-
-        tokens = stripped.split('/')
-
-        count = len(tokens)
-
-        filters = {'%sisnull' % ('parent__' * count): True}
-
-        for n, token in enumerate(tokens):
-            filters['%sslug' % ('parent__' * (count-n-1))] = token
-
-        try:
-            return self.active().filter(**filters)[0]
-        except IndexError:
-            if raise404:
-                raise Http404
-            raise self.model.DoesNotExist
-
-    def page_for_path_or_404(self, path):
-        """
-        Wrapper for page_for_path which raises a Http404 if no page
-        has been found for the passed path.
-        """
-        return self.page_for_path(path, raise404=True)
-
-    def best_match_for_path(self, path, raise404=False):
-        """
-        Return the best match for a path.
-        """
-
-        tokens = path.strip('/').split('/')
-
-        for count in range(len(tokens), -1, -1):
-            try:
-                return self.page_for_path('/'.join(tokens[:count]))
-            except self.model.DoesNotExist:
-                pass
-
-        if raise404:
-            raise Http404
-        return None
-
-    def in_navigation(self):
-        return self.active().filter(in_navigation=True)
-
-    def toplevel_navigation(self):
-        return self.in_navigation().filter(parent__isnull=True)
-
-    def from_request(self, request, raise404=False):
-        page = self.page_for_path(request.path, raise404)
-        page.setup_request(request)
-        return page
-
-    def from_request_or_404(self, request):
-        return self.page_for_path_or_404(request.path, raise404=True)
-
-    def best_match_from_request(self, request, raise404=False):
-        page = self.best_match_for_path(request.path, raise404)
-        page.setup_request(request)
-        return page
-
-
-class Page(models.Model):
-    active = models.BooleanField(_('active'), default=False)
-    template = models.ForeignKey(Template)
-
-    # structure and navigation
-    title = models.CharField(_('title'), max_length=100,
-        help_text=_('This is used for the generated navigation too.'))
-    slug = models.SlugField()
-    parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
-    in_navigation = models.BooleanField(_('in navigation'), default=True)
-    override_url = models.CharField(_('override URL'), max_length=200, blank=True,
-        help_text=_('Override the target URL for the navigation.'))
-    redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
-        help_text=_('Target URL for automatic redirects.'))
-
-    # navigation extensions
-    NE_CHOICES = [(
-        '%s.%s' % (cls.__module__, cls.__name__), cls.name) for cls in NavigationExtension.types]
-    navigation_extension = models.CharField(_('navigation extension'),
-        choices=NE_CHOICES, blank=True, max_length=50,
-        help_text=_('Select the module providing subpages for this page if you need to customize the navigation.'))
-
-    # content
-    _content_title = models.TextField(_('content title'), blank=True,
-        help_text=_('The first line is the main title, the following lines are subtitles.'))
-
-    # meta stuff TODO keywords and description?
-    _page_title = models.CharField(_('page title'), max_length=100, blank=True,
-        help_text=_('Page title for browser window. Same as title by default.'))
-    meta_keywords = models.TextField(_('meta keywords'), blank=True,
-        help_text=_('This will be prepended to the default keyword list.'))
-    meta_description = models.TextField(_('meta description'), blank=True,
-        help_text=_('This will be prepended to the default description.'))
-
-    # language
-    language = models.CharField(_('language'), max_length=10,
-        choices=settings.LANGUAGES)
-    translations = models.ManyToManyField('self', blank=True)
-
-    class Meta:
-        ordering = ['tree_id', 'lft']
-        verbose_name = _('page')
-        verbose_name_plural = _('pages')
-
-    objects = PageManager()
-
-    def __unicode__(self):
-        return u'%s (%s)' % (self.title, self.get_absolute_url())
-
-    def get_absolute_url(self):
-        if self.override_url:
-            return self.override_url
-        if self.is_root_node():
-            return u'/%s/' % (self.slug)
-        else:
-            return u'/%s/%s/' % ('/'.join([page.slug for page in self.get_ancestors()]), self.slug)
-
-    @property
-    def content(self):
-        if not hasattr(self, '_content_proxy'):
-            self._content_proxy = ContentProxy(self, self.template)
-
-        return self._content_proxy
-
-    @property
-    def page_title(self):
-        if self._page_title:
-            return self._page_title
-        return self.content_title
-
-    @property
-    def content_title(self):
-        if not self._content_title:
-            return self.title
-
-        try:
-            return self._content_title.splitlines()[0]
-        except IndexError:
-            return u''
-
-    @property
-    def content_subtitle(self):
-        return u'\n'.join(self._content_title.splitlines()[1:])
-
-    def setup_request(self, request):
-        translation.activate(self.language)
-        request.LANGUAGE_CODE = translation.get_language()
-
-
-    def extended_navigation(self):
-        if not self.navigation_extension:
-            return []
-
-        cls = get_object(self.navigation_extension, fail_silently=True)
-        if not cls:
-            return []
-
-        return cls().children(self)
-
-
-mptt.register(Page)
-
-
 class ContentProxy(object):
     """
     This proxy offers attribute-style access to the page contents of regions.
@@ -278,58 +70,66 @@ class ContentProxy(object):
     [A list of all page contents which are assigned to the region with key 'main']
     """
 
-    def __init__(self, page, template):
-        self.page = page
-        self.template = template
+    def __init__(self, item, types):
+        self.item = item
+        self.types = types
 
     def __getattr__(self, attr):
         """
-        Get all page content instances for the specified page and region
+        Get all item content instances for the specified item and region
 
-        If no page contents could be found for the current page and the region
+        If no item contents could be found for the current item and the region
         has the inherited flag set, this method will go up the ancestor chain
-        until either some page contents have found or no ancestors are left.
+        until either some item contents have found or no ancestors are left.
         """
 
         try:
-            region = self.__dict__['template'].regions.get(key=attr)
+            region = self.__dict__['item'].template.regions.get(key=attr)
         except Region.DoesNotExist:
             return []
 
-        def collect_items(page):
+        def collect_items(item):
             contents = []
-            for cls in PageContent.types:
-                queryset = getattr(page, '%s_set' % cls.__name__.lower())
+            base_field = self.item.__class__.__name__.lower()
+            for cls in self.__dict__['types']:
+                queryset = getattr(item, '%s_set' % cls.__name__.lower())
                 contents += list(queryset.filter(region=region).select_related(
-                    'page', 'region'))
+                    base_field, 'region'))
 
-            if not contents and page.parent_id and region.inherited:
-                return collect_items(page.parent)
+            if not contents and item.parent_id and region.inherited:
+                return collect_items(item.parent)
 
             return contents
 
-        contents = collect_items(self.__dict__['page'])
+        contents = collect_items(self.__dict__['item'])
         contents.sort(key=lambda c: c.ordering)
         return contents
 
 
-class PageContentRegistry(models.base.ModelBase, TypeRegistryMetaClass):
-    pass
-
-
-class PageContent(models.Model):
-    __metaclass__ = PageContentRegistry
-
-    page = models.ForeignKey(Page, related_name='%(class)s_set')
-    region = models.ForeignKey(Region)
-    ordering = models.IntegerField(_('ordering'), default=0)
-
+def create_content_base(model):
     class Meta:
         abstract = True
         ordering = ['ordering']
 
     def __unicode__(self):
-        return u'%s on %s, ordering %s' % (self.region, self.page, self.ordering)
+        return u'%s on %s, ordering %s' % (self.region, self.parent, self.ordering)
+
+    @classmethod
+    def create_content_type(self, model):
+        class Meta:
+            db_table = '%s_%s' % (self._feincms_parent_model._meta.db_table,
+                model.__name__.lower())
+
+        attrs = {
+            '__module__': self.__module__,
+            'Meta': Meta,
+            }
+
+        cls = type(
+            model.__name__,
+            (self, model,), attrs)
+        self.types.append(cls)
+        return cls
 
     def render(self, **kwargs):
         render_fn = getattr(self, 'render_%s' % self.region.key, None)
@@ -338,4 +138,25 @@ class PageContent(models.Model):
             return render_fn(**kwargs)
 
         raise NotImplementedError
+
+    attrs = {
+        '__module__': model.__module__,
+        '__unicode__': __unicode__,
+        'create_content_type': create_content_type,
+        'render': render,
+        'Meta': Meta,
+        model.__name__.lower(): models.ForeignKey(model, related_name='%(class)s_set'),
+        'region': models.ForeignKey(Region, related_name='%s_%%(class)s_set' % model.__name__.lower()),
+        'ordering': models.IntegerField(_('ordering'), default=0),
+        '_feincms_parent_model': model,
+        'types': [],
+        }
+
+    model._feincms_content_model = type(
+        '%sContent' % model.__name__,
+        (models.Model,), attrs)
+
+    return model._feincms_content_model
+
+
 

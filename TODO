@@ -18,4 +18,6 @@ it's nothing more than a brain dump.
 - It's not too bad to set the language on every page, but! the translation stuff
   does not work correctly. Think about the content model some more (or think on
   building a GUI which is logical)
+- Implement higher-level rendering methods so that the results can be more easily
+  cached (maybe in ContentProxy?)
 

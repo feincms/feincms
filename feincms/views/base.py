@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import translation
 
-from feincms.models import Page
+from feincms.module.page.models import Page
 
 
 def handler(request, path=None):
