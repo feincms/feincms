@@ -21,21 +21,31 @@ FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feinc
 
 
 class ItemEditorMixin(object):
+    """
+    This mixin needs several attributes on the ModelAdmin class:
+
+    content_model::
+        The base content model; content_model.types should be an iterable of
+        content types.
+
+    show_on_top::
+        A list of fields which should be displayed at the top of the page form.
+        This does not need to (and should not) include ``template''
+    """
+
     def change_view(self, request, object_id, extra_context=None):
 
         class ModelForm(forms.ModelForm):
             class Meta:
                 model = self.model
 
-
         class SettingsFieldset(forms.ModelForm):
             # This form class is used solely for presentation, the data will be saved
-            # by the PageForm above
+            # by the ModelForm above
 
             class Meta:
                 model = self.model
-                exclude = ('active', 'template', 'title', 'in_navigation')
-
+                exclude = self.show_on_top+('template',)
 
         inline_formset_types = [(
             content_type,
@@ -85,6 +95,7 @@ class ItemEditorMixin(object):
             'inline_formsets': inline_formsets,
             'content_types': content_types,
             'settings_fieldset': settings_fieldset,
+            'top_fieldset': [model_form[field] for field in self.show_on_top],
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
         }
 

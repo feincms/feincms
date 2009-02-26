@@ -40,6 +40,7 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
         }
 
     content_model = PageContent
+    show_on_top = ('title', 'active', 'in_navigation')
 
 
 admin.site.register(Region,

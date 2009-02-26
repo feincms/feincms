@@ -139,25 +139,21 @@
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="." method="post" id="{{ opts.module_name }}_form">
 
 <div id="overview">
-        {{ page_form.title.label_tag }}
-        <span>{{ page_form.title }}{{ page_form.title.errors }}</span>
+    {% for field in top_fieldset %}
+        {{ field.label_tag }}
+        <span>{{ field }}{{ field.errors }}</span>
+    {% endfor %}
 
-         {{ page_form.active.label_tag }}
-        <span>{{ page_form.active }}{{ page_form.active.errors }}</span>
+    <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
 
-         {{ page_form.in_navigation.label_tag }}
-        <span>{{ page_form.in_navigation }}{{ page_form.in_navigation.errors }}</span>
+    <hr/>
 
-        <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
+    {{ page_form.template.label_tag }}
+    <span>{{ page_form.template }}{{ page_form.template.errors }}</span>
 
-        <hr/>
+    <input type="button" class="cancel" value="{% trans 'Change Template' %}" />
 
-        {{ page_form.template.label_tag }}
-        <span>{{ page_form.template }}{{ page_form.template.errors }}</span>
-
-        <input type="button" class="cancel" value="{% trans 'Change Template' %}" />
-
-        <hr/>
+    <hr/>
 </div>
 <div id="main_wrapper">
     <div class="navi_tab tab_active" id="settings_tab" key="settings" nr="0">Settings</div>
