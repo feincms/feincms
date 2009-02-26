@@ -72,10 +72,10 @@ class ItemEditorMixin(object):
                     formset.save()
                 return HttpResponseRedirect(".")
 
-            settings_fieldset = SettingsFieldset(request.POST, instance=page)
+            settings_fieldset = SettingsFieldset(request.POST, instance=obj)
             settings_fieldset.is_valid()
         else:
-            model_form = ModelForm(instance=page)
+            model_form = ModelForm(instance=obj)
             inline_formsets = [
                 formset_class(instance=obj, prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types]
