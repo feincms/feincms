@@ -80,7 +80,7 @@ class ItemEditorMixin(object):
                 formset_class(instance=obj, prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types]
 
-            settings_fieldset = SettingsFieldset(instance=page)
+            settings_fieldset = SettingsFieldset(instance=obj)
 
         content_types = []
         for content_type in self.content_model.types:
