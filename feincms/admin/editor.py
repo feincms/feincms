@@ -142,6 +142,7 @@ class TreeEditorMixin(object):
             'has_add_permission': self.has_add_permission(request),
             'root_path': self.admin_site.root_path,
             'app_label': app_label,
+            'object_list': self.model._tree_manager.all(),
         }
         context.update(extra_context or {})
         return render_to_response("admin/feincms/tree_editor.html",

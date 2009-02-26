@@ -4,7 +4,6 @@
 {% block title %}{{ block.super }}{% endblock %}
 
 {% block extrahead %}{{ block.super }}
-{% full_tree_for_model feincms.Page as pages %}
 <script type="text/javascript" src="../../../jsi18n/"></script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.min.js"></script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.ui.all.js"></script>
@@ -20,10 +19,10 @@
 
 
 
-    ancestors = [{% for page in pages %}'{{ page.parent_id|default_if_none:"0" }}'{% if not forloop.last %},{% endif %} {% endfor %}];
+    ancestors = [{% for page in object_list %}'{{ page.parent_id|default_if_none:"0" }}'{% if not forloop.last %},{% endif %} {% endfor %}];
 
     tablestr = '';
-    {% for page in pages %}tablestr += add_row({{ forloop.counter }}, {{ page.id }}, "{{ page.parent_id|default_if_none:"-1" }}", "{{ page.title }}", ["{{ page.active }}", "{{ page.in_navigation }}"]);
+    {% for page in object_list %}tablestr += add_row({{ forloop.counter }}, {{ page.id }}, "{{ page.parent_id|default_if_none:"-1" }}", "{{ page.title }}", ["{{ page.active }}", "{{ page.in_navigation }}"]);
     {% endfor %}
 
     function add_row(node_id, page_id, parent_id, page_title, attrs) {
