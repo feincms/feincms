@@ -1,0 +1,21 @@
+This is in no way supposed to be a complete list of all open issues,
+it's nothing more than a brain dump.
+
+- Move NavigationExtension into an extension module -- it's not used that much.
+  Part of it is implementing an extension infrastructure for the base models.
+  Other ideas: SEOExtension, SubtitleExtension, ...
+- Implement possibility to reuse the content model for blogs and other stuff
+- Write more and better documentation
+- Make shiny looking website -- maybe
+- Use list_display tuple for items in tree view
+- Think about the hardcoded 'template' stuff in the change_view
+- Add more default content types -- batteries are not yet included...
+- The template tags feel fragile and ugly
+- Do not include more javascript than necessary -- we do not net all of jQuery.ui
+- Display labels in PageContent forms; with many fields, it is not clear which
+  form fields are supposed to contain what information
+- Cleanup template code
+- It's not too bad to set the language on every page, but! the translation stuff
+  does not work correctly. Think about the content model some more (or think on
+  building a GUI which is logical)
+
