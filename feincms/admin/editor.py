@@ -29,7 +29,7 @@ class ItemEditorMixin(object):
         content types.
 
     show_on_top::
-        A list of fields which should be displayed at the top of the page form.
+        A list of fields which should be displayed at the top of the form.
         This does not need to (and should not) include ``template''
     """
 
@@ -53,16 +53,16 @@ class ItemEditorMixin(object):
             ) for content_type in self.content_model.types]
 
         opts = self.model._meta
-        page = self.model._default_manager.get(pk=unquote(object_id))
+        obj = self.model._default_manager.get(pk=unquote(object_id))
 
-        if not self.has_change_permission(request, page):
+        if not self.has_change_permission(request, obj):
             raise PermissionDenied
 
         if request.method == 'POST':
-            model_form = ModelForm(request.POST, request.FILES, instance=page)
+            model_form = ModelForm(request.POST, request.FILES, instance=obj)
 
             inline_formsets = [
-                formset_class(request.POST, request.FILES, instance=page,
+                formset_class(request.POST, request.FILES, instance=obj,
                     prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types]
 
@@ -77,7 +77,7 @@ class ItemEditorMixin(object):
         else:
             model_form = ModelForm(instance=page)
             inline_formsets = [
-                formset_class(instance=page, prefix=content_type.__name__.lower())
+                formset_class(instance=obj, prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types]
 
             settings_fieldset = SettingsFieldset(instance=page)
@@ -90,7 +90,7 @@ class ItemEditorMixin(object):
         context = {
             'has_file_field': True, # FIXME - but isn't fixed in django either
             'opts': opts,
-            'page': page,
+            'page': obj,
             'page_form': model_form,
             'inline_formsets': inline_formsets,
             'content_types': content_types,
@@ -99,7 +99,7 @@ class ItemEditorMixin(object):
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
         }
 
-        return render_to_response("admin/feincms/page/change_form_edit.html",
+        return render_to_response("admin/feincms/item_editor.html",
             context, context_instance=template.RequestContext(request))
 
 
@@ -144,12 +144,12 @@ class TreeEditorMixin(object):
             'app_label': app_label,
         }
         context.update(extra_context or {})
-        return render_to_response("admin/feincms/page/change_list_edit.html",
+        return render_to_response("admin/feincms/tree_editor.html",
             context, context_instance=template.RequestContext(request))
 
     def _save_tree(self, request):
         pagetree = simplejson.loads(request.POST['tree'])
-        # 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = page_id
+        # 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = item_id
         sql = "UPDATE %s SET %s=%%s, %s_id=%%s, %s=%%s, %s=%%s, %s=%%s WHERE %s=%%s" % (
             self.model._meta.db_table,
             self.model._meta.tree_id_attr,
@@ -165,7 +165,7 @@ class TreeEditorMixin(object):
         return HttpResponse("OK", mimetype="text/plain")
 
     def _delete_item(self, request):
-        page_id = request.POST['page-id']
+        page_id = request.POST['item_id']
         obj = self.model._default_manager.get(pk=unquote(page_id))
         obj.delete()
         return HttpResponse("OK", mimetype="text/plain")

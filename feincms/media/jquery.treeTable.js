@@ -279,7 +279,7 @@ function handle_page_delete(node) {
     } else {
         jConfirm('Really delete item?', 'Confirm to delete item', function(r) {
             if (r==true) {
-                $.post('.', {'__cmd': 'delete_item', 'page-id': page_id}, function(data){
+                $.post('.', {'__cmd': 'delete_item', 'item_id': page_id}, function(data){
                     if (data == "OK") {
                         if (parent_id && $(".child-of-node-"+parent_id).length == 1) {
                             $("#node-"+parent_id).removeClass("parent")
