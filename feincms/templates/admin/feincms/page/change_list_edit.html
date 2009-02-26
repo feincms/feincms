@@ -97,11 +97,11 @@
             });
 
             $(".save_tree").click(function(){
-                    save_page_tree("save-pagetree/");
+                    save_page_tree();
             });
 
             $(".del-page").click(function(){
-                handle_page_delete($(this).parents("tr"), "delete-page-ajax/");
+                handle_page_delete($(this).parents("tr"));
             });
 
     });

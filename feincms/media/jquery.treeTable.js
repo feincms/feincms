@@ -264,7 +264,7 @@ function handle_drop_event(source, dest, method){
     source.find(".wrap").switchClass("nohover","flash",0).switchClass("flash","nohover",500);
 }
 
-function handle_page_delete(node, url) {
+function handle_page_delete(node) {
     var page_id = node.attr("class").match(/page-id-(\d+)/)[1];
     var parent_id = null;
     if (node.attr("class").match(/child-of-node-(\d+)/))
@@ -272,14 +272,14 @@ function handle_page_delete(node, url) {
     var popup_bg = '<div class="popup_bg"></div>';
     $("body").append(popup_bg);
     if (node.hasClass("parent")){
-        jAlert('Cannot delete page, because it is parent of at least one other page.',
-            'Cannot delete page', function(){
+        jAlert('Cannot delete item, because it is parent of at least one other item.',
+            'Cannot delete item', function(){
                 $(".popup_bg").remove();
         });
     } else {
-        jConfirm('Really delete page?', 'Confirm to delete page', function(r) {
+        jConfirm('Really delete item?', 'Confirm to delete item', function(r) {
             if (r==true) {
-                $.post(url, {'page-id': page_id}, function(data){
+                $.post('.', {'__cmd': 'delete_item', 'page-id': page_id}, function(data){
                     if (data == "OK") {
                         if (parent_id && $(".child-of-node-"+parent_id).length == 1) {
                             $("#node-"+parent_id).removeClass("parent")
@@ -287,6 +287,11 @@ function handle_page_delete(node, url) {
                                 .find(".expander").removeClass("expander");
                         }
                         node.remove();
+                        $("body").append(popup_bg);
+                        jAlert('Item deleted successfully.',
+                            'Item deleted', function(){
+                                $(".popup_bg").remove();
+                        });
                     }
                 });
             }
@@ -311,7 +316,7 @@ function ancestorsOf_jQuery(node) {
     return ancestors;
 };
 
-function save_page_tree(url) {
+function save_page_tree() {
     var send_tree = new Array();
 
    // prepare tree
@@ -366,11 +371,11 @@ function save_page_tree(url) {
     }
 
     // send tree to url
-    $.post(url, {'tree': $.toJSON(send_tree)}, function(data){
+    $.post('.', {'__cmd': 'save_tree', 'tree': $.toJSON(send_tree)}, function(data){
         if (data == "OK") {
             var popup_bg = '<div class="popup_bg"></div>';
             $("body").append(popup_bg);
-            jAlert("Page tree saved successfully.", "Tree saved.", function(){
+            jAlert("Tree saved successfully.", "Tree saved", function(){
                     $(".popup_bg").remove();
             });
         }

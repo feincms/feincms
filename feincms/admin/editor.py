@@ -104,39 +104,17 @@ class ItemEditorMixin(object):
 
 
 class TreeEditorMixin(object):
-    def get_urls(self):
-        from django.conf.urls.defaults import patterns, url
-
-        def wrap(view):
-            def wrapper(*args, **kwargs):
-                return self.admin_site.admin_view(view)(*args, **kwargs)
-            return update_wrapper(wrapper, view)
-
-        info = self.admin_site.name, self.model._meta.app_label, self.model._meta.module_name
-
-        urlpatterns = patterns('',
-            url(r'^$',
-                wrap(self.changelist_view),
-                name='%sadmin_%s_%s_changelist' % info),
-            url(r'^add/$',
-                wrap(self.add_view),
-                name='%sadmin_%s_%s_add' % info),
-            url(r'^(.+)/history/$',
-                wrap(self.history_view),
-                name='%sadmin_%s_%s_history' % info),
-            url(r'^(.+)/delete/$',
-                wrap(self.delete_view),
-                name='%sadmin_%s_%s_delete' % info),
-            url(r'^save-pagetree/$', wrap(self.save_pagetree)),
-            url(r'^delete-page-ajax/$', wrap(self.delete_page_ajax)),
-            url(r'^(.+)/$',
-                wrap(self.change_view),
-                name='%sadmin_%s_%s_change' % info),
-        )
-
-        return urlpatterns
-
     def changelist_view(self, request, extra_context=None):
+        # handle AJAX requests
+        if request.is_ajax():
+            cmd = request.POST.get('__cmd')
+            if cmd=='save_tree':
+                return self._save_tree(request)
+            elif cmd=='delete_item':
+                return self._delete_item(request)
+
+            return HttpResponse('Oops. AJAX request not understood.')
+
         from django.contrib.admin.views.main import ChangeList, ERROR_FLAG
         opts = self.model._meta
         app_label = opts.app_label
@@ -169,7 +147,7 @@ class TreeEditorMixin(object):
         return render_to_response("admin/feincms/page/change_list_edit.html",
             context, context_instance=template.RequestContext(request))
 
-    def save_pagetree(self, request):
+    def _save_tree(self, request):
         pagetree = simplejson.loads(request.POST['tree'])
         # 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = page_id
         sql = "UPDATE %s SET %s=%%s, %s_id=%%s, %s=%%s, %s=%%s, %s=%%s WHERE %s=%%s" % (
@@ -186,11 +164,9 @@ class TreeEditorMixin(object):
 
         return HttpResponse("OK", mimetype="text/plain")
 
-    def delete_page_ajax(self, request):
+    def _delete_item(self, request):
         page_id = request.POST['page-id']
         obj = self.model._default_manager.get(pk=unquote(page_id))
         obj.delete()
         return HttpResponse("OK", mimetype="text/plain")
-
-
 
