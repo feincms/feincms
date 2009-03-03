@@ -104,15 +104,15 @@ class PageManager(models.Manager):
     def toplevel_navigation(self):
         return self.in_navigation().filter(parent__isnull=True)
 
-    def from_request(self, request, raise404=False):
+    def for_request(self, request, raise404=False):
         page = self.page_for_path(request.path, raise404)
         page.setup_request(request)
         return page
 
-    def from_request_or_404(self, request):
+    def for_request_or_404(self, request):
         return self.page_for_path_or_404(request.path, raise404=True)
 
-    def best_match_from_request(self, request, raise404=False):
+    def best_match_for_request(self, request, raise404=False):
         page = self.best_match_for_path(request.path, raise404)
         page.setup_request(request)
         return page
