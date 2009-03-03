@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 import mptt
 
 from feincms.models import TypeRegistryMetaClass, Region, Template,\
-    ContentProxy, create_content_base
+    Base, ContentProxy
 
 
 def get_object(path, fail_silently=False):
@@ -118,9 +118,8 @@ class PageManager(models.Manager):
         return page
 
 
-class Page(models.Model):
+class Page(Base):
     active = models.BooleanField(_('active'), default=False)
-    template = models.ForeignKey(Template)
 
     # structure and navigation
     title = models.CharField(_('title'), max_length=100,
@@ -178,7 +177,7 @@ class Page(models.Model):
     @property
     def content(self):
         if not hasattr(self, '_content_proxy'):
-            self._content_proxy = ContentProxy(self, PageContent.types)
+            self._content_proxy = ContentProxy(self, Page.types)
 
         return self._content_proxy
 
@@ -219,10 +218,9 @@ class Page(models.Model):
 
 mptt.register(Page)
 
-PageContent = create_content_base(Page)
 
 from feincms.content.image.models import ImageContent
 from feincms.content.richtext.models import RichTextContent
-PageContent.create_content_type(ImageContent)
-PageContent.create_content_type(RichTextContent)
+Page.create_content_type(ImageContent)
+Page.create_content_type(RichTextContent)
 

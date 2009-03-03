@@ -60,6 +60,68 @@ class Template(models.Model):
         return self.title
 
 
+class Base(models.Model):
+    template = models.ForeignKey(Template)
+
+    class Meta:
+        abstract = True
+
+    @classmethod
+    def create_content_base(cls):
+        class Meta:
+            abstract = True
+            ordering = ['ordering']
+
+        def __unicode__(self):
+            return u'%s on %s, ordering %s' % (self.region, self.parent, self.ordering)
+
+        def render(self, **kwargs):
+            render_fn = getattr(self, 'render_%s' % self.region.key, None)
+
+            if render_fn:
+                return render_fn(**kwargs)
+
+            raise NotImplementedError
+
+        attrs = {
+            '__module__': cls.__module__,
+            '__unicode__': __unicode__,
+            'render': render,
+            'Meta': Meta,
+            cls.__name__.lower(): models.ForeignKey(cls, related_name='%(class)s_set'),
+            'region': models.ForeignKey(Region, related_name='%s_%%(class)s_set' % cls.__name__.lower()),
+            'ordering': models.IntegerField(_('ordering'), default=0),
+            }
+
+        cls._feincms_content_model = type('%sContent' % cls.__name__,
+            (models.Model,), attrs)
+
+        cls.types = []
+
+        return cls._feincms_content_model
+
+    @classmethod
+    def create_content_type(cls, model):
+        if not hasattr(cls, '_feincms_content_model'):
+            cls.create_content_base()
+
+        feincms_content_base = getattr(cls, '_feincms_content_model')
+
+        class Meta:
+            db_table = '%s_%s' % (cls._meta.db_table, model.__name__.lower())
+
+        attrs = {
+            '__module__': cls.__module__,
+            'Meta': Meta,
+            }
+
+        new_type = type(
+            model.__name__,
+            (feincms_content_base, model,), attrs)
+        cls.types.append(new_type)
+        return new_type
+
+
 class ContentProxy(object):
     """
     This proxy offers attribute-style access to the page contents of regions.
@@ -104,59 +166,4 @@ class ContentProxy(object):
         contents = collect_items(self.__dict__['item'])
         contents.sort(key=lambda c: c.ordering)
         return contents
-
-
-def create_content_base(model):
-    class Meta:
-        abstract = True
-        ordering = ['ordering']
-
-    def __unicode__(self):
-        return u'%s on %s, ordering %s' % (self.region, self.parent, self.ordering)
-
-    @classmethod
-    def create_content_type(self, model):
-        class Meta:
-            db_table = '%s_%s' % (self._feincms_parent_model._meta.db_table,
-                model.__name__.lower())
-
-        attrs = {
-            '__module__': self.__module__,
-            'Meta': Meta,
-            }
-
-        cls = type(
-            model.__name__,
-            (self, model,), attrs)
-        self.types.append(cls)
-        return cls
-
-    def render(self, **kwargs):
-        render_fn = getattr(self, 'render_%s' % self.region.key, None)
-
-        if render_fn:
-            return render_fn(**kwargs)
-
-        raise NotImplementedError
-
-    attrs = {
-        '__module__': model.__module__,
-        '__unicode__': __unicode__,
-        'create_content_type': create_content_type,
-        'render': render,
-        'Meta': Meta,
-        model.__name__.lower(): models.ForeignKey(model, related_name='%(class)s_set'),
-        'region': models.ForeignKey(Region, related_name='%s_%%(class)s_set' % model.__name__.lower()),
-        'ordering': models.IntegerField(_('ordering'), default=0),
-        '_feincms_parent_model': model,
-        'types': [],
-        }
-
-    model._feincms_content_model = type(
-        '%sContent' % model.__name__,
-        (models.Model,), attrs)
-
-    return model._feincms_content_model
-
-
 

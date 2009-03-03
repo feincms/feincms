@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from feincms.admin import editor
-from feincms.module.page.models import Page, PageContent
+from feincms.module.page.models import Page
 
 
 class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin):
@@ -28,7 +28,7 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
         'slug': ('title',),
         }
 
-    content_model = PageContent
+    content_model = Page
     show_on_top = ('title', 'active', 'in_navigation')
 
 admin.site.register(Page, PageAdmin)
