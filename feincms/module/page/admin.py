@@ -28,7 +28,6 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
         'slug': ('title',),
         }
 
-    content_model = Page
     show_on_top = ('title', 'active', 'in_navigation')
 
 admin.site.register(Page, PageAdmin)

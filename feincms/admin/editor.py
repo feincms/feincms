@@ -22,11 +22,7 @@ FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feinc
 
 class ItemEditorMixin(object):
     """
-    This mixin needs several attributes on the ModelAdmin class:
-
-    content_model::
-        The base content model; content_model.types should be an iterable of
-        content types.
+    This mixin needs an attribute on the ModelAdmin class:
 
     show_on_top::
         A list of fields which should be displayed at the top of the form.
@@ -50,7 +46,7 @@ class ItemEditorMixin(object):
         inline_formset_types = [(
             content_type,
             inlineformset_factory(self.model, content_type, extra=1)
-            ) for content_type in self.content_model.types]
+            ) for content_type in self.model.types]
 
         opts = self.model._meta
         obj = self.model._default_manager.get(pk=unquote(object_id))
@@ -83,7 +79,7 @@ class ItemEditorMixin(object):
             settings_fieldset = SettingsFieldset(instance=obj)
 
         content_types = []
-        for content_type in self.content_model.types:
+        for content_type in self.model.types:
             content_name = content_type._meta.verbose_name
             content_types.append((content_name, content_name.replace(' ','')))
 
