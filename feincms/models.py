@@ -124,7 +124,7 @@ class Base(models.Model):
 
         new_type = type(
             model.__name__,
-            (feincms_content_base, model,), attrs)
+            (model, feincms_content_base,), attrs)
         cls._feincms_content_types.append(new_type)
         return new_type
 
