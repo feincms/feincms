@@ -66,6 +66,13 @@ class Base(models.Model):
     class Meta:
         abstract = True
 
+    @property
+    def content(self):
+        if not hasattr(self, '_content_proxy'):
+            self._content_proxy = ContentProxy(self)
+
+        return self._content_proxy
+
     @classmethod
     def create_content_base(cls):
         class Meta:
@@ -132,9 +139,8 @@ class ContentProxy(object):
     [A list of all page contents which are assigned to the region with key 'main']
     """
 
-    def __init__(self, item, types):
+    def __init__(self, item):
         self.item = item
-        self.types = types
 
     def __getattr__(self, attr):
         """
@@ -153,7 +159,7 @@ class ContentProxy(object):
         def collect_items(item):
             contents = []
             base_field = self.item.__class__.__name__.lower()
-            for cls in self.__dict__['types']:
+            for cls in self.__dict__['item']._feincms_content_types:
                 queryset = getattr(item, '%s_set' % cls.__name__.lower())
                 contents += list(queryset.filter(region=region).select_related(
                     base_field, 'region'))

@@ -175,13 +175,6 @@ class Page(Base):
             return u'/%s/%s/' % ('/'.join([page.slug for page in self.get_ancestors()]), self.slug)
 
     @property
-    def content(self):
-        if not hasattr(self, '_content_proxy'):
-            self._content_proxy = ContentProxy(self, Page.types)
-
-        return self._content_proxy
-
-    @property
     def page_title(self):
         if self._page_title:
             return self._page_title
