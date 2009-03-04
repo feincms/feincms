@@ -46,18 +46,18 @@ CMS without being forced to use whatever the developers deemed best:
 
 ::
 
-    from feincms.models import PageContent
+    from feincms.module.page.models import Page
     from django.contrib.markup.templatetags.markup import textile
+    from django.db import models
 
-    class TextilePageContent(PageContent):
+    class TextilePageContent(models.Model):
         content = models.TextField()
 
         def render(self, **kwargs):
             return textile(self.content)
 
+    Page.create_content_type(TextilePageContent)
 
-That's it. Not even ten lines for your own page content type. By virtue
-of being a subclass of `PageContent`, the class registers itself as a
-page content type (Thanks to Marty Alchin, wo explained how to do this
-in his Pro Django book).
+
+That's it. Not even ten lines for your own page content type.
 

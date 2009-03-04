@@ -45,15 +45,23 @@ Without further ado, here's the first example:
 
 ::
 
-    from feincms.models import PageContent
+    from feincms.module.page.models import Page
     from django.contrib.markup.templatetags.markup import textile
+    from django.db import models
 
-    class TextilePageContent(PageContent):
+    class TextilePageContent(models.Model):
         content = models.TextField()
 
         def render(self, **kwargs):
             return textile(self.content)
 
+    Page.create_content_type(TextilePageContent)
+
+
+There are three field names you should not use because they are added
+by ``create_content_type'': These are ``parent'', ``region'' and ``ordering''.
+These fields are used to specify the place where the page content will be
+placed in the output.
 
 
 

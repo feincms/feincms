@@ -1,0 +1,21 @@
+===================================
+HOWTO: Use the built-in page module
+===================================
+
+FeinCMS is primarily a system to work with lists of content blocks which
+you can assign to arbitrary other objects. You do not necessarily have to
+use it with a hierarchical page structure, but that's the most common use
+case of course. Being able to put content together in small manageable
+pieces is interesting for other uses too, f.e. for weblog entries where you
+have rich text content interspersed with images, videos or maybe even galleries.
+
+To activate the page module, you need to follow the instructions in
+installation.txt and afterwards add ``feincms.module.page'' to your
+``INSTALLED_APPS''.
+
+The default is currently to create ``ImageContent``and ``RichTextContent''
+models for pages. This might change in the future, especially since there is
+conceptually no possibility to un-create models. It would be possible in
+principle to unregister them, but the models and the associated database tables
+would still get created.
+
