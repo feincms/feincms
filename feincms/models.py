@@ -95,7 +95,7 @@ class Base(models.Model):
             '__unicode__': __unicode__,
             'render': render,
             'Meta': Meta,
-            cls.__name__.lower(): models.ForeignKey(cls, related_name='%(class)s_set'),
+            'parent': models.ForeignKey(cls, related_name='%(class)s_set'),
             'region': models.ForeignKey(Region, related_name='%s_%%(class)s_set' % cls.__name__.lower()),
             'ordering': models.IntegerField(_('ordering'), default=0),
             }
