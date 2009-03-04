@@ -46,7 +46,7 @@ class ItemEditorMixin(object):
         inline_formset_types = [(
             content_type,
             inlineformset_factory(self.model, content_type, extra=1)
-            ) for content_type in self.model.types]
+            ) for content_type in self.model._feincms_content_types]
 
         opts = self.model._meta
         obj = self.model._default_manager.get(pk=unquote(object_id))
@@ -79,7 +79,7 @@ class ItemEditorMixin(object):
             settings_fieldset = SettingsFieldset(instance=obj)
 
         content_types = []
-        for content_type in self.model.types:
+        for content_type in self.model._feincms_content_types:
             content_name = content_type._meta.verbose_name
             content_types.append((content_name, content_name.replace(' ','')))
 

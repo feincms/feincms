@@ -96,7 +96,7 @@ class Base(models.Model):
         cls._feincms_content_model = type('%sContent' % cls.__name__,
             (models.Model,), attrs)
 
-        cls.types = []
+        cls._feincms_content_types = []
 
         return cls._feincms_content_model
 
@@ -118,7 +118,7 @@ class Base(models.Model):
         new_type = type(
             model.__name__,
             (feincms_content_base, model,), attrs)
-        cls.types.append(new_type)
+        cls._feincms_content_types.append(new_type)
         return new_type
 
 
