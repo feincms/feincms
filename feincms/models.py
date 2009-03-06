@@ -73,6 +73,33 @@ class Base(models.Model):
 
         return self._content_proxy
 
+    def _content_for_region(self, region):
+        sql = ' UNION '.join([
+            'SELECT %d, COUNT(id) FROM %s WHERE parent_id=%s AND region_id=%s' % (
+                idx,
+                cls._meta.db_table,
+                self.pk,
+                region.id) for idx, cls in enumerate(self._feincms_content_types)])
+
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute(sql)
+
+        counts = [row[1] for row in cursor.fetchall()]
+
+        if not any(counts):
+            return []
+
+        contents = []
+        for idx, cnt in enumerate(counts):
+            if cnt:
+                contents += list(
+                    self._feincms_content_types[idx].objects.filter(
+                        parent=self,
+                        region=region).select_related('parent', 'region'))
+
+        return contents
+
     @classmethod
     def create_content_base(cls):
         class Meta:
@@ -151,25 +178,22 @@ class ContentProxy(object):
         until either some item contents have found or no ancestors are left.
         """
 
+        item = self.__dict__['item']
+
         try:
-            region = self.__dict__['item'].template.regions.get(key=attr)
+            region = item.template.regions.get(key=attr)
         except Region.DoesNotExist:
             return []
 
-        def collect_items(item):
-            contents = []
-            base_field = self.item.__class__.__name__.lower()
-            for cls in self.__dict__['item']._feincms_content_types:
-                queryset = getattr(item, '%s_set' % cls.__name__.lower())
-                contents += list(queryset.filter(region=region).select_related(
-                    base_field, 'region'))
+        def collect_items(obj):
+            contents = obj._content_for_region(region)
 
-            if not contents and item.parent_id and region.inherited:
-                return collect_items(item.parent)
+            if not contents and obj.parent_id and region.inherited:
+                return collect_items(obj.parent)
 
             return contents
 
-        contents = collect_items(self.__dict__['item'])
+        contents = collect_items(item)
         contents.sort(key=lambda c: c.ordering)
         return contents
 
