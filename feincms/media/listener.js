@@ -4,8 +4,7 @@ $(document).ready(function(){
         $(this).removeClass("tab_inactive").addClass("tab_active");
         $("#main > div:visible").hide();
 
-        var tab_id = $(this).attr("id");
-        var tab_str = tab_id.substr(0,tab_id.length-4);
+        var tab_str = $(this).attr("id").substr(0,$(this).attr("id").length-4);
         $('#'+tab_str+'_body').show();
         ACTIVE_REGION = REGIONS.indexOf(tab_str);
 
@@ -23,12 +22,9 @@ $(document).ready(function(){
             var form = $("#"+modvar+"_set_item_"+last_id);
 
             total_forms.val(last_id+2);
-            form.children(".region-choice-field").val(REGION_MAP[ACTIVE_REGION]);
-
             create_new_from_form(form, modvar, last_id);
             region_append(ACTIVE_REGION, form, modname, modvar);
-
-            $(this).parent().parent().siblings(".empty-machine-msg").hide();
+            set_item_field_value(form,"region-choice-field", ACTIVE_REGION);
 
             init_pagecontent();
     });
@@ -36,16 +32,12 @@ $(document).ready(function(){
     $(".order-machine-move-button").livequery('click', function(){
             var moveTo = $(this).prev().val();
             move_item(REGIONS.indexOf(moveTo),$(".active-item"));
-
-            $("#"+moveTo+"_body").children(".empty-machine-msg").hide();
-            if ($(this).parent().parent().siblings(".order-machine").children(":visible").length == 0)
-                $(this).parent().parent().siblings(".empty-machine-msg").show();
     });
 
     $(".item-delete").livequery('click',function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
-        var item = $(this).parent().parent();
+        var item = $(this).parents(".order-item");
         jConfirm('Really delete item?', 'Confirm to delete item', function(r) {
             if (r==true) {
                 set_item_field_value(item,"delete-field","checked");
@@ -61,7 +53,6 @@ $(document).ready(function(){
         jConfirm('Really change template? <br/>All content will be moved to main region.',
             'Change template', function(r) {
             if (r==true) {
-                //$("#main").html(ORIGINAL);
                 var items = $(".panel").children(".order-machine").children();
                 move_item(0, items);
                 $(".submit_form").click();
@@ -88,7 +79,7 @@ $(document).ready(function(){
     });
 
     $(".submit_form").livequery('click',function(){
-        zucht_und_ordnung();
+        zucht_und_ordnung(false);
         return true;
     });
 

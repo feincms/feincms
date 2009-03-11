@@ -214,6 +214,10 @@ mptt.register(Page)
 
 from feincms.content.image.models import ImageContent
 from feincms.content.richtext.models import RichTextContent
+from feincms.content.rss.models import RSSContent
+from feincms.content.video.models import VideoContent
 Page.create_content_type(ImageContent)
 Page.create_content_type(RichTextContent)
+Page.create_content_type(RSSContent)
+Page.create_content_type(VideoContent)
 

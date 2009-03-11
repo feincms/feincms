@@ -66,12 +66,8 @@ span { margin-right: 5px;}
 }
 .order-item .handle {
     float: left;
+    margin-top:2px;
     cursor: move;
-    background-color: #456;
-    height:100%;
-    border: 0px solid #456;
-    width:5px;
-    position:absolute;
 }
 .item-content {
     padding: 0px 10px 0px 15px;
@@ -106,6 +102,7 @@ span { margin-right: 5px;}
     border: 1px solid #678;
     width:30px;
 }
+th { vertical-align: middle; }
 
 #test-log { padding: 5px; border: 1px solid #ccc; }
 

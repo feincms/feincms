@@ -32,7 +32,7 @@
         theme_advanced_path: false,
         theme_advanced_blockformats: "p,h2,h3",
         theme_advanced_resizing: true,
-        width: '650',
+        width: '600',
         height: '300',
         content_css: "/path_to_your_media/css/preview.css",
         plugins: "advimage,advlink,fullscreen,table,preview,media,inlinepopups",
@@ -53,59 +53,59 @@
     IMG_ARROW_RIGHT_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/arrow_right.gif";
     IMG_CIRCLE_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/circle.gif";
     IMG_DELETELINK_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif";
+    IMG_MOVE_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif";
 
     REGIONS = [];
+    REGION_MAP = [];
     {% for region in page.template.regions.all %}
-        REGIONS[{{ forloop.counter0 }}] = '{{ region.key }}';
+        REGIONS.push('{{ region.key }}');
+        REGION_MAP.push('{{ region.id }}');
     {% endfor %}
     ACTIVE_REGION = 0;
-    REGION_MAP = []
+
 
     $(document).ready(function(){
+        // move contents into their corresponding regions and do some simple formatting
+        $("div[id$=_set]").children().each(function(){
+            if (!($(this).hasClass("header"))) {
+                $(this).find("select[name$=region]").addClass("region-choice-field").parents("tr").hide();
+                $(this).find("input[name$=DELETE]").addClass("delete-field").parents("tr").hide();
+                $(this).find("input[name$=ordering]").addClass("order-field").parents("tr").hide();
+                $(this).find("input[name$=id]").hide().prev().hide();
+                $(this).find("input[name$=parent]").hide().prev().hide();
 
-        $("select[name$=region]:first").children("option").each(function(){
-            if ($(this).val() != "")
-            REGION_MAP[REGION_MAP.length] = $(this).val();
+                var region_id = $(this).find(".region-choice-field").val();
+                region_id = REGION_MAP.indexOf(region_id);
+                var content_name = $(this).attr("id").substr(0, $(this).attr("id").indexOf("_"));
+                var ind = content_name.indexOf("content");
+                content_name = content_name.substr(0, ind) + " " + content_name.substr(ind)
+                region_append(region_id,$(this),content_name);
+                set_item_field_value($(this),"region-choice-field",region_id)
+            }
         });
-
-        {% for content_name, content_type in content_types %}
-            $("#{{ content_type }}_set").children().each(function(){
-                if ($(this).hasClass("header")) {
-
-                }
-                else {
-                    $(this).children("label").hide();
-                    $(this).children("select[name$=region]").addClass("region-choice-field").hide();
-                    $(this).children("input[name$=DELETE]").addClass("delete-field").hide();
-                    $(this).children("input[name$=ordering]").addClass("order-field").hide();
-
-                    var region_id = $(this).children(".region-choice-field").val();
-                    region_id = REGION_MAP.indexOf(region_id);
-                    region_append(region_id,$(this),"{{ content_name }}");
-                }
-            });
-        {% endfor %}
-        $(".order-machine").each(function(){
-                $(this).siblings(".empty-machine-msg").hide();
-                for (var i=0;i<$(this).children().length;i++) {
-                    var item = $(this).children(".order-item").children(".item-content").children()
-                        .children(".order-field[value="+i+"]")
-                        .parent().parent().parent();
-                    $(this).append(item);
-                }
-                if ($(this).children(":visible").length == 0) {
-                    $(this).siblings(".empty-machine-msg").show();
-                }
+        // register regions as sortable for drag N drop
+        $(".order-machine").sortable({
+            handle: '.handle',
+            helper: 'clone',
+            stop: function(event, ui) {
+                richify_poor($(ui.item));
+            }
         });
-
-        $(".order-machine").sortable({handle : '.handle'});
-        $(".machine-control").hide();
-
+        // hide content on drag n drop
+        $(".handle").mousedown(function(){
+            poorify_rich($(this).parents(".order-item"));
+        });
+        $(".handle").mouseup(function(){
+            richify_poor($(this).parents(".order-item"));
+        });
+        // convert text areas to rich text editors.
         init_pagecontent();
 
         if(window.location.hash) {
             $(window.location.hash+'_tab').trigger('click');
         }
+        // bring order to chaos
+        zucht_und_ordnung(true);
     });
 </script>
 
@@ -125,92 +125,62 @@
 
 {% block content %}
 
-{% for error in page_form.non_field_errors %}
-    {{ error }}<br/>
-{% endfor %}
-{% for formset in inline_formsets %}
-    {% for form in formset.forms %}
-        {% for error in form.non_field_errors %}
-            {{ error }}<br/>
-        {% endfor %}
-    {% endfor %}
-{% endfor %}
-
-<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="." method="post" id="{{ opts.module_name }}_form">
+<form name="main_form" {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="." method="post" id="{{ opts.module_name }}_form">
 
 <div id="overview">
     {% for field in top_fieldset %}
         {{ field.label_tag }}
         <span>{{ field }}{{ field.errors }}</span>
     {% endfor %}
-
     <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
-
     <hr/>
-
     {{ page_form.template.label_tag }}
     <span>{{ page_form.template }}{{ page_form.template.errors }}</span>
-
     <input type="button" class="cancel" value="{% trans 'Change Template' %}" />
-
     <hr/>
 </div>
 <div id="main_wrapper">
-    <div class="navi_tab tab_active" id="settings_tab" key="settings" nr="0">Settings</div>
-    {% for region in page.template.regions.all %}
-        <div class="navi_tab tab_inactive" id="{{ region.key }}_tab">{{ region.title }}</div>
-    {% endfor %}
+    <div class="navi_tab tab_active" id="settings_tab">Settings</div>
+    {% for region in page.template.regions.all %}<div class="navi_tab tab_inactive" id="{{ region.key }}_tab">{{ region.title }}</div>{% endfor %}
     <div id="main">
         <div id="settings_body">
             <table>
-                {% for field in settings_fieldset %}
-                <tr>
-                    <th>{{ field.label_tag }}</th>
-                    <td><span>
-                        {{ field }}
-                        {{ field.errors }}
-                        {% if field.field.help_text %}<p class="help">{{ field.field.help_text }}</p>{% endif %}
-                    </span></td>
-                </tr>
-                {% endfor %}
+                {{ settings_fieldset.as_table }}
             </table>
         </div>
         {% for region in page.template.regions.all %}
-            <div id="{{ region.key }}_body" class="panel">
-                <div class="empty-machine-msg">
-                    Region empty
-                </div>
+        <div id="{{ region.key }}_body" class="panel">
+            <div class="empty-machine-msg">
+                {% trans "Region empty" %}
+            </div>
+            <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
+                {% if region.inherited %}
+                    {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
+                {% endif %}
+            </div>
+            <div class="order-machine">
 
-                <div class="order-machine">
-                </div>
+            </div>
 
-                <div class="machine-control">
-                    <div class="control-unit">
-                        <span>Add New item:</span> <br/>
-                        <select name="order-machine-add-select">
-                        {% for n,v  in content_types %}
-                            <option value="{{ v }}">{{ n }}</option>
-                        {% endfor %}
-                        </select>
-                        <input type="button" class="order-machine-add-button button" value="OK" />
-                    </div>
-                    <div class="control-unit">
-                        <span>Move selected item to:</span>  <br/>
-                        <select name="order-machine-move-select">
-                        {% for r in page.template.regions.all %}
-                            {% ifnotequal region r %}
-                                <option value="{{ r.key }}">{{ r.title }}</option>
-                            {% endifnotequal %}
-                        {% endfor %}
-                        </select>
-                        <input type="button" class="order-machine-move-button button" value="OK" />
-                    </div>
+            <div class="machine-control">
+                <div class="control-unit">
+                    <span>Add New item:</span> <br/>
+                    <select name="order-machine-add-select">
+                    {% for n,v  in content_types %} <option value="{{ v }}">{{ n }}</option> {% endfor %}
+                    </select>
+                    <input type="button" class="order-machine-add-button button" value="OK" />
                 </div>
-             </div>
+                <div class="control-unit">
+                    <span>Move selected item to:</span>  <br/>
+                    <select name="order-machine-move-select">
+                    {% for r in page.template.regions.all %} {% ifnotequal region r %} <option value="{{ r.key }}">{{ r.title }}</option> {% endifnotequal %} {% endfor %}
+                    </select>
+                    <input type="button" class="order-machine-move-button button" value="OK" />
+                </div>
+            </div>
+         </div>
         {% endfor %}
     </div>
-
-
 </div>
 
 
@@ -223,11 +193,9 @@
         </div>
         {% for form in formset.forms %}
             <div id="{{ formset.rel_name }}_item_{{ forloop.counter0 }}">
-            {% for field in form %}
-                {{ field.label_tag }}
-                {{ field }}
-                {{ field.errors }}
-            {% endfor %}
+            <table>
+            {{ form.as_table }}
+            </table>
             </div>
         {% endfor %}
     </div>
