@@ -197,7 +197,7 @@ class Page(Base):
     def setup_request(self, request):
         translation.activate(self.language)
         request.LANGUAGE_CODE = translation.get_language()
-
+        request._feincms_page = self
 
     def extended_navigation(self):
         if not self.navigation_extension:
