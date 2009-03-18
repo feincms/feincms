@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -9,6 +11,7 @@ import feedparser
 class RSSContent(models.Model):
     link = models.URLField(_('link'))
     rendered_content = models.TextField(_('Pre-rendered content'), blank=True, editable=False)
+    last_updated = models.DateTimeField(_('Last updated'), blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -24,6 +27,7 @@ class RSSContent(models.Model):
         print u"Pre-rendering content"
         self.rendered_content = render_to_string('rsscontent.html', {
             'feed': feed})
+        self.last_updated = datetime.now()
 
         self.save()
 
