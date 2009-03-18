@@ -153,6 +153,12 @@ class Base(models.Model):
             model.__name__,
             (model, feincms_content_base,), attrs)
         cls._feincms_content_types.append(new_type)
+
+        if not hasattr(model, '_feincms_content_models'):
+            model._feincms_content_models = []
+
+        model._feincms_content_models.append(new_type)
+
         return new_type
 
 
