@@ -125,7 +125,7 @@
 
 {% block content %}
 
-<form name="main_form" {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="." method="post" id="{{ opts.module_name }}_form">
+<form name="main_form" enctype="multipart/form-data" action="." method="post" id="{{ opts.module_name }}_form">
 
 <div id="overview">
     {% for field in top_fieldset %}

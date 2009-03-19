@@ -84,7 +84,6 @@ class ItemEditorMixin(object):
             content_types.append((content_name, content_name.replace(' ','')))
 
         context = {
-            'has_file_field': True, # FIXME - but isn't fixed in django either
             'opts': opts,
             'page': obj,
             'page_form': model_form,
