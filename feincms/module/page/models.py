@@ -117,6 +117,12 @@ class PageManager(models.Manager):
         page.setup_request(request)
         return page
 
+    def from_request(self, request):
+        if hasattr(request, '_feincms_page'):
+            return request._feincms_page
+
+        return self.for_request(request)
+
 
 class Page(Base):
     active = models.BooleanField(_('active'), default=False)
