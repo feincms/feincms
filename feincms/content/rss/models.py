@@ -9,6 +9,7 @@ import feedparser
 
 
 class RSSContent(models.Model):
+    title = models.CharField(help_text=_('The rss field is updated several times a day. A change in the title will only be visible on the home page after the next feed update.'), max_length=50)
     link = models.URLField(_('link'))
     rendered_content = models.TextField(_('Pre-rendered content'), blank=True, editable=False)
     last_updated = models.DateTimeField(_('Last updated'), blank=True, null=True)
@@ -26,6 +27,7 @@ class RSSContent(models.Model):
 
         print u"Pre-rendering content"
         self.rendered_content = render_to_string('rsscontent.html', {
+            'title':self.title,
             'feed': feed})
         self.last_updated = datetime.now()
 
