@@ -13,11 +13,26 @@ To activate the page module, you need to follow the instructions in
 installation.txt and afterwards add ``feincms.module.page'' to your
 ``INSTALLED_APPS''.
 
-The default is currently to create ``ImageContent``and ``RichTextContent''
-models for pages. This might change in the future, especially since there is
-conceptually no possibility to un-create models. It would be possible in
-principle to unregister them, but the models and the associated database tables
-would still get created.
+You need to create some content models. No models are created by default,
+because there is no possibility to unregister models. A sane default might
+be to create ``ImageContent``and ``RichTextContent'' models; you can do this
+by adding the following lines somewhere into your project, for example in a
+``models.py'' file that will be processed anyway:
+
+::
+
+    from feincms.module.page.models import Page
+    from feincms.content.richtext.models import RichTextContent
+    from feincms.content.image.models import ImageContent
+
+    Page.create_content_type(RichTextContent)
+    Page.create_content_type(ImageContent)
+
+
+It will be a good idea most of the time to register the RichTextContent
+first, because it's the most used content type for many applications. The
+content type dropdown will contain content types in the same order as they
+were registered.
 
 
 Setting up the admin interface
@@ -68,7 +83,7 @@ And inside ``views.py'':
 The home view would also be the place to decide which webpage to show f.e. for
 multilingual sites or sites that can be accessed under different domains.
 
-More information can be foudn in urlconfs-views.txt
+More information can be found in urlconfs-views.txt
 
 
 Adding another content type
