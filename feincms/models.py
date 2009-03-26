@@ -135,7 +135,7 @@ class Base(models.Model):
         return cls._feincms_content_model
 
     @classmethod
-    def create_content_type(cls, model):
+    def create_content_type(cls, model, **kwargs):
         if not hasattr(cls, '_feincms_content_model'):
             cls._create_content_base()
 
@@ -158,6 +158,12 @@ class Base(models.Model):
             model._feincms_content_models = []
 
         model._feincms_content_models.append(new_type)
+
+        if hasattr(new_type, 'handle_kwargs'):
+            new_type.handle_kwargs(**kwargs)
+        else:
+            for k, v in kwargs.items():
+                setattr(new_type, k, v)
 
         return new_type
 
