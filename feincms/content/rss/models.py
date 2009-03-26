@@ -13,6 +13,7 @@ class RSSContent(models.Model):
     link = models.URLField(_('link'))
     rendered_content = models.TextField(_('Pre-rendered content'), blank=True, editable=False)
     last_updated = models.DateTimeField(_('Last updated'), blank=True, null=True)
+    max_items = models.IntegerField(_('Max. items'), default=5)
 
     class Meta:
         abstract = True
@@ -26,9 +27,11 @@ class RSSContent(models.Model):
         feed = feedparser.parse(self.link)
 
         print u"Pre-rendering content"
-        self.rendered_content = render_to_string('rsscontent.html', {
-            'title':self.title,
-            'feed': feed})
+        self.rendered_content = render_to_string('content/rss/content.html', {
+            'feed_title': self.title,
+            'feed_link': feed['feed']['link'],
+            'entries': feed['entries'][:self.max_items],
+            })
         self.last_updated = datetime.now()
 
         self.save()
