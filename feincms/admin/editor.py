@@ -49,6 +49,7 @@ class ItemEditorMixin(object):
             ) for content_type in self.model._feincms_content_types]
 
         opts = self.model._meta
+        app_label = opts.app_label
         obj = self.model._default_manager.get(pk=unquote(object_id))
 
         if not self.has_change_permission(request, obj):
@@ -94,8 +95,11 @@ class ItemEditorMixin(object):
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
         }
 
-        return render_to_response("admin/feincms/item_editor.html",
-            context, context_instance=template.RequestContext(request))
+        return render_to_response([
+            'admin/feincms/%s/%s/item_editor.html' % (app_label, opts.object_name.lower()),
+            'admin/feincms/%s/item_editor.html' % app_label,
+            'admin/feincms/item_editor.html',
+            ], context, context_instance=template.RequestContext(request))
 
 
 class TreeEditorMixin(object):
@@ -140,8 +144,11 @@ class TreeEditorMixin(object):
             'object_list': self.model._tree_manager.all(),
         }
         context.update(extra_context or {})
-        return render_to_response("admin/feincms/tree_editor.html",
-            context, context_instance=template.RequestContext(request))
+        return render_to_response([
+            'admin/feincms/%s/%s/tree_editor.html' % (app_label, opts.object_name.lower()),
+            'admin/feincms/%s/tree_editor.html' % app_label,
+            'admin/feincms/tree_editor.html',
+            ], context, context_instance=template.RequestContext(request))
 
     def _save_tree(self, request):
         pagetree = simplejson.loads(request.POST['tree'])
