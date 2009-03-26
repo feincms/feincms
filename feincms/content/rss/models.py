@@ -20,7 +20,6 @@ class RSSContent(models.Model):
 
     def render(self, **kwargs):
         return mark_safe(self.rendered_content)
-        #u'<div class="rsscontent"> RSS: <a href="'+self.link+'">'+self.link+'</a></div')
 
     def cache_content(self):
         print u"Getting RSS feed at %s" % (self.link,)

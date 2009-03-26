@@ -25,6 +25,6 @@ class ImageContent(models.Model):
 
     @classmethod
     def handle_kwargs(cls, POSITION_CHOICES=()):
-        models.CharField(_('Position'), max_length=10, choices=POSITION_CHOICES
+        models.CharField(_('position'), max_length=10, choices=POSITION_CHOICES
             ).contribute_to_class(cls, 'position')
 
