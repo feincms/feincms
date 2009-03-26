@@ -101,7 +101,7 @@ class Base(models.Model):
         return contents
 
     @classmethod
-    def create_content_base(cls):
+    def _create_content_base(cls):
         class Meta:
             abstract = True
             ordering = ['ordering']
@@ -137,7 +137,7 @@ class Base(models.Model):
     @classmethod
     def create_content_type(cls, model):
         if not hasattr(cls, '_feincms_content_model'):
-            cls.create_content_base()
+            cls._create_content_base()
 
         feincms_content_base = getattr(cls, '_feincms_content_model')
 
