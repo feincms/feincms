@@ -125,5 +125,6 @@ Or even like this:
 
 
 This does exactly the same, but you do not have to loop over the page content
-blocks yourself.
+blocks yourself. You need to add the request context processor to your list
+of context processors for this example to work.
 
