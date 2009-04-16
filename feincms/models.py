@@ -1,7 +1,6 @@
 import copy
 
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
@@ -74,22 +73,13 @@ class Base(models.Model):
 
         return self._content_proxy
 
-    @property
-    def _feincms_content_types(self):
-        if not hasattr(self, '_feincms_content_types_real'):
-            raise ImproperlyConfigured, 'You need to create at least one content type for the %s model' % (self.__class__.__name__)
-
-        return self._feincms_content_types_real
-
     def _content_for_region(self, region):
-        content_types = self._feincms_content_types
-
         sql = ' UNION '.join([
             'SELECT %d, COUNT(id) FROM %s WHERE parent_id=%s AND region_id=%s' % (
                 idx,
                 cls._meta.db_table,
                 self.pk,
-                region.id) for idx, cls in enumerate(content_types)])
+                region.id) for idx, cls in enumerate(self._feincms_content_types)])
 
         from django.db import connection
         cursor = connection.cursor()
@@ -104,7 +94,7 @@ class Base(models.Model):
         for idx, cnt in enumerate(counts):
             if cnt:
                 contents += list(
-                    content_types[idx].objects.filter(
+                    self._feincms_content_types[idx].objects.filter(
                         parent=self,
                         region=region).select_related('parent', 'region'))
 
@@ -140,7 +130,7 @@ class Base(models.Model):
         cls._feincms_content_model = type('%sContent' % cls.__name__,
             (models.Model,), attrs)
 
-        cls._feincms_content_types_real = []
+        cls._feincms_content_types = []
 
         return cls._feincms_content_model
 
@@ -162,7 +152,7 @@ class Base(models.Model):
         new_type = type(
             model.__name__,
             (model, feincms_content_base,), attrs)
-        cls._feincms_content_types_real.append(new_type)
+        cls._feincms_content_types.append(new_type)
 
         if not hasattr(model, '_feincms_content_models'):
             model._feincms_content_models = []
