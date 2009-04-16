@@ -1,6 +1,7 @@
 import copy
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
@@ -74,6 +75,9 @@ class Base(models.Model):
         return self._content_proxy
 
     def _content_for_region(self, region):
+        if not hasattr(self, '_feincms_content_types'):
+            raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.__class__.__name__)
+
         sql = ' UNION '.join([
             'SELECT %d, COUNT(id) FROM %s WHERE parent_id=%s AND region_id=%s' % (
                 idx,

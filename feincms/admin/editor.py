@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.contrib.admin.options import IncorrectLookupParameters
 from django.contrib.admin.util import unquote
 from django.core import serializers
+from django.core.exceptions import ImproperlyConfigured
 from django.db import connection, transaction
 from django.forms.formsets import all_valid
 from django.forms.models import inlineformset_factory
@@ -30,6 +31,9 @@ class ItemEditorMixin(object):
     """
 
     def change_view(self, request, object_id, extra_context=None):
+
+        if not hasattr(self.model, '_feincms_content_types'):
+            raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.model.__name__)
 
         class ModelForm(forms.ModelForm):
             class Meta:
