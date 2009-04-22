@@ -131,6 +131,7 @@
 <form name="main_form" enctype="multipart/form-data" action="." method="post" id="{{ opts.module_name }}_form">
 
 <div id="overview">
+    <p style="float:right;" class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
     {% for field in top_fieldset %}
         {{ field.label_tag }}
         <span>{{ field }}{{ field.errors }}</span>
