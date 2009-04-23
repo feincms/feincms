@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class FileContent(models.Model):
+    title = models.CharField(max_length=200)
     file = models.FileField(_('file'), upload_to='filecontent')
 
     class Meta:
