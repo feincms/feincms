@@ -61,8 +61,12 @@ class Template(models.Model):
         return self.title
 
 
+def first_template():
+    return Template.objects.all()[0]
+
+
 class Base(models.Model):
-    template = models.ForeignKey(Template)
+    template = models.ForeignKey(Template, default=first_template)
 
     class Meta:
         abstract = True
