@@ -137,6 +137,8 @@ class Page(Base):
         help_text=_('Override the target URL for the navigation.'))
     redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
         help_text=_('Target URL for automatic redirects.'))
+    _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
+        editable=False, default='')
 
     # navigation extensions
     NE_CHOICES = [(
@@ -172,13 +174,24 @@ class Page(Base):
     def __unicode__(self):
         return u'%s (%s)' % (self.title, self.get_absolute_url())
 
-    def get_absolute_url(self):
+    def save(self, *args, **kwargs):
+        super(Page, self).save(*args, **kwargs)
+        pages = self.get_descendants(include_self=True)
+        for page in pages:
+            page._generate_cached_url()
+
+    def _generate_cached_url(self):
         if self.override_url:
-            return self.override_url
+            self._cached_url = self.override_url
         if self.is_root_node():
-            return u'/%s/' % (self.slug)
+            self._cached_url = u'/%s/' % (self.slug)
         else:
-            return u'/%s/%s/' % ('/'.join([page.slug for page in self.get_ancestors()]), self.slug)
+            self._cached_url = u'/%s/%s/' % ('/'.join([page.slug for page in self.get_ancestors()]), self.slug)
+
+        super(Page, self).save()
+
+    def get_absolute_url(self):
+        return self._cached_url
 
     @property
     def page_title(self):
