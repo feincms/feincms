@@ -13,6 +13,7 @@ from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.utils import simplejson
+from django.utils.encoding import force_unicode
 from django.utils.functional import update_wrapper
 from django.utils.translation import ugettext_lazy as _
 
@@ -89,6 +90,7 @@ class ItemEditorMixin(object):
             content_types.append((content_name, content_type.__name__.lower()))
 
         context = {
+            'title': _('Change %s') % force_unicode(opts.verbose_name),
             'opts': opts,
             'page': obj,
             'page_form': model_form,

@@ -1,7 +1,8 @@
 {% extends "admin/change_form.html" %}
 {% load i18n admin_modify adminmedia %}
 
-{% block title %}Edit page {{ block.super }}{% endblock %}
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
 
 {% block extrahead %}{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />
@@ -129,6 +130,18 @@
 
 {% block content %}
 
+<div id="content-main">
+
+{% block object-tools %}
+<ul class="object-tools">
+    {% if page.get_absolute_url %}
+        <li><a target="_blank" href="{{ page.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
+    {% endif %}
+</ul>
+{% endblock %}
+
+<hr/>
+
 <form name="main_form" enctype="multipart/form-data" action="." method="post" id="{{ opts.module_name }}_form">
 
 <div id="overview">
@@ -208,5 +221,7 @@
 </div>
 
 </form>
+
+</div>
 {% endblock %}
 
