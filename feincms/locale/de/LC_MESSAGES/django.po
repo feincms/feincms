@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-26 15:53+0100\n"
+"POT-Creation-Date: 2009-04-23 11:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,54 +16,67 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:32 module/page/models.py:131
+#: models.py:33 module/page/models.py:131
 msgid "title"
 msgstr "Titel"
 
-#: models.py:33
+#: models.py:34
 msgid "key"
 msgstr "Schlüssel"
 
-#: models.py:34
+#: models.py:35
 msgid "inherited"
 msgstr "Vererbt"
 
-#: models.py:35
+#: models.py:36
 msgid ""
 "Should the content be inherited by subpages if they do not define any "
 "content for this region?"
-msgstr "Soll der Inhalt dieser Region durch Unterseiten geerbt werden, "
-"sofern diese keinen eigenen Inhalt definieren?"
+msgstr ""
+"Soll der Inhalt dieser Region durch Unterseiten geerbt werden, sofern diese "
+"keinen eigenen Inhalt definieren?"
 
-#: models.py:38
+#: models.py:39
 msgid "region"
 msgstr "Region"
 
-#: models.py:39
+#: models.py:40
 msgid "regions"
 msgstr "Regionen"
 
-#: models.py:56
+#: models.py:57
 msgid "template"
 msgstr "Template"
 
-#: models.py:57
+#: models.py:58
 msgid "templates"
 msgstr "Templates"
 
-#: models.py:127
+#: models.py:135
 msgid "ordering"
 msgstr "Sortierung"
 
-#: admin/editor.py:133
+#: admin/editor.py:139
 msgid "Database error"
 msgstr "Datenbankfehler"
 
-#: content/image/models.py:15
+#: content/file/models.py:8 content/file/models.py:12
+msgid "file"
+msgstr "Datei"
+
+#: content/file/models.py:13
+msgid "files"
+msgstr "Dateien"
+
+#: content/image/models.py:15 content/image/models.py:19
 msgid "image"
 msgstr "Bild"
 
-#: content/image/models.py:28
+#: content/image/models.py:20
+msgid "images"
+msgstr "Bilder"
+
+#: content/image/models.py:30
 msgid "position"
 msgstr "Position"
 
@@ -71,12 +84,21 @@ msgstr "Position"
 msgid "text"
 msgstr "Text"
 
+#: content/richtext/models.py:11
+msgid "rich text"
+msgstr "Text"
+
+#: content/richtext/models.py:12
+msgid "rich texts"
+msgstr "Texte"
+
 #: content/rss/models.py:12
 msgid ""
 "The rss field is updated several times a day. A change in the title will "
 "only be visible on the home page after the next feed update."
-msgstr "Der RSS Feed wird mehrmals täglich aktualisiert. Eine Änderung des "
-"Titels erscheint erst nach der nächsten Feed-Aktualisierung auf der Webseite."
+msgstr ""
+"Der RSS Feed wird mehrmals täglich aktualisiert. Eine Änderung des Titels "
+"erscheint erst nach der nächsten Feed-Aktualisierung auf der Webseite."
 
 #: content/rss/models.py:13
 msgid "link"
@@ -94,6 +116,14 @@ msgstr "Letzte Aktualisierung"
 msgid "Max. items"
 msgstr "Maximale Anzahl"
 
+#: content/rss/models.py:20
+msgid "RSS feed"
+msgstr "RSS Feed"
+
+#: content/rss/models.py:21
+msgid "RSS feeds"
+msgstr "RSS Feeds"
+
 #: content/video/models.py:7
 msgid "video link"
 msgstr "Video-Link"
@@ -102,14 +132,23 @@ msgstr "Video-Link"
 msgid ""
 "This should be a link to a youtube video, i.e.: http://www.youtube.com/watch?"
 "v=zmj1rpzDRZ0"
-msgstr "Dies sollte ein Link zu einem Youtube-Video sein, z.B.: "
-"http://www.youtube.com/watch?v=zmj1rpzDRZ0"
+msgstr ""
+"Dies sollte ein Link zu einem Youtube-Video sein, z.B.: http://www.youtube."
+"com/watch?v=zmj1rpzDRZ0"
+
+#: content/video/models.py:11
+msgid "video"
+msgstr "Video"
+
+#: content/video/models.py:12
+msgid "videos"
+msgstr "Videos"
 
 #: module/page/admin.py:17
 msgid "Other options"
 msgstr "Weitere Optionen"
 
-#: module/page/models.py:36 module/page/models.py:144
+#: module/page/models.py:36 module/page/models.py:146
 msgid "navigation extension"
 msgstr "Navigations-Erweiterung"
 
@@ -141,53 +180,58 @@ msgstr "Weiterleiten zu"
 msgid "Target URL for automatic redirects."
 msgstr "Ziel-URL für automatische Weiterleitungen."
 
-#: module/page/models.py:146
+#: module/page/models.py:140
+msgid "Cached URL"
+msgstr "Zwischengespeicherte URL"
+
+#: module/page/models.py:148
 msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr "Wähle das Modul aus, welches weitere Navigationspunkte erstellt."
 
-#: module/page/models.py:149
+#: module/page/models.py:151
 msgid "content title"
 msgstr "Inhaltstitel"
 
-#: module/page/models.py:150
+#: module/page/models.py:152
 msgid "The first line is the main title, the following lines are subtitles."
 msgstr "Die erste Zeile ist der Haupttitel, die weiteren Zeilen Untertitel"
 
-#: module/page/models.py:153
+#: module/page/models.py:155
 msgid "page title"
 msgstr "Seitentitel"
 
-#: module/page/models.py:154
+#: module/page/models.py:156
 msgid "Page title for browser window. Same as title by default."
-msgstr "Seitentitel für das Browser-Fenster. Standardmässig gleich wie der Titel."
+msgstr ""
+"Seitentitel für das Browser-Fenster. Standardmässig gleich wie der Titel."
 
-#: module/page/models.py:155
+#: module/page/models.py:157
 msgid "meta keywords"
 msgstr "Meta Begriffe"
 
-#: module/page/models.py:156
+#: module/page/models.py:158
 msgid "This will be prepended to the default keyword list."
 msgstr "Diese Begriffe werden vor die Standard-Begriffsliste eingefügt."
 
-#: module/page/models.py:157
+#: module/page/models.py:159
 msgid "meta description"
 msgstr "Meta Beschreibung"
 
-#: module/page/models.py:158
+#: module/page/models.py:160
 msgid "This will be prepended to the default description."
 msgstr "Diese Beschreibung wird vor der Standard-Beschreibung eingefügt."
 
-#: module/page/models.py:161
+#: module/page/models.py:163
 msgid "language"
 msgstr "Sprache"
 
-#: module/page/models.py:167
+#: module/page/models.py:169
 msgid "page"
 msgstr "Seite"
 
-#: module/page/models.py:168
+#: module/page/models.py:170
 msgid "pages"
 msgstr "Seiten"
 
@@ -195,24 +239,29 @@ msgstr "Seiten"
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/admin/feincms/item_editor.html:138
+#: templates/admin/feincms/item_editor.html:134
+msgid "Delete"
+msgstr "Löschen"
+
+#: templates/admin/feincms/item_editor.html:139
 msgid "Save"
 msgstr "Speichern"
 
-#: templates/admin/feincms/item_editor.html:142
+#: templates/admin/feincms/item_editor.html:143
 msgid "Change Template"
 msgstr "Template ändern"
 
-#: templates/admin/feincms/item_editor.html:157
+#: templates/admin/feincms/item_editor.html:158
 msgid "Region empty"
 msgstr "Region leer"
 
-#: templates/admin/feincms/item_editor.html:161
+#: templates/admin/feincms/item_editor.html:162
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
-msgstr "Inhalt wird von der übergeordneten Seite geerbt. Füge Inhalt hinzu, "
-"um dieses Verhalten zu ändern"
+msgstr ""
+"Inhalt wird von der übergeordneten Seite geerbt. Füge Inhalt hinzu, um "
+"dieses Verhalten zu ändern"
 
 #: templates/admin/feincms/tree_editor.html:121
 #, python-format

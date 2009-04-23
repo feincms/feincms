@@ -17,6 +17,8 @@ class RSSContent(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name = _('RSS feed')
+        verbose_name_plural = _('RSS feeds')
 
     def render(self, **kwargs):
         return mark_safe(self.rendered_content)

@@ -9,6 +9,8 @@ class FileContent(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name = _('file')
+        verbose_name_plural = _('files')
 
     def render(self, **kwargs):
         return render_to_string([

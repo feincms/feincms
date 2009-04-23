@@ -16,6 +16,8 @@ class ImageContent(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name = _('image')
+        verbose_name_plural = _('images')
 
     def render(self, **kwargs):
         return render_to_string([

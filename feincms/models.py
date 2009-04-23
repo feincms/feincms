@@ -151,6 +151,8 @@ class Base(models.Model):
 
         class Meta:
             db_table = '%s_%s' % (cls._meta.db_table, model.__name__.lower())
+            verbose_name = model._meta.verbose_name
+            verbose_name_plural = model._meta.verbose_name_plural
 
         attrs = {
             '__module__': cls.__module__,

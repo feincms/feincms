@@ -8,6 +8,8 @@ class RichTextContent(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name = _('rich text')
+        verbose_name_plural = _('rich texts')
 
     def render(self, **kwargs):
         return mark_safe(self.text)

@@ -63,6 +63,9 @@
     {% endfor %}
     ACTIVE_REGION = 0;
 
+    CONTENT_NAMES = {
+        {% for name, value in content_types %}'{{ value }}': '{{ name }}'{% if not forloop.last %},{% endif %}
+        {% endfor %}};
 
     $(document).ready(function(){
         // move contents into their corresponding regions and do some simple formatting
@@ -76,10 +79,8 @@
 
                 var region_id = $(this).find(".region-choice-field").val();
                 region_id = REGION_MAP.indexOf(region_id);
-                var content_name = $(this).attr("id").substr(0, $(this).attr("id").indexOf("_"));
-                var ind = content_name.indexOf("content");
-                content_name = content_name.substr(0, ind) + " " + content_name.substr(ind)
-                region_append(region_id,$(this),content_name);
+                var content_type = $(this).attr("id").substr(0, $(this).attr("id").indexOf("_"));
+                region_append(region_id,$(this), CONTENT_NAMES[content_type]);
                 set_item_field_value($(this),"region-choice-field",region_id)
             }
         });

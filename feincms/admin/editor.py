@@ -86,7 +86,7 @@ class ItemEditorMixin(object):
         content_types = []
         for content_type in self.model._feincms_content_types:
             content_name = content_type._meta.verbose_name
-            content_types.append((content_name, content_name.replace(' ','')))
+            content_types.append((content_name, content_type.__name__.lower()))
 
         context = {
             'opts': opts,
