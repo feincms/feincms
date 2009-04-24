@@ -36,7 +36,7 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         ('download', re.compile(r'')),
         )
 
-    file = models.ImageField(_('file'), upload_to='medialibrary/%Y/%m/')
+    file = models.FileField(_('file'), upload_to='medialibrary/%Y/%m/')
     created = models.DateTimeField(_('created'), default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
 
