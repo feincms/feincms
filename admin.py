@@ -13,5 +13,6 @@ admin.site.register(models.MediaFile,
     inlines=[MediaFileTranslationInline],
     list_display=('__unicode__', 'file', 'created'),
     list_filter=('categories',),
+    search_fields=('copyright', 'translations__caption',),
     )
 
