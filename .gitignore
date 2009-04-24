@@ -1,0 +1,6 @@
+*.pyc
+*~
+.*.swp
+\#*#
+/secrets.py
+*.mo
