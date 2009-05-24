@@ -4,6 +4,10 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class RichTextContent(models.Model):
+    feincms_item_editor_includes = {
+        'head': ['admin/content/richtext/init.html'],
+        }
+
     text = models.TextField(_('text'), blank=True)
 
     class Meta:

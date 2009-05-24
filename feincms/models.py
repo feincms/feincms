@@ -139,6 +139,7 @@ class Base(models.Model):
             (models.Model,), attrs)
 
         cls._feincms_content_types = []
+        cls.feincms_item_editor_includes = {}
 
         return cls._feincms_content_model
 
@@ -174,6 +175,10 @@ class Base(models.Model):
         else:
             for k, v in kwargs.items():
                 setattr(new_type, k, v)
+
+        if hasattr(model, 'feincms_item_editor_includes'):
+            for key, includes in model.feincms_item_editor_includes.items():
+                cls.feincms_item_editor_includes.setdefault(key, []).extend(includes)
 
         return new_type
 
