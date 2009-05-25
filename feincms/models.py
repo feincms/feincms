@@ -62,7 +62,10 @@ class Template(models.Model):
 
 
 def first_template():
-    return Template.objects.all()[0]
+    try:
+        return Template.objects.all()[0]
+    except IndexError:
+        return None
 
 
 class Base(models.Model):
