@@ -51,7 +51,6 @@ class ParentLinkNode(SimpleNodeWithVarAndArgs):
             return '#'
 register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(ParentLinkNode))
 
-
 class BestMatchNode(SimpleAssignmentNodeWithVar):
     """
     {% feincms_bestmatch for request.path as feincms_page %}
@@ -60,4 +59,20 @@ class BestMatchNode(SimpleAssignmentNodeWithVar):
     def what(self, path):
         return Page.objects.best_match_for_path(path)
 register.tag('feincms_bestmatch', do_simple_assignment_node_with_var_helper(BestMatchNode))
+
+
+@register.simple_tag
+def feincms_breadcrumbs(page):
+    """
+    {% feincms_breadcrumbs feincms_page %}
+    """
+    ancs = page.get_ancestors()
+    if not ancs:
+        return ""
+    bc = []
+    for anc in ancs:
+        bc.append('<a href="%s">%s</a> &gt; ' % (anc.get_absolute_url(),anc.title))
+    bc.append(page.title)
+    return "".join(bc)
+
 
