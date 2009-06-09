@@ -20,7 +20,9 @@ version of FeinCMS using the Git_ version control system:
 
     $ git clone git://github.com/matthiask/feincms.git
 
-In addition, you will need a django-mptt_ installation.
+In addition, you will need a django-mptt_ installation (The released
+version 0.2.1 is incompatible with Django SVN trunk, you need to get a
+django-mptt version from SVN too.)
 
 
 .. _Django: http://www.djangoproject.com/
