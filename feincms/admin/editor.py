@@ -50,7 +50,8 @@ class ItemEditorMixin(object):
 
         inline_formset_types = [(
             content_type,
-            inlineformset_factory(self.model, content_type, extra=1)
+            inlineformset_factory(self.model, content_type, extra=1,
+                form=getattr(content_type, 'feincms_item_editor_form', forms.ModelForm))
             ) for content_type in self.model._feincms_content_types]
 
         opts = self.model._meta
