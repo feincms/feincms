@@ -92,3 +92,12 @@ class MediaFileContent(models.Model):
             'content/mediafile/%s.html' % self.position,
             'content/mediafile/default.html',
             ], {'content': self})
+
+
+    @classmethod
+    def default_create_content_type(cls, cms_model):
+        return cms_model.create_content_type(cls, POSITION_CHOICES=(
+            ('block', _('block')),
+            ('left', _('left')),
+            ('right', _('right')),
+            ))
