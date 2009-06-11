@@ -5,6 +5,7 @@ from django import forms
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from feinheit.translations import TranslatedObjectMixin, Translation,\
     TranslatedObjectManager
@@ -72,9 +73,27 @@ class MediaFileTranslation(Translation(MediaFile)):
             )
 
 
+class MediaFileWidget(forms.TextInput):
+    def render(self, name, value, attrs=None):
+        inputfield = super(MediaFileWidget, self).render(name, value, attrs)
+        if value:
+            try:
+                mf = MediaFile.objects.get(pk=value)
+                return mark_safe(u"""
+                    <a href="%(url)s" target="_blank">%(caption)s (%(url)s)</a><br />
+                    %(inputfield)s""" % {
+                        'url': mf.file.url,
+                        'caption': mf.translation.caption,
+                        'inputfield': inputfield})
+            except:
+                pass
+
+        return inputfield
+
+
 class MediaFileContentAdminForm(forms.ModelForm):
     mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.all(),
-        widget=forms.TextInput)
+        widget=MediaFileWidget)
 
 
 # FeinCMS connector
