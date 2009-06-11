@@ -1,6 +1,7 @@
 from datetime import datetime
 import re
 
+from django import forms
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.template.loader import render_to_string
@@ -71,8 +72,19 @@ class MediaFileTranslation(Translation(MediaFile)):
             )
 
 
+class MediaFileContentAdminForm(forms.ModelForm):
+    mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.all(),
+        widget=forms.TextInput)
+
+
 # FeinCMS connector
 class MediaFileContent(models.Model):
+    feincms_item_editor_form = MediaFileContentAdminForm
+    feincms_item_editor_includes = {
+        'head': ['admin/content/mediafile/init.html'],
+        }
+
+
     mediafile = models.ForeignKey(MediaFile, verbose_name=_('media file'))
 
     class Meta:
