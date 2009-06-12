@@ -1,0 +1,85 @@
+===========================
+The FeinCMS admin interface
+===========================
+
+FeinCMS provides two mixins for the ModelAdmin classes, `ItemEditorMixin` and
+`TreeEditorMixin`. Their purpose and their customization hooks are briefly
+discussed here.
+
+
+The tree editor
+===============
+
+The tree editor replaces the standard change list interface with a collapsible,
+drag-drop-enabled item tree. The model must be registered with `django-mptt`
+for this to work.
+
+Usage is as follows:
+
+::
+    from django.contrib import admin
+    from feincms.admin import editor
+    from yourapp.models import YourModel
+
+    class YourModelAdmin(editor.TreeEditorMixin, admin.ModelAdmin):
+        pass
+
+    admin.site.register(YourModel, YourModelAdmin)
+
+
+For now, the columns are hardcoded in the tree editor template, and the fact
+that FeinCMS started as an application for editing pages shows through.
+The tree editor should take the settings `list_display` and `list_editable`
+into account, but this part of the code still needs some love.
+
+Please note that you need to put the `TreeEditorMixin` before the standard
+`ModelAdmin` class, because otherwise the standard methods will not be
+overridden.
+
+
+The item editor
+===============
+
+The tree editor replaces the edit view (NOT the add form, therefore you may
+still use `fieldsets`, etc. to customize the form which is used to add new
+items.
+
+Customization the item editor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* show_on_top
+
+  A tuple which describes, which fields should be shown above the tabbed item
+  editor interface.
+
+
+Customizing the individual content type forms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Customizing the individual content type editors is easily possible through two
+settings on the content type model itself:
+
+* feincms_item_editor_form:
+
+  You can specify the base class which should be used for the content type
+  model. The default value is `django.forms.ModelForm`.
+
+* feincms_item_editor_includes:
+
+  If you need additional javascript or CSS files or need to perform additional
+  initialization on your content type forms, you can specify template fragments
+  which are included in predefined places into the item editor.
+
+  If you need to execute additional javascript, f.e. add a TinyMCE instance,
+  it is recommended to add the initialization functions to the
+  `pagecontent_init_handlers` array, because the initialization needs to be
+  performed not only on page load, but also after drag-dropping a content block
+  and after adding new content blocks. Take a look at the `mediafile` and
+  `richtext` item editor include files to understand how this should be done.
+
+
+
+Putting it all together
+=======================
+
+Best advice here is taking a look at the files inside `feincms/module/page/`.
