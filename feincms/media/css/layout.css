@@ -110,8 +110,12 @@ th { vertical-align: middle; }
 
 .richtextcontent {display:none;}
 
+select {
+    max-width: 580px;
+}
+
 textarea {
-    width: 100%;
+    width: 580px;
     margin-top:5px;
     margin-bottom:5px;
 }
