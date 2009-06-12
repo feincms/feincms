@@ -9,6 +9,17 @@ import mptt
 from feincms.models import Region, Template, Base, ContentProxy
 
 
+def get_object(path, fail_silently=False):
+    dot = path.rindex('.')
+    try:
+        return getattr(__import__(path[:dot], {}, {}, ['']), path[dot+1:])
+    except ImportError:
+        if not fail_silently:
+            raise
+
+    return None
+
+
 class PageManager(models.Manager):
     def active(self):
         return self.filter(active=True)
@@ -147,6 +158,11 @@ class Page(Base):
     def setup_request(self, request):
         request._feincms_page = self
 
+    @classmethod
+    def register_extensions(cls, *extensions):
+        for ext in extensions:
+            fn = get_object('feincms.module.page.extensions.%s.register' % ext)
+            fn()
 
 mptt.register(Page)
 
