@@ -22,6 +22,8 @@ function dismissRelatedLookupPopup(win, chosenId) {
         document.getElementById(name).value = chosenId;
     }
     win.close();
+
+    $('#'+name).siblings('a, br').remove();
 }
 /* until here */
 
