@@ -1,6 +1,16 @@
 {% load i18n %}
 <script type="text/javascript">
 /* copied from django admin javascript files */
+function html_unescape(text) {
+    // Unescape a string that was escaped using django.utils.html.escape.
+    text = text.replace(/&lt;/g, '<');
+    text = text.replace(/&gt;/g, '>');
+    text = text.replace(/&quot;/g, '"');
+    text = text.replace(/&#39;/g, "'");
+    text = text.replace(/&amp;/g, '&');
+    return text;
+}
+
 function id_to_windowname(text) {
     text = text.replace(/\./g, '__dot__');
     text = text.replace(/\-/g, '__dash__');
@@ -20,6 +30,37 @@ function dismissRelatedLookupPopup(win, chosenId) {
         elem.value += ',' + chosenId;
     } else {
         document.getElementById(name).value = chosenId;
+    }
+    win.close();
+
+    $('#'+name).siblings('a, br').remove();
+}
+
+function dismissAddAnotherPopup(win, newId, newRepr) {
+    // newId and newRepr are expected to have previously been escaped by
+    // django.utils.html.escape.
+    newId = html_unescape(newId);
+    newRepr = html_unescape(newRepr);
+    var name = windowname_to_id(win.name);
+    var elem = document.getElementById(name);
+    if (elem) {
+        if (elem.nodeName == 'SELECT') {
+            var o = new Option(newRepr, newId);
+            elem.options[elem.options.length] = o;
+            o.selected = true;
+        } else if (elem.nodeName == 'INPUT') {
+            if (elem.className.indexOf('vManyToManyRawIdAdminField') != -1 && elem.value) {
+                elem.value += ',' + newId;
+            } else {
+                elem.value = newId;
+            }
+        }
+    } else {
+        var toId = name + "_to";
+        elem = document.getElementById(toId);
+        var o = new Option(newRepr, newId);
+        SelectBox.add_to_cache(toId, o);
+        SelectBox.redisplay(toId);
     }
     win.close();
 
