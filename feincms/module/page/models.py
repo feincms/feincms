@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
-from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 import mptt
@@ -116,11 +115,6 @@ class Page(Base):
     meta_description = models.TextField(_('meta description'), blank=True,
         help_text=_('This will be prepended to the default description.'))
 
-    # language
-    language = models.CharField(_('language'), max_length=10,
-        choices=settings.LANGUAGES)
-    translations = models.ManyToManyField('self', blank=True)
-
     class Meta:
         ordering = ['tree_id', 'lft']
         verbose_name = _('page')
@@ -151,8 +145,6 @@ class Page(Base):
         return self._cached_url
 
     def setup_request(self, request):
-        translation.activate(self.language)
-        request.LANGUAGE_CODE = translation.get_language()
         request._feincms_page = self
 
 
