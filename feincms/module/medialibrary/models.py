@@ -7,8 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from feinheit.translations import TranslatedObjectMixin, Translation,\
     TranslatedObjectManager
 
-import mptt
-
 
 class Category(models.Model):
     title = models.CharField(_('title'), max_length=200)
