@@ -19,20 +19,20 @@
 
 
 
-    ancestors = [{% for page in object_list %}'{{ page.parent_id|default_if_none:"0" }}'{% if not forloop.last %},{% endif %} {% endfor %}];
+    ancestors = [{% for item in object_list %}'{{ item.parent_id|default_if_none:"0" }}'{% if not forloop.last %},{% endif %} {% endfor %}];
 
     tablestr = '';
-    {% for page in object_list %}tablestr += add_row({{ forloop.counter }}, {{ page.id }}, "{{ page.parent_id|default_if_none:"-1" }}", "{{ page.title }}", ["{{ page.active }}", "{{ page.in_navigation }}"]);
+    {% for item in object_list %}tablestr += add_row({{ forloop.counter }}, {{ item.id }}, "{{ item.parent_id|default_if_none:"-1" }}", "{{ item.title }}", ["{{ item.active }}", "{{ item.in_navigation }}"]);
     {% endfor %}
 
-    function add_row(node_id, page_id, parent_id, page_title, attrs) {
-        var str = '<tr id="node-' + node_id + '" class="page-id-' + page_id + ' ';
+    function add_row(node_id, item_id, parent_id, item_title, attrs) {
+        var str = '<tr id="node-' + node_id + '" class="item-id-' + item_id + ' ';
         if (parseInt(parent_id) >= 0)
             str += 'child-of-node-'+ancestors.indexOf(parent_id);
         str += '">';
         str += '<td><div class="wrap nohover">';
         str += '<div class="insert-as-child"></div>';
-        str += '<span class="title-col"><a href="'+page_id+'"><strong>'+page_title+'</strong></a><img class="move-node" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif" /></span>';
+        str += '<span class="title-col"><a href="'+item_id+'"><strong>'+item_title+'</strong></a><img class="move-node" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif" /></span>';
         str += '<div class="insert-as-sibling"></div>';
         str += '</div></td>';
         for (key in attrs)

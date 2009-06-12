@@ -94,8 +94,8 @@ class ItemEditorMixin(object):
         context = {
             'title': _('Change %s') % force_unicode(opts.verbose_name),
             'opts': opts,
-            'page': obj,
-            'page_form': model_form,
+            'object': obj,
+            'object_form': model_form,
             'inline_formsets': inline_formsets,
             'content_types': content_types,
             'settings_fieldset': settings_fieldset,
@@ -161,7 +161,7 @@ class TreeEditorMixin(object):
             ], context, context_instance=template.RequestContext(request))
 
     def _save_tree(self, request):
-        pagetree = simplejson.loads(request.POST['tree'])
+        itemtree = simplejson.loads(request.POST['tree'])
         # 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = item_id
         sql = "UPDATE %s SET %s=%%s, %s_id=%%s, %s=%%s, %s=%%s, %s=%%s WHERE %s=%%s" % (
             self.model._meta.db_table,
@@ -172,14 +172,14 @@ class TreeEditorMixin(object):
             self.model._meta.level_attr,
             self.model._meta.pk.column)
 
-        connection.cursor().executemany(sql, pagetree)
+        connection.cursor().executemany(sql, itemtree)
         transaction.commit_unless_managed()
 
         return HttpResponse("OK", mimetype="text/plain")
 
     def _delete_item(self, request):
-        page_id = request.POST['item_id']
-        obj = self.model._default_manager.get(pk=unquote(page_id))
+        item_id = request.POST['item_id']
+        obj = self.model._default_manager.get(pk=unquote(item_id))
         obj.delete()
         return HttpResponse("OK", mimetype="text/plain")
 

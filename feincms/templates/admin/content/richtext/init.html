@@ -21,7 +21,7 @@
         relative_urls: false,
     });
 
-    pagecontent_init_handlers.push(function(){
+    contentblock_init_handlers.push(function(){
         $('.order-machine textarea[name*=richtext]:visible').each(function(){
             tinyMCE.execCommand('mceAddControl', true, this.id);
         });

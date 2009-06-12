@@ -72,7 +72,7 @@ settings on the content type model itself:
 
   If you need to execute additional javascript, f.e. add a TinyMCE instance,
   it is recommended to add the initialization functions to the
-  `pagecontent_init_handlers` array, because the initialization needs to be
+  `contentblock_init_handlers` array, because the initialization needs to be
   performed not only on page load, but also after drag-dropping a content block
   and after adding new content blocks. Take a look at the `mediafile` and
   `richtext` item editor include files to understand how this should be done.

@@ -28,7 +28,7 @@ $(document).ready(function(){
             region_append(ACTIVE_REGION, form, modname, modvar);
             set_item_field_value(form,"region-choice-field", ACTIVE_REGION);
 
-            init_pagecontent();
+            init_contentblock();
     });
 
     $(".order-machine-move-button").livequery('click', function(){

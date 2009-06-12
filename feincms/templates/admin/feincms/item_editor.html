@@ -17,16 +17,16 @@
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}listener.js"></script>
 
 <script type="text/javascript">
-    var pagecontent_init_handlers = [];
+    var contentblock_init_handlers = [];
 </script>
 
-{% for inc in page.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
+{% for inc in object.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
 
 <script type="text/javascript">
 
-    function init_pagecontent() {
-        for(var k in pagecontent_init_handlers)
-            pagecontent_init_handlers[k]();
+    function init_contentblock() {
+        for(var k in contentblock_init_handlers)
+            contentblock_init_handlers[k]();
     }
 
     IMG_ARROW_DOWN_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/arrow_down.gif";
@@ -37,7 +37,7 @@
 
     REGIONS = [];
     REGION_MAP = [];
-    {% for region in page.template.regions.all %}
+    {% for region in object.template.regions.all %}
         REGIONS.push('{{ region.key }}');
         REGION_MAP.push('{{ region.id }}');
     {% endfor %}
@@ -80,7 +80,7 @@
             richify_poor($(this).parents(".order-item"));
         });
         // convert text areas to rich text editors.
-        init_pagecontent();
+        init_contentblock();
 
         if(window.location.hash) {
             $(window.location.hash+'_tab').trigger('click');
@@ -103,7 +103,7 @@
      <a href="../../../">{% trans "Home" %}</a> &rsaquo;
      <a href="../../">{{ opts.app_label|capfirst|escape }}</a> &rsaquo;
      <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
-     {{ page.title|truncatewords:"18" }}
+     {{ object.title|truncatewords:"18" }}
 </div>
 {% endblock %}
 
@@ -113,8 +113,8 @@
 
 {% block object-tools %}
 <ul class="object-tools">
-    {% if page.get_absolute_url %}
-        <li><a target="_blank" href="{{ page.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
+    {% if object.get_absolute_url %}
+        <li><a target="_blank" href="{{ object.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
     {% endif %}
 </ul>
 {% endblock %}
@@ -131,21 +131,21 @@
     {% endfor %}
     <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
     <hr/>
-    {{ page_form.template.label_tag }}
-    <span>{{ page_form.template }}{{ page_form.template.errors }}</span>
+    {{ object_form.template.label_tag }}
+    <span>{{ object_form.template }}{{ object_form.template.errors }}</span>
     <input type="button" class="cancel" value="{% trans 'Change Template' %}" />
     <hr/>
 </div>
 <div id="main_wrapper">
     <div class="navi_tab tab_active" id="settings_tab">Settings</div>
-    {% for region in page.template.regions.all %}<div class="navi_tab tab_inactive" id="{{ region.key }}_tab">{{ region.title }}</div>{% endfor %}
+    {% for region in object.template.regions.all %}<div class="navi_tab tab_inactive" id="{{ region.key }}_tab">{{ region.title }}</div>{% endfor %}
     <div id="main">
         <div id="settings_body">
             <table>
                 {{ settings_fieldset.as_table }}
             </table>
         </div>
-        {% for region in page.template.regions.all %}
+        {% for region in object.template.regions.all %}
         <div id="{{ region.key }}_body" class="panel">
             <div class="empty-machine-msg">
                 {% trans "Region empty" %}
@@ -170,7 +170,7 @@
                 <div class="control-unit">
                     <span>Move selected item to:</span>  <br/>
                     <select name="order-machine-move-select">
-                    {% for r in page.template.regions.all %} {% ifnotequal region r %} <option value="{{ r.key }}">{{ r.title }}</option> {% endifnotequal %} {% endfor %}
+                    {% for r in object.template.regions.all %} {% ifnotequal region r %} <option value="{{ r.key }}">{{ r.title }}</option> {% endifnotequal %} {% endfor %}
                     </select>
                     <input type="button" class="order-machine-move-button button" value="OK" />
                 </div>

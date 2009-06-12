@@ -18,7 +18,7 @@ def feincms_render_region(page, region, request):
 @register.simple_tag
 def feincms_render_content(content, request):
     """
-    {% feincms_render_content pagecontent request %}
+    {% feincms_render_content contentblock request %}
     """
 
     return content.render(request=request)

@@ -265,7 +265,7 @@ function handle_drop_event(source, dest, method){
 }
 
 function handle_page_delete(node) {
-    var page_id = node.attr("class").match(/page-id-(\d+)/)[1];
+    var item_id = node.attr("class").match(/item-id-(\d+)/)[1];
     var parent_id = null;
     if (node.attr("class").match(/child-of-node-(\d+)/))
         parent_id = node.attr("class").match(/child-of-node-(\d+)/)[1];
@@ -279,7 +279,7 @@ function handle_page_delete(node) {
     } else {
         jConfirm('Really delete item?', 'Confirm to delete item', function(r) {
             if (r==true) {
-                $.post('.', {'__cmd': 'delete_item', 'item_id': page_id}, function(data){
+                $.post('.', {'__cmd': 'delete_item', 'item_id': item_id}, function(data){
                     if (data == "OK") {
                         if (parent_id && $(".child-of-node-"+parent_id).length == 1) {
                             $("#node-"+parent_id).removeClass("parent")
@@ -326,21 +326,21 @@ function save_page_tree() {
     var tree_id = 0;
     $("#sitetree tbody tr").each(function(){
         var tobj = new Array();
-        // 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = page_id
+        // 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = item_id
         var classNames = $(this).attr("class").split(' ');
         var is_child = false; var is_parent = false;
         var parent_id = "";
         tobj[1] = null;
         // gather information
         for (key in classNames) {
-            if(classNames[key].match("page-id-"))
+            if(classNames[key].match("item-id-"))
                 tobj[5] = parseInt(classNames[key].substring(8));
             if(classNames[key].match("parent"))
                 is_parent = true;
             if(classNames[key].match("child-of-")) {
                 is_child = true;
                 var node_parent_id = classNames[key].substring(9);
-                var parent_id = parseInt($("#"+node_parent_id).attr("class").match(/page-id-(\d+)/)[1])
+                var parent_id = parseInt($("#"+node_parent_id).attr("class").match(/item-id-(\d+)/)[1])
                 tobj[1] = parent_id;
             }
         }
