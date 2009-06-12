@@ -1,4 +1,6 @@
 from django import template
+from django.http import HttpRequest
+
 from feincms.module.page.models import Page
 from feincms.templatetags.utils import *
 
@@ -19,6 +21,9 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
 
         if level <= 1:
             return Page.objects.toplevel_navigation()
+
+        if isinstance(instance,  HttpRequest):
+            instance = Page.objects.from_request(instance)
 
         # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
         # of the current page, we have to add 2 to the mptt level
