@@ -1,0 +1,6 @@
+<a href="{{ content.mediafile.file.url }}">
+    {{ content.mediafile.translation.caption }}
+    {% if content.mediafile.copyright %}
+        ({{ content.mediafile.copyright }})
+    {% endif %}
+</a>
