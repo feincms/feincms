@@ -312,3 +312,35 @@ msgstr "Im Menü"
 #: templates/admin/feincms/tree_editor.html:135
 msgid "delete"
 msgstr "Löschen"
+
+#: models.py:17
+msgid "parent"
+msgstr "Übergeordnet"
+
+#: models.py:21
+msgid "category"
+msgstr "Kategorie"
+
+#: models.py:22 models.py:35
+msgid "categories"
+msgstr "Kategorien"
+
+#: models.py:33
+msgid "created"
+msgstr "Erstellt"
+
+#: models.py:45
+msgid "caption"
+msgstr "Legende"
+
+#: models.py:46
+msgid "copyright"
+msgstr "Copyright"
+
+#: models.py:49
+msgid "media file translation"
+msgstr "Mediendatei-Übersetzung"
+
+#: models.py:50
+msgid "media file translations"
+msgstr "Mediendatei-Übersetzungen"

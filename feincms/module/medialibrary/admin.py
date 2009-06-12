@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from medialibrary import models
+from feincms.module.medialibrary import models
 
 
 class MediaFileTranslationInline(admin.TabularInline):

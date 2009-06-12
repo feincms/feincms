@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from medialibrary.models import MediaFile
+from feincms.module.medialibrary.models import MediaFile
 
 
 class MediaFileWidget(forms.TextInput):
