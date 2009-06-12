@@ -27,10 +27,10 @@ Usage is as follows:
     admin.site.register(YourModel, YourModelAdmin)
 
 
-For now, the columns are hardcoded in the tree editor template, and the fact
-that FeinCMS started as an application for editing pages shows through.
-The tree editor should take the settings `list_display` and `list_editable`
-into account, but this part of the code still needs some love.
+The columns shown in the tree editor can be specified using list_display. Please
+note that the first column is hardcoded as the value of __unicode__ currently.
+In the future, the tree editor might even take the setting `list_editable`
+into account.
 
 Please note that you need to put the `TreeEditorMixin` before the standard
 `ModelAdmin` class, because otherwise the standard methods will not be
