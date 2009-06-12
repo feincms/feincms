@@ -4,7 +4,8 @@ import re
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
-from feinheit.translations import TranslatedObjectMixin, Translation,\
+
+from feincms.translations import TranslatedObjectMixin, Translation,\
     TranslatedObjectManager
 
 
