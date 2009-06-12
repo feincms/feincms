@@ -8,6 +8,9 @@
 #content {
     background-color:#fff;
     margin-bottom:0px;
+}
+
+#content.colM {
     width:745px;
 }
 
@@ -186,10 +189,13 @@ td span select {
     top:0px; left:0px;
 }
 
+#sitetree-wrapper {
+    margin: 0;
+    padding: 20px 1px 0 1px;
+}
+
 #sitetree {
-    margin-left: 20px;
-    margin-top: 20px;
-    padding: 0px;
+    width: 100%;
 }
 
 .title-col {

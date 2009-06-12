@@ -22,7 +22,7 @@
     ancestors = [{% for item in object_list %}'{{ item.parent_id|default_if_none:"0" }}'{% if not forloop.last %},{% endif %} {% endfor %}];
 
     tablestr = '';
-    {% for item in object_list %}tablestr += add_row({{ forloop.counter }}, {{ item.id }}, "{{ item.parent_id|default_if_none:"-1" }}", "{{ item.title }}", ["{{ item.active }}", "{{ item.in_navigation }}"]);
+    {% for item in object_list %}tablestr += add_row({{ forloop.counter }}, {{ item.id }}, "{{ item.parent_id|default_if_none:"-1" }}", "{{ item.title }}", ["{{ item.active }}", "{{ item.in_navigation }}", "{{ item.slug }}"]);
     {% endfor %}
 
     function add_row(node_id, item_id, parent_id, item_title, attrs) {
@@ -121,24 +121,26 @@
     <ul class="object-tools"><li><a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">{% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}</a></li></ul>
     {% endif %}
     {% endblock %}
-</div>
 
-<input type="button" value="save tree" class="save_tree" style="margin: 20px 5px -10px 460px;"/>
+    <input type="button" value="{% trans "Save tree" %}" class="save_tree" style="float:right;margin:0 1px 0 0" />
 
-<div id="sitetree-wrapper">
-<table id="sitetree" border="1">
-    <thead>
-    <tr id="table_header">
-        <th width="400">{% trans  "Page" %}</th>
-        <th>{% trans  "active" %}</th>
-        <th>{% trans  "in navi" %}</th>
-        <th>{% trans  "delete" %}</th>
-    </tr>
-    </thead>
-    <tbody>
+    <div id="sitetree-wrapper" style="clear:both">
+    <table id="sitetree" border="1">
+        <thead>
+        <tr id="table_header">
+            <th style="min-width:400px">{% trans  "Page" %}</th>
+            <th>{% trans  "active" %}</th>
+            <th>{% trans  "in navi" %}</th>
+            <th>{% trans  "slug" %}</th>
+            <th>{% trans  "delete" %}</th>
+        </tr>
+        </thead>
+        <tbody>
 
-    </tbody>
-</table>
+        </tbody>
+    </table>
+    </div>
+
 </div>
 
 {% endblock %}
