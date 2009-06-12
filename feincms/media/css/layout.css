@@ -198,6 +198,11 @@ td span select {
     width: 100%;
 }
 
+#sitetree tr td {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .title-col {
     position:relative;
     z-index:2;
