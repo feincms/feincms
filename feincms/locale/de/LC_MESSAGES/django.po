@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-23 11:12+0200\n"
+"POT-Creation-Date: 2009-06-12 10:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,11 +52,16 @@ msgstr "Template"
 msgid "templates"
 msgstr "Templates"
 
-#: models.py:135
+#: models.py:138
 msgid "ordering"
 msgstr "Sortierung"
 
-#: admin/editor.py:139
+#: admin/editor.py:94
+#, python-format
+msgid "Change %s"
+msgstr "%s ändern"
+
+#: admin/editor.py:142
 msgid "Database error"
 msgstr "Datenbankfehler"
 
@@ -76,19 +81,39 @@ msgstr "Bild"
 msgid "images"
 msgstr "Bilder"
 
-#: content/image/models.py:30
+#: content/image/models.py:30 content/medialibrary/models.py:56
 msgid "position"
 msgstr "Position"
 
-#: content/richtext/models.py:7
+#: content/medialibrary/models.py:47 content/medialibrary/models.py:51
+msgid "media file"
+msgstr "Mediendatei"
+
+#: content/medialibrary/models.py:52
+msgid "media files"
+msgstr "Mediendateien"
+
+#: content/medialibrary/models.py:71
+msgid "block"
+msgstr "Block"
+
+#: content/medialibrary/models.py:72
+msgid "left"
+msgstr "Links"
+
+#: content/medialibrary/models.py:73
+msgid "right"
+msgstr "Rechts"
+
+#: content/richtext/models.py:11
 msgid "text"
 msgstr "Text"
 
-#: content/richtext/models.py:11
+#: content/richtext/models.py:15
 msgid "rich text"
 msgstr "Text"
 
-#: content/richtext/models.py:12
+#: content/richtext/models.py:16
 msgid "rich texts"
 msgstr "Texte"
 
@@ -235,27 +260,35 @@ msgstr "Seite"
 msgid "pages"
 msgstr "Seiten"
 
-#: templates/admin/feincms/item_editor.html:122
+#: templates/admin/content/mediafile/init.html:34
+msgid "Choose"
+msgstr "Auswählen"
+
+#: templates/admin/feincms/item_editor.html:103
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/admin/feincms/item_editor.html:134
+#: templates/admin/feincms/item_editor.html:117
+msgid "View on site"
+msgstr "Auf der Webseite anzeigen"
+
+#: templates/admin/feincms/item_editor.html:127
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/admin/feincms/item_editor.html:139
+#: templates/admin/feincms/item_editor.html:132
 msgid "Save"
 msgstr "Speichern"
 
-#: templates/admin/feincms/item_editor.html:143
+#: templates/admin/feincms/item_editor.html:136
 msgid "Change Template"
 msgstr "Template ändern"
 
-#: templates/admin/feincms/item_editor.html:158
+#: templates/admin/feincms/item_editor.html:151
 msgid "Region empty"
 msgstr "Region leer"
 
-#: templates/admin/feincms/item_editor.html:162
+#: templates/admin/feincms/item_editor.html:155
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
