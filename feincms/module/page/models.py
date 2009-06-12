@@ -111,13 +111,6 @@ class Page(Base):
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
         editable=False, default='')
 
-    # content
-    _content_title = models.TextField(_('content title'), blank=True,
-        help_text=_('The first line is the main title, the following lines are subtitles.'))
-
-    # meta stuff TODO keywords and description?
-    _page_title = models.CharField(_('page title'), max_length=100, blank=True,
-        help_text=_('Page title for browser window. Same as title by default.'))
     meta_keywords = models.TextField(_('meta keywords'), blank=True,
         help_text=_('This will be prepended to the default keyword list.'))
     meta_description = models.TextField(_('meta description'), blank=True,
@@ -156,26 +149,6 @@ class Page(Base):
 
     def get_absolute_url(self):
         return self._cached_url
-
-    @property
-    def page_title(self):
-        if self._page_title:
-            return self._page_title
-        return self.content_title
-
-    @property
-    def content_title(self):
-        if not self._content_title:
-            return self.title
-
-        try:
-            return self._content_title.splitlines()[0]
-        except IndexError:
-            return u''
-
-    @property
-    def content_subtitle(self):
-        return u'\n'.join(self._content_title.splitlines()[1:])
 
     def setup_request(self, request):
         translation.activate(self.language)
