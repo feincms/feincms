@@ -48,9 +48,10 @@ class Template(models.Model):
     A template file on the disk which can be used by pages to render themselves.
     """
 
-    title = models.CharField(max_length=200)
-    path = models.CharField(max_length=200)
-    regions = models.ManyToManyField(Region, related_name='templates')
+    title = models.CharField(_('title'), max_length=200)
+    path = models.CharField(_('path'), max_length=200)
+    regions = models.ManyToManyField(Region, related_name='templates',
+        verbose_name=_('regions'))
 
     class Meta:
         ordering = ['title']
@@ -69,22 +70,37 @@ def first_template():
 
 
 class Base(models.Model):
-    template = models.ForeignKey(Template, default=first_template)
+    """
+    This is the base class for your CMS models.
+    """
+
+    template = models.ForeignKey(Template, default=first_template,
+        verbose_name=_('template'))
 
     class Meta:
         abstract = True
 
     @property
     def content(self):
+        """
+        Provide a simple interface for getting all content blocks for a region.
+        """
+
         if not hasattr(self, '_content_proxy'):
             self._content_proxy = ContentProxy(self)
 
         return self._content_proxy
 
     def _content_for_region(self, region):
-        if not hasattr(self, '_feincms_content_types'):
+        """
+        This method is used primarily by the ContentProxy
+        """
+
+        if not hasattr(self, '_feincms_content_types') or not self._feincms_content_types:
             raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.__class__.__name__)
 
+        # find all concrete content type tables which have at least one entry for
+        # the current CMS object and region
         sql = ' UNION '.join([
             'SELECT %d, COUNT(id) FROM %s WHERE parent_id=%s AND region_id=%s' % (
                 idx,
@@ -113,6 +129,14 @@ class Base(models.Model):
 
     @classmethod
     def _create_content_base(cls):
+        """
+        This is purely an internal method. Here, we create a base class for the
+        concrete content types, which are built in `create_content_type`.
+
+        The three fields added to build a concrete content type class/mdoel are
+        `parent`, `region` and `ordering`.
+        """
+
         class Meta:
             abstract = True
             ordering = ['ordering']
@@ -121,6 +145,14 @@ class Base(models.Model):
             return u'%s on %s, ordering %s' % (self.region, self.parent, self.ordering)
 
         def render(self, **kwargs):
+            """
+            Default render implementation, tries to call a method named after the
+            region key before giving up.
+
+            You'll probably override the render method itself most of the time
+            instead of adding region-specific render methods.
+            """
+
             render_fn = getattr(self, 'render_%s' % self.region.key, None)
 
             if render_fn:
@@ -138,16 +170,32 @@ class Base(models.Model):
             'ordering': models.IntegerField(_('ordering'), default=0),
             }
 
+        # save reference to base class on CMS class
         cls._feincms_content_model = type('%sContent' % cls.__name__,
             (models.Model,), attrs)
 
+        # list of concrete content types
         cls._feincms_content_types = []
-        cls.feincms_item_editor_includes = {}
 
-        return cls._feincms_content_model
+        # list of templates which should be included in the item editor
+        cls.feincms_item_editor_includes = {}
 
     @classmethod
     def create_content_type(cls, model, **kwargs):
+        """
+        This is the method you'll use to create concrete content types.
+
+        If the CMS base class is `page.models.Page`, its database table will be
+        `page_page`. A concrete content type which is created from `ImageContent`
+        will use `page_page_imagecontent` as its table.
+
+        You can pass additional keyword arguments to this factory function. These
+        keyword arguments will be passed on to the concrete content type, provided
+        that it has a `handle_kwargs` classmethod. This is used f.e. in
+        `MediaFileContent` to pass a set of possible media positions (f.e. left,
+        right, centered) through to the content type.
+        """
+
         if not hasattr(cls, '_feincms_content_model'):
             cls._create_content_base()
 
@@ -159,26 +207,34 @@ class Base(models.Model):
             verbose_name_plural = model._meta.verbose_name_plural
 
         attrs = {
-            '__module__': cls.__module__,
+            '__module__': cls.__module__, # put the concrete content type into the
+                                          # same module as the CMS base type
             'Meta': Meta,
             }
 
         new_type = type(
             model.__name__,
-            (model, feincms_content_base,), attrs)
+            (model, feincms_content_base,),
+            attrs)
         cls._feincms_content_types.append(new_type)
 
+        # Add a list of CMS base types for which a concrete content type has
+        # been created to the abstract content type. This is needed f.e. for the
+        # update_rsscontent management command, which needs to find all concrete
+        # RSSContent types, so that the RSS feeds can be fetched
         if not hasattr(model, '_feincms_content_models'):
             model._feincms_content_models = []
 
         model._feincms_content_models.append(new_type)
 
+        # customization hook.
         if hasattr(new_type, 'handle_kwargs'):
             new_type.handle_kwargs(**kwargs)
         else:
             for k, v in kwargs.items():
                 setattr(new_type, k, v)
 
+        # collect item editor includes from the content type
         if hasattr(model, 'feincms_item_editor_includes'):
             for key, includes in model.feincms_item_editor_includes.items():
                 cls.feincms_item_editor_includes.setdefault(key, []).extend(includes)

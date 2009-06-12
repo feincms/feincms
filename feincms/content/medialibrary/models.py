@@ -14,6 +14,10 @@ from medialibrary.models import MediaFile
 
 
 class MediaFileWidget(forms.TextInput):
+    """
+    TextInput widget, shows a link to the current value if there is one.
+    """
+
     def render(self, name, value, attrs=None):
         inputfield = super(MediaFileWidget, self).render(name, value, attrs)
         if value:

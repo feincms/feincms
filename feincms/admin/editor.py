@@ -33,7 +33,7 @@ class ItemEditorMixin(object):
 
     def change_view(self, request, object_id, extra_context=None):
 
-        if not hasattr(self.model, '_feincms_content_types'):
+        if not hasattr(self.model, '_feincms_content_types') or not self.model._feincms_content_types:
             raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.model.__name__)
 
         class ModelForm(forms.ModelForm):
@@ -48,6 +48,7 @@ class ItemEditorMixin(object):
                 model = self.model
                 exclude = self.show_on_top+('template',)
 
+        # generate a formset type for every concrete content type
         inline_formset_types = [(
             content_type,
             inlineformset_factory(self.model, content_type, extra=1,

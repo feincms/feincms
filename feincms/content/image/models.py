@@ -3,6 +3,9 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 class ImageContent(models.Model):
+    # You should probably use `feincms.content.medialibrary.models.MediaFileContent`
+    # instead.
+
     """
     Create an ImageContent like this:
 
