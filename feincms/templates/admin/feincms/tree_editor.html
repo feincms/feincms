@@ -22,7 +22,7 @@
     ancestors = [{% for item in object_list %}'{{ item.parent_id|default_if_none:"0" }}'{% if not forloop.last %},{% endif %} {% endfor %}];
 
     tablestr = '';
-    {% for item in object_list %}tablestr += add_row({{ forloop.counter }}, {{ item.id }}, "{{ item.parent_id|default_if_none:"-1" }}", "{{ item.title }}", ["{{ item.active }}", "{{ item.in_navigation }}", "{{ item.slug }}"]);
+    {% for item, title, item_properties in tree_editor.object_list %}tablestr += add_row({{ forloop.counter }}, {{ item.id }}, "{{ item.parent_id|default_if_none:"-1" }}", "{{ title|escapejs }}", [{% for property in item_properties %}"{{ property|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}]);
     {% endfor %}
 
     function add_row(node_id, item_id, parent_id, item_title, attrs) {
@@ -36,7 +36,7 @@
         str += '<div class="insert-as-sibling"></div>';
         str += '</div></td>';
         for (key in attrs)
-            str += '<td>'+attrs[key]+'</td>';
+            str += attrs[key];
         str += '<td><img class="del-page" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif"/></td></tr>';
         return str;
     }
@@ -128,11 +128,10 @@
     <table id="sitetree" border="1">
         <thead>
         <tr id="table_header">
-            <th style="min-width:400px">{% trans  "Page" %}</th>
-            <th>{% trans  "active" %}</th>
-            <th>{% trans  "in navi" %}</th>
-            <th>{% trans  "slug" %}</th>
-            <th>{% trans  "delete" %}</th>
+        {% for header in result_headers %}
+            <th{% if forloop.first %} style="min-width:400px"{% endif %}>{{ header.text|capfirst }}
+        {% endfor %}
+            <th>{% trans  "Delete" %}</th>
         </tr>
         </thead>
         <tbody>
