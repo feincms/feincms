@@ -11,18 +11,6 @@ from django.utils.translation import ugettext_lazy as _
 import mptt
 
 
-class TypeRegistryMetaClass(type):
-    """
-    You can access the list of subclasses as <BaseClass>.types
-    """
-
-    def __init__(cls, name, bases, attrs):
-        if not hasattr(cls, 'types'):
-            cls.types = []
-        else:
-            cls.types.append(cls)
-
-
 class Region(models.Model):
     """
     A template region which will be a container for several page contents.
@@ -133,7 +121,7 @@ class Base(models.Model):
         This is purely an internal method. Here, we create a base class for the
         concrete content types, which are built in `create_content_type`.
 
-        The three fields added to build a concrete content type class/mdoel are
+        The three fields added to build a concrete content type class/model are
         `parent`, `region` and `ordering`.
         """
 

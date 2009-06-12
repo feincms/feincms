@@ -7,36 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import mptt
 
-from feincms.models import TypeRegistryMetaClass, Region, Template,\
-    Base, ContentProxy
-
-
-def get_object(path, fail_silently=False):
-    dot = path.rindex('.')
-    try:
-        return getattr(__import__(path[:dot], {}, {}, ['']), path[dot+1:])
-    except ImportError:
-        if not fail_silently:
-            raise
-
-    return None
-
-
-class PagePretender(object):
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-    def get_absolute_url(self):
-        return self.url
-
-
-class NavigationExtension(object):
-    __metaclass__ = TypeRegistryMetaClass
-    name = _('navigation extension')
-
-    def children(self, page, **kwargs):
-        raise NotImplementedError
+from feincms.models import Region, Template, Base, ContentProxy
 
 
 class PageManager(models.Manager):
@@ -140,13 +111,6 @@ class Page(Base):
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
         editable=False, default='')
 
-    # navigation extensions
-    NE_CHOICES = [(
-        '%s.%s' % (cls.__module__, cls.__name__), cls.name) for cls in NavigationExtension.types]
-    navigation_extension = models.CharField(_('navigation extension'),
-        choices=NE_CHOICES, blank=True, max_length=50,
-        help_text=_('Select the module providing subpages for this page if you need to customize the navigation.'))
-
     # content
     _content_title = models.TextField(_('content title'), blank=True,
         help_text=_('The first line is the main title, the following lines are subtitles.'))
@@ -218,15 +182,6 @@ class Page(Base):
         request.LANGUAGE_CODE = translation.get_language()
         request._feincms_page = self
 
-    def extended_navigation(self):
-        if not self.navigation_extension:
-            return []
-
-        cls = get_object(self.navigation_extension, fail_silently=True)
-        if not cls:
-            return []
-
-        return cls().children(self)
 
 mptt.register(Page)
 
