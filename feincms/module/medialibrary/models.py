@@ -1,6 +1,4 @@
 from datetime import datetime
-import re
-
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
@@ -28,12 +26,6 @@ class Category(models.Model):
 
 
 class MediaFile(models.Model, TranslatedObjectMixin):
-    TYPES = (
-        ('image', re.compile(r'.(jpg|jpeg|gif|png)$', re.IGNORECASE)),
-        ('pdf', re.compile(r'.pdf$', re.IGNORECASE)),
-        ('download', re.compile(r'')),
-        )
-
     file = models.FileField(_('file'), upload_to='medialibrary/%Y/%m/')
     created = models.DateTimeField(_('created'), default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
@@ -45,13 +37,6 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         verbose_name_plural = _('media files')
 
     objects = TranslatedObjectManager()
-
-    @property
-    def type(self):
-        filename = self.file.name
-        for identifier, expression in self.TYPES:
-            if expression.search(filename):
-                return identifier
 
 
 class MediaFileTranslation(Translation(MediaFile)):
