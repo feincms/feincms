@@ -128,3 +128,39 @@ This does exactly the same, but you do not have to loop over the page content
 blocks yourself. You need to add the request context processor to your list
 of context processors for this example to work.
 
+
+
+Bundled content types
+=====================
+
+* feincms.content.file.models.FileContent
+* feincms.content.image.models.ImageContent
+
+  These are simple content types holding just a file or an image with a
+  position. You should probably use the MediaFileContent though.
+
+* feincms.content.medialibrary.models.MediaFileContent
+
+  Mini-framework for arbitrary file types with customizable rendering
+  methods per-filetype.
+
+* feincms.content.raw.models.RawContent
+
+  Raw HTML code, f.e. for flash movies or javascript code.
+
+* feincms.content.richtext.models.RichtextContent
+
+  TinyMCE widget, stripped down to the essentials; no media support, only
+  a few styles activated. The TinyMCE javascript files are not included,
+  you need to put them in the right place on your own.
+
+* feincms.content.rss.models.RSSContent
+
+  A feed reader widget. This also servers as an example how to build a content
+  type that needs additional processing, in this case from a cron job.
+
+* feincms.content.video.models.VideoContent
+
+  A easy-to-use content that automatically generates flash video inclusion code
+  from a website link. Currently only youtube links are supported.
+
