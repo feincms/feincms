@@ -150,6 +150,7 @@ class Page(Base):
         else:
             self._cached_url = u'/%s/%s/' % ('/'.join([page.slug for page in self.get_ancestors()]), self.slug)
 
+        # do not recurse into _generate_cached_url
         super(Page, self).save()
 
     def get_absolute_url(self):
