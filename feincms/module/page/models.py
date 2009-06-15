@@ -105,7 +105,7 @@ class Page(Base):
     redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
         help_text=_('Target URL for automatic redirects.'))
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
-        editable=False, default='')
+        editable=False, default='', db_index=True)
 
     meta_keywords = models.TextField(_('meta keywords'), blank=True,
         help_text=_('This will be prepended to the default keyword list.'))
