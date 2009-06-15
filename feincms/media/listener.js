@@ -14,7 +14,7 @@ $(document).ready(function(){
             $(".machine-control").show();
 
         // make it possible to open current tab on page reload
-        window.location.hash = '#'+tab_str;
+        window.location.hash = '#'+tab_str+'_tab';
     });
 
     $(".order-machine-add-button").livequery('click', function(){
