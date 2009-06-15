@@ -9,11 +9,13 @@ function region_append(region, obj, modname) {
     wrp.push('<img class="item-delete" src="'+IMG_DELETELINK_PATH+'" />');
     wrp.push('</div><div class="item-content"></div></div>');
 
+    // move content into new place (append actually moves the node here)
     $("#"+REGIONS[region]+"_body").children(".order-machine").append(wrp.join(""))
         .children(".order-item:last").children(".item-content").append(obj);
 }
 
-function create_new_from_form(form, modvar, last_id) {
+function create_new_spare_form(form, modvar, last_id) {
+    // create new spare form
     var new_form = form.html().replace(
         new RegExp(modvar+'-'+last_id, 'g'),
         modvar+'-'+(last_id+1));
@@ -21,18 +23,9 @@ function create_new_from_form(form, modvar, last_id) {
     $("#"+modvar+"_set").append(new_form);
 }
 
-function get_item_field_value(item,field) {
-    // item: DOM object created by 'region_append' function
-    // field: "order-field" | "delete-field" | "region-field"
-    if (field=="delete-field")
-        return item.find("."+field).attr("checked");
-    else
-        return item.find("."+field).val();
-}
-
 function set_item_field_value(item, field, value) {
     // item: DOM object created by 'region_append' function
-    // field: "order-field" | "delete-field" | "region-field"
+    // field: "order-field" | "delete-field" | "region-choice-field"
     if (field=="delete-field")
         item.find("."+field).attr("checked",value);
     else if (field=="region-choice-field") {
@@ -40,9 +33,10 @@ function set_item_field_value(item, field, value) {
         item.find("."+field).val(REGION_MAP[value]);
 
         old_region_item = $("#"+REGIONS[old_region_id]+"_body");
-        old_region_item.children(".empty-machine-msg").hide();
         if (old_region_item.children(".order-machine").children().length == 0)
             old_region_item.children(".empty-machine-msg").show();
+        else
+            old_region_item.children(".empty-machine-msg").hide();
 
         new_region_item = $("#"+REGIONS[value]+"_body");
         new_region_item.children(".empty-machine-msg").hide();

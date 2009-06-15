@@ -320,51 +320,52 @@ function save_page_tree() {
    // prepare tree
     var i = 0;
     var ancestor_tree_ids = [];
-    var ancestor_indeces = [];
+    var ancestor_indices = [];
     var tree_id = 0;
     $("#sitetree tbody tr").each(function(){
-        var tobj = new Array();
         // 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = item_id
         var classNames = $(this).attr("class").split(' ');
-        var is_child = false; var is_parent = false;
-        var parent_id = "";
-        tobj[1] = null;
+        var is_child = false;
+        var is_parent = false;
+        var parent_id = null;
+        var item_id = "";
+        var left = "";
+        var right = "";
+
         // gather information
         for (key in classNames) {
             if(classNames[key].match("item-id-"))
-                tobj[5] = parseInt(classNames[key].substring(8));
+                item_id = parseInt(classNames[key].substring(8));
             if(classNames[key].match("parent"))
                 is_parent = true;
             if(classNames[key].match("child-of-")) {
                 is_child = true;
                 var node_parent_id = classNames[key].substring(9);
-                var parent_id = parseInt($("#"+node_parent_id).attr("class").match(/item-id-(\d+)/)[1])
-                tobj[1] = parent_id;
+                parent_id = parseInt($("#"+node_parent_id).attr("class").match(/item-id-(\d+)/)[1])
             }
         }
         // save info
         var inArray = ancestor_tree_ids.indexOf(parent_id);
         while ( ( is_child && inArray < ancestor_tree_ids.length - 1 && inArray >= 0) || ( !is_child && ancestor_tree_ids.length > 0 ) ) {
-            send_tree[ancestor_indeces.pop()][3] = i++;
+            send_tree[ancestor_indices.pop()][3] = i++;
             ancestor_tree_ids.pop();
         }
         if (!is_child) {
             tree_id++;
             i = 0;
         }
-        tobj[0] = tree_id;
-        tobj[4] = ancestor_tree_ids.length;
-        tobj[2] = i++;
+        left = i++;
         if (is_parent) {
-            ancestor_tree_ids.push(tobj[5]);
-            ancestor_indeces.push(send_tree.length);
+            ancestor_tree_ids.push(item_id);
+            ancestor_indices.push(send_tree.length);
         } else {
-            tobj[3] = i++;
+            right = i++;
         }
-        send_tree.push(tobj);
+
+        send_tree.push([tree_id, parent_id?parent_id:null, left, right, ancestor_tree_ids.length, item_id]);
     });
     while (ancestor_tree_ids.length>0) {
-        send_tree[ancestor_indeces.pop()][3] = i++;
+        send_tree[ancestor_indices.pop()][3] = i++;
         ancestor_tree_ids.pop();
     }
 

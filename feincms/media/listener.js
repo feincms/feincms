@@ -18,23 +18,24 @@ $(document).ready(function(){
     });
 
     $(".order-machine-add-button").livequery('click', function(){
-            var modvar = $(this).prev().val();
-            var modname = $(this).prev().children("option:selected").html();
-            var total_forms = $('#id_'+modvar+'-TOTAL_FORMS');
-            var last_id = parseInt(total_forms.val()) - 1;
-            var form = $("#"+modvar+"_set_item_"+last_id);
+        var modvar = $(this).prev().val();
+        var modname = $(this).prev().children("option:selected").html();
+        var total_forms = $('#id_'+modvar+'-TOTAL_FORMS');
+        var last_id = parseInt(total_forms.val()) - 1;
+        var form = $("#"+modvar+"_set_item_"+last_id);
 
-            total_forms.val(last_id+2);
-            create_new_from_form(form, modvar, last_id);
-            region_append(ACTIVE_REGION, form, modname, modvar);
-            set_item_field_value(form,"region-choice-field", ACTIVE_REGION);
+        // update formset bookkeeping value
+        total_forms.val(last_id+2);
+        create_new_spare_form(form, modvar, last_id);
+        region_append(ACTIVE_REGION, form, modname, modvar);
+        set_item_field_value(form,"region-choice-field", ACTIVE_REGION);
 
-            init_contentblocks();
+        init_contentblocks();
     });
 
     $(".order-machine-move-button").livequery('click', function(){
-            var moveTo = $(this).prev().val();
-            move_item(REGIONS.indexOf(moveTo),$(".active-item"));
+        var moveTo = $(this).prev().val();
+        move_item(REGIONS.indexOf(moveTo),$(".active-item"));
     });
 
     $(".item-delete").livequery('click',function(){
@@ -50,7 +51,7 @@ $(document).ready(function(){
         });
     });
 
-    $(".change_template").livequery('click',function(){
+    $(".change-template").livequery('click',function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
         jConfirm(CHANGE_TEMPLATE_MESSAGES[1], CHANGE_TEMPLATE_MESSAGES[0], function(r) {
@@ -65,19 +66,19 @@ $(document).ready(function(){
     });
 
     $(".item-minimize").livequery('click',function(){
-            var item = $(this).parent().next();
-            if (item.is(":visible")) {
-                $(this).html('<img src="'+IMG_ARROW_RIGHT_PATH+'" />');
-                item.slideUp(200);
-            } else {
-                $(this).html('<img src="'+IMG_ARROW_DOWN_PATH+'" />');
-                item.slideDown(200);
-            }
+        var item = $(this).parent().next();
+        if (item.is(":visible")) {
+            $(this).html('<img src="'+IMG_ARROW_RIGHT_PATH+'" />');
+            item.slideUp(200);
+        } else {
+            $(this).html('<img src="'+IMG_ARROW_DOWN_PATH+'" />');
+            item.slideDown(200);
+        }
     });
 
     $(".order-item").livequery('click',function(){
-            $(".order-item.active-item").removeClass("active-item");
-            $(this).addClass("active-item");
+        $(".order-item.active-item").removeClass("active-item");
+        $(this).addClass("active-item");
     });
 
     $(".submit_form").livequery('click',function(){

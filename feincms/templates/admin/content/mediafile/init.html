@@ -74,7 +74,7 @@ contentblock_init_handlers.push(function(){
         var elem = $(this);
 
         elem.siblings('span').remove().end();
-        elem.css('width', '50px').after('<span style="color:red" class="mediafile" id="lookup_'+this.id+'"> {% trans "Choose" %}</span>');
+        elem.css('width', '50px').after("<span class=\"mediafile\" id=\"lookup_"+this.id+"\"> {% trans "Choose" %}</span>");
     });
 });
 $(function(){
