@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class RawContent(models.Model):
-    text = models.TextField(_('text'), blank=True)
+    text = models.TextField(_('content'), blank=True)
 
     class Meta:
         abstract = True
