@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-12 10:47+0200\n"
+"POT-Creation-Date: 2009-06-15 12:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,19 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:33 module/page/models.py:131
+#: models.py:21 models.py:39 content/rss/models.py:12
+#: module/medialibrary/models.py:13 module/page/models.py:98
 msgid "title"
 msgstr "Titel"
 
-#: models.py:34
+#: models.py:22
 msgid "key"
 msgstr "Schlüssel"
 
-#: models.py:35
+#: models.py:23
 msgid "inherited"
 msgstr "Vererbt"
 
-#: models.py:36
+#: models.py:24
 msgid ""
 "Should the content be inherited by subpages if they do not define any "
 "content for this region?"
@@ -36,74 +37,92 @@ msgstr ""
 "Soll der Inhalt dieser Region durch Unterseiten geerbt werden, sofern diese "
 "keinen eigenen Inhalt definieren?"
 
-#: models.py:39
+#: models.py:27
 msgid "region"
 msgstr "Region"
 
-#: models.py:40
+#: models.py:28 models.py:42
 msgid "regions"
 msgstr "Regionen"
 
-#: models.py:57
+#: models.py:40
+msgid "path"
+msgstr "Pfad"
+
+#: models.py:46 models.py:66
 msgid "template"
 msgstr "Template"
 
-#: models.py:58
+#: models.py:47
 msgid "templates"
 msgstr "Templates"
 
-#: models.py:138
+#: models.py:158
 msgid "ordering"
 msgstr "Sortierung"
 
-#: admin/editor.py:94
+#: admin/editor.py:99
 #, python-format
 msgid "Change %s"
 msgstr "%s ändern"
 
-#: admin/editor.py:142
+#: admin/editor.py:149
 msgid "Database error"
 msgstr "Datenbankfehler"
 
-#: content/file/models.py:8 content/file/models.py:12
+#: content/file/models.py:11 content/file/models.py:15
+#: module/medialibrary/models.py:37
 msgid "file"
 msgstr "Datei"
 
-#: content/file/models.py:13
+#: content/file/models.py:16
 msgid "files"
 msgstr "Dateien"
 
-#: content/image/models.py:15 content/image/models.py:19
+#: content/image/models.py:18 content/image/models.py:22
 msgid "image"
 msgstr "Bild"
 
-#: content/image/models.py:20
+#: content/image/models.py:23
 msgid "images"
 msgstr "Bilder"
 
-#: content/image/models.py:30 content/medialibrary/models.py:56
+#: content/image/models.py:33 content/medialibrary/models.py:60
 msgid "position"
 msgstr "Position"
 
-#: content/medialibrary/models.py:47 content/medialibrary/models.py:51
+#: content/medialibrary/models.py:51 content/medialibrary/models.py:55
+#: module/medialibrary/models.py:44
 msgid "media file"
 msgstr "Mediendatei"
 
-#: content/medialibrary/models.py:52
+#: content/medialibrary/models.py:56 module/medialibrary/models.py:45
 msgid "media files"
 msgstr "Mediendateien"
 
-#: content/medialibrary/models.py:71
+#: content/medialibrary/models.py:75
 msgid "block"
 msgstr "Block"
 
-#: content/medialibrary/models.py:72
+#: content/medialibrary/models.py:76
 msgid "left"
 msgstr "Links"
 
-#: content/medialibrary/models.py:73
+#: content/medialibrary/models.py:77
 msgid "right"
 msgstr "Rechts"
+
+#: content/raw/models.py:7
+msgid "content"
+msgstr "Inhalt"
+
+#: content/raw/models.py:11
+msgid "raw content"
+msgstr "Roh-Inhalt"
+
+#: content/raw/models.py:12
+msgid "raw contents"
+msgstr "Roh-Inhalte"
 
 #: content/richtext/models.py:11
 msgid "text"
@@ -117,7 +136,7 @@ msgstr "Text"
 msgid "rich texts"
 msgstr "Texte"
 
-#: content/rss/models.py:12
+#: content/rss/models.py:13
 msgid ""
 "The rss field is updated several times a day. A change in the title will "
 "only be visible on the home page after the next feed update."
@@ -125,27 +144,27 @@ msgstr ""
 "Der RSS Feed wird mehrmals täglich aktualisiert. Eine Änderung des Titels "
 "erscheint erst nach der nächsten Feed-Aktualisierung auf der Webseite."
 
-#: content/rss/models.py:13
+#: content/rss/models.py:14
 msgid "link"
 msgstr "Link"
 
-#: content/rss/models.py:14
-msgid "Pre-rendered content"
+#: content/rss/models.py:15
+msgid "pre-rendered content"
 msgstr "Vor-gerenderter Inhalt"
 
-#: content/rss/models.py:15
-msgid "Last updated"
+#: content/rss/models.py:16
+msgid "last updated"
 msgstr "Letzte Aktualisierung"
 
-#: content/rss/models.py:16
-msgid "Max. items"
+#: content/rss/models.py:17
+msgid "max. items"
 msgstr "Maximale Anzahl"
 
-#: content/rss/models.py:20
+#: content/rss/models.py:21
 msgid "RSS feed"
 msgstr "RSS Feed"
 
-#: content/rss/models.py:21
+#: content/rss/models.py:22
 msgid "RSS feeds"
 msgstr "RSS Feeds"
 
@@ -169,98 +188,135 @@ msgstr "Video"
 msgid "videos"
 msgstr "Videos"
 
+#: module/medialibrary/models.py:16
+msgid "parent"
+msgstr "Übergeordnet"
+
+#: module/medialibrary/models.py:20
+msgid "category"
+msgstr "Kategorie"
+
+#: module/medialibrary/models.py:21 module/medialibrary/models.py:41
+msgid "categories"
+msgstr "Kategorien"
+
+#: module/medialibrary/models.py:38
+msgid "created"
+msgstr "Erstellt"
+
+#: module/medialibrary/models.py:39
+msgid "copyright"
+msgstr "Copyright"
+
+#: module/medialibrary/models.py:58
+msgid "caption"
+msgstr "Legende"
+
+#: module/medialibrary/models.py:61
+msgid "media file translation"
+msgstr "Mediendatei-Übersetzung"
+
+#: module/medialibrary/models.py:62
+msgid "media file translations"
+msgstr "Mediendatei-Übersetzungen"
+
 #: module/page/admin.py:17
 msgid "Other options"
 msgstr "Weitere Optionen"
 
-#: module/page/models.py:36 module/page/models.py:146
-msgid "navigation extension"
-msgstr "Navigations-Erweiterung"
-
-#: module/page/models.py:128 templates/admin/feincms/tree_editor.html:133
+#: module/page/models.py:95
 msgid "active"
 msgstr "Aktiv"
 
-#: module/page/models.py:132
+#: module/page/models.py:99
 msgid "This is used for the generated navigation too."
 msgstr "Dies wird auch für die generierte Navigation verwendet."
 
-#: module/page/models.py:135
+#: module/page/models.py:102
 msgid "in navigation"
 msgstr "In der Navigation"
 
-#: module/page/models.py:136
+#: module/page/models.py:103
 msgid "override URL"
 msgstr "Überschriebene URL"
 
-#: module/page/models.py:137
-msgid "Override the target URL for the navigation."
-msgstr "Überschreibe die Ziel-URL für die Navigation."
+#: module/page/models.py:104
+msgid ""
+"Override the target URL. Be sure to include slashes at the beginning and at "
+"the end if it is a local URL."
+msgstr ""
+"Überschreibe die URL. Am Anfang und Ende muss ein / stehen, falls es sich "
+"um eine lokale URL handelt."
 
-#: module/page/models.py:138
+#: module/page/models.py:105
 msgid "redirect to"
 msgstr "Weiterleiten zu"
 
-#: module/page/models.py:139
+#: module/page/models.py:106
 msgid "Target URL for automatic redirects."
 msgstr "Ziel-URL für automatische Weiterleitungen."
 
-#: module/page/models.py:140
+#: module/page/models.py:107
 msgid "Cached URL"
 msgstr "Zwischengespeicherte URL"
 
-#: module/page/models.py:148
+#: module/page/models.py:110
+msgid "meta keywords"
+msgstr "Meta Begriffe"
+
+#: module/page/models.py:111
+msgid "This will be prepended to the default keyword list."
+msgstr "Diese Begriffe werden vor die Standard-Begriffsliste eingefügt."
+
+#: module/page/models.py:112
+msgid "meta description"
+msgstr "Meta Beschreibung"
+
+#: module/page/models.py:113
+msgid "This will be prepended to the default description."
+msgstr "Diese Beschreibung wird vor der Standard-Beschreibung eingefügt."
+
+#: module/page/models.py:117
+msgid "page"
+msgstr "Seite"
+
+#: module/page/models.py:118
+msgid "pages"
+msgstr "Seiten"
+
+#: module/page/extensions/navigation.py:30
+#: module/page/extensions/navigation.py:51
+msgid "navigation extension"
+msgstr "Navigations-Erweiterung"
+
+#: module/page/extensions/navigation.py:53
 msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr "Wähle das Modul aus, welches weitere Navigationspunkte erstellt."
 
-#: module/page/models.py:151
+#: module/page/extensions/titles.py:8
 msgid "content title"
 msgstr "Inhaltstitel"
 
-#: module/page/models.py:152
+#: module/page/extensions/titles.py:9
 msgid "The first line is the main title, the following lines are subtitles."
 msgstr "Die erste Zeile ist der Haupttitel, die weiteren Zeilen Untertitel"
 
-#: module/page/models.py:155
+#: module/page/extensions/titles.py:10
 msgid "page title"
 msgstr "Seitentitel"
 
-#: module/page/models.py:156
+#: module/page/extensions/titles.py:11
 msgid "Page title for browser window. Same as title by default."
 msgstr ""
 "Seitentitel für das Browser-Fenster. Standardmässig gleich wie der Titel."
 
-#: module/page/models.py:157
-msgid "meta keywords"
-msgstr "Meta Begriffe"
-
-#: module/page/models.py:158
-msgid "This will be prepended to the default keyword list."
-msgstr "Diese Begriffe werden vor die Standard-Begriffsliste eingefügt."
-
-#: module/page/models.py:159
-msgid "meta description"
-msgstr "Meta Beschreibung"
-
-#: module/page/models.py:160
-msgid "This will be prepended to the default description."
-msgstr "Diese Beschreibung wird vor der Standard-Beschreibung eingefügt."
-
-#: module/page/models.py:163
+#: module/page/extensions/translations.py:10
 msgid "language"
 msgstr "Sprache"
 
-#: module/page/models.py:169
-msgid "page"
-msgstr "Seite"
-
-#: module/page/models.py:170
-msgid "pages"
-msgstr "Seiten"
-
-#: templates/admin/content/mediafile/init.html:34
+#: templates/admin/content/mediafile/init.html:77
 msgid "Choose"
 msgstr "Auswählen"
 
@@ -273,6 +329,7 @@ msgid "View on site"
 msgstr "Auf der Webseite anzeigen"
 
 #: templates/admin/feincms/item_editor.html:127
+#: templates/admin/feincms/tree_editor.html:134
 msgid "Delete"
 msgstr "Löschen"
 
@@ -301,46 +358,6 @@ msgstr ""
 msgid "Add %(name)s"
 msgstr "%(name)s hinzufügen"
 
-#: templates/admin/feincms/tree_editor.html:132
-msgid "Page"
-msgstr "Seite"
-
-#: templates/admin/feincms/tree_editor.html:134
-msgid "in navi"
-msgstr "Im Menü"
-
-#: templates/admin/feincms/tree_editor.html:135
-msgid "delete"
-msgstr "Löschen"
-
-#: models.py:17
-msgid "parent"
-msgstr "Übergeordnet"
-
-#: models.py:21
-msgid "category"
-msgstr "Kategorie"
-
-#: models.py:22 models.py:35
-msgid "categories"
-msgstr "Kategorien"
-
-#: models.py:33
-msgid "created"
-msgstr "Erstellt"
-
-#: models.py:45
-msgid "caption"
-msgstr "Legende"
-
-#: models.py:46
-msgid "copyright"
-msgstr "Copyright"
-
-#: models.py:49
-msgid "media file translation"
-msgstr "Mediendatei-Übersetzung"
-
-#: models.py:50
-msgid "media file translations"
-msgstr "Mediendatei-Übersetzungen"
+#: templates/admin/feincms/tree_editor.html:125
+msgid "Save tree"
+msgstr "Baum speichern"
