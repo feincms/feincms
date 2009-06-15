@@ -118,3 +118,49 @@ attributes added.
 The newly created ``GalleryContent'' for ``Page'' will live in the database
 table ``page_page_gallerycontent''.
 
+It is generally recommended to make your model base class abstract, because
+FeinCMS will create another class inheriting from your class, and you should
+probably not use model inheritance if you don't know exactly that you'll need
+it.
+
+
+Using page extensions
+=====================
+
+Extensions are a way to put often-used functionality easily accessible without
+cluttering up the core page model for those who do not need them. Currently,
+the following extensions are available:
+
+* navigation
+
+  Adds navigation extensions to the page model. You can define subclasses of
+  ``NavigationExtension'', which provide submenus to the navigation generation
+  mechanism. This extension is bound to change and is only in proof-of-concept
+  stage currently.
+
+* titles
+
+  Adds additional title fields to the page model. You may not only define a
+  single title for the page to be used in the navigation, the <title> tag and
+  inside the content area, you are not only allowed to define different titles
+  for the three uses but also enabld to define titles and subtitles for the
+  content area.
+
+* translations
+
+  Adds a language field and a recursive translations many to many field to the
+  page, so that you can define the language the page is in and assign
+  translations. I am currently very unhappy with state of things concerning
+  the definition of translations, so that extension might change somewhat too.
+  This extension also adds new instructions to the setup_request method where
+  the Django i18n tools are initialized with the language given on the page
+  object.
+
+
+You can either import the register method in the extension models yourself or
+call a helper function on the Page class as follows to activate the extensions:
+
+::
+
+    Page.register_extensions('navigation', 'titles', 'translations')
+
