@@ -30,7 +30,7 @@ function get_item_field_value(item,field) {
         return item.find("."+field).val();
 }
 
-function set_item_field_value(item,field, value) {
+function set_item_field_value(item, field, value) {
     // item: DOM object created by 'region_append' function
     // field: "order-field" | "delete-field" | "region-field"
     if (field=="delete-field")

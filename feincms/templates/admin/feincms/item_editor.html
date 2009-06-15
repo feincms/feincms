@@ -24,7 +24,7 @@
 
 <script type="text/javascript">
 
-    function init_contentblock() {
+    function init_contentblocks() {
         for(var k in contentblock_init_handlers)
             contentblock_init_handlers[k]();
     }
@@ -80,7 +80,7 @@
             richify_poor($(this).parents(".order-item"));
         });
         // convert text areas to rich text editors.
-        init_contentblock();
+        init_contentblocks();
 
         if(window.location.hash) {
             $(window.location.hash+'_tab').trigger('click');
@@ -89,7 +89,7 @@
         // bring order to chaos
         zucht_und_ordnung(true);
 
-        {% block extra-init-js %}{% endblock %}
+        {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
     });
 </script>
 
@@ -133,7 +133,7 @@
     <hr/>
     {{ object_form.template.label_tag }}
     <span>{{ object_form.template }}{{ object_form.template.errors }}</span>
-    <input type="button" class="cancel" value="{% trans 'Change Template' %}" />
+    <input type="button" class="change_template" value="{% trans 'Change Template' %}" />
     <hr/>
 </div>
 <div id="main_wrapper">

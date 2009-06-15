@@ -13,6 +13,7 @@ $(document).ready(function(){
         else
             $(".machine-control").show();
 
+        // make it possible to open current tab on page reload
         window.location.hash = '#'+tab_str;
     });
 
@@ -28,7 +29,7 @@ $(document).ready(function(){
             region_append(ACTIVE_REGION, form, modname, modvar);
             set_item_field_value(form,"region-choice-field", ACTIVE_REGION);
 
-            init_contentblock();
+            init_contentblocks();
     });
 
     $(".order-machine-move-button").livequery('click', function(){
@@ -49,7 +50,7 @@ $(document).ready(function(){
         });
     });
 
-    $(".cancel").livequery('click',function(){
+    $(".change_template").livequery('click',function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
         jConfirm('Really change template? <br/>All content will be moved to main region.',
@@ -76,7 +77,7 @@ $(document).ready(function(){
     });
 
     $(".order-item").livequery('click',function(){
-            $(".order-item").removeClass("active-item");
+            $(".order-item.active-item").removeClass("active-item");
             $(this).addClass("active-item");
     });
 
