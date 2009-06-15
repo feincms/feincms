@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-15 12:52+0200\n"
+"POT-Creation-Date: 2009-06-15 16:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -245,8 +245,8 @@ msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL."
 msgstr ""
-"Überschreibe die URL. Am Anfang und Ende muss ein / stehen, falls es sich "
-"um eine lokale URL handelt."
+"Überschreibe die URL. Am Anfang und Ende muss ein / stehen, falls es sich um "
+"eine lokale URL handelt."
 
 #: module/page/models.py:105
 msgid "redirect to"
@@ -320,38 +320,86 @@ msgstr "Sprache"
 msgid "Choose"
 msgstr "Auswählen"
 
-#: templates/admin/feincms/item_editor.html:103
+#: templates/admin/feincms/_messages.html:3
+msgid "Really delete item?"
+msgstr "Element wirklich löschen?"
+
+#: templates/admin/feincms/_messages.html:3
+msgid "Confirm to delete item"
+msgstr "Bestätigen, um das Element zu löschen"
+
+#: templates/admin/feincms/_messages.html:4
+msgid "Item deleted successfully."
+msgstr "Element erfolgreich gelöscht."
+
+#: templates/admin/feincms/_messages.html:4
+msgid "Cannot delete item"
+msgstr "Kann Element nicht löschen"
+
+#: templates/admin/feincms/_messages.html:5
+msgid "Cannot delete item, because it is parent of at least one other item."
+msgstr "Kann Element nicht löschen, weil es mindestens ein Unterelement hat."
+
+#: templates/admin/feincms/_messages.html:6
+msgid "Tree saved successfully."
+msgstr "Baum erfolgreich gespeichert"
+
+#: templates/admin/feincms/_messages.html:7
+msgid "Change template"
+msgstr "Template ändern"
+
+#: templates/admin/feincms/_messages.html:8
+msgid "Really change template? <br/>All content will be moved to main region."
+msgstr "Temlpate wirklich ändern? <br />Alle Inhalte werden in die erste Region verschoben."
+
+#: templates/admin/feincms/item_editor.html:107
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/admin/feincms/item_editor.html:117
+#: templates/admin/feincms/item_editor.html:121
 msgid "View on site"
 msgstr "Auf der Webseite anzeigen"
 
-#: templates/admin/feincms/item_editor.html:127
+#: templates/admin/feincms/item_editor.html:131
 #: templates/admin/feincms/tree_editor.html:134
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/admin/feincms/item_editor.html:132
+#: templates/admin/feincms/item_editor.html:136
 msgid "Save"
 msgstr "Speichern"
 
-#: templates/admin/feincms/item_editor.html:136
+#: templates/admin/feincms/item_editor.html:140
 msgid "Change Template"
 msgstr "Template ändern"
 
-#: templates/admin/feincms/item_editor.html:151
+#: templates/admin/feincms/item_editor.html:144
+msgid "Properties"
+msgstr "Eigenschaften"
+
+#: templates/admin/feincms/item_editor.html:155
 msgid "Region empty"
 msgstr "Region leer"
 
-#: templates/admin/feincms/item_editor.html:155
+#: templates/admin/feincms/item_editor.html:159
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
 msgstr ""
 "Inhalt wird von der übergeordneten Seite geerbt. Füge Inhalt hinzu, um "
 "dieses Verhalten zu ändern"
+
+#: templates/admin/feincms/item_editor.html:168
+msgid "Add new item"
+msgstr "Neues Element hinzufügen"
+
+#: templates/admin/feincms/item_editor.html:175
+msgid "Move selected item to"
+msgstr "Element verschieben nach"
+
+#: templates/admin/feincms/item_editor.html:179
+msgid "OK"
+msgstr "OK"
 
 #: templates/admin/feincms/tree_editor.html:121
 #, python-format

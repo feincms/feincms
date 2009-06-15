@@ -272,12 +272,11 @@ function handle_page_delete(node) {
     var popup_bg = '<div class="popup_bg"></div>';
     $("body").append(popup_bg);
     if (node.hasClass("parent")){
-        jAlert('Cannot delete item, because it is parent of at least one other item.',
-            'Cannot delete item', function(){
-                $(".popup_bg").remove();
+        jAlert(DELETE_MESSAGES[4], DELETE_MESSAGES[3], function(){
+            $(".popup_bg").remove();
         });
     } else {
-        jConfirm('Really delete item?', 'Confirm to delete item', function(r) {
+        jConfirm(DELETE_MESSAGES[0], DELETE_MESSAGES[1], function(r) {
             if (r==true) {
                 $.post('.', {'__cmd': 'delete_item', 'item_id': item_id}, function(data){
                     if (data == "OK") {
@@ -288,8 +287,7 @@ function handle_page_delete(node) {
                         }
                         node.remove();
                         $("body").append(popup_bg);
-                        jAlert('Item deleted successfully.',
-                            'Item deleted', function(){
+                        jAlert(DELETE_MESSAGES[2], DELETE_MESSAGES[2], function(){
                                 $(".popup_bg").remove();
                         });
                     }
@@ -375,8 +373,8 @@ function save_page_tree() {
         if (data == "OK") {
             var popup_bg = '<div class="popup_bg"></div>';
             $("body").append(popup_bg);
-            jAlert("Tree saved successfully.", "Tree saved", function(){
-                    $(".popup_bg").remove();
+            jAlert(TREE_SAVED_MESSAGE, TREE_SAVED_MESSAGE, function(){
+                $(".popup_bg").remove();
             });
         }
     });

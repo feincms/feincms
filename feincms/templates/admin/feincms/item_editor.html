@@ -24,6 +24,8 @@
 
 <script type="text/javascript">
 
+    {% include "admin/feincms/_messages.html" %}
+
     function init_contentblocks() {
         for(var k in contentblock_init_handlers)
             contentblock_init_handlers[k]();
@@ -50,18 +52,20 @@
     $(document).ready(function(){
         // move contents into their corresponding regions and do some simple formatting
         $("div[id$=_set]").children().each(function(){
-            if (!($(this).hasClass("header"))) {
-                $(this).find("select[name$=region]").addClass("region-choice-field").parents("tr").hide();
-                $(this).find("input[name$=DELETE]").addClass("delete-field").parents("tr").hide();
-                $(this).find("input[name$=ordering]").addClass("order-field").parents("tr").hide();
-                $(this).find("input[name$=id]").hide().prev().hide();
-                $(this).find("input[name$=parent]").hide().prev().hide();
+            var elem = $(this);
 
-                var region_id = $(this).find(".region-choice-field").val();
+            if (!(elem.hasClass("header"))) {
+                elem.find("select[name$=region]").addClass("region-choice-field").parents("tr").hide();
+                elem.find("input[name$=DELETE]").addClass("delete-field").parents("tr").hide();
+                elem.find("input[name$=ordering]").addClass("order-field").parents("tr").hide();
+                elem.find("input[name$=id]").hide().prev().hide();
+                elem.find("input[name$=parent]").hide().prev().hide();
+
+                var region_id = elem.find(".region-choice-field").val();
                 region_id = REGION_MAP.indexOf(region_id);
-                var content_type = $(this).attr("id").substr(0, $(this).attr("id").indexOf("_"));
-                region_append(region_id,$(this), CONTENT_NAMES[content_type]);
-                set_item_field_value($(this),"region-choice-field",region_id)
+                var content_type = elem.attr("id").substr(0, elem.attr("id").indexOf("_"));
+                region_append(region_id,elem, CONTENT_NAMES[content_type]);
+                set_item_field_value(elem,"region-choice-field",region_id)
             }
         });
         // register regions as sortable for drag N drop
@@ -137,7 +141,7 @@
     <hr/>
 </div>
 <div id="main_wrapper">
-    <div class="navi_tab tab_active" id="settings_tab">Settings</div>
+    <div class="navi_tab tab_active" id="settings_tab">{% trans "Properties" %}</div>
     {% for region in object.template.regions.all %}<div class="navi_tab tab_inactive" id="{{ region.key }}_tab">{{ region.title }}</div>{% endfor %}
     <div id="main">
         <div id="settings_body">
@@ -161,18 +165,18 @@
 
             <div class="machine-control">
                 <div class="control-unit">
-                    <span>Add New item:</span> <br/>
+                    <span>{% trans "Add new item" %}:</span> <br/>
                     <select name="order-machine-add-select">
                     {% for n,v  in content_types %} <option value="{{ v }}">{{ n }}</option> {% endfor %}
                     </select>
                     <input type="button" class="order-machine-add-button button" value="OK" />
                 </div>
                 <div class="control-unit">
-                    <span>Move selected item to:</span>  <br/>
+                    <span>{% trans "Move selected item to" %}:</span>  <br/>
                     <select name="order-machine-move-select">
                     {% for r in object.template.regions.all %} {% ifnotequal region r %} <option value="{{ r.key }}">{{ r.title }}</option> {% endifnotequal %} {% endfor %}
                     </select>
-                    <input type="button" class="order-machine-move-button button" value="OK" />
+                    <input type="button" class="order-machine-move-button button" value="{% trans "OK" %}" />
                 </div>
             </div>
          </div>

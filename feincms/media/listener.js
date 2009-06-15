@@ -41,7 +41,7 @@ $(document).ready(function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
         var item = $(this).parents(".order-item");
-        jConfirm('Really delete item?', 'Confirm to delete item', function(r) {
+        jConfirm(DELETE_MESSAGES[0], DELETE_MESSAGES[1], function(r) {
             if (r==true) {
                 set_item_field_value(item,"delete-field","checked");
                 item.fadeOut(200);
@@ -53,8 +53,7 @@ $(document).ready(function(){
     $(".change_template").livequery('click',function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
-        jConfirm('Really change template? <br/>All content will be moved to main region.',
-            'Change template', function(r) {
+        jConfirm(CHANGE_TEMPLATE_MESSAGES[1], CHANGE_TEMPLATE_MESSAGES[0], function(r) {
             if (r==true) {
                 var items = $(".panel").children(".order-machine").children();
                 move_item(0, items);
