@@ -35,25 +35,11 @@ class PageManager(models.Manager):
         stripped = path.strip('/')
 
         try:
-            return self.active().filter(override_url='/%s/' % stripped)[0]
-        except IndexError:
-            pass
-
-        tokens = stripped.split('/')
-
-        count = len(tokens)
-
-        filters = {'%sisnull' % ('parent__' * count): True}
-
-        for n, token in enumerate(tokens):
-            filters['%sslug' % ('parent__' * (count-n-1))] = token
-
-        try:
-            return self.active().filter(**filters)[0]
-        except IndexError:
+            return self.active().get(_cached_url=u'/%s/' % stripped)
+        except self.model.DoesNotExist:
             if raise404:
                 raise Http404
-            raise self.model.DoesNotExist
+            raise
 
     def page_for_path_or_404(self, path):
         """
@@ -115,7 +101,7 @@ class Page(Base):
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
     in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=200, blank=True,
-        help_text=_('Override the target URL for the navigation.'))
+        help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL.'))
     redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
         help_text=_('Target URL for automatic redirects.'))
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
@@ -137,21 +123,32 @@ class Page(Base):
         return u'%s (%s)' % (self.title, self.get_absolute_url())
 
     def save(self, *args, **kwargs):
-        super(Page, self).save(*args, **kwargs)
-        pages = self.get_descendants(include_self=True)
-        for page in pages:
-            page._generate_cached_url()
+        cached_page_urls = {}
 
-    def _generate_cached_url(self):
+        # determine own URL
         if self.override_url:
             self._cached_url = self.override_url
-        if self.is_root_node():
-            self._cached_url = u'/%s/' % (self.slug)
+        elif self.is_root_node():
+            self._cached_url = u'/%s/' % self.slug
         else:
-            self._cached_url = u'/%s/%s/' % ('/'.join([page.slug for page in self.get_ancestors()]), self.slug)
+            self._cached_url = u'%s%s/' % (self.parent._cached_url, self.slug)
 
-        # do not recurse into _generate_cached_url
-        super(Page, self).save()
+        cached_page_urls[self.id] = self._cached_url
+        super(Page, self).save(*args, **kwargs)
+
+        # make sure that we get the descendants back after their parents
+        pages = self.get_descendants().order_by('lft')
+        for page in pages:
+            if page.override_url:
+                page._cached_url = page.override_url
+            else:
+                # cannot be root node by definition
+                page._cached_url = u'%s%s/' % (
+                    cached_page_urls[page.parent_id],
+                    page.slug)
+
+            cached_page_urls[page.id] = page._cached_url
+            super(Page, page).save() # do not recurse
 
     def get_absolute_url(self):
         return self._cached_url
