@@ -167,5 +167,5 @@ Bundled content types
 * feincms.content.video.models.VideoContent
 
   A easy-to-use content that automatically generates flash video inclusion code
-  from a website link. Currently only youtube links are supported.
+  from a website link. Currently only youtube and vimeo links are supported.
 
