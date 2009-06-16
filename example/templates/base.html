@@ -1,0 +1,36 @@
+{% load feincms_tags feincms_page_tags %}
+<html>
+<head>
+    <title>{{ feincms_page.title }}</title>
+</head>
+<body>
+    <h1>{{ feincms_page.title }}</h1>
+
+    <h2>Toplevel navigation</h2>
+    {% feincms_navigation of feincms_page as toplevel level=1 %}
+    {% for p in toplevel %}
+        <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
+        {% if not forloop.last %}|{% endif %}
+    {% endfor %}
+
+    <h2>This page's navigation</h2>
+    {% if not feincms_page.is_root_node %}
+        <a href="{{ feincms_page.parent.get_absolute_url }}">Parent: {{ feincms_page.parent.title }}</a><br />
+    {% endif %}
+
+    Subpages:
+    {% feincms_navigation of feincms_page as toplevel level=1 %}
+    {% for p in feincms_page.children.all %}
+        <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
+        {% if not forloop.last %}|{% endif %}
+    {% empty %}
+        No subpages
+    {% endfor %}
+
+    <h2>Main content</h2>
+    {% feincms_render_region feincms_page "main" request %}
+
+    <h2>Sidebar content</h2>
+    {% feincms_render_region feincms_page "sidebar" request %}
+</body>
+</html>
