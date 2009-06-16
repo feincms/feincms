@@ -107,11 +107,6 @@ class Page(Base):
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
         editable=False, default='', db_index=True)
 
-    meta_keywords = models.TextField(_('meta keywords'), blank=True,
-        help_text=_('This will be prepended to the default keyword list.'))
-    meta_description = models.TextField(_('meta description'), blank=True,
-        help_text=_('This will be prepended to the default description.'))
-
     class Meta:
         ordering = ['tree_id', 'lft']
         verbose_name = _('page')

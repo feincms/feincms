@@ -138,6 +138,11 @@ the following extensions are available:
   mechanism. This extension is bound to change and is only in proof-of-concept
   stage currently.
 
+* seo
+
+  Adds fields to the page relevant for search engine optimization (SEO),
+  currently only meta keywords and description.
+
 * titles
 
   Adds additional title fields to the page model. You may not only define a
