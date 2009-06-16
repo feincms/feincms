@@ -184,6 +184,16 @@ class Base(models.Model):
         right, centered) through to the content type.
         """
 
+        try:
+            getattr(cls, '%s_set' % model.__name__.lower())
+            raise ImproperlyConfigured, 'Cannot create content type using %s.%s for %s.%s, because %s_set is already taken.' % (
+                model.__module__, model.__name__,
+                cls.__module__, cls.__name__,
+                model.__name__.lower())
+        except AttributeError:
+            # everything ok
+            pass
+
         if not hasattr(cls, '_feincms_content_model'):
             cls._create_content_base()
 
