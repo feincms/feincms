@@ -133,6 +133,11 @@ of context processors for this example to work.
 Bundled content types
 =====================
 
+* feincms.content.contactform.models.ContactForm
+
+  Simple contact form. Also serves as an example how forms might be used inside
+  content types.
+
 * feincms.content.file.models.FileContent
 * feincms.content.image.models.ImageContent
 
