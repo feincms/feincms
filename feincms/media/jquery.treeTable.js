@@ -331,6 +331,7 @@ function save_page_tree() {
         var item_id = "";
         var left = "";
         var right = "";
+        var level = "";
 
         // gather information
         for (key in classNames) {
@@ -355,6 +356,7 @@ function save_page_tree() {
             i = 0;
         }
         left = i++;
+        level = ancestor_tree_ids.length;
         if (is_parent) {
             ancestor_tree_ids.push(item_id);
             ancestor_indices.push(send_tree.length);
@@ -362,7 +364,7 @@ function save_page_tree() {
             right = i++;
         }
 
-        send_tree.push([tree_id, parent_id?parent_id:null, left, right, ancestor_tree_ids.length, item_id]);
+        send_tree.push([tree_id, parent_id?parent_id:null, left, right, level, item_id]);
     });
     while (ancestor_tree_ids.length>0) {
         send_tree[ancestor_indices.pop()][3] = i++;
