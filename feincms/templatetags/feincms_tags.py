@@ -1,4 +1,5 @@
 from django import template
+from feincms import utils
 from feincms.module.page.models import Page
 
 register = template.Library()
@@ -22,4 +23,15 @@ def feincms_render_content(content, request):
     """
 
     return content.render(request=request)
+
+
+@register.simple_tag
+def feincms_prefill_entry_list(entry_list, attrs):
+    """
+    {% feincms_prefill_entry_list queryset "authors,richtextcontent_set" %}
+    """
+
+    queryset = utils.prefill_entry_list(queryset, *(attrs.split(',')))
+    return u''
+
 
