@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.module.page.admin import PageAdmin
 from feincms.module.page.models import Page
 
 
@@ -18,4 +19,8 @@ def register():
         self._ext_translation_setup_request(request)
 
     Page.setup_request = _setup_request
+
+    PageAdmin.fieldsets[1][1]['fields'] += ('language',)
+    PageAdmin.list_display += ('language',)
+    PageAdmin.list_filter += ('language',)
 

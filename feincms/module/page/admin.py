@@ -12,7 +12,7 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
     fieldsets = (
         (None, {
             'fields': ('active', 'in_navigation', 'template', 'title', 'slug',
-                'parent', 'language'),
+                'parent'),
         }),
         (_('Other options'), {
             'classes': ('collapse',),
@@ -20,8 +20,8 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
         }),
         )
     list_display=('__unicode__', 'active', 'in_navigation',
-        'language', 'template')
-    list_filter=('active', 'in_navigation', 'language', 'template')
+        'template')
+    list_filter=('active', 'in_navigation', 'template')
     search_fields = ('title', 'slug', '_content_title', '_page_title',
         'meta_keywords', 'meta_description')
     prepopulated_fields={
