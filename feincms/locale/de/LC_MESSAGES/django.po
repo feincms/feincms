@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-15 16:30+0200\n"
+"POT-Creation-Date: 2009-06-16 23:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: models.py:21 models.py:39 content/rss/models.py:12
-#: module/medialibrary/models.py:13 module/page/models.py:98
+#: module/medialibrary/models.py:11 module/page/models.py:98
 msgid "title"
 msgstr "Titel"
 
@@ -70,8 +70,32 @@ msgstr "%s ändern"
 msgid "Database error"
 msgstr "Datenbankfehler"
 
+#: content/contactform/models.py:8
+msgid "name"
+msgstr "Name"
+
+#: content/contactform/models.py:9
+msgid "email"
+msgstr "E-Mail"
+
+#: content/contactform/models.py:10
+msgid "subject"
+msgstr "Betreff"
+
+#: content/contactform/models.py:13 content/raw/models.py:7
+msgid "content"
+msgstr "Inhalt"
+
+#: content/contactform/models.py:24
+msgid "contact form"
+msgstr "Kontaktformular"
+
+#: content/contactform/models.py:25
+msgid "contact forms"
+msgstr "Kontaktformulare"
+
 #: content/file/models.py:11 content/file/models.py:15
-#: module/medialibrary/models.py:37
+#: module/medialibrary/models.py:29
 msgid "file"
 msgstr "Datei"
 
@@ -87,34 +111,30 @@ msgstr "Bild"
 msgid "images"
 msgstr "Bilder"
 
-#: content/image/models.py:33 content/medialibrary/models.py:60
+#: content/image/models.py:33 content/medialibrary/models.py:61
 msgid "position"
 msgstr "Position"
 
-#: content/medialibrary/models.py:51 content/medialibrary/models.py:55
-#: module/medialibrary/models.py:44
+#: content/medialibrary/models.py:52 content/medialibrary/models.py:56
+#: module/medialibrary/models.py:36
 msgid "media file"
 msgstr "Mediendatei"
 
-#: content/medialibrary/models.py:56 module/medialibrary/models.py:45
+#: content/medialibrary/models.py:57 module/medialibrary/models.py:37
 msgid "media files"
 msgstr "Mediendateien"
 
-#: content/medialibrary/models.py:75
+#: content/medialibrary/models.py:88
 msgid "block"
 msgstr "Block"
 
-#: content/medialibrary/models.py:76
+#: content/medialibrary/models.py:89
 msgid "left"
 msgstr "Links"
 
-#: content/medialibrary/models.py:77
+#: content/medialibrary/models.py:90
 msgid "right"
 msgstr "Rechts"
-
-#: content/raw/models.py:7
-msgid "content"
-msgstr "Inhalt"
 
 #: content/raw/models.py:11
 msgid "raw content"
@@ -168,55 +188,55 @@ msgstr "RSS Feed"
 msgid "RSS feeds"
 msgstr "RSS Feeds"
 
-#: content/video/models.py:7
+#: content/video/models.py:15
 msgid "video link"
 msgstr "Video-Link"
 
-#: content/video/models.py:7
+#: content/video/models.py:16
 msgid ""
-"This should be a link to a youtube video, i.e.: http://www.youtube.com/watch?"
-"v=zmj1rpzDRZ0"
-msgstr ""
-"Dies sollte ein Link zu einem Youtube-Video sein, z.B.: http://www.youtube."
+"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
 "com/watch?v=zmj1rpzDRZ0"
+msgstr ""
+"Dies sollte ein Link zu einem Youtube- oder vimeo-Video sein, z.B.: http://www."
+"youtube.com/watch?v=zmj1rpzDRZ0"
 
-#: content/video/models.py:11
+#: content/video/models.py:20
 msgid "video"
 msgstr "Video"
 
-#: content/video/models.py:12
+#: content/video/models.py:21
 msgid "videos"
 msgstr "Videos"
 
-#: module/medialibrary/models.py:16
+#: module/medialibrary/models.py:14
 msgid "parent"
 msgstr "Übergeordnet"
 
-#: module/medialibrary/models.py:20
+#: module/medialibrary/models.py:18
 msgid "category"
 msgstr "Kategorie"
 
-#: module/medialibrary/models.py:21 module/medialibrary/models.py:41
+#: module/medialibrary/models.py:19 module/medialibrary/models.py:33
 msgid "categories"
 msgstr "Kategorien"
 
-#: module/medialibrary/models.py:38
+#: module/medialibrary/models.py:30
 msgid "created"
 msgstr "Erstellt"
 
-#: module/medialibrary/models.py:39
+#: module/medialibrary/models.py:31
 msgid "copyright"
 msgstr "Copyright"
 
-#: module/medialibrary/models.py:58
+#: module/medialibrary/models.py:43
 msgid "caption"
 msgstr "Legende"
 
-#: module/medialibrary/models.py:61
+#: module/medialibrary/models.py:46
 msgid "media file translation"
 msgstr "Mediendatei-Übersetzung"
 
-#: module/medialibrary/models.py:62
+#: module/medialibrary/models.py:47
 msgid "media file translations"
 msgstr "Mediendatei-Übersetzungen"
 
@@ -260,27 +280,11 @@ msgstr "Ziel-URL für automatische Weiterleitungen."
 msgid "Cached URL"
 msgstr "Zwischengespeicherte URL"
 
-#: module/page/models.py:110
-msgid "meta keywords"
-msgstr "Meta Begriffe"
-
-#: module/page/models.py:111
-msgid "This will be prepended to the default keyword list."
-msgstr "Diese Begriffe werden vor die Standard-Begriffsliste eingefügt."
-
 #: module/page/models.py:112
-msgid "meta description"
-msgstr "Meta Beschreibung"
-
-#: module/page/models.py:113
-msgid "This will be prepended to the default description."
-msgstr "Diese Beschreibung wird vor der Standard-Beschreibung eingefügt."
-
-#: module/page/models.py:117
 msgid "page"
 msgstr "Seite"
 
-#: module/page/models.py:118
+#: module/page/models.py:113
 msgid "pages"
 msgstr "Seiten"
 
@@ -294,6 +298,22 @@ msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr "Wähle das Modul aus, welches weitere Navigationspunkte erstellt."
+
+#: module/page/extensions/seo.py:8
+msgid "meta keywords"
+msgstr "Meta Begriffe"
+
+#: module/page/extensions/seo.py:9
+msgid "This will be prepended to the default keyword list."
+msgstr "Diese Begriffe werden vor die Standard-Begriffsliste eingefügt."
+
+#: module/page/extensions/seo.py:10
+msgid "meta description"
+msgstr "Meta Beschreibung"
+
+#: module/page/extensions/seo.py:11
+msgid "This will be prepended to the default description."
+msgstr "Diese Beschreibung wird vor der Standard-Beschreibung eingefügt."
 
 #: module/page/extensions/titles.py:8
 msgid "content title"
@@ -312,13 +332,17 @@ msgid "Page title for browser window. Same as title by default."
 msgstr ""
 "Seitentitel für das Browser-Fenster. Standardmässig gleich wie der Titel."
 
-#: module/page/extensions/translations.py:10
+#: module/page/extensions/translations.py:11
 msgid "language"
 msgstr "Sprache"
 
 #: templates/admin/content/mediafile/init.html:77
 msgid "Choose"
 msgstr "Auswählen"
+
+#: templates/admin/content/video/unknown.html:3
+msgid "Video from unknown portal"
+msgstr "Video einer unbekannten Portalseite"
 
 #: templates/admin/feincms/_messages.html:3
 msgid "Really delete item?"
@@ -350,7 +374,9 @@ msgstr "Template ändern"
 
 #: templates/admin/feincms/_messages.html:8
 msgid "Really change template? <br/>All content will be moved to main region."
-msgstr "Temlpate wirklich ändern? <br />Alle Inhalte werden in die erste Region verschoben."
+msgstr ""
+"Template wirklich ändern? <br />Alle Inhalte werden in die erste Region "
+"verschoben."
 
 #: templates/admin/feincms/item_editor.html:107
 msgid "Home"
@@ -409,3 +435,11 @@ msgstr "%(name)s hinzufügen"
 #: templates/admin/feincms/tree_editor.html:125
 msgid "Save tree"
 msgstr "Baum speichern"
+
+#: templates/content/contactform/form.html:8
+msgid "Submit"
+msgstr "Senden"
+
+#: templates/content/contactform/thanks.html:3
+msgid "Thanks!"
+msgstr "Danke!"
