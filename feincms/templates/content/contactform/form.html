@@ -1,0 +1,12 @@
+{% load i18n %}
+<div class="contactform">
+<form method="post" action=".">
+    <table>
+        {{ form }}
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" value="{% trans "Submit" %}" /></td>
+        </tr>
+    </table>
+</form>
+</div>
