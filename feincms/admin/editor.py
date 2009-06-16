@@ -115,7 +115,7 @@ class ItemEditorMixin(object):
 
 
 class TreeEditorMixin(object):
-    actions = None
+    actions = None # TreeEditorMixin does not like the checkbox column
 
     def changelist_view(self, request, extra_context=None):
         # handle AJAX requests
@@ -198,14 +198,13 @@ class TreeEditorMixin(object):
 
 
 
-# copied from django.contrib.admin.templatetags.admin_list
+# copied from django.contrib.admin.templatetags.admin_list and slightly modified
 def _boolean_icon(field_val):
     BOOLEAN_MAPPING = {True: 'yes', False: 'no', None: 'unknown'}
     return mark_safe(u'<img src="%simg/admin/icon-%s.gif" alt="%s" />' % (settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], field_val))
 
 
 def _properties(cl, result):
-    #[item.active, item.in_navigation, item.language, item.template.title]
     first = True
     pk = cl.lookup_opts.pk.attname
     EMPTY_CHANGELIST_VALUE = '(None)'

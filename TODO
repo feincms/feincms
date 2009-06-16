@@ -1,15 +1,11 @@
 This is in no way supposed to be a complete list of all open issues,
 it's nothing more than a brain dump.
 
-- Write more and better documentation
+- Write even more and even better documentation
 - Make shiny looking website -- maybe
 - Think about the hardcoded 'template' stuff in the change_view
-- The template tags feel fragile and ugly
 - Do not include more javascript than necessary -- we do not net all of jQuery.ui
-- Cleanup template code
 - It's not too bad to set the language on every page, but! the translation stuff
   does not work correctly. Think about the content model some more (or think on
   building a GUI which is logical)
-- Implement higher-level rendering methods so that the results can be more easily
-  cached (maybe in ContentProxy?)
 
