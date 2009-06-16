@@ -71,7 +71,7 @@ class MediaFileContent(models.Model):
             if expression.search(filename):
                 return identifier
 
-         return 'unknown'
+        return 'unknown'
 
     def render(self, **kwargs):
         return render_to_string([
