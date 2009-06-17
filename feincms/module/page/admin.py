@@ -16,7 +16,7 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
         }),
         (_('Other options'), {
             'classes': ('collapse',),
-            'fields': ('override_url', 'meta_keywords', 'meta_description'),
+            'fields': ('override_url',),
         }),
         )
     list_display=('__unicode__', 'active', 'in_navigation',
