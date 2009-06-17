@@ -20,7 +20,7 @@ def register():
 
     Page.setup_request = _setup_request
 
-    PageAdmin.fieldsets[1][1]['fields'] += ('language',)
+    PageAdmin.fieldsets[0][1]['fields'] += ('language',)
     PageAdmin.list_display += ('language',)
     PageAdmin.list_filter += ('language',)
 
