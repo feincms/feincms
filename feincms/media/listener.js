@@ -1,10 +1,11 @@
 $(document).ready(function(){
-    $(".navi_tab").livequery('click',function(){
-        $(".navi_tab").removeClass("tab_active").addClass("tab_inactive");
-        $(this).removeClass("tab_inactive").addClass("tab_active");
+    $("#main_wrapper > .navi_tab").click(function(){
+        var elem = $(this);
+        $("#main_wrapper > .navi_tab").removeClass("tab_active");
+        elem.addClass("tab_active");
         $("#main > div:visible").hide();
 
-        var tab_str = $(this).attr("id").substr(0,$(this).attr("id").length-4);
+        var tab_str = elem.attr("id").substr(0, elem.attr("id").length-4);
         $('#'+tab_str+'_body').show();
         ACTIVE_REGION = REGIONS.indexOf(tab_str);
 
@@ -18,8 +19,9 @@ $(document).ready(function(){
     });
 
     $(".order-machine-add-button").livequery('click', function(){
-        var modvar = $(this).prev().val();
-        var modname = $(this).prev().children("option:selected").html();
+        var select = $(this).prev();
+        var modvar = select.val();
+        var modname = select.children("option:selected").html();
         var total_forms = $('#id_'+modvar+'-TOTAL_FORMS');
         var last_id = parseInt(total_forms.val()) - 1;
         var form = $("#"+modvar+"_set_item_"+last_id);
@@ -28,14 +30,14 @@ $(document).ready(function(){
         total_forms.val(last_id+2);
         create_new_spare_form(form, modvar, last_id);
         region_append(ACTIVE_REGION, form, modname, modvar);
-        set_item_field_value(form,"region-choice-field", ACTIVE_REGION);
+        set_item_field_value(form, "region-choice-field", ACTIVE_REGION);
 
         init_contentblocks();
     });
 
     $(".order-machine-move-button").livequery('click', function(){
         var moveTo = $(this).prev().val();
-        move_item(REGIONS.indexOf(moveTo),$(".active-item"));
+        move_item(REGIONS.indexOf(moveTo), $("#main div.order-machine div.active-item"));
     });
 
     $(".item-delete").livequery('click',function(){

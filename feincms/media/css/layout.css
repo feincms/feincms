@@ -21,19 +21,18 @@
     border: 1px solid #aaa;
     border-bottom:none;
     min-width:100px;
-}
-.tab_active {
-    height:16px;
-    font-weight: bold;
-    background-image:url('../img/default-bg.gif');
-    color: white;
-}
-.tab_inactive {
     margin-top:4px;
     height:12px;
     font-weight: normal;
     background-image:none;
     color: black;
+}
+.tab_active {
+    margin-top: 0;
+    height:16px;
+    font-weight: bold;
+    background-image:url('../img/default-bg.gif');
+    color: white;
 }
 #main_wrapper {margin-left:15px;}
 #main {

@@ -140,7 +140,9 @@
 </div>
 <div id="main_wrapper">
     <div class="navi_tab tab_active" id="settings_tab">{% trans "Properties" %}</div>
-    {% for region in object.template.regions.all %}<div class="navi_tab tab_inactive" id="{{ region.key }}_tab">{{ region.title }}</div>{% endfor %}
+    {% for region in object.template.regions.all %}
+        <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
+    {% endfor %}
     <div id="main">
         <div id="settings_body">
             <table>
