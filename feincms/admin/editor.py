@@ -143,10 +143,16 @@ class TreeEditorMixin(object):
         if not self.has_change_permission(request, None):
             raise PermissionDenied
         try:
-            self.changelist = ChangeList(request, self.model, self.list_display,
-                self.list_display_links, self.list_filter, self.date_hierarchy,
-                self.search_fields, self.list_select_related, self.list_per_page,
-                self.list_editable, self)
+            if django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1):
+                self.changelist = ChangeList(request, self.model, self.list_display,
+                    self.list_display_links, self.list_filter, self.date_hierarchy,
+                    self.search_fields, self.list_select_related, self.list_per_page,
+                    self)
+            else:
+                self.changelist = ChangeList(request, self.model, self.list_display,
+                    self.list_display_links, self.list_filter, self.date_hierarchy,
+                    self.search_fields, self.list_select_related, self.list_per_page,
+                    self.list_editable, self)
         except IncorrectLookupParameters:
             # Wacky lookup parameters were given, so redirect to the main
             # changelist page, without parameters, and pass an 'invalid=1'
