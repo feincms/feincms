@@ -70,6 +70,7 @@
         $(".order-machine").sortable({
             handle: '.handle',
             helper: 'clone',
+            placeholder: 'highlight',
             stop: function(event, ui) {
                 richify_poor($(ui.item));
             }
