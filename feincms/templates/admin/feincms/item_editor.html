@@ -55,11 +55,9 @@
             var elem = $(this);
 
             if (!(elem.hasClass("header"))) {
-                elem.find("select[name$=-region]").addClass("region-choice-field").parents("tr").hide();
+                elem.find("input[name$=-region]").addClass("region-choice-field");
                 elem.find("input[name$=-DELETE]").addClass("delete-field").parents("tr").hide();
-                elem.find("input[name$=-ordering]").addClass("order-field").parents("tr").hide();
-                elem.find("input[name$=-id]").hide().prev().hide();
-                elem.find("input[name$=-parent]").hide().prev().hide();
+                elem.find("input[name$=-ordering]").addClass("order-field");
 
                 var region_id = elem.find(".region-choice-field").val();
                 region_id = REGION_MAP.indexOf(region_id);

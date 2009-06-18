@@ -21,9 +21,16 @@ from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import get_date_formats, get_partial_date_formats, ugettext_lazy as _
 
+from feincms.models import Region
 
 
 FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
+
+
+class ItemEditorForm(forms.ModelForm):
+    region = forms.ModelChoiceField(queryset=Region.objects.all(),
+        widget=forms.HiddenInput())
+    ordering = forms.IntegerField(widget=forms.HiddenInput())
 
 
 class ItemEditorMixin(object):
@@ -56,7 +63,7 @@ class ItemEditorMixin(object):
         inline_formset_types = [(
             content_type,
             inlineformset_factory(self.model, content_type, extra=1,
-                form=getattr(content_type, 'feincms_item_editor_form', forms.ModelForm))
+                form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm))
             ) for content_type in self.model._feincms_content_types]
 
         opts = self.model._meta

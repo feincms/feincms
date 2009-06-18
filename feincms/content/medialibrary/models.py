@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.admin.editor import ItemEditorForm
 from feincms.module.medialibrary.models import MediaFile
 
 
@@ -31,7 +32,7 @@ class MediaFileWidget(forms.TextInput):
         return inputfield
 
 
-class MediaFileContentAdminForm(forms.ModelForm):
+class MediaFileContentAdminForm(ItemEditorForm):
     mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.all(),
         widget=MediaFileWidget)
 
