@@ -10,8 +10,8 @@ function region_append(region, obj, modname) {
     wrp.push('</div><div class="item-content"></div></div>');
 
     // move content into new place (append actually moves the node here)
-    $("#"+REGIONS[region]+"_body").children(".order-machine").append(wrp.join(""))
-        .children(".order-item:last").children(".item-content").append(obj);
+    $("#"+REGIONS[region]+"_body").children("div.order-machine").append(wrp.join(""))
+        .children("div.order-item:last").children("div.item-content").append(obj);
 }
 
 function create_new_spare_form(form, modvar, last_id) {
@@ -33,13 +33,13 @@ function set_item_field_value(item, field, value) {
         item.find("."+field).val(REGION_MAP[value]);
 
         old_region_item = $("#"+REGIONS[old_region_id]+"_body");
-        if (old_region_item.children(".order-machine").children().length == 0)
-            old_region_item.children(".empty-machine-msg").show();
+        if (old_region_item.children("div.order-machine").children().length == 0)
+            old_region_item.children("div.empty-machine-msg").show();
         else
-            old_region_item.children(".empty-machine-msg").hide();
+            old_region_item.children("div.empty-machine-msg").hide();
 
         new_region_item = $("#"+REGIONS[value]+"_body");
-        new_region_item.children(".empty-machine-msg").hide();
+        new_region_item.children("div.empty-machine-msg").hide();
     }
     else
         item.find("."+field).val(value);
@@ -47,44 +47,44 @@ function set_item_field_value(item, field, value) {
 
 function move_item (region_id, item) {
     poorify_rich(item);
-    $("#"+REGIONS[region_id]+"_body").children(".order-machine").append(item);
+    $("#"+REGIONS[region_id]+"_body").children("div.order-machine").append(item);
     set_item_field_value(item, "region-choice-field", region_id);
     richify_poor(item);
 }
 
 function poorify_rich(item){
-    item.children(".item-content").hide();
+    item.children("div.item-content").hide();
     if (item.find("div[id^=richtext]").length > 0) {
         var editor_id = item.find(".mceEditor").prev().attr("id");
-        tinyMCE.execCommand('mceRemoveControl',false,editor_id);
+        tinyMCE.execCommand('mceRemoveControl', false, editor_id);
     }
 }
 function richify_poor(item){
-    item.children(".item-content").show();
+    item.children("div.item-content").show();
     if (item.find("div[id^=richtext]").length > 0) {
         var editor_id = item.find('textarea[name*=richtext]:visible').attr("id");
-        tinyMCE.execCommand('mceAddControl',false,editor_id);
+        tinyMCE.execCommand('mceAddControl', false, editor_id);
     }
 }
 
 function zucht_und_ordnung(move_item) {
     for (var i=0; i<REGIONS.length;i++) {
-        var container = $("#"+REGIONS[i]+"_body .order-machine");
+        var container = $("#"+REGIONS[i]+"_body div.order-machine");
         for (var j=0; j<container.children().length; j++) {
             if (move_item)
-                container.find(".order-field[value="+j+"]").parents(".order-item").appendTo(container);
+                container.find("input.order-field[value="+j+"]").parents("div.order-item").appendTo(container);
             else
-                set_item_field_value(container.find(".order-item:eq("+j+")"),"order-field",j);
+                set_item_field_value(container.find("div.order-item:eq("+j+")"), "order-field", j);
         }
     }
 }
 
 function attach_dragdrop_handlers() {
     // hide content on drag n drop
-    $(".handle").mousedown(function(){
-        poorify_rich($(this).parents(".order-item"));
+    $("#main img.handle").mousedown(function(){
+        poorify_rich($(this).parents("div.order-item"));
     });
-    $(".handle").mouseup(function(){
-        richify_poor($(this).parents(".order-item"));
+    $("#main img.handle").mouseup(function(){
+        richify_poor($(this).parents("div.order-item"));
     });
 }

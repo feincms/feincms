@@ -19,11 +19,12 @@
 
     {% include "admin/feincms/_messages.html" %}
 
-    ancestors = [{% for item in object_list %}'{{ item.parent_id|default_if_none:"0" }}'{% if not forloop.last %},{% endif %} {% endfor %}];
+    ancestors = [{% for item in object_list %}'{{ item.parent_id|default_if_none:"0" }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
 
     tablestr = '';
-    {% for item, title, item_properties in tree_editor.object_list %}tablestr += add_row({{ forloop.counter }}, {{ item.id }}, "{{ item.parent_id|default_if_none:"-1" }}", "{{ title|escapejs }}", [{% for property in item_properties %}"{{ property|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}]);
-    {% endfor %}
+    {% for item, title, item_properties in tree_editor.object_list %}
+    tablestr += add_row({{ forloop.counter }}, {{ item.id }}, "{{ item.parent_id|default_if_none:"-1" }}", "{{ title|escapejs }}",
+        [{% for property in item_properties %}"{{ property|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}]);{% endfor %}
 
     function add_row(node_id, item_id, parent_id, item_title, attrs) {
         var str = '<tr id="node-' + node_id + '" class="item-id-' + item_id + ' ';

@@ -18,7 +18,7 @@ $(document).ready(function(){
         window.location.hash = '#'+tab_str+'_tab';
     });
 
-    $(".order-machine-add-button").livequery('click', function(){
+    $(".order-machine-add-button").click(function(){
         var select = $(this).prev();
         var modvar = select.val();
         var modname = select.children("option:selected").html();
@@ -36,7 +36,7 @@ $(document).ready(function(){
         init_contentblocks();
     });
 
-    $(".order-machine-move-button").livequery('click', function(){
+    $(".order-machine-move-button").click(function(){
         var moveTo = $(this).prev().val();
         move_item(REGIONS.indexOf(moveTo), $("#main div.order-machine div.active-item"));
     });
@@ -54,21 +54,21 @@ $(document).ready(function(){
         });
     });
 
-    $(".change-template").livequery('click',function(){
+    $(".change-template").click(function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
         jConfirm(CHANGE_TEMPLATE_MESSAGES[1], CHANGE_TEMPLATE_MESSAGES[0], function(r) {
             if (r==true) {
                 var items = $(".panel").children(".order-machine").children();
                 move_item(0, items);
-                $(".submit_form").click();
+                $("#overview input.submit_form").click();
             } else {
                 $(".popup_bg").remove();
             }
         });
     });
 
-    $(".item-minimize").livequery('click',function(){
+    $("div.item-minimize").livequery('click',function(){
         var item = $(this).parent().next();
         if (item.is(":visible")) {
             $(this).html('<img src="'+IMG_ARROW_RIGHT_PATH+'" />');
@@ -79,12 +79,12 @@ $(document).ready(function(){
         }
     });
 
-    $(".order-item").livequery('click',function(){
+    $("div.order-item").livequery('click',function(){
         $(".order-item.active-item").removeClass("active-item");
         $(this).addClass("active-item");
     });
 
-    $(".submit_form").livequery('click',function(){
+    $("input.submit_form").livequery('click',function(){
         zucht_und_ordnung(false);
         var form = $(this).parents('form');
         form.attr('action', form.attr('action')+window.location.hash);
