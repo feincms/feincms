@@ -1,5 +1,6 @@
 import re
 
+import django
 from django import forms, template
 from django.conf import settings
 from django.contrib import admin
