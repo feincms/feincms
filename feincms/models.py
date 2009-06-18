@@ -165,6 +165,9 @@ class Base(models.Model):
         # list of concrete content types
         cls._feincms_content_types = []
 
+        # list of item editor context processors
+        cls.feincms_item_editor_context_processors = []
+
         # list of templates which should be included in the item editor
         cls.feincms_item_editor_includes = {}
 
@@ -231,6 +234,10 @@ class Base(models.Model):
         else:
             for k, v in kwargs.items():
                 setattr(new_type, k, v)
+
+        if hasattr(model, 'feincms_item_editor_context_processors'):
+            cls.feincms_item_editor_context_processors.extend(
+                model.feincms_item_editor_context_processors)
 
         # collect item editor includes from the content type
         if hasattr(model, 'feincms_item_editor_includes'):

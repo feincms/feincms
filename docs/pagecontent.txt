@@ -159,6 +159,9 @@ Bundled content types
   a few styles activated. The TinyMCE javascript files are not included,
   you need to put them in the right place on your own.
 
+  Please note that you should set the TINYMCE_JS_URL inside your settings,
+  otherwise settings.MEDIA_URL + 'js/tiny_mce/tiny_mce.js' will be used.
+
 * feincms.content.rss.models.RSSContent
 
   A feed reader widget. This also servers as an example how to build a content

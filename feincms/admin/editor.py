@@ -111,7 +111,8 @@ class ItemEditorMixin(object):
             'admin/feincms/%s/%s/item_editor.html' % (app_label, opts.object_name.lower()),
             'admin/feincms/%s/item_editor.html' % app_label,
             'admin/feincms/item_editor.html',
-            ], context, context_instance=template.RequestContext(request))
+            ], context, context_instance=template.RequestContext(request,
+                processors=self.model.feincms_item_editor_context_processors))
 
 
 class TreeEditorMixin(object):

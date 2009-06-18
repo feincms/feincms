@@ -59,6 +59,11 @@ Customizing the individual content type forms
 Customizing the individual content type editors is easily possible through two
 settings on the content type model itself:
 
+* feincms_item_editor_context_processors:
+
+  A list of callables using which you may add additional values to the item
+  editor templates.
+
 * feincms_item_editor_form:
 
   You can specify the base class which should be used for the content type
