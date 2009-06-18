@@ -79,4 +79,12 @@ function zucht_und_ordnung(move_item) {
     }
 }
 
-
+function attach_dragdrop_handlers() {
+    // hide content on drag n drop
+    $(".handle").mousedown(function(){
+        poorify_rich($(this).parents(".order-item"));
+    });
+    $(".handle").mouseup(function(){
+        richify_poor($(this).parents(".order-item"));
+    });
+}

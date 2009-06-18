@@ -75,14 +75,8 @@
                 richify_poor($(ui.item));
             }
         });
-        // hide content on drag n drop
-        $(".handle").mousedown(function(){
-            poorify_rich($(this).parents(".order-item"));
-        });
-        $(".handle").mouseup(function(){
-            richify_poor($(this).parents(".order-item"));
-        });
-        // convert text areas to rich text editors.
+
+        attach_dragdrop_handlers();
         init_contentblocks();
 
         if(window.location.hash) {

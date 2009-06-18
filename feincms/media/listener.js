@@ -32,6 +32,7 @@ $(document).ready(function(){
         region_append(ACTIVE_REGION, form, modname, modvar);
         set_item_field_value(form, "region-choice-field", ACTIVE_REGION);
 
+        attach_dragdrop_handlers();
         init_contentblocks();
     });
 
