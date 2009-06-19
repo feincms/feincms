@@ -88,6 +88,8 @@
         zucht_und_ordnung(true);
 
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
+
+        $('#inlines').hide();
     });
 </script>
 
@@ -181,12 +183,11 @@
 </div>
 
 
-<div id="inlines" style="display:none">
+<div id="inlines">
 {% for formset in inline_formsets %}
     <div id="{{ formset.rel_name }}">
         <div class="header">
             {{ formset.management_form }}
-            <h3>{{ formset.rel_name }}</h3>
         </div>
         {% for form in formset.forms %}
             <div id="{{ formset.rel_name }}_item_{{ forloop.counter0 }}">

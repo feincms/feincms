@@ -1,7 +1,7 @@
 function region_append(region, obj, modname) {
     var wrp = [];
     wrp.push('<div class="order-item"><div class="item-header">');
-    if (obj.children(":visible").length > 0)
+    if (obj.children(':visible').length > 0)
         wrp.push('<div class="item-minimize"><img src="'+IMG_ARROW_DOWN_PATH+'" /></div>');
     else
         wrp.push('<div class="item-minimize-disabled"><img src="'+IMG_CIRCLE_PATH+'" /></div>');
