@@ -10,9 +10,10 @@ from django.contrib.admin.util import unquote
 from django.core import serializers
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connection, transaction, models
+from django.db.models import loading
 from django.forms.formsets import all_valid
 from django.forms.models import inlineformset_factory
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.utils import dateformat, simplejson
 from django.utils.html import escape, conditional_escape
@@ -26,6 +27,7 @@ from feincms.models import Region
 
 
 FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
+FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 
 
 class ItemEditorForm(forms.ModelForm):
@@ -43,10 +45,55 @@ class ItemEditorMixin(object):
         This does not need to (and should not) include ``template''
     """
 
+    def _frontend_editing_view(self, request, cms_id, content_type, content_id):
+        try:
+            model_cls = loading.get_model(self.model._meta.app_label, content_type)
+            obj = model_cls.objects.get(parent=cms_id, id=content_id)
+        except:
+            raise Http404
+
+        form_class_base = getattr(model_cls, 'feincms_item_editor_form', ItemEditorForm)
+
+        class ModelForm(form_class_base):
+            class Meta:
+                model = model_cls
+                exclude = ('parent', 'region', 'ordering')
+
+        del ModelForm.base_fields['region']
+        del ModelForm.base_fields['ordering']
+
+        if request.method=='POST':
+            form = ModelForm(request.POST, instance=obj)
+
+            if form.is_valid():
+                obj = form.save()
+
+                return render_to_response('admin/feincms/fe_editor_done.html', {
+                    'content': obj.render(request=request),
+                    'identifier': obj.fe_identifier(),
+                    'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
+                    })
+        else:
+            form = ModelForm(instance=obj)
+
+        return render_to_response('admin/feincms/fe_editor.html', {
+            'title': _('Change %s') % force_unicode(model_cls._meta.verbose_name),
+            'object': obj,
+            'form': form,
+            'is_popup': True,
+            'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
+            }, context_instance=template.RequestContext(request,
+                processors=self.model.feincms_item_editor_context_processors))
+
     def change_view(self, request, object_id, extra_context=None):
 
         if not hasattr(self.model, '_feincms_content_types') or not self.model._feincms_content_types:
             raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.model.__name__)
+
+        res = FRONTEND_EDITING_MATCHER.search(object_id)
+
+        if res:
+            return self._frontend_editing_view(request, res.group(1), res.group(2), res.group(3))
 
         class ModelForm(forms.ModelForm):
             class Meta:

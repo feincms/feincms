@@ -151,6 +151,9 @@ class Page(Base):
     def setup_request(self, request):
         request._feincms_page = self
 
+        if 'frontend_editing' in request.GET and request.user.has_module_perms('page'):
+            request.session['frontend_editing'] = request.GET['frontend_editing'] and True or False
+
     @classmethod
     def register_extensions(cls, *extensions):
         for ext in extensions:

@@ -5,6 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
+from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
@@ -148,10 +149,35 @@ class Base(models.Model):
 
             raise NotImplementedError
 
+        def fe_render(self, **kwargs):
+            """
+            Frontend Editing enabled renderer
+            """
+
+            if 'request' in kwargs:
+                request = kwargs['request']
+
+                if request.session and request.session.get('frontend_editing'):
+                    return render_to_string('admin/feincms/fe_box.html', {
+                        'content': self.render(**kwargs),
+                        'identifier': self.fe_identifier(),
+                        })
+
+            return self.render(**kwargs)
+
+        def fe_identifier(self):
+            return u'%s-%s-%s' % (
+                self.__class__.__name__.lower(),
+                self.parent_id,
+                self.id,
+                )
+
         attrs = {
             '__module__': cls.__module__,
             '__unicode__': __unicode__,
             'render': render,
+            'fe_render': fe_render,
+            'fe_identifier': fe_identifier,
             'Meta': Meta,
             'parent': models.ForeignKey(cls, related_name='%(class)s_set'),
             'region': models.ForeignKey(Region, related_name='%s_%%(class)s_set' % cls.__name__.lower()),
