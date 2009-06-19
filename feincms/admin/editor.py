@@ -58,7 +58,7 @@ class ItemEditorMixin(object):
 
             class Meta:
                 model = self.model
-                exclude = self.show_on_top+('template',)
+                exclude = self.show_on_top+('template', 'parent')
 
         # generate a formset type for every concrete content type
         inline_formset_types = [(
