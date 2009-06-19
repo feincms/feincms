@@ -101,7 +101,7 @@ class Page(Base):
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
     in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=200, blank=True,
-        help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL.'))
+        help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
     redirect_to = models.CharField(_('redirect to'), max_length=200, blank=True,
         help_text=_('Target URL for automatic redirects.'))
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,

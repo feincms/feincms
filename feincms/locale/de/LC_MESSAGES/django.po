@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-16 23:04+0200\n"
+"POT-Creation-Date: 2009-06-19 15:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,20 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:21 models.py:39 content/rss/models.py:12
+#: models.py:22 models.py:40 content/rss/models.py:12
 #: module/medialibrary/models.py:11 module/page/models.py:98
 msgid "title"
 msgstr "Titel"
 
-#: models.py:22
+#: models.py:23
 msgid "key"
 msgstr "Schlüssel"
 
-#: models.py:23
+#: models.py:24
 msgid "inherited"
 msgstr "Vererbt"
 
-#: models.py:24
+#: models.py:25
 msgid ""
 "Should the content be inherited by subpages if they do not define any "
 "content for this region?"
@@ -37,36 +37,36 @@ msgstr ""
 "Soll der Inhalt dieser Region durch Unterseiten geerbt werden, sofern diese "
 "keinen eigenen Inhalt definieren?"
 
-#: models.py:27
+#: models.py:28
 msgid "region"
 msgstr "Region"
 
-#: models.py:28 models.py:42
+#: models.py:29 models.py:43
 msgid "regions"
 msgstr "Regionen"
 
-#: models.py:40
+#: models.py:41
 msgid "path"
 msgstr "Pfad"
 
-#: models.py:46 models.py:66
+#: models.py:47 models.py:67
 msgid "template"
 msgstr "Template"
 
-#: models.py:47
+#: models.py:48
 msgid "templates"
 msgstr "Templates"
 
-#: models.py:158
+#: models.py:178
 msgid "ordering"
 msgstr "Sortierung"
 
-#: admin/editor.py:99
+#: admin/editor.py:81 admin/editor.py:155
 #, python-format
 msgid "Change %s"
 msgstr "%s ändern"
 
-#: admin/editor.py:149
+#: admin/editor.py:212
 msgid "Database error"
 msgstr "Datenbankfehler"
 
@@ -111,28 +111,28 @@ msgstr "Bild"
 msgid "images"
 msgstr "Bilder"
 
-#: content/image/models.py:33 content/medialibrary/models.py:61
+#: content/image/models.py:33 content/medialibrary/models.py:62
 msgid "position"
 msgstr "Position"
 
-#: content/medialibrary/models.py:52 content/medialibrary/models.py:56
+#: content/medialibrary/models.py:53 content/medialibrary/models.py:57
 #: module/medialibrary/models.py:36
 msgid "media file"
 msgstr "Mediendatei"
 
-#: content/medialibrary/models.py:57 module/medialibrary/models.py:37
+#: content/medialibrary/models.py:58 module/medialibrary/models.py:37
 msgid "media files"
 msgstr "Mediendateien"
 
-#: content/medialibrary/models.py:88
+#: content/medialibrary/models.py:89
 msgid "block"
 msgstr "Block"
 
-#: content/medialibrary/models.py:89
+#: content/medialibrary/models.py:90
 msgid "left"
 msgstr "Links"
 
-#: content/medialibrary/models.py:90
+#: content/medialibrary/models.py:91
 msgid "right"
 msgstr "Rechts"
 
@@ -144,15 +144,15 @@ msgstr "Roh-Inhalt"
 msgid "raw contents"
 msgstr "Roh-Inhalte"
 
-#: content/richtext/models.py:11
+#: content/richtext/models.py:19
 msgid "text"
 msgstr "Text"
 
-#: content/richtext/models.py:15
+#: content/richtext/models.py:23
 msgid "rich text"
 msgstr "Text"
 
-#: content/richtext/models.py:16
+#: content/richtext/models.py:24
 msgid "rich texts"
 msgstr "Texte"
 
@@ -197,8 +197,8 @@ msgid ""
 "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
 "com/watch?v=zmj1rpzDRZ0"
 msgstr ""
-"Dies sollte ein Link zu einem Youtube- oder vimeo-Video sein, z.B.: http://www."
-"youtube.com/watch?v=zmj1rpzDRZ0"
+"Dies sollte ein Link zu einem Youtube- oder vimeo-Video sein, z.B.: http://"
+"www.youtube.com/watch?v=zmj1rpzDRZ0"
 
 #: content/video/models.py:20
 msgid "video"
@@ -263,10 +263,12 @@ msgstr "Überschriebene URL"
 #: module/page/models.py:104
 msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
-"the end if it is a local URL."
+"the end if it is a local URL. This affects both the navigation and subpages' "
+"URLs."
 msgstr ""
 "Überschreibe die URL. Am Anfang und Ende muss ein / stehen, falls es sich um "
-"eine lokale URL handelt."
+"eine lokale URL handelt. Dieses Feld bestimmt die Navigation und die URLs "
+"von Unterseiten."
 
 #: module/page/models.py:105
 msgid "redirect to"
@@ -299,19 +301,19 @@ msgid ""
 "the navigation."
 msgstr "Wähle das Modul aus, welches weitere Navigationspunkte erstellt."
 
-#: module/page/extensions/seo.py:8
+#: module/page/extensions/seo.py:9
 msgid "meta keywords"
 msgstr "Meta Begriffe"
 
-#: module/page/extensions/seo.py:9
+#: module/page/extensions/seo.py:10
 msgid "This will be prepended to the default keyword list."
 msgstr "Diese Begriffe werden vor die Standard-Begriffsliste eingefügt."
 
-#: module/page/extensions/seo.py:10
+#: module/page/extensions/seo.py:11
 msgid "meta description"
 msgstr "Meta Beschreibung"
 
-#: module/page/extensions/seo.py:11
+#: module/page/extensions/seo.py:12
 msgid "This will be prepended to the default description."
 msgstr "Diese Beschreibung wird vor der Standard-Beschreibung eingefügt."
 
@@ -378,36 +380,37 @@ msgstr ""
 "Template wirklich ändern? <br />Alle Inhalte werden in die erste Region "
 "verschoben."
 
-#: templates/admin/feincms/item_editor.html:107
+#: templates/admin/feincms/fe_editor.html:16
+#: templates/admin/feincms/item_editor.html:132
+msgid "Save"
+msgstr "Speichern"
+
+#: templates/admin/feincms/item_editor.html:103
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/admin/feincms/item_editor.html:121
+#: templates/admin/feincms/item_editor.html:117
 msgid "View on site"
 msgstr "Auf der Webseite anzeigen"
 
-#: templates/admin/feincms/item_editor.html:131
-#: templates/admin/feincms/tree_editor.html:134
+#: templates/admin/feincms/item_editor.html:127
+#: templates/admin/feincms/tree_editor.html:137
 msgid "Delete"
 msgstr "Löschen"
 
 #: templates/admin/feincms/item_editor.html:136
-msgid "Save"
-msgstr "Speichern"
-
-#: templates/admin/feincms/item_editor.html:140
 msgid "Change Template"
 msgstr "Template ändern"
 
-#: templates/admin/feincms/item_editor.html:144
+#: templates/admin/feincms/item_editor.html:140
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: templates/admin/feincms/item_editor.html:155
+#: templates/admin/feincms/item_editor.html:153
 msgid "Region empty"
 msgstr "Region leer"
 
-#: templates/admin/feincms/item_editor.html:159
+#: templates/admin/feincms/item_editor.html:157
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
@@ -415,24 +418,24 @@ msgstr ""
 "Inhalt wird von der übergeordneten Seite geerbt. Füge Inhalt hinzu, um "
 "dieses Verhalten zu ändern"
 
-#: templates/admin/feincms/item_editor.html:168
+#: templates/admin/feincms/item_editor.html:166
 msgid "Add new item"
 msgstr "Neues Element hinzufügen"
 
-#: templates/admin/feincms/item_editor.html:175
+#: templates/admin/feincms/item_editor.html:173
 msgid "Move selected item to"
 msgstr "Element verschieben nach"
 
-#: templates/admin/feincms/item_editor.html:179
+#: templates/admin/feincms/item_editor.html:177
 msgid "OK"
 msgstr "OK"
 
-#: templates/admin/feincms/tree_editor.html:121
+#: templates/admin/feincms/tree_editor.html:124
 #, python-format
 msgid "Add %(name)s"
 msgstr "%(name)s hinzufügen"
 
-#: templates/admin/feincms/tree_editor.html:125
+#: templates/admin/feincms/tree_editor.html:128
 msgid "Save tree"
 msgstr "Baum speichern"
 
