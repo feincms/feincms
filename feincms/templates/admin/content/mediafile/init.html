@@ -70,7 +70,7 @@ function dismissAddAnotherPopup(win, newId, newRepr) {
 
 
 contentblock_init_handlers.push(function(){
-    $('.order-machine input[name$=-mediafile]:visible').each(function(){
+    $('input[name$=mediafile]:visible').each(function(){
         var elem = $(this);
 
         elem.siblings('span').remove().end();
@@ -80,7 +80,7 @@ contentblock_init_handlers.push(function(){
 $(function(){
     $('span.mediafile').livequery('click', function(){
         var name = id_to_windowname(this.id.replace(/^lookup_/, ''));
-        var win = window.open('../../../medialibrary/mediafile/?pop=1', name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+        var win = window.open('{% if frontend_editing %}../../{% endif %}../../../medialibrary/mediafile/?pop=1', name, 'height=500,width=800,resizable=yes,scrollbars=yes');
         win.focus();
         return false;
     });

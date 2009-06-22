@@ -63,7 +63,7 @@ class ItemEditorMixin(object):
         del ModelForm.base_fields['ordering']
 
         if request.method=='POST':
-            form = ModelForm(request.POST, instance=obj)
+            form = ModelForm(request.POST, instance=obj, prefix=content_type)
 
             if form.is_valid():
                 obj = form.save()
@@ -74,9 +74,10 @@ class ItemEditorMixin(object):
                     'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
                     })
         else:
-            form = ModelForm(instance=obj)
+            form = ModelForm(instance=obj, prefix=content_type)
 
         return render_to_response('admin/feincms/fe_editor.html', {
+            'frontend_editing': True,
             'title': _('Change %s') % force_unicode(model_cls._meta.verbose_name),
             'object': obj,
             'form': form,
