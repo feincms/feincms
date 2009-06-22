@@ -19,7 +19,7 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
             'fields': ('override_url',),
         }),
         )
-    list_display=('__unicode__', 'active', 'in_navigation',
+    list_display=('__unicode__', '_cached_url', 'active', 'in_navigation',
         'template')
     list_filter=('active', 'in_navigation', 'template')
     search_fields = ('title', 'slug', '_content_title', '_page_title',

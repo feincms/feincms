@@ -115,7 +115,7 @@ class Page(Base):
     objects = PageManager()
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.title, self.get_absolute_url())
+        return self.title
 
     def save(self, *args, **kwargs):
         cached_page_urls = {}
