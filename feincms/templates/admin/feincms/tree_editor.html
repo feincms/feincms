@@ -108,6 +108,21 @@
 
     });
 
+    function expandall(yesno) {
+        if(yesno) {
+            var elems = $('#sitetree tr.collapsed');
+
+            if(elems.length)
+                elems.expand().removeClass('collapsed').addClass('expanded');
+        } else {
+            var elems = $('#sitetree tr.expanded');
+
+            for(var i=elems.length; i>=0; i--)
+                $(elems[i]).collapse().removeClass('expanded').addClass('collapsed');
+        }
+
+        return false;
+    }
 </script>
 
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}css/layout.css" />
@@ -128,6 +143,12 @@
     <input type="button" value="{% trans "Save tree" %}" class="save_tree" style="float:right;margin:0 1px 0 0" />
 
     <div id="sitetree-wrapper" style="clear:both">
+
+    <div style="padding-bottom: 5px;">
+        <a href="#" onclick="return expandall(1)">{% trans "Expand all" %}</a>
+        <a href="#" onclick="return expandall(0)">{% trans "Collapse all" %}</a>
+    </div>
+
     <table id="sitetree" border="1">
         <thead>
         <tr id="table_header">
