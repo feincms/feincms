@@ -12,50 +12,35 @@ from django.utils.translation import ugettext_lazy as _
 import mptt
 
 
-class Region(models.Model):
-    """
-    A template region which will be a container for several page contents.
-
-    Often used regions might be "main" and "sidebar"
-    """
-
-    title = models.CharField(_('title'), max_length=50, unique=True)
-    key = models.CharField(_('key'), max_length=20, unique=True)
-    inherited = models.BooleanField(_('inherited'), default=False,
-        help_text=_('Should the content be inherited by subpages if they do not define any content for this region?'))
-
-    class Meta:
-        verbose_name = _('region')
-        verbose_name_plural = _('regions')
+class Region(object):
+    def __init__(self, key, title, *args):
+        self.key = key
+        self.title = title
+        self.inherited = args and args[0]=='inherited'
 
     def __unicode__(self):
-        return self.title
+        return unicode(self.title)
 
 
-class Template(models.Model):
-    """
-    A template file on the disk which can be used by pages to render themselves.
-    """
+class Template(object):
+    def __init__(self, title, path, regions, key=None):
+        if not key:
+            key = path
 
-    title = models.CharField(_('title'), max_length=200)
-    path = models.CharField(_('path'), max_length=200)
-    regions = models.ManyToManyField(Region, related_name='templates',
-        verbose_name=_('regions'))
+        self.key = key
+        self.title = title
+        self.path = path
 
-    class Meta:
-        ordering = ['title']
-        verbose_name = _('template')
-        verbose_name_plural = _('templates')
+        def _make_region(data):
+            if isinstance(data, Region):
+                return data
+            return Region(*data)
+
+        self.regions = [_make_region(row) for row in regions]
+        self.regions_dict = dict((r.key, r) for r in self.regions)
 
     def __unicode__(self):
-        return self.title
-
-
-def first_template():
-    try:
-        return Template.objects.all()[0]
-    except IndexError:
-        return None
+        return unicode(self.title)
 
 
 class Base(models.Model):
@@ -63,11 +48,55 @@ class Base(models.Model):
     This is the base class for your CMS models.
     """
 
-    template = models.ForeignKey(Template, default=first_template,
-        verbose_name=_('template'))
-
     class Meta:
         abstract = True
+
+    @classmethod
+    def register_templates(cls, *templates):
+        """
+
+        Example:
+            Page.register_templates({
+                'key': 'base',
+                'title': _('Standard template'),
+                'path': 'feincms_base.html',
+                'regions': (
+                    ('main', _('Main content area')),
+                    ('sidebar', _('Sidebar'), 'inherited'),
+                    ),
+                }, {
+                'key': '2col',
+                'title': _('Template with two columns'),
+                'path': 'feincms_2col.html',
+                'regions': (
+                    ('col1', _('Column one')),
+                    ('col2', _('Column two')),
+                    ('sidebar', _('Sidebar'), 'inherited'),
+                    ),
+                })
+        """
+
+        instances = {}
+        choices = []
+
+        for template in templates:
+            if not isinstance(template, Template):
+                template = Template(**template)
+
+            instances[template.key] = template
+            choices.append((template.key, template.title))
+
+        cls.TEMPLATE_CHOICES = choices
+
+        cls.add_to_class('template_key', models.CharField(_('template'), max_length=20,
+            choices=cls.TEMPLATE_CHOICES, default=choices[0][0]))
+
+        cls._feincms_templates = instances
+
+        def _template(self):
+            return self._feincms_templates[self.template_key]
+
+        cls.template = property(_template)
 
     @property
     def content(self):
@@ -91,15 +120,14 @@ class Base(models.Model):
         # find all concrete content type tables which have at least one entry for
         # the current CMS object and region
         sql = ' UNION '.join([
-            'SELECT %d, COUNT(id) FROM %s WHERE parent_id=%s AND region_id=%s' % (
+            'SELECT %d, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
                 idx,
                 cls._meta.db_table,
-                self.pk,
-                region.id) for idx, cls in enumerate(self._feincms_content_types)])
+                self.pk) for idx, cls in enumerate(self._feincms_content_types)])
 
         from django.db import connection
         cursor = connection.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, [region.key]*len(self._feincms_content_types))
 
         counts = [row[1] for row in cursor.fetchall()]
 
@@ -112,7 +140,7 @@ class Base(models.Model):
                 contents += list(
                     self._feincms_content_types[idx].objects.filter(
                         parent=self,
-                        region=region).select_related('parent', 'region'))
+                        region=region.key).select_related('parent', 'region'))
 
         return contents
 
@@ -180,7 +208,7 @@ class Base(models.Model):
             'fe_identifier': fe_identifier,
             'Meta': Meta,
             'parent': models.ForeignKey(cls, related_name='%(class)s_set'),
-            'region': models.ForeignKey(Region, related_name='%s_%%(class)s_set' % cls.__name__.lower()),
+            'region': models.CharField(max_length=20),
             'ordering': models.IntegerField(_('ordering'), default=0),
             }
 
@@ -298,8 +326,8 @@ class ContentProxy(object):
         item = self.__dict__['item']
 
         try:
-            region = item.template.regions.get(key=attr)
-        except Region.DoesNotExist:
+            region = item.template.regions_dict[attr]
+        except KeyError:
             return []
 
         def collect_items(obj):

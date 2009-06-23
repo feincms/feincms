@@ -40,9 +40,9 @@
 
     REGIONS = [];
     REGION_MAP = [];
-    {% for region in object.template.regions.all %}
+    {% for region in object.template.regions %}
         REGIONS.push('{{ region.key }}');
-        REGION_MAP.push('{{ region.id }}');
+        REGION_MAP.push('{{ region.key }}');
     {% endfor %}
     ACTIVE_REGION = 0;
 
@@ -78,7 +78,6 @@
         });
 
         attach_dragdrop_handlers();
-        init_contentblocks();
 
         if(window.location.hash) {
             $(window.location.hash).trigger('click');
@@ -91,6 +90,8 @@
 
         $('#inlines').hide();
     });
+
+    $(window).load(function(){init_contentblocks()});
 </script>
 
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}css/layout.css" />
@@ -131,14 +132,14 @@
     {% endfor %}
     <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
     <hr/>
-    {{ object_form.template.label_tag }}
-    <span>{{ object_form.template }}{{ object_form.template.errors }}</span>
+    {{ object_form.template_key.label_tag }}
+    <span>{{ object_form.template_key }}{{ object_form.template_key.errors }}</span>
     <input type="button" class="change-template" value="{% trans 'Change Template' %}" />
     <hr/>
 </div>
 <div id="main_wrapper">
     <div class="navi_tab tab_active" id="settings_tab">{% trans "Properties" %}</div>
-    {% for region in object.template.regions.all %}
+    {% for region in object.template.regions %}
         <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
     {% endfor %}
     <div id="main">
@@ -147,7 +148,7 @@
                 {{ settings_fieldset.as_table }}
             </table>
         </div>
-        {% for region in object.template.regions.all %}
+        {% for region in object.template.regions %}
         <div id="{{ region.key }}_body" class="panel">
             <div class="empty-machine-msg">
                 {% trans "Region empty" %}
@@ -172,7 +173,7 @@
                 <div class="control-unit">
                     <span>{% trans "Move selected item to" %}:</span>  <br/>
                     <select name="order-machine-move-select">
-                    {% for r in object.template.regions.all %} {% ifnotequal region r %} <option value="{{ r.key }}">{{ r.title }}</option> {% endifnotequal %} {% endfor %}
+                    {% for r in object.template.regions %} {% ifnotequal region r %} <option value="{{ r.key }}">{{ r.title }}</option> {% endifnotequal %} {% endfor %}
                     </select>
                     <input type="button" class="order-machine-move-button button" value="{% trans "OK" %}" />
                 </div>

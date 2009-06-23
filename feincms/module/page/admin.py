@@ -11,7 +11,7 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
     # for the change_view which is completely customized anyway
     fieldsets = (
         (None, {
-            'fields': ('active', 'in_navigation', 'template', 'title', 'slug',
+            'fields': ('active', 'in_navigation', 'template_key', 'title', 'slug',
                 'parent'),
         }),
         (_('Other options'), {
@@ -21,7 +21,7 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
         )
     list_display=('__unicode__', '_cached_url', 'active', 'in_navigation',
         'template')
-    list_filter=('active', 'in_navigation', 'template')
+    list_filter=('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', '_content_title', '_page_title',
         'meta_keywords', 'meta_description')
     prepopulated_fields={

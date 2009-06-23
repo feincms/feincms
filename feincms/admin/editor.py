@@ -31,8 +31,7 @@ FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 
 
 class ItemEditorForm(forms.ModelForm):
-    region = forms.ModelChoiceField(queryset=Region.objects.all(),
-        widget=forms.HiddenInput())
+    region = forms.CharField(widget=forms.HiddenInput())
     ordering = forms.IntegerField(widget=forms.HiddenInput())
 
 
@@ -106,7 +105,7 @@ class ItemEditorMixin(object):
 
             class Meta:
                 model = self.model
-                exclude = self.show_on_top+('template', 'parent')
+                exclude = self.show_on_top+('template_key', 'parent')
 
         # generate a formset type for every concrete content type
         inline_formset_types = [(
