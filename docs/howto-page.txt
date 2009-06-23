@@ -25,6 +25,16 @@ by adding the following lines somewhere into your project, for example in a
     from feincms.content.richtext.models import RichTextContent
     from feincms.content.image.models import ImageContent
 
+    Page.register_templates({
+        'key': 'base',
+        'title': 'Standard template',
+        'path': 'base.html',
+        'regions': (
+            ('main', 'Main content area'),
+            ('sidebar', 'Sidebar', 'inherited'),
+            ),
+        })
+
     Page.create_content_type(RichTextContent)
     Page.create_content_type(ImageContent)
 
