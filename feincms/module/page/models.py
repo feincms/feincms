@@ -35,7 +35,7 @@ class PageManager(models.Manager):
         stripped = path.strip('/')
 
         try:
-            return self.active().get(_cached_url=u'/%s/' % stripped)
+            return self.active().get(_cached_url=stripped and u'/%s/' % stripped or '/')
         except self.model.DoesNotExist:
             if raise404:
                 raise Http404
