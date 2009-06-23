@@ -70,7 +70,7 @@ function dismissAddAnotherPopup(win, newId, newRepr) {
 
 
 contentblock_init_handlers.push(function(){
-    $('input[name$=mediafile]:visible').each(function(){
+    $('.order-machine input[name$=mediafile], #frontend_editor input[name$=mediafile]').each(function(){
         var elem = $(this);
 
         elem.siblings('span').remove().end();
