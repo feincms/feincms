@@ -8,9 +8,14 @@ from feincms.module.page.models import Page
 
 
 def register():
+    primary_language = settings.LANGUAGES[0][0]
+
     Page.add_to_class('language', models.CharField(_('language'), max_length=10,
         choices=settings.LANGUAGES))
-    Page.add_to_class('translations', models.ManyToManyField('self', blank=True))
+    Page.add_to_class('translation_of', models.ForeignKey('self',
+        blank=True, null=True, verbose_name='translation of',
+        related_name='translations',
+        limit_choices_to={'language': primary_language}))
 
     Page._ext_translation_setup_request = Page.setup_request
     def _setup_request(self, request):
@@ -20,7 +25,26 @@ def register():
 
     Page.setup_request = _setup_request
 
-    PageAdmin.fieldsets[0][1]['fields'] += ('language',)
-    PageAdmin.list_display += ('language',)
-    PageAdmin.list_filter += ('language',)
+    def available_translations(self):
+        if self.language==primary_language:
+            return self.translations.all()
+        elif self.translation_of:
+            return [self.translation_of]+list(self.translation_of.translations.exclude(
+                language=self.language))
+        else:
+            return []
 
+    Page.available_translations = available_translations
+
+    def available_translations_admin(self):
+        translations = self.available_translations()
+
+        return u', '.join(
+            u'<a href="%s/">%s</a>' % (page.id, page.language.upper()) for page in translations)
+
+    available_translations_admin.allow_tags = True
+    available_translations_admin.short_description = _('available translations')
+    Page.available_translations_admin = available_translations_admin
+
+    PageAdmin.fieldsets[0][1]['fields'] += ('language',)
+    PageAdmin.list_display += ('language', 'available_translations_admin')
