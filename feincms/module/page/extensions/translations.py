@@ -48,3 +48,4 @@ def register():
 
     PageAdmin.fieldsets[0][1]['fields'] += ('language',)
     PageAdmin.list_display += ('language', 'available_translations_admin')
+    PageAdmin.show_on_top += ('language',)
