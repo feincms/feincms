@@ -80,7 +80,7 @@
         attach_dragdrop_handlers();
 
         if(window.location.hash) {
-            $(window.location.hash).trigger('click');
+            $('#'+window.location.hash.substr(5)+'_tab').trigger('click');
         }
 
         // bring order to chaos
