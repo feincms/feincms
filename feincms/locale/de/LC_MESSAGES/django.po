@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-19 15:08+0200\n"
+"POT-Creation-Date: 2009-06-24 12:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,57 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:22 models.py:40 content/rss/models.py:12
-#: module/medialibrary/models.py:11 module/page/models.py:98
-msgid "title"
-msgstr "Titel"
-
-#: models.py:23
-msgid "key"
-msgstr "Schlüssel"
-
-#: models.py:24
-msgid "inherited"
-msgstr "Vererbt"
-
-#: models.py:25
-msgid ""
-"Should the content be inherited by subpages if they do not define any "
-"content for this region?"
-msgstr ""
-"Soll der Inhalt dieser Region durch Unterseiten geerbt werden, sofern diese "
-"keinen eigenen Inhalt definieren?"
-
-#: models.py:28
-msgid "region"
-msgstr "Region"
-
-#: models.py:29 models.py:43
-msgid "regions"
-msgstr "Regionen"
-
-#: models.py:41
-msgid "path"
-msgstr "Pfad"
-
-#: models.py:47 models.py:67
+#: models.py:91
 msgid "template"
 msgstr "Template"
 
-#: models.py:48
-msgid "templates"
-msgstr "Templates"
-
-#: models.py:178
+#: models.py:212
 msgid "ordering"
 msgstr "Sortierung"
 
-#: admin/editor.py:81 admin/editor.py:155
+#: admin/editor.py:80 admin/editor.py:154
 #, python-format
 msgid "Change %s"
 msgstr "%s ändern"
 
-#: admin/editor.py:212
+#: admin/editor.py:211
 msgid "Database error"
 msgstr "Datenbankfehler"
 
@@ -155,6 +118,11 @@ msgstr "Text"
 #: content/richtext/models.py:24
 msgid "rich texts"
 msgstr "Texte"
+
+#: content/rss/models.py:12 module/medialibrary/models.py:11
+#: module/page/models.py:98
+msgid "title"
+msgstr "Titel"
 
 #: content/rss/models.py:13
 msgid ""
@@ -334,9 +302,13 @@ msgid "Page title for browser window. Same as title by default."
 msgstr ""
 "Seitentitel für das Browser-Fenster. Standardmässig gleich wie der Titel."
 
-#: module/page/extensions/translations.py:11
+#: module/page/extensions/translations.py:13
 msgid "language"
 msgstr "Sprache"
+
+#: module/page/extensions/translations.py:46
+msgid "available translations"
+msgstr "Verfügbare Übersetzungen"
 
 #: templates/admin/content/mediafile/init.html:77
 msgid "Choose"
@@ -380,37 +352,57 @@ msgstr ""
 "Template wirklich ändern? <br />Alle Inhalte werden in die erste Region "
 "verschoben."
 
-#: templates/admin/feincms/fe_editor.html:16
-#: templates/admin/feincms/item_editor.html:132
+#: templates/admin/feincms/fe_editor.html:50
+#: templates/admin/feincms/item_editor.html:133
 msgid "Save"
 msgstr "Speichern"
 
-#: templates/admin/feincms/item_editor.html:103
+#: templates/admin/feincms/fe_tools.html:3
+msgid "edit"
+msgstr "bearbeiten"
+
+#: templates/admin/feincms/fe_tools.html:5
+msgid "new"
+msgstr "neu"
+
+#: templates/admin/feincms/fe_tools.html:6
+msgid "up"
+msgstr "rauf"
+
+#: templates/admin/feincms/fe_tools.html:7
+msgid "down"
+msgstr "runter"
+
+#: templates/admin/feincms/fe_tools.html:8
+msgid "remove"
+msgstr "entfernen"
+
+#: templates/admin/feincms/item_editor.html:104
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/admin/feincms/item_editor.html:117
+#: templates/admin/feincms/item_editor.html:118
 msgid "View on site"
 msgstr "Auf der Webseite anzeigen"
 
-#: templates/admin/feincms/item_editor.html:127
-#: templates/admin/feincms/tree_editor.html:137
+#: templates/admin/feincms/item_editor.html:128
+#: templates/admin/feincms/tree_editor.html:157
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/admin/feincms/item_editor.html:136
+#: templates/admin/feincms/item_editor.html:137
 msgid "Change Template"
 msgstr "Template ändern"
 
-#: templates/admin/feincms/item_editor.html:140
+#: templates/admin/feincms/item_editor.html:141
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: templates/admin/feincms/item_editor.html:153
+#: templates/admin/feincms/item_editor.html:154
 msgid "Region empty"
 msgstr "Region leer"
 
-#: templates/admin/feincms/item_editor.html:157
+#: templates/admin/feincms/item_editor.html:158
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
@@ -418,26 +410,34 @@ msgstr ""
 "Inhalt wird von der übergeordneten Seite geerbt. Füge Inhalt hinzu, um "
 "dieses Verhalten zu ändern"
 
-#: templates/admin/feincms/item_editor.html:166
+#: templates/admin/feincms/item_editor.html:167
 msgid "Add new item"
 msgstr "Neues Element hinzufügen"
 
-#: templates/admin/feincms/item_editor.html:173
+#: templates/admin/feincms/item_editor.html:174
 msgid "Move selected item to"
 msgstr "Element verschieben nach"
 
-#: templates/admin/feincms/item_editor.html:177
+#: templates/admin/feincms/item_editor.html:178
 msgid "OK"
 msgstr "OK"
 
-#: templates/admin/feincms/tree_editor.html:124
+#: templates/admin/feincms/tree_editor.html:139
 #, python-format
 msgid "Add %(name)s"
 msgstr "%(name)s hinzufügen"
 
-#: templates/admin/feincms/tree_editor.html:128
+#: templates/admin/feincms/tree_editor.html:143
 msgid "Save tree"
 msgstr "Baum speichern"
+
+#: templates/admin/feincms/tree_editor.html:146
+msgid "Expand all"
+msgstr "Alles aufklappen"
+
+#: templates/admin/feincms/tree_editor.html:147
+msgid "Collapse all"
+msgstr "Alles zuklappen"
 
 #: templates/content/contactform/form.html:8
 msgid "Submit"
@@ -446,3 +446,28 @@ msgstr "Senden"
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
 msgstr "Danke!"
+
+#~ msgid "key"
+#~ msgstr "Schlüssel"
+
+#~ msgid "inherited"
+#~ msgstr "Vererbt"
+
+#~ msgid ""
+#~ "Should the content be inherited by subpages if they do not define any "
+#~ "content for this region?"
+#~ msgstr ""
+#~ "Soll der Inhalt dieser Region durch Unterseiten geerbt werden, sofern "
+#~ "diese keinen eigenen Inhalt definieren?"
+
+#~ msgid "region"
+#~ msgstr "Region"
+
+#~ msgid "regions"
+#~ msgstr "Regionen"
+
+#~ msgid "path"
+#~ msgstr "Pfad"
+
+#~ msgid "templates"
+#~ msgstr "Templates"
