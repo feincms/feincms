@@ -50,8 +50,6 @@ class MediaFileContent(models.Model):
         ('download', re.compile(r'')),
         )
 
-    mediafile = models.ForeignKey(MediaFile, verbose_name=_('media file'))
-
     class Meta:
         abstract = True
         verbose_name = _('media file')
@@ -59,8 +57,12 @@ class MediaFileContent(models.Model):
 
     @classmethod
     def handle_kwargs(cls, POSITION_CHOICES=(), TYPES=None):
-        models.CharField(_('position'), max_length=10, choices=POSITION_CHOICES
-            ).contribute_to_class(cls, 'position')
+        cls.add_to_class('mediafile', models.ForeignKey(MediaFile, verbose_name=_('media file'),
+            related_name='%s_%s_set' % (cls._meta.app_label, cls._meta.module_name)
+            ))
+
+        cls.add_to_class('position', models.CharField(_('position'),
+            max_length=10, choices=POSITION_CHOICES))
 
         if TYPES:
             cls.TYPES = TYPES
