@@ -45,6 +45,17 @@ from django.db import connection, models
 from django.db.models.fields import related
 
 
+def get_object(path, fail_silently=False):
+    dot = path.rindex('.')
+    try:
+        return getattr(__import__(path[:dot], {}, {}, ['']), path[dot+1:])
+    except ImportError:
+        if not fail_silently:
+            raise
+
+    return None
+
+
 def prefilled_attribute(name):
     key = '_prefill_%s' % name
 

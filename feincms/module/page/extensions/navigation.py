@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.module.page.models import Page, get_object
+from feincms.module.page.models import Page
+from feincms.utils import get_object
 
 
 class TypeRegistryMetaClass(type):

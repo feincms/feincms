@@ -7,17 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 import mptt
 
 from feincms.models import Region, Template, Base, ContentProxy
-
-
-def get_object(path, fail_silently=False):
-    dot = path.rindex('.')
-    try:
-        return getattr(__import__(path[:dot], {}, {}, ['']), path[dot+1:])
-    except ImportError:
-        if not fail_silently:
-            raise
-
-    return None
+from feincms.utils import get_object
 
 
 class PageManager(models.Manager):
