@@ -52,6 +52,18 @@ class Base(models.Model):
         abstract = True
 
     @classmethod
+    def register_regions(cls, *regions):
+        """
+
+        Example:
+            BlogEntry.register_regions(
+                ('main', _('Main content area')),
+                )
+        """
+
+        cls.template = Template('', '', regions)
+
+    @classmethod
     def register_templates(cls, *templates):
         """
 

@@ -132,10 +132,12 @@
     {% endfor %}
     <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
     <hr/>
-    {{ object_form.template_key.label_tag }}
-    <span>{{ object_form.template_key }}{{ object_form.template_key.errors }}</span>
-    <input type="button" class="change-template" value="{% trans 'Change Template' %}" />
-    <hr/>
+    {% if object_form.template_key %} {# Maybe this should be moved somewhere else, since this is page-module-specific #}
+        {{ object_form.template_key.label_tag }}
+        <span>{{ object_form.template_key }}{{ object_form.template_key.errors }}</span>
+        <input type="button" class="change-template" value="{% trans 'Change Template' %}" />
+        <hr/>
+    {% endif %}
 </div>
 <div id="main_wrapper">
     <div class="navi_tab tab_active" id="settings_tab">{% trans "Properties" %}</div>
