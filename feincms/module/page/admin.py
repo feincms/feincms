@@ -8,7 +8,7 @@ from feincms.module.page.models import Page
 
 
 if not hasattr(Page, 'template'):
-    raise ImproperlyConfigured, 'You need to register at least one template for Page before the admin code is includede'
+    raise ImproperlyConfigured, 'You need to register at least one template for Page before the admin code is included.'
 
 
 class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin):
