@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models import Q
+from django.forms.models import model_to_dict
 from django.http import Http404
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -311,6 +312,15 @@ class Base(models.Model):
                 cls.feincms_item_editor_includes.setdefault(key, []).extend(includes)
 
         return new_type
+
+    def copy_content_from(self, obj):
+        for cls in self._feincms_content_models:
+            for content in cls.objects.filter(parent=obj):
+                data = model_to_dict(content)
+                del content['id']
+                new = cls(**content)
+                new.parent = self
+                new.save()
 
 
 class ContentProxy(object):
