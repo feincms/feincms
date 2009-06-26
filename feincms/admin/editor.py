@@ -21,7 +21,7 @@ from django.utils.encoding import force_unicode, smart_str, smart_unicode
 from django.utils.functional import update_wrapper
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
-from django.utils.translation import get_date_formats, get_partial_date_formats, ugettext_lazy as _
+from django.utils.translation import get_date_formats, get_partial_date_formats, ugettext as _
 
 from feincms.models import Region
 
@@ -134,7 +134,17 @@ class ItemEditorMixin(object):
                 model_form.save()
                 for formset in inline_formsets:
                     formset.save()
-                return HttpResponseRedirect(".")
+
+                msg = _('The %(name)s "%(obj)s" was changed successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
+                if request.POST.has_key("_continue"):
+                    self.message_user(request, msg + ' ' + _("You may edit it again below."))
+                    return HttpResponseRedirect('.')
+                elif request.POST.has_key('_addanother'):
+                    self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_unicode(opts.verbose_name)))
+                    return HttpResponseRedirect("../add/")
+                else:
+                    self.message_user(request, msg)
+                    return HttpResponseRedirect("../")
 
             settings_fieldset = SettingsFieldset(request.POST, instance=obj)
             settings_fieldset.is_valid()
