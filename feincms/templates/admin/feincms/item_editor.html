@@ -120,36 +120,50 @@
 </ul>
 {% endblock %}
 
-<hr/>
-
 <form name="main_form" enctype="multipart/form-data" action="." method="post" id="{{ opts.module_name }}_form">
+<div>
 
-<div id="overview">
-    <p style="float:right;" class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
+<div class="submit-row" >
+<input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
+<p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
+
+<input type="submit" value="Sichern und neu hinzufügen" name="_addanother"  />
+<input type="submit" value="{% trans "Save and continue editing" %}" name="_continue" />
+</div>
+
+
+<fieldset class="module aligned">
     {% for field in top_fieldset %}
-        {{ field.label_tag }}
-        <span>{{ field }}{{ field.errors }}</span>
+    <div class="form-row{% if field.errors %} errors{% endif %}">
+        {{ field.label_tag }}{{ field }}
+        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+    </div>
     {% endfor %}
-    <input type="submit" class="submit_form" value="{% trans 'Save' %}" />
-    <hr/>
+
     {% if object_form.template_key %} {# Maybe this should be moved somewhere else, since this is page-module-specific #}
+    <div class="form-row{% if field.errors %} errors{% endif %}">
         {{ object_form.template_key.label_tag }}
         <span>{{ object_form.template_key }}{{ object_form.template_key.errors }}</span>
         <input type="button" class="change-template" value="{% trans 'Change Template' %}" />
-        <hr/>
+    </div>
     {% endif %}
-</div>
+</fieldset>
+
 <div id="main_wrapper">
     <div class="navi_tab tab_active" id="settings_tab">{% trans "Properties" %}</div>
     {% for region in object.template.regions %}
         <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
     {% endfor %}
     <div id="main">
-        <div id="settings_body">
-            <table>
-                {{ settings_fieldset.as_table }}
-            </table>
-        </div>
+        <fieldset class="module aligned" id="settings_body">
+            {% for field in settings_fieldset %}
+            <div class="form-row{% if field.errors %} errors{% endif %}">
+                {{ field.label_tag }}{{ field }}
+                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+            </div>
+            {% endfor %}
+        </fieldset>
+
         {% for region in object.template.regions %}
         <div id="{{ region.key }}_body" class="panel">
             <div class="empty-machine-msg">
@@ -160,9 +174,8 @@
                     {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
                 {% endif %}
             </div>
-            <div class="order-machine">
 
-            </div>
+            <div class="order-machine"></div>
 
             <div class="machine-control">
                 <div class="control-unit">
@@ -185,6 +198,13 @@
     </div>
 </div>
 
+<div class="submit-row" >
+<input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
+<p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
+
+<input type="submit" value="Sichern und neu hinzufügen" name="_addanother"  />
+<input type="submit" value="{% trans "Save and continue editing" %}" name="_continue" />
+</div>
 
 <div id="inlines">
 {% for formset in inline_formsets %}
@@ -203,6 +223,7 @@
 {% endfor %}
 </div>
 
+</div>
 </form>
 
 </div>

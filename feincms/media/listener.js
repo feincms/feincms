@@ -3,7 +3,7 @@ $(document).ready(function(){
         var elem = $(this);
         $("#main_wrapper > .navi_tab").removeClass("tab_active");
         elem.addClass("tab_active");
-        $("#main > div:visible").hide();
+        $("#main > div:visible, #main > fieldset:visible").hide();
 
         var tab_str = elem.attr("id").substr(0, elem.attr("id").length-4);
         $('#'+tab_str+'_body').show();
