@@ -177,4 +177,4 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
         'slug': ('title',),
         }
 
-    show_on_top = ('title', 'active', 'in_navigation')
+    show_on_top = ('title', 'active')

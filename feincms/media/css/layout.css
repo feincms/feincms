@@ -1,15 +1,3 @@
-
-#overview {
-    background-color:none;
-    padding:5px 0px 0px 5px;
-    margin:10px 0px 0px 10px;
-}
-
-#content {
-    background-color:#fff;
-    margin-bottom:0px;
-}
-
 #content.colM {
     width:745px;
 }
