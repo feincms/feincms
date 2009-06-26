@@ -57,7 +57,7 @@
 
             if (!(elem.hasClass("header"))) {
                 elem.find("input[name$=-region]").addClass("region-choice-field");
-                elem.find("input[name$=-DELETE]").addClass("delete-field").parents("tr").hide();
+                elem.find("input[name$=-DELETE]").addClass("delete-field").parents("div.form-row").hide();
                 elem.find("input[name$=-ordering]").addClass("order-field");
 
                 var region_id = elem.find(".region-choice-field").val();
@@ -214,9 +214,16 @@
         </div>
         {% for form in formset.forms %}
             <div id="{{ formset.rel_name }}_item_{{ forloop.counter0 }}">
-            <table>
-            {{ form.as_table }}
-            </table>
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{ field }}
+                    {% else %}
+                        <div class="form-row{% if field.errors %} errors{% endif %}">
+                            {{ field.label_tag }}{{ field }}
+                            {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         {% endfor %}
     </div>

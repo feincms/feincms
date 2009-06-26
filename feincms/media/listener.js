@@ -68,25 +68,18 @@ $(document).ready(function(){
         });
     });
 
-    $("div.item-minimize").livequery('click',function(){
-        var item = $(this).parent().next();
-        if (item.is(":visible")) {
-            $(this).html('<img src="'+IMG_ARROW_RIGHT_PATH+'" />');
-            item.slideUp(200);
+    $("fieldset.order-item").livequery('click',function(){
+        if($(this).hasClass('active-item')) {
+            $(this).removeClass('active-item')
         } else {
-            $(this).html('<img src="'+IMG_ARROW_DOWN_PATH+'" />');
-            item.slideDown(200);
+            $(".order-item.active-item").removeClass("active-item");
+            $(this).addClass("active-item");
         }
     });
 
-    $("div.order-item").livequery('click',function(){
-        $(".order-item.active-item").removeClass("active-item");
-        $(this).addClass("active-item");
-    });
-
-    $("input.submit_form").livequery('click',function(){
+    $('form').submit(function(){
         zucht_und_ordnung(false);
-        var form = $(this).parents('form');
+        var form = $(this);
         form.attr('action', form.attr('action')+window.location.hash);
         return true;
     });

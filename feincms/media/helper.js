@@ -1,17 +1,12 @@
 function region_append(region, obj, modname) {
     var wrp = [];
-    wrp.push('<div class="order-item"><div class="item-header">');
-    if (obj.children(':visible').length > 0)
-        wrp.push('<div class="item-minimize"><img src="'+IMG_ARROW_DOWN_PATH+'" /></div>');
-    else
-        wrp.push('<div class="item-minimize-disabled"><img src="'+IMG_CIRCLE_PATH+'" /></div>');
-    wrp.push('<span>' + modname + '</span><img class="handle" src='+IMG_MOVE_PATH+' />');
-    wrp.push('<img class="item-delete" src="'+IMG_DELETELINK_PATH+'" />');
-    wrp.push('</div><div class="item-content"></div></div>');
+    wrp.push('<fieldset class="module aligned order-item">');
+    wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle">'+modname+'</span></h2>');
+    wrp.push('<div class="item-content"></div>');
+    wrp.push('</fieldset>');
 
-    // move content into new place (append actually moves the node here)
     $("#"+REGIONS[region]+"_body").children("div.order-machine").append(wrp.join(""))
-        .children("div.order-item:last").children("div.item-content").append(obj);
+        .children("fieldset.order-item:last").children(".item-content").append(obj);
 }
 
 function create_new_spare_form(form, modvar, last_id) {
@@ -53,14 +48,14 @@ function move_item (region_id, item) {
 }
 
 function poorify_rich(item){
-    item.children("div.item-content").hide();
+    item.children(".item-content").hide();
     if (item.find("div[id^=richtext]").length > 0) {
         var editor_id = item.find(".mceEditor").prev().attr("id");
         tinyMCE.execCommand('mceRemoveControl', false, editor_id);
     }
 }
 function richify_poor(item){
-    item.children("div.item-content").show();
+    item.children(".item-content").show();
     if (item.find("div[id^=richtext]").length > 0) {
         var editor_id = item.find('textarea[name*=richtext]:visible').attr("id");
         tinyMCE.execCommand('mceAddControl', false, editor_id);
@@ -72,19 +67,19 @@ function zucht_und_ordnung(move_item) {
         var container = $("#"+REGIONS[i]+"_body div.order-machine");
         for (var j=0; j<container.children().length; j++) {
             if (move_item)
-                container.find("input.order-field[value="+j+"]").parents("div.order-item").appendTo(container);
+                container.find("input.order-field[value="+j+"]").parents("fieldset.order-item").appendTo(container);
             else
-                set_item_field_value(container.find("div.order-item:eq("+j+")"), "order-field", j);
+                set_item_field_value(container.find("fieldset.order-item:eq("+j+")"), "order-field", j);
         }
     }
 }
 
 function attach_dragdrop_handlers() {
     // hide content on drag n drop
-    $("#main img.handle").mousedown(function(){
-        poorify_rich($(this).parents("div.order-item"));
+    $("#main h2.handle").mousedown(function(){
+        poorify_rich($(this).parents("fieldset.order-item"));
     });
-    $("#main img.handle").mouseup(function(){
-        richify_poor($(this).parents("div.order-item"));
+    $("#main h2.handle").mouseup(function(){
+        richify_poor($(this).parents("fieldset.order-item"));
     });
 }

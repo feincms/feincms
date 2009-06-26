@@ -18,7 +18,7 @@
     float:left;
     padding: 3px 10px 3px 10px;
     cursor:pointer;
-    border: 1px solid #aaa;
+    border: 1px solid #ccc;
     border-bottom:none;
     min-width:100px;
     margin-top:3px;
@@ -38,7 +38,8 @@
 #main {
     clear:both;
     padding: 10px 10px 10px 10px;
-    border: 1px solid #aaa;
+    border: 1px solid #ccc;
+    margin: 0 0 10px 0;
 }
 .panel {
      display:none;
@@ -46,61 +47,35 @@
      padding-bottom:50px;
 }
 
-
-lab { font-weight: bold; margin-right:5px;}
-span { margin-right: 5px;}
-
 .order-machine {
     margin-bottom:10px;
 }
 
 .order-item {
-    margin: 5px 15px 10px 5px;
-    background: #eee;
+    margin: 0 0 10px 0;
     position:relative;
-    width:700px;
-    min-height:24px;
-    border: 1px solid #678;
 }
-.order-item span {
-    font-weight:bold;
-    margin-left:5px;
-}
+
 .order-item .handle {
-    float: left;
-    margin-top:2px;
+    display: block;
+    height: 100%;
+    width: 650px;
     cursor: move;
 }
-.item-content {
-    padding: 0px 10px 0px 15px;
-    margin-right:5px;
-    clear:both;
-    margin-left:10px;
-}
-.item-header {
-    padding: 3px 10px 3px 15px;
-    margin-left:10px;
-    margin-top:1px;
-}
-.item-header span {
-    margin-right:10px;
-    float:left;
-    font-weight: strong;
-}
+
 .item-delete {
     cursor:pointer;
     float:right;
     margin:3px 0px 0px 5px;
 }
 .active-item {
-    border: 1px solid #00a;
-    background-color:#def;
+    background-color:#eee;
 }
 
 .highlight {
     height: 26px;
     background-color:#def;
-    margin: 0 1px 0 5px;
+    margin: 0 0 10px 0;
 }
 
 .button {
@@ -147,32 +122,23 @@ textarea {
 .machine-control {
     height:50px;
     padding: 5px 0px 5px 0px;
-    border: 1px solid #678;
-    background-color:#ddd;
-    width:728px;
+    border: 1px solid #ccc;
+    background-color:#fff;
+    width:743px;
     position:absolute;
     left:-11px;
-    bottom:-21px;
+    bottom:-11px;
 }
 
 .control-unit {
     float:left;
     padding-left:15px;
     padding-right:10px;
-    border-right: 1px solid #678;
+    border-right: 1px solid #eee;
 }
 
 .control-unit span {
     font-weight:bold;
-    margin-left:5px;
-}
-
-hr {
-    color: #f00;
-    background-color: #bbb;
-    height: 1px;
-    margin-top: 5px;
-    margin-bottom: 5px;
 }
 
 .empty-machine-msg {
