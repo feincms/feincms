@@ -26,7 +26,6 @@ by adding the following lines somewhere into your project, for example in a
     from feincms.content.image.models import ImageContent
 
     Page.register_templates({
-        'key': 'base',
         'title': 'Standard template',
         'path': 'base.html',
         'regions': (
@@ -51,6 +50,9 @@ Setting up the admin interface
 The customized admin interface code is contained inside the ``ModelAdmin''
 subclass, so you do not need to do anything special here. You only need to set
 ``FEINCMS_ADMIN_MEDIA'' as described in the installation documentation.
+
+If you use the RichTextContent, you need to download TinyMCE and set
+``TINYMCE_JS_URL'' to the absolute path to the main javascript file.
 
 
 Wiring up the views
