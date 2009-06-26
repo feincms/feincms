@@ -20,6 +20,10 @@ def register():
     def _setup_request(self, request):
         translation.activate(self.language)
         request.LANGUAGE_CODE = translation.get_language()
+
+        if hasattr(request, 'session') and request.LANGUAGE_CODE!=request.session.get('django_language'):
+            request.session['django_language'] = request.LANGUAGE_CODE
+
         self._ext_translation_setup_request(request)
 
     Page.setup_request = _setup_request
