@@ -135,6 +135,20 @@
 <fieldset class="module aligned">
     {% for field in top_fieldset %}
     <div class="form-row{% if field.errors %} errors{% endif %}">
+        {% ifequal field.name "language" %}
+            {# Maybe this should be moved somewhere else, since this is specific for translated objects... #}
+            {% with object.available_translations as translations %}
+            {% if translations %}
+                <div style="float:right;padding:5px 0 0 0">
+                {% trans "available translations" %}:
+                {% for translation in translations %}
+                    <a href="../{{ translation.id }}/">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                </div>
+            {% endif %}
+            {% endwith %}
+        {% endifequal %}
+
         {{ field.label_tag }}{{ field }}
         {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
     </div>
