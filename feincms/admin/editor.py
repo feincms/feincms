@@ -98,6 +98,7 @@ class ItemEditorMixin(object):
         class ModelForm(forms.ModelForm):
             class Meta:
                 model = self.model
+                exclude = ('parent',)
 
         class SettingsFieldset(forms.ModelForm):
             # This form class is used solely for presentation, the data will be saved
