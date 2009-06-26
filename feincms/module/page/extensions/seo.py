@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.module.page.admin import PageAdmin
-from feincms.module.page.models import Page
+from feincms.module.page.models import Page, PageAdmin
 
 
 def register():
