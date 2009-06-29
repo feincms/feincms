@@ -64,7 +64,7 @@ class TranslatedObjectMixin(object):
                 try:
                     return queryset.all()[0]
                 except IndexError:
-                    raise ObjectDoesNotExist
+                    raise queryset.model.DoesNotExist
 
     @property
     def translation(self, language_code=None):

@@ -490,6 +490,9 @@ msgstr "Senden"
 msgid "Thanks!"
 msgstr "Danke!"
 
+msgid "Save and add another"
+msgstr "Sichern und neu hinzufügen"
+
 #~ msgid "key"
 #~ msgstr "Schlüssel"
 
