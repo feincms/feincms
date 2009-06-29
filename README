@@ -66,6 +66,16 @@ That's it. Not even ten lines for your own page content type.
 Getting started
 ===============
 
+Visit these sites
+~~~~~~~~~~~~~~~~~
+
+* See the google groups page at http://groups.google.com/group/django-feincms
+* FeinCMS on github: http://github.com/matthiask/feincms/tree
+
+
+Read the documentation
+~~~~~~~~~~~~~~~~~~~~~~
+
 * docs/installation.txt
 
   Initial installation and configuration of FeinCMS
