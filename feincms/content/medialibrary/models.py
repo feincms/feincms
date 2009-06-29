@@ -1,6 +1,7 @@
 import re
 
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
@@ -20,11 +21,18 @@ class MediaFileWidget(forms.TextInput):
         if value:
             try:
                 mf = MediaFile.objects.get(pk=value)
+                try:
+                    caption = mf.translation.caption
+                except ObjectDoesNotExist:
+                    caption = _('(no caption)')
+
                 return mark_safe(u"""
+                    <div style="margin-left:10em">
                     <a href="%(url)s" target="_blank">%(caption)s (%(url)s)</a><br />
-                    %(inputfield)s""" % {
+                    %(inputfield)s
+                    </div>""" % {
                         'url': mf.file.url,
-                        'caption': mf.translation.caption,
+                        'caption': caption,
                         'inputfield': inputfield})
             except:
                 pass
