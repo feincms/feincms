@@ -199,6 +199,7 @@
                     </select>
                     <input type="button" class="order-machine-add-button button" value="OK" />
                 </div>
+                {% ifnotequal object.template.regions|length 1 %}
                 <div class="control-unit">
                     <span>{% trans "Move selected item to" %}:</span>  <br/>
                     <select name="order-machine-move-select">
@@ -206,6 +207,7 @@
                     </select>
                     <input type="button" class="order-machine-move-button button" value="{% trans "OK" %}" />
                 </div>
+                {% endifnotequal %}
             </div>
          </div>
         {% endfor %}
