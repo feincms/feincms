@@ -183,7 +183,7 @@ class Base(models.Model):
             instead of adding region-specific render methods.
             """
 
-            render_fn = getattr(self, 'render_%s' % self.region.key, None)
+            render_fn = getattr(self, 'render_%s' % self.region, None)
 
             if render_fn:
                 return render_fn(**kwargs)
