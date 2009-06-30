@@ -17,7 +17,7 @@ class FileContent(models.Model):
 
     def render(self, **kwargs):
         return render_to_string([
-            'content/file/%s.html' % self.region.key,
+            'content/file/%s.html' % self.region,
             'content/file/default.html',
             ], {'content': self})
 
