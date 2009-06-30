@@ -3,9 +3,4 @@ it's nothing more than a brain dump.
 
 - Write even more and even better documentation
 - Make shiny looking website -- maybe
-- Think about the hardcoded 'template' stuff in the change_view
 - Do not include more javascript than necessary -- we do not net all of jQuery.ui
-- It's not too bad to set the language on every page, but! the translation stuff
-  does not work correctly. Think about the content model some more (or think on
-  building a GUI which is logical)
-
