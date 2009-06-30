@@ -21,7 +21,7 @@ class VideoContent(models.Model):
         verbose_name_plural = _('videos')
 
     def render(self, **kwargs):
-        for portal, match, context_fn in self.TYPES:
+        for portal, match, context_fn in self.PORTALS:
             if match.search(self.video):
                 return render_to_string([
                     'content/video/%s.html' % portal,
