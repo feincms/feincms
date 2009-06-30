@@ -10,6 +10,7 @@
 <script type="text/javascript" src="../../../jsi18n/"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+<link type="text/css" href="http://jqueryui.com/latest/themes/base/ui.all.css" rel="stylesheet" />
 
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.livequery.js"></script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
@@ -89,6 +90,8 @@
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
 
         $('#inlines').hide();
+
+        $('input.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
     });
 
     $(window).load(function(){init_contentblocks()});

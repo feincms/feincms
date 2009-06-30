@@ -12,7 +12,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import connection, transaction, models
 from django.db.models import loading
 from django.forms.formsets import all_valid
-from django.forms.models import inlineformset_factory
+from django.forms.models import modelform_factory, inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.utils import dateformat, simplejson
@@ -28,6 +28,15 @@ from feincms.models import Region
 
 FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
+
+
+def formfield_callback(f):
+    print f
+    if isinstance(f, (models.DateField, models.DateTimeField)):
+        field = f.formfield(widget=forms.TextInput(attrs={'class': 'datepicker'}))
+        return field
+
+    return f.formfield()
 
 
 class ItemEditorForm(forms.ModelForm):
@@ -53,10 +62,10 @@ class ItemEditorMixin(object):
 
         form_class_base = getattr(model_cls, 'feincms_item_editor_form', ItemEditorForm)
 
-        class ModelForm(form_class_base):
-            class Meta:
-                model = model_cls
-                exclude = ('parent', 'region', 'ordering')
+        ModelForm = modelform_factory(model_cls,
+            exclude=('parent', 'region', 'ordering'),
+            form=form_class_base,
+            formfield_callback=formfield_callback)
 
         del ModelForm.base_fields['region']
         del ModelForm.base_fields['ordering']
@@ -95,24 +104,18 @@ class ItemEditorMixin(object):
         if res:
             return self._frontend_editing_view(request, res.group(1), res.group(2), res.group(3))
 
-        class ModelForm(forms.ModelForm):
-            class Meta:
-                model = self.model
-                exclude = ('parent',)
-
-        class SettingsFieldset(forms.ModelForm):
-            # This form class is used solely for presentation, the data will be saved
-            # by the ModelForm above
-
-            class Meta:
-                model = self.model
-                exclude = self.show_on_top+('template_key', 'parent')
+        ModelForm = modelform_factory(self.model, exclude=('parent',),
+            formfield_callback=formfield_callback)
+        SettingsForm = modelform_factory(self.model,
+            exclude=self.show_on_top+('template_key', 'parent'),
+            formfield_callback=formfield_callback)
 
         # generate a formset type for every concrete content type
         inline_formset_types = [(
             content_type,
             inlineformset_factory(self.model, content_type, extra=1,
-                form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm))
+                form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm),
+                formfield_callback=formfield_callback)
             ) for content_type in self.model._feincms_content_types]
 
         opts = self.model._meta
@@ -146,7 +149,7 @@ class ItemEditorMixin(object):
                     self.message_user(request, msg)
                     return HttpResponseRedirect("../")
 
-            settings_fieldset = SettingsFieldset(request.POST, instance=obj)
+            settings_fieldset = SettingsForm(request.POST, instance=obj)
             settings_fieldset.is_valid()
         else:
             model_form = ModelForm(instance=obj)
@@ -154,7 +157,7 @@ class ItemEditorMixin(object):
                 formset_class(instance=obj, prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types]
 
-            settings_fieldset = SettingsFieldset(instance=obj)
+            settings_fieldset = SettingsForm(instance=obj)
 
         content_types = []
         for content_type in self.model._feincms_content_types:
