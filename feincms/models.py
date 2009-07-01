@@ -264,6 +264,9 @@ class Base(models.Model):
             # everything ok
             pass
 
+        if not model._meta.abstract:
+            raise ImproperlyConfigured, 'Cannot create content type from non-abstract model (yet).'
+
         if not hasattr(cls, '_feincms_content_model'):
             cls._create_content_base()
 
