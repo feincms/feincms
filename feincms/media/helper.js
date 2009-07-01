@@ -76,10 +76,10 @@ function zucht_und_ordnung(move_item) {
 
 function attach_dragdrop_handlers() {
     // hide content on drag n drop
-    $("#main h2.handle").mousedown(function(){
+    $("#main h2 span.handle").mousedown(function(){
         poorify_rich($(this).parents("fieldset.order-item"));
     });
-    $("#main h2.handle").mouseup(function(){
+    $("#main h2 span.handle").mouseup(function(){
         richify_poor($(this).parents("fieldset.order-item"));
     });
 }
