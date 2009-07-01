@@ -27,6 +27,7 @@ from feincms.models import Region
 
 
 FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
+FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKING', False)
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 
 
@@ -79,6 +80,7 @@ class ItemEditorMixin(object):
                     'content': obj.render(request=request),
                     'identifier': obj.fe_identifier(),
                     'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
+                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
                     })
         else:
             form = ModelForm(instance=obj, prefix=content_type)
@@ -173,6 +175,7 @@ class ItemEditorMixin(object):
             'settings_fieldset': settings_fieldset,
             'top_fieldset': [model_form[field] for field in self.show_on_top],
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
         }
 
         return render_to_response([
@@ -226,6 +229,7 @@ class TreeEditorMixin(object):
 
         context = {
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
             'title': self.changelist.title,
             'is_popup': self.changelist.is_popup,
             'cl': self.changelist,
