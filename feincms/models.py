@@ -167,6 +167,9 @@ class Base(models.Model):
         `parent`, `region` and `ordering`.
         """
 
+        if not hasattr(cls, 'template'):
+            raise ImproperlyConfigured, 'You must register regions or templates before attempting to create content types.'
+
         class Meta:
             abstract = True
             ordering = ['ordering']
