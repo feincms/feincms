@@ -205,7 +205,7 @@
                 <div class="control-unit">
                     <span>{% trans "Add new item" %}:</span> <br/>
                     <select name="order-machine-add-select">
-                    {% for n,v  in content_types %} <option value="{{ v }}">{{ n }}</option> {% endfor %}
+                    {% for n,v in region.content_types %} <option value="{{ v }}">{{ n }}</option> {% endfor %}
                     </select>
                     <input type="button" class="order-machine-add-button button" value="OK" />
                 </div>

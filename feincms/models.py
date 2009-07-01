@@ -18,9 +18,19 @@ class Region(object):
         self.key = key
         self.title = title
         self.inherited = args and args[0]=='inherited'
+        self._content_types = []
 
     def __unicode__(self):
         return unicode(self.title)
+
+    @property
+    def content_types(self):
+        content_types = []
+        for content_type in self._content_types:
+            content_name = content_type._meta.verbose_name
+            content_types.append((content_name, content_type.__name__.lower()))
+
+        return content_types
 
 
 class Template(object):
@@ -63,6 +73,7 @@ class Base(models.Model):
         """
 
         cls.template = Template('', '', regions)
+        cls._feincms_all_regions = cls.template.regions
 
     @classmethod
     def register_templates(cls, *templates):
@@ -110,6 +121,9 @@ class Base(models.Model):
             return self._feincms_templates[self.template_key]
 
         cls.template = property(_template)
+        cls._feincms_all_regions = []
+        for template in cls._feincms_templates.values():
+            cls._feincms_all_regions += template.regions
 
     @property
     def content(self):
@@ -242,13 +256,17 @@ class Base(models.Model):
         cls.feincms_item_editor_includes = {}
 
     @classmethod
-    def create_content_type(cls, model, **kwargs):
+    def create_content_type(cls, model, regions=None, **kwargs):
         """
         This is the method you'll use to create concrete content types.
 
         If the CMS base class is `page.models.Page`, its database table will be
         `page_page`. A concrete content type which is created from `ImageContent`
         will use `page_page_imagecontent` as its table.
+
+        If you want a content type only available in a subset of regions, you can
+        pass a list/tuple of region keys as `regions'. The content type will only
+        appear in the corresponding tabs in the item editor.
 
         You can pass additional keyword arguments to this factory function. These
         keyword arguments will be passed on to the concrete content type, provided
@@ -291,6 +309,14 @@ class Base(models.Model):
             (model, feincms_content_base,),
             attrs)
         cls._feincms_content_types.append(new_type)
+
+        # content types can be limited to only one region
+        if not regions:
+            regions = [region.key for region in cls._feincms_all_regions]
+
+        for region in cls._feincms_all_regions:
+            if region.key in regions:
+                region._content_types.append(new_type)
 
         # Add a list of CMS base types for which a concrete content type has
         # been created to the abstract content type. This is needed f.e. for the
