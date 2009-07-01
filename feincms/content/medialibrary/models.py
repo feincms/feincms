@@ -70,7 +70,8 @@ class MediaFileContent(models.Model):
             ))
 
         cls.add_to_class('position', models.CharField(_('position'),
-            max_length=10, choices=POSITION_CHOICES))
+            max_length=10, choices=POSITION_CHOICES,
+            default=POSITION_CHOICES[0][0]))
 
         if TYPES:
             cls.TYPES = TYPES
