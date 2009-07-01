@@ -31,7 +31,6 @@ FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 
 
 def formfield_callback(f):
-    print f
     if isinstance(f, (models.DateField, models.DateTimeField)):
         field = f.formfield(widget=forms.TextInput(attrs={'class': 'datepicker'}))
         return field
