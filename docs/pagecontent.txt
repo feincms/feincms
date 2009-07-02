@@ -174,6 +174,23 @@ Bundled content types
 
 
 
+Design considerations for content types
+=======================================
+
+Because the admin interface is already filled with information, it is sometimes
+easier to keep the details for certain models outside the CMS content types.
+Complicated models do not need to be edited directly in the CMS item editor,
+you can instead use the standard Django administration interface for them, and
+integrate them into FeinCMS by utilizing foreign keys. Already the bundled
+FileContent and ImageContent models can be viewed as bad style in this respect,
+because if you want to use a image or file more than once you need to upload it
+for every single use instead of being able to reuse the uploaded file. The
+media library module and MediaFileContent resolve at least this issue nicely by
+allowing the website administrator to attach metainformation to a file and
+include it in a page by simply selecting the previously uploaded media file.
+
+
+
 Obtaining a concrete content type model
 =======================================
 
