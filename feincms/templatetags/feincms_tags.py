@@ -8,6 +8,13 @@ from feincms.module.page.models import Page
 register = template.Library()
 
 
+def _render_content(content, **kwargs):
+    try:
+        return content.fe_render(**kwargs)
+    except AttributeError:
+        return content.render(**kwargs)
+
+
 @register.simple_tag
 def feincms_render_region(page, region, request):
     """
@@ -16,7 +23,7 @@ def feincms_render_region(page, region, request):
 
     contents = getattr(page.content, region)
 
-    return u''.join(content.fe_render(request=request) for content in contents)
+    return u''.join(_render_content(content, request=request) for content in contents)
 
 
 @register.simple_tag
@@ -25,7 +32,7 @@ def feincms_render_content(content, request):
     {% feincms_render_content contentblock request %}
     """
 
-    return content.fe_render(request=request)
+    return _render_content(content, request=request)
 
 
 @register.simple_tag
