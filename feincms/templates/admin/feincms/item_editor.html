@@ -35,20 +35,9 @@
             contentblock_init_handlers[k]();
     }
 
-    IMG_ARROW_DOWN_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/arrow_down.gif";
-    IMG_ARROW_RIGHT_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/arrow_right.gif";
-    IMG_CIRCLE_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/circle.gif";
     IMG_DELETELINK_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif";
-    IMG_MOVE_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif";
-
-    REGIONS = [];
-    REGION_MAP = [];
-    {% for region in object.template.regions %}
-        REGIONS.push('{{ region.key }}');
-        REGION_MAP.push('{{ region.key }}');
-    {% endfor %}
+    REGION_MAP = [{% for region in object.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     ACTIVE_REGION = 0;
-
     CONTENT_NAMES = {
         {% for name, value in content_types %}'{{ value }}': '{{ name }}'{% if not forloop.last %},{% endif %}
         {% endfor %}};

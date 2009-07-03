@@ -19,7 +19,7 @@
     margin-top: 0;
     height:16px;
     font-weight: bold;
-    background-image:url('../img/default-bg.gif');
+    background-image:url('img/default-bg.gif');
     color: white;
 }
 
@@ -69,7 +69,7 @@
 .button {
     margin:5px; padding:5px;
     font-weight: bold;
-    background-image:url('../img/nav-bg.gif');
+    background-image:url('img/nav-bg.gif');
     cursor:pointer;
     border: 1px solid #678;
     width:30px;
@@ -236,11 +236,11 @@ td div.hover-as-sibling {
 }
 
 .treeTable tr.collapsed td .expander {
-  background-image: url(../img/toggle-expand-dark.png);
+  background-image: url(img/toggle-expand-dark.png);
 }
 
 .treeTable tr.expanded td .expander {
-  background-image: url(../img/toggle-collapse-dark.png);
+  background-image: url(img/toggle-collapse-dark.png);
 }
 
 /* jquery.treeTable.sortable
@@ -255,11 +255,11 @@ td div.hover-as-sibling {
 }
 
 .treeTable tr.collapsed.selected td .expander, .treeTable tr.collapsed.accept td .expander {
-  /*background-image: url(../img/toggle-expand-light.png);*/
+  /*background-image: url(img/toggle-expand-light.png);*/
 }
 
 .treeTable tr.expanded.selected td .expander, .treeTable tr.expanded.accept td .expander {
-  /*background-image: url(../img/toggle-collapse-light.png);*/
+  /*background-image: url(img/toggle-collapse-light.png);*/
 }
 
 .treeTable .ui-draggable-dragging {
@@ -295,21 +295,21 @@ td div.hover-as-sibling {
 }
 
 #popup_content {
-	background: 16px 16px no-repeat url(../img/info.gif);
+	background: 16px 16px no-repeat url(img/info.gif);
 	padding: 1em 1.75em;
 	margin: 0em;
 }
 
 #popup_content.alert {
-	background-image: url(../img/info.gif);
+	background-image: url(img/info.gif);
 }
 
 #popup_content.confirm {
-	background-image: url(../img/important.gif);
+	background-image: url(img/important.gif);
 }
 
 #popup_content.prompt {
-	background-image: url(../img/help.gif);
+	background-image: url(img/help.gif);
 }
 
 #popup_message {

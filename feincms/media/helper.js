@@ -5,7 +5,7 @@ function region_append(region, obj, modname) {
     wrp.push('<div class="item-content"></div>');
     wrp.push('</fieldset>');
 
-    $("#"+REGIONS[region]+"_body").children("div.order-machine").append(wrp.join(""))
+    $("#"+REGION_MAP[region]+"_body").children("div.order-machine").append(wrp.join(""))
         .children("fieldset.order-item:last").children(".item-content").append(obj);
 }
 
@@ -27,13 +27,13 @@ function set_item_field_value(item, field, value) {
         var old_region_id = REGION_MAP.indexOf(item.find("."+field).val());
         item.find("."+field).val(REGION_MAP[value]);
 
-        old_region_item = $("#"+REGIONS[old_region_id]+"_body");
+        old_region_item = $("#"+REGION_MAP[old_region_id]+"_body");
         if (old_region_item.children("div.order-machine").children().length == 0)
             old_region_item.children("div.empty-machine-msg").show();
         else
             old_region_item.children("div.empty-machine-msg").hide();
 
-        new_region_item = $("#"+REGIONS[value]+"_body");
+        new_region_item = $("#"+REGION_MAP[value]+"_body");
         new_region_item.children("div.empty-machine-msg").hide();
     }
     else
@@ -42,7 +42,7 @@ function set_item_field_value(item, field, value) {
 
 function move_item (region_id, item) {
     poorify_rich(item);
-    $("#"+REGIONS[region_id]+"_body").children("div.order-machine").append(item);
+    $("#"+REGION_MAP[region_id]+"_body").children("div.order-machine").append(item);
     set_item_field_value(item, "region-choice-field", region_id);
     richify_poor(item);
 }
@@ -63,8 +63,8 @@ function richify_poor(item){
 }
 
 function zucht_und_ordnung(move_item) {
-    for (var i=0; i<REGIONS.length;i++) {
-        var container = $("#"+REGIONS[i]+"_body div.order-machine");
+    for (var i=0; i<REGION_MAP.length;i++) {
+        var container = $("#"+REGION_MAP[i]+"_body div.order-machine");
         for (var j=0; j<container.children().length; j++) {
             if (move_item)
                 container.find("input.order-field[value="+j+"]").parents("fieldset.order-item").appendTo(container);

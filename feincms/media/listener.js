@@ -7,7 +7,7 @@ $(document).ready(function(){
 
         var tab_str = elem.attr("id").substr(0, elem.attr("id").length-4);
         $('#'+tab_str+'_body').show();
-        ACTIVE_REGION = REGIONS.indexOf(tab_str);
+        ACTIVE_REGION = REGION_MAP.indexOf(tab_str);
 
         if (tab_str == "settings")
             $(".machine-control").hide();
@@ -38,7 +38,7 @@ $(document).ready(function(){
 
     $(".order-machine-move-button").click(function(){
         var moveTo = $(this).prev().val();
-        move_item(REGIONS.indexOf(moveTo), $("#main div.order-machine fieldset.active-item"));
+        move_item(REGION_MAP.indexOf(moveTo), $("#main div.order-machine fieldset.active-item"));
     });
 
     $(".item-delete").live('click', function(){

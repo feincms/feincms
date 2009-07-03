@@ -50,67 +50,66 @@
     }
 
     $(document).ready(function()  {
-            // build table
-            $("#sitetree tbody").append(tablestr);
-            // register
-            $("#sitetree").treeTable();
-            // configure draggable
-            $("#sitetree .title-col").draggable({
-              appendTo: '#sitetree-wrapper',
-              helper:  function(){ return $(this).parent().clone(); } ,
-              handle: ".move-node",
-              opacity: .75,
-              refreshPositions: true,
-              revert: "invalid",
-              revertDuration: 300,
-              scroll: true
-            });
-            // configure droppable to insert as child
-            $("#sitetree .insert-as-child").each(function() {
-              $(this).droppable({
+        // build table
+        $("#sitetree tbody").append(tablestr);
+        // register
+        $("#sitetree").treeTable();
+        // configure draggable
+        $("#sitetree .title-col").draggable({
+            appendTo: '#sitetree-wrapper',
+            helper:  function(){ return $(this).parent().clone(); } ,
+            handle: ".move-node",
+            opacity: .75,
+            refreshPositions: true,
+            revert: "invalid",
+            revertDuration: 300,
+            scroll: true
+        });
+        // configure droppable to insert as child
+        $("#sitetree .insert-as-child").each(function() {
+            $(this).droppable({
                 accept: ".title-col",
                 tolerance: "intersect",
                 drop: function(e, ui) {
                     handle_drop_event($(ui.draggable).parents("tr"), $(this).parents("tr"), "child")
                 },
                 over: function(e, ui) {
-                  $(this).parent().removeClass("nohover").addClass("hover-as-child");
+                    $(this).parent().removeClass("nohover").addClass("hover-as-child");
                 },
                 out: function(e, ui) {
-                  $(this).parent().removeClass("hover-as-child").addClass("nohover");
+                    $(this).parent().removeClass("hover-as-child").addClass("nohover");
                 }
-              });
             });
-            // configure droppable to insert as sibling
-            $("#sitetree .insert-as-sibling").each(function() {
-              $(this).droppable({
+        });
+        // configure droppable to insert as sibling
+        $("#sitetree .insert-as-sibling").each(function() {
+            $(this).droppable({
                 accept: ".title-col",
                 tolerance: "intersect",
                 drop: function(e, ui) {
                     handle_drop_event($(ui.draggable).parents("tr"), $(this).parents("tr"), "sibling")
                 },
                 over: function(e, ui) {
-                  $(this).parent().removeClass("nohover").addClass("hover-as-sibling");
+                    $(this).parent().removeClass("nohover").addClass("hover-as-sibling");
                 },
                 out: function(e, ui) {
-                  $(this).parent().removeClass("hover-as-sibling").addClass("nohover");
+                    $(this).parent().removeClass("hover-as-sibling").addClass("nohover");
                 }
-              });
             });
+        });
 
-            $(".wrap").live('click',function() {
-                if ($(this).find(".expander").length > 0)
-                    $(this).parents("tr").toggleBranch();
-            });
+        $(".wrap").live('click',function() {
+            if ($(this).find(".expander").length > 0)
+                $(this).parents("tr").toggleBranch();
+        });
 
-            $(".save_tree").click(function(){
-                    save_page_tree();
-            });
+        $(".save_tree").click(function(){
+            save_page_tree();
+        });
 
-            $(".del-page").click(function(){
-                handle_page_delete($(this).parents("tr"));
-            });
-
+        $(".del-page").click(function(){
+            handle_page_delete($(this).parents("tr"));
+        });
     });
 
     function expandall(yesno) {
@@ -157,16 +156,13 @@
         {% for header in result_headers %}
             <th{% if forloop.first %} style="min-width:400px"{% endif %}>{{ header.text|capfirst }}
         {% endfor %}
-            <th>{% trans  "Delete" %}</th>
+            <th>{% trans "Delete" %}</th>
         </tr>
         </thead>
-        <tbody>
-
-        </tbody>
+        <tbody></tbody>
     </table>
     </div>
 
 </div>
 
 {% endblock %}
-
