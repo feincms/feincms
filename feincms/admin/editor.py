@@ -4,6 +4,7 @@ import django
 from django import forms, template
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.admin import widgets
 from django.contrib.admin.options import IncorrectLookupParameters
 from django.contrib.admin.templatetags import admin_list
 from django.contrib.admin.util import unquote
@@ -32,9 +33,15 @@ FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 
 
 def formfield_callback(f):
-    if isinstance(f, (models.DateField, models.DateTimeField)):
-        field = f.formfield(widget=forms.TextInput(attrs={'class': 'datepicker'}))
-        return field
+    if isinstance(f, models.DateTimeField):
+        return f.formfield(
+            form_class=forms.SplitDateTimeField,
+            widget=widgets.AdminSplitDateTime)
+
+    elif isinstance(f, models.DateField):
+        return f.formfield(widget=widgets.AdminDateWidget())
+        #return forms.SplitDateTimeField(widget=widgets.AdminSplitDateTime())
+        #return f.formfield(widget=widgets.AdminSplitDateTime())
 
     return f.formfield()
 
@@ -91,7 +98,9 @@ class ItemEditorMixin(object):
             'object': obj,
             'form': form,
             'is_popup': True,
+            'media': self.media,
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
             }, context_instance=template.RequestContext(request,
                 processors=self.model.feincms_item_editor_context_processors))
 
@@ -174,6 +183,7 @@ class ItemEditorMixin(object):
             'content_types': content_types,
             'settings_fieldset': settings_fieldset,
             'top_fieldset': [model_form[field] for field in self.show_on_top],
+            'media': self.media+model_form.media,
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
         }

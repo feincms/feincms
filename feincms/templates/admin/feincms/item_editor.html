@@ -5,10 +5,6 @@
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
 
 {% block extrahead %}{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />
-
-<script type="text/javascript" src="../../../jsi18n/"></script>
-
 {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
