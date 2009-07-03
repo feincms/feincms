@@ -41,7 +41,7 @@ $(document).ready(function(){
         move_item(REGIONS.indexOf(moveTo), $("#main div.order-machine fieldset.active-item"));
     });
 
-    $(".item-delete").livequery('click',function(){
+    $(".item-delete").live('click', function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
         var item = $(this).parents(".order-item");
@@ -61,14 +61,14 @@ $(document).ready(function(){
             if (r==true) {
                 var items = $(".panel").children(".order-machine").children();
                 move_item(0, items);
-                $("#overview input.submit_form").click();
+                $('form').submit();
             } else {
                 $(".popup_bg").remove();
             }
         });
     });
 
-    $("fieldset.order-item").livequery('click',function(){
+    $("fieldset.order-item").live('click', function(){
         if($(this).hasClass('active-item')) {
             $(this).removeClass('active-item')
         } else {
