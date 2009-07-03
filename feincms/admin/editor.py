@@ -245,8 +245,13 @@ class TreeEditorMixin(object):
             ], context, context_instance=template.RequestContext(request))
 
     def object_list(self):
+        first_field = self.changelist.list_display[0]
+
         for item in self.model._tree_manager.all().select_related():
-            yield item, unicode(item), _properties(self.changelist, item)
+            first = getattr(item, first_field)
+            if callable(first):
+                first = first()
+            yield item, first, _properties(self.changelist, item)
 
     def _save_tree(self, request):
         itemtree = simplejson.loads(request.POST['tree'])

@@ -12,7 +12,7 @@ def register():
     Page.add_to_class('language', models.CharField(_('language'), max_length=10,
         choices=settings.LANGUAGES))
     Page.add_to_class('translation_of', models.ForeignKey('self',
-        blank=True, null=True, verbose_name='translation of',
+        blank=True, null=True, verbose_name=_('translation of'),
         related_name='translations',
         limit_choices_to={'language': primary_language}))
 

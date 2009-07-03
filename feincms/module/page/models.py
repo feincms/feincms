@@ -115,7 +115,7 @@ class Page(Base):
     objects = PageManager()
 
     def __unicode__(self):
-        return self.title
+        return u'%s (%s)' % (self.title, self._cached_url)
 
     def save(self, *args, **kwargs):
         cached_page_urls = {}
@@ -176,7 +176,7 @@ class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin
             'fields': ('override_url',),
         }),
         )
-    list_display=('__unicode__', '_cached_url', 'active', 'in_navigation',
+    list_display=('title', '_cached_url', 'active', 'in_navigation',
         'template')
     list_filter=('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', '_content_title', '_page_title',
