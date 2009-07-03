@@ -38,7 +38,7 @@ $(document).ready(function(){
 
     $(".order-machine-move-button").click(function(){
         var moveTo = $(this).prev().val();
-        move_item(REGIONS.indexOf(moveTo), $("#main div.order-machine div.active-item"));
+        move_item(REGIONS.indexOf(moveTo), $("#main div.order-machine fieldset.active-item"));
     });
 
     $(".item-delete").livequery('click',function(){
