@@ -2,9 +2,8 @@
 The FeinCMS admin interface
 ===========================
 
-FeinCMS provides two mixins for the ModelAdmin classes, `ItemEditorMixin` and
-`TreeEditorMixin`. Their purpose and their customization hooks are briefly
-discussed here.
+FeinCMS provides two ModelAdmin classes, `ItemEditor` and `TreeEditor`. Their
+purpose and their customization hooks are briefly discussed here.
 
 
 The tree editor
@@ -21,7 +20,7 @@ Usage is as follows:
     from feincms.admin import editor
     from yourapp.models import YourModel
 
-    class YourModelAdmin(editor.TreeEditorMixin, admin.ModelAdmin):
+    class YourModelAdmin(editor.TreeEditor):
         pass
 
     admin.site.register(YourModel, YourModelAdmin)
@@ -31,10 +30,6 @@ The columns shown in the tree editor can be specified using list_display. Please
 note that the first column is hardcoded as the value of __unicode__ currently.
 In the future, the tree editor might even take the setting `list_editable`
 into account.
-
-Please note that you need to put the `TreeEditorMixin` before the standard
-`ModelAdmin` class, because otherwise the standard methods will not be
-overridden.
 
 
 The item editor

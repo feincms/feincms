@@ -55,7 +55,7 @@ class Entry(Base):
             fn()
 
 
-class EntryAdmin(editor.ItemEditorMixin, admin.ModelAdmin):
+class EntryAdmin(editor.ItemEditor, admin.ModelAdmin):
     date_hierarchy = 'published_on'
     list_display=('__unicode__', 'published', 'published_on')
     list_filter=('published',)

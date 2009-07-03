@@ -37,9 +37,9 @@ class ItemEditorForm(forms.ModelForm):
     ordering = forms.IntegerField(widget=forms.HiddenInput())
 
 
-class ItemEditorMixin(object):
+class ItemEditor(admin.ModelAdmin):
     """
-    This mixin needs an attribute on the ModelAdmin class:
+    This ModelAdmin class needs an attribute:
 
     show_on_top::
         A list of fields which should be displayed at the top of the form.
@@ -182,8 +182,8 @@ class ItemEditorMixin(object):
                 processors=self.model.feincms_item_editor_context_processors))
 
 
-class TreeEditorMixin(object):
-    actions = None # TreeEditorMixin does not like the checkbox column
+class TreeEditor(admin.ModelAdmin):
+    actions = None # TreeEditor does not like the checkbox column
 
     def changelist_view(self, request, extra_context=None):
         # handle AJAX requests
@@ -248,7 +248,7 @@ class TreeEditorMixin(object):
         first_field = self.changelist.list_display[0]
 
         if first_field=='action_checkbox':
-            raise ImproperlyConfigured, 'You do have actions defined for this ModelAdmin class. Please don\'t do that, the TreeEditorMixin cannot handle those yet.'
+            raise ImproperlyConfigured, 'You do have actions defined for this ModelAdmin class. Please don\'t do that, the TreeEditor cannot handle those yet.'
 
         for item in self.model._tree_manager.all().select_related():
             first = getattr(item, first_field)

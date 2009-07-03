@@ -171,7 +171,7 @@ class Page(Base):
 mptt.register(Page)
 
 
-class PageAdmin(editor.ItemEditorMixin, editor.TreeEditorMixin, admin.ModelAdmin):
+class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     # the fieldsets config here is used for the add_view, it has no effect
     # for the change_view which is completely customized anyway
     fieldsets = (
