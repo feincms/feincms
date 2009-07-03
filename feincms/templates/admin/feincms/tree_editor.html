@@ -89,11 +89,10 @@
                     handle_drop_event($(ui.draggable).parents("tr"), $(this).parents("tr"), "sibling")
                 },
                 over: function(e, ui) {
-                  var row = '<div style="background-color:#bcf; height:4px; width:100%; margin:-8px 0px 4px -5px; position:relative; z-index:10;"></div>'
-                  $(row).insertBefore($(this).parent());
+                  $(this).parent().removeClass("nohover").addClass("hover-as-sibling");
                 },
                 out: function(e, ui) {
-                  $(this).parent().prev().remove();
+                  $(this).parent().removeClass("hover-as-sibling").addClass("nohover");
                 }
               });
             });

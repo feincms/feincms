@@ -185,7 +185,7 @@
         });
 
         if(options.expandable) {
-            cell.children(":first").children("span").prepend('<span style="margin-left: -' + (options.indent-15) + 'px; padding-left: ' + (options.indent-5) + 'px;" class="expander"></span>');
+            cell.children(":first").children("span").prepend('<span style="margin-left: -' + (options.indent-15) + 'px; padding-left: ' + (options.indent-3) + 'px;" class="expander"></span>');
           //$(cell[0].firstChild).click(function() { node.toggleBranch(); });
 
           // Check for a class set explicitly by the user, otherwise set the default class
@@ -201,7 +201,7 @@
         }
       } else {
           var cell = $(node.children("td")[options.treeColumn]);
-          cell.children(":first").children("span").prepend('<span style="margin-left: -' + (options.indent-15) + 'px; padding-left: ' + (options.indent-5) + 'px;"></span>');
+          cell.children(":first").children("span").prepend('<span style="margin-left: -' + (options.indent-15) + 'px; padding-left: ' + (options.indent-3) + 'px;"></span>');
       }
       node.children(":first").addClass("padded");
     }
@@ -240,8 +240,9 @@ function handle_drop_event(source, dest, method){
     var ancestorNames = $.map(ancestorsOf_jQuery(dest), function(a) { return a.attr("id"); });
     if (method=="child")
         dest.find(".wrap").removeClass("hover-as-child").addClass("nohover");
-    else // method == "sibling"
-        dest.find("div:first").remove();
+    else
+        dest.find('.wrap').removeClass('hover-as-sibling').addClass('nohover');
+
     // do not drop on itself or its own children, if method == "child"
     if ( (method == "sibling") || (source.attr("id") != dest.attr("id") && $.inArray(source.attr("id"), ancestorNames) == -1) ) {
         var source_child_of = null;
@@ -268,6 +269,8 @@ function handle_drop_event(source, dest, method){
             source.insertBranchBefore(dest);
     }
     source.find(".wrap").switchClass("nohover","flash",0).switchClass("flash","nohover",500);
+    dest.find(".wrap").switchClass("nohover","flash",0).switchClass("flash","nohover",500);
+
 }
 
 function handle_page_delete(node) {
