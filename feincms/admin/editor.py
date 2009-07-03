@@ -247,6 +247,9 @@ class TreeEditorMixin(object):
     def object_list(self):
         first_field = self.changelist.list_display[0]
 
+        if first_field=='action_checkbox':
+            raise ImproperlyConfigured, 'You do have actions defined for this ModelAdmin class. Please don\'t do that, the TreeEditorMixin cannot handle those yet.'
+
         for item in self.model._tree_manager.all().select_related():
             first = getattr(item, first_field)
             if callable(first):
