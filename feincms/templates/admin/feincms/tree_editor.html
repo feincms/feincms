@@ -114,10 +114,10 @@
     });
 
     function expandall(yesno) {
+        // the treeTable methods are too stupid... we need to call them for
+        // every single node separately
         if(yesno) {
-            var elems = $('#sitetree tr.collapsed');
-
-            elems.each(function(){
+            $('#sitetree tr.collapsed').each(function(){
                 $(this).expand();
             });
         } else {
@@ -130,9 +130,7 @@
     }
 </script>
 
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}css/layout.css" />
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}css/jquery.alerts.css" media="screen" />
-<link href="{{ FEINCMS_ADMIN_MEDIA }}css/jquery.treeTable.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
 
 {% endblock %}
 
