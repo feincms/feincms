@@ -13,8 +13,16 @@ from feincms.utils import get_object
 
 
 class PageManager(models.Manager):
+
+    # A list of filters which are used to determine whether a page is active or not.
+    # Extended for example in the datepublisher extension (date-based publishing and
+    # un-publishing of pages)
+    active_filters = [
+        Q(active=True),
+        ]
+
     def active(self):
-        return self.filter(active=True)
+        return self.filter(*self.active_filters)
 
     def page_for_path(self, path, raise404=False):
         """
