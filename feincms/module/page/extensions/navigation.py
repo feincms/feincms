@@ -1,3 +1,11 @@
+"""
+Proof-of-concept for extending the navigation with non-page-objects (f.e. if
+you'd like to show all albums of a gallery in a submenu or something...)
+
+This is not really finished, and the navigation template tags don't support
+this.
+"""
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 

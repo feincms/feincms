@@ -1,3 +1,11 @@
+"""
+This extension adds a language field to every page. When calling setup_request,
+the page's language is activated.
+Pages in secondary languages can be said to be a translation of a page in the
+primary langauge (the first language in settings.LANGUAGES), thereby enabling
+deeplinks between translated pages...
+"""
+
 from django.conf import settings
 from django.db import models
 from django.utils import translation

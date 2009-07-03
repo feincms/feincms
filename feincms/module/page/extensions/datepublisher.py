@@ -1,3 +1,9 @@
+"""
+Allows setting a date range for when the page is active. Modifies the active()
+manager method so that only pages inside the given range are used in the default
+views and the template tags.
+"""
+
 from datetime import datetime
 
 from django.db import models

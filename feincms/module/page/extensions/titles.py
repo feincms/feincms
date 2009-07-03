@@ -1,3 +1,9 @@
+"""
+Sometimes, a single title is not enough, you'd like subtitles, and maybe differing
+titles in the navigation and in the <title>-tag.
+This extension lets you do that.
+"""
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
