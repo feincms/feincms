@@ -356,25 +356,40 @@ function save_page_tree() {
         }
         // save info
         var inArray = ancestor_tree_ids.indexOf(parent_id);
-        while ( ( is_child && inArray < ancestor_tree_ids.length - 1 && inArray >= 0) || ( !is_child && ancestor_tree_ids.length > 0 ) ) {
+
+        while (
+                ( is_child && inArray < ancestor_tree_ids.length - 1 && inArray >= 0)
+                    // We are working on a child currently (not a root node).
+                    // Walk back up the tree until the last entries in the ancestor
+                    // arrays belong to the parent of the current item. We can then
+                    // proceed by filling in the left value for the current entry.
+                || ( !is_child && ancestor_tree_ids.length > 0 )
+                    // We are working on a new root node. Completely drain the ancestor
+                    // arrays and proceed by opening a new tree (see next if statement).
+                ) {
             send_tree[ancestor_indices.pop()][3] = i++;
             ancestor_tree_ids.pop();
         }
         if (!is_child) {
+            // Start with the next tree, reset left/right value
             tree_id++;
             i = 0;
         }
         left = i++;
         level = ancestor_tree_ids.length;
         if (is_parent) {
+            // Walk down the tree -- the current entry is the parent of the next entry.
             ancestor_tree_ids.push(item_id);
             ancestor_indices.push(send_tree.length);
         } else {
+            // No children -- fill in right value now
             right = i++;
         }
 
         send_tree.push([tree_id, parent_id?parent_id:null, left, right, level, item_id]);
     });
+
+    // Drain the ancestor array again
     while (ancestor_tree_ids.length>0) {
         send_tree[ancestor_indices.pop()][3] = i++;
         ancestor_tree_ids.pop();
