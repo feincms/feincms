@@ -53,6 +53,14 @@ class ItemEditor(admin.ModelAdmin):
             return curry(self.formfield_for_dbfield, request=request)
 
     def _frontend_editing_view(self, request, cms_id, content_type, content_id):
+        """
+        This view is used strictly for frontend editing -- it is not used inside the
+        standard administration interface.
+
+        The code in feincms/templates/admin/feincms/fe_tools.html knows how to call
+        this view correctly.
+        """
+
         try:
             model_cls = loading.get_model(self.model._meta.app_label, content_type)
             obj = model_cls.objects.get(parent=cms_id, id=content_id)
@@ -66,10 +74,16 @@ class ItemEditor(admin.ModelAdmin):
             form=form_class_base,
             formfield_callback=self._formfield_callback(request=request))
 
+        # we do not want to edit these two fields in the frontend editing mode; we are
+        # strictly editing single content blocks there.
         del ModelForm.base_fields['region']
         del ModelForm.base_fields['ordering']
 
         if request.method=='POST':
+            # The prefix is used to replace the formset identifier from the ItemEditor
+            # interface. Customization of the form is easily possible through either matching
+            # the prefix (frontend editing) or the formset identifier (ItemEditor) as it is
+            # done in the richtext and mediafile init.html item editor includes.
             form = ModelForm(request.POST, instance=obj, prefix=content_type)
 
             if form.is_valid():
@@ -101,6 +115,9 @@ class ItemEditor(admin.ModelAdmin):
         if not hasattr(self.model, '_feincms_content_types') or not self.model._feincms_content_types:
             raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.model.__name__)
 
+        # Recognize frontend editing requests
+        # This is done here so that the developer does not need to add additional entries to
+        # urls.py or something...
         res = FRONTEND_EDITING_MATCHER.search(object_id)
 
         if res:
