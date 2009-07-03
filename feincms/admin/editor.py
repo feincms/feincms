@@ -223,6 +223,12 @@ class TreeEditor(admin.ModelAdmin):
                 return render_to_response('admin/invalid_setup.html', {'title': _('Database error')})
             return HttpResponseRedirect(request.path + '?' + ERROR_FLAG + '=1')
 
+        # XXX Hack alarm!
+        # if actions is defined, Django adds a new field to list_display, action_checkbox. The
+        # TreeEditor cannot cope with this (yet), so we remove it by hand.
+        if 'action_checkbox' in self.changelist.list_display:
+            self.changelist.list_display.remove('action_checkbox')
+
         context = {
             'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
