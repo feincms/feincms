@@ -48,6 +48,8 @@ class ItemEditor(admin.ModelAdmin):
 
     def _formfield_callback(self, request):
         if django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1):
+            # This should compare for Django SVN before [9761] (From 2009-01-16),
+            # but I don't care that much. Doesn't work with git checkouts anyway, so...
             return self.formfield_for_dbfield
         else:
             return curry(self.formfield_for_dbfield, request=request)
