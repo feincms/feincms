@@ -54,7 +54,7 @@
 .item-delete {
     cursor:pointer;
     float:right;
-    margin:3px 0px 0px 5px;
+    margin: 2px 0px 0px 0;
 }
 .active-item {
     background-color:#eee;
@@ -167,6 +167,7 @@ td span select {
     z-index:2;
     background-color:none;
 }
+
 td div.wrap {
     margin: -5px;
     padding: 5px 5px 5px 5px;
@@ -212,6 +213,7 @@ td div.hover-as-sibling {
 
 .del-page {
     cursor: pointer;
+    margin: 0 0 1px 0;
 }
 
 
