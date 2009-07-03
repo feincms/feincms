@@ -22,7 +22,15 @@ class PageManager(models.Manager):
         ]
 
     def active(self):
-        return self.filter(*self.active_filters)
+        queryset = self.all()
+
+        for filt in self.active_filters:
+            if callable(filt):
+                queryset = filt(queryset)
+            else:
+                queryset = queryset.filter(filt)
+
+        return queryset
 
     def page_for_path(self, path, raise404=False):
         """
