@@ -93,8 +93,6 @@
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
 
         $('#inlines').hide();
-
-        $('input.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
     });
 
     $(window).load(function(){init_contentblocks()});
