@@ -10,6 +10,12 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
+try:
+    any
+except NameError:
+    # For Python 2.4
+    from feincms.compat import c_any as any
+
 import mptt
 
 
