@@ -496,6 +496,15 @@ msgstr "Sichern und neu hinzufügen"
 msgid "(no caption)"
 msgstr "(Keine Legende)"
 
+msgid "publication date"
+msgstr "Veröffentlichen am"
+
+msgid "publication end date"
+msgstr "Veröffentlicht bis"
+
+msgid "slug"
+msgstr "Slug"
+
 #~ msgid "key"
 #~ msgstr "Schlüssel"
 

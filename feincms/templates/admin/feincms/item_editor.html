@@ -155,7 +155,7 @@
             {% endwith %}
         {% endifequal %}
 
-        {{ field.label_tag }}{{ field }}
+        <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
         {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
     </div>
     {% endfor %}
@@ -178,7 +178,7 @@
         <fieldset class="module aligned" id="settings_body">
             {% for field in settings_fieldset %}
             <div class="form-row{% if field.errors %} errors{% endif %}">
-                {{ field.label_tag }}{{ field }}
+                <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
                 {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
             </div>
             {% endfor %}
@@ -241,7 +241,7 @@
                         {{ field }}
                     {% else %}
                         <div class="form-row{% if field.errors %} errors{% endif %}">
-                            {{ field.label_tag }}{{ field }}
+                            <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
                             {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
                         </div>
                     {% endif %}

@@ -97,7 +97,7 @@ class Page(Base):
     # structure and navigation
     title = models.CharField(_('title'), max_length=100,
         help_text=_('This is used for the generated navigation too.'))
-    slug = models.SlugField()
+    slug = models.SlugField(_('slug'))
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
     in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=200, blank=True,
