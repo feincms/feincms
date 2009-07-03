@@ -84,6 +84,8 @@
 
         if(window.location.hash) {
             $('#'+window.location.hash.substr(5)+'_tab').trigger('click');
+        } else {
+            $('#main_wrapper>div.navi_tab:first-child').trigger('click');
         }
 
         // bring order to chaos
@@ -167,10 +169,10 @@
 </fieldset>
 
 <div id="main_wrapper">
-    <div class="navi_tab tab_active" id="settings_tab">{% trans "Properties" %}</div>
     {% for region in object.template.regions %}
         <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
     {% endfor %}
+    <div class="navi_tab" id="settings_tab">{% trans "Properties" %}</div>
     <div id="main">
         <fieldset class="module aligned" id="settings_body">
             {% for field in settings_fieldset %}
