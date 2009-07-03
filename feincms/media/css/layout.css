@@ -86,6 +86,10 @@ select {
     max-width: 580px;
 }
 
+#main_wrapper {
+    margin: 10px 0 0 0;
+}
+
 textarea {
     width: 580px;
     margin-top:5px;
