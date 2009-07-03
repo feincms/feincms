@@ -32,6 +32,9 @@ FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKI
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 
 
+DJANGO10_COMPAT = django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1)
+
+
 class ItemEditorForm(forms.ModelForm):
     region = forms.CharField(widget=forms.HiddenInput())
     ordering = forms.IntegerField(widget=forms.HiddenInput())
@@ -47,7 +50,7 @@ class ItemEditor(admin.ModelAdmin):
     """
 
     def _formfield_callback(self, request):
-        if django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1):
+        if DJANGO10_COMPAT:
             # This should compare for Django SVN before [9761] (From 2009-01-16),
             # but I don't care that much. Doesn't work with git checkouts anyway, so...
             return self.formfield_for_dbfield
@@ -228,7 +231,7 @@ class TreeEditor(admin.ModelAdmin):
         if not self.has_change_permission(request, None):
             raise PermissionDenied
         try:
-            if django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1):
+            if DJANGO10_COMPAT:
                 self.changelist = ChangeList(request, self.model, self.list_display,
                     self.list_display_links, self.list_filter, self.date_hierarchy,
                     self.search_fields, self.list_select_related, self.list_per_page,
@@ -405,8 +408,11 @@ def _properties(cl, result):
                 attr = str(cl.to_field)
             else:
                 attr = pk
-            value = result.serializable_value(attr)
-            result_id = repr(force_unicode(value))[1:]
+            if DJANGO10_COMPAT: # see Django [9602]
+                result_id = repr(force_unicode(getattr(result, attr)))[1:]
+            else:
+                value = result.serializable_value(attr)
+                result_id = repr(force_unicode(value))[1:]
             yield mark_safe(u'<%s><a href="%s"%s>%s</a></%s>' % \
                 (table_tag, url, (cl.is_popup and ' onclick="opener.dismissRelatedLookupPopup(window, %s); return false;"' % result_id or ''), conditional_escape(result_repr), table_tag))
         else:
