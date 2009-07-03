@@ -4,3 +4,6 @@ it's nothing more than a brain dump.
 - Write even more and even better documentation
 - Make shiny looking website -- maybe
 - Do not include more javascript than necessary -- we do not net all of jQuery.ui
+- Document how to write extensions
+- Encourage people to translate the administration interface
+- Finish frontend editing -- not much more than a proof of concept now
