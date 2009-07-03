@@ -76,12 +76,6 @@
 }
 th { vertical-align: middle; }
 
-#test-log { padding: 5px; border: 1px solid #ccc; }
-
-#overview span { margin-right:15px; margin-left:5px;}
-
-.richtextcontent {display:none;}
-
 select {
     max-width: 580px;
 }
