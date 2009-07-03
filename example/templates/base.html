@@ -20,12 +20,14 @@
 
     Subpages:
     {% feincms_navigation of feincms_page as toplevel level=1 %}
-    {% for p in feincms_page.children.all %}
-        <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
-        {% if not forloop.last %}|{% endif %}
-    {% empty %}
+    {% if feincms_page.children.all %} {# stupid django 1.0 compatibility ... :-) #}
+        {% for p in feincms_page.children.all %}
+            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
+            {% if not forloop.last %}|{% endif %}
+        {% endfor %}
+    {% else %}
         No subpages
-    {% endfor %}
+    {% endif %}
 
     <h2>Main content</h2>
     {% feincms_render_region feincms_page "main" request %}

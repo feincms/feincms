@@ -46,6 +46,12 @@ class ItemEditor(admin.ModelAdmin):
         This does not need to (and should not) include ``template''
     """
 
+    def _formfield_callback(self, request):
+        if django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1):
+            return self.formfield_for_dbfield
+        else:
+            return curry(self.formfield_for_dbfield, request=request)
+
     def _frontend_editing_view(self, request, cms_id, content_type, content_id):
         try:
             model_cls = loading.get_model(self.model._meta.app_label, content_type)
@@ -58,7 +64,7 @@ class ItemEditor(admin.ModelAdmin):
         ModelForm = modelform_factory(model_cls,
             exclude=('parent', 'region', 'ordering'),
             form=form_class_base,
-            formfield_callback=curry(self.formfield_for_dbfield, request=request))
+            formfield_callback=self._formfield_callback(request=request))
 
         del ModelForm.base_fields['region']
         del ModelForm.base_fields['ordering']
@@ -101,17 +107,17 @@ class ItemEditor(admin.ModelAdmin):
             return self._frontend_editing_view(request, res.group(1), res.group(2), res.group(3))
 
         ModelForm = modelform_factory(self.model, exclude=('parent',),
-            formfield_callback=curry(self.formfield_for_dbfield, request=request))
+            formfield_callback=self._formfield_callback(request=request))
         SettingsForm = modelform_factory(self.model,
             exclude=self.show_on_top+('template_key', 'parent'),
-            formfield_callback=curry(self.formfield_for_dbfield, request=request))
+            formfield_callback=self._formfield_callback(request=request))
 
         # generate a formset type for every concrete content type
         inline_formset_types = [(
             content_type,
             inlineformset_factory(self.model, content_type, extra=1,
                 form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm),
-                formfield_callback=curry(self.formfield_for_dbfield, request=request))
+                formfield_callback=self._formfield_callback(request=request))
             ) for content_type in self.model._feincms_content_types]
 
         opts = self.model._meta
