@@ -28,16 +28,18 @@
 
   // Recursively hide all node's children in a tree
   $.fn.collapse = function() {
-    $(this).addClass("collapsed");
+    var e0 = $(this);
+    e0.addClass("collapsed");
 
-    childrenOf($(this)).each(function() {
-      initialize($(this));
+    childrenOf(e0).each(function() {
+      var e1 = $(this);
+      initialize(e1);
 
-      if(!$(this).hasClass("collapsed")) {
-        $(this).collapse();
+      if(!e1.hasClass("collapsed")) {
+        e1.collapse();
       }
 
-      $(this).hide();
+      e1.hide();
     });
 
     return this;
@@ -45,16 +47,18 @@
 
   // Recursively show all node's children in a tree
   $.fn.expand = function() {
-    $(this).removeClass("collapsed").addClass("expanded");
+    var e0 = $(this);
+    e0.removeClass("collapsed").addClass("expanded");
 
-    childrenOf($(this)).each(function() {
-      initialize($(this));
+    childrenOf(e0).each(function() {
+      var e1 = $(this);
+      initialize(e1);
 
-      if($(this).is(".expanded.parent")) {
-        $(this).expand();
+      if(e1.is(".expanded.parent")) {
+        e1.expand();
       }
 
-      $(this).show();
+      e1.show();
     });
 
     return this;
@@ -126,10 +130,12 @@
 
   // Toggle an entire branch
   $.fn.toggleBranch = function() {
-    if($(this).hasClass("collapsed")) {
-      $(this).expand();
+    var e0 = $(this);
+
+    if(e0.hasClass("collapsed")) {
+      e0.expand();
     } else {
-      $(this).removeClass("expanded").collapse();
+      e0.removeClass("expanded").collapse();
     }
 
     return this;
