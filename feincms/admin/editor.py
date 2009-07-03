@@ -19,7 +19,7 @@ from django.shortcuts import render_to_response
 from django.utils import dateformat, simplejson
 from django.utils.html import escape, conditional_escape
 from django.utils.encoding import force_unicode, smart_str, smart_unicode
-from django.utils.functional import update_wrapper
+from django.utils.functional import curry, update_wrapper
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import get_date_formats, get_partial_date_formats, ugettext as _
@@ -30,20 +30,6 @@ from feincms.models import Region
 FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
 FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKING', False)
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
-
-
-def formfield_callback(f):
-    if isinstance(f, models.DateTimeField):
-        return f.formfield(
-            form_class=forms.SplitDateTimeField,
-            widget=widgets.AdminSplitDateTime)
-
-    elif isinstance(f, models.DateField):
-        return f.formfield(widget=widgets.AdminDateWidget())
-        #return forms.SplitDateTimeField(widget=widgets.AdminSplitDateTime())
-        #return f.formfield(widget=widgets.AdminSplitDateTime())
-
-    return f.formfield()
 
 
 class ItemEditorForm(forms.ModelForm):
@@ -72,7 +58,7 @@ class ItemEditorMixin(object):
         ModelForm = modelform_factory(model_cls,
             exclude=('parent', 'region', 'ordering'),
             form=form_class_base,
-            formfield_callback=formfield_callback)
+            formfield_callback=curry(self.formfield_for_dbfield, request=request))
 
         del ModelForm.base_fields['region']
         del ModelForm.base_fields['ordering']
@@ -115,17 +101,17 @@ class ItemEditorMixin(object):
             return self._frontend_editing_view(request, res.group(1), res.group(2), res.group(3))
 
         ModelForm = modelform_factory(self.model, exclude=('parent',),
-            formfield_callback=formfield_callback)
+            formfield_callback=curry(self.formfield_for_dbfield, request=request))
         SettingsForm = modelform_factory(self.model,
             exclude=self.show_on_top+('template_key', 'parent'),
-            formfield_callback=formfield_callback)
+            formfield_callback=curry(self.formfield_for_dbfield, request=request))
 
         # generate a formset type for every concrete content type
         inline_formset_types = [(
             content_type,
             inlineformset_factory(self.model, content_type, extra=1,
                 form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm),
-                formfield_callback=formfield_callback)
+                formfield_callback=curry(self.formfield_for_dbfield, request=request))
             ) for content_type in self.model._feincms_content_types]
 
         opts = self.model._meta
