@@ -117,13 +117,13 @@
         if(yesno) {
             var elems = $('#sitetree tr.collapsed');
 
-            if(elems.length)
-                elems.expand().removeClass('collapsed').addClass('expanded');
+            elems.each(function(){
+                $(this).expand();
+            });
         } else {
-            var elems = $('#sitetree tr.expanded');
-
-            for(var i=elems.length; i>=0; i--)
-                $(elems[i]).collapse().removeClass('expanded').addClass('collapsed');
+            $('#sitetree tr.expanded').each(function(){
+                $(this).collapse().removeClass('expanded');
+            });
         }
 
         return false;
