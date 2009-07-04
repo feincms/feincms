@@ -1,6 +1,7 @@
 import re
 
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import models
 from django.template.loader import render_to_string
@@ -65,6 +66,9 @@ class MediaFileContent(models.Model):
 
     @classmethod
     def handle_kwargs(cls, POSITION_CHOICES=None, TYPES=None):
+        if 'feincms.module.medialibrary' not in settings.INSTALLED_APPS:
+            raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
+
         if POSITION_CHOICES is None:
             raise ImproperlyConfigured, 'You need to set POSITION_CHOICES when creating a %s' % cls.__name__
 
