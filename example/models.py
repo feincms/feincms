@@ -15,14 +15,18 @@ Page.register_templates({
         ),
     })
 Page.create_content_type(RawContent)
-Page.create_content_type(ImageContent)
+Page.create_content_type(ImageContent, POSITION_CHOICES=(
+    ('default', 'Default position'),
+    ))
 
 
 Entry.register_regions(
     ('main', 'Main region'),
     )
 Entry.create_content_type(RawContent)
-Entry.create_content_type(ImageContent)
+Entry.create_content_type(ImageContent, POSITION_CHOICES=(
+    ('default', 'Default position'),
+    ))
 
 
 class Category(models.Model):

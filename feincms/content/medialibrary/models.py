@@ -1,7 +1,7 @@
 import re
 
 from django import forms
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
@@ -64,7 +64,10 @@ class MediaFileContent(models.Model):
         verbose_name_plural = _('media files')
 
     @classmethod
-    def handle_kwargs(cls, POSITION_CHOICES=(), TYPES=None):
+    def handle_kwargs(cls, POSITION_CHOICES=None, TYPES=None):
+        if POSITION_CHOICES is None:
+            raise ImproperlyConfigured, 'You need to set POSITION_CHOICES when creating a %s' % cls.__name__
+
         cls.add_to_class('mediafile', models.ForeignKey(MediaFile, verbose_name=_('media file'),
             related_name='%s_%s_set' % (cls._meta.app_label, cls._meta.module_name)
             ))

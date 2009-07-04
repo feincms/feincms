@@ -1,3 +1,4 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -29,7 +30,11 @@ class ImageContent(models.Model):
             ], {'content': self})
 
     @classmethod
-    def handle_kwargs(cls, POSITION_CHOICES=()):
-        models.CharField(_('position'), max_length=10, choices=POSITION_CHOICES
+    def handle_kwargs(cls, POSITION_CHOICES=None):
+        if POSITION_CHOICES is None:
+            raise ImproperlyConfigured, 'You need to set POSITION_CHOICES when creating a %s' % cls.__name__
+
+        models.CharField(_('position'), max_length=10, choices=POSITION_CHOICES,
+            default=POSITION_CHOICES[0][0]
             ).contribute_to_class(cls, 'position')
 
