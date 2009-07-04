@@ -25,7 +25,7 @@ class ContactFormContent(models.Model):
         verbose_name_plural = _('contact forms')
 
     @classmethod
-    def handle_kwargs(cls, form=None):
+    def initialize_type(cls, form=None):
         if form:
             cls.form = form
 

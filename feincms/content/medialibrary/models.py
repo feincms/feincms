@@ -65,7 +65,7 @@ class MediaFileContent(models.Model):
         verbose_name_plural = _('media files')
 
     @classmethod
-    def handle_kwargs(cls, POSITION_CHOICES=None, TYPES=None):
+    def initialize_type(cls, POSITION_CHOICES=None, TYPES=None):
         if 'feincms.module.medialibrary' not in settings.INSTALLED_APPS:
             raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
 

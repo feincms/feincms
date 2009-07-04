@@ -276,7 +276,7 @@ class Base(models.Model):
 
         You can pass additional keyword arguments to this factory function. These
         keyword arguments will be passed on to the concrete content type, provided
-        that it has a `handle_kwargs` classmethod. This is used f.e. in
+        that it has a `initialize_type` classmethod. This is used f.e. in
         `MediaFileContent` to pass a set of possible media positions (f.e. left,
         right, centered) through to the content type.
         """
@@ -334,8 +334,8 @@ class Base(models.Model):
         model._feincms_content_models.append(new_type)
 
         # customization hook.
-        if hasattr(new_type, 'handle_kwargs'):
-            new_type.handle_kwargs(**kwargs)
+        if hasattr(new_type, 'initialize_type'):
+            new_type.initialize_type(**kwargs)
         else:
             for k, v in kwargs.items():
                 setattr(new_type, k, v)

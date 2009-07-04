@@ -30,7 +30,7 @@ class ImageContent(models.Model):
             ], {'content': self})
 
     @classmethod
-    def handle_kwargs(cls, POSITION_CHOICES=None):
+    def initialize_type(cls, POSITION_CHOICES=None):
         if POSITION_CHOICES is None:
             raise ImproperlyConfigured, 'You need to set POSITION_CHOICES when creating a %s' % cls.__name__
 
