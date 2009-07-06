@@ -316,7 +316,13 @@ class TreeEditor(admin.ModelAdmin):
             self.model._meta.pk.column)
 
         connection.cursor().executemany(sql, itemtree)
-        transaction.commit_unless_managed()
+
+        # call save on all toplevel objects, thereby ensuring that caches are regenerated (if they
+        # exist)
+        # XXX This is currently only really needed for the page module, I should probably use a
+        # signal for this
+        for item in self.model._tree_manager.filter(**{'%s__isnull' % self.model._meta.parent_attr: True}):
+            item.save()
 
         return HttpResponse("OK", mimetype="text/plain")
 
