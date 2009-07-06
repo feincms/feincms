@@ -54,7 +54,7 @@
       var e1 = $(this);
       initialize(e1);
 
-      if(e1.is(".parent")) {
+      if(e1.is(".expanded.parent")) {
         e1.expand();
       }
 
