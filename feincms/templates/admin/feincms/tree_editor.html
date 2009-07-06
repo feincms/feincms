@@ -26,6 +26,8 @@
 
     {% include "admin/feincms/_messages.html" %}
 
+    DRAGGING = false
+
     $(document).ready(function()  {
         // register
         $("#sitetree").treeTable();
@@ -38,23 +40,54 @@
             refreshPositions: true,
             revert: "invalid",
             revertDuration: 300,
-            scroll: true
+            scroll: true,
+            start: function(){ DRAGGING = true;},
+            stop: function(){
+                DRAGGING = false;
+                $(".hover-as-sibling").removeClass(".hover-as-sibling");
+                $(".hover-as-child").removeClass(".hover-as-child");
+                $(".flash").removeClass(".flash");
+            },
         });
+
+        $("#sitetree td.first").mouseover(function(){
+                if (!(DRAGGING))
+                    return
+                $(this).find(".insert-as-child").droppable('enable');
+                $(this).find(".insert-as-sibling").droppable('enable');
+        });
+
+        $("#sitetree td.first").mousemove(function(e){
+                if (!(DRAGGING))
+                    return
+                var y = e.pageY - $(this).offset().top;
+                if (y < 12) {
+                    $(this).find(".wrap").removeClass("nohover").addClass("hover-as-sibling");
+                } else {
+                    $(this).find(".wrap").removeClass("nohover").addClass("hover-as-child");
+                }
+        });
+
+        $("#sitetree td.first").mouseout(function(e){
+                if (!(DRAGGING))
+                    return
+                $(this).find(".wrap").removeClass("hover-as-child").removeClass("hover-as-sibling").addClass("nohover");
+                $(this).find(".insert-as-child").droppable('disable');
+                $(this).find(".insert-as-sibling").droppable('disable');
+        });
+
+
         // configure droppable to insert as child
         $("#sitetree .insert-as-child").each(function() {
             $(this).droppable({
                 accept: ".title-col",
                 tolerance: "intersect",
                 drop: function(e, ui) {
-                    handle_drop_event($(ui.draggable).parents("tr"), $(this).parents("tr"), "child")
+                    if (!($(ui.draggable).parents("tr")==$(this).parents("tr")))
+                        handle_drop_event($(ui.draggable).parents("tr"), $(this).parents("tr"), "child")
                 },
-                over: function(e, ui) {
-                    $(this).parent().removeClass("nohover").addClass("hover-as-child");
-                },
-                out: function(e, ui) {
-                    $(this).parent().removeClass("hover-as-child").addClass("nohover");
-                }
             });
+            $(this).droppable('disable')
         });
         // configure droppable to insert as sibling
         $("#sitetree .insert-as-sibling").each(function() {
@@ -62,15 +95,11 @@
                 accept: ".title-col",
                 tolerance: "intersect",
                 drop: function(e, ui) {
-                    handle_drop_event($(ui.draggable).parents("tr"), $(this).parents("tr"), "sibling")
+                    if (!($(ui.draggable).parents("tr")==$(this).parents("tr")))
+                        handle_drop_event($(ui.draggable).parents("tr"), $(this).parents("tr"), "sibling")
                 },
-                over: function(e, ui) {
-                    $(this).parent().removeClass("nohover").addClass("hover-as-sibling");
-                },
-                out: function(e, ui) {
-                    $(this).parent().removeClass("hover-as-sibling").addClass("nohover");
-                }
             });
+            $(this).droppable('disable')
         });
 
         $(".wrap").live('click',function() {
@@ -137,7 +166,7 @@
         <tbody>
         {% for item, title, item_properties in tree_editor.object_list %}
             <tr id="node-{{ forloop.counter }}" class="item-id-{{ item.id }} {% ifnotequal item.parent_node_index "none" %}child-of-node-{{ item.parent_node_index }}{% endifnotequal %}" {% if not item.is_root_node %}style="display:none"{% endif %}>
-                <td><div class="wrap nohover">
+                <td class="first"><div class="wrap nohover">
                     <div class="insert-as-child"></div>
                         <span class="title-col"><a href="{{ item.id }}/"><strong>{{ title }}</strong></a><img class="move-node" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif" /></span>
                     <div class="insert-as-sibling"></div>

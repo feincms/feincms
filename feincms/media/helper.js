@@ -40,7 +40,7 @@ function set_item_field_value(item, field, value) {
         item.find("."+field).val(value);
 }
 
-function move_item (region_id, item) {
+function move_item(region_id, item) {
     poorify_rich(item);
     $("#"+REGION_MAP[region_id]+"_body").children("div.order-machine").append(item);
     set_item_field_value(item, "region-choice-field", region_id);

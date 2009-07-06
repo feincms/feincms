@@ -269,7 +269,7 @@ function handle_drop_event(source, dest, method){
             source.insertBranchBefore(dest);
     }
     source.find(".wrap").switchClass("nohover","flash",0).switchClass("flash","nohover",500);
-    dest.find(".wrap").switchClass("nohover","flash",0).switchClass("flash","nohover",500);
+    //dest.find(".wrap").switchClass("nohover","flash",0).switchClass("flash","nohover",500);
 
 }
 
