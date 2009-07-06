@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load adminmedia i18n %}
 <script type="text/javascript">
 /* copied from django admin javascript files */
 function html_unescape(text) {
@@ -74,7 +74,7 @@ contentblock_init_handlers.push(function(){
         var elem = $(this);
 
         elem.siblings('span').remove().end();
-        elem.css('width', '50px').after("<span class=\"mediafile\" id=\"lookup_"+this.id+"\"> {% trans "Choose" %}</span>");
+        elem.css('width', '50px').after("<span class=\"mediafile\" id=\"lookup_"+this.id+"\"> <img src=\"{% admin_media_prefix %}img/admin/selector-search.gif\" alt=\"{% trans "Search" %}\" /></span>");
     });
 });
 $(function(){
