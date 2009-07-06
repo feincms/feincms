@@ -26,32 +26,7 @@
 
     {% include "admin/feincms/_messages.html" %}
 
-    ancestors = [{% for item in object_list %}'{{ item.parent_id|default_if_none:"0" }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
-
-    tablestr = '';
-    {% for item, title, item_properties in tree_editor.object_list %}
-    tablestr += add_row({{ forloop.counter }}, {{ item.id }}, "{{ item.parent_id|default_if_none:"-1" }}", "{{ title|escapejs }}",
-        [{% for property in item_properties %}"{{ property|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}]);{% endfor %}
-
-    function add_row(node_id, item_id, parent_id, item_title, attrs) {
-        var str = '<tr id="node-' + node_id + '" class="item-id-' + item_id + ' ';
-        if (parseInt(parent_id) >= 0)
-            str += 'child-of-node-'+ancestors.indexOf(parent_id);
-        str += '">';
-        str += '<td><div class="wrap nohover">';
-        str += '<div class="insert-as-child"></div>';
-        str += '<span class="title-col"><a href="'+item_id+'/"><strong>'+item_title+'</strong></a><img class="move-node" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif" /></span>';
-        str += '<div class="insert-as-sibling"></div>';
-        str += '</div></td>';
-        for (key in attrs)
-            str += attrs[key];
-        str += '<td><img class="del-page" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif"/></td></tr>';
-        return str;
-    }
-
     $(document).ready(function()  {
-        // build table
-        $("#sitetree tbody").append(tablestr);
         // register
         $("#sitetree").treeTable();
         // configure draggable
@@ -159,7 +134,23 @@
             <th>{% trans "Delete" %}</th>
         </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+        {% for item, title, item_properties in tree_editor.object_list %}
+            <tr id="node-{{ forloop.counter }}" class="item-id-{{ item.id }} {% ifnotequal item.parent_node_index "none" %}child-of-node-{{ item.parent_node_index }}{% endifnotequal %}">
+                <td><div class="wrap nohover">
+                    <div class="insert-as-child"></div>
+                        <span class="title-col"><a href="{{ item.id }}/"><strong>{{ title }}</strong></a><img class="move-node" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif" /></span>
+                    <div class="insert-as-sibling"></div>
+                </div></td>
+                {% for property in item_properties %}
+                    {{ property }}
+                {% endfor %}
+                <td>
+                    <img class="del-page" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif" />
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
     </table>
     </div>
 

@@ -284,10 +284,23 @@ class TreeEditor(admin.ModelAdmin):
         if first_field=='action_checkbox':
             raise ImproperlyConfigured, 'You do have actions defined for this ModelAdmin class. Please don\'t do that, the TreeEditor cannot handle those yet.'
 
+        ancestors = []
+
         for item in self.model._tree_manager.all().select_related():
             first = getattr(item, first_field)
             if callable(first):
                 first = first()
+
+            if item.parent_id is None:
+                ancestors.append(0)
+            else:
+                ancestors.append(item.parent_id)
+
+            if item.parent_id is not None:
+                item.parent_node_index = ancestors.index(item.parent_id)
+            else:
+                item.parent_node_index = 'none'
+
             yield item, first, _properties(self.changelist, item)
 
     def _save_tree(self, request):
