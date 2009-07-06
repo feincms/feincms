@@ -2,6 +2,7 @@ import re
 
 from django import forms
 from django.conf import settings
+from django.contrib.admin.widgets import AdminRadioSelect
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import models
 from django.template.loader import render_to_string
@@ -41,14 +42,10 @@ class MediaFileWidget(forms.TextInput):
         return inputfield
 
 
-class MediaFileContentAdminForm(ItemEditorForm):
-    mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.all(),
-        widget=MediaFileWidget)
 
 
 # FeinCMS connector
 class MediaFileContent(models.Model):
-    feincms_item_editor_form = MediaFileContentAdminForm
     feincms_item_editor_includes = {
         'head': ['admin/content/mediafile/init.html'],
         }
@@ -79,6 +76,15 @@ class MediaFileContent(models.Model):
         cls.add_to_class('position', models.CharField(_('position'),
             max_length=10, choices=POSITION_CHOICES,
             default=POSITION_CHOICES[0][0]))
+
+        class MediaFileContentAdminForm(ItemEditorForm):
+            mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.all(),
+                widget=MediaFileWidget)
+            position = forms.ChoiceField(choices=POSITION_CHOICES,
+                initial=POSITION_CHOICES[0][0], label=_('position'),
+                widget=AdminRadioSelect(attrs={'class': 'radiolist'}))
+
+        cls.feincms_item_editor_form = MediaFileContentAdminForm
 
         if TYPES:
             cls.TYPES = TYPES
