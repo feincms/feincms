@@ -31,6 +31,22 @@ like you want. You should think about positions that make sense for different
 media file types however, because the choice cannot be customized per file
 type.
 
+Configuring the media library
+=============================
+
+The location and URL of the media library may be configured either by setting
+the appropriate variables in your settings.py file or in your CMS defining
+module.
+
+The file system path for uploaded files is defined using the
+FEINCMS_MEDIALIBRARY_PATH settings (default 'medialibrary/'). Below that
+location, FEINCMS_MEDIALIBRARY_FILES (default MEDIALIBRARY_PATH + '%Y/%m/')
+defines the directory to upload to.
+The external URL to the media library can be set with FEINCMS_MEDIALIBRARY_URL
+(default '/medialibrary/').
+
+These settings can also be defined programmatically using
+MediaFile.reconfigure(upload_to=..., storage=...)
 
 Rendering media file contents
 =============================
