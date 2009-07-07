@@ -28,12 +28,18 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
         # of the current page, we have to add 2 to the mptt level
         if instance.level+2 == level:
-            return instance.children.in_navigation()
+            pass
+        else:
+            try:
+                instance = instance.get_ancestors()[level-2]
+            except IndexError:
+                return []
 
-        try:
-            return instance.get_ancestors()[level-2].children.in_navigation()
-        except IndexError:
-            return []
+        # special case for the navigation extension
+        if getattr(instance, 'navigation_extension', None):
+            return instance.extended_navigation()
+        else:
+            return instance.children.in_navigation()
 register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
 
@@ -55,6 +61,7 @@ class ParentLinkNode(SimpleNodeWithVarAndArgs):
         except IndexError:
             return '#'
 register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(ParentLinkNode))
+
 
 class BestMatchNode(SimpleAssignmentNodeWithVar):
     """
