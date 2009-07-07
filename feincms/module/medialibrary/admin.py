@@ -12,8 +12,8 @@ admin.site.register(models.Category)
 admin.site.register(models.MediaFile,
     date_hierarchy='created',
     inlines=[MediaFileTranslationInline],
-    list_display=('__unicode__', 'copyright', 'created'),
-    list_filter=('categories',),
+    list_display=('__unicode__', 'file_type', 'copyright', 'created'),
+    list_filter=('categories', 'type'),
     search_fields=('copyright', 'file', 'translations__caption',),
     )
 
