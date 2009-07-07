@@ -84,5 +84,13 @@ rendered:
         {# feincms_navigation template tag #}
     {% endif %}
 
+This extension could be used to pass through the children of the current
+page unmodified -- you could also apply some filtering to the entries:
 
+::
+    class PassthroughExtension(NavigationExtension):
+        name = 'passthrough extension'
 
+        def children(self, page):
+            for p in page.children.in_navigation():
+                yield p
