@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 from django.http import HttpRequest
 
 from feincms.module.page.models import Page
@@ -71,6 +72,35 @@ class BestMatchNode(SimpleAssignmentNodeWithVar):
     def what(self, path):
         return Page.objects.best_match_for_path(path)
 register.tag('feincms_bestmatch', do_simple_assignment_node_with_var_helper(BestMatchNode))
+
+
+class LanguageLinksNode(SimpleAssignmentNodeWithVar):
+    """
+    {% feincms_languagelinks for feincms_page as links %}
+
+    This template tag needs the translations extension.
+
+    Example:
+
+    {% for key, name, link in links %}
+        <a href="{% if link %}{{ link }}{% else %}/{{ key }}/{% endif %}">{% trans name %}</a>
+    {% endfor %}
+    """
+
+    def what(self, page):
+        translations = dict((t.language, t) for t in page.available_translations())
+        translations[page.language] = page
+
+        links = []
+        for key, name in settings.LANGUAGES:
+            # hardcoded paths... bleh
+            if key in translations:
+                links.append((key, name, translations[key].get_absolute_url()))
+            else:
+                links.append((key, name, None))
+
+        return links
+register.tag('feincms_languagelinks', do_simple_assignment_node_with_var_helper(LanguageLinksNode))
 
 
 @register.simple_tag
