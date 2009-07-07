@@ -1,11 +1,12 @@
 from django.contrib import admin
+from django.conf import settings
 
 from feincms.module.medialibrary import models
 
 
 class MediaFileTranslationInline(admin.TabularInline):
     model = models.MediaFileTranslation
-
+    max_num = len(settings.LANGUAGES)
 
 admin.site.register(models.Category)
 admin.site.register(models.MediaFile,
