@@ -4,3 +4,5 @@
 \#*#
 /secrets.py
 *.mo
+.DS_Store
+._*
