@@ -55,14 +55,6 @@ class MediaFile(models.Model, TranslatedObjectMixin):
             if callable(upload_to):
                 f.generate_filename = upload_to
 
-    @property
-    def file_name(self):
-        return self.file.name
-
-    @property
-    def file_url(self):
-        return self.file.url
-
     def get_absolute_url(self):
         return self.file_url
 
