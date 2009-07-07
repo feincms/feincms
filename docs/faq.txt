@@ -43,12 +43,10 @@ Please note however, that this call needs to come after all
 NavigationExtension subclasses have been processed, because otherwise they
 will not be available for selection in the page administration!
 
-Because the use cases for extended navigations are so different, there is
-no built-in support for them in the stock template tags and page methods.
-Implementing a generic system for extended subnavigation, for modification
-of the current navigation and so on is very hard, therefore FeinCMS does not
-even try to fulfil the needs of everyone. What it lets you do however is to
-hook your own code into the navigation generation process.
+Because the use cases for extended navigations are so different, FeinCMS
+does not go to great lengths trying to cover them all. What it does though
+is to let you execute code to filter, replace or add navigation entries when
+generating a list of navigation entries.
 
 If you have a blog and you want to display the blog categories as subnavigation
 entries, you could do it as follows:
@@ -74,6 +72,8 @@ navigation entries to appear.
 
 3. Modify your template so that the extended navigation will actually be
 rendered:
+
+    TODO redo this section with the improved feincms_navigation tag
 
     {% if feincms_page.navigation_extension %}
         {% for entry in feincms_page.extended_navigation %}
