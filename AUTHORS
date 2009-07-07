@@ -5,6 +5,7 @@ The primary authors are:
 
 Additional contributors include:
 
+    * Martin J. Laubach (media library improvements)
     * Martin Mahner (Typo fixes in the documentation)
     * Denis Martinez (Django 1.0 compatibility and bug reports)
 

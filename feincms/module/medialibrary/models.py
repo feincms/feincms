@@ -3,6 +3,7 @@ from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 
+from feincms import settings
 from feincms.translations import TranslatedObjectMixin, Translation,\
     TranslatedObjectManager
 
@@ -26,7 +27,11 @@ class Category(models.Model):
 
 
 class MediaFile(models.Model, TranslatedObjectMixin):
-    file = models.FileField(_('file'), upload_to='medialibrary/%Y/%m/')
+    from django.core.files.storage import FileSystemStorage
+    fs = FileSystemStorage(location=settings.FEINCMS_MEDIALIBRARY_PATH,
+                           base_url=settings.FEINCMS_MEDIALIBRARY_URL)
+
+    file = models.FileField(_('file'), upload_to=settings.FEINCMS_MEDIALIBRARY_FILES, storage=fs)
     created = models.DateTimeField(_('created'), default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
 
@@ -37,6 +42,18 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         verbose_name_plural = _('media files')
 
     objects = TranslatedObjectManager()
+
+    @classmethod
+    def reconfigure(cls, upload_to=None, storage=None):
+        f = cls._meta.get_field('file')
+        # Ugh. Copied relevant parts from django/db/models/fields/files.py
+        # FileField.__init__ (around line 225)
+        if storage:
+            f.storage = storage
+        if upload_to:
+            f.upload_to = upload_to
+            if callable(upload_to):
+                f.generate_filename = upload_to
 
 
 class MediaFileTranslation(Translation(MediaFile)):
@@ -52,3 +69,4 @@ class MediaFileTranslation(Translation(MediaFile)):
             self.parent.file.name[21:], # only show filename
             filesizeformat(self.parent.file.size),
             )
+
