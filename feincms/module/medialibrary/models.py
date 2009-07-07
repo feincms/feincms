@@ -55,6 +55,32 @@ class MediaFile(models.Model, TranslatedObjectMixin):
             if callable(upload_to):
                 f.generate_filename = upload_to
 
+    @property
+    def file_name(self):
+        return self.file.name
+
+    @property
+    def file_url(self):
+        return self.file.url
+
+    def get_absolute_url(self):
+        return self.file_url
+
+    @property
+    def file_type(self):
+        import re
+        
+        FILE_TYPES = (
+            ('image', re.compile(r'.(jpg|jpeg|gif|png)$', re.IGNORECASE)),
+            ('pdf',   re.compile(r'.pdf$', re.IGNORECASE)),
+        )
+        
+        filename = self.file_name
+        for ftype, pat in FILE_TYPES:
+            if pat.search(filename):
+                return ftype
+        return 'other'
+
 
 class MediaFileTranslation(Translation(MediaFile)):
     caption = models.CharField(_('caption'), max_length=200)
