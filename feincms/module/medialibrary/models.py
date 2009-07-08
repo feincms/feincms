@@ -37,7 +37,7 @@ class MediaFile(models.Model, TranslatedObjectMixin):
 
     # XXX maybe have a look at settings.DEFAULT_FILE_STORAGE here?
     from django.core.files.storage import FileSystemStorage
-    fs = FileSystemStorage(location=settings.FEINCMS_MEDIALIBRARY_PATH,
+    fs = FileSystemStorage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
                            base_url=settings.FEINCMS_MEDIALIBRARY_URL)
 
     FILE_TYPES = (
@@ -49,7 +49,7 @@ class MediaFile(models.Model, TranslatedObjectMixin):
 
     FILE_TYPES_DICT = dict( [ ( ft[0], ft[1] ) for ft in FILE_TYPES ] )
 
-    file = models.FileField(_('file'), upload_to=settings.FEINCMS_MEDIALIBRARY_FILES, storage=fs)
+    file = models.FileField(_('file'), upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=fs)
     type = models.CharField(_('file type'), max_length=12, editable=False, default='other',
         choices=[t[0:2] for t in FILE_TYPES])
     created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
