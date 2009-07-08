@@ -50,12 +50,6 @@ class MediaFileContent(models.Model):
         'head': ['admin/content/mediafile/init.html'],
         }
 
-    TYPES = (
-        ('image', re.compile(r'.(jpg|jpeg|gif|png)$', re.IGNORECASE)),
-        ('pdf', re.compile(r'.pdf$', re.IGNORECASE)),
-        ('download', re.compile(r'')),
-        )
-
     class Meta:
         abstract = True
         verbose_name = _('media file')
@@ -86,22 +80,10 @@ class MediaFileContent(models.Model):
 
         cls.feincms_item_editor_form = MediaFileContentAdminForm
 
-        if TYPES:
-            cls.TYPES = TYPES
-
-    @property
-    def type(self):
-        filename = self.mediafile.file.name
-        for identifier, expression in self.TYPES:
-            if expression.search(filename):
-                return identifier
-
-        return 'unknown'
-
     def render(self, **kwargs):
         return render_to_string([
-            'content/mediafile/%s_%s.html' % (self.type, self.position),
-            'content/mediafile/%s.html' % self.type,
+            'content/mediafile/%s_%s.html' % (self.mediafile.type, self.position),
+            'content/mediafile/%s.html' % self.mediafile.type,
             'content/mediafile/%s.html' % self.position,
             'content/mediafile/default.html',
             ], {'content': self})
