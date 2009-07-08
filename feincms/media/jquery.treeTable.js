@@ -299,6 +299,8 @@ function handle_page_delete(node) {
                         jAlert(DELETE_MESSAGES[2], DELETE_MESSAGES[2], function(){
                                 $(".popup_bg").remove();
                         });
+                    } else {
+                        jAlert(data);
                     }
                 });
             }

@@ -326,8 +326,12 @@ class TreeEditor(admin.ModelAdmin):
 
     def _delete_item(self, request):
         item_id = request.POST['item_id']
-        obj = self.model._default_manager.get(pk=unquote(item_id))
-        obj.delete()
+        try:
+            obj = self.model._default_manager.get(pk=unquote(item_id))
+            obj.delete()
+        except Exception, e:
+            return HttpResponse("FAILED " + str(e), mimetype="text/plain")
+
         return HttpResponse("OK", mimetype="text/plain")
 
 
