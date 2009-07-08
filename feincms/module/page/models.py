@@ -166,7 +166,7 @@ class Page(Base):
     def register_extensions(cls, *extensions):
         for ext in extensions:
             fn = get_object('feincms.module.page.extensions.%s.register' % ext)
-            fn()
+            fn(cls, PageAdmin)
 
 mptt.register(Page)
 

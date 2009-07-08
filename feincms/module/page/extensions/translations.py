@@ -11,20 +11,18 @@ from django.db import models
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.module.page.models import Page, PageAdmin
 
-
-def register():
+def register(cls, admin_cls):
     primary_language = settings.LANGUAGES[0][0]
 
-    Page.add_to_class('language', models.CharField(_('language'), max_length=10,
+    cls.add_to_class('language', models.CharField(_('language'), max_length=10,
         choices=settings.LANGUAGES))
-    Page.add_to_class('translation_of', models.ForeignKey('self',
+    cls.add_to_class('translation_of', models.ForeignKey('self',
         blank=True, null=True, verbose_name=_('translation of'),
         related_name='translations',
         limit_choices_to={'language': primary_language}))
 
-    Page._ext_translation_setup_request = Page.setup_request
+    cls._ext_translation_setup_request = cls.setup_request
     def _setup_request(self, request):
         translation.activate(self.language)
         request.LANGUAGE_CODE = translation.get_language()
@@ -34,7 +32,7 @@ def register():
 
         self._ext_translation_setup_request(request)
 
-    Page.setup_request = _setup_request
+    cls.setup_request = _setup_request
 
     def available_translations(self):
         if self.language==primary_language:
@@ -45,7 +43,7 @@ def register():
         else:
             return []
 
-    Page.available_translations = available_translations
+    cls.available_translations = available_translations
 
     def available_translations_admin(self, page):
         translations = page.available_translations()
@@ -55,8 +53,8 @@ def register():
 
     available_translations_admin.allow_tags = True
     available_translations_admin.short_description = _('available translations')
-    PageAdmin.available_translations_admin = available_translations_admin
+    admin_cls.available_translations_admin = available_translations_admin
 
-    PageAdmin.fieldsets[0][1]['fields'] += ('language',)
-    PageAdmin.list_display += ('language', 'available_translations_admin')
-    PageAdmin.show_on_top += ('language',)
+    admin_cls.fieldsets[0][1]['fields'] += ('language',)
+    admin_cls.list_display += ('language', 'available_translations_admin')
+    admin_cls.show_on_top += ('language',)

@@ -10,16 +10,14 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.module.page.models import Page, PageAdmin
 
-
-def register():
-    Page.add_to_class('publication_date', models.DateTimeField(_('publication date'),
+def register(cls, admin_cls):
+    cls.add_to_class('publication_date', models.DateTimeField(_('publication date'),
         default=datetime.now))
-    Page.add_to_class('publication_end_date', models.DateTimeField(_('publication end date'),
+    cls.add_to_class('publication_end_date', models.DateTimeField(_('publication end date'),
         blank=True, null=True))
 
-    Page.objects.active_filters.append(
+    cls.objects.active_filters.append(
             Q(publication_date__lte=datetime.now)
             & (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=datetime.now)))
 
@@ -36,6 +34,6 @@ def register():
 
     datepublisher_admin.allow_tags = True
     datepublisher_admin.short_description = _('date publisher')
-    PageAdmin.datepublisher_admin = datepublisher_admin
+    admin_cls.datepublisher_admin = datepublisher_admin
 
-    PageAdmin.list_display += ('datepublisher_admin',)
+    admin_cls.list_display += ('datepublisher_admin',)
