@@ -9,7 +9,6 @@ this.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.module.page.models import Page
 from feincms.utils import get_object
 
 
@@ -53,15 +52,15 @@ def _extended_navigation(self):
     return cls().children(self)
 
 
-def register():
-    Page.NE_CHOICES = [(
+def register(cls, admin_cls):
+    cls.NE_CHOICES = [(
         '%s.%s' % (cls.__module__, cls.__name__), cls.name) for cls in NavigationExtension.types]
 
-    Page.add_to_class('navigation_extension', models.CharField(_('navigation extension'),
-        choices=Page.NE_CHOICES, blank=True, max_length=50,
+    cls.add_to_class('navigation_extension', models.CharField(_('navigation extension'),
+        choices=cls.NE_CHOICES, blank=True, max_length=50,
         help_text=_('Select the module providing subpages for this page if you need to customize the navigation.')))
 
-    Page.extended_navigation = _extended_navigation
+    cls.extended_navigation = _extended_navigation
 
 
 

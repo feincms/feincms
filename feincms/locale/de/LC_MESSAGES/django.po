@@ -462,10 +462,6 @@ msgstr "Sichern und neu hinzufügen"
 msgid "Save and continue editing"
 msgstr "Sichern und weiter bearbeiten"
 
-#: templates/admin/feincms/item_editor.html:165
-msgid "Change Template"
-msgstr "Template ändern"
-
 #: templates/admin/feincms/item_editor.html:171
 msgid "Properties"
 msgstr "Eigenschaften"
@@ -518,3 +514,23 @@ msgstr "Senden"
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
 msgstr "Danke!"
+
+#: module/medialibrary/models.py:44
+msgid "Image"
+msgstr "Bild"
+
+#: module/medialibrary/models.py:45
+msgid "PDF document"
+msgstr "PDF-Dokument"
+
+#: module/medialibrary/models.py:46
+msgid "Text"
+msgstr "Text"
+
+#: module/medialibrary/models.py:47
+msgid "Binary"
+msgstr "Binärdaten"
+
+#: module/medialibrary/models.py:53
+msgid "file type"
+msgstr "Dateityp"

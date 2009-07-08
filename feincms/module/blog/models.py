@@ -52,7 +52,7 @@ class Entry(Base):
     def register_extensions(cls, *extensions):
         for ext in extensions:
             fn = get_object('feincms.module.blog.extensions.%s.register' % ext)
-            fn()
+            fn(cls, EntryAdmin)
 
 
 class EntryAdmin(editor.ItemEditor, admin.ModelAdmin):
