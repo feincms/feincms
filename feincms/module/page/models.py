@@ -184,8 +184,8 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             'fields': ('override_url',),
         }),
         )
-    list_display=('title', '_cached_url', 'active', 'in_navigation',
-        'template')
+    list_display=['title', '_cached_url', 'active', 'in_navigation',
+        'template', ]
     list_filter=('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', '_content_title', '_page_title',
         'meta_keywords', 'meta_description')
