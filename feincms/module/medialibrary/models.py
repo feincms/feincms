@@ -81,7 +81,7 @@ class MediaFile(models.Model, TranslatedObjectMixin):
     def file_type(self):
         return self.FILE_TYPES_DICT[self.type]
     file_type.admin_order_field = 'type'
-    file_type = property(file_type)
+    file_type.short_description = _('file type')
 
     def determine_file_type(self, name):
         """
