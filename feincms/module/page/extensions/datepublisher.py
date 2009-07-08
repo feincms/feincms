@@ -22,3 +22,20 @@ def register():
     Page.objects.active_filters.append(
             Q(publication_date__lte=datetime.now)
             & (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=datetime.now)))
+
+    def datepublisher_admin(self, page):
+        if page.publication_end_date:
+            return u'%s &ndash; %s' % (
+                page.publication_date.strftime('%d.%m.%Y'),
+                page.publication_end_date.strftime('%d.%m.%Y'),
+                )
+
+        return u'%s &ndash; &infin;' % (
+            page.publication_date.strftime('%d.%m.%Y'),
+            )
+
+    datepublisher_admin.allow_tags = True
+    datepublisher_admin.short_description = _('date publisher')
+    PageAdmin.datepublisher_admin = datepublisher_admin
+
+    PageAdmin.list_display += ('datepublisher_admin',)
