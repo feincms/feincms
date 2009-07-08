@@ -47,15 +47,15 @@ def register():
 
     Page.available_translations = available_translations
 
-    def available_translations_admin(self):
-        translations = self.available_translations()
+    def available_translations_admin(self, page):
+        translations = page.available_translations()
 
         return u', '.join(
             u'<a href="%s/">%s</a>' % (page.id, page.language.upper()) for page in translations)
 
     available_translations_admin.allow_tags = True
     available_translations_admin.short_description = _('available translations')
-    Page.available_translations_admin = available_translations_admin
+    PageAdmin.available_translations_admin = available_translations_admin
 
     PageAdmin.fieldsets[0][1]['fields'] += ('language',)
     PageAdmin.list_display += ('language', 'available_translations_admin')
