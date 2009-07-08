@@ -1,5 +1,7 @@
 # Django settings for example project.
 
+import os
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -20,8 +22,8 @@ SITE_ID = 1
 
 USE_I18N = True
 
-MEDIA_ROOT = ''
-MEDIA_URL = ''
+MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'media/')
+MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/admin_media/'
 FEINCMS_ADMIN_MEDIA = '/feincms_media/'
 
@@ -61,5 +63,6 @@ INSTALLED_APPS = (
     'feincms',
     'feincms.module.blog',
     'feincms.module.page',
+    'feincms.module.medialibrary',
     'example',
 )
