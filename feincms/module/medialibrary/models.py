@@ -34,6 +34,8 @@ class Category(models.Model):
 
 # ------------------------------------------------------------------------
 class MediaFile(models.Model, TranslatedObjectMixin):
+
+    # XXX maybe have a look at settings.DEFAULT_FILE_STORAGE here?
     from django.core.files.storage import FileSystemStorage
     fs = FileSystemStorage(location=settings.FEINCMS_MEDIALIBRARY_PATH,
                            base_url=settings.FEINCMS_MEDIALIBRARY_URL)
