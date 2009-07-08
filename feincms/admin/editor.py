@@ -2,7 +2,7 @@ import re
 
 import django
 from django import forms, template
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin import widgets
 from django.contrib.admin.options import IncorrectLookupParameters
@@ -25,10 +25,8 @@ from django.utils.text import capfirst
 from django.utils.translation import get_date_formats, get_partial_date_formats, ugettext as _
 
 from feincms.models import Region
+from feincms import settings
 
-
-FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
-FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKING', False)
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 
 
@@ -97,8 +95,8 @@ class ItemEditor(admin.ModelAdmin):
                 return render_to_response('admin/feincms/fe_editor_done.html', {
                     'content': obj.render(request=request),
                     'identifier': obj.fe_identifier(),
-                    'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
-                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
+                    'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
+                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
                     })
         else:
             form = ModelForm(instance=obj, prefix=content_type)
@@ -110,8 +108,8 @@ class ItemEditor(admin.ModelAdmin):
             'form': form,
             'is_popup': True,
             'media': self.media,
-            'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
             }, context_instance=template.RequestContext(request,
                 processors=self.model.feincms_item_editor_context_processors))
 
@@ -198,8 +196,8 @@ class ItemEditor(admin.ModelAdmin):
             'settings_fieldset': settings_fieldset,
             'top_fieldset': [model_form[field] for field in self.show_on_top],
             'media': self.media+model_form.media,
-            'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
         }
 
         return render_to_response([
@@ -258,8 +256,8 @@ class TreeEditor(admin.ModelAdmin):
             self.changelist.list_display.remove('action_checkbox')
 
         context = {
-            'FEINCMS_ADMIN_MEDIA': FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING': FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
             'title': self.changelist.title,
             'is_popup': self.changelist.is_popup,
             'cl': self.changelist,
@@ -337,7 +335,7 @@ class TreeEditor(admin.ModelAdmin):
 # copied from django.contrib.admin.templatetags.admin_list and slightly modified
 def _boolean_icon(field_val):
     BOOLEAN_MAPPING = {True: 'yes', False: 'no', None: 'unknown'}
-    return mark_safe(u'<img src="%simg/admin/icon-%s.gif" alt="%s" />' % (settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], field_val))
+    return mark_safe(u'<img src="%simg/admin/icon-%s.gif" alt="%s" />' % (django_settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], field_val))
 
 
 def _properties(cl, result):
