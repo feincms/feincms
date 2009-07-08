@@ -38,13 +38,6 @@ class MediaFile(models.Model, TranslatedObjectMixin):
     fs = FileSystemStorage(location=settings.FEINCMS_MEDIALIBRARY_PATH,
                            base_url=settings.FEINCMS_MEDIALIBRARY_URL)
 
-    file = models.FileField(_('file'), upload_to=settings.FEINCMS_MEDIALIBRARY_FILES, storage=fs)
-    type = models.CharField(_('file type'), max_length=12, editable=False, default='other')
-    created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
-    copyright = models.CharField(_('copyright'), max_length=200, blank=True)
-
-    categories = models.ManyToManyField(Category, verbose_name=_('categories'))
-
     FILE_TYPES = (
         ( 'image', _('Image'),           lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f) ),
         ( 'pdf',   _('PDF document'),    lambda f: f.lower().endswith('.pdf') ),
@@ -53,6 +46,14 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         )
 
     FILE_TYPES_DICT = dict( [ ( ft[0], ft[1] ) for ft in FILE_TYPES ] )
+
+    file = models.FileField(_('file'), upload_to=settings.FEINCMS_MEDIALIBRARY_FILES, storage=fs)
+    type = models.CharField(_('file type'), max_length=12, editable=False, default='other',
+        choices=[t[0:2] for t in FILE_TYPES])
+    created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
+    copyright = models.CharField(_('copyright'), max_length=200, blank=True)
+
+    categories = models.ManyToManyField(Category, verbose_name=_('categories'))
 
     class Meta:
         verbose_name = _('media file')
@@ -103,7 +104,7 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         if self.id is None:
             created = datetime.now()
         self.type = self.determine_file_type(self.file.name)
-            
+
         super(MediaFile, self).save(*args, **kwargs)
 
 # ------------------------------------------------------------------------
@@ -116,7 +117,7 @@ class MediaFileTranslation(Translation(MediaFile)):
 
     def __unicode__(self):
         from os.path import basename
-        
+
         return u'%s (%s / %s)' % (
             self.caption,
             basename(self.parent.file.name),
