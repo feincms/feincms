@@ -366,8 +366,8 @@ class ContentProxy(object):
     This proxy offers attribute-style access to the page contents of regions.
 
     Example:
-    >>> page = Page.objects.all()[0]
-    >>> page.content.main
+    >> page = Page.objects.all()[0]
+    >> page.content.main
     [A list of all page contents which are assigned to the region with key 'main']
     """
 
