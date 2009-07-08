@@ -25,7 +25,7 @@ def register(cls, admin_cls):
     def _boolean_icon(field_val, alt_text=None):
         # Origin: contrib/admin/templatetags/admin_list.py
         BOOLEAN_MAPPING = { True: 'yes', False: 'no', None: 'unknown' }
-        return (u'<img src="%simg/admin/icon-%s.gif" alt="%s" title="%s" />' % 
+        return (u'<img src="%simg/admin/icon-%s.gif" alt="%s" title="%s" />' %
                 (settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], alt_text, alt_text))
 
     def is_visible_admin(self, page):
@@ -43,7 +43,7 @@ def register(cls, admin_cls):
 
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('visible')
-    
+
     admin_cls.is_visible_admin = is_visible_admin
 
     def datepublisher_admin(self, page):
@@ -61,7 +61,7 @@ def register(cls, admin_cls):
             )
 
     datepublisher_admin.allow_tags = True
-    datepublisher_admin.short_description = _('publish dates')
+    datepublisher_admin.short_description = _('publication dates')
     admin_cls.datepublisher_admin = datepublisher_admin
 
     admin_cls.list_display.extend(('is_visible_admin', 'datepublisher_admin'))
