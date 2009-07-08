@@ -534,3 +534,6 @@ msgstr "Binärdaten"
 #: module/medialibrary/models.py:53
 msgid "file type"
 msgstr "Dateityp"
+
+msgid "Leave this empty for entries in the primary language (%s)."
+msgstr "Dieses Feld für Einträge in der Primärsprache (%s) leer lassen."

@@ -10,9 +10,11 @@ def register(cls, admin_cls):
     cls.add_to_class('language', models.CharField(_('language'), max_length=10,
         choices=settings.LANGUAGES))
     cls.add_to_class('translation_of', models.ForeignKey('self',
-        blank=True, null=True, verbose_name='translation of',
+        blank=True, null=True, verbose_name=_('translation of'),
         related_name='translations',
-        limit_choices_to={'language': primary_language}))
+        limit_choices_to={'language': primary_language},
+        help_text=_('Leave this empty for entries in the primary language (%s).') %\
+            _(settings.LANGUAGES[0][1])))
 
     def available_translations(self):
         if self.language==primary_language:
