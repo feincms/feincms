@@ -33,6 +33,17 @@ from django.utils import translation
 
 
 def short_language_code(code=None):
+    """
+    Extract the short language code from its argument (or return the default language code).
+    
+    from django.conf import settings
+    >>> short_language_code('de')
+    'de'
+    >>> short_language_code('de-at')
+    'de'
+    >>> short_language_code() == settings.LANGUAGES[0][0]
+    True
+    """
     if code is None:
         code = translation.get_language()
 
