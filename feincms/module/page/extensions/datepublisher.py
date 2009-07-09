@@ -35,33 +35,20 @@ def register(cls, admin_cls):
         already_published = page.publication_date <= now
         not_expired       = (page.publication_end_date is None or page.publication_end_date > now)
 
-        reason = (not visible and _('Page not active')) or \
-                 (not already_published and _('Page not yet published')) or \
-                 (not not_expired and _('Page expired')) or \
-                 _('Page visible')
-        return _boolean_icon(visible and already_published and not_expired, reason)
+        format_args = {
+            'icon': _boolean_icon(visible and already_published and not_expired),
+            'from': page.publication_date.strftime('%d.%m.%y'),
+            'to': page.publication_end_date and page.publication_end_date.strftime('%d.%m.%y') or '&infin;',
+            }
+
+        reason = (not visible and _('%(icon)s (not active)')) or \
+                 (not already_published and _('%(icon)s (until %(from)s)')) or \
+                 (not not_expired and _('%(icon)s (since %(to)s)')) or \
+                 _('%(icon)s (%(from)s &ndash; %(to)s)')
+        return reason % format_args
 
     is_visible_admin.allow_tags = True
-    is_visible_admin.short_description = _('visible')
+    is_visible_admin.short_description = _('is visible')
 
     admin_cls.is_visible_admin = is_visible_admin
-
-    def datepublisher_admin(self, page):
-        if not page.active:
-            return _('Not active')
-
-        if page.publication_end_date:
-            return u'%s &ndash; %s' % (
-                page.publication_date.strftime('%d.%m.%Y'),
-                page.publication_end_date.strftime('%d.%m.%Y'),
-                )
-
-        return u'%s &ndash; &infin;' % (
-            page.publication_date.strftime('%d.%m.%Y'),
-            )
-
-    datepublisher_admin.allow_tags = True
-    datepublisher_admin.short_description = _('publication dates')
-    admin_cls.datepublisher_admin = datepublisher_admin
-
-    admin_cls.list_display.extend(('is_visible_admin', 'datepublisher_admin'))
+    admin_cls.list_display[admin_cls.list_display.index('active')] = 'is_visible_admin'

@@ -12,7 +12,7 @@ def register(cls, admin_cls):
     cls.add_to_class('_content_title', models.TextField(_('content title'), blank=True,
         help_text=_('The first line is the main title, the following lines are subtitles.')))
     cls.add_to_class('_page_title', models.CharField(_('page title'), max_length=100, blank=True,
-        help_text=_('cls title for browser window. Same as title by default.')))
+        help_text=_('Page title for browser window. Same as title by default.')))
 
     def _page_title(self):
         if self._page_title:
