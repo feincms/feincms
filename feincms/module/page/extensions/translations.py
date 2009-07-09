@@ -2,7 +2,7 @@
 This extension adds a language field to every page. When calling setup_request,
 the page's language is activated.
 Pages in secondary languages can be said to be a translation of a page in the
-primary langauge (the first language in settings.LANGUAGES), thereby enabling
+primary language (the first language in settings.LANGUAGES), thereby enabling
 deeplinks between translated pages...
 """
 
@@ -24,17 +24,14 @@ def register(cls, admin_cls):
         help_text=_('Leave this empty for entries in the primary language (%s).') %\
             _(settings.LANGUAGES[0][1])))
 
-    cls._ext_translation_setup_request = cls.setup_request
-    def _setup_request(self, request):
-        translation.activate(self.language)
+    def translations_request_processor(page, request):
+        translation.activate(page.language)
         request.LANGUAGE_CODE = translation.get_language()
 
         if hasattr(request, 'session') and request.LANGUAGE_CODE!=request.session.get('django_language'):
             request.session['django_language'] = request.LANGUAGE_CODE
 
-        self._ext_translation_setup_request(request)
-
-    cls.setup_request = _setup_request
+    cls.register_request_processors(translations_request_processor)
 
     def available_translations(self):
         if self.language==primary_language:
