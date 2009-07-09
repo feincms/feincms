@@ -115,6 +115,8 @@ class Page(Base):
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
         editable=False, default='', db_index=True)
 
+    request_processors = []
+
     class Meta:
         ordering = ['tree_id', 'lft']
         verbose_name = _('page')
@@ -157,10 +159,29 @@ class Page(Base):
         return self._cached_url
 
     def setup_request(self, request):
+        """
+        Before rendering a page, run all registered request processors. A request
+        processor may peruse and modify the page or the request. It can also return
+        a HttpResponse for shortcutting the page rendering and returning that response
+        immediately to the client.
+        """
         request._feincms_page = self
 
+        for fn in self.request_processors:
+            r = fn(self, request)
+            if r: return r
+
+    def redirect_request_processor(self, request):
+        if self.redirect_to:
+            return HttpResponseRedirect(self.redirect_to)
+
+    def frontendediting_request_processor(self, request):
         if 'frontend_editing' in request.GET and request.user.has_module_perms('page'):
             request.session['frontend_editing'] = request.GET['frontend_editing'] and True or False
+
+    @classmethod
+    def register_request_processors(cls, *processors):
+        cls.request_processors[0:0] = processors
 
     @classmethod
     def register_extensions(cls, *extensions):
@@ -169,6 +190,10 @@ class Page(Base):
             fn(cls, PageAdmin)
 
 mptt.register(Page)
+
+Page.register_request_processors(Page.frontendediting_request_processor,
+                                 Page.redirect_request_processor)
+
 
 
 class PageAdmin(editor.ItemEditor, editor.TreeEditor):

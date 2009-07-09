@@ -12,12 +12,10 @@ def handler(request, path=None):
 
     page = Page.objects.page_for_path_or_404(path)
 
-    if page.redirect_to:
-        return HttpResponseRedirect(page.redirect_to)
+    response = page.setup_request(request) or \
+               render_to_response(page.template.path, {
+                    'feincms_page': page,
+                    }, context_instance=RequestContext(request))
 
-    page.setup_request(request)
-
-    return render_to_response(page.template.path, {
-        'feincms_page': page,
-        }, context_instance=RequestContext(request))
-
+    return response
+    
