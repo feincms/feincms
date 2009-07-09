@@ -25,8 +25,9 @@ def register(cls, admin_cls):
     def _boolean_icon(field_val, alt_text=None):
         # Origin: contrib/admin/templatetags/admin_list.py
         BOOLEAN_MAPPING = { True: 'yes', False: 'no', None: 'unknown' }
-        return (u'<img src="%simg/admin/icon-%s.gif" alt="%s" title="%s" />' %
-                (settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], alt_text, alt_text))
+        alt_text = alt_text or BOOLEAN_MAPPING[field_val]
+        return (u'<img src="%simg/admin/icon-%s.gif" alt="%s" />' %
+                (settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], alt_text))
 
     def is_visible_admin(self, page):
         now = datetime.now()
