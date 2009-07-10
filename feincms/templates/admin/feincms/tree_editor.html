@@ -30,7 +30,7 @@
         // register
         $("#sitetree").treeTable();
         // configure draggable
-        $("#sitetree .title-col").draggable({
+        $("#sitetree span.title-col").draggable({
             appendTo: '#sitetree-wrapper',
             helper:  function(){ return $(this).parent().clone(); } ,
             handle: ".move-node",
@@ -41,7 +41,7 @@
             scroll: true
         });
         // configure droppable to insert as child
-        $("#sitetree .insert-as-child").each(function() {
+        $("#sitetree div.insert-as-child").each(function() {
             $(this).droppable({
                 accept: ".title-col",
                 tolerance: "intersect",
@@ -57,7 +57,7 @@
             });
         });
         // configure droppable to insert as sibling
-        $("#sitetree .insert-as-sibling").each(function() {
+        $("#sitetree div.insert-as-sibling").each(function() {
             $(this).droppable({
                 accept: ".title-col",
                 tolerance: "intersect",
@@ -73,16 +73,16 @@
             });
         });
 
-        $(".wrap").live('click',function() {
+        $("td div.wrap").live('click',function() {
             if ($(this).find(".expander").length > 0)
                 $(this).parents("tr").toggleBranch();
         });
 
-        $(".save_tree").click(function(){
+        $("input.save_tree").click(function(){
             save_page_tree();
         });
 
-        $(".del-page").click(function(){
+        $("img.del-page").click(function(){
             handle_page_delete($(this).parents("tr"));
         });
 
