@@ -19,8 +19,8 @@ def register(cls, admin_cls):
         blank=True, null=True))
 
     cls.objects.active_filters.append(
-            Q(publication_date__lte=datetime.now) and \
-            (Q(publication_end_date__isnull=True) or Q(publication_end_date__gt=datetime.now)))
+            Q(publication_date__lte=datetime.now) & \
+            (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=datetime.now)))
 
     def _boolean_icon(field_val, alt_text=None):
         # Origin: contrib/admin/templatetags/admin_list.py
