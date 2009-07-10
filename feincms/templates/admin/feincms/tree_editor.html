@@ -85,6 +85,12 @@
         $(".del-page").click(function(){
             handle_page_delete($(this).parents("tr"));
         });
+
+        // do not expand/collapse nodes when selecting the items -- it was confusing some users
+        $('span.title-col a').click(function(){
+            window.location.href = this.href;
+            return false;
+        });
     });
 
     function expandall(yesno) {
