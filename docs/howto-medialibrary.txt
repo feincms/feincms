@@ -31,6 +31,7 @@ like you want. You should think about positions that make sense for different
 media file types however, because the choice cannot be customized per file
 type.
 
+
 Configuring the media library
 =============================
 
@@ -48,27 +49,28 @@ The external URL to the media library can be set with FEINCMS_MEDIALIBRARY_URL
 These settings can also be defined programmatically using
 MediaFile.reconfigure(upload_to=..., storage=...)
 
+
 Rendering media file contents
 =============================
 
-A set of regexes will be run on the file name to determine the file type. Using
-combinations of the name and type, the default render method tries to find a
-template for rendering the ``MediaFileContent''.
+A set of recognition functions will be run on the file name to determine the file
+type. Using combinations of the name and type, the default render method tries to
+find a template for rendering the ``MediaFileContent''.
 
-The default set of regexes is the following:
+The default set of pre-defined content types and recognition functions is:
 
 ::
 
-    TYPES = (
-        ('image', re.compile(r'.(jpg|jpeg|gif|png)$', re.IGNORECASE)),
-        ('pdf', re.compile(r'.pdf$', re.IGNORECASE)),
-        ('download', re.compile(r'')),
+    MediaFile.register_filetypes(
+            ( 'image', _('Image'),        
+              lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f) ),
+            ( 'pdf',   _('PDF document'), lambda f: f.lower().endswith('.pdf') ),
+            ( 'txt',   _('Text'),         lambda f: f.lower().endswith('.txt') ),
+            ( 'other', _('Binary'),       lambda f: True ), # Must be last
         )
 
-
-The last line, 'download' with a regular expression that always matches, is not
-strictly required. If no regular expression matches, 'unknown' will be used as
-fallback.
+You can add to that set by calling MediaFile.register_filetypes() with your new
+file types similar to the above.
 
 If we've got an example file '2009/06/foobar.jpg' and a selected position of
 'left', the templates tried to render the media file are the following:

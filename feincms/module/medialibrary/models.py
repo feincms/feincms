@@ -40,18 +40,8 @@ class MediaFile(models.Model, TranslatedObjectMixin):
     fs = FileSystemStorage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
                            base_url=settings.FEINCMS_MEDIALIBRARY_URL)
 
-    FILE_TYPES = (
-        ( 'image', _('Image'),           lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f) ),
-        ( 'pdf',   _('PDF document'),    lambda f: f.lower().endswith('.pdf') ),
-        ( 'txt',   _('Text'),            lambda f: f.lower().endswith('.txt') ),
-        ( 'other', _('Binary'),          lambda f: True ), # Must be last
-        )
-
-    FILE_TYPES_DICT = dict( [ ( ft[0], ft[1] ) for ft in FILE_TYPES ] )
-
     file = models.FileField(_('file'), upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=fs)
-    type = models.CharField(_('file type'), max_length=12, editable=False, default='other',
-        choices=[t[0:2] for t in FILE_TYPES])
+    type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
     created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
 
@@ -62,6 +52,10 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         verbose_name_plural = _('media files')
 
     objects = TranslatedObjectManager()
+
+    filetypes = [ ]
+    filetypes_dict = { }
+
 
     @classmethod
     def reconfigure(cls, upload_to=None, storage=None):
@@ -75,11 +69,18 @@ class MediaFile(models.Model, TranslatedObjectMixin):
             if callable(upload_to):
                 f.generate_filename = upload_to
 
+    @classmethod
+    def register_filetypes(cls, *types):
+        cls.filetypes[0:0] = types
+        choices = [ t[0:2] for t in cls.filetypes ]
+        cls.filetypes_dict = dict(choices)
+        cls._meta.get_field('type').choices[:] = choices
+        
     def get_absolute_url(self):
         return self.file.url
 
     def file_type(self):
-        return self.FILE_TYPES_DICT[self.type]
+        return self.filetypes_dict[self.type]
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
 
@@ -97,10 +98,10 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         >>> t.determine_file_type('foobar-jpg')
         'other'
         """
-        for type_key, type_name, type_test in self.FILE_TYPES:
+        for type_key, type_name, type_test in self.filetypes:
             if type_test(name):
                 return type_key
-        return self.FILE_TYPES[-1]
+        return self.filetypes[-1][0]
 
     def save(self, *args, **kwargs):
         if self.id is None:
@@ -108,6 +109,15 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         self.type = self.determine_file_type(self.file.name)
 
         super(MediaFile, self).save(*args, **kwargs)
+
+
+
+MediaFile.register_filetypes(
+        ( 'image', _('Image'),        lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f) ),
+        ( 'pdf',   _('PDF document'), lambda f: f.lower().endswith('.pdf') ),
+        ( 'txt',   _('Text'),         lambda f: f.lower().endswith('.txt') ),
+        ( 'other', _('Binary'),       lambda f: True ), # Must be last
+    )
 
 # ------------------------------------------------------------------------
 class MediaFileTranslation(Translation(MediaFile)):
