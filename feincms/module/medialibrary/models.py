@@ -76,7 +76,7 @@ class MediaFile(models.Model, TranslatedObjectMixin):
                 f.generate_filename = upload_to
 
     def get_absolute_url(self):
-        return self.file_url
+        return self.file.url
 
     def file_type(self):
         return self.FILE_TYPES_DICT[self.type]
