@@ -161,6 +161,11 @@ the following extensions are available:
   Adds fields to the page relevant for search engine optimization (SEO),
   currently only meta keywords and description.
 
+* symlinks
+
+  Sometimes you want to reuse all content from a page in another place. This
+  extension lets you do that.
+
 * titles
 
   Adds additional title fields to the page model. You may not only define a
