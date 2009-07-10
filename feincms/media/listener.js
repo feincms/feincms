@@ -69,10 +69,8 @@ $(document).ready(function(){
     });
 
     $("fieldset.order-item").live('click', function(){
-        if($(this).hasClass('active-item')) {
-            $(this).removeClass('active-item')
-        } else {
-            $(".order-item.active-item").removeClass("active-item");
+        if(!$(this).hasClass('active-item')) {
+            $("fieldset.active-item").removeClass("active-item");
             $(this).addClass("active-item");
         }
     });
