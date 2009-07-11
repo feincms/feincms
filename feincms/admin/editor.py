@@ -303,6 +303,51 @@ class TreeEditor(admin.ModelAdmin):
 
     def _save_tree(self, request):
         itemtree = simplejson.loads(request.POST['tree'])
+
+        TREE_ID = 0; PARENT_ID = 1; LEFT = 2; RIGHT = 3; LEVEL = 4; ITEM_ID = 5
+
+        tree_id = 0
+        parents = []
+        node_indices = {}
+
+        data = []
+
+        def indexer(start):
+            while True:
+                yield start
+                start += 1
+
+        left = indexer(0)
+
+        for item_id, parent_id, is_parent in itemtree:
+            node_indices[item_id] = len(node_indices)
+
+            if parent_id in parents:
+                for i in range(len(parents) - parents.index(parent_id) - 1):
+                    data[node_indices[parents.pop()]][RIGHT] = left.next()
+            elif not parent_id:
+                while parents:
+                    data[node_indices[parents.pop()]][RIGHT] = left.next()
+                left = indexer(0)
+                tree_id += 1
+
+            data.append([
+                tree_id,
+                parent_id and parent_id or None,
+                left.next(),
+                0,
+                len(parents),
+                item_id,
+                ])
+
+            if is_parent:
+                parents.append(item_id)
+            else:
+                data[-1][RIGHT] = left.next()
+
+        while parents:
+            data[node_indices[parents.pop()]][RIGHT] = left.next()
+
         # 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = item_id
         sql = "UPDATE %s SET %s=%%s, %s_id=%%s, %s=%%s, %s=%%s, %s=%%s WHERE %s=%%s" % (
             self.model._meta.db_table,
@@ -313,7 +358,7 @@ class TreeEditor(admin.ModelAdmin):
             self.model._meta.level_attr,
             self.model._meta.pk.column)
 
-        connection.cursor().executemany(sql, itemtree)
+        connection.cursor().executemany(sql, data)
 
         # call save on all toplevel objects, thereby ensuring that caches are regenerated (if they
         # exist)

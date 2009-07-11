@@ -162,53 +162,8 @@ td span select {
     white-space: nowrap;
 }
 
-.title-col {
-    position:relative;
-    z-index:2;
-    background-color:none;
-}
-
-td div.wrap {
-    margin: -5px;
-    padding: 5px 5px 5px 5px;
-    position: relative;
-}
-
-.insert-as-child {
-    position: absolute;
-    bottom: 0px;
-    left: 15px;
-    height: 12px;
-    width: 100%;
-}
-.insert-as-sibling {
-    position: absolute;
-    top: 0px;
-    left: 15px;
-    height: 12px;
-    width: 100%;
-}
-
-.nohover {
-    background-color: #fff;
-}
-
-.flash {
-    background-color: #afa;
-}
-
-td div.hover-as-child {
-    background-color: #cdf;
-}
-
-td div.hover-as-sibling {
-    border-top: 2px solid #cdf;
-    padding-top: 3px;
-}
-
-.move-node {
+.suchadrag img {
     cursor: move;
-    margin-left:5px;
 }
 
 .del-page {
@@ -217,56 +172,25 @@ td div.hover-as-sibling {
 }
 
 
-
-
-/* jQuery TreeTable Core 2.0 stylesheet
- *
- * This file contains styles that are used to display the tree table. Each tree
- * table is assigned the +treeTable+ class.
- * ========================================================================= */
-
-/* jquery.treeTable.collapsible
- * ------------------------------------------------------------------------- */
-.treeTable tr td .expander {
-  background-position: left center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  padding: 0;
-  zoom: 1; /* IE7 Hack */
-}
-
-.treeTable tr.collapsed td .expander {
-  background-image: url(img/toggle-expand-dark.png);
-}
-
-.treeTable tr.expanded td .expander {
-  background-image: url(img/toggle-collapse-dark.png);
-}
-
-/* jquery.treeTable.sortable
- * ------------------------------------------------------------------------- */
-.treeTable tr.selected, .treeTable tr.accept {
-  /*background-color: #7799ff;
-  color: #fff;*/
-}
-
-.treeTable tr.append {
-  border-bottom: 2px solid #7799ff;
-}
-
-.treeTable tr.collapsed.selected td .expander, .treeTable tr.collapsed.accept td .expander {
-  /*background-image: url(img/toggle-expand-light.png);*/
-}
-
-.treeTable tr.expanded.selected td .expander, .treeTable tr.expanded.accept td .expander {
-  /*background-image: url(img/toggle-collapse-light.png);*/
-}
-
-.treeTable .ui-draggable-dragging {
-  color: #000;
-  z-index: 1;
-}
-
+tr.level0 td:first-child {padding-left: 5px;}
+tr.level1 td:first-child {padding-left: 15px;}
+tr.level2 td:first-child {padding-left: 25px;}
+tr.level3 td:first-child {padding-left: 35px;}
+tr.level4 td:first-child {padding-left: 45px;}
+tr.level5 td:first-child {padding-left: 55px;}
+tr.level6 td:first-child {padding-left: 65px;}
+tr.level7 td:first-child {padding-left: 75px;}
+tr.level8 td:first-child {padding-left: 85px;}
+tr.level9 td:first-child {padding-left: 95px;}
+tr.level10 td:first-child {padding-left: 105px;}
+tr.level11 td:first-child {padding-left: 115px;}
+tr.level12 td:first-child {padding-left: 125px;}
+tr td:first-child div.expander {float: left; width: 15px; height: 10px;}
+tr.parent td:first-child div.expander {background: url(img/toggle-expand-dark.png) no-repeat 0 -2px; cursor: pointer;}
+tr.parent.expanded td:first-child div.expander {background-image: url(img/toggle-collapse-dark.png);}
+tr td.hover {background-color: #abc;}
+tr td.highlight {background-color: #8f8;}
+tr td.nohighlight {background-color: #fff;}
 
 
 /* jQuery alerts */
