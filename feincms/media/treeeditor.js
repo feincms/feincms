@@ -269,6 +269,8 @@ $(document).ready(function()  {
 });
 
 function get_expanded_nodes() {
+    // Shorter: return $('#sitetree tr.expanded').map(function() { return row_node_id($(this)) })
+    
     var nodes = [];
     $('#sitetree tr.expanded').each(function(){
         nodes.push(this.id.substr(4));
