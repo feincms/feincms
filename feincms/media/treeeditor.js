@@ -267,3 +267,23 @@ $(document).ready(function()  {
     expandall(false);
     $('#sitetree tr.parent.childof0 .expander').trigger('click');
 });
+
+function get_expanded_nodes() {
+    var nodes = [];
+    $('#sitetree tr.expanded').each(function(){
+        nodes.push(this.id.substr(4));
+    });
+
+    return nodes;
+}
+
+function set_expanded_nodes(nodes) {
+    expandall(false);
+    var i = nodes.length;
+    while(i-->0) {
+        var row = $('#item'+nodes[i]);
+        console.log(row);
+        get_children(row).show();
+        row.addClass('expanded');
+    }
+}
