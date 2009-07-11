@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 
 import mptt
