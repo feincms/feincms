@@ -55,6 +55,9 @@ class BoxNode(template.Node):
             return
         return
 
+'''
+as we no longer use {% extends %} for rendering a base tempate, i think that is ok and makes it more comfortable
+'''
 @register.tag(name="block")
 def do_box(parser, token):
     nodelist = parser.parse(('endblock',))
