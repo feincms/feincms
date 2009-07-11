@@ -106,10 +106,6 @@ function drop_item(dragged, target, method) {
     if(old_parent!=new_parent && get_children(dragged_parent).length==1)
         dragged_parent.removeClass('parent');
 
-    // if drag method is 'child', the new target is a parent for sure
-    if(method=='child')
-        target.addClass('parent');
-
     if(method=='before') {
         var len = descendants.length;
 
@@ -165,6 +161,10 @@ function drop_item(dragged, target, method) {
         dragged.find('td:first-child').removeClass('hover').switchClass('highlight', 'nohighlight');
 
     target.find('td:first-child').removeClass('hover');
+
+    // if drag method is 'child', the new target is a parent for sure
+    if(method=='child')
+        target.addClass('parent');
 }
 
 
