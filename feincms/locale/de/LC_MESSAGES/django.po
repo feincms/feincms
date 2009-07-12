@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-09 12:52+0200\n"
+"POT-Creation-Date: 2009-07-12 20:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -72,7 +72,7 @@ msgid "contact forms"
 msgstr "Kontaktformulare"
 
 #: content/file/models.py:11 content/file/models.py:15
-#: module/medialibrary/models.py:52
+#: module/medialibrary/models.py:43
 msgid "file"
 msgstr "Datei"
 
@@ -98,11 +98,11 @@ msgid "(no caption)"
 msgstr "(Keine Legende)"
 
 #: content/medialibrary/models.py:55 content/medialibrary/models.py:66
-#: module/medialibrary/models.py:61
+#: module/medialibrary/models.py:51
 msgid "media file"
 msgstr "Mediendatei"
 
-#: content/medialibrary/models.py:56 module/medialibrary/models.py:62
+#: content/medialibrary/models.py:56 module/medialibrary/models.py:52
 msgid "media files"
 msgstr "Mediendateien"
 
@@ -256,8 +256,8 @@ msgid "Leave this empty for entries in the primary language (%s)."
 msgstr "Dieses Feld für Einträge in der Primärsprache (%s) leer lassen."
 
 #: module/blog/extensions/translations.py:37
-#: module/page/extensions/translations.py:57
-#: templates/admin/feincms/item_editor.html:136
+#: module/page/extensions/translations.py:54
+#: templates/admin/feincms/item_editor.html:134
 msgid "available translations"
 msgstr "Verfügbare Übersetzungen"
 
@@ -269,47 +269,47 @@ msgstr "Übergeordnet"
 msgid "category"
 msgstr "Kategorie"
 
-#: module/medialibrary/models.py:27 module/medialibrary/models.py:58
+#: module/medialibrary/models.py:27 module/medialibrary/models.py:48
 msgid "categories"
 msgstr "Kategorien"
 
-#: module/medialibrary/models.py:44
-msgid "Image"
-msgstr "Bild"
-
-#: module/medialibrary/models.py:45
-msgid "PDF document"
-msgstr "PDF-Dokument"
-
-#: module/medialibrary/models.py:46
-msgid "Text"
-msgstr "Text"
-
-#: module/medialibrary/models.py:47
-msgid "Binary"
-msgstr "Binärdaten"
-
-#: module/medialibrary/models.py:53 module/medialibrary/models.py:84
+#: module/medialibrary/models.py:44 module/medialibrary/models.py:85
 msgid "file type"
 msgstr "Dateityp"
 
-#: module/medialibrary/models.py:55
+#: module/medialibrary/models.py:45
 msgid "created"
 msgstr "Erstellt"
 
-#: module/medialibrary/models.py:56
+#: module/medialibrary/models.py:46
 msgid "copyright"
 msgstr "Copyright"
 
-#: module/medialibrary/models.py:114
+#: module/medialibrary/models.py:116
+msgid "Image"
+msgstr "Bild"
+
+#: module/medialibrary/models.py:117
+msgid "PDF document"
+msgstr "PDF-Dokument"
+
+#: module/medialibrary/models.py:118
+msgid "Text"
+msgstr "Text"
+
+#: module/medialibrary/models.py:119
+msgid "Binary"
+msgstr "Binärdaten"
+
+#: module/medialibrary/models.py:124
 msgid "caption"
 msgstr "Legende"
 
-#: module/medialibrary/models.py:117
+#: module/medialibrary/models.py:127
 msgid "media file translation"
 msgstr "Mediendatei-Übersetzung"
 
-#: module/medialibrary/models.py:118
+#: module/medialibrary/models.py:128
 msgid "media file translations"
 msgstr "Mediendatei-Übersetzungen"
 
@@ -351,15 +351,15 @@ msgstr "Ziel-URL für automatische Weiterleitungen."
 msgid "Cached URL"
 msgstr "Zwischengespeicherte URL"
 
-#: module/page/models.py:120
+#: module/page/models.py:122
 msgid "page"
 msgstr "Seite"
 
-#: module/page/models.py:121
+#: module/page/models.py:123
 msgid "pages"
 msgstr "Seiten"
 
-#: module/page/models.py:182
+#: module/page/models.py:207
 msgid "Other options"
 msgstr "Weitere Optionen"
 
@@ -371,27 +371,27 @@ msgstr "Veröffentlichen am"
 msgid "publication end date"
 msgstr "Veröffentlicht bis"
 
-#: module/page/extensions/datepublisher.py:44
+#: module/page/extensions/datepublisher.py:45
 #, python-format
 msgid "%(icon)s (not active)"
 msgstr "%(icon)s (inaktiv)"
 
-#: module/page/extensions/datepublisher.py:45
+#: module/page/extensions/datepublisher.py:46
 #, python-format
 msgid "%(icon)s (until %(from)s)"
 msgstr "%(icon)s (bis %(from)s)"
 
-#: module/page/extensions/datepublisher.py:46
+#: module/page/extensions/datepublisher.py:47
 #, python-format
 msgid "%(icon)s (since %(to)s)"
 msgstr "%(icon)s (seit %(to)s)"
 
-#: module/page/extensions/datepublisher.py:47
+#: module/page/extensions/datepublisher.py:48
 #, python-format
 msgid "%(icon)s (%(from)s &ndash; %(to)s)"
 msgstr "%(icon)s (%(from)s &ndash; %(to)s)"
 
-#: module/page/extensions/datepublisher.py:51
+#: module/page/extensions/datepublisher.py:52
 msgid "is visible"
 msgstr "ist sichtbar"
 
@@ -405,6 +405,14 @@ msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr "Wähle das Modul aus, welches weitere Navigationspunkte erstellt."
+
+#: module/page/extensions/symlinks.py:14
+msgid "symlinked page"
+msgstr "Verbundene Seite"
+
+#: module/page/extensions/symlinks.py:15
+msgid "All content is inherited from this page if given."
+msgstr "Der angezeigte Inhalt wird durch den Inhalt der angegebenen Seite ersetzt."
 
 #: module/page/extensions/titles.py:12
 msgid "content title"
@@ -456,7 +464,7 @@ msgid "Tree saved successfully."
 msgstr "Baum erfolgreich gespeichert"
 
 #: templates/admin/feincms/_messages.html:7
-#: templates/admin/feincms/item_editor.html:154
+#: templates/admin/feincms/item_editor.html:152
 msgid "Change template"
 msgstr "Template ändern"
 
@@ -466,9 +474,13 @@ msgstr ""
 "Template wirklich ändern? <br />Alle Inhalte werden in die erste Region "
 "verschoben."
 
-#: templates/admin/feincms/fe_editor.html:49
-#: templates/admin/feincms/item_editor.html:120
-#: templates/admin/feincms/item_editor.html:211
+#: templates/admin/feincms/_messages.html:9
+msgid "Cannot make a node a child of itself."
+msgstr "Kann ein Element nicht unterhalb von sich selbst einfügen."
+
+#: templates/admin/feincms/fe_editor.html:51
+#: templates/admin/feincms/item_editor.html:118
+#: templates/admin/feincms/item_editor.html:209
 msgid "Save"
 msgstr "Sichern"
 
@@ -492,39 +504,39 @@ msgstr "runter"
 msgid "remove"
 msgstr "entfernen"
 
-#: templates/admin/feincms/item_editor.html:97
+#: templates/admin/feincms/item_editor.html:95
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/admin/feincms/item_editor.html:111
+#: templates/admin/feincms/item_editor.html:109
 msgid "View on site"
 msgstr "Auf der Webseite anzeigen"
 
-#: templates/admin/feincms/item_editor.html:121
-#: templates/admin/feincms/item_editor.html:212
-#: templates/admin/feincms/tree_editor.html:134
+#: templates/admin/feincms/item_editor.html:119
+#: templates/admin/feincms/item_editor.html:210
+#: templates/admin/feincms/tree_editor.html:52
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/admin/feincms/item_editor.html:123
-#: templates/admin/feincms/item_editor.html:214
+#: templates/admin/feincms/item_editor.html:121
+#: templates/admin/feincms/item_editor.html:212
 msgid "Save and add another"
 msgstr "Sichern und neu hinzufügen"
 
-#: templates/admin/feincms/item_editor.html:124
-#: templates/admin/feincms/item_editor.html:215
+#: templates/admin/feincms/item_editor.html:122
+#: templates/admin/feincms/item_editor.html:213
 msgid "Save and continue editing"
 msgstr "Sichern und weiter bearbeiten"
 
-#: templates/admin/feincms/item_editor.html:163
+#: templates/admin/feincms/item_editor.html:161
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: templates/admin/feincms/item_editor.html:177
+#: templates/admin/feincms/item_editor.html:175
 msgid "Region empty"
 msgstr "Region leer"
 
-#: templates/admin/feincms/item_editor.html:181
+#: templates/admin/feincms/item_editor.html:179
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
@@ -532,34 +544,46 @@ msgstr ""
 "Inhalt wird von der übergeordneten Seite geerbt. Füge Inhalt hinzu, um "
 "dieses Verhalten zu ändern"
 
-#: templates/admin/feincms/item_editor.html:189
+#: templates/admin/feincms/item_editor.html:187
 msgid "Add new item"
 msgstr "Neues Element hinzufügen"
 
-#: templates/admin/feincms/item_editor.html:197
+#: templates/admin/feincms/item_editor.html:195
 msgid "Move selected item to"
 msgstr "Element verschieben nach"
 
-#: templates/admin/feincms/item_editor.html:201
+#: templates/admin/feincms/item_editor.html:199
 msgid "OK"
 msgstr "OK"
 
-#: templates/admin/feincms/tree_editor.html:116
+#: templates/admin/feincms/tree_editor.html:34
 #, python-format
 msgid "Add %(name)s"
 msgstr "%(name)s hinzufügen"
 
-#: templates/admin/feincms/tree_editor.html:120
+#: templates/admin/feincms/tree_editor.html:38
 msgid "Save tree"
 msgstr "Baum speichern"
 
-#: templates/admin/feincms/tree_editor.html:123
+#: templates/admin/feincms/tree_editor.html:41
 msgid "Expand all"
 msgstr "Alles aufklappen"
 
-#: templates/admin/feincms/tree_editor.html:124
+#: templates/admin/feincms/tree_editor.html:42
 msgid "Collapse all"
 msgstr "Alles zuklappen"
+
+#: templates/admin/feincms/tree_editor.html:61
+msgid "Insert after"
+msgstr "Nachher einfügen"
+
+#: templates/admin/feincms/tree_editor.html:62
+msgid "Insert before"
+msgstr "Vorher einfügen"
+
+#: templates/admin/feincms/tree_editor.html:63
+msgid "Insert as child"
+msgstr "Als Unterelement einfügen"
 
 #: templates/content/contactform/form.html:8
 msgid "Submit"
@@ -568,6 +592,3 @@ msgstr "Senden"
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
 msgstr "Danke!"
-
-#~ msgid "Choose"
-#~ msgstr "Auswählen"
