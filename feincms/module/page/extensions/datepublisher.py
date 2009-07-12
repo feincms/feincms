@@ -22,14 +22,9 @@ def register(cls, admin_cls):
             Q(publication_date__lte=datetime.now) & \
             (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=datetime.now)))
 
-    def _boolean_icon(field_val, alt_text=None):
-        # Origin: contrib/admin/templatetags/admin_list.py
-        BOOLEAN_MAPPING = { True: 'yes', False: 'no', None: 'unknown' }
-        alt_text = alt_text or BOOLEAN_MAPPING[field_val]
-        return (u'<img src="%simg/admin/icon-%s.gif" alt="%s" />' %
-                (settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], alt_text))
-
     def is_visible_admin(self, page):
+        from feincms.module import django_boolean_icon
+
         now = datetime.now()
 
         visible           = page.active
@@ -37,7 +32,7 @@ def register(cls, admin_cls):
         not_expired       = (page.publication_end_date is None or page.publication_end_date > now)
 
         format_args = {
-            'icon': _boolean_icon(visible and already_published and not_expired),
+            'icon': django_boolean_icon(visible and already_published and not_expired),
             'from': page.publication_date.strftime('%d.%m.%y'),
             'to': page.publication_end_date and page.publication_end_date.strftime('%d.%m.%y') or '&infin;',
             }
