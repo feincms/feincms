@@ -164,6 +164,14 @@ td span select {
 
 .suchadrag img {
     cursor: move;
+    float: right;
+    margin: 0 0 0 3px;
+}
+
+.suchadrag a {
+	display: block;
+	margin-right: 28px;
+	overflow: hidden;
 }
 
 .del-page {

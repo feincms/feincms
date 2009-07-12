@@ -58,10 +58,10 @@
                 <td>
                     <div class="expander"></div>
                     <div class="suchadrag">
+                        <img class="move-after" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_after.png" title="{% trans "Insert after" %}" />
+                        <img class="move-before" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_before.png" title="{% trans "Insert before" %}" />
+                        <img class="move-child" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_child.png" title="{% trans "Insert as child" %}" />
                         <a href="{{ item.id }}/"><strong>{{ title }}</strong></a>
-                        <img class="move-child" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_move.gif" />
-                        <img class="move-before" src="{{ FEINCMS_ADMIN_MEDIA }}img/uparrow.png" />
-                        <img class="move-after" src="{{ FEINCMS_ADMIN_MEDIA }}img/downarrow.png" />
                     </div>
                 </td>
                 {% for property in item_properties %}
