@@ -1,5 +1,6 @@
 from django import forms
 from django.core.mail import send_mail
+from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -32,7 +33,7 @@ class ContactFormContent(models.Model):
     def render(self, **kwargs):
         request = kwargs.get('request')
 
-        if request.method=='POST':
+        if request.method == 'POST':
             form = self.form(request.POST)
 
             if form.is_valid():
