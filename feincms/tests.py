@@ -77,3 +77,12 @@ class CMSBaseTest(TestCase):
         # creating a content type twice is forbidden
         self.assertRaises(ImproperlyConfigured,
             lambda: ExampleCMSBase.create_content_type(RawContent))
+
+    def test_04_mediafilecontent_creation(self):
+        # the medialibrary needs to be enabled, otherwise this test fails
+
+        from feincms.content.medialibrary.models import MediaFileContent
+
+        # We use the convenience method here which has defaults for
+        # POSITION_CHOICES
+        MediaFileContent.default_create_content_type(ExampleCMSBase)
