@@ -1,5 +1,11 @@
+from django.test import TestCase
 
-import feincms.translations
-import doctest
+class TranslationsTest(TestCase):
+    def test_short_language_code(self):
+        # this is quite stupid, but it's the first time I do something
+        # with TestCase
 
-doctest.testmod(feincms.translations)
+        import feincms.translations
+        import doctest
+
+        doctest.testmod(feincms.translations)

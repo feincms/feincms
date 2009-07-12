@@ -41,14 +41,14 @@ def short_language_code(code=None):
     'de'
     >>> short_language_code('de-at')
     'de'
-    >>> short_language_code() == settings.LANGUAGES[0][0]
+    >>> short_language_code() == short_language_code(settings.LANGUAGE_CODE)
     True
     """
     if code is None:
         code = translation.get_language()
 
     pos = code.find('-')
-    if pos>-1:
+    if pos > -1:
         return code[:pos]
     return code
 
