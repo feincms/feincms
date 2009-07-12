@@ -179,7 +179,9 @@ td span select {
     margin: 0 0 1px 0;
 }
 
-
+tr.level0 td {background: #f4f4f4;}
+tr.level1 td {background: #fafafa;}
+tr.level2 td {background: #fdfdfd;}
 tr.level0 td:first-child {padding-left: 5px;}
 tr.level1 td:first-child {padding-left: 15px;}
 tr.level2 td:first-child {padding-left: 25px;}
