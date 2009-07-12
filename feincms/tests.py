@@ -9,6 +9,7 @@ from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
 from feincms.models import Region, Template, Base
+from feincms.module.page.models import Page
 from feincms.utils import collect_dict_values, get_object
 
 
@@ -86,3 +87,9 @@ class CMSBaseTest(TestCase):
         # We use the convenience method here which has defaults for
         # POSITION_CHOICES
         MediaFileContent.default_create_content_type(ExampleCMSBase)
+
+
+class PageModelTest(TestCase):
+    def test_01_extensions(self):
+        Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
+                                 'titles', 'translations')
