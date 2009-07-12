@@ -1,4 +1,4 @@
-var popup_bg = '<div class="popup_bg"></div>';
+var popup_bg = '<div id="popup_bg"></div>';
 
 function row_node_id(elem) {
     return parseInt(elem.attr('id').substr(4));
@@ -173,7 +173,7 @@ function drop_item(dragged, target, method) {
 function show_alert(message, title) {
     $("body").append(popup_bg);
     jAlert(message, title, function(){
-        $(".popup_bg").remove();
+        $("#popup_bg").remove();
     });
 }
 
