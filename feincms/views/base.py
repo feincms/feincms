@@ -18,4 +18,3 @@ def handler(request, path=None):
                     }, context_instance=RequestContext(request))
 
     return response
-    
