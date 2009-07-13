@@ -52,7 +52,7 @@ def feincms_frontend_editing(cms_obj, request):
     {% feincms_frontend_editing feincms_page request %}
     """
 
-    if request.session and request.session.get('frontend_editing'):
+    if hasattr(request, 'session') and request.session.get('frontend_editing'):
         return render_to_string('admin/feincms/fe_tools.html')
 
     return u''
