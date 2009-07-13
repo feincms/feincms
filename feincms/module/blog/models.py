@@ -50,9 +50,16 @@ class Entry(Base):
 
     @classmethod
     def register_extensions(cls, *extensions):
+        if not hasattr(cls, '_feincms_extensions'):
+            cls._feincms_extensions = set()
+
         for ext in extensions:
+            if ext in cls._feincms_extensions:
+                continue
+
             fn = get_object('feincms.module.blog.extensions.%s.register' % ext)
-            fn(cls, EntryAdmin)
+            fn(cls, PageAdmin)
+            cls._feincms_extensions.add(ext)
 
 
 class EntryAdmin(editor.ItemEditor, admin.ModelAdmin):

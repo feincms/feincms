@@ -142,10 +142,10 @@ class Page(Base):
         max_length = 50
         if len(self.title) >= max_length:
             first_part = int(max_length * 0.6)
-            next_space = self.title[first_part:(max_length/2 - first_part)].find(' ')
+            next_space = self.title[first_part:(max_length / 2 - first_part)].find(' ')
             if next_space >= 0:
                 first_part += next_space
-            return self.title[:first_part] + u' … ' + self.title[-(max_length-first_part):]
+            return self.title[:first_part] + u' … ' + self.title[-(max_length - first_part):]
         return self.title
     short_title.admin_order_field = 'title'
     short_title.short_description = _('title')
@@ -216,9 +216,16 @@ class Page(Base):
 
     @classmethod
     def register_extensions(cls, *extensions):
+        if not hasattr(cls, '_feincms_extensions'):
+            cls._feincms_extensions = set()
+
         for ext in extensions:
+            if ext in cls._feincms_extensions:
+                continue
+
             fn = get_object('feincms.module.page.extensions.%s.register' % ext)
             fn(cls, PageAdmin)
+            cls._feincms_extensions.add(ext)
 
 mptt.register(Page)
 
@@ -240,13 +247,14 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             'fields': ('override_url',),
         }),
         )
-    list_display=['short_title', '_cached_url', 'active', 'in_navigation',
+    list_display = ['short_title', '_cached_url', 'active', 'in_navigation',
         'template', ]
-    list_filter=('active', 'in_navigation', 'template_key')
+    list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', '_content_title', '_page_title',
         'meta_keywords', 'meta_description')
-    prepopulated_fields={
+    prepopulated_fields = {
         'slug': ('title',),
         }
 
     show_on_top = ('title', 'active')
+
