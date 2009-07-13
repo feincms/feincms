@@ -1,4 +1,5 @@
 import copy
+import sys
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -316,6 +317,7 @@ class Base(models.Model):
             (model, feincms_content_base,),
             attrs)
         cls._feincms_content_types.append(new_type)
+        setattr(sys.modules[cls.__module__], model.__name__, new_type)
 
         # content types can be limited to only one region
         if not regions:
