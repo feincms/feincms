@@ -66,3 +66,45 @@ INSTALLED_APPS = (
     'feincms.module.medialibrary',
     'example',
 )
+
+
+COVERAGE_MODULES = ['feincms.admin.editor',
+                    'feincms.content.contactform.models',
+                    'feincms.content.file.models',
+                    'feincms.content.image.models',
+                    'feincms.content.medialibrary.models',
+                    'feincms.content.raw.models',
+                    'feincms.content.richtext.models',
+                    'feincms.content.rss.models',
+                    'feincms.content.video.models',
+                    'feincms.models',
+                    'feincms.module.blog.admin',
+                    'feincms.module.blog.extensions.seo',
+                    #'feincms.module.blog.extensions.tags', # I don't have tagging installed here...
+                    'feincms.module.blog.extensions.translations',
+                    'feincms.module.blog.models',
+                    'feincms.module.medialibrary.admin',
+                    'feincms.module.medialibrary.models',
+                    'feincms.module.page.admin',
+                    'feincms.module.page.extensions.datepublisher',
+                    'feincms.module.page.extensions.navigation',
+                    'feincms.module.page.extensions.seo',
+                    'feincms.module.page.extensions.symlinks',
+                    'feincms.module.page.extensions.titles',
+                    'feincms.module.page.extensions.translations',
+                    'feincms.module.page.models',
+                    'feincms.module.page.templatetags.feincms_page_tags',
+                    'feincms.templatetags.feincms_tags',
+                    'feincms.translations',
+                    'feincms.utils',
+                    'feincms.views.base',
+                    ]
+
+# comment this out if you do want to run code coverage
+# (see http://nedbatchelder.com/code/coverage/ )
+TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
+
+LANGUAGES = (
+    ('en', 'English'),
+    ('de', 'German'),
+    )
