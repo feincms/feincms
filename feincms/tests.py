@@ -19,6 +19,7 @@ from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page.models import Page
+from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
 from feincms.utils import collect_dict_values, get_object, prefill_entry_list
 
@@ -153,8 +154,12 @@ class PagesTestCase(TestCase):
 
     def test_03_item_editor(self):
         self.login()
-        self.create_page()
+        self.assertRedirects(self.create_page(_continue=1), '/admin/page/page/1/')
         assert self.client.get('/admin/page/page/1/').status_code == 200
+
+    def test_03_add_another(self):
+        self.login()
+        self.assertRedirects(self.create_page(_addanother=1), '/admin/page/page/add/')
 
     def test_04_add_child(self):
         response = self.create_default_page_set()
@@ -199,6 +204,13 @@ class PagesTestCase(TestCase):
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertRaises(Page.DoesNotExist, lambda: Page.objects.get(pk=2))
+
+    def test_07_tree_editor_invalid_ajax(self):
+        self.login()
+        self.assertContains(self.client.post('/admin/page/page/', {
+            '__cmd': 'notexists',
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
+            'Oops. AJAX request not understood.')
 
     def is_published(self, url, should_be=True):
         try:
@@ -321,6 +333,10 @@ class PagesTestCase(TestCase):
 
         os.unlink(path)
 
+        self.client.get('/admin/page/page/1/')
+
+        self.assertEqual(page.content.main[1].render(), """<div class="image">\n    <img src="/media/somefile.jpg" alt="something" />\n    <span class="caption">something</span>\n    \n</div>\n""")
+
     def test_11_translations(self):
         self.create_default_page_set()
 
@@ -380,6 +396,29 @@ class PagesTestCase(TestCase):
         tmp = Page._feincms_content_types[:]
         Page.create_content_type(RichTextContent, regions=('notexists',))
         Page._feincms_content_types = tmp
+
+    def test_15_frontend_editing(self):
+        self.create_default_page_set()
+        page = Page.objects.get(pk=1)
+        self.create_pagecontent(page)
+
+        assert self.client.get('/admin/page/page/1/rawcontent/1/').status_code == 200
+        assert self.client.post('/admin/page/page/1/rawcontent/1/', {
+            'rawcontent-text': 'blablabla',
+            }).status_code == 200
+
+        self.assertEqual(page.content.main[0].render(), 'blablabla')
+        self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), u'')
+
+    def test_16_template_tags(self):
+        self.create_default_page_set()
+        page = Page.objects.get(pk=1)
+        self.create_pagecontent(page)
+
+        self.assertEqual(feincms_tags.feincms_render_region(page, 'main', {}),
+                         'This is some example content')
+        self.assertEqual(feincms_tags.feincms_render_content(page.content.main[0], {}),
+                         'This is some example content')
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
