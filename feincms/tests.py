@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
+from django.template.defaultfilters import slugify
 from django.test import TestCase
 
 from feincms.content.contactform.models import ContactFormContent
@@ -93,3 +95,74 @@ class PageModelTest(TestCase):
     def test_01_extensions(self):
         Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                                  'titles', 'translations')
+
+
+class PagesTestCase(TestCase):
+    def setUp(self):
+        u = User(username='test', is_active=True, is_staff=True, is_superuser=True)
+        u.set_password('test')
+        u.save()
+
+        Page.register_templates({
+                'key': 'base',
+                'title': 'Standard template',
+                'path': 'feincms_base.html',
+                'regions': (
+                    ('main', 'Main content area'),
+                    ('sidebar', 'Sidebar', 'inherited'),
+                    ),
+                })
+
+    def login(self):
+        assert self.client.login(username='test', password='test')
+
+    def create_page(self, title='Test page', parent=''):
+        return self.client.post('/admin/page/page/add/', {
+            'title': title,
+            'slug': slugify(title),
+            'parent': parent,
+            'template_key': 'base',
+            })
+
+    def create_default_page_set(self):
+        self.login()
+        self.create_page()
+        return self.create_page('Test child page', 1)
+
+    def test_01_tree_editor(self):
+        self.login()
+        assert self.client.get('/admin/page/page/').status_code == 200
+
+    def test_02_add_page(self):
+        self.login()
+        self.assertRedirects(self.create_page(), '/admin/page/page/')
+        assert Page.objects.count() == 1
+
+    def test_03_item_editor(self):
+        self.login()
+        self.create_page()
+        assert self.client.get('/admin/page/page/1/').status_code == 200
+
+    def test_04_add_child(self):
+        response = self.create_default_page_set()
+        self.assertRedirects(response, '/admin/page/page/')
+        assert Page.objects.count() == 2
+
+        page = Page.objects.get(pk=2)
+        self.assertEqual(page.get_absolute_url(), '/test-page/test-child-page/')
+
+    def test_05_override_url(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        page.override_url = '/something/'
+        page.save()
+
+        page2 = Page.objects.get(pk=2)
+        self.assertEqual(page2.get_absolute_url(), '/something/test-child-page/')
+
+        page.override_url = '/'
+        page.save()
+        page2 = Page.objects.get(pk=2)
+        self.assertEqual(page2.get_absolute_url(), '/test-child-page/')
+
