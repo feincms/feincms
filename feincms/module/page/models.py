@@ -186,8 +186,7 @@ class Page(Base):
         try:
             return reverse('feincms:preview', kwargs={ 'page_id': self.id })
         except:
-            pass
-        return None
+            return None
 
     def setup_request(self, request):
         """

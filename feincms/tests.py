@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from datetime import datetime, timedelta
 import os
 
@@ -21,7 +23,8 @@ from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
-from feincms.utils import collect_dict_values, get_object, prefill_entry_list
+from feincms.utils import collect_dict_values, get_object, prefill_entry_list, \
+    prefilled_attribute
 
 
 class TranslationsTest(TestCase):
@@ -126,7 +129,7 @@ class PagesTestCase(TestCase):
     def create_page(self, title='Test page', parent='', **kwargs):
         dic = {
             'title': title,
-            'slug': slugify(title),
+            'slug': kwargs.get('slug', slugify(title)),
             'parent': parent,
             'template_key': 'base',
             'publication_date_0': '2009-01-01',
@@ -149,8 +152,10 @@ class PagesTestCase(TestCase):
 
     def test_02_add_page(self):
         self.login()
-        self.assertRedirects(self.create_page(), '/admin/page/page/')
+        self.assertRedirects(self.create_page(title='Test page ' * 10, slug='test-page'),
+                             '/admin/page/page/')
         assert Page.objects.count() == 1
+        self.assertContains(self.client.get('/admin/page/page/'), '…')
 
     def test_03_item_editor(self):
         self.login()
@@ -429,6 +434,8 @@ class BlogTestCase(TestCase):
         u.save()
 
         Entry.register_regions(('main', 'Main region'))
+        Entry.prefilled_categories = prefilled_attribute('categories')
+        Entry.prefilled_rawcontent_set = prefilled_attribute('rawcontent_set')
 
     def login(self):
         assert self.client.login(username='test', password='test')
@@ -448,9 +455,10 @@ class BlogTestCase(TestCase):
     def test_01_prefilled_attributes(self):
         self.create_entry()
 
-        objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set')
+        objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set', 'categories')
 
-        self.assertEqual(len(objects[0]._prefill_rawcontent_set), 1)
+        self.assertEqual(len(objects[0].prefilled_categories), 0)
+        self.assertEqual(len(objects[0].prefilled_rawcontent_set), 1)
         self.assertEqual(unicode(objects[0]), 'Something')
 
         self.login()
