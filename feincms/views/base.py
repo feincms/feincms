@@ -1,9 +1,10 @@
-
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
 from feincms.module.page.models import Page
+from feincms.infanta import infanta_exclude
+
 
 def build_page_response(page, request):
     response = page.setup_request(request) or \
@@ -13,6 +14,8 @@ def build_page_response(page, request):
 
     return response
 
+
+@infanta_exclude
 def handler(request, path=None):
     """
     This is the default handler for feincms page content.
@@ -23,6 +26,8 @@ def handler(request, path=None):
     page = Page.objects.page_for_path_or_404(path)
     return build_page_response(page, request)
 
+
+@infanta_exclude
 @permission_required('page.change_page')
 def preview_handler(request, page_id):
     """
