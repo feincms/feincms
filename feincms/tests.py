@@ -112,15 +112,17 @@ class PagesTestCase(TestCase):
     def login(self):
         assert self.client.login(username='test', password='test')
 
-    def create_page(self, title='Test page', parent=''):
-        return self.client.post('/admin/page/page/add/', {
+    def create_page(self, title='Test page', parent='', **kwargs):
+        dic = {
             'title': title,
             'slug': slugify(title),
             'parent': parent,
             'template_key': 'base',
             'publication_date': '2009-01-01 00:00:00',
             'language': 'en',
-            })
+            }
+        dic.update(kwargs)
+        return self.client.post('/admin/page/page/add/', dic)
 
     def create_default_page_set(self):
         self.login()
@@ -164,4 +166,23 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
         self.assertEqual(page2.get_absolute_url(), '/test-child-page/')
 
+    def test_06_tree_editor_save(self):
+        self.create_default_page_set()
 
+        self.client.post('/admin/page/page/', {
+            '__cmd': 'save_tree',
+            'tree': '[[2, 0, 1], [1, 2, 0]]',
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        page = Page.objects.get(pk=1)
+        self.assertEqual(page.get_absolute_url(), '/test-child-page/test-page/')
+
+    def test_07_tree_editor_delete(self):
+        self.create_default_page_set()
+
+        self.client.post('/admin/page/page/', {
+            '__cmd': 'delete_item',
+            'item_id': 2,
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.get(pk=2))
