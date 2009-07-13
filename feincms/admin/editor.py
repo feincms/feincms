@@ -364,7 +364,7 @@ class TreeEditor(admin.ModelAdmin):
         # exist)
         # XXX This is currently only really needed for the page module, I should probably use a
         # signal for this
-        for item in self.model._tree_manager.filter(**{'%s__isnull' % self.model._meta.parent_attr: True}):
+        for item in self.model._tree_manager.root_nodes():
             item.save()
 
         return HttpResponse("OK", mimetype="text/plain")
