@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
+import os
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.template import TemplateDoesNotExist
@@ -14,8 +16,11 @@ from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
 from feincms.models import Region, Template, Base
+from feincms.module.blog.models import Entry
+from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page.models import Page
-from feincms.utils import collect_dict_values, get_object
+from feincms.translations import short_language_code
+from feincms.utils import collect_dict_values, get_object, prefill_entry_list
 
 
 class TranslationsTest(TestCase):
@@ -272,3 +277,94 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
         page2.symlinked_page = page
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
+
+    def test_10_mediafilecontent(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        self.create_pagecontent(page)
+
+        path = os.path.join(settings.MEDIA_ROOT, 'somefile.jpg')
+        f = open(path, 'wb')
+        f.write('blabla')
+        f.close()
+
+        category = Category.objects.create(title='Category', parent=None)
+        mediafile = MediaFile.objects.create(file='somefile.jpg')
+        mediafile.categories = [category]
+        mediafile.translations.create(caption='something',
+            language_code='%s-ha' % short_language_code())
+
+        page.mediafilecontent_set.create(
+            mediafile=mediafile,
+            region='main',
+            position='block',
+            ordering=1)
+
+        mf = page.content.main[1].mediafile
+
+        self.assertEqual(mf.translation.caption, 'something')
+        self.assertEqual(mf.translation.short_language_code(), short_language_code())
+        self.assertNotEqual(mf.get_absolute_url(), '')
+        self.assertEqual(unicode(mf), 'something (somefile.jpg / 6 bytes)')
+
+        os.unlink(path)
+
+    def test_11_translations(self):
+        self.create_default_page_set()
+
+        page1 = Page.objects.get(pk=1)
+        self.assertEqual(len(page1.available_translations()), 0)
+
+        page1 = Page.objects.get(pk=1)
+        page2 = Page.objects.get(pk=2)
+
+        page2.language = 'de'
+        page2.translation_of = page1
+        page2.save()
+
+        self.assertEqual(len(page2.available_translations()), 1)
+        self.assertEqual(len(page1.available_translations()), 1)
+
+    def test_12_titles(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+
+        self.assertEqual(page.page_title, page.title)
+        self.assertEqual(page.content_title, page.title)
+
+        page._content_title = 'Something\nawful'
+        page._page_title = 'Hello world'
+        page.save()
+
+        self.assertEqual(page.page_title, 'Hello world')
+        self.assertEqual(page.content_title, 'Something')
+        self.assertEqual(page.content_subtitle, 'awful')
+
+
+Entry.register_extensions('seo', 'translations')
+class BlogTestCase(TestCase):
+    def setUp(self):
+        Entry.register_regions(('main', 'Main region'))
+
+    def create_entry(self):
+        entry = Entry.objects.create(
+            published=True,
+            title='Something',
+            slug='something',
+            published_on=datetime.now(),
+            language='en')
+
+        entry.rawcontent_set.create(
+            region='main',
+            ordering=0,
+            text='Something awful')
+
+    def test_01_prefilled_attributes(self):
+        self.create_entry()
+
+        objects = prefill_entry_list(Entry.objects.all(), 'rawcontent_set')
+
+        assert len(objects[0]._prefill_rawcontent_set) == 1
+
