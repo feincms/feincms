@@ -91,11 +91,7 @@ class CMSBaseTest(TestCase):
         MediaFileContent.default_create_content_type(ExampleCMSBase)
 
 
-class PageModelTest(TestCase):
-    def test_01_extensions(self):
-        Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
-                                 'titles', 'translations')
-
+Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks', 'titles', 'translations')
 
 class PagesTestCase(TestCase):
     def setUp(self):
@@ -122,6 +118,8 @@ class PagesTestCase(TestCase):
             'slug': slugify(title),
             'parent': parent,
             'template_key': 'base',
+            'publication_date': '2009-01-01 00:00:00',
+            'language': 'en',
             })
 
     def create_default_page_set(self):
@@ -165,4 +163,5 @@ class PagesTestCase(TestCase):
         page.save()
         page2 = Page.objects.get(pk=2)
         self.assertEqual(page2.get_absolute_url(), '/test-child-page/')
+
 
