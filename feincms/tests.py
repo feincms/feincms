@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
+from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
 
@@ -118,7 +121,10 @@ class PagesTestCase(TestCase):
             'slug': slugify(title),
             'parent': parent,
             'template_key': 'base',
-            'publication_date': '2009-01-01 00:00:00',
+            'publication_date_0': '2009-01-01',
+            'publication_date_1': '00:00:00',
+            'initial-publication_date_0': '2009-01-01',
+            'initial-publication_date_1': '00:00:00',
             'language': 'en',
             }
         dic.update(kwargs)
@@ -186,3 +192,50 @@ class PagesTestCase(TestCase):
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertRaises(Page.DoesNotExist, lambda: Page.objects.get(pk=2))
+
+    def is_published(self, url, should_be=True):
+        try:
+            self.client.get(url)
+        except TemplateDoesNotExist, e:
+            if should_be:
+                if e.args != ('feincms_base.html',):
+                    raise
+            else:
+                if e.args != ('404.html',):
+                    raise
+
+    def test_08_publishing(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        self.is_published(page.get_absolute_url(), should_be=False)
+
+        page.active = True
+        page.save()
+        self.is_published(page.get_absolute_url(), should_be=True)
+
+        old_publication = page.publication_date
+        page.publication_date = datetime.now() + timedelta(days=1)
+        page.save()
+        self.is_published(page.get_absolute_url(), should_be=False)
+
+        page.publication_date = old_publication
+        page.publication_end_date = datetime.now() - timedelta(days=1)
+        page.save()
+        self.is_published(page.get_absolute_url(), should_be=False)
+
+        page.publication_end_date = datetime.now() + timedelta(days=1)
+        page.save()
+        self.is_published(page.get_absolute_url(), should_be=True)
+
+    def test_09_symlinking(self):
+        self.create_default_page_set()
+
+        page1 = Page.objects.get(pk=1)
+        page2 = Page.objects.get(pk=2)
+
+        page1.symlinked_page = page2
+        page1.save()
+
+        self.assertEqual(page1.content.__dict__['item'], page2)
+
