@@ -41,6 +41,7 @@ class ModelsTest(TestCase):
         r = Region('region', 'region title')
         t = Template('base template', 'base.html', (
             ('region', 'region title'),
+            Region('region2', 'region2 title'),
             ))
 
         # I'm not sure whether this test tests anything at all
@@ -99,7 +100,8 @@ class CMSBaseTest(TestCase):
         MediaFileContent.default_create_content_type(ExampleCMSBase)
 
 
-Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks', 'titles', 'translations')
+Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
+                         'titles', 'translations', 'seo')
 
 class PagesTestCase(TestCase):
     def setUp(self):
@@ -278,6 +280,10 @@ class PagesTestCase(TestCase):
         page2.symlinked_page = page
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
 
+        self.assertEqual(len(page2.content.main), 1)
+        self.assertEqual(len(page2.content.sidebar), 0)
+        self.assertEqual(len(page2.content.nonexistant_region), 0)
+
     def test_10_mediafilecontent(self):
         self.create_default_page_set()
 
@@ -290,6 +296,10 @@ class PagesTestCase(TestCase):
         f.close()
 
         category = Category.objects.create(title='Category', parent=None)
+        category2 = Category.objects.create(title='Something', parent=category)
+
+        self.assertEqual(unicode(category2), 'Category - Something')
+
         mediafile = MediaFile.objects.create(file='somefile.jpg')
         mediafile.categories = [category]
         mediafile.translations.create(caption='something',
@@ -307,6 +317,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(mf.translation.short_language_code(), short_language_code())
         self.assertNotEqual(mf.get_absolute_url(), '')
         self.assertEqual(unicode(mf), 'something (somefile.jpg / 6 bytes)')
+        self.assertEqual(mf.file_type(), 'Image')
 
         os.unlink(path)
 
@@ -342,18 +353,52 @@ class PagesTestCase(TestCase):
         self.assertEqual(page.content_title, 'Something')
         self.assertEqual(page.content_subtitle, 'awful')
 
+        page._content_title = 'Only one line'
+        self.assertEqual(page.content_title, 'Only one line')
+        self.assertEqual(page.content_subtitle, '')
 
-Entry.register_extensions('seo', 'translations')
+        page._content_title = ''
+        self.assertEqual(page.content_title, page.title)
+        self.assertEqual(page.content_subtitle, '')
+
+    def test_13_inheritance(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        page.rawcontent_set.create(
+            region='sidebar',
+            ordering=0,
+            text='Something')
+
+        page2 = Page.objects.get(pk=2)
+
+        self.assertEqual(page2.content.sidebar[0].render(), 'Something')
+
+    def test_14_richtext(self):
+        # only create the content type to test the item editor
+        # customization hooks
+        tmp = Page._feincms_content_types[:]
+        Page.create_content_type(RichTextContent, regions=('notexists',))
+        Page._feincms_content_types = tmp
+
+
+Entry.register_extensions('seo', 'translations', 'seo')
 class BlogTestCase(TestCase):
     def setUp(self):
+        u = User(username='test', is_active=True, is_staff=True, is_superuser=True)
+        u.set_password('test')
+        u.save()
+
         Entry.register_regions(('main', 'Main region'))
+
+    def login(self):
+        assert self.client.login(username='test', password='test')
 
     def create_entry(self):
         entry = Entry.objects.create(
             published=True,
             title='Something',
             slug='something',
-            published_on=datetime.now(),
             language='en')
 
         entry.rawcontent_set.create(
@@ -364,7 +409,12 @@ class BlogTestCase(TestCase):
     def test_01_prefilled_attributes(self):
         self.create_entry()
 
-        objects = prefill_entry_list(Entry.objects.all(), 'rawcontent_set')
+        objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set')
 
-        assert len(objects[0]._prefill_rawcontent_set) == 1
+        self.assertEqual(len(objects[0]._prefill_rawcontent_set), 1)
+        self.assertEqual(unicode(objects[0]), 'Something')
+
+        self.login()
+        assert self.client.get('/admin/blog/entry/').status_code == 200
+        assert self.client.get('/admin/blog/entry/1/').status_code == 200
 

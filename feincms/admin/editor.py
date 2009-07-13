@@ -82,7 +82,7 @@ class ItemEditor(admin.ModelAdmin):
         del ModelForm.base_fields['region']
         del ModelForm.base_fields['ordering']
 
-        if request.method=='POST':
+        if request.method == 'POST':
             # The prefix is used to replace the formset identifier from the ItemEditor
             # interface. Customization of the form is easily possible through either matching
             # the prefix (frontend editing) or the formset identifier (ItemEditor) as it is
@@ -129,7 +129,7 @@ class ItemEditor(admin.ModelAdmin):
         ModelForm = modelform_factory(self.model, exclude=('parent',),
             formfield_callback=self._formfield_callback(request=request))
         SettingsForm = modelform_factory(self.model,
-            exclude=self.show_on_top+('template_key', 'parent'),
+            exclude=self.show_on_top + ('template_key', 'parent'),
             formfield_callback=self._formfield_callback(request=request))
 
         # generate a formset type for every concrete content type
@@ -195,7 +195,7 @@ class ItemEditor(admin.ModelAdmin):
             'content_types': content_types,
             'settings_fieldset': settings_fieldset,
             'top_fieldset': [model_form[field] for field in self.show_on_top],
-            'media': self.media+model_form.media,
+            'media': self.media + model_form.media,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
         }
@@ -215,9 +215,9 @@ class TreeEditor(admin.ModelAdmin):
         # handle AJAX requests
         if request.is_ajax():
             cmd = request.POST.get('__cmd')
-            if cmd=='save_tree':
+            if cmd == 'save_tree':
                 return self._save_tree(request)
-            elif cmd=='delete_item':
+            elif cmd == 'delete_item':
                 return self._delete_item(request)
 
             return HttpResponse('Oops. AJAX request not understood.')
@@ -279,7 +279,7 @@ class TreeEditor(admin.ModelAdmin):
     def object_list(self):
         first_field = self.changelist.list_display[0]
 
-        if first_field=='action_checkbox':
+        if first_field == 'action_checkbox':
             raise ImproperlyConfigured, 'You do have actions defined for this ModelAdmin class. Please don\'t do that, the TreeEditor cannot handle those yet.'
 
         ancestors = []
