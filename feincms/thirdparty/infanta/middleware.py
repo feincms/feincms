@@ -14,11 +14,9 @@ class InfantaMiddleware(object):
         if getattr(func, '_infanta_exclude ', False):
             return None
 
-        url = request.path
         ''' if there is no page object for the slug, process the request as usual'''
         try:
-            page = Page.objects.page_for_path(url)
-
+            page = Page.objects.best_match_for_path(request.path)
         except Page.DoesNotExist:
             return None
 
