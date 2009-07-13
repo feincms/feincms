@@ -239,3 +239,43 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(page1.content.__dict__['item'], page2)
 
+    def create_pagecontent(self, page):
+         return self.client.post('/admin/page/page/1/', {
+            'title': page.title,
+            'slug': page.slug,
+            #'parent': page.parent_id, # this field is excluded from the form
+            'template_key': page.template_key,
+            'publication_date_0': '2009-01-01',
+            'publication_date_1': '00:00:00',
+            'initial-publication_date_0': '2009-01-01',
+            'initial-publication_date_1': '00:00:00',
+            'language': 'en',
+
+            'rawcontent-TOTAL_FORMS': 1,
+            'rawcontent-INITIAL_FORMS': 0,
+
+            'rawcontent-0-parent': 1,
+            'rawcontent-0-region': 'main',
+            'rawcontent-0-ordering': 0,
+            'rawcontent-0-text': 'This is some example content',
+
+            'mediafilecontent-TOTAL_FORMS': 1,
+            'mediafilecontent-INITIAL_FORMS': 0,
+
+            'mediafilecontent-0-parent': 1,
+            'mediafilecontent-0-position': 'block',
+
+            'imagecontent-TOTAL_FORMS': 1,
+            'imagecontent-INITIAL_FORMS': 0,
+
+            'imagecontent-0-parent': 1,
+            'imagecontent-0-position': 'default',
+            })
+
+    def test_10_pagecontent(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        response = self.create_pagecontent(page)
+        self.assertRedirects(response, '/admin/page/page/')
+        self.assertEqual(page.content.main[0].__class__.__name__, 'RawContent')
