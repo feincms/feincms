@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# $Id$
+# ------------------------------------------------------------------------
+
 from django.contrib import admin
 from django.conf import settings
 from django.db import models
@@ -127,6 +132,24 @@ class Page(Base):
     def __unicode__(self):
         return u'%s (%s)' % (self.title, self._cached_url)
 
+    def short_title(self):
+        """
+        Do a short version of the title, truncate it intelligently when too long.
+        Try to cut it in 2/3 + ellipsis + 1/3 of the original title. The first part
+        also tries to cut at white space instead of in mid-word.
+        """
+        max_length = 50
+        if len(self.title) >= max_length:
+            first_part = int(max_length * 0.6)
+            next_space = self.title[first_part:(max_length/2 - first_part)].find(' ')
+            if next_space >= 0:
+                first_part += next_space
+            return self.title[:first_part] + u' … ' + self.title[-(max_length-first_part):]
+        return self.title
+    short_title.admin_order_field = 'title'
+    short_title.short_description = _('title')
+
+
     def save(self, *args, **kwargs):
         cached_page_urls = {}
 
@@ -209,7 +232,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             'fields': ('override_url',),
         }),
         )
-    list_display=['title', '_cached_url', 'active', 'in_navigation',
+    list_display=['short_title', '_cached_url', 'active', 'in_navigation',
         'template', ]
     list_filter=('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', '_content_title', '_page_title',

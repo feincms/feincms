@@ -380,14 +380,9 @@ class TreeEditor(admin.ModelAdmin):
         return HttpResponse("OK", mimetype="text/plain")
 
 
-
-# copied from django.contrib.admin.templatetags.admin_list and slightly modified
-def _boolean_icon(field_val):
-    BOOLEAN_MAPPING = {True: 'yes', False: 'no', None: 'unknown'}
-    return mark_safe(u'<img src="%simg/admin/icon-%s.gif" alt="%s" />' % (django_settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], field_val))
-
-
 def _properties(cl, result):
+    from feincms.module import django_boolean_icon
+
     first = True
     pk = cl.lookup_opts.pk.attname
     EMPTY_CHANGELIST_VALUE = '(None)'
@@ -414,7 +409,7 @@ def _properties(cl, result):
                 boolean = getattr(attr, 'boolean', False)
                 if boolean:
                     allow_tags = True
-                    result_repr = _boolean_icon(value)
+                    result_repr = django_boolean_icon(value)
                 else:
                     result_repr = smart_unicode(value)
             except (AttributeError, models.ObjectDoesNotExist):
@@ -448,7 +443,7 @@ def _properties(cl, result):
                     result_repr = EMPTY_CHANGELIST_VALUE
             # Booleans are special: We use images.
             elif isinstance(f, models.BooleanField) or isinstance(f, models.NullBooleanField):
-                result_repr = _boolean_icon(field_val)
+                result_repr = django_boolean_icon(field_val)
             # DecimalFields are special: Zero-pad the decimals.
             elif isinstance(f, models.DecimalField):
                 if field_val is not None:
