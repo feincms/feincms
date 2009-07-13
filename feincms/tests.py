@@ -228,17 +228,6 @@ class PagesTestCase(TestCase):
         page.save()
         self.is_published(page.get_absolute_url(), should_be=True)
 
-    def test_09_symlinking(self):
-        self.create_default_page_set()
-
-        page1 = Page.objects.get(pk=1)
-        page2 = Page.objects.get(pk=2)
-
-        page1.symlinked_page = page2
-        page1.save()
-
-        self.assertEqual(page1.content.__dict__['item'], page2)
-
     def create_pagecontent(self, page):
          return self.client.post('/admin/page/page/1/', {
             'title': page.title,
@@ -272,10 +261,14 @@ class PagesTestCase(TestCase):
             'imagecontent-0-position': 'default',
             })
 
-    def test_10_pagecontent(self):
+    def test_09_pagecontent(self):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
         response = self.create_pagecontent(page)
         self.assertRedirects(response, '/admin/page/page/')
         self.assertEqual(page.content.main[0].__class__.__name__, 'RawContent')
+
+        page2 = Page.objects.get(pk=2)
+        page2.symlinked_page = page
+        self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
