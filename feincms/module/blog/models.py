@@ -58,7 +58,7 @@ class Entry(Base):
                 continue
 
             fn = get_object('feincms.module.blog.extensions.%s.register' % ext)
-            fn(cls, PageAdmin)
+            fn(cls, EntryAdmin)
             cls._feincms_extensions.add(ext)
 
 
