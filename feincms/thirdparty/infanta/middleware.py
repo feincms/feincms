@@ -23,10 +23,17 @@ class InfantaMiddleware(object):
         ''' extend the page object, so we have a place to access our view contents in the templatetag as well as in the render method of the content type'''
         page.vc_manager = {}
 
-        page.setup_request(request)
+        # run request processors and return short-circuit the response handling
+        # if a request processor returned a response.
+        response = page.setup_request(request)
+        if response:
+            return response
 
         response = func(request, *vargs, **vkwargs)
 
+        # The {% box %} template tag has captured the content of the third-party
+        # application and should have stored it inside the view content manager.
+        # We do not need to pass the content explicitly therefore.
         html = render_to_string(page.template.path, {
                                                     'feincms_page': page,
                                                     }, context_instance=RequestContext(request))
