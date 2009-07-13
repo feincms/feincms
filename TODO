@@ -7,3 +7,12 @@ it's nothing more than a brain dump.
 - Encourage people to translate the administration interface
 - Finish frontend editing -- not much more than a proof of concept now
 - Testsuite!!
+
+
+Infanta - a FeinCMS extension for easy integrate reusable django apps
+---------------------------------------------------------------------
+
+- command for filling up the tree with the pages from the reusable app and automaticaly attaching ViewContents as placeholders
+- attach a view content which is not defined in the page tree at the end of the region
+- decide what to do if a region defined in the templatetag is not found
+  for example a extrajs block, which should be rendered in the <head> tag 

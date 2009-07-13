@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
 from feincms.module.page.models import Page
-from feincms.thirdparty.infanta import infanta_exclude
+from feincms.infanta import infanta_exclude
 
 
 def build_page_response(page, request):
