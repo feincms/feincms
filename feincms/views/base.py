@@ -1,7 +1,6 @@
 
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required, permission_required
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
 from feincms.module.page.models import Page
@@ -24,8 +23,7 @@ def handler(request, path=None):
     page = Page.objects.page_for_path_or_404(path)
     return build_page_response(page, request)
 
-# XXX Needs more restrictive permissions than just "logged in"!!
-@login_required
+@permission_required('page.change_page')
 def preview_handler(request, page_id):
     """
     This handler is for previewing site content; it takes a page_id so
