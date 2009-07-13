@@ -153,10 +153,11 @@ class Base(models.Model):
         # find all concrete content type tables which have at least one entry for
         # the current CMS object and region
         sql = ' UNION '.join([
-            'SELECT %d, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
+            'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
                 idx,
                 cls._meta.db_table,
                 self.pk) for idx, cls in enumerate(self._feincms_content_types)])
+        sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
 
         from django.db import connection
         cursor = connection.cursor()
