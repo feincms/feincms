@@ -35,5 +35,5 @@ def register(cls, admin_cls):
     def _content_subtitle(self):
         return u'\n'.join(self._content_title.splitlines()[1:])
 
-    cls.content_subtitle = _content_subtitle
+    cls.content_subtitle = property(_content_subtitle)
 
