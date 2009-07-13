@@ -22,5 +22,6 @@ urlpatterns = patterns('',
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),
 
-    (r'^(.*)$', 'feincms.views.base.handler'),
+    url(r'^preview/(?P<page_id>\d+)/', 'feincms.views.base.preview_handler', name='feincms:preview'),
+    url(r'^(.*)$', 'feincms.views.base.handler'),
 )

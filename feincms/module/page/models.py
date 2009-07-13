@@ -9,6 +9,7 @@ from django.db import models
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 import mptt
 
@@ -180,6 +181,13 @@ class Page(Base):
 
     def get_absolute_url(self):
         return self._cached_url
+
+    def get_preview_url(self):
+        try:
+            return reverse('feincms:preview', kwargs={ 'page_id': self.id })
+        except:
+            pass
+        return None
 
     def setup_request(self, request):
         """
