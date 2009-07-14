@@ -38,7 +38,7 @@ class ContactFormContent(models.Model):
 
             if form.is_valid():
                 send_mail(
-                    self.subject,
+                    form.cleaned_data['subject'],
                     render_to_string('content/contactform/email.txt', {
                         'data': form.cleaned_data,
                         }),
