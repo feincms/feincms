@@ -15,8 +15,11 @@ def _parse_args(argstr):
     try:
         args = {}
         for token in argstr.split(','):
-            k, v = token.split('=')
-            args[k] = v
+            if '=' in token:
+                k, v = token.split('=', 1)
+                args[k] = v
+            else:
+                args[token] = True
 
         return args
 
