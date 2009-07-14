@@ -7,13 +7,14 @@ from django import template
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
+from django.core import mail
 from django.db import models
 from django.http import Http404
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
 
-from feincms.content.contactform.models import ContactFormContent
+from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
 from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
@@ -29,6 +30,13 @@ from feincms.translations import short_language_code
 from feincms.utils import collect_dict_values, get_object, prefill_entry_list, \
     prefilled_attribute
 
+
+class Empty(object):
+    """
+    Helper class to use as request substitute (or whatever)
+    """
+
+    pass
 
 class TranslationsTest(TestCase):
     def test_short_language_code(self):
@@ -125,6 +133,8 @@ class CMSBaseTest(TestCase):
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'titles', 'translations', 'seo')
+Page.create_content_type(ContactFormContent, form=ContactForm)
+
 
 class PagesTestCase(TestCase):
     def setUp(self):
@@ -136,6 +146,14 @@ class PagesTestCase(TestCase):
                 'key': 'base',
                 'title': 'Standard template',
                 'path': 'feincms_base.html',
+                'regions': (
+                    ('main', 'Main content area'),
+                    ('sidebar', 'Sidebar', 'inherited'),
+                    ),
+                }, {
+                'key': 'theother',
+                'title': 'This actually exists',
+                'path': 'base.html',
                 'regions': (
                     ('main', 'Main content area'),
                     ('sidebar', 'Sidebar', 'inherited'),
@@ -302,6 +320,9 @@ class PagesTestCase(TestCase):
 
             'imagecontent-0-parent': 1,
             'imagecontent-0-position': 'default',
+
+            'contactformcontent-TOTAL_FORMS': 1,
+            'contactformcontent-INITIAL_FORMS': 0,
             })
 
     def test_09_pagecontent(self):
@@ -320,7 +341,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(len(page2.content.sidebar), 0)
         self.assertEqual(len(page2.content.nonexistant_region), 0)
 
-    def test_10_mediafilecontent(self):
+    def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
@@ -335,17 +356,20 @@ class PagesTestCase(TestCase):
         category2 = Category.objects.create(title='Something', parent=category)
 
         self.assertEqual(unicode(category2), 'Category - Something')
+        self.assertEqual(unicode(category), 'Category')
 
         mediafile = MediaFile.objects.create(file='somefile.jpg')
         mediafile.categories = [category]
-        mediafile.translations.create(caption='something',
-            language_code='%s-ha' % short_language_code())
-
         page.mediafilecontent_set.create(
             mediafile=mediafile,
             region='main',
             position='block',
             ordering=1)
+
+        self.assertContains(self.client.get('/admin/page/page/1/'), 'no caption')
+
+        mediafile.translations.create(caption='something',
+            language_code='%s-ha' % short_language_code())
 
         mf = page.content.main[1].mediafile
 
@@ -359,7 +383,11 @@ class PagesTestCase(TestCase):
 
         self.client.get('/admin/page/page/1/')
 
-        self.assertEqual(page.content.main[1].render(), """<div class="image">\n    <img src="/media/somefile.jpg" alt="something" />\n    <span class="caption">something</span>\n    \n</div>\n""")
+        assert 'alt="something"' in page.content.main[1].render()
+
+        page.imagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
+
+        assert 'somefile.jpg' in page.content.main[2].render()
 
     def test_11_translations(self):
         self.create_default_page_set()
@@ -418,8 +446,13 @@ class PagesTestCase(TestCase):
         # only create the content type to test the item editor
         # customization hooks
         tmp = Page._feincms_content_types[:]
-        Page.create_content_type(RichTextContent, regions=('notexists',))
+        type = Page.create_content_type(RichTextContent, regions=('notexists',))
         Page._feincms_content_types = tmp
+
+        from django.utils.safestring import SafeData
+        obj = type()
+        obj.text = 'Something'
+        assert isinstance(obj.render(), SafeData)
 
     def test_15_frontend_editing(self):
         self.create_default_page_set()
@@ -434,7 +467,6 @@ class PagesTestCase(TestCase):
         self.assertEqual(page.content.main[0].render(), 'blablabla')
         self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), u'')
 
-        class Empty(object): pass
         request = Empty()
         request.session = {'frontend_editing': True}
 
@@ -557,6 +589,30 @@ class PagesTestCase(TestCase):
         page2.copy_content_from(page)
         self.assertEqual(len(page2.content.main), 1)
 
+    def test_22_contactform(self):
+        self.create_default_page_set()
+        page = Page.objects.get(pk=1)
+        page.active = True
+        page.template_key = 'theother'
+        page.save()
+
+        page.contactformcontent_set.create(email='mail@example.com', subject='bla',
+                                           region='main', ordering=0)
+
+        request = Empty()
+        request.method = 'GET'
+        assert 'form' in page.content.main[0].render(request=request)
+
+        self.client.post(page.get_absolute_url(), {
+            'name': 'So what\'s your name, dude?',
+            'email': 'another@example.com',
+            'subject': 'This is a test. Please calm down',
+            'content': 'Hell on earth.',
+            })
+
+        self.assertEquals(len(mail.outbox), 1)
+        self.assertEquals(mail.outbox[0].subject, 'This is a test. Please calm down')
+
 
 Entry.register_extensions('seo', 'translations', 'seo')
 class BlogTestCase(TestCase):
@@ -584,6 +640,24 @@ class BlogTestCase(TestCase):
             ordering=0,
             text='Something awful')
 
+        return entry
+
+    def create_entries(self):
+        entry = self.create_entry()
+
+        Entry.objects.create(
+            published=True,
+            title='Something 2',
+            slug='something-2',
+            language='de',
+            translation_of=entry)
+
+        Entry.objects.create(
+            published=True,
+            title='Something 3',
+            slug='something-3',
+            language='de')
+
     def test_01_prefilled_attributes(self):
         self.create_entry()
 
@@ -597,3 +671,11 @@ class BlogTestCase(TestCase):
         assert self.client.get('/admin/blog/entry/').status_code == 200
         assert self.client.get('/admin/blog/entry/1/').status_code == 200
 
+    def test_02_translations(self):
+        self.create_entries()
+
+        entries = Entry.objects.in_bulk((1, 2, 3))
+
+        self.assertEqual(len(entries[1].available_translations()), 1)
+        self.assertEqual(len(entries[2].available_translations()), 1)
+        self.assertEqual(len(entries[3].available_translations()), 0)
