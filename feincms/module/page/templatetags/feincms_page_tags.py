@@ -74,33 +74,45 @@ class BestMatchNode(SimpleAssignmentNodeWithVar):
 register.tag('feincms_bestmatch', do_simple_assignment_node_with_var_helper(BestMatchNode))
 
 
-class LanguageLinksNode(SimpleAssignmentNodeWithVar):
+class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
     """
-    {% feincms_languagelinks for feincms_page as links %}
+    {% feincms_languagelinks for feincms_page as links [args] %}
 
     This template tag needs the translations extension.
 
+    Arguments can be any combination of:
+        all or existing: Return all languages or only those where a translation exists
+        excludecurrent: Excludes the item in the current language from the list
+
+    The default behavior is to return an entry for all languages including the
+    current language.
+
     Example:
 
-    {% for key, name, link in links %}
+    {% for key, name, link in links all,excludecurrent %}
         <a href="{% if link %}{{ link }}{% else %}/{{ key }}/{% endif %}">{% trans name %}</a>
     {% endfor %}
     """
 
-    def what(self, page):
+    def what(self, page, args):
+        only_existing = args.get('existing', False)
+        exclude_current = args.get('excludecurrent', False)
+
         translations = dict((t.language, t) for t in page.available_translations())
-        translations[page.language] = page
+
+        if not exclude_current:
+            translations[page.language] = page
 
         links = []
         for key, name in settings.LANGUAGES:
             # hardcoded paths... bleh
             if key in translations:
                 links.append((key, name, translations[key].get_absolute_url()))
-            else:
+            elif not only_existing:
                 links.append((key, name, None))
 
         return links
-register.tag('feincms_languagelinks', do_simple_assignment_node_with_var_helper(LanguageLinksNode))
+register.tag('feincms_languagelinks', do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode))
 
 
 @register.simple_tag
