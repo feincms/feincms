@@ -17,7 +17,7 @@ class ViewContent(models.Model):
 
     class Meta:
         abstract = True
-        verbose_name = _("View Content")
+        verbose_name = _("view content")
 
     def render(self, **kwargs):
         request = kwargs.get('request')
@@ -25,7 +25,7 @@ class ViewContent(models.Model):
             return unicode(request._feincms_page.vc_manager[self.id])
         except KeyError:
             if self.viewname and self.viewfunc:
-                return _("Placeholder for the %s calling %s" % (self.viewname, self.viewfunc))
+                return _("Placeholder for the %(viewname)s calling %(viewfunc)s" % {'viewname': self.viewname, 'viewfunc': self.viewfunc})
             if self.viewfunc:
-                return _("Placeholder for calling %s" % (self.viewfunc))
+                return _("Placeholder for calling %(viewfunc)s" % {'viewfunc': self.viewfunc})
             return 'no content registered for this view content'
