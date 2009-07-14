@@ -31,7 +31,11 @@ def do_simple_node_with_var_and_args_helper(cls):
         try:
             tag_name, of_, in_var_name, args = token.contents.split()
         except ValueError:
-            raise template.TemplateSyntaxError
+            try:
+                tag_name, of_, in_var_name = token.contents.split()
+                args = ''
+            except ValueError:
+                raise template.TemplateSyntaxError, 'Invalid syntax for %s node: %s' % (cls.__name__, token.contents)
 
         return cls(tag_name, in_var_name, args)
 
@@ -56,7 +60,7 @@ def do_simple_node_with_var_helper(cls):
         try:
             tag_name, of_, in_var_name = token.contents.split()
         except ValueError:
-            raise template.TemplateSyntaxError
+            raise template.TemplateSyntaxError, 'Invalid syntax for %s node: %s' % (cls.__name__, token.contents)
 
         return cls(tag_name, in_var_name)
 
@@ -80,7 +84,7 @@ def do_simple_assignment_node_helper(cls):
         try:
             tag_name, as_, var_name = token.contents.split()
         except ValueError:
-            raise template.TemplateSyntaxError
+            raise template.TemplateSyntaxError, 'Invalid syntax for %s node: %s' % (cls.__name__, token.contents)
 
         return cls(tag_name, var_name)
 
@@ -100,7 +104,7 @@ def do_simple_assignment_node_with_var_helper(cls):
         try:
             tag_name, of_, in_var_name, as_, var_name = token.contents.split()
         except ValueError:
-            raise template.TemplateSyntaxError
+            raise template.TemplateSyntaxError, 'Invalid syntax for %s node: %s' % (cls.__name__, token.contents)
 
         return cls(tag_name, in_var_name, var_name)
 
@@ -127,7 +131,11 @@ def do_simple_assignment_node_with_var_and_args_helper(cls):
         try:
             tag_name, of_, in_var_name, as_, var_name, args = token.contents.split()
         except ValueError:
-            raise template.TemplateSyntaxError
+            try:
+                tag_name, of_, in_var_name, as_, var_name = token.contents.split()
+                args = ''
+            except ValueError:
+                raise template.TemplateSyntaxError, 'Invalid syntax for %s node: %s' % (cls.__name__, token.contents)
 
         return cls(tag_name, in_var_name, var_name, args)
 
