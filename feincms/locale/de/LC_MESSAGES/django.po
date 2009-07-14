@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-12 20:42+0200\n"
+"POT-Creation-Date: 2009-07-14 14:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "template"
 msgstr "Template"
 
-#: models.py:248
+#: models.py:249
 msgid "ordering"
 msgstr "Sortierung"
 
@@ -47,27 +47,27 @@ msgstr "Es kann ein weiteres Element des Typs %s angelegt werden."
 msgid "Database error"
 msgstr "Datenbankfehler"
 
-#: content/contactform/models.py:8
+#: content/contactform/models.py:9
 msgid "name"
 msgstr "Name"
 
-#: content/contactform/models.py:9
+#: content/contactform/models.py:10
 msgid "email"
 msgstr "E-Mail"
 
-#: content/contactform/models.py:10
+#: content/contactform/models.py:11
 msgid "subject"
 msgstr "Betreff"
 
-#: content/contactform/models.py:13 content/raw/models.py:7
+#: content/contactform/models.py:14 content/raw/models.py:7
 msgid "content"
 msgstr "Inhalt"
 
-#: content/contactform/models.py:24
+#: content/contactform/models.py:25
 msgid "contact form"
 msgstr "Kontaktformular"
 
-#: content/contactform/models.py:25
+#: content/contactform/models.py:26
 msgid "contact forms"
 msgstr "Kontaktformulare"
 
@@ -139,7 +139,8 @@ msgid "rich texts"
 msgstr "Texte"
 
 #: content/rss/models.py:12 module/blog/models.py:25
-#: module/medialibrary/models.py:19 module/page/models.py:106
+#: module/medialibrary/models.py:19 module/page/models.py:112
+#: module/page/models.py:151
 msgid "title"
 msgstr "Titel"
 
@@ -195,11 +196,25 @@ msgstr "Video"
 msgid "videos"
 msgstr "Videos"
 
+#: infanta/models.py:20
+msgid "view content"
+msgstr "Funktionsinhalt"
+
+#: infanta/models.py:28
+#, python-format
+msgid "Placeholder for the %(viewname)s calling %(viewfunc)s"
+msgstr "Platzhalter für %(viewname)s, welche %(viewfunc)s aufruft"
+
+#: infanta/models.py:30
+#, python-format
+msgid "Placeholder for calling %(viewfunc)s"
+msgstr "Platzhalter um %(viewfunc)s aufzurufen"
+
 #: module/blog/models.py:24
 msgid "published"
 msgstr "veröffentlicht"
 
-#: module/blog/models.py:26 module/page/models.py:107
+#: module/blog/models.py:26 module/page/models.py:113
 msgid "This is used for the generated navigation too."
 msgstr "Dies wird auch für die generierte Navigation verwendet."
 
@@ -257,7 +272,7 @@ msgstr "Dieses Feld für Einträge in der Primärsprache (%s) leer lassen."
 
 #: module/blog/extensions/translations.py:37
 #: module/page/extensions/translations.py:54
-#: templates/admin/feincms/item_editor.html:134
+#: templates/admin/feincms/item_editor.html:137
 msgid "available translations"
 msgstr "Verfügbare Übersetzungen"
 
@@ -313,23 +328,23 @@ msgstr "Mediendatei-Übersetzung"
 msgid "media file translations"
 msgstr "Mediendatei-Übersetzungen"
 
-#: module/page/models.py:103
+#: module/page/models.py:109
 msgid "active"
 msgstr "Aktiv"
 
-#: module/page/models.py:108
+#: module/page/models.py:114
 msgid "slug"
 msgstr "Slug"
 
-#: module/page/models.py:110
+#: module/page/models.py:116
 msgid "in navigation"
 msgstr "In der Navigation"
 
-#: module/page/models.py:111
+#: module/page/models.py:117
 msgid "override URL"
 msgstr "Überschriebene URL"
 
-#: module/page/models.py:112
+#: module/page/models.py:118
 msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL. This affects both the navigation and subpages' "
@@ -339,27 +354,27 @@ msgstr ""
 "eine lokale URL handelt. Dieses Feld bestimmt die Navigation und die URLs "
 "von Unterseiten."
 
-#: module/page/models.py:113
+#: module/page/models.py:119
 msgid "redirect to"
 msgstr "Weiterleiten zu"
 
-#: module/page/models.py:114
+#: module/page/models.py:120
 msgid "Target URL for automatic redirects."
 msgstr "Ziel-URL für automatische Weiterleitungen."
 
-#: module/page/models.py:115
+#: module/page/models.py:121
 msgid "Cached URL"
 msgstr "Zwischengespeicherte URL"
 
-#: module/page/models.py:122
+#: module/page/models.py:128
 msgid "page"
 msgstr "Seite"
 
-#: module/page/models.py:123
+#: module/page/models.py:129
 msgid "pages"
 msgstr "Seiten"
 
-#: module/page/models.py:207
+#: module/page/models.py:244
 msgid "Other options"
 msgstr "Weitere Optionen"
 
@@ -371,27 +386,27 @@ msgstr "Veröffentlichen am"
 msgid "publication end date"
 msgstr "Veröffentlicht bis"
 
-#: module/page/extensions/datepublisher.py:45
+#: module/page/extensions/datepublisher.py:40
 #, python-format
 msgid "%(icon)s (not active)"
 msgstr "%(icon)s (inaktiv)"
 
-#: module/page/extensions/datepublisher.py:46
+#: module/page/extensions/datepublisher.py:41
 #, python-format
 msgid "%(icon)s (until %(from)s)"
 msgstr "%(icon)s (bis %(from)s)"
 
-#: module/page/extensions/datepublisher.py:47
+#: module/page/extensions/datepublisher.py:42
 #, python-format
 msgid "%(icon)s (since %(to)s)"
 msgstr "%(icon)s (seit %(to)s)"
 
-#: module/page/extensions/datepublisher.py:48
+#: module/page/extensions/datepublisher.py:43
 #, python-format
 msgid "%(icon)s (%(from)s &ndash; %(to)s)"
 msgstr "%(icon)s (%(from)s &ndash; %(to)s)"
 
-#: module/page/extensions/datepublisher.py:52
+#: module/page/extensions/datepublisher.py:47
 msgid "is visible"
 msgstr "ist sichtbar"
 
@@ -412,7 +427,8 @@ msgstr "Verbundene Seite"
 
 #: module/page/extensions/symlinks.py:15
 msgid "All content is inherited from this page if given."
-msgstr "Der angezeigte Inhalt wird durch den Inhalt der angegebenen Seite ersetzt."
+msgstr ""
+"Der angezeigte Inhalt wird durch den Inhalt der angegebenen Seite ersetzt."
 
 #: module/page/extensions/titles.py:12
 msgid "content title"
@@ -464,7 +480,7 @@ msgid "Tree saved successfully."
 msgstr "Baum erfolgreich gespeichert"
 
 #: templates/admin/feincms/_messages.html:7
-#: templates/admin/feincms/item_editor.html:152
+#: templates/admin/feincms/item_editor.html:155
 msgid "Change template"
 msgstr "Template ändern"
 
@@ -479,8 +495,8 @@ msgid "Cannot make a node a child of itself."
 msgstr "Kann ein Element nicht unterhalb von sich selbst einfügen."
 
 #: templates/admin/feincms/fe_editor.html:51
-#: templates/admin/feincms/item_editor.html:118
-#: templates/admin/feincms/item_editor.html:209
+#: templates/admin/feincms/item_editor.html:121
+#: templates/admin/feincms/item_editor.html:212
 msgid "Save"
 msgstr "Sichern"
 
@@ -509,34 +525,38 @@ msgid "Home"
 msgstr "Startseite"
 
 #: templates/admin/feincms/item_editor.html:109
+msgid "Preview"
+msgstr "Vorschau"
+
+#: templates/admin/feincms/item_editor.html:112
 msgid "View on site"
 msgstr "Auf der Webseite anzeigen"
 
-#: templates/admin/feincms/item_editor.html:119
-#: templates/admin/feincms/item_editor.html:210
+#: templates/admin/feincms/item_editor.html:122
+#: templates/admin/feincms/item_editor.html:213
 #: templates/admin/feincms/tree_editor.html:52
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/admin/feincms/item_editor.html:121
-#: templates/admin/feincms/item_editor.html:212
+#: templates/admin/feincms/item_editor.html:124
+#: templates/admin/feincms/item_editor.html:215
 msgid "Save and add another"
 msgstr "Sichern und neu hinzufügen"
 
-#: templates/admin/feincms/item_editor.html:122
-#: templates/admin/feincms/item_editor.html:213
+#: templates/admin/feincms/item_editor.html:125
+#: templates/admin/feincms/item_editor.html:216
 msgid "Save and continue editing"
 msgstr "Sichern und weiter bearbeiten"
 
-#: templates/admin/feincms/item_editor.html:161
+#: templates/admin/feincms/item_editor.html:164
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: templates/admin/feincms/item_editor.html:175
+#: templates/admin/feincms/item_editor.html:178
 msgid "Region empty"
 msgstr "Region leer"
 
-#: templates/admin/feincms/item_editor.html:179
+#: templates/admin/feincms/item_editor.html:182
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
@@ -544,15 +564,15 @@ msgstr ""
 "Inhalt wird von der übergeordneten Seite geerbt. Füge Inhalt hinzu, um "
 "dieses Verhalten zu ändern"
 
-#: templates/admin/feincms/item_editor.html:187
+#: templates/admin/feincms/item_editor.html:190
 msgid "Add new item"
 msgstr "Neues Element hinzufügen"
 
-#: templates/admin/feincms/item_editor.html:195
+#: templates/admin/feincms/item_editor.html:198
 msgid "Move selected item to"
 msgstr "Element verschieben nach"
 
-#: templates/admin/feincms/item_editor.html:199
+#: templates/admin/feincms/item_editor.html:202
 msgid "OK"
 msgstr "OK"
 
