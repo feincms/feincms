@@ -1,12 +1,11 @@
 This is in no way supposed to be a complete list of all open issues,
 it's nothing more than a brain dump.
 
-- Write even more and even better documentation
 - Make shiny looking website -- maybe
 - Document how to write extensions
 - Encourage people to translate the administration interface
 - Finish frontend editing -- not much more than a proof of concept now
-- Testsuite!!
+- Document template tags
 
 
 Infanta - a FeinCMS extension for easy integrate reusable django apps
