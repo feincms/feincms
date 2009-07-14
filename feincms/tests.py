@@ -3,6 +3,7 @@
 from datetime import datetime, timedelta
 import os
 
+from django import template
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
@@ -424,6 +425,45 @@ class PagesTestCase(TestCase):
                          'This is some example content')
         self.assertEqual(feincms_tags.feincms_render_content(page.content.main[0], {}),
                          'This is some example content')
+
+    def test_17_page_template_tags(self):
+        self.create_default_page_set()
+
+        page1 = Page.objects.get(pk=1)
+        page2 = Page.objects.get(pk=2)
+        ctx = template.Context({'feincms_page': page2})
+
+        page2.language = 'de'
+        page2.translation_of = page1
+        page2.active = True
+        page2.in_navigation = True
+        page2.save()
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_parentlink of feincms_page level=1 %}')
+        self.assertEqual(t.render(ctx), '/test-page/')
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for feincms_page as links %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(t.render(ctx), 'en:/test-page/,de:/test-page/test-child-page/')
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(t.render(ctx), '')
+
+        # XXX should the other template tags not respect the in_navigation setting too?
+        page1.active = True
+        page1.in_navigation = True
+        page1.save()
+
+        self.assertEqual(t.render(ctx), '/test-page/')
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(t.render(ctx), '/test-page/test-child-page/')
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=99 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(t.render(ctx), '')
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_breadcrumbs feincms_page %}')
+        self.assertEqual(t.render(ctx), u'<a href="/test-page/">Test page</a> &gt; Test child page')
+
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
