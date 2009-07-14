@@ -12,15 +12,15 @@ class InfantaMiddleware(object):
     def process_view(self, request, func, vargs, vkwargs):
         # do not process functions marked with @infanta_exclude
         if getattr(func, '_infanta_exclude ', False):
-            return None
+            return
 
-        ''' if there is no page object for the slug, process the request as usual'''
-        try:
-            page = Page.objects.best_match_for_path(request.path)
-        except Page.DoesNotExist:
-            return None
+        page = Page.objects.best_match_for_path(request.path, raise404=True)
 
-        ''' extend the page object, so we have a place to access our view contents in the templatetag as well as in the render method of the content type'''
+        '''
+        extend the page object, so we have an attribute to access 
+        our view contents in the templatetag  as well as in the render method 
+        of the content type
+        '''
         page.vc_manager = {}
 
         # run request processors and return short-circuit the response handling
