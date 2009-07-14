@@ -7,6 +7,8 @@ from django import template
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
+from django.db import models
+from django.http import Http404
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
@@ -51,6 +53,7 @@ class ModelsTest(TestCase):
 
         # I'm not sure whether this test tests anything at all
         self.assertEqual(r.key, t.regions[0].key)
+        self.assertEqual(unicode(r), 'region title')
 
 
 class UtilsTest(TestCase):
@@ -103,6 +106,21 @@ class CMSBaseTest(TestCase):
         # We use the convenience method here which has defaults for
         # POSITION_CHOICES
         MediaFileContent.default_create_content_type(ExampleCMSBase)
+
+    def test_05_non_abstract_content_type(self):
+        # Should not be able to create a content type from a non-abstract base type
+        class TestContentType(models.Model):
+            pass
+
+        self.assertRaises(ImproperlyConfigured,
+            lambda: ExampleCMSBase.create_content_type(TestContentType))
+
+    def test_06_videocontent(self):
+        type = ExampleCMSBase.content_type_for(VideoContent)
+        obj = type()
+        obj.video = 'http://www.youtube.com/watch?v=zmj1rpzDRZ0'
+
+        assert 'x-shockwave-flash' in obj.render()
 
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
@@ -416,6 +434,13 @@ class PagesTestCase(TestCase):
         self.assertEqual(page.content.main[0].render(), 'blablabla')
         self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), u'')
 
+        class Empty(object): pass
+        request = Empty()
+        request.session = {'frontend_editing': True}
+
+        assert 'class="fe_box"' in\
+            page.content.main[0].fe_render(request=request)
+
     def test_16_template_tags(self):
         self.create_default_page_set()
         page = Page.objects.get(pk=1)
@@ -464,6 +489,73 @@ class PagesTestCase(TestCase):
         t = template.Template('{% load feincms_page_tags %}{% feincms_breadcrumbs feincms_page %}')
         self.assertEqual(t.render(ctx), u'<a href="/test-page/">Test page</a> &gt; Test child page')
 
+    def test_18_default_render_method(self):
+        """
+        Test the default render() behavior of selecting render_<region> methods
+        to do the (not so) heavy lifting.
+        """
+
+        class Something(models.Model):
+            class Meta:
+                abstract = True
+
+            def render_main(self):
+                return u'Hello'
+
+        # do not register this model in the internal FeinCMS bookkeeping structures
+        tmp = Page._feincms_content_types[:]
+        type = Page.create_content_type(Something, regions=('notexists',))
+        Page._feincms_content_types = tmp
+
+        s = type(region='main', ordering='1')
+
+        self.assertEqual(s.render(), 'Hello')
+
+    def test_19_page_manager(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=2)
+        page.active = True
+        page.save()
+
+        self.assertEqual(page, Page.objects.page_for_path(page.get_absolute_url()))
+        self.assertEqual(page, Page.objects.best_match_for_path(page.get_absolute_url() + 'something/hello/'))
+
+        self.assertRaises(Http404, lambda: Page.objects.best_match_for_path('/blabla/blabla/', raise404=True))
+
+    def test_20_redirects(self):
+        self.create_default_page_set()
+        page1 = Page.objects.get(pk=1)
+        page2 = Page.objects.get(pk=2)
+
+        page2.active = True
+        page2.publication_date = datetime.now() - timedelta(days=1)
+        page2.override_url = '/blablabla/'
+        page2.redirect_to = page1.get_absolute_url()
+        page2.save()
+
+        # regenerate cached URLs in the whole tree
+        page1.active = True
+        page1.save()
+
+        page2 = Page.objects.get(pk=2)
+
+        # page2 has been modified too, but its URL should not have changed
+        try:
+            self.assertRedirects(self.client.get('/blablabla/'), page1.get_absolute_url())
+        except TemplateDoesNotExist, e:
+            # catch the error from rendering page1
+            if e.args != ('feincms_base.html',):
+                raise
+
+    def test_21_copy_content(self):
+        self.create_default_page_set()
+        page = Page.objects.get(pk=1)
+        self.create_pagecontent(page)
+
+        page2 = Page.objects.get(pk=2)
+        page2.copy_content_from(page)
+        self.assertEqual(len(page2.content.main), 1)
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
