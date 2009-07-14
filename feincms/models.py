@@ -23,7 +23,7 @@ class Region(object):
     def __init__(self, key, title, *args):
         self.key = key
         self.title = title
-        self.inherited = args and args[0]=='inherited'
+        self.inherited = args and args[0] == 'inherited'
         self._content_types = []
 
     def __unicode__(self):
@@ -161,7 +161,7 @@ class Base(models.Model):
 
         from django.db import connection
         cursor = connection.cursor()
-        cursor.execute(sql, [region.key]*len(self._feincms_content_types))
+        cursor.execute(sql, [region.key] * len(self._feincms_content_types))
 
         counts = [row[1] for row in cursor.fetchall()]
 
@@ -352,12 +352,20 @@ class Base(models.Model):
 
         return new_type
 
+    @classmethod
+    def content_type_for(cls, model):
+        for type in cls._feincms_content_types:
+            if issubclass(type, model):
+                return type
+        return None
+
     def copy_content_from(self, obj):
-        for cls in self._feincms_content_models:
+        for cls in self._feincms_content_types:
             for content in cls.objects.filter(parent=obj):
                 data = model_to_dict(content)
-                del content['id']
-                new = cls(**content)
+                del data['id']
+                del data['parent']
+                new = cls(**data)
                 new.parent = self
                 new.save()
 
