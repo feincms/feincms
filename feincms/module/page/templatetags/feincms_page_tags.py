@@ -23,16 +23,16 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         if level <= 1:
             return Page.objects.toplevel_navigation()
 
-        if isinstance(instance,  HttpRequest):
+        if isinstance(instance, HttpRequest):
             instance = Page.objects.from_request(instance)
 
         # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
         # of the current page, we have to add 2 to the mptt level
-        if instance.level+2 == level:
+        if instance.level + 2 == level:
             pass
         else:
             try:
-                instance = instance.get_ancestors()[level-2]
+                instance = instance.get_ancestors()[level - 2]
             except IndexError:
                 return []
 
@@ -52,13 +52,13 @@ class ParentLinkNode(SimpleNodeWithVarAndArgs):
     def what(self, page, args):
         level = int(args.get('level', 1))
 
-        if page.level+1 == level:
+        if page.level + 1 == level:
             return page.get_absolute_url()
-        elif page.level+1 < level:
+        elif page.level + 1 < level:
             return '#'
 
         try:
-            return page.get_ancestors()[level-1].get_absolute_url()
+            return page.get_ancestors()[level - 1].get_absolute_url()
         except IndexError:
             return '#'
 register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(ParentLinkNode))
@@ -113,8 +113,19 @@ def feincms_breadcrumbs(page):
         return ""
     bc = []
     for anc in ancs:
-        bc.append('<a href="%s">%s</a> &gt; ' % (anc.get_absolute_url(),anc.title))
+        bc.append('<a href="%s">%s</a> &gt; ' % (anc.get_absolute_url(), anc.title))
     bc.append(page.title)
     return "".join(bc)
 
 
+@register.filter
+def is_parent_of(page1, page2):
+    """
+    Determines whether a given page is the parent of another page
+
+    Example:
+
+    {% if page|is_parent_of:feincms_page %} ... {% endif %}
+    """
+
+    return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
