@@ -23,6 +23,8 @@ class ViewContent(models.Model):
         request = kwargs.get('request')
         try:
             return unicode(request._feincms_page.vc_manager[self.id])
+        except AttributeError:
+            return _("Could not parse the view content because the view is excluded from infanta handling.")
         except KeyError:
             if self.viewname and self.viewfunc:
                 return _("Placeholder for the %(viewname)s calling %(viewfunc)s" % {'viewname': self.viewname, 'viewfunc': self.viewfunc})
