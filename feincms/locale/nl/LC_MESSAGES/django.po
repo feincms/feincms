@@ -352,7 +352,7 @@ msgid ""
 msgstr ""
 "Overschrijft de URL. Als het een lokale URL betreft moet er aan aan weerszijden "
 " een / staan. Dit veld heeft betrekking op zowel de navigatie als de URLs van "
-"subpagina's".
+"subpagina's."
 
 #: module/page/models.py:119
 msgid "redirect to"
@@ -614,5 +614,4 @@ msgstr "Verzenden"
 
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
-msgstr "Bedankt
-!"
+msgstr "Bedankt!"

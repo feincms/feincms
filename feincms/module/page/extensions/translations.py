@@ -21,23 +21,23 @@ def register(cls, admin_cls):
         blank=True, null=True, verbose_name=_('translation of'),
         related_name='translations',
         limit_choices_to={'language': primary_language},
-        help_text=_('Leave this empty for entries in the primary language (%s).') %\
+        help_text=_('Leave this empty for entries in the primary language (%s).') % \
             _(settings.LANGUAGES[0][1])))
 
     def translations_request_processor(page, request):
         translation.activate(page.language)
         request.LANGUAGE_CODE = translation.get_language()
 
-        if hasattr(request, 'session') and request.LANGUAGE_CODE!=request.session.get('django_language'):
+        if hasattr(request, 'session') and request.LANGUAGE_CODE != request.session.get('django_language'):
             request.session['django_language'] = request.LANGUAGE_CODE
 
     cls.register_request_processors(translations_request_processor)
 
     def available_translations(self):
-        if self.language==primary_language:
+        if self.language == primary_language:
             return self.translations.all()
         elif self.translation_of:
-            return [self.translation_of]+list(self.translation_of.translations.exclude(
+            return [self.translation_of] + list(self.translation_of.translations.exclude(
                 language=self.language))
         else:
             return []
@@ -51,7 +51,7 @@ def register(cls, admin_cls):
             u'<a href="%s/">%s</a>' % (page.id, page.language.upper()) for page in translations)
 
     available_translations_admin.allow_tags = True
-    available_translations_admin.short_description = _('available translations')
+    available_translations_admin.short_description = _('translations')
     admin_cls.available_translations_admin = available_translations_admin
 
     admin_cls.fieldsets[0][1]['fields'] += ('language',)

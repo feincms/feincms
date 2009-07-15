@@ -15,6 +15,7 @@ import mptt
 
 from feincms.admin import editor
 from feincms.models import Region, Template, Base, ContentProxy
+from feincms.module import django_boolean_icon
 from feincms.utils import get_object
 
 
@@ -275,7 +276,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             'fields': ('override_url',),
         }),
         )
-    list_display = ['short_title', '_cached_url', 'active', 'in_nav',
+    list_display = ['short_title', '_cached_url', 'is_visible_admin', 'in_nav',
         'template', ]
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', '_content_title', '_page_title',
@@ -285,4 +286,27 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         }
 
     show_on_top = ('title', 'active')
+
+    def changelist_view(self, *args, **kwargs):
+        # get a list of all visible pages for use by is_visible_admin
+        self._visible_pages = list(Page.objects.active().values_list('id', flat=True))
+
+        return super(PageAdmin, self).changelist_view(*args, **kwargs)
+
+    def is_visible_admin(self, page):
+        if page.parent_id and not page.parent_id in self._visible_pages:
+            # parent page's invisibility is inherited
+            if page.id in self._visible_pages:
+                self._visible_pages.remove(page.id)
+                return u'%s (%s)' % (django_boolean_icon(False), _('inherited'))
+
+            return u'%s (%s)' % (django_boolean_icon(False), _('not active'))
+
+        if not page.id in self._visible_pages:
+            return u'%s (%s)' % (django_boolean_icon(False), _('not active'))
+
+        return django_boolean_icon(True)
+    is_visible_admin.allow_tags = True
+    is_visible_admin.short_description = _('is visible')
+
 
