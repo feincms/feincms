@@ -289,3 +289,19 @@ function set_expanded_nodes(nodes) {
         row.addClass('expanded');
     }
 }
+
+function toggle_boolean(elem, attr) {
+    var row = $(elem.parentNode.parentNode);
+
+    $.post('.', {
+        '__cmd': 'toggle_boolean',
+        'item_id': row_node_id(row),
+        'attr': attr
+        }, function(data) {
+            for(var i=0; i<data.length; i++) {
+                var elem = $('#item'+data[i][0]+' a.attr_'+attr);
+                elem.replaceWith(data[i][1]);
+            }
+        }, 'json');
+    return false;
+}

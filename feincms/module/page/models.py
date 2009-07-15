@@ -202,17 +202,6 @@ class Page(Base):
         except:
             return None
 
-    def in_nav(self):
-        from django.core.urlresolvers import reverse
-        from feincms.module import django_boolean_icon
-        from django.utils.safestring import mark_safe
-
-        callback_url = reverse('feincms:ajax:toggle')        
-        return mark_safe("<a href=\".\" onclick=\"$(this).load('%s', { attr: 'in_navigation', id: %d }); return false;\">%s</a>" % \
-            ( callback_url, self.id, django_boolean_icon(self.in_navigation) ))
-    in_nav.allow_tags = True
-    in_nav.short_description = _('in nav')
-
     def setup_request(self, request):
         """
         Before rendering a page, run all registered request processors. A request
@@ -276,8 +265,8 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             'fields': ('override_url',),
         }),
         )
-    list_display = ['short_title', '_cached_url', 'is_visible_admin', 'in_nav',
-        'template', ]
+    list_display = ['short_title', '_cached_url', 'is_visible_admin',
+        'in_navigation_toggle', 'template']
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', '_content_title', '_page_title',
         'meta_keywords', 'meta_description')
@@ -308,5 +297,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         return django_boolean_icon(True)
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is visible')
+
+    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
 

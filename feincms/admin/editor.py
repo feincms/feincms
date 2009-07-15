@@ -13,7 +13,8 @@ from django.db import connection, transaction, models
 from django.db.models import loading
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponse, Http404, \
+    HttpResponseBadRequest
 from django.shortcuts import render_to_response
 from django.utils import dateformat, simplejson
 from django.utils.html import escape, conditional_escape
@@ -23,8 +24,9 @@ from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import get_date_formats, get_partial_date_formats, ugettext as _
 
-from feincms.models import Region
 from feincms import settings
+from feincms.models import Region
+from feincms.module import django_boolean_icon
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 
@@ -216,6 +218,8 @@ class TreeEditor(admin.ModelAdmin):
                 return self._save_tree(request)
             elif cmd == 'delete_item':
                 return self._delete_item(request)
+            elif cmd == 'toggle_boolean':
+                return self._toggle_boolean(request)
 
             return HttpResponse('Oops. AJAX request not understood.')
 
@@ -373,10 +377,54 @@ class TreeEditor(admin.ModelAdmin):
 
         return HttpResponse("OK", mimetype="text/plain")
 
+    def _toggle_boolean(self, request):
+        if not hasattr(self, '_ajax_editable_booleans'):
+            self._ajax_editable_booleans = []
+
+            for field in self.list_display:
+                item = getattr(self.__class__, field, None)
+                if not item:
+                    continue
+
+                attr = getattr(item, 'editable_boolean_field', None)
+                if attr:
+                    self._ajax_editable_booleans.append(attr)
+
+        item_id = request.POST['item_id']
+        attr = request.POST['attr']
+
+        if attr not in self._ajax_editable_booleans:
+            return HttpResponseBadRequest()
+
+        try:
+            obj = self.model._default_manager.get(pk=unquote(item_id))
+            setattr(obj, attr, not getattr(obj, attr))
+            obj.save()
+        except Exception, e:
+            return HttpResponse("FAILED " + str(e), mimetype="text/plain")
+
+        data = [(obj.id, ajax_editable_boolean_cell(obj, attr))]
+
+        # TODO descend recursively, sometimes (f.e. for Page.active)
+
+        return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+
+
+def ajax_editable_boolean_cell(item, attr):
+    return '<a class="attr_%s" href="#" onclick="return toggle_boolean(this, \'%s\')">%s</a>' % (
+        attr, attr, django_boolean_icon(getattr(item, attr), 'toggle %s' % attr))
+
+
+def ajax_editable_boolean(attr, short_description):
+    def _fn(self, item):
+        return ajax_editable_boolean_cell(item, attr)
+    _fn.allow_tags = True
+    _fn.short_description = short_description
+    _fn.editable_boolean_field = attr
+    return _fn
+
 
 def _properties(cl, result):
-    from feincms.module import django_boolean_icon
-
     first = True
     pk = cl.lookup_opts.pk.attname
     EMPTY_CHANGELIST_VALUE = '(None)'
