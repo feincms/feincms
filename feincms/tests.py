@@ -24,6 +24,7 @@ from feincms.content.video.models import VideoContent
 from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
+from feincms.module.page.extensions.navigation import NavigationExtension
 from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
@@ -129,6 +130,15 @@ class CMSBaseTest(TestCase):
         obj.video = 'http://www.youtube.com/watch?v=zmj1rpzDRZ0'
 
         assert 'x-shockwave-flash' in obj.render()
+
+
+class PassthroughExtension(NavigationExtension):
+    # See PagesTestCase.test_23_navigation_extension
+    name = 'passthrough extension'
+
+    def children(self, page):
+        for p in page.children.in_navigation():
+            yield p
 
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
@@ -612,6 +622,26 @@ class PagesTestCase(TestCase):
 
         self.assertEquals(len(mail.outbox), 1)
         self.assertEquals(mail.outbox[0].subject, 'This is a test. Please calm down')
+
+    def test_23_navigation_extension(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+
+        self.assertEqual(page.extended_navigation(), [])
+
+        page.navigation_extension = 'feincms.tests.PassthroughExtension'
+
+        page2 = Page.objects.get(pk=2)
+        page2.active = True
+        page2.in_navigation = True
+        page2.save()
+
+        self.assertEqual(list(page.extended_navigation()), [page2])
+
+        page.navigation_extension = 'feincms.tests.ThisExtensionDoesNotExist'
+
+        self.assertEqual(page.extended_navigation(), [])
 
 
 Entry.register_extensions('seo', 'translations', 'seo')

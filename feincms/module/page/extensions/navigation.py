@@ -1,9 +1,6 @@
 """
 Proof-of-concept for extending the navigation with non-page-objects (f.e. if
 you'd like to show all albums of a gallery in a submenu or something...)
-
-This is not really finished, and the navigation template tags don't support
-this.
 """
 
 from django.db import models
@@ -54,7 +51,7 @@ def _extended_navigation(self):
 
 def register(cls, admin_cls):
     cls.NE_CHOICES = [(
-        '%s.%s' % (cls.__module__, cls.__name__), cls.name) for cls in NavigationExtension.types]
+        '%s.%s' % (ext.__module__, ext.__name__), ext.name) for ext in NavigationExtension.types]
 
     cls.add_to_class('navigation_extension', models.CharField(_('navigation extension'),
         choices=cls.NE_CHOICES, blank=True, max_length=50,

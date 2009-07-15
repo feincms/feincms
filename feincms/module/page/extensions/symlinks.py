@@ -12,7 +12,7 @@ from feincms.models import ContentProxy
 def register(cls, admin_cls):
     cls.add_to_class('symlinked_page', models.ForeignKey('self', blank=True, null=True,
         verbose_name=_('symlinked page'),
-        help_text=_('All content is inherited from this page if given.')));
+        help_text=_('All content is inherited from this page if given.')))
 
     def content(self):
         if not hasattr(self, '_content_proxy'):
