@@ -14,3 +14,7 @@ def infanta_exclude(view_func):
 
     view_func._infanta_exclude = True
     return view_func
+
+from django.template import add_to_builtins
+
+add_to_builtins('feincms.infanta.loader_tags')

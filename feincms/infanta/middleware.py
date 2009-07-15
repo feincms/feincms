@@ -32,17 +32,5 @@ class InfantaMiddleware(object):
         if response:
             return response
 
-        response = func(request, *vargs, **vkwargs)
+        return(func(request, *vargs, **vkwargs))
 
-        # The {% box %} template tag has captured the content of the third-party
-        # application and should have stored it inside the view content manager.
-        # We do not need to pass the content explicitly therefore.
-        # TODO: this step would not be necessary if infanta would make use of template inheritance
-        # from a base template which renders the content with templatetags
-        html = render_to_string(page.template.path, {
-                                                    'feincms_page': page,
-                                                    }, context_instance=RequestContext(request))
-        if response:
-            response.content = html
-            return response
-        return HttpResponse(html)
