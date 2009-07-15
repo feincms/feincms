@@ -100,9 +100,13 @@ COVERAGE_MODULES = ['feincms.admin.editor',
                     'feincms.views.base',
                     ]
 
-# comment this out if you do want to run code coverage
-# (see http://nedbatchelder.com/code/coverage/ )
-TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
+try:
+    # see http://nedbatchelder.com/code/coverage/
+    import coverage
+    TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
+except ImportError:
+    # run without coverage support
+    pass
 
 LANGUAGES = (
     ('en', 'English'),
