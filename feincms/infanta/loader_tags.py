@@ -56,15 +56,35 @@ class BoxNode(template.Node):
         return
 
 '''
-as we no longer use {% extends %} for rendering a base tempate, i think that is ok and makes it more comfortable
+usage:
+        {% box region_name %}
+        
+        region name must be one of your defined region
 '''
-@register.tag(name="block")
+@register.tag(name="box")
 def do_box(parser, token):
-    nodelist = parser.parse(('endblock',))
+    nodelist = parser.parse(('endbox',))
     parser.delete_first_token()
     try:
         # split_contents() knows not to split quoted strings.
         tag_name, region = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires exactly 2 argument" % token.contents.split()[0]
+        raise template.TemplateSyntaxError, "%r tag requires exactly 1 argument" % token.contents.split()[0]
     return BoxNode(nodelist, region)
+
+from django.template.loader_tags import ExtendsNode, do_extends
+
+class NewExtendsNode(ExtendsNode):
+    
+    def __init__(self, extends_node):
+        super(NewExtendsNode,self).__init__(extends_node.nodelist, extends_node.parent_name, extends_node.parent_name_expr, template_dirs = extends_node.template_dirs)
+        
+    def render(self, context):
+        for box in self.nodelist.get_nodes_by_type(BoxNode):
+            box.render(context)
+        return super(NewExtendsNode,self).render(context)
+
+@register.tag(name="extends")
+def new_do_extends(parser, token):
+    extends_node = do_extends(parser, token)
+    return NewExtendsNode(extends_node)
