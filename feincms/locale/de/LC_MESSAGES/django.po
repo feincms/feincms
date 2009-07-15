@@ -271,10 +271,13 @@ msgid "Leave this empty for entries in the primary language (%s)."
 msgstr "Dieses Feld für Einträge in der Primärsprache (%s) leer lassen."
 
 #: module/blog/extensions/translations.py:37
-#: module/page/extensions/translations.py:54
 #: templates/admin/feincms/item_editor.html:137
 msgid "available translations"
 msgstr "Verfügbare Übersetzungen"
+
+#: module/page/extensions/translations.py:54
+msgid "translations"
+msgstr "Übersetzungen"
 
 #: module/medialibrary/models.py:22
 msgid "parent"
@@ -338,7 +341,7 @@ msgstr "Slug"
 
 #: module/page/models.py:116
 msgid "in navigation"
-msgstr "In der Navigation"
+msgstr "Im Menü"
 
 #: module/page/models.py:117
 msgid "override URL"
