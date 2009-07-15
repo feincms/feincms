@@ -26,9 +26,6 @@ def handler(request, path=None):
 
     page = Page.objects.page_for_path_or_404(path)
 
-    if not page.are_ancestors_active():
-        raise Http404()
-
     return build_page_response(page, request)
 
 

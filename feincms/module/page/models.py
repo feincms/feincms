@@ -214,6 +214,10 @@ class Page(Base):
             r = fn(self, request)
             if r: return r
 
+    def require_path_active_request_processor(self, request):
+        if not self.are_ancestors_active():
+            raise Http404()
+
     def redirect_request_processor(self, request):
         if self.redirect_to:
             return HttpResponseRedirect(self.redirect_to)
@@ -241,7 +245,8 @@ class Page(Base):
 
 mptt.register(Page)
 
-Page.register_request_processors(Page.frontendediting_request_processor,
+Page.register_request_processors(Page.require_path_active_request_processor,
+                                 Page.frontendediting_request_processor,
                                  Page.redirect_request_processor)
 
 
