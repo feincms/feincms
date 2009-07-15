@@ -9,7 +9,6 @@ from django.contrib.admin.options import IncorrectLookupParameters
 from django.contrib.admin.templatetags import admin_list
 from django.contrib.admin.util import unquote
 from django.core import serializers
-from django.core.exceptions import ImproperlyConfigured
 from django.db import connection, transaction, models
 from django.db.models import loading
 from django.forms.formsets import all_valid
@@ -276,9 +275,6 @@ class TreeEditor(admin.ModelAdmin):
 
     def object_list(self):
         first_field = self.changelist.list_display[0]
-
-        if first_field == 'action_checkbox':
-            raise ImproperlyConfigured, 'You do have actions defined for this ModelAdmin class. Please don\'t do that, the TreeEditor cannot handle those yet.'
 
         ancestors = []
 
