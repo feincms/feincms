@@ -317,25 +317,37 @@ class PagesTestCase(TestCase):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
+        page2 = Page.objects.get(pk=2)
         self.is_published(page.get_absolute_url(), should_be=False)
+        self.is_published(page2.get_absolute_url(), should_be=False)
 
         page.active = True
         page.save()
+        page2.active = True
+        page2.save()
         self.is_published(page.get_absolute_url(), should_be=True)
+        self.is_published(page2.get_absolute_url(), should_be=True)
 
         old_publication = page.publication_date
         page.publication_date = datetime.now() + timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=False)
 
+        # Should be not accessible because of its parent's inactivity
+        self.is_published(page2.get_absolute_url(), should_be=False)
+
         page.publication_date = old_publication
         page.publication_end_date = datetime.now() - timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=False)
 
+        # Should be not accessible because of its parent's inactivity
+        self.is_published(page2.get_absolute_url(), should_be=False)
+
         page.publication_end_date = datetime.now() + timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=True)
+        self.is_published(page2.get_absolute_url(), should_be=True)
 
     def create_pagecontent(self, page, **kwargs):
         data = {
