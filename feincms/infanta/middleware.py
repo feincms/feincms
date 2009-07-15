@@ -14,7 +14,10 @@ class InfantaMiddleware(object):
         if getattr(func, '_infanta_exclude ', False):
             return
 
-        page = Page.objects.best_match_for_path(request.path, raise404=True)
+        page = Page.objects.best_match_for_path(request.path)
+        
+        if not page:
+        	return
 
         '''
         extend the page object, so we have an attribute to access 
@@ -34,6 +37,8 @@ class InfantaMiddleware(object):
         # The {% box %} template tag has captured the content of the third-party
         # application and should have stored it inside the view content manager.
         # We do not need to pass the content explicitly therefore.
+        # TODO: this step would not be necessary if infanta would make use of template inheritance
+        # from a base template which renders the content with templatetags
         html = render_to_string(page.template.path, {
                                                     'feincms_page': page,
                                                     }, context_instance=RequestContext(request))
