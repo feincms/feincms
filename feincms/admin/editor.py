@@ -114,9 +114,7 @@ class ItemEditor(admin.ModelAdmin):
                 processors=self.model.feincms_item_editor_context_processors))
 
     def change_view(self, request, object_id, extra_context=None):
-
-        if not hasattr(self.model, '_feincms_content_types') or not self.model._feincms_content_types:
-            raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.model.__name__)
+        self.model._needs_content_types()
 
         # Recognize frontend editing requests
         # This is done here so that the developer does not need to add additional entries to

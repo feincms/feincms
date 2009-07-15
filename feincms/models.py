@@ -147,8 +147,7 @@ class Base(models.Model):
         This method is used primarily by the ContentProxy
         """
 
-        if not hasattr(self, '_feincms_content_types') or not self._feincms_content_types:
-            raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.__class__.__name__)
+        self._needs_content_types()
 
         # find all concrete content type tables which have at least one entry for
         # the current CMS object and region
@@ -368,6 +367,17 @@ class Base(models.Model):
                 new = cls(**data)
                 new.parent = self
                 new.save()
+
+    @classmethod
+    def _needs_templates(cls):
+        if not hasattr(cls, 'template'):
+            raise ImproperlyConfigured, 'You need to register at least one template for Page before the admin code is included.'
+
+    @classmethod
+    def _needs_content_types(cls):
+        if not hasattr(cls, '_feincms_content_types') or not cls._feincms_content_types:
+            raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.model.__name__)
+
 
 
 class ContentProxy(object):

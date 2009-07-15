@@ -409,6 +409,10 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
 
         page2.language = 'de'
+        page2.save()
+
+        self.assertEqual(len(page2.available_translations()), 0)
+
         page2.translation_of = page1
         page2.save()
 
