@@ -615,3 +615,12 @@ msgstr "Senden"
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
 msgstr "Danke!"
+
+msgid "inherited"
+msgstr "geerbt"
+
+msgid "not active"
+msgstr "inaktiv"
+
+msgid "visible from - to"
+msgstr "sichtbar von – bis"

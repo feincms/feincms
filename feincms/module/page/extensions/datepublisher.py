@@ -22,29 +22,14 @@ def register(cls, admin_cls):
             Q(publication_date__lte=datetime.now) & \
             (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=datetime.now)))
 
-    def is_visible_admin(self, page):
-        from feincms.module import django_boolean_icon
+    def datepublisher_admin(self, page):
+        return u'%s &ndash; %s' % (
+            page.publication_date.strftime('%d.%m.%Y'),
+            page.publication_end_date and page.publication_end_date.strftime('%d.%m.%Y') or '&infin;',
+            )
+    datepublisher_admin.allow_tags = True
+    datepublisher_admin.short_description = _('visible from - to')
 
-        now = datetime.now()
-
-        visible           = page.active
-        already_published = page.publication_date <= now
-        not_expired       = (page.publication_end_date is None or page.publication_end_date > now)
-
-        format_args = {
-            'icon': django_boolean_icon(visible and already_published and not_expired),
-            'from': page.publication_date.strftime('%d.%m.%y'),
-            'to': page.publication_end_date and page.publication_end_date.strftime('%d.%m.%y') or '&infin;',
-            }
-
-        reason = (not visible and _('%(icon)s (not active)')) or \
-                 (not already_published and _('%(icon)s (until %(from)s)')) or \
-                 (not not_expired and _('%(icon)s (since %(to)s)')) or \
-                 _('%(icon)s (%(from)s &ndash; %(to)s)')
-        return reason % format_args
-
-    is_visible_admin.allow_tags = True
-    is_visible_admin.short_description = _('is visible')
-
-    admin_cls.is_visible_admin = is_visible_admin
-    admin_cls.list_display[admin_cls.list_display.index('active')] = 'is_visible_admin'
+    admin_cls.datepublisher_admin = datepublisher_admin
+    admin_cls.list_display.insert(admin_cls.list_display.index('is_visible_admin') + 1,
+                                  'datepublisher_admin')
