@@ -32,6 +32,33 @@ In the future, the tree editor might even take the setting `list_editable`
 into account.
 
 
+Using the ajax boolean toggle functionality
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The tree editor allows you to define boolean columns which let the website
+administrator change the value of the boolean using a simple click on the icon.
+
+Usage:
+
+::
+    from django.contrib import admin
+    from feincms.admin import editor
+    import mptt
+
+    class Category(models.Model):
+        active = models.BooleanField()
+        name = models.CharField(...)
+        parent = models.ForeignKey('self', blank=True, null=True)
+
+        # ...
+    mptt.register(Category)
+
+    class CategoryAdmin(editor.TreeEditor):
+        list_display = ('__unicode__', 'active_toggle')
+        active_toggle = editor.ajax_editable_boolean('active', _('active'))
+
+
+
 The item editor
 ===============
 
