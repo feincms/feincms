@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
@@ -24,6 +25,12 @@ def handler(request, path=None):
         path = request.path
 
     page = Page.objects.page_for_path_or_404(path)
+
+    if not page.are_ancestors_active():
+        # XXX This is a bit inconsistent; we serve 404 if the page itself
+        # is inactive, and 403 if any ancestors are inactive... oh well.
+        return HttpResponseForbidden('Access to this page is forbidden.')
+
     return build_page_response(page, request)
 
 

@@ -133,6 +133,24 @@ class Page(Base):
     def __unicode__(self):
         return u'%s (%s)' % (self.title, self._cached_url)
 
+    def are_ancestors_active(self):
+        """
+        Check whether all ancestors of this page are active
+        """
+
+        if self.is_root_node():
+            return True
+
+        queryset = self.get_ancestors()
+
+        for filt in PageManager.active_filters:
+            if callable(filt):
+                queryset = filt(queryset)
+            else:
+                queryset = queryset.filter(filt)
+
+        return queryset.count() >= self.level
+
     def short_title(self):
         """
         Do a short version of the title, truncate it intelligently when too long.
