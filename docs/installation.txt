@@ -35,13 +35,17 @@ django-mptt version from SVN too.)
 Configuration
 =============
 
-There isn't much left to do apart from adding FeinCMS to INSTALLED_APPS.
+There isn't much left to do apart from adding 'feincms' to INSTALLED_APPS.
 The customized administration interface needs some media and javascript
 libraries, which you have to make available to the browser. You should
 publish the files in the folder `feincms/media/` somewhere on your site
 and set the FEINCMS_ADMIN_MEDIA to the location. You can do this either
 by copying the media files into your media folder or by installing a
 symlink to the correct place.
+
+Please note that the 'feincms' module will not create or need any database
+tables, but you need to put it into INSTALLED_APPS because otherwise the
+templates in feincms/templates/ will not be found by the template loader.
 
 
 
