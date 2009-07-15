@@ -84,17 +84,30 @@ class UtilsTest(TestCase):
 class ExampleCMSBase(Base):
     pass
 
-ExampleCMSBase.register_regions(('region', 'region title'))
+ExampleCMSBase.register_regions(('region', 'region title'), ('region2', 'region2 title'))
 
 class CMSBaseTest(TestCase):
     def test_01_simple_content_type_creation(self):
+        self.assertEqual(ExampleCMSBase.content_type_for(FileContent), None)
+
         ExampleCMSBase.create_content_type(ContactFormContent)
-        ExampleCMSBase.create_content_type(FileContent)
-        ExampleCMSBase.create_content_type(ImageContent,
-            POSITION_CHOICES=(('left', 'left'),))
+        ExampleCMSBase.create_content_type(FileContent, regions=('region2',))
+
+        # no POSITION_CHOICES, should raise
+        self.assertRaises(ImproperlyConfigured,
+                          lambda: ExampleCMSBase.create_content_type(ImageContent))
+
         ExampleCMSBase.create_content_type(RawContent)
         ExampleCMSBase.create_content_type(RichTextContent)
-        ExampleCMSBase.create_content_type(VideoContent)
+
+        # test creating a cotent with arguments, but no initialize_type classmethod
+        ExampleCMSBase.create_content_type(VideoContent, arbitrary_arg='arbitrary_value')
+
+        # content_type_for should return None if it does not have a subclass registered
+        self.assertEqual(ExampleCMSBase.content_type_for(Empty), None)
+
+        assert 'filecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).values()
+        assert 'filecontent' in dict(ExampleCMSBase.template.regions[1].content_types).values()
 
     def test_02_rsscontent_creation(self):
         # this test resides in its own method because the required feedparser
@@ -112,9 +125,9 @@ class CMSBaseTest(TestCase):
 
         from feincms.content.medialibrary.models import MediaFileContent
 
-        # We use the convenience method here which has defaults for
-        # POSITION_CHOICES
-        MediaFileContent.default_create_content_type(ExampleCMSBase)
+        # no POSITION_CHOICES, should raise
+        self.assertRaises(ImproperlyConfigured,
+                          lambda: ExampleCMSBase.create_content_type(MediaFileContent))
 
     def test_05_non_abstract_content_type(self):
         # Should not be able to create a content type from a non-abstract base type
@@ -131,6 +144,23 @@ class CMSBaseTest(TestCase):
 
         assert 'x-shockwave-flash' in obj.render()
 
+        self.assertEqual(getattr(type, 'arbitrary_arg'), 'arbitrary_value')
+
+    def test_07_default_render_method(self):
+        class SomethingElse(models.Model):
+            class Meta:
+                abstract = True
+
+            def render_region(self):
+                return 'hello'
+
+        type = ExampleCMSBase.create_content_type(SomethingElse)
+        obj = type()
+        self.assertRaises(NotImplementedError, lambda: obj.render())
+
+        obj.region = 'region'
+        self.assertEqual(obj.render(), 'hello')
+
 
 class PassthroughExtension(NavigationExtension):
     # See PagesTestCase.test_23_navigation_extension
@@ -144,6 +174,7 @@ class PassthroughExtension(NavigationExtension):
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'titles', 'translations', 'seo')
 Page.create_content_type(ContactFormContent, form=ContactForm)
+Page.create_content_type(FileContent)
 
 
 class PagesTestCase(TestCase):
@@ -250,12 +281,19 @@ class PagesTestCase(TestCase):
     def test_07_tree_editor_delete(self):
         self.create_default_page_set()
 
-        self.client.post('/admin/page/page/', {
+        self.assertContains(self.client.post('/admin/page/page/', {
             '__cmd': 'delete_item',
             'item_id': 2,
-            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
+            'OK')
 
         self.assertRaises(Page.DoesNotExist, lambda: Page.objects.get(pk=2))
+
+        self.assertContains(self.client.post('/admin/page/page/', {
+            '__cmd': 'delete_item',
+            'item_id': 2,
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
+            'FAILED')
 
     def test_07_tree_editor_invalid_ajax(self):
         self.login()
@@ -299,8 +337,8 @@ class PagesTestCase(TestCase):
         page.save()
         self.is_published(page.get_absolute_url(), should_be=True)
 
-    def create_pagecontent(self, page):
-         return self.client.post('/admin/page/page/1/', {
+    def create_pagecontent(self, page, **kwargs):
+        data = {
             'title': page.title,
             'slug': page.slug,
             #'parent': page.parent_id, # this field is excluded from the form
@@ -333,7 +371,13 @@ class PagesTestCase(TestCase):
 
             'contactformcontent-TOTAL_FORMS': 1,
             'contactformcontent-INITIAL_FORMS': 0,
-            })
+
+            'filecontent-TOTAL_FORMS': 1,
+            'filecontent-INITIAL_FORMS': 0,
+            }
+        data.update(kwargs)
+
+        return self.client.post('/admin/page/page/1/', data)
 
     def test_09_pagecontent(self):
         self.create_default_page_set()
@@ -346,6 +390,8 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
         page2.symlinked_page = page
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
+        self.assertEqual(unicode(page2.content.main[0]),
+                         'main on Test page (/test-page/), ordering 0')
 
         self.assertEqual(len(page2.content.main), 1)
         self.assertEqual(len(page2.content.sidebar), 0)
@@ -396,8 +442,10 @@ class PagesTestCase(TestCase):
         assert 'alt="something"' in page.content.main[1].render()
 
         page.imagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
+        page.filecontent_set.create(file='somefile.jpg', title='thetitle', region='main', ordering=3)
 
         assert 'somefile.jpg' in page.content.main[2].render()
+        assert '<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render()
 
     def test_11_translations(self):
         self.create_default_page_set()
@@ -472,6 +520,10 @@ class PagesTestCase(TestCase):
         self.create_default_page_set()
         page = Page.objects.get(pk=1)
         self.create_pagecontent(page)
+
+        # this should return a 404
+        self.is_published('/admin/page/page/10/rawcontent/1/', should_be=False)
+        self.is_published('/admin/page/page/1/rawcontent/10/', should_be=False)
 
         assert self.client.get('/admin/page/page/1/rawcontent/1/').status_code == 200
         assert self.client.post('/admin/page/page/1/rawcontent/1/', {
@@ -646,6 +698,19 @@ class PagesTestCase(TestCase):
         page.navigation_extension = 'feincms.tests.ThisExtensionDoesNotExist'
 
         self.assertEqual(page.extended_navigation(), [])
+
+    def test_24_admin_redirects(self):
+        self.create_default_page_set()
+        page = Page.objects.get(pk=1)
+
+        response = self.create_pagecontent(page, _continue=1)
+        self.assertRedirects(response, '/admin/page/page/1/')
+
+        response = self.create_pagecontent(page, _addanother=1)
+        self.assertRedirects(response, '/admin/page/page/add/')
+
+        response = self.create_pagecontent(page)
+        self.assertRedirects(response, '/admin/page/page/')
 
 
 Entry.register_extensions('seo', 'translations', 'seo')

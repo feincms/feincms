@@ -187,8 +187,7 @@ class Base(models.Model):
         `parent`, `region` and `ordering`.
         """
 
-        if not hasattr(cls, 'template'):
-            raise ImproperlyConfigured, 'You must register regions or templates before attempting to create content types.'
+        cls._needs_templates()
 
         class Meta:
             abstract = True
@@ -353,6 +352,9 @@ class Base(models.Model):
 
     @classmethod
     def content_type_for(cls, model):
+        if not hasattr(cls, '_feincms_content_types') or not cls._feincms_content_types:
+            return None
+
         for type in cls._feincms_content_types:
             if issubclass(type, model):
                 return type
