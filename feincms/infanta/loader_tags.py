@@ -1,9 +1,8 @@
 from django import template
 from django.core.exceptions import ImproperlyConfigured
 
-from feincms.module.page.models import Page 
+from feincms.module.page.models import Page
 
-from infanta.models import ViewContent
 
 register = template.Library()
 
@@ -43,6 +42,7 @@ class BoxNode(template.Node):
             return
         
         region = self.feincms_page.template.regions_dict[self.region]
+        from infanta.models import ViewContent
         for content in self.feincms_page._content_for_region(region):
             if isinstance(content, ViewContent) and not self.is_registered(content.id):
                 self.register_view_content(content.id, self.nodelist.render(context))                
