@@ -27,16 +27,18 @@ class PageManager(models.Manager):
         Q(active=True),
         ]
 
-    def active(self):
-        queryset = self.all()
-
-        for filt in self.active_filters:
+    @classmethod
+    def apply_filters(cls, queryset):
+        for filt in cls.active_filters:
             if callable(filt):
                 queryset = filt(queryset)
             else:
                 queryset = queryset.filter(filt)
 
         return queryset
+
+    def active(self):
+        return self.apply_filters(self)
 
     def page_for_path(self, path, raise404=False):
         """
@@ -141,14 +143,7 @@ class Page(Base):
         if self.is_root_node():
             return True
 
-        queryset = self.get_ancestors()
-
-        for filt in PageManager.active_filters:
-            if callable(filt):
-                queryset = filt(queryset)
-            else:
-                queryset = queryset.filter(filt)
-
+        queryset = PageManager.apply_filters(self.get_ancestors())
         return queryset.count() >= self.level
 
     def short_title(self):
