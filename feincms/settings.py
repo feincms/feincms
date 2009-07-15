@@ -3,9 +3,13 @@
 # $Id$
 # ------------------------------------------------------------------------
 
+import django
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from os.path import join
+
+# Whether Django 1.0 compatibilty mode should be active or not
+DJANGO10_COMPAT = django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1)
 
 # ------------------------------------------------------------------------
 # Settings for MediaLibrary
@@ -15,7 +19,7 @@ FEINCMS_MEDIALIBRARY_ROOT = getattr(settings, 'FEINCMS_MEDIALIBRARY_ROOT', setti
 # Local path to newly uploaded media files
 FEINCMS_MEDIALIBRARY_UPLOAD_TO = getattr(settings, 'FEINCMS_MEDIALIBRARY_UPLOAD_TO', 'medialibrary/%Y/%m/')
 # URL to access media library files
-FEINCMS_MEDIALIBRARY_URL  = getattr(settings, 'FEINCMS_MEDIALIBRARY_URL', settings.MEDIA_URL)
+FEINCMS_MEDIALIBRARY_URL = getattr(settings, 'FEINCMS_MEDIALIBRARY_URL', settings.MEDIA_URL)
 
 # ------------------------------------------------------------------------
 # Settings for RichText
