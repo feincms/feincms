@@ -25,10 +25,7 @@ def register(cls, admin_cls):
         if not self._content_title:
             return self.title
 
-        try:
-            return self._content_title.splitlines()[0]
-        except IndexError:
-            return u''
+        return self._content_title.splitlines()[0]
 
     cls.content_title = property(_content_title)
 
