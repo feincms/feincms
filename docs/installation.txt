@@ -43,5 +43,13 @@ and set the FEINCMS_ADMIN_MEDIA to the location. You can do this either
 by copying the media files into your media folder or by installing a
 symlink to the correct place.
 
-That's it! You have successfully installed FeinCMS now.
 
+
+The page module
+===============
+
+The tools contained in FeinCMS can be used for many CMS-related
+activities. The most common use of a CMS is to manage a hierarchy of
+pages and this is the most advanced module of FeinCMS too. Please
+proceed to howto-page.txt to find out how you can get the page module
+up and running.
