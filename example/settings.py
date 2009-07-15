@@ -69,6 +69,8 @@ INSTALLED_APPS = (
 
 
 COVERAGE_MODULES = ['feincms.admin.editor',
+                    'feincms.admin.item_editor',
+                    'feincms.admin.tree_editor',
                     'feincms.content.contactform.models',
                     'feincms.content.file.models',
                     'feincms.content.image.models',
