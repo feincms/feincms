@@ -101,16 +101,6 @@ class TreeEditor(admin.ModelAdmin):
             if callable(first):
                 first = first()
 
-            if item.parent_id is None:
-                ancestors.append(0)
-            else:
-                ancestors.append(item.parent_id)
-
-            if item.parent_id is not None:
-                item.parent_node_index = ancestors.index(item.parent_id)
-            else:
-                item.parent_node_index = 'none'
-
             yield item, first, _properties(self.changelist, item)
 
     def _save_tree(self, request):
