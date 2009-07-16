@@ -14,8 +14,8 @@ from django.core.urlresolvers import reverse
 import mptt
 
 from feincms.admin import editor
+from feincms.admin.editor import django_boolean_icon
 from feincms.models import Region, Template, Base, ContentProxy
-from feincms.module import django_boolean_icon
 from feincms.utils import get_object
 
 

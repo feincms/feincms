@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.options import IncorrectLookupParameters
 from django.contrib.admin.templatetags import admin_list
@@ -16,7 +17,22 @@ from django.utils.text import capfirst
 from django.utils.translation import get_date_formats, get_partial_date_formats, ugettext as _
 
 from feincms import settings
-from feincms.module import django_boolean_icon
+
+
+def django_boolean_icon(field_val, alt_text=None, title=None):
+    """
+    Return HTML code for a nice representation of true/false.
+    """
+
+    # Origin: contrib/admin/templatetags/admin_list.py
+    BOOLEAN_MAPPING = { True: 'yes', False: 'no', None: 'unknown' }
+    alt_text = alt_text or BOOLEAN_MAPPING[field_val]
+    if title is not None:
+        title = 'title="%s" ' % title
+    else:
+        title = ''
+    return mark_safe(u'<img src="%simg/admin/icon-%s.gif" alt="%s" %s/>' %
+            (django_settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], alt_text, title))
 
 
 class TreeEditor(admin.ModelAdmin):
