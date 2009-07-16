@@ -71,6 +71,8 @@ class ItemEditor(admin.ModelAdmin):
 
         # we do not want to edit these two fields in the frontend editing mode; we are
         # strictly editing single content blocks there.
+        # We have to remove them from the form because we explicitly redefined them in
+        # the ItemEditorForm definition above. Just using exclude is not enough.
         del ModelForm.base_fields['region']
         del ModelForm.base_fields['ordering']
 
@@ -116,6 +118,8 @@ class ItemEditor(admin.ModelAdmin):
         if res:
             return self._frontend_editing_view(request, res.group(1), res.group(2), res.group(3))
 
+        # The ModelForm class is used to actually store the data, the SettingsForm is used
+        # strictly for presentation.
         ModelForm = modelform_factory(self.model, exclude=('parent',),
             formfield_callback=self._formfield_callback(request=request))
         SettingsForm = modelform_factory(self.model,
@@ -171,6 +175,7 @@ class ItemEditor(admin.ModelAdmin):
 
             settings_fieldset = SettingsForm(instance=obj)
 
+        # Prepare mapping of content types to their prettified names
         content_types = []
         for content_type in self.model._feincms_content_types:
             content_name = content_type._meta.verbose_name

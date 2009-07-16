@@ -20,6 +20,11 @@ import mptt
 
 
 class Region(object):
+    """
+    This class represents a reigon inside a template. Example regions might be
+    'main' and 'sidebar'.
+    """
+
     def __init__(self, key, title, *args):
         self.key = key
         self.title = title
@@ -40,6 +45,11 @@ class Region(object):
 
 
 class Template(object):
+    """
+    A template is a standard Django template which is used to render a
+    CMS object, most commonly a page.
+    """
+
     def __init__(self, title, path, regions, key=None):
         if not key:
             key = path
@@ -78,6 +88,8 @@ class Base(models.Model):
                 )
         """
 
+        # implicitly creates a dummy template object -- the item editor
+        # depends on the presence of a template.
         cls.template = Template('', '', regions)
         cls._feincms_all_regions = cls.template.regions
 
@@ -170,6 +182,9 @@ class Base(models.Model):
         contents = []
         for idx, cnt in enumerate(counts):
             if cnt:
+                # the queryset is evaluated right here, because the content objects
+                # of different type will have to be sorted into a list according
+                # to their 'ordering' attribute later
                 contents += list(
                     self._feincms_content_types[idx].objects.filter(
                         parent=self,
@@ -187,6 +202,11 @@ class Base(models.Model):
         `parent`, `region` and `ordering`.
         """
 
+        # We need a template, because of the possibility of restricting content types
+        # to a subset of all available regions. Each region object carries a list of
+        # all allowed content types around. Content types created before a region is
+        # initialized would not be available in the respective region; we avoid this
+        # problem by raising an ImproperlyConfigured exception early.
         cls._needs_templates()
 
         class Meta:
@@ -229,6 +249,12 @@ class Base(models.Model):
             return self.render(**kwargs)
 
         def fe_identifier(self):
+            """
+            Returns an identifier which is understood by the frontend editing
+            javascript code. (It is used to find the URL which should be used
+            to load the form for every given block of content.)
+            """
+
             return u'%s-%s-%s' % (
                 self.__class__.__name__.lower(),
                 self.parent_id,
@@ -236,7 +262,12 @@ class Base(models.Model):
                 )
 
         attrs = {
-            '__module__': cls.__module__,
+            '__module__': cls.__module__, # The basic content type is put into
+                                          # the same module as the CMS base type.
+                                          # If an app_label is not given, Django
+                                          # needs to know where a model comes
+                                          # from, therefore we ensure that the
+                                          # module is always known.
             '__unicode__': __unicode__,
             'render': render,
             'fe_render': fe_render,
@@ -247,17 +278,18 @@ class Base(models.Model):
             'ordering': models.IntegerField(_('ordering'), default=0),
             }
 
-        # save reference to base class on CMS class
+        # create content base type and save reference on CMS class
         cls._feincms_content_model = type('%sContent' % cls.__name__,
             (models.Model,), attrs)
 
         # list of concrete content types
         cls._feincms_content_types = []
 
-        # list of item editor context processors
+        # list of item editor context processors, will be extended by content types
         cls.feincms_item_editor_context_processors = []
 
-        # list of templates which should be included in the item editor
+        # list of templates which should be included in the item editor, will be extended
+        # by content types
         cls.feincms_item_editor_includes = {}
 
     @classmethod
@@ -280,6 +312,8 @@ class Base(models.Model):
         right, centered) through to the content type.
         """
 
+        # prevent double registration and registration of two different content types
+        # with the same class name because of related_name clashes
         try:
             getattr(cls, '%s_set' % model.__name__.lower())
             raise ImproperlyConfigured, 'Cannot create content type using %s.%s for %s.%s, because %s_set is already taken.' % (
@@ -305,7 +339,12 @@ class Base(models.Model):
 
         attrs = {
             '__module__': cls.__module__, # put the concrete content type into the
-                                          # same module as the CMS base type
+                                          # same module as the CMS base type; this is
+                                          # necessary because 1. Django needs to know
+                                          # the module where a model lives and 2. a
+                                          # content type may be used by several CMS
+                                          # base models at the same time (f.e. in
+                                          # the blog and the page module).
             'Meta': Meta,
             }
 
@@ -315,7 +354,7 @@ class Base(models.Model):
             attrs)
         cls._feincms_content_types.append(new_type)
 
-        # content types can be limited to only one region
+        # content types can be limited to a subset of regions
         if not regions:
             regions = [region.key for region in cls._feincms_all_regions]
 
@@ -339,6 +378,7 @@ class Base(models.Model):
             for k, v in kwargs.items():
                 setattr(new_type, k, v)
 
+        # collect item editor context processors from the content type
         if hasattr(model, 'feincms_item_editor_context_processors'):
             cls.feincms_item_editor_context_processors.extend(
                 model.feincms_item_editor_context_processors)
@@ -352,6 +392,15 @@ class Base(models.Model):
 
     @classmethod
     def content_type_for(cls, model):
+        """
+        Return the concrete content type for an abstract content type.
+
+        Example:
+
+            from feincms.content.video.models import VideoContent
+            concrete_type = Page.content_type_for(VideoContent)
+        """
+
         if not hasattr(cls, '_feincms_content_types') or not cls._feincms_content_types:
             return None
 
@@ -361,6 +410,12 @@ class Base(models.Model):
         return None
 
     def copy_content_from(self, obj):
+        """
+        Copy all content blocks over to another CMS base object. (Must be of the
+        same type, but this is not enforced. It will crash if you try to copy content
+        from another CMS base type.)
+        """
+
         for cls in self._feincms_content_types:
             for content in cls.objects.filter(parent=obj):
                 data = model_to_dict(content)
@@ -372,11 +427,14 @@ class Base(models.Model):
 
     @classmethod
     def _needs_templates(cls):
+        # helper which can be used to ensure that either register_regions or
+        # register_templates has been executed before proceeding
         if not hasattr(cls, 'template'):
             raise ImproperlyConfigured, 'You need to register at least one template for Page before the admin code is included.'
 
     @classmethod
     def _needs_content_types(cls):
+        # Check whether any content types have been created for this base class
         if not hasattr(cls, '_feincms_content_types') or not cls._feincms_content_types:
             raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.model.__name__)
 

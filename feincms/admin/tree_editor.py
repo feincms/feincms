@@ -95,6 +95,8 @@ class TreeEditor(admin.ModelAdmin):
         ancestors = []
 
         for item in self.model._tree_manager.all().select_related():
+            # The first field is handled separately, because we have to add a bit more HTML
+            # code to the table cell for the expanders.
             first = getattr(item, first_field)
             if callable(first):
                 first = first()
@@ -228,6 +230,17 @@ def ajax_editable_boolean_cell(item, attr):
 
 
 def ajax_editable_boolean(attr, short_description):
+    """
+    Assign the return value of this method to a variable of your ModelAdmin
+    subclass of TreeEditor and put the variable name into list_display.
+
+    Example:
+        class MyTreeEditor(TreeEditor):
+            list_display = ('__unicode__', 'active_toggle')
+
+            active_toggle = ajax_editable_boolean('active', _('is active'))
+    """
+
     def _fn(self, item):
         return ajax_editable_boolean_cell(item, attr)
     _fn.allow_tags = True
@@ -236,6 +249,8 @@ def ajax_editable_boolean(attr, short_description):
     return _fn
 
 
+# copied from django.contrib.admin.templatetags.admin_list.items_for_result and
+# slightly modified for our purpose
 def _properties(cl, result):
     first = True
     pk = cl.lookup_opts.pk.attname
