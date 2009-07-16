@@ -136,7 +136,10 @@ class ItemEditor(admin.ModelAdmin):
 
         opts = self.model._meta
         app_label = opts.app_label
-        obj = self.model._default_manager.get(pk=unquote(object_id))
+        try:
+            obj = self.model._default_manager.get(pk=unquote(object_id))
+        except self.model.DoesNotExist:
+            raise Http404
 
         if not self.has_change_permission(request, obj):
             raise PermissionDenied
