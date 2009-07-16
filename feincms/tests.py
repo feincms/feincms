@@ -299,17 +299,19 @@ class PagesTestCase(TestCase):
         self.create_default_page_set()
 
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
-        self.client.post('/admin/page/page/', {
+        self.assertContains(self.client.post('/admin/page/page/', {
             '__cmd': 'toggle_boolean',
             'item_id': 1,
             'attr': 'in_navigation',
-            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
+            'icon-yes.gif')
         self.assertEqual(Page.objects.get(pk=1).in_navigation, True)
-        self.client.post('/admin/page/page/', {
+        self.assertContains(self.client.post('/admin/page/page/', {
             '__cmd': 'toggle_boolean',
             'item_id': 1,
             'attr': 'in_navigation',
-            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
+            'icon-no.gif')
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
 
     def test_07_tree_editor_invalid_ajax(self):
