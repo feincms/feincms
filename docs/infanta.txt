@@ -38,7 +38,7 @@ e.g.:
     
     urlpatterns = patterns('',
         url(r'^accounts/', include('userprofile.urls')),
-        url(r'^(.*)$', 'feincms.views.base.handler'),
+        url(r'^(.*)/$', 'feincms.views.base.handler'),
     )
 
 So add a page with the url 'accounts'. You can now add 'view content' as content to 

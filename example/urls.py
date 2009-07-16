@@ -23,5 +23,5 @@ urlpatterns = patterns('',
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),
 
     url(r'^preview/(?P<page_id>\d+)/', 'feincms.views.base.preview_handler', name='feincms:preview'),
-    url(r'^(.*)$', 'feincms.views.base.handler'),
+    url(r'^(.*)/$', 'feincms.views.base.handler'),
 )
