@@ -105,7 +105,7 @@ $(document).ready(function(){
         window.location.hash = '#tab_'+tab_str;
     });
 
-    $(".order-machine-add-button").click(function(){
+    $("input.order-machine-add-button").click(function(){
         var select = $(this).prev();
         var modvar = select.val();
         var modname = select.children("option:selected").html();
@@ -123,12 +123,12 @@ $(document).ready(function(){
         init_contentblocks();
     });
 
-    $(".order-machine-move-button").click(function(){
+    $("input.order-machine-move-button").click(function(){
         var moveTo = $(this).prev().val();
         move_item(REGION_MAP.indexOf(moveTo), $("#main div.order-machine fieldset.active-item"));
     });
 
-    $(".item-delete").live('click', function(){
+    $("h2 img.item-delete").live('click', function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
         var item = $(this).parents(".order-item");
@@ -141,7 +141,7 @@ $(document).ready(function(){
         });
     });
 
-    $(".change-template").click(function(){
+    $("input.change-template").click(function(){
         popup_bg = '<div class="popup_bg"></div>';
         $("body").append(popup_bg);
         jConfirm(CHANGE_TEMPLATE_MESSAGES[1], CHANGE_TEMPLATE_MESSAGES[0], function(r) {
