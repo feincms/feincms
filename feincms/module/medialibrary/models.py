@@ -9,7 +9,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
-from feincms.translations import TranslatedObjectMixin, Translation,\
+from feincms.translations import TranslatedObjectMixin, Translation, \
     TranslatedObjectManager
 
 import re
@@ -45,7 +45,8 @@ class MediaFile(models.Model, TranslatedObjectMixin):
     created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
 
-    categories = models.ManyToManyField(Category, verbose_name=_('categories'))
+    categories = models.ManyToManyField(Category, verbose_name=_('categories'),
+                                        blank=True, null=True)
 
     class Meta:
         verbose_name = _('media file')
@@ -75,7 +76,7 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         choices = [ t[0:2] for t in cls.filetypes ]
         cls.filetypes_dict = dict(choices)
         cls._meta.get_field('type').choices[:] = choices
-        
+
     def get_absolute_url(self):
         return self.file.url
 
@@ -113,10 +114,10 @@ class MediaFile(models.Model, TranslatedObjectMixin):
 
 
 MediaFile.register_filetypes(
-        ( 'image', _('Image'),        lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f) ),
-        ( 'pdf',   _('PDF document'), lambda f: f.lower().endswith('.pdf') ),
-        ( 'txt',   _('Text'),         lambda f: f.lower().endswith('.txt') ),
-        ( 'other', _('Binary'),       lambda f: True ), # Must be last
+        ('image', _('Image'), lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f)),
+        ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
+        ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
+        ('other', _('Binary'), lambda f: True), # Must be last
     )
 
 # ------------------------------------------------------------------------
