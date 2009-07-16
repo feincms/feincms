@@ -5,7 +5,9 @@ The primary authors are:
 
 Additional contributors include:
 
-    * Martin J. Laubach (media library improvements)
+    * Maarten van Gompel (Template tag improvements, dutch translation)
+    * Martin J. Laubach (media library improvements, request processors, overall improvements and bugfixes of the code)
     * Martin Mahner (Typo fixes in the documentation)
     * Denis Martinez (Django 1.0 compatibility and bug reports)
+    * Simon Schürpf (Infanta module)
 
