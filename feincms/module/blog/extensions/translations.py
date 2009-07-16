@@ -13,14 +13,14 @@ def register(cls, admin_cls):
         blank=True, null=True, verbose_name=_('translation of'),
         related_name='translations',
         limit_choices_to={'language': primary_language},
-        help_text=_('Leave this empty for entries in the primary language (%s).') %\
+        help_text=_('Leave this empty for entries in the primary language (%s).') % \
             _(settings.LANGUAGES[0][1])))
 
     def available_translations(self):
-        if self.language==primary_language:
+        if self.language == primary_language:
             return self.translations.all()
         elif self.translation_of:
-            return [self.translation_of]+list(self.translation_of.translations.exclude(
+            return [self.translation_of] + list(self.translation_of.translations.exclude(
                 language=self.language))
         else:
             return []
@@ -40,3 +40,5 @@ def register(cls, admin_cls):
     admin_cls.list_display += ('language', 'available_translations_admin')
     admin_cls.list_filter += ('language',)
     admin_cls.show_on_top += ('language',)
+
+    admin_cls.raw_id_fields.append('translation_of')
