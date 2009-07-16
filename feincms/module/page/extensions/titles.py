@@ -15,6 +15,10 @@ def register(cls, admin_cls):
         help_text=_('Page title for browser window. Same as title by default.')))
 
     def _page_title(self):
+        """
+        Use this for the browser window (<title>-tag in the <head> of the HTML document)
+        """
+
         if self._page_title:
             return self._page_title
         return self.content_title
@@ -22,6 +26,10 @@ def register(cls, admin_cls):
     cls.page_title = property(_page_title)
 
     def _content_title(self):
+        """
+        This should be used f.e. for the <h1>-tag
+        """
+
         if not self._content_title:
             return self.title
 
