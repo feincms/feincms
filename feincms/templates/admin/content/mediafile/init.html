@@ -1,18 +1,5 @@
 {% load adminmedia i18n %}
 <script type="text/javascript">
-/* patch Django admin javascript methods for related popups to remove the
-   name and link of the previous media file */
-_mediafile_dismissRelatedLookupPopup = dismissRelatedLookupPopup
-dismissRelatedLookupPopup = function(win, chosenId) {
-    _mediafile_dismissRelatedLookupPopup(win, chosenId);
-    $('#'+windowname_to_id(win.name)).siblings('a, br').remove();
-}
-_mediafile_dismissAddAnotherPopup = dismissAddAnotherPopup
-dismissAddAnotherPopup = function(win, chosenId, newRepr) {
-    _mediafile_dismissAddAnotherPopup(win, chosenId, newRepr);
-    $('#'+windowname_to_id(win.name)).siblings('a, br').remove();
-}
-
 contentblock_init_handlers.push(function(){
     $('.order-machine input[name$=mediafile], #frontend_editor input[name$=mediafile]').each(function(){
         var elem = $(this);

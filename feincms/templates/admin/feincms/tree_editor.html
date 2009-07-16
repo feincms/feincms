@@ -61,7 +61,7 @@
                         <img class="move-after" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_after.png" title="{% trans "Insert after" %}" />
                         <img class="move-before" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_before.png" title="{% trans "Insert before" %}" />
                         <img class="move-child" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_child.png" title="{% trans "Insert as child" %}" />
-                        <a href="{{ item.id }}/"><strong>{{ title }}</strong></a>
+                        <a href="{{ item.id }}/" {% if is_popup %}onclick="opener.dismissRelatedLookupPopup(window, {{ item.id }}); return false"{% endif %}><strong>{{ title }}</strong></a>
                     </div>
                 </td>
                 {% for property in item_properties %}

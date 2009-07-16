@@ -273,6 +273,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     prepopulated_fields = {
         'slug': ('title',),
         }
+    raw_id_fields = []
 
     show_on_top = ('title', 'active')
 

@@ -57,3 +57,5 @@ def register(cls, admin_cls):
     admin_cls.fieldsets[0][1]['fields'] += ('language',)
     admin_cls.list_display += ('language', 'available_translations_admin')
     admin_cls.show_on_top += ('language',)
+
+    admin_cls.raw_id_fields.append('translation_of')

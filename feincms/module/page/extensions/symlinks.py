@@ -24,3 +24,5 @@ def register(cls, admin_cls):
         return self._content_proxy
 
     setattr(cls, 'content', property(content))
+
+    admin_cls.raw_id_fields.append('symlinked_page')
