@@ -1,12 +1,6 @@
-from django.conf import settings
-from django.http import HttpResponse
-
+from feincms import settings
 from feincms.module.page.models import Page
 
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
-from django.template.loader import render_to_string
-from django.utils import simplejson as json
 
 class InfantaMiddleware(object):
     def process_view(self, request, func, vargs, vkwargs):
@@ -14,8 +8,12 @@ class InfantaMiddleware(object):
         if getattr(func, '_infanta_exclude ', False):
             return
 
+        for url in settings.INFANTA_EXCLUDE_URLS:
+            if request.path.startswith(url):
+                return
+
         page = Page.objects.best_match_for_path(request.path)
-        
+
         if not page:
         	return
 
