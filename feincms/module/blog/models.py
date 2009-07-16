@@ -64,11 +64,12 @@ class Entry(Base):
 
 class EntryAdmin(editor.ItemEditor, admin.ModelAdmin):
     date_hierarchy = 'published_on'
-    list_display=('__unicode__', 'published', 'published_on')
-    list_filter=('published',)
+    list_display = ('__unicode__', 'published', 'published_on')
+    list_filter = ('published',)
     search_fields = ('title', 'slug',)
-    prepopulated_fields={
+    prepopulated_fields = {
         'slug': ('title',),
         }
 
     show_on_top = ('title', 'published')
+    raw_id_fields = []
