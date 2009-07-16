@@ -6,7 +6,7 @@
 from django.contrib import admin
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, signals
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
@@ -15,6 +15,7 @@ import mptt
 
 from feincms.admin import editor
 from feincms.admin.editor import django_boolean_icon
+from feincms.management.checker import check_database_schema
 from feincms.models import Region, Template, Base, ContentProxy
 from feincms.utils import get_object
 
@@ -250,6 +251,7 @@ Page.register_request_processors(Page.require_path_active_request_processor,
                                  Page.frontendediting_request_processor,
                                  Page.redirect_request_processor)
 
+signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
 
 class PageAdmin(editor.ItemEditor, editor.TreeEditor):

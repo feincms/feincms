@@ -3,11 +3,12 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import admin
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, signals
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin import editor
+from feincms.management.checker import check_database_schema
 from feincms.models import Base
 from feincms.utils import get_object
 
@@ -60,6 +61,8 @@ class Entry(Base):
             fn = get_object('feincms.module.blog.extensions.%s.register' % ext)
             fn(cls, EntryAdmin)
             cls._feincms_extensions.add(ext)
+
+signals.post_syncdb.connect(check_database_schema(Entry, __name__), weak=False)
 
 
 class EntryAdmin(editor.ItemEditor, admin.ModelAdmin):
