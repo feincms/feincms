@@ -45,9 +45,12 @@
 }
 
 .order-item .handle {
+    position: absolute;
+    top: 0;
+    left: 0;
     display: block;
-    height: 100%;
-    width: 650px;
+    height: 24px;
+    width: 15px;
     cursor: move;
 }
 
@@ -257,5 +260,12 @@ tr td.nohighlight {background-color: #fff;}
 
 #popup_prompt {
 	margin: .5em 0em;
+}
+
+
+/* override Django admin styles */
+.order-machine .module h2 {
+	padding: 4px 5px 6px 17px;
+	background: url(img/item_editor_form_title.png) no-repeat left bottom;
 }
 

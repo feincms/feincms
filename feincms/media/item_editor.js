@@ -1,7 +1,7 @@
 function region_append(region, obj, modname) {
     var wrp = [];
     wrp.push('<fieldset class="module aligned order-item">');
-    wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle">'+modname+'</span></h2>');
+    wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span>'+modname+'</h2>');
     wrp.push('<div class="item-content"></div>');
     wrp.push('</fieldset>');
 
