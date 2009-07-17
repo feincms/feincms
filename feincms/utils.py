@@ -75,7 +75,7 @@ def collect_dict_values(data):
     return dic
 
 
-def prefill_entry_list(queryset, *attrs):
+def prefill_entry_list(queryset, region=None, *attrs):
     """
     Prefill a queryset with related data. Instead of querying the related tables
     over and over for every single entry of the queryset, the absolute minimum of
@@ -83,6 +83,10 @@ def prefill_entry_list(queryset, *attrs):
     many to many fields. The returned data is assigned to the individual entries
     afterwards, where it can be made easily accessible by using the
     prefilled_attribute property generator above.
+
+    You may optionally pass a region argument here, which will be applied to
+    reverse foreign key relations. This is obviously most useful for fetching
+    content objects.
     """
 
     # Evaluate queryset. We need a list of objects, because we need to iterate over
@@ -133,9 +137,19 @@ def prefill_entry_list(queryset, *attrs):
             from_m2m.append((attr, assigned_objects))
         else:
             # Process reverse foreign keys
+
+            related_queryset = related_model.objects.filter(
+                    parent__in=queryset).select_related('parent', 'region')
+
+            # Apply region filtering if a region has been passed
+            # We do not need to apply the same filtering to m2m relations, because
+            # the region field (as we know it) only exists for content types created
+            # using create_content_type
+            if region:
+                related_queryset = related_queryset.filter(region=region)
+
             from_fk.append((attr,
-                collect_dict_values((o.parent_id, o) for o in related_model.objects.filter(
-                    parent__in=queryset).select_related('parent', 'region'))))
+                collect_dict_values((o.parent_id, o) for o in related_queryset)))
 
     # Assign the collected values onto the individual queryset objects
     for entry in queryset:
