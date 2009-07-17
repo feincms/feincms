@@ -47,5 +47,8 @@ class ApplicationContent(models.Model):
 
         # ... and restore it after processing the view
         del _urlconfs[currentThread()]
+
+        if hasattr(output, 'content'):
+            return output.content
         return output
 
