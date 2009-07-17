@@ -77,10 +77,6 @@ class TranslatedObjectMixin(object):
                 except IndexError:
                     raise queryset.model.DoesNotExist
 
-    @property
-    def translation(self, language_code=None):
-        return self.get_translation(language_code)
-
     def get_translation(self, language_code=None):
         if not language_code:
             language_code = translation.get_language()
@@ -98,6 +94,8 @@ class TranslatedObjectMixin(object):
             cache.set(key, trans)
 
         return trans
+
+    translation = property(get_translation)
 
     @property
     def available_translations(self):
