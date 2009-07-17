@@ -54,7 +54,7 @@ def short_language_code(code=None):
 
 
 class TranslatedObjectManager(models.Manager):
-    def only_language(self, language):
+    def only_language(self, language=short_language_code):
         return self.filter(translations__language_code=language)
 
 
