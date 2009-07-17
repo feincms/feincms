@@ -1,7 +1,7 @@
 function region_append(region, obj, modname) {
     var wrp = [];
     wrp.push('<fieldset class="module aligned order-item">');
-    wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span>'+modname+'</h2>');
+    wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span> '+modname+' &nbsp;(<span class="collapse">'+ITEM_EDITOR_COLLAPSE+'</span>)</h2>');
     wrp.push('<div class="item-content"></div>');
     wrp.push('</fieldset>');
 
@@ -139,6 +139,14 @@ $(document).ready(function(){
             }
             $(".popup_bg").remove();
         });
+    });
+
+    $('h2 span.collapse').live('click', function(){
+        var node = this;
+        $(this.parentNode.parentNode).children('.item-content').slideToggle(function(){
+            $(node).text($(this).is(':visible') ? ITEM_EDITOR_COLLAPSE : ITEM_EDITOR_EXPAND);
+        });
+        return false;
     });
 
     $("input.change-template").click(function(){

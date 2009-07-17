@@ -54,6 +54,12 @@
     cursor: move;
 }
 
+.order-item .collapse {
+	cursor: pointer;
+	color: #444;
+	font-weight: normal;
+}
+
 .item-delete {
     cursor:pointer;
     float:right;

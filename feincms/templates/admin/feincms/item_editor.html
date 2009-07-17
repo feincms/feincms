@@ -34,6 +34,8 @@
     }
 
     IMG_DELETELINK_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif";
+    ITEM_EDITOR_COLLAPSE = "{% trans "collapse" %}";
+    ITEM_EDITOR_EXPAND = "{% trans "expand" %}";
     REGION_MAP = [{% for region in object.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     ACTIVE_REGION = 0;
     CONTENT_NAMES = {
