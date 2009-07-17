@@ -123,6 +123,7 @@ MediaFile.register_filetypes(
 # ------------------------------------------------------------------------
 class MediaFileTranslation(Translation(MediaFile)):
     caption = models.CharField(_('caption'), max_length=200)
+    description = models.TextField(_('description'), blank=True)
 
     class Meta:
         verbose_name = _('media file translation')

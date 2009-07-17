@@ -4,7 +4,7 @@ from django.conf import settings
 from feincms.module.medialibrary import models
 
 
-class MediaFileTranslationInline(admin.TabularInline):
+class MediaFileTranslationInline(admin.StackedInline):
     model = models.MediaFileTranslation
     max_num = len(settings.LANGUAGES)
 
