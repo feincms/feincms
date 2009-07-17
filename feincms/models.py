@@ -160,6 +160,10 @@ class Base(models.Model):
         """
 
         self._needs_content_types()
+        content_types = region._content_types
+
+        if not content_types:
+            return []
 
         # find all concrete content type tables which have at least one entry for
         # the current CMS object and region
@@ -167,12 +171,12 @@ class Base(models.Model):
             'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
                 idx,
                 cls._meta.db_table,
-                self.pk) for idx, cls in enumerate(self._feincms_content_types)])
+                self.pk) for idx, cls in enumerate(content_types)])
         sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
 
         from django.db import connection
         cursor = connection.cursor()
-        cursor.execute(sql, [region.key] * len(self._feincms_content_types))
+        cursor.execute(sql, [region.key] * len(content_types))
 
         counts = [row[1] for row in cursor.fetchall()]
 
@@ -186,7 +190,7 @@ class Base(models.Model):
                 # of different type will have to be sorted into a list according
                 # to their 'ordering' attribute later
                 contents += list(
-                    self._feincms_content_types[idx].objects.filter(
+                    content_types[idx].objects.filter(
                         parent=self,
                         region=region.key).select_related('parent', 'region'))
 
