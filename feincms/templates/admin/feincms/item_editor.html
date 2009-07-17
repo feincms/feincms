@@ -39,7 +39,7 @@
     REGION_MAP = [{% for region in object.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     ACTIVE_REGION = 0;
     CONTENT_NAMES = {
-        {% for name, value in content_types %}'{{ value }}': '{{ name }}'{% if not forloop.last %},{% endif %}
+        {% for name, value in content_types %}'{{ value }}': '{{ name|capfirst }}'{% if not forloop.last %},{% endif %}
         {% endfor %}};
 
     $(document).ready(function(){
@@ -191,7 +191,7 @@
                 <div class="control-unit">
                     <span>{% trans "Add new item" %}:</span> <br/>
                     <select name="order-machine-add-select">
-                    {% for n,v in region.content_types %} <option value="{{ v }}">{{ n }}</option> {% endfor %}
+                    {% for n,v in region.content_types %} <option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
                     </select>
                     <input type="button" class="order-machine-add-button button" value="OK" />
                 </div>
@@ -199,7 +199,7 @@
                 <div class="control-unit">
                     <span>{% trans "Move selected item to" %}:</span>  <br/>
                     <select name="order-machine-move-select">
-                    {% for r in object.template.regions %} {% ifnotequal region r %} <option value="{{ r.key }}">{{ r.title }}</option> {% endifnotequal %} {% endfor %}
+                    {% for r in object.template.regions %} {% ifnotequal region r %} <option value="{{ r.key }}">{{ r.title|capfirst }}</option> {% endifnotequal %} {% endfor %}
                     </select>
                     <input type="button" class="order-machine-move-button button" value="{% trans "OK" %}" />
                 </div>
