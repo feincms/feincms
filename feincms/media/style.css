@@ -4,23 +4,24 @@
 
 .navi_tab {
     float:left;
-    padding: 3px 10px 3px 10px;
+    padding: 5px 14px 5px 12px;
     cursor:pointer;
     border: 1px solid #ccc;
     border-bottom:none;
     min-width:100px;
     margin-top:3px;
     height:13px;
-    font-weight: normal;
+    font-weight: bold;
+    font-size: 12px;
     background-image:none;
-    color: black;
+    color: #333333;
 }
 .tab_active {
     margin-top: 0;
-    height:16px;
-    font-weight: bold;
+    padding-top: 6px;
+    padding-bottom: 7px;
     background-image:url('img/default-bg.gif');
-    color: white;
+    color: #ffffff;
 }
 
 #main {
