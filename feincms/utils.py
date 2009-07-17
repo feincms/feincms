@@ -76,11 +76,24 @@ def collect_dict_values(data):
 
 
 def prefill_entry_list(queryset, *attrs):
+    """
+    Prefill a queryset with related data. Instead of querying the related tables
+    over and over for every single entry of the queryset, the absolute minimum of
+    queries is performed per related field, one for reverse foreign keys, two for
+    many to many fields. The returned data is assigned to the individual entries
+    afterwards, where it can be made easily accessible by using the
+    prefilled_attribute property generator above.
+    """
+
+    # Evaluate queryset. We need a list of objects, because we need to iterate over
+    # to find out
     queryset = list(queryset)
 
     if not queryset:
         return queryset
 
+    # Get an arbitrary object of the queryset. We need this to determine the field
+    # type alter
     arbitrary = queryset[0]
     cls = arbitrary.__class__
 
@@ -92,9 +105,11 @@ def prefill_entry_list(queryset, *attrs):
         descriptor = getattr(cls, attr)
 
         if isinstance(descriptor, related.ReverseManyRelatedObjectsDescriptor):
+            # Process many to many fields
             f = arbitrary._meta.get_field(attr)
             qn = connection.ops.quote_name
 
+            # Query the table linking the two models
             sql = 'SELECT DISTINCT %s, %s FROM %s WHERE %s in (%s)' % (
                 qn(f.m2m_column_name()),
                 qn(f.m2m_reverse_name()),
@@ -106,7 +121,9 @@ def prefill_entry_list(queryset, *attrs):
             cursor.execute(sql, [entry.id for entry in queryset])
             mapping = cursor.fetchall()
 
-            related_objects = dict((o.id, o) for o in related_model.objects.all())
+            # Get all related models which are linked with any entry in the queryset
+            related_objects = dict((o.id, o) for o in related_model.objects.filter(
+                id__in=[v for k, v in mapping]))
 
             assigned_objects = {}
 
@@ -115,10 +132,12 @@ def prefill_entry_list(queryset, *attrs):
 
             from_m2m.append((attr, assigned_objects))
         else:
+            # Process reverse foreign keys
             from_fk.append((attr,
                 collect_dict_values((o.parent_id, o) for o in related_model.objects.filter(
                     parent__in=queryset).select_related('parent', 'region'))))
 
+    # Assign the collected values onto the individual queryset objects
     for entry in queryset:
         for attr, dic in from_fk:
             setattr(entry, '_prefill_%s' % attr, dic.get(entry.id, []))
