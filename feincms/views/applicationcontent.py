@@ -16,7 +16,7 @@ def handler(request, path=None):
         # The best_match logic kicked in. See if we have at least one
         # application content for this page, and raise a 404 otherwise.
 
-        if page.applicationcontent_set.count():
+        if not page.applicationcontent_set.count():
             raise Http404
 
     return build_page_response(page, request)
