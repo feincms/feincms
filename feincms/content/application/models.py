@@ -43,7 +43,13 @@ class ApplicationContent(models.Model):
             del _urlconfs[currentThread()]
             return u''
 
-        output = fn(request, *args, **kwargs)
+        try:
+            output = fn(request, *args, **kwargs)
+        except:
+            # We want exceptions to propagate, but we cannot allow the
+            # modifications to reverse() to stay here.
+            del _urlconfs[currentThread()]
+            raise
 
         # ... and restore it after processing the view
         del _urlconfs[currentThread()]
