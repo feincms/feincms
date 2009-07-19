@@ -75,7 +75,7 @@ def collect_dict_values(data):
     return dic
 
 
-def prefill_entry_list(queryset, region=None, *attrs):
+def prefill_entry_list(queryset, *attrs, **kwargs):
     """
     Prefill a queryset with related data. Instead of querying the related tables
     over and over for every single entry of the queryset, the absolute minimum of
@@ -88,6 +88,8 @@ def prefill_entry_list(queryset, region=None, *attrs):
     reverse foreign key relations. This is obviously most useful for fetching
     content objects.
     """
+
+    region = kwargs.get('region', None)
 
     # Evaluate queryset. We need a list of objects, because we need to iterate over
     # to find out
