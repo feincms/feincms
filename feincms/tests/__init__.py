@@ -162,14 +162,6 @@ class CMSBaseTest(TestCase):
         self.assertEqual(obj.render(), 'hello')
 
 
-class PassthroughExtension(NavigationExtension):
-    # See PagesTestCase.test_23_navigation_extension
-    name = 'passthrough extension'
-
-    def children(self, page):
-        for p in page.children.in_navigation():
-            yield p
-
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'titles', 'translations', 'seo')
@@ -717,7 +709,7 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(page.extended_navigation(), [])
 
-        page.navigation_extension = 'feincms.tests.PassthroughExtension'
+        page.navigation_extension = 'feincms.tests.navigation_extensions.PassthroughExtension'
 
         page2 = Page.objects.get(pk=2)
         page2.active = True
@@ -726,7 +718,7 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(list(page.extended_navigation()), [page2])
 
-        page.navigation_extension = 'feincms.tests.ThisExtensionDoesNotExist'
+        page.navigation_extension = 'feincms.tests.navigation_extensions.ThisExtensionDoesNotExist'
 
         self.assertEqual(page.extended_navigation(), [])
 
