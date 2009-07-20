@@ -14,6 +14,7 @@ from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
 
+from feincms.content.application.models import ApplicationContent
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
 from feincms.content.image.models import ImageContent
@@ -165,6 +166,7 @@ class CMSBaseTest(TestCase):
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'titles', 'translations', 'seo')
+Page.create_content_type(ApplicationContent)
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
 
@@ -397,6 +399,9 @@ class PagesTestCase(TestCase):
 
             'filecontent-TOTAL_FORMS': 1,
             'filecontent-INITIAL_FORMS': 0,
+
+            'applicationcontent-TOTAL_FORMS': 1,
+            'applicationcontent-INITIAL_FORMS': 0,
             }
         data.update(kwargs)
 
@@ -734,6 +739,29 @@ class PagesTestCase(TestCase):
 
         response = self.create_pagecontent(page)
         self.assertRedirects(response, '/admin/page/page/')
+
+    def test_25_applicationcontent(self):
+        self.create_default_page_set()
+
+        page1 = Page.objects.get(pk=1)
+        page1.active = True
+        page1.save()
+
+        page = Page.objects.get(pk=2)
+        page.active = True
+        page.template_key = 'theother'
+        page.save()
+
+        page.applicationcontent_set.create(
+            region='main', ordering=0,
+            urlconf_path='feincms.tests.applicationcontent_urls')
+
+        self.assertContains(self.client.get(page.get_absolute_url()),
+                            'module_root')
+        self.assertContains(self.client.get(page.get_absolute_url() + 'args_test/abc/def/'),
+                            'abc-def')
+        self.assertContains(self.client.get(page.get_absolute_url() + 'kwargs_test/abc/def/'),
+                            'def-abc')
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
