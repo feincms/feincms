@@ -12,8 +12,6 @@ def build_page_response(page, request):
                render_to_response(page.template.path, {
                     'feincms_page': page,
                     }, context_instance=RequestContext(request))
-    
-    page.finalize_response(request, response)
 
     return response
 
@@ -28,7 +26,10 @@ def handler(request, path=None):
 
     page = Page.objects.page_for_path_or_404(path)
 
-    return build_page_response(page, request)
+    response = build_page_response(page, request)
+    page.finalize_response(request, response)
+
+    return response
 
 
 @infanta_exclude
