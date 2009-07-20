@@ -267,7 +267,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             'fields': ('override_url',),
         }),
         )
-    list_display = ['short_title', '_cached_url', 'is_visible_admin',
+    list_display = ['short_title', 'cached_url_admin', 'is_visible_admin',
         'in_navigation_toggle', 'template']
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', '_content_title', '_page_title',
@@ -300,6 +300,12 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         return django_boolean_icon(True)
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is visible')
+
+    def cached_url_admin(self, page):
+        return u'<a href="%s">%s</a>' % (page._cached_url, page._cached_url)
+    cached_url_admin.allow_tags = True
+    cached_url_admin.admin_order_field = '_cached_url'
+    cached_url_admin.short_description = _('Cached URL')
 
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
