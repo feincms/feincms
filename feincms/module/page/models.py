@@ -125,7 +125,8 @@ class Page(Base):
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
         editable=False, default='', db_index=True)
 
-    request_processors = []
+    request_processors  = []
+    response_processors = []
 
     class Meta:
         ordering = ['tree_id', 'lft']
@@ -216,6 +217,15 @@ class Page(Base):
             r = fn(self, request)
             if r: return r
 
+    def finalize_response(self, request, response):
+        """
+        After rendering a page to a response, the registered response processors are
+        called to modify the response, eg. for setting cache or expiration headers,
+        keeping statistics, etc.
+        """
+        for fn in self.response_processors:
+            fn(self, request, response)
+
     def require_path_active_request_processor(self, request):
         if not self.are_ancestors_active():
             raise Http404()
@@ -231,6 +241,10 @@ class Page(Base):
     @classmethod
     def register_request_processors(cls, *processors):
         cls.request_processors[0:0] = processors
+
+    @classmethod
+    def register_response_processors(cls, *processors):
+        cls.response_processors.extend(processors)
 
     @classmethod
     def register_extensions(cls, *extensions):

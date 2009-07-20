@@ -12,6 +12,8 @@ def build_page_response(page, request):
                render_to_response(page.template.path, {
                     'feincms_page': page,
                     }, context_instance=RequestContext(request))
+    
+    page.finalize_response(request, response)
 
     return response
 
