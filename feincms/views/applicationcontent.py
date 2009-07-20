@@ -12,12 +12,19 @@ def handler(request, path=None):
 
     page = Page.objects.best_match_for_path(path, raise404=True)
 
+    applicationcontents = page.applicationcontent_set.all()
+
     if request.path != page.get_absolute_url():
         # The best_match logic kicked in. See if we have at least one
         # application content for this page, and raise a 404 otherwise.
 
-        if not page.applicationcontent_set.count():
+        if not applicationcontents:
             raise Http404
+
+    for content in applicationcontents:
+        r = content.process(request)
+        if r:
+            return r
 
     return build_page_response(page, request)
 

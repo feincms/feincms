@@ -4,6 +4,8 @@ from django.conf import settings
 from django.core import urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse, NoReverseMatch
 from django.db import models
+from django.http import HttpResponse
+from django.utils.safestring import mark_safe
 from django.utils.thread_support import currentThread
 from django.utils.translation import ugettext_lazy as _
 
@@ -35,6 +37,13 @@ class ApplicationContent(models.Model):
         verbose_name_plural = _('application contents')
 
     def render(self, request, **kwargs):
+        return request._feincms_applicationcontents.get(self.id)
+
+    def process(self, request):
+        # prepare storage for rendered application contents
+        if not hasattr(request, '_feincms_applicationcontents'):
+            request._feincms_applicationcontents = {}
+
         page_url = self.parent.get_absolute_url()
 
         # Get the rest of the URL
@@ -61,7 +70,11 @@ class ApplicationContent(models.Model):
         # ... and restore it after processing the view
         del _urlconfs[currentThread()]
 
-        if hasattr(output, 'content'):
-            return output.content
-        return output
+        if isinstance(output, HttpResponse):
+            if output.status_code == 200:
+                request._feincms_applicationcontents[self.id] = mark_safe(output.content)
 
+            # return response if view returned a HttpResponse, but not a 200
+            return output
+        else:
+            request._feincms_applicationcontents[self.id] = mark_safe(output)
