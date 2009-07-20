@@ -751,7 +751,7 @@ class BlogTestCase(TestCase):
         u.set_password('test')
         u.save()
 
-        Entry.register_regions(('main', 'Main region'))
+        Entry.register_regions(('main', 'Main region'), ('another', 'Another region'))
         Entry.prefilled_categories = prefilled_attribute('categories')
         Entry.prefilled_rawcontent_set = prefilled_attribute('rawcontent_set')
 
@@ -793,9 +793,19 @@ class BlogTestCase(TestCase):
 
         objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set', 'categories')
 
+        self.assertEqual(len(objects[0]._prefill_categories), 0)
+        self.assertEqual(len(objects[0]._prefill_rawcontent_set), 1)
+        self.assertEqual(unicode(objects[0]), 'Something')
+
+        objects = Entry.objects.published()
+
         self.assertEqual(len(objects[0].prefilled_categories), 0)
         self.assertEqual(len(objects[0].prefilled_rawcontent_set), 1)
-        self.assertEqual(unicode(objects[0]), 'Something')
+
+        objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set', 'categories', region='another')
+
+        self.assertEqual(len(objects[0]._prefill_categories), 0)
+        self.assertEqual(len(objects[0]._prefill_rawcontent_set), 0)
 
         self.login()
         assert self.client.get('/admin/blog/entry/').status_code == 200
