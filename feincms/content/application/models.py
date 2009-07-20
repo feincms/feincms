@@ -2,7 +2,7 @@ import re
 
 from django.conf import settings
 from django.core import urlresolvers
-from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse
+from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse, NoReverseMatch
 from django.db import models
 from django.utils.thread_support import currentThread
 from django.utils.translation import ugettext_lazy as _
@@ -12,8 +12,15 @@ _urlconfs = {}
 
 def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs, **vkwargs):
     ct = currentThread()
-    if not urlconf and ct in _urlconfs:
-        urlconf, prefix = _urlconfs[ct]
+    if ct in _urlconfs:
+        # Special handling inside ApplicationContent.render; override urlconf
+        # and prefix variables so that reverse works as expected.
+        urlconf1, prefix1 = _urlconfs[ct]
+        try:
+            return _reverse(viewname, urlconf1, args, kwargs, prefix1, *vargs, **vkwargs)
+        except NoReverseMatch:
+            # fall through to calling reverse with default arguments
+            pass
 
     return _reverse(viewname, urlconf, args, kwargs, prefix, *vargs, **vkwargs)
 urlresolvers.reverse = reverse
@@ -47,7 +54,7 @@ class ApplicationContent(models.Model):
             output = fn(request, *args, **kwargs)
         except:
             # We want exceptions to propagate, but we cannot allow the
-            # modifications to reverse() to stay here.
+            # modifications to reverse() to stay here.
             del _urlconfs[currentThread()]
             raise
 
