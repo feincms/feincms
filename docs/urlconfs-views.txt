@@ -21,6 +21,14 @@ for any pages which were not matched before:
         url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
     )
 
+Note that this default handler can also take a keyword parameter "page"
+to specify which url to render. You can use that functionality to
+implement a default page by adding a clause to your urls.py:
+
+::
+
+        url(r'^$', 'feincms.views.base.handler', { 'path': '/rootpage' })
+
 
 Generic views replacements
 ==========================
