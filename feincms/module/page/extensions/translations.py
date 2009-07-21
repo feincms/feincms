@@ -11,16 +11,16 @@ from django.db import models
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.translations import is_primary_language
+
 
 def register(cls, admin_cls):
-    primary_language = settings.LANGUAGES[0][0]
-
     cls.add_to_class('language', models.CharField(_('language'), max_length=10,
         choices=settings.LANGUAGES))
     cls.add_to_class('translation_of', models.ForeignKey('self',
         blank=True, null=True, verbose_name=_('translation of'),
         related_name='translations',
-        limit_choices_to={'language': primary_language},
+        limit_choices_to={'language': settings.LANGUAGES[0][0]},
         help_text=_('Leave this empty for entries in the primary language (%s).') % \
             _(settings.LANGUAGES[0][1])))
 
@@ -34,7 +34,7 @@ def register(cls, admin_cls):
     cls.register_request_processors(translations_request_processor)
 
     def available_translations(self):
-        if self.language == primary_language:
+        if is_primary_language(self.language):
             return self.translations.all()
         elif self.translation_of:
             return [self.translation_of] + list(self.translation_of.translations.exclude(

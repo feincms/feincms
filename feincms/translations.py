@@ -53,6 +53,18 @@ def short_language_code(code=None):
     return code
 
 
+def is_primary_language(language=None):
+    """
+    Returns true if current or passed language is the primary language for this site.
+    (The primary language is defined as the first language in settings.LANGUAGES.)
+    """
+
+    if not language:
+        language = translation.get_language()
+
+    return language == settings.LANGUAGES[0][0]
+
+
 class TranslatedObjectManager(models.Manager):
     def only_language(self, language=short_language_code):
         return self.filter(translations__language_code=language)
