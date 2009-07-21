@@ -29,12 +29,15 @@ urlresolvers.reverse = reverse
 
 
 class ApplicationContent(models.Model):
-    urlconf_path = models.CharField(_('URLconf path'), max_length=100)
-
     class Meta:
         abstract = True
         verbose_name = _('application content')
         verbose_name_plural = _('application contents')
+
+    @classmethod
+    def initialize_type(cls, APPLICATIONS):
+        cls.add_to_class('urlconf_path', models.CharField(_('application'), max_length=100,
+                                                          choices=APPLICATIONS))
 
     def render(self, request, **kwargs):
         return request._feincms_applicationcontents.get(self.id, u'')
