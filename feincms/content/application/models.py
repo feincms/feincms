@@ -46,6 +46,7 @@ class ApplicationContent(models.Model):
         # prepare storage for rendered application contents
         if not hasattr(request, '_feincms_applicationcontents'):
             request._feincms_applicationcontents = {}
+            request._feincms_applicationcontents_fragments = {}
 
         page_url = self.parent.get_absolute_url()
 
