@@ -37,7 +37,7 @@ class ApplicationContent(models.Model):
         verbose_name_plural = _('application contents')
 
     def render(self, request, **kwargs):
-        return request._feincms_applicationcontents.get(self.id)
+        return request._feincms_applicationcontents.get(self.id, u'')
 
     def process(self, request):
         # prepare storage for rendered application contents
@@ -57,7 +57,7 @@ class ApplicationContent(models.Model):
         except (ValueError, Resolver404):
             # Silent failure if resolving failed
             del _urlconfs[currentThread()]
-            return u''
+            return
 
         try:
             output = fn(request, *args, **kwargs)

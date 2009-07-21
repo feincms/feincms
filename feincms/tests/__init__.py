@@ -763,6 +763,17 @@ class PagesTestCase(TestCase):
         self.assertContains(self.client.get(page.get_absolute_url() + 'kwargs_test/abc/def/'),
                             'def-abc')
 
+        response = self.client.get(page.get_absolute_url() + 'reverse_test/')
+        self.assertContains(response, 'home:/test-page/test-child-page/')
+        self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
+        self.assertContains(response, 'base:/test/')
+
+        # This should not raise
+        assert self.client.get(page.get_absolute_url() + 'notexists/').status_code == 200
+
+        # This should raise (the view raises an error)
+        self.assertRaises(NotImplementedError, lambda: self.client.get(page.get_absolute_url() + 'raises/'))
+
 
 Entry.register_extensions('seo', 'translations', 'seo')
 class BlogTestCase(TestCase):
