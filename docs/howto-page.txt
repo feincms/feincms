@@ -143,6 +143,11 @@ Extensions are a way to put often-used functionality easily accessible without
 cluttering up the core page model for those who do not need them. Currently,
 the following extensions are available:
 
+* changedate
+
+  Adds automatically maintained creation and modification date fields
+  to the page.
+
 * datepublisher
 
   Adds publication date and end date fields to the page, thereby enabling the
