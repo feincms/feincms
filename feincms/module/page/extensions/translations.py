@@ -48,7 +48,13 @@ def register(cls, admin_cls):
         translations = page.available_translations()
 
         return u', '.join(
-            u'<a href="%s/">%s</a>' % (page.id, page.language.upper()) for page in translations)
+            u'<a href="%s/" title="%s">%s</a>' % (page.id, unicode(page), page.language.upper()) for page in translations)
+
+    def original_translation(self):
+        if is_primary_language(self.language):
+            return self
+        return self.translation_of
+    cls.original_translation = property(original_translation)
 
     available_translations_admin.allow_tags = True
     available_translations_admin.short_description = _('translations')

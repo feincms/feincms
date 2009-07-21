@@ -136,7 +136,7 @@
                 <div style="float:right;padding:5px 0 0 0">
                 {% trans "available translations" %}:
                 {% for translation in translations %}
-                    <a href="../{{ translation.id }}/">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
+                    <a href="../{{ translation.id }}/" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 </div>
             {% endif %}
