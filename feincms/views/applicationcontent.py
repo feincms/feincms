@@ -23,7 +23,7 @@ def handler(request, path=None):
 
     for content in applicationcontents:
         r = content.process(request)
-        if r:
+        if r and r.status_code != 200:
             return r
 
     return build_page_response(page, request)
