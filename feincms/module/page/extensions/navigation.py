@@ -40,11 +40,11 @@ class NavigationExtension(object):
 
 def _extended_navigation(self):
     if not self.navigation_extension:
-        return []
+        return self.children.in_navigation()
 
     cls = get_object(self.navigation_extension, fail_silently=True)
     if not cls:
-        return []
+        return self.children.in_navigation()
 
     return cls().children(self)
 
