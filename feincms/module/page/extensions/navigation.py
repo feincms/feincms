@@ -22,6 +22,10 @@ class TypeRegistryMetaClass(type):
 
 
 class PagePretender(object):
+    # emulate mptt properties to get the template tags working
+    class _meta:
+        level_attr = 'level'
+
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)

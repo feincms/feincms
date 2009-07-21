@@ -2,7 +2,7 @@ from django import template
 from django.conf import settings
 from django.http import HttpRequest
 
-from feincms.module.page.models import Page
+from feincms.module.page.models import Page, PageManager
 from feincms.templatetags.utils import *
 
 register = template.Library()
@@ -19,17 +19,30 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
 
     def what(self, instance, args):
         level = int(args.get('level', 1))
-
-        if level <= 1:
-            return Page.objects.toplevel_navigation()
+        depth = int(args.get('depth', 1))
 
         if isinstance(instance, HttpRequest):
             instance = Page.objects.from_request(instance)
+
+        if level <= 1:
+            if depth == 1:
+                return Page.objects.toplevel_navigation()
+            else:
+                return Page.objects.in_navigation().filter(level__lt=depth)
+
+        if depth > 1:
+            raise NotImplementedError # NotYetImplementedError
 
         # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
         # of the current page, we have to add 2 to the mptt level
         if instance.level + 2 == level:
             pass
+        elif instance.level + 2 < level:
+            try:
+                queryset = instance.get_descendants().filter(level=level - 1, in_navigation=True)
+                instance = PageManager.apply_active_filters(queryset)[0]
+            except IndexError:
+                return []
         else:
             try:
                 instance = instance.get_ancestors()[level - 2]
