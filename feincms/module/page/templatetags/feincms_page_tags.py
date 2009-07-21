@@ -89,7 +89,8 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
     Example:
 
-    {% for key, name, link in links all,excludecurrent %}
+    {% feincms_languagelinks for entry as links all,excludecurrent %}
+    {% for key, name, link in links %}
         <a href="{% if link %}{{ link }}{% else %}/{{ key }}/{% endif %}">{% trans name %}</a>
     {% endfor %}
     """
