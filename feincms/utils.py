@@ -41,19 +41,13 @@ Example:
     {% feincms_prefill_entry_list object_list "authors,richtextcontent_set,imagecontent_set" %}
 """
 
+from django.core.urlresolvers import get_callable
 from django.db import connection, models
 from django.db.models.fields import related
 
 
 def get_object(path, fail_silently=False):
-    dot = path.rindex('.')
-    try:
-        return getattr(__import__(path[:dot], {}, {}, ['']), path[dot + 1:])
-    except (ImportError, AttributeError):
-        if not fail_silently:
-            raise
-
-    return None
+    return get_callable(path, fail_silently)
 
 
 def prefilled_attribute(name):
