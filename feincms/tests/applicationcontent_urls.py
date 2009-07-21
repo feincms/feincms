@@ -24,10 +24,16 @@ def raises(request):
     raise NotImplementedError, 'not really not implemented, but it is as good as anything for the test'
 
 
+def fragment(request):
+    t = template.Template('{% load applicationcontent_tags %}{% fragment request "something" %}some things{% endfragment %}')
+    return t.render({'request': request})
+
+
 urlpatterns = patterns('',
     url(r'^$', module_root, name='ac_module_root'),
     url(r'^args_test/([^/]+)/([^/]+)/$', args_test, name='ac_args_test'),
     url(r'^kwargs_test/(?P<kwarg2>[^/]+)/(?P<kwarg1>[^/]+)/$', args_test),
     url(r'^reverse_test/$', reverse_test),
     url(r'^raises/$', raises),
+    url(r'^fragment/$', fragment),
 )

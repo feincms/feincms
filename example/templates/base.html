@@ -1,4 +1,4 @@
-{% load feincms_tags feincms_page_tags %}
+{% load applicationcontent_tags feincms_tags feincms_page_tags %}
 <html>
 <head>
     <title>{{ feincms_page.title }}</title>
@@ -36,5 +36,7 @@
     {% feincms_render_region feincms_page "sidebar" request %}
 
     {% feincms_frontend_editing feincms_page request %}
+
+    <span id="something">{% get_fragment request "something" %}</span>
 </body>
 </html>
