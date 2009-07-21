@@ -47,7 +47,7 @@ def _extended_navigation(self):
         return self.children.in_navigation()
 
     cls = get_object(self.navigation_extension, fail_silently=True)
-    if not cls:
+    if not cls or not callable(cls):
         return self.children.in_navigation()
 
     return cls().children(self)

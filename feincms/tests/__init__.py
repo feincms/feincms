@@ -712,7 +712,7 @@ class PagesTestCase(TestCase):
 
         page = Page.objects.get(pk=1)
 
-        self.assertEqual(page.extended_navigation(), [])
+        self.assertEqual(len(page.extended_navigation()), 0)
 
         page.navigation_extension = 'feincms.tests.navigation_extensions.PassthroughExtension'
 
@@ -725,7 +725,7 @@ class PagesTestCase(TestCase):
 
         page.navigation_extension = 'feincms.tests.navigation_extensions.ThisExtensionDoesNotExist'
 
-        self.assertEqual(page.extended_navigation(), [])
+        self.assertEqual(len(page.extended_navigation()), 1)
 
     def test_24_admin_redirects(self):
         self.create_default_page_set()
