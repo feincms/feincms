@@ -10,8 +10,16 @@ register = template.Library()
 
 class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
     """
+    Return a list of pages to be used for the navigation
+
+    level: 1 = toplevel, 2 = sublevel, 3 = sub-sublevel
+    depth: 1 = only one level, 2 = subpages too
+
+    If you set depth to something else than 1, you might want to look into
+    the tree_info template tag from the mptt_tags library.
+
     Example:
-    {% feincms_navigation of feincms_page as sublevel level=2 %}
+    {% feincms_navigation of feincms_page as sublevel level=2,depth=1 %}
     {% for p in sublevel %}
         <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
     {% endfor %}
@@ -29,9 +37,6 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 return Page.objects.toplevel_navigation()
             else:
                 return Page.objects.in_navigation().filter(level__lt=depth)
-
-        if depth > 1:
-            raise NotImplementedError # NotYetImplementedError
 
         # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
         # of the current page, we have to add 2 to the mptt level
@@ -51,9 +56,14 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
 
         # special case for the navigation extension
         if getattr(instance, 'navigation_extension', None):
+            # XXX what should be done with the depth parameter here?
             return instance.extended_navigation()
         else:
-            return instance.children.in_navigation()
+            if depth == 1:
+                return instance.children.in_navigation()
+            else:
+                queryset = instance.get_descendants().filter(level__lte=instance.level + depth, in_navigation=True)
+                return PageManager.apply_active_filters(queryset)
 register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
 
