@@ -165,7 +165,7 @@ class CMSBaseTest(TestCase):
 
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
-                         'titles', 'translations', 'seo')
+                         'titles', 'translations', 'seo', 'changedate')
 Page.create_content_type(ApplicationContent, APPLICATIONS=())
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
