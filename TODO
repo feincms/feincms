@@ -6,13 +6,17 @@ it's nothing more than a brain dump.
 - Encourage people to translate the administration interface
 - Finish frontend editing -- not much more than a proof of concept now
 - Document template tags
+- ajax_editable_boolean functionality is very non-obvious to the admin
+  interface user
+- the tree editor drag/drop icons seem to be unclear
+
 
 ------------------------------------------------------------------
 Infanta - A FeinCMS extension to manage contents of reusabble apps
 ------------------------------------------------------------------
 
 - think about a way of making it easier to integrate reusable app
-  - maybe add a mapper, which converts a BlockNode with the according block name to a BoxNode assigend by the mapper
+- maybe add a mapper, which converts a BlockNode with the according block name to a BoxNode assigend by the mapper
 - attach a view content which is not defined in the page tree at the end of the region
 - decide what to do if a region defined in the templatetag is not found
   for example a extrajs block, which should be rendered in the <head> tag 
