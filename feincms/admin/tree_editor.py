@@ -9,12 +9,11 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404, \
     HttpResponseBadRequest
 from django.shortcuts import render_to_response
 from django.utils import dateformat, simplejson
-from django.utils.encoding import force_unicode, smart_str, smart_unicode
-from django.utils.functional import curry, update_wrapper
+from django.utils.encoding import force_unicode, smart_unicode
 from django.utils.html import escape, conditional_escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
-from django.utils.translation import get_date_formats, get_partial_date_formats, ugettext as _
+from django.utils.translation import get_date_formats, ugettext as _
 
 from feincms import settings
 

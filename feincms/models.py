@@ -1,13 +1,14 @@
-import copy
+"""
+This is the core of FeinCMS
 
-from django.conf import settings
+All models defined here are abstract, which means no tables are created in
+the feincms_ namespace.
+"""
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.db.models import Q
 from django.forms.models import model_to_dict
-from django.http import Http404
 from django.template.loader import render_to_string
-from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -16,12 +17,10 @@ except NameError:
     # For Python 2.4
     from feincms.compat import c_any as any
 
-import mptt
-
 
 class Region(object):
     """
-    This class represents a reigon inside a template. Example regions might be
+    This class represents a region inside a template. Example regions might be
     'main' and 'sidebar'.
     """
 
@@ -32,16 +31,16 @@ class Region(object):
         self._content_types = []
 
     def __unicode__(self):
-        return unicode(self.title)
+        return self.title
 
     @property
     def content_types(self):
-        content_types = []
-        for content_type in self._content_types:
-            content_name = content_type._meta.verbose_name
-            content_types.append((content_name, content_type.__name__.lower()))
+        """
+        Returns a list of content types registered for this region as a list
+        of (content type key, beautified content type name) tuples
+        """
 
-        return content_types
+        return [(ct.__name__.lower(), ct._meta.verbose_name) for ct in self._content_types]
 
 
 class Template(object):
@@ -51,6 +50,8 @@ class Template(object):
     """
 
     def __init__(self, title, path, regions, key=None):
+        # The key is what will be stored in the database. If key is undefined
+        # use the template path as fallback.
         if not key:
             key = path
 
@@ -67,7 +68,7 @@ class Template(object):
         self.regions_dict = dict((r.key, r) for r in self.regions)
 
     def __unicode__(self):
-        return unicode(self.title)
+        return self.title
 
 
 class Base(models.Model):

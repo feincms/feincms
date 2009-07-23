@@ -106,8 +106,8 @@ class CMSBaseTest(TestCase):
         # content_type_for should return None if it does not have a subclass registered
         self.assertEqual(ExampleCMSBase.content_type_for(Empty), None)
 
-        assert 'filecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).values()
-        assert 'filecontent' in dict(ExampleCMSBase.template.regions[1].content_types).values()
+        assert 'filecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).keys()
+        assert 'filecontent' in dict(ExampleCMSBase.template.regions[1].content_types).keys()
 
     def test_02_rsscontent_creation(self):
         # this test resides in its own method because the required feedparser
