@@ -84,16 +84,6 @@ class ParentLinkNode(SimpleNodeWithVarAndArgs):
 register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(ParentLinkNode))
 
 
-class BestMatchNode(SimpleAssignmentNodeWithVar):
-    """
-    {% feincms_bestmatch for request.path as feincms_page %}
-    """
-
-    def what(self, path):
-        return Page.objects.best_match_for_path(path)
-register.tag('feincms_bestmatch', do_simple_assignment_node_with_var_helper(BestMatchNode))
-
-
 class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
     """
     {% feincms_languagelinks for feincms_page as links [args] %}
