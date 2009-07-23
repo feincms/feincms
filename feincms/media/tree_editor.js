@@ -103,8 +103,11 @@ function drop_item(dragged, target, method) {
 
     // was the dragged element the last child of its former parent?
     var dragged_parent = get_parent(dragged);
-    if(old_parent!=new_parent && get_children(dragged_parent).length==1)
-        dragged_parent.removeClass('parent');
+    if(dragged_parent.length) {
+        // dragged_parent is empty if dragged is/was a toplevel object
+        if(old_parent!=new_parent && get_children(dragged_parent).length==1)
+            dragged_parent.removeClass('parent');
+    }
 
     if(method=='before') {
         var len = descendants.length;
