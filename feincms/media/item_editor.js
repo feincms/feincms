@@ -1,3 +1,18 @@
+if(typeof(Array.prototype.indexOf) == 'undefined') {
+    // indexOf() function prototype for IE6/7/8 compatibility, taken from 
+    // JavaScript Standard Library - http://www.devpro.it/JSL/
+    Array.prototype.indexOf=function(elm,i){
+        var j=this.length;
+        if(!i)i=0;
+        if(i>=0){while(i<j){if(this[i++]===elm){
+            i=i-1+j;j=i-j;
+        }}}
+        else
+            j=this.indexOf(elm,j+i);
+        return j!==this.length?j:-1;
+    }
+}
+
 function region_append(region, obj, modname) {
     var wrp = [];
     wrp.push('<fieldset class="module aligned order-item">');
@@ -82,6 +97,11 @@ function attach_dragdrop_handlers() {
     $("#main h2 span.handle").mouseup(function(){
         richify_poor($(this).parents("fieldset.order-item"));
     });
+}
+
+function init_contentblocks() {
+    for(var i=0; i<contentblock_init_handlers.length; i++)
+        contentblock_init_handlers[i]();
 }
 
 
@@ -177,4 +197,44 @@ $(document).ready(function(){
         return true;
     });
 
+    // move contents into their corresponding regions and do some simple formatting
+    $("div[id$=_set]").children().each(function(){
+        var elem = $(this);
+
+        if (!(elem.hasClass("header"))) {
+            elem.find("input[name$=-region]").addClass("region-choice-field");
+            elem.find("input[name$=-DELETE]").addClass("delete-field").parents("div.form-row").hide();
+            elem.find("input[name$=-ordering]").addClass("order-field");
+
+            var region_id = elem.find(".region-choice-field").val();
+            region_id = REGION_MAP.indexOf(region_id);
+            var content_type = elem.attr("id").substr(0, elem.attr("id").indexOf("_"));
+            region_append(region_id,elem, CONTENT_NAMES[content_type]);
+            set_item_field_value(elem,"region-choice-field",region_id)
+        }
+    });
+    // register regions as sortable for drag N drop
+    $(".order-machine").sortable({
+        handle: '.handle',
+        helper: 'clone',
+        placeholder: 'highlight',
+        stop: function(event, ui) {
+            richify_poor($(ui.item));
+        }
+    });
+
+    attach_dragdrop_handlers();
+
+    if(window.location.hash) {
+        $('#'+window.location.hash.substr(5)+'_tab').trigger('click');
+    } else {
+        $('#main_wrapper>div.navi_tab:first-child').trigger('click');
+    }
+
+    // bring order to chaos
+    zucht_und_ordnung(true);
+
+    $('#inlines').hide();
 });
+
+$(window).load(function(){init_contentblocks()});
