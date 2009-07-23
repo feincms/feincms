@@ -25,7 +25,6 @@ from feincms.content.video.models import VideoContent
 from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
-from feincms.module.page.extensions.navigation import NavigationExtension
 from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
