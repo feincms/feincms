@@ -120,51 +120,76 @@ class TreeEditor(admin.ModelAdmin):
             yield item, first, _properties(self.changelist, item)
 
     def _save_tree(self, request):
-        itemtree = simplejson.loads(request.POST['tree'])
+        """
+        The incoming data is structured as a list of lists. Every item has
+        a list entry holding the primary key, the primary key of its parent
+        (or anything evaluating to false in a boolean context if it is a
+        toplevel entry) and a flag indicating whether the item has children
+        or not.
+        """
 
-        TREE_ID = 0; PARENT_ID = 1; LEFT = 2; RIGHT = 3; LEVEL = 4; ITEM_ID = 5
+        itemtree = simplejson.loads(request.POST['tree'])
 
         tree_id = 0
         parents = []
+
+        # map item primary keys to data array indices
         node_indices = {}
 
+        # Data is a list of lists holding the data which is used to update
+        # the database at the end of this view.
+        # The sublist have the following structure:
+        # [tree_id, parent_id, left, right, level, item_id]
         data = []
 
-        def indexer(start):
+        def incrementer(start):
+            # Returns an ever-increasing stream of numbers. The starting
+            # point can be freely defined.
             while True:
                 yield start
                 start += 1
 
-        left = indexer(0)
+        left = incrementer(0)
 
-        for item_id, parent_id, is_parent in itemtree:
+        for item_id, parent_id, has_children in itemtree:
             node_indices[item_id] = len(node_indices)
 
             if parent_id in parents:
+                # We are processing another child element. However, we might
+                # be processing an item that's further up the tree than the
+                # previous. Walk up the tree until the parent_id of the current
+                # item is the last element in the parents list. 
                 for i in range(len(parents) - parents.index(parent_id) - 1):
-                    data[node_indices[parents.pop()]][RIGHT] = left.next()
+                    data[node_indices[parents.pop()]][3] = left.next()
             elif not parent_id:
+                # We are processing a top-level item. Completely drain the
+                # parents list, and start a new tree.
                 while parents:
-                    data[node_indices[parents.pop()]][RIGHT] = left.next()
-                left = indexer(0)
+                    data[node_indices[parents.pop()]][3] = left.next()
+                left = incrementer(0)
                 tree_id += 1
 
             data.append([
                 tree_id,
                 parent_id and parent_id or None,
                 left.next(),
-                0,
+                0, # The "right" value can only be determined when walking
+                   # back up the tree, not now. 
                 len(parents),
                 item_id,
                 ])
 
-            if is_parent:
+            if has_children:
                 parents.append(item_id)
             else:
-                data[-1][RIGHT] = left.next()
+                # Finalize the current element (assign the "right" value to
+                # the last element from data, that is, the current item.)
+                data[-1][3] = left.next()
 
         while parents:
-            data[node_indices[parents.pop()]][RIGHT] = left.next()
+            # Completely drain the parents list again. There will often be a
+            # couple of "right" values that still need to be assigned.
+            data[node_indices[parents.pop()]][3] = left.next()
 
         # 0 = tree_id, 1 = parent_id, 2 = left, 3 = right, 4 = level, 5 = item_id
         sql = "UPDATE %s SET %s=%%s, %s_id=%%s, %s=%%s, %s=%%s, %s=%%s WHERE %s=%%s" % (
@@ -178,10 +203,14 @@ class TreeEditor(admin.ModelAdmin):
 
         connection.cursor().executemany(sql, data)
 
-        # call save on all toplevel objects, thereby ensuring that caches are regenerated (if they
-        # exist)
-        # XXX This is currently only really needed for the page module, I should probably use a
-        # signal for this
+        # call save on all toplevel objects, thereby ensuring that caches are
+        # regenerated (if they exist)
+        # XXX This is currently only really needed for the page module. Maybe we
+        # should use a signal for this?
+        # NOTE! If you remove these lines, be sure to make Django commit the
+        # current transaction if we have one -- Django won't do it when we've
+        # manipulated the DB only directly using cursors.
+        # --> transaction.commit_unless_managed()
         for item in self.model._tree_manager.root_nodes():
             item.save()
 
@@ -199,9 +228,14 @@ class TreeEditor(admin.ModelAdmin):
 
     def _toggle_boolean(self, request):
         if not hasattr(self, '_ajax_editable_booleans'):
+            # Collect all fields marked as editable booleans. We do not
+            # want the user to be able to edit arbitrary fields by crafting
+            # an AJAX request by hand.
             self._ajax_editable_booleans = []
 
             for field in self.list_display:
+                # The ajax_editable_boolean return value has to be assigned
+                # to the ModelAdmin class
                 item = getattr(self.__class__, field, None)
                 if not item:
                     continue
@@ -210,8 +244,8 @@ class TreeEditor(admin.ModelAdmin):
                 if attr:
                     self._ajax_editable_booleans.append(attr)
 
-        item_id = request.POST['item_id']
-        attr = request.POST['attr']
+        item_id = request.POST.get('item_id')
+        attr = request.POST.get('attr')
 
         if attr not in self._ajax_editable_booleans:
             return HttpResponseBadRequest()
