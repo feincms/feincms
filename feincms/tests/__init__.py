@@ -609,6 +609,12 @@ class PagesTestCase(TestCase):
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
         self.assertEqual(t.render(ctx), '/test-page/test-child-page/')
 
+        t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of request as nav level=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        from django.http import HttpRequest
+        request = HttpRequest()
+        request.path = '/test-page/'
+        self.assertEqual(t.render(template.Context({'request': request})), '/test-page/test-child-page/')
+
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=99 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
         self.assertEqual(t.render(ctx), '')
 
