@@ -621,6 +621,22 @@ class PagesTestCase(TestCase):
         t = template.Template('{% load feincms_page_tags %}{% feincms_breadcrumbs feincms_page %}')
         self.assertEqual(t.render(ctx), u'<a href="/test-page/">Test page</a> &gt; Test child page')
 
+        page3 = Page.objects.create(parent=page2,
+                                    title='page3',
+                                    slug='page3',
+                                    language='en',
+                                    active=True,
+                                    in_navigation=True)
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(t.render(ctx), '/test-page/test-child-page/,/test-page/test-child-page/page3/')
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(t.render(ctx), '/test-page/,/test-page/test-child-page/')
+
+        t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=3 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(t.render(ctx), '/test-page/,/test-page/test-child-page/,/test-page/test-child-page/page3/')
+
     def test_18_default_render_method(self):
         """
         Test the default render() behavior of selecting render_<region> methods
