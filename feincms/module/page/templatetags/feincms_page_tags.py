@@ -49,10 +49,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
             except IndexError:
                 return []
         else:
-            try:
-                instance = instance.get_ancestors()[level - 2]
-            except IndexError:
-                return []
+            instance = instance.get_ancestors()[level - 2]
 
         # special case for the navigation extension
         if getattr(instance, 'navigation_extension', None):
