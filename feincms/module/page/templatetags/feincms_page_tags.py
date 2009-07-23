@@ -44,7 +44,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
             pass
         elif instance.level + 2 < level:
             try:
-                queryset = instance.get_descendants().filter(level=level - 1, in_navigation=True)
+                queryset = instance.get_descendants().filter(level=level - 2, in_navigation=True)
                 instance = PageManager.apply_active_filters(queryset)[0]
             except IndexError:
                 return []

@@ -650,6 +650,9 @@ class PagesTestCase(TestCase):
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=3 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
         self.assertEqual(t.render(ctx), '/test-page/,/test-page/test-child-page/,/test-page/test-child-page/page3/')
 
+        t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=3,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(t.render(ctx), '/test-page/test-child-page/page3/')
+
         t = template.Template('{% load feincms_page_tags %}{% if feincms_page|is_parent_of:page3 %}yes{% endif %}|{% if page3|is_parent_of:feincms_page %}yes{% endif %}')
         self.assertEqual(t.render(ctx), 'yes|')
 
