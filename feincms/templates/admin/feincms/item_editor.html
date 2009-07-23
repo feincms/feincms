@@ -15,94 +15,28 @@
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.css" />
 {% endif %}
 
+<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}item_editor.js"></script>
 
 <script type="text/javascript">
-    var contentblock_init_handlers = [];
-</script>
-
-{% for inc in object.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
-
-<script type="text/javascript">
-
     {% include "admin/feincms/_messages.html" %}
-
-    function init_contentblocks() {
-        for(var k in contentblock_init_handlers)
-            contentblock_init_handlers[k]();
-    }
-
     IMG_DELETELINK_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif";
     REGION_MAP = [{% for region in object.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     ACTIVE_REGION = 0;
     CONTENT_NAMES = {
         {% for name, value in content_types %}'{{ value }}': '{{ name|capfirst }}'{% if not forloop.last %},{% endif %}
         {% endfor %}};
-    
-    // indexOf() function prototype for IE6/7/8 compatibility, taken from 
-    // JavaScript Standard Library - http://www.devpro.it/JSL/
-    
-    Array.prototype.indexOf=function(elm,i){
-        var j=this.length;
-        if(!i)i=0;
-        if(i>=0){while(i<j){if(this[i++]===elm){
-            i=i-1+j;j=i-j;
-        }}}
-        else
-            j=this.indexOf(elm,j+i);
-        return j!==this.length?j:-1;
-    }
-
-
-    $(document).ready(function(){
-        // move contents into their corresponding regions and do some simple formatting
-        $("div[id$=_set]").children().each(function(){
-            var elem = $(this);
-
-            if (!(elem.hasClass("header"))) {
-                elem.find("input[name$=-region]").addClass("region-choice-field");
-                elem.find("input[name$=-DELETE]").addClass("delete-field").parents("div.form-row").hide();
-                elem.find("input[name$=-ordering]").addClass("order-field");
-
-                var region_id = elem.find(".region-choice-field").val();
-                region_id = REGION_MAP.indexOf(region_id);
-                var content_type = elem.attr("id").substr(0, elem.attr("id").indexOf("_"));
-                region_append(region_id,elem, CONTENT_NAMES[content_type]);
-                set_item_field_value(elem,"region-choice-field",region_id)
-            }
-        });
-        // register regions as sortable for drag N drop
-        $(".order-machine").sortable({
-            handle: '.handle',
-            helper: 'clone',
-            placeholder: 'highlight',
-            stop: function(event, ui) {
-                richify_poor($(ui.item));
-            }
-        });
-
-        attach_dragdrop_handlers();
-
-        if(window.location.hash) {
-            $('#'+window.location.hash.substr(5)+'_tab').trigger('click');
-        } else {
-            $('#main_wrapper>div.navi_tab:first-child').trigger('click');
-        }
-
-        // bring order to chaos
-        zucht_und_ordnung(true);
-
-        {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
-
-        $('#inlines').hide();
-    });
-
-    $(window).load(function(){init_contentblocks()});
+    var contentblock_init_handlers = [];
 </script>
 
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
+{% for inc in object.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
+    });
+</script>
 {% endblock %}
 
 {% block breadcrumbs %}
