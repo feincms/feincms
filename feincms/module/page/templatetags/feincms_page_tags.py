@@ -110,12 +110,13 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
         exclude_current = args.get('excludecurrent', False)
 
         translations = dict((t.language, t) for t in page.available_translations())
-
-        if not exclude_current:
-            translations[page.language] = page
+        translations[page.language] = page
 
         links = []
         for key, name in settings.LANGUAGES:
+            if exclude_current and key == page.language:
+                continue
+
             # hardcoded paths... bleh
             if key in translations:
                 links.append((key, name, translations[key].get_absolute_url()))
