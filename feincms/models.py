@@ -330,7 +330,7 @@ class Base(models.Model):
         if not hasattr(cls, '_feincms_content_model'):
             cls._create_content_base()
 
-        feincms_content_base = getattr(cls, '_feincms_content_model')
+        feincms_content_base = cls._feincms_content_model
 
         class Meta:
             db_table = '%s_%s' % (cls._meta.db_table, model.__name__.lower())
