@@ -9,6 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.forms.models import model_to_dict
 from django.template.loader import render_to_string
+from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -31,7 +32,7 @@ class Region(object):
         self._content_types = []
 
     def __unicode__(self):
-        return self.title
+        return force_unicode(self.title)
 
     @property
     def content_types(self):
@@ -68,7 +69,7 @@ class Template(object):
         self.regions_dict = dict((r.key, r) for r in self.regions)
 
     def __unicode__(self):
-        return self.title
+        return force_unicode(self.title)
 
 
 class Base(models.Model):
