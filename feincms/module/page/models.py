@@ -200,7 +200,7 @@ class Page(Base):
 
     def get_preview_url(self):
         try:
-            return reverse('feincms:preview', kwargs={ 'page_id': self.id })
+            return reverse('feincms_preview', kwargs={ 'page_id': self.id })
         except:
             return None
 
