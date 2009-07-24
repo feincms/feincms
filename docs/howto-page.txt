@@ -218,3 +218,45 @@ simple user access check can be implemented like this:
             
     Page.register_request_processors(authenticated_request_processor)
 
+
+Using page response processors
+==============================
+
+Analogous to a request processor, a reponse processor runs after a page
+has been rendered. It needs to accept the page, the request and the response
+as parameters and may change the response (or throw an exception, but try
+not to).
+
+A reponse processor is the right place to tweak the returned http response
+for whatever purposes you have in mind.
+
+::
+
+    def set_random_header_response_processor(page, request, response):
+        response['X-Random-Number'] = 42
+    
+    Page.register_response_processors(set_random_header_response_processor)
+
+
+ETag handling
+=============
+
+An ETag is a string that is associated with a page -- it should change if
+(and only if) the page content itself has changed. Since a page's content
+may depend on more than just the raw page data in the database (e.g. it
+might list its children or a navigation tree or an excerpt from some other
+place in the CMS alltogether), you are required to write an etag producing
+method for the Page.
+
+::
+
+    # Very stupid etag function, a page is supposed the unchanged as long
+    # as its id and slug do not change. You definitely want something more
+    # involved, like including last change dates or whatever.
+    def my_etag(page, request):
+        return 'PAGE-%d-%s' % ( page.id, page.slug ) 
+    Page.etag = my_etag
+    
+    Page.register_request_processors(Page.etag_request_processor)
+    Page.register_response_processors(Page.etag_response_processor)
+

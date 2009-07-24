@@ -3,13 +3,14 @@
 # $Id$
 # ------------------------------------------------------------------------
 
-from django.contrib import admin
 from django.conf import settings
+from django.contrib import admin
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, signals
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
+from django.views.decorators.http import condition
 
 import mptt
 
@@ -108,7 +109,7 @@ class PageManager(models.Manager):
 
         return self.for_request(request)
 
-
+# ------------------------------------------------------------------------
 class Page(Base):
     active = models.BooleanField(_('active'), default=False)
 
@@ -166,7 +167,6 @@ class Page(Base):
     short_title.admin_order_field = 'title'
     short_title.short_description = _('title')
 
-
     def save(self, *args, **kwargs):
         cached_page_urls = {}
 
@@ -204,6 +204,17 @@ class Page(Base):
         except:
             return None
 
+    def etag(self, request):
+        """
+        Generate an etag for this page.
+        An etag should be unique and unchanging for as long as the page
+        content does not change. Since we have no means to determine whether
+        rendering the page now (as opposed to a minute ago) will actually
+        give the same result, this default implementation returns None, which
+        means "No etag please, thanks for asking".
+        """
+        return None
+
     def setup_request(self, request):
         """
         Before rendering a page, run all registered request processors. A request
@@ -227,6 +238,10 @@ class Page(Base):
             fn(self, request, response)
 
     def require_path_active_request_processor(self, request):
+        """
+        Checks whether any ancestors are actually inaccessible (ie. not
+        inactive or expired) and raise a 404 if so.
+        """
         if not self.are_ancestors_active():
             raise Http404()
 
@@ -237,6 +252,47 @@ class Page(Base):
     def frontendediting_request_processor(self, request):
         if 'frontend_editing' in request.GET and request.user.has_module_perms('page'):
             request.session['frontend_editing'] = request.GET['frontend_editing'] and True or False
+
+    def etag_request_processor(self, request):
+        
+        # XXX is this a performance concern? Does it create a new class
+        # every time the processor is called or is this optimized to a static
+        # class??
+        class DummyResponse(dict):
+            """
+            This is a dummy class with enough behaviour of HttpResponse so we
+            can use the condition decorator without too much pain.
+            """
+            def has_header(self, what):
+                return False
+
+        def dummy_response_handler(*args, **kwargs):
+            return DummyResponse()
+        
+        def etagger(request, page, *args, **kwargs):
+            etag = page.etag(request)
+            return etag
+
+        # Now wrap the condition decorator around our dummy handler:
+        # the net effect is that we will be getting a DummyResponse from
+        # the handler if processing is to continue and a non-DummyResponse
+        # (should be a "304 not modified") if the etag matches.
+        rsp = condition(etag_func = etagger)(dummy_response_handler)(request, self)
+
+        # If dummy then don't do anything, if a real response, return and
+        # thus shortcut the request processing.
+        if not isinstance(rsp, DummyResponse):
+            return rsp
+
+    def etag_response_processor(self, request, response):
+        """
+        Response processor to set an etag header on outgoing responses.
+        The Page.etag() method must return something valid as etag content
+        whenever you want an etag header generated.
+        """
+        etag = self.etag(request)
+        if etag is not None:
+            response['ETag'] = etag
 
     @classmethod
     def register_request_processors(cls, *processors):
