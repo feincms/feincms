@@ -24,11 +24,9 @@ class RSSContent(models.Model):
     def render(self, **kwargs):
         return mark_safe(self.rendered_content)
 
-    def cache_content(self):
-        print u"Getting RSS feed at %s" % (self.link,)
+    def cache_content(self, save=True):
         feed = feedparser.parse(self.link)
 
-        print u"Pre-rendering content"
         self.rendered_content = render_to_string('content/rss/content.html', {
             'feed_title': self.title,
             'feed_link': feed['feed']['link'],
@@ -36,5 +34,6 @@ class RSSContent(models.Model):
             })
         self.last_updated = datetime.now()
 
-        self.save()
+        if save:
+            self.save()
 

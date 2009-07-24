@@ -113,7 +113,15 @@ class CMSBaseTest(TestCase):
         # this test resides in its own method because the required feedparser
         # module is not available everywhere
         from feincms.content.rss.models import RSSContent
-        ExampleCMSBase.create_content_type(RSSContent)
+        type = ExampleCMSBase.create_content_type(RSSContent)
+        obj = type()
+
+        assert 'yahoo' not in obj.render()
+
+        obj.link = 'http://rss.news.yahoo.com/rss/topstories'
+        obj.cache_content(save=False)
+
+        assert 'yahoo' in obj.render()
 
     def test_03_double_creation(self):
         # creating a content type twice is forbidden
