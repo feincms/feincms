@@ -116,7 +116,7 @@ class TreeEditor(admin.ModelAdmin):
             if callable(first):
                 first = first()
 
-            yield item, first, _properties(self.changelist, item)
+            yield item, first, list(admin_list.items_for_result(self.changelist, item, None))[1:]
 
     def _save_tree(self, request):
         """
@@ -286,14 +286,3 @@ def ajax_editable_boolean(attr, short_description):
     _fn.short_description = short_description
     _fn.editable_boolean_field = attr
     return _fn
-
-
-def _properties(cl, result):
-    first = True
-    for item in admin_list.items_for_result(cl, result, None):
-        if first:
-            # The first column is handled specially. Throw the standard
-            # value away and continue.
-            first = False
-            continue
-        yield item
