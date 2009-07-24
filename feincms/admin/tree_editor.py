@@ -288,10 +288,9 @@ def ajax_editable_boolean(attr, short_description):
     return _fn
 
 
-from django.contrib.admin.templatetags.admin_list import items_for_result
 def _properties(cl, result):
     first = True
-    for item in items_for_result(cl, result, None):
+    for item in admin_list.items_for_result(cl, result, None):
         if first:
             # The first column is handled specially. Throw the standard
             # value away and continue.
