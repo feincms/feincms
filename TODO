@@ -9,6 +9,7 @@ it's nothing more than a brain dump.
 - ajax_editable_boolean functionality is very non-obvious to the admin
   interface user
 - the tree editor drag/drop icons seem to be unclear
+- Some PageManager methods crash when there are two active objects with the same _cached_url
 
 
 ------------------------------------------------------------------

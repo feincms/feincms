@@ -95,7 +95,7 @@ class PageManager(models.Manager):
         return page
 
     def for_request_or_404(self, request):
-        return self.page_for_path_or_404(request.path, raise404=True)
+        return self.for_request(request, raise404=True)
 
     def best_match_for_request(self, request, raise404=False):
         page = self.best_match_for_path(request.path, raise404)
@@ -125,7 +125,7 @@ class Page(Base):
     _cached_url = models.CharField(_('Cached URL'), max_length=200, blank=True,
         editable=False, default='', db_index=True)
 
-    request_processors  = []
+    request_processors = []
     response_processors = []
 
     class Meta:

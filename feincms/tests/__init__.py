@@ -5,7 +5,7 @@ import os
 
 from django import template
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -154,6 +154,10 @@ class CMSBaseTest(TestCase):
 
         self.assertEqual(getattr(type, 'arbitrary_arg'), 'arbitrary_value')
 
+        obj.video = 'http://www.example.com/'
+
+        assert obj.video in obj.render()
+
     def test_07_default_render_method(self):
         class SomethingElse(models.Model):
             class Meta:
@@ -225,6 +229,17 @@ class PagesTestCase(TestCase):
         self.create_page()
         return self.create_page('Test child page', 1)
 
+    def is_published(self, url, should_be=True):
+        try:
+            self.client.get(url)
+        except TemplateDoesNotExist, e:
+            if should_be:
+                if e.args != ('feincms_base.html',):
+                    raise
+            else:
+                if e.args != ('404.html',):
+                    raise
+
     def test_01_tree_editor(self):
         self.login()
         assert self.client.get('/admin/page/page/').status_code == 200
@@ -240,6 +255,7 @@ class PagesTestCase(TestCase):
         self.login()
         self.assertRedirects(self.create_page(_continue=1), '/admin/page/page/1/')
         assert self.client.get('/admin/page/page/1/').status_code == 200
+        self.is_published('/admin/page/page/42/', should_be=False)
 
     def test_03_add_another(self):
         self.login()
@@ -252,6 +268,20 @@ class PagesTestCase(TestCase):
 
         page = Page.objects.get(pk=2)
         self.assertEqual(page.get_absolute_url(), '/test-page/test-child-page/')
+
+        page.active = True
+        page.save()
+
+        # page2 inherited the inactive flag from the toplevel page
+        self.assertContains(self.client.get('/admin/page/page/'), 'inherited')
+
+        page1 = Page.objects.get(pk=1)
+        page1.active = True
+        page1.save()
+
+        # icon-yes should exist two times (active flag for both pages,
+        # in_navigation is false)
+        self.assertEqual(len(self.client.get('/admin/page/page/').content.split('icon-yes')), 3)
 
     def test_05_override_url(self):
         self.create_default_page_set()
@@ -330,17 +360,6 @@ class PagesTestCase(TestCase):
             '__cmd': 'notexists',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
             'Oops. AJAX request not understood.')
-
-    def is_published(self, url, should_be=True):
-        try:
-            self.client.get(url)
-        except TemplateDoesNotExist, e:
-            if should_be:
-                if e.args != ('feincms_base.html',):
-                    raise
-            else:
-                if e.args != ('404.html',):
-                    raise
 
     def test_08_publishing(self):
         self.create_default_page_set()
@@ -521,6 +540,9 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(len(page2.available_translations()), 1)
         self.assertEqual(len(page1.available_translations()), 1)
+
+        self.assertEqual(page1, page1.original_translation)
+        self.assertEqual(page1, page2.original_translation)
 
     def test_12_titles(self):
         self.create_default_page_set()
@@ -717,6 +739,26 @@ class PagesTestCase(TestCase):
         self.assertEqual(page, Page.objects.best_match_for_path(page.get_absolute_url() + 'something/hello/'))
 
         self.assertRaises(Http404, lambda: Page.objects.best_match_for_path('/blabla/blabla/', raise404=True))
+        self.assertEqual(None, Page.objects.best_match_for_path('/blabla/blabla/'))
+
+        request = Empty()
+        request.path = page.get_absolute_url()
+        request.GET = []
+        request.user = AnonymousUser()
+
+        self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
+        page1 = Page.objects.get(pk=1)
+        page1.active = True
+        page1.save()
+
+        self.assertEqual(page, Page.objects.for_request_or_404(request))
+
+        request.path += 'hello/'
+        self.assertEqual(page, Page.objects.best_match_for_request(request))
+
+        page_id = id(request._feincms_page)
+        p = Page.objects.from_request(request)
+        self.assertEqual(id(p), page_id)
 
     def test_20_redirects(self):
         self.create_default_page_set()
