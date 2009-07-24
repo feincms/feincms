@@ -511,6 +511,7 @@ class PagesTestCase(TestCase):
 
         os.unlink(path)
 
+        # this should not raise
         self.client.get('/admin/page/page/1/')
 
         assert 'alt="something"' in page.content.main[1].render()
@@ -520,6 +521,22 @@ class PagesTestCase(TestCase):
 
         assert 'somefile.jpg' in page.content.main[2].render()
         assert '<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render()
+
+        page.mediafilecontent_set.update(mediafile=3)
+        # this should not raise
+        self.client.get('/admin/page/page/1/')
+
+        field = MediaFile._meta.get_field('file')
+        old = (field.upload_to, field.storage)
+        from django.core.files.storage import FileSystemStorage
+        MediaFile.reconfigure(upload_to=lambda: 'anywhere',
+                              storage=FileSystemStorage(location='/wha/', base_url='/whe/'))
+        mediafile = MediaFile.objects.get(pk=1)
+        self.assertEqual(mediafile.file.url, '/whe/somefile.jpg')
+
+        MediaFile.reconfigure(upload_to=old[0], storage=old[1])
+        mediafile = MediaFile.objects.get(pk=1)
+        self.assertEqual(mediafile.file.url, '/media/somefile.jpg')
 
     def test_11_translations(self):
         self.create_default_page_set()
@@ -974,3 +991,9 @@ class BlogTestCase(TestCase):
         self.assertEqual(len(entries[1].available_translations()), 1)
         self.assertEqual(len(entries[2].available_translations()), 1)
         self.assertEqual(len(entries[3].available_translations()), 0)
+
+    def test_03_admin(self):
+        self.login()
+        self.create_entries()
+        assert self.client.get('/admin/blog/entry/').status_code == 200
+        assert self.client.get('/admin/blog/entry/1/').status_code == 200
