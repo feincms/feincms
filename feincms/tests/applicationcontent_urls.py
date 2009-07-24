@@ -4,7 +4,7 @@ This is a dummy module used to test the ApplicationContent
 
 from django import template
 from django.conf.urls.defaults import *
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 def module_root(request):
@@ -29,6 +29,10 @@ def fragment(request):
     return t.render({'request': request})
 
 
+def redirect(request):
+    return HttpResponseRedirect('../')
+
+
 urlpatterns = patterns('',
     url(r'^$', module_root, name='ac_module_root'),
     url(r'^args_test/([^/]+)/([^/]+)/$', args_test, name='ac_args_test'),
@@ -36,4 +40,5 @@ urlpatterns = patterns('',
     url(r'^reverse_test/$', reverse_test),
     url(r'^raises/$', raises),
     url(r'^fragment/$', fragment),
+    url(r'^redirect/$', redirect),
 )

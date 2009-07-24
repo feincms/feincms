@@ -6,8 +6,8 @@ import os
 from django import template
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import ImproperlyConfigured
 from django.core import mail
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.http import Http404
 from django.template import TemplateDoesNotExist
@@ -260,6 +260,15 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
         self.assertEqual(page2.get_absolute_url(), '/test-child-page/')
 
+        # This goes through feincms.views.base.handler instead of the applicationcontent handler
+        self.is_published('/', False)
+        page.active = True
+        page.template_key = 'theother'
+        page.save()
+        self.is_published('/', True)
+
+        self.is_published('/preview/%d/' % page.id, True)
+
     def test_06_tree_editor_save(self):
         self.create_default_page_set()
 
@@ -451,8 +460,12 @@ class PagesTestCase(TestCase):
 
         self.assertContains(self.client.get('/admin/page/page/1/'), 'no caption')
 
+        self.assertEqual(unicode(mediafile), 'MediaFile')
+
         mediafile.translations.create(caption='something',
             language_code='%s-ha' % short_language_code())
+
+        assert 'something' in unicode(mediafile)
 
         mf = page.content.main[1].mediafile
 
@@ -461,6 +474,13 @@ class PagesTestCase(TestCase):
         self.assertNotEqual(mf.get_absolute_url(), '')
         self.assertEqual(unicode(mf), 'something (somefile.jpg / 6 bytes)')
         self.assertEqual(mf.file_type(), 'Image')
+
+        self.assertEqual(MediaFile.objects.only_language('de').count(), 0)
+        self.assertEqual(MediaFile.objects.only_language('en').count(), 0)
+        self.assertEqual(MediaFile.objects.only_language('%s-ha' % short_language_code()).count(),
+                         1)
+
+        assert '%s-ha' % short_language_code() in mf.available_translations
 
         os.unlink(path)
 
@@ -793,6 +813,10 @@ class PagesTestCase(TestCase):
         page.template_key = 'theother'
         page.save()
 
+        # Should not be published because the page has no application contents and should
+        # therefore not catch anything below it.
+        self.is_published(page1.get_absolute_url() + 'anything/', False)
+
         page.applicationcontent_set.create(
             region='main', ordering=0,
             urlconf_path='feincms.tests.applicationcontent_urls')
@@ -816,7 +840,10 @@ class PagesTestCase(TestCase):
         self.assertRaises(NotImplementedError, lambda: self.client.get(page.get_absolute_url() + 'raises/'))
 
         self.assertContains(self.client.get(page.get_absolute_url() + 'fragment/'),
-                            '<span id="something">some things</span>');
+                            '<span id="something">some things</span>')
+
+        self.assertRedirects(self.client.get(page.get_absolute_url() + 'redirect/'),
+                             page.get_absolute_url())
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
@@ -865,6 +892,9 @@ class BlogTestCase(TestCase):
 
     def test_01_prefilled_attributes(self):
         self.create_entry()
+
+        # This should return silently
+        objects = prefill_entry_list(Entry.objects.none(), 'rawcontent_set', 'categories')
 
         objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set', 'categories')
 
