@@ -221,7 +221,7 @@ class TreeEditor(admin.ModelAdmin):
             obj = self.model._default_manager.get(pk=unquote(item_id))
             obj.delete()
         except Exception, e:
-            return HttpResponse("FAILED " + str(e), mimetype="text/plain")
+            return HttpResponse("FAILED " + unicode(e), mimetype="text/plain")
 
         return HttpResponse("OK", mimetype="text/plain")
 
@@ -254,7 +254,7 @@ class TreeEditor(admin.ModelAdmin):
             setattr(obj, attr, not getattr(obj, attr))
             obj.save()
         except Exception, e:
-            return HttpResponse("FAILED " + str(e), mimetype="text/plain")
+            return HttpResponse("FAILED " + unicode(e), mimetype="text/plain")
 
         data = [(obj.id, ajax_editable_boolean_cell(obj, attr))]
 

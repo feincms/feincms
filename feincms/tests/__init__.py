@@ -9,7 +9,7 @@ from django.contrib.auth.models import User, AnonymousUser
 from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.http import Http404
+from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
@@ -25,7 +25,7 @@ from feincms.content.video.models import VideoContent
 from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
-from feincms.module.page.models import Page
+from feincms.module.page.models import Page, PageAdmin
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
 from feincms.utils import collect_dict_values, get_object, prefill_entry_list, \
@@ -244,6 +244,15 @@ class PagesTestCase(TestCase):
         self.login()
         assert self.client.get('/admin/page/page/').status_code == 200
 
+        self.assertRedirects(self.client.get('/admin/page/page/?anything=anything'),
+                             '/admin/page/page/?e=1')
+
+        # test that the action_checkbox gets removed by changelist_view
+        PageAdmin.list_display += ('action_checkbox',)
+        assert 'action_checkbox' in PageAdmin.list_display
+        self.client.get('/admin/page/page/')
+        assert 'action_checkbox' not in PageAdmin.list_display
+
     def test_02_add_page(self):
         self.login()
         self.assertRedirects(self.create_page(title='Test page ' * 10, slug='test-page'),
@@ -310,13 +319,28 @@ class PagesTestCase(TestCase):
     def test_06_tree_editor_save(self):
         self.create_default_page_set()
 
+        page1 = Page.objects.get(pk=1)
+        page2 = Page.objects.get(pk=2)
+
+        page3 = Page.objects.create(title='page3', slug='page3', parent=page2)
+        page4 = Page.objects.create(title='page4', slug='page4', parent=page1)
+        page5 = Page.objects.create(title='page5', slug='page5', parent=None)
+
+        self.assertEqual(page3.get_absolute_url(), '/test-page/test-child-page/page3/')
+        self.assertEqual(page4.get_absolute_url(), '/test-page/page4/')
+        self.assertEqual(page5.get_absolute_url(), '/page5/')
+
         self.client.post('/admin/page/page/', {
             '__cmd': 'save_tree',
-            'tree': '[[2, 0, 1], [1, 2, 0]]',
+            'tree': '[[2, 0, 1], [1, 2, 1], [3, 1, 0], [4, 0, 1], [5, 4, 1]]',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
-        page = Page.objects.get(pk=1)
-        self.assertEqual(page.get_absolute_url(), '/test-child-page/test-page/')
+        self.assertEqual(Page.objects.get(pk=1).get_absolute_url(),
+                         '/test-child-page/test-page/')
+        self.assertEqual(Page.objects.get(pk=5).get_absolute_url(),
+                         '/page4/page5/')
+        self.assertEqual(Page.objects.get(pk=3).get_absolute_url(),
+                         '/test-child-page/test-page/page3/')
 
     def test_07_tree_editor_delete(self):
         self.create_default_page_set()
@@ -353,6 +377,12 @@ class PagesTestCase(TestCase):
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
             'icon-no.gif')
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
+
+        assert isinstance(self.client.post('/admin/page/page/', {
+            '__cmd': 'toggle_boolean',
+            'item_id': 1,
+            'attr': 'notexists',
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'), HttpResponseBadRequest)
 
     def test_07_tree_editor_invalid_ajax(self):
         self.login()
