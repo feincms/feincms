@@ -63,7 +63,7 @@ class SplitPaneEditor(admin.ModelAdmin):
         return render_to_response('admin/feincms/splitpane_editor_blank.html', {
             'has_add_permission': self.has_add_permission(request),
             'root_path': self.admin_site.root_path,
-            'title': opts.verbose_name_plural,
+            'title': capfirst(opts.verbose_name_plural),
             'opts': opts,
             }, context_instance=template.RequestContext(request))
 
