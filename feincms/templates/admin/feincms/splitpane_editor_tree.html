@@ -1,0 +1,94 @@
+{% extends "admin/base_site.html" %}
+
+{% load mptt_tags %}
+
+{% block title %}{{ block.super }}{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="../../../jsi18n/"></script>
+
+{% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+{% else %}
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.css" />
+{% endif %}
+
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.json-1.3.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.simple.tree.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.contextmenu.r2.js"></script>
+<script type="text/javascript">
+{% include "admin/feincms/_messages.html" %}
+</script>
+
+<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
+<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}jquery.simple.tree.css" />
+
+<script type="text/javascript">
+var simpleTreeCollection;
+$(document).ready(function(){
+    simpleTreeCollection = $('.simpleTree').simpleTree({
+        autoclose: true,
+        afterClick:function(node){
+            top.frames.frame_content.location.assign(top.location.pathname+node.attr('id').substr(4)+'/')
+            //alert("text-"+$('span:first',node).text());
+        },
+        afterDblClick:function(node){
+            //alert("text-"+$('span:first',node).text());
+        },
+        afterMove:function(destination, source, pos){
+            //alert("destination-"+destination.attr('id')+" source-"+source.attr('id')+" pos-"+pos);
+        },
+        afterAjax:function()
+        {
+            //alert('Loaded');
+        },
+        animate:true,
+        docToFolderConvert:true
+    });
+
+    $('.simpleTree .root span').contextMenu('myMenu1', {});
+    $('.simpleTree ul span').contextMenu('myMenu2', {
+        bindings: {
+            edit: function(trigger) { console.log('edit '+trigger); },
+            delete: function(trigger) { console.log('delete '+trigger); }
+        }
+    });
+});
+</script>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="contextMenu" id="myMenu1">
+    <ul>
+        <li id="add"><img src="images/folder_add.png" /> Add child</li>
+        <li id="reload"><img src="images/arrow_refresh.png" /> Reload</li>
+        <li id="edit"><img src="images/folder_edit.png" /> Edit</li>
+        <li id="delete"><img src="images/folder_delete.png" /> Delete</li>
+    </ul>
+</div>
+<div class="contextMenu" id="myMenu2">
+    <ul>
+        <li id="edit"><img src="images/page_edit.png" /> Edit</li>
+        <li id="delete"><img src="images/page_delete.png" /> Delete</li>
+    </ul>
+</div>
+
+<ul class="simpleTree">
+<li class="root" id="item0"><span>Site tree</span>
+{% for item, structure in object_list|tree_info %}
+    {% if structure.new_level %}<ul>{% else %}</li>{% endif %}
+    <li id="item{{ item.id }}">
+    <span>{{ item }}</span>
+    {% for level in structure.closed_levels %}</li></ul>{% endfor %}
+{% endfor %}
+</li>
+</ul>
+
+{% endblock %}

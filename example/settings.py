@@ -65,6 +65,8 @@ INSTALLED_APPS = (
     'feincms.module.page',
     'feincms.module.medialibrary',
     'example',
+
+    'mptt',
 )
 
 
