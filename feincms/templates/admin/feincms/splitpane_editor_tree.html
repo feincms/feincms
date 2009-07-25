@@ -41,10 +41,10 @@ $(document).ready(function(){
         },
         afterMove:function(destination, source, pos){
             $.post('.', {
-                __cmd: 'move_node',
-                destination: destination.attr('id').substr(4),
-                source: source.attr('id').substr(4),
-                position: pos
+                '__cmd': 'move_node',
+                'destination': destination.attr('id').substr(4),
+                'source': source.attr('id').substr(4),
+                'position': pos
             }, function(data) {
                 alert(data);
             });
@@ -62,8 +62,8 @@ $(document).ready(function(){
     $('.simpleTree .root span').contextMenu('myMenu1', {});
     $('.simpleTree ul span').contextMenu('myMenu2', {
         bindings: {
-            edit: function(trigger) { console.log('edit '+trigger); },
-            delete: function(trigger) { console.log('delete '+trigger); }
+            'edit': function(trigger) { console.log('edit '+trigger); },
+            'delete': function(trigger) { console.log('delete '+trigger); }
         }
     });
 });
