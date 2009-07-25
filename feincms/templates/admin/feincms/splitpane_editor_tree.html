@@ -47,7 +47,8 @@ $(document).ready(function(){
             //alert('Loaded');
         },
         animate:true,
-        docToFolderConvert:true
+        docToFolderConvert:true,
+        imagesBasePath: '{{ FEINCMS_ADMIN_MEDIA }}images/'
     });
 
     $('.simpleTree .root span').contextMenu('myMenu1', {});
