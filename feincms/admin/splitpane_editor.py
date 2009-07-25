@@ -82,16 +82,28 @@ class SplitPaneEditor(admin.ModelAdmin):
 
         if siblings.count() == 0:
             # This can only happen when destination != 0
+            # Insert dragged element as new (and only) child
             self.model._tree_manager.move_node(source, parent, 'last-child')
         elif position == 0:
             sibling = siblings[0]
             if sibling != source:
+                # Only do something if item was not dragged to the same place
+                # as it was before
                 self.model._tree_manager.move_node(source, siblings[0], 'left')
         else:
             sibling = siblings[position - 1]
             if source in siblings[:position]:
+                # The item is a direct sibling of its former position. If the
+                # item's place was somewhere before its new place, we have to
+                # adjust the position slightly
                 self.model._tree_manager.move_node(source, siblings[position], 'right')
             else:
+                # Otherwise, add it to the right of the target node. This
+                # works for last childs too
                 self.model._tree_manager.move_node(source, siblings[position - 1], 'right')
+
+        # Ensure that model save has been run
+        source = self.model._tree_manager.get(pk=source)
+        source.save()
 
         return HttpResponse('OK')
