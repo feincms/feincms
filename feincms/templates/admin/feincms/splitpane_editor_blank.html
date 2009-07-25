@@ -1,0 +1,29 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_modify adminmedia %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="../../" target="top">
+    {% trans "Home" %}
+  </a>
+   &rsaquo; 
+   <a href="../" target="top">
+     {{ opts.app_label|capfirst }}
+  </a>
+  &rsaquo; 
+  {{ opts.verbose_name_plural|capfirst }}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+    {% block object-tools %}
+    {% if has_add_permission %}
+    <ul class="object-tools"><li><a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">{% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}</a></li></ul>
+    {% endif %}
+    {% endblock %}
+</div>
+
+{% endblock %}
