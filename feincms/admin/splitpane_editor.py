@@ -80,8 +80,6 @@ class SplitPaneEditor(admin.ModelAdmin):
 
         source = self.model._tree_manager.get(pk=source)
 
-        print source, siblings, position
-
         if siblings.count() == 0:
             # This can only happen when destination != 0
             self.model._tree_manager.move_node(source, parent, 'last-child')
