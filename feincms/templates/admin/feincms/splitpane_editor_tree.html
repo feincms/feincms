@@ -40,6 +40,14 @@ $(document).ready(function(){
             //alert("text-"+$('span:first',node).text());
         },
         afterMove:function(destination, source, pos){
+            $.post('.', {
+                __cmd: 'move_node',
+                destination: destination.attr('id').substr(4),
+                source: source.attr('id').substr(4),
+                position: pos
+            }, function(data) {
+                alert(data);
+            });
             //alert("destination-"+destination.attr('id')+" source-"+source.attr('id')+" pos-"+pos);
         },
         afterAjax:function()

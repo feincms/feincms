@@ -24,6 +24,12 @@ class SplitPaneEditor(admin.ModelAdmin):
             raise PermissionDenied
 
         if request.is_ajax():
+            cmd = request.POST.get('__cmd')
+            if cmd == 'move_node':
+                return self._move_node(request)
+
+            return HttpResponse('Oops. AJAX request not understood.')
+
             # Endpoints for tree structure changes and other things
             # Not implemented yet (obviously :-)
             return HttpResponse('hello world')
@@ -60,3 +66,34 @@ class SplitPaneEditor(admin.ModelAdmin):
             'title': opts.verbose_name_plural,
             'opts': opts,
             }, context_instance=template.RequestContext(request))
+
+    def _move_node(self, request):
+        destination = int(request.POST.get('destination'))
+        source = int(request.POST.get('source'))
+        position = int(request.POST.get('position'))
+
+        if destination == 0:
+            siblings = self.model._tree_manager.root_nodes()
+        else:
+            parent = self.model._tree_manager.get(pk=destination)
+            siblings = parent.get_children()
+
+        source = self.model._tree_manager.get(pk=source)
+
+        print source, siblings, position
+
+        if siblings.count() == 0:
+            # This can only happen when destination != 0
+            self.model._tree_manager.move_node(source, parent, 'last-child')
+        elif position == 0:
+            sibling = siblings[0]
+            if sibling != source:
+                self.model._tree_manager.move_node(source, siblings[0], 'left')
+        else:
+            sibling = siblings[position - 1]
+            if source in siblings[:position]:
+                self.model._tree_manager.move_node(source, siblings[position], 'right')
+            else:
+                self.model._tree_manager.move_node(source, siblings[position - 1], 'right')
+
+        return HttpResponse('OK')
