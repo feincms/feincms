@@ -40,6 +40,7 @@ class SplitPaneEditor(admin.ModelAdmin):
     def _tree_view(self, request):
         return render_to_response('admin/feincms/splitpane_editor_tree.html', {
             'object_list': self.model._tree_manager.all(),
+            'opts': self.model._meta,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             }, context_instance=template.RequestContext(request))
 

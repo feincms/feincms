@@ -82,7 +82,7 @@ $(document).ready(function(){
 </div>
 
 <ul class="simpleTree">
-<li class="root" id="item0"><span>Site tree</span>
+<li class="root" id="item0"><span>{{ opts.verbose_name_plural|capfirst }}</span>
 {% for item, structure in object_list|tree_info %}
     {% if structure.new_level %}<ul>{% else %}</li>{% endif %}
     <li id="item{{ item.id }}">
