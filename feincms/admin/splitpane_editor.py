@@ -68,17 +68,17 @@ class SplitPaneEditor(admin.ModelAdmin):
             }, context_instance=template.RequestContext(request))
 
     def _move_node(self, request):
-        destination = int(request.POST.get('destination'))
-        source = int(request.POST.get('source'))
+        destination_id = int(request.POST.get('destination'))
+        source_id = int(request.POST.get('source'))
         position = int(request.POST.get('position'))
 
-        if destination == 0:
+        if destination_id == 0:
             siblings = self.model._tree_manager.root_nodes()
         else:
-            parent = self.model._tree_manager.get(pk=destination)
+            parent = self.model._tree_manager.get(pk=destination_id)
             siblings = parent.get_children()
 
-        source = self.model._tree_manager.get(pk=source)
+        source = self.model._tree_manager.get(pk=source_id)
 
         if siblings.count() == 0:
             # This can only happen when destination != 0
@@ -103,7 +103,7 @@ class SplitPaneEditor(admin.ModelAdmin):
                 self.model._tree_manager.move_node(source, siblings[position - 1], 'right')
 
         # Ensure that model save has been run
-        source = self.model._tree_manager.get(pk=source)
+        source = self.model._tree_manager.get(pk=source_id)
         source.save()
 
         return HttpResponse('OK')
