@@ -17,18 +17,24 @@ from feincms import settings
 class SplitPaneEditor(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if 'mptt' not in django_settings.INSTALLED_APPS:
+            # mptt_tags is needed to build the nested tree for the tree view
             raise ImproperlyConfigured, 'You have to add \'mptt\' to INSTALLED_APPS to use the SplitPaneEditor'
 
         if not self.has_change_permission(request, None):
             raise PermissionDenied
 
         if request.is_ajax():
+            # Endpoints for tree structure changes and other things
+            # Not implemented yet (obviously :-)
             return HttpResponse('hello world')
 
         if '_tree' in request.GET:
+            # Left frame
             return self._tree_view(request)
 
         if '_blank' in request.GET:
+            # Default content for right frame (if the user is not editing
+            # any items currently)
             return self._blank_view(request)
 
         if 'pop' in request.GET:
@@ -46,13 +52,11 @@ class SplitPaneEditor(admin.ModelAdmin):
             }, context_instance=template.RequestContext(request))
 
     def _blank_view(self, request):
-        from django.contrib.admin.views.main import ChangeList, ERROR_FLAG
         opts = self.model._meta
-        app_label = opts.app_label
 
         return render_to_response('admin/feincms/splitpane_editor_blank.html', {
-            'title': opts.verbose_name_plural,
             'has_add_permission': self.has_add_permission(request),
             'root_path': self.admin_site.root_path,
+            'title': opts.verbose_name_plural,
             'opts': opts,
             }, context_instance=template.RequestContext(request))
