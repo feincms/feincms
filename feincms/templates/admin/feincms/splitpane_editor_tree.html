@@ -1,11 +1,11 @@
 {% extends "admin/base_site.html" %}
 
-{% load mptt_tags %}
+{% load i18n mptt_tags %}
 
 {% block title %}{{ block.super }}{% endblock %}
 
 {% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="../../../jsi18n/"></script>
+<script type="text/javascript" src="../../jsi18n/"></script>
 
 {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
@@ -60,9 +60,21 @@ $(document).ready(function(){
     });
 });
 </script>
-
 {% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="../../" target="top">
+    {% trans "Home" %}
+  </a>
+   &rsaquo; 
+   <a href="../" target="top">
+     {{ opts.app_label|capfirst }}
+  </a>
+  &rsaquo; 
+  {{ opts.verbose_name_plural|capfirst }}
+</div>
+{% endblock %}
 
 {% block content %}
 

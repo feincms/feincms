@@ -13,6 +13,9 @@ setInterval(function(){
     // This is really ugly. If possible this should only be done
     // when a new document has been loaded into the frame below...
    top.document.title = top.frames.frame_content.document.title;
+
+   if(top.frames.frame_content.location.href.indexOf(top.location.href)!=0)
+       top.location.href = top.frames.frame_content.location.href;
 }, 1000);
 </script>
 </head>
