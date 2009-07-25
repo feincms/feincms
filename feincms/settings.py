@@ -38,3 +38,8 @@ FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKI
 INFANTA_EXCLUDE_URLS = getattr(settings, 'INFANTA_EXCLUDE_URLS', ['/admin/', '/media/'])
 
 # ------------------------------------------------------------------------
+# Settings for the page module
+
+# Please note that this setting might be replaced by a more general one
+# in the (near) future or might disappear completely!
+_FEINCMS_PAGE_USE_SPLIT_EDITOR = getattr(settings, '_FEINCMS_PAGE_USE_SPLIT_EDITOR', False)

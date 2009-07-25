@@ -3,7 +3,6 @@
 # $Id$
 # ------------------------------------------------------------------------
 
-from django.conf import settings
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -14,6 +13,7 @@ from django.views.decorators.http import condition
 
 import mptt
 
+from feincms import settings
 from feincms.admin import editor
 from feincms.admin.editor import django_boolean_icon
 from feincms.management.checker import check_database_schema
@@ -254,7 +254,7 @@ class Page(Base):
             request.session['frontend_editing'] = request.GET['frontend_editing'] and True or False
 
     def etag_request_processor(self, request):
-        
+
         # XXX is this a performance concern? Does it create a new class
         # every time the processor is called or is this optimized to a static
         # class??
@@ -268,7 +268,7 @@ class Page(Base):
 
         def dummy_response_handler(*args, **kwargs):
             return DummyResponse()
-        
+
         def etagger(request, page, *args, **kwargs):
             etag = page.etag(request)
             return etag
@@ -277,7 +277,7 @@ class Page(Base):
         # the net effect is that we will be getting a DummyResponse from
         # the handler if processing is to continue and a non-DummyResponse
         # (should be a "304 not modified") if the etag matches.
-        rsp = condition(etag_func = etagger)(dummy_response_handler)(request, self)
+        rsp = condition(etag_func=etagger)(dummy_response_handler)(request, self)
 
         # If dummy then don't do anything, if a real response, return and
         # thus shortcut the request processing.
@@ -324,7 +324,12 @@ Page.register_request_processors(Page.require_path_active_request_processor,
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
 
-class PageAdmin(editor.ItemEditor, editor.TreeEditor):
+if settings._FEINCMS_PAGE_USE_SPLIT_EDITOR:
+    list_modeladmin = editor.SplitPaneEditor
+else:
+    list_modeladmin = editor.TreeEditor
+
+class PageAdmin(editor.ItemEditor, list_modeladmin):
     # the fieldsets config here is used for the add_view, it has no effect
     # for the change_view which is completely customized anyway
     fieldsets = (
