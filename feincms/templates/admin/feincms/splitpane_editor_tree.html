@@ -31,7 +31,7 @@
 var simpleTreeCollection;
 $(document).ready(function(){
     simpleTreeCollection = $('.simpleTree').simpleTree({
-        autoclose: true,
+        autoclose: false,
         afterClick:function(node){
             top.frames.frame_content.location.assign(top.location.pathname+node.attr('id').substr(4)+'/')
             //alert("text-"+$('span:first',node).text());
