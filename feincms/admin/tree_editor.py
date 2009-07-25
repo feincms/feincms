@@ -38,18 +38,6 @@ class TreeEditor(admin.ModelAdmin):
     actions = None # TreeEditor does not like the checkbox column
 
     def changelist_view(self, request, extra_context=None):
-        # handle AJAX requests
-        if request.is_ajax():
-            cmd = request.POST.get('__cmd')
-            if cmd == 'save_tree':
-                return self._save_tree(request)
-            elif cmd == 'delete_item':
-                return self._delete_item(request)
-            elif cmd == 'toggle_boolean':
-                return self._toggle_boolean(request)
-
-            return HttpResponse('Oops. AJAX request not understood.')
-
         from django.contrib.admin.views.main import ChangeList, ERROR_FLAG
         opts = self.model._meta
         app_label = opts.app_label
@@ -76,6 +64,18 @@ class TreeEditor(admin.ModelAdmin):
             if ERROR_FLAG in request.GET.keys():
                 return render_to_response('admin/invalid_setup.html', {'title': _('Database error')})
             return HttpResponseRedirect(request.path + '?' + ERROR_FLAG + '=1')
+
+        # handle AJAX requests
+        if request.is_ajax():
+            cmd = request.POST.get('__cmd')
+            if cmd == 'save_tree':
+                return self._save_tree(request)
+            elif cmd == 'delete_item':
+                return self._delete_item(request)
+            elif cmd == 'toggle_boolean':
+                return self._toggle_boolean(request)
+
+            return HttpResponse('Oops. AJAX request not understood.')
 
         # XXX Hack alarm!
         # if actions is defined, Django adds a new field to list_display, action_checkbox. The
