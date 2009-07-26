@@ -12,15 +12,6 @@ setInterval(function(){
     // This is really ugly. If possible this should only be done
     // when a new document has been loaded into the frame below...
     top.document.title = top.frames.frame_content.document.title;
-
-    // I don't think we have a non-intrusive way of determining
-    // whether a user has exited the admin section controlled by
-    // the split page editor. We take a look at the location of
-    // the content frame and jump out of the frameset if the
-    // location is not somewhere below the frameset location
-    // anymore.
-    if(top.frames.frame_content.location.href.indexOf(top.location.href)!=0)
-        top.location.href = top.frames.frame_content.location.href;
 }, 1000);
 </script>
 </head>
