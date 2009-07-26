@@ -120,12 +120,18 @@ $(document).ready(function(){
 
 <ul class="simpleTree">
 <li class="root" id="item0"><span>{{ opts.verbose_name_plural|capfirst }}</span>
-{% for item, structure in object_list|tree_info %}
-    {% if structure.new_level %}<ul>{% else %}</li>{% endif %}
-    <li id="item{{ item.id }}">
-    <span>{{ item }}</span>
-    {% for level in structure.closed_levels %}</li></ul>{% endfor %}
-{% endfor %}
+{% if full_object_list %}
+    {% for item, structure in object_list|tree_info %}
+        {% if structure.new_level %}<ul>{% else %}</li>{% endif %}
+        <li id="item{{ item.id }}">
+        <span>{{ item }}</span>
+        {% for level in structure.closed_levels %}</li></ul>{% endfor %}
+    {% endfor %}
+{% else %}
+    <ul>
+    {% include "admin/feincms/splitpane_editor_tree_subtree.html" %}
+    </ul>
+{% endif %}
 </li>
 </ul>
 

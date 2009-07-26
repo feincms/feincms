@@ -24,22 +24,22 @@ class SplitPaneEditor(admin.ModelAdmin):
             raise PermissionDenied
 
         if request.is_ajax():
-            cmd = request.POST.get('__cmd')
+            cmd = request.REQUEST.get('__cmd')
             if cmd == 'move_node':
                 return self._move_node(request)
+            elif cmd == 'subtree':
+                return self._subtree_view(request)
 
             return HttpResponse('Oops. AJAX request not understood.')
 
         if '_tree' in request.GET:
             # Left frame
             return self._tree_view(request)
-
-        if '_blank' in request.GET:
+        elif '_blank' in request.GET:
             # Default content for right frame (if the user is not editing
             # any items currently)
             return self._blank_view(request)
-
-        if 'pop' in request.GET:
+        elif 'pop' in request.GET:
             # Delegate to default implementation for raw_id_fields etc
             return super(SplitPaneEditor, self).changelist_view(request, extra_context)
 
@@ -54,13 +54,33 @@ class SplitPaneEditor(admin.ModelAdmin):
         except AttributeError:
             inactive_nodes = []
 
-        return render_to_response('admin/feincms/splitpane_editor_tree.html', {
-            'object_list': self.model._tree_manager.all(),
-            'opts': self.model._meta,
+        opts = self.model._meta
+
+        context = {
+            'opts': opts,
             'root_path': self.admin_site.root_path,
             'inactive_nodes': ', '.join('#item%d' % i for i in inactive_nodes),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-            }, context_instance=template.RequestContext(request))
+            }
+
+        if settings.FEINCMS_SPLIT_PANE_TREE_AJAX:
+            context['object_list'] = self.model._tree_manager.root_nodes()
+        else:
+            context['object_list'] = self.model._tree_manager.all()
+            context['full_object_list'] = True
+
+
+        return render_to_response([
+            'admin/feincms/%s/%s/splitpane_editor_tree.html' % (opts.app_label, opts.object_name.lower()),
+            'admin/feincms/%s/splitpane_editor_tree.html' % opts.app_label,
+            'admin/feincms/splitpane_editor_tree.html',
+            ], context, context_instance=template.RequestContext(request))
+
+    def _subtree_view(self, request):
+        parent = self.model._default_manager.get(pk=request.GET.get('parent'))
+        return render_to_response('admin/feincms/splitpane_editor_tree_subtree.html', {
+                                  'object_list': parent.get_children(),
+                                   })
 
     def _blank_view(self, request):
         opts = self.model._meta
