@@ -28,6 +28,7 @@
 #container { min-width: 0px; }
 #content.colM { width: auto; }
 #user-tools { display: none; }
+{% if inactive_nodes %}{{ inactive_nodes }} { color: #888; }{% endif %}
 </style>
 <script type="text/javascript">
 function frame_goto(location) {

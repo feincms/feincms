@@ -30,10 +30,6 @@ class SplitPaneEditor(admin.ModelAdmin):
 
             return HttpResponse('Oops. AJAX request not understood.')
 
-            # Endpoints for tree structure changes and other things
-            # Not implemented yet (obviously :-)
-            return HttpResponse('hello world')
-
         if '_tree' in request.GET:
             # Left frame
             return self._tree_view(request)
@@ -50,10 +46,19 @@ class SplitPaneEditor(admin.ModelAdmin):
         return render_to_response('admin/feincms/splitpane_editor.html')
 
     def _tree_view(self, request):
+        # XXX the default manager isn't guaranteed to have a method
+        # named "active" at all...
+        try:
+            inactive_nodes = self.model._default_manager.exclude(
+                id__in=self.model._default_manager.active()).values_list('id', flat=True)
+        except AttributeError:
+            inactive_nodes = []
+
         return render_to_response('admin/feincms/splitpane_editor_tree.html', {
             'object_list': self.model._tree_manager.all(),
             'opts': self.model._meta,
             'root_path': self.admin_site.root_path,
+            'inactive_nodes': ', '.join('#item%d' % i for i in inactive_nodes),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             }, context_instance=template.RequestContext(request))
 
