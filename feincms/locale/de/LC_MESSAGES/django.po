@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-21 14:46+0200\n"
+"POT-Creation-Date: 2009-07-26 16:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,34 +16,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:133
+#: models.py:135
 msgid "template"
 msgstr "Template"
 
-#: models.py:278
+#: models.py:280
 msgid "ordering"
 msgstr "Sortierung"
 
-#: admin/item_editor.py:100 admin/item_editor.py:188
+#: admin/item_editor.py:94 admin/item_editor.py:182
 #, python-format
 msgid "Change %s"
 msgstr "%s ändern"
 
-#: admin/item_editor.py:160
+#: admin/item_editor.py:154
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was changed successfully."
 msgstr "%(name)s \"%(obj)s\" wurde erfolgreich geändert."
 
-#: admin/item_editor.py:162
+#: admin/item_editor.py:156
 msgid "You may edit it again below."
 msgstr "Das Element kann jetzt erneut bearbeitet werden."
 
-#: admin/item_editor.py:165
+#: admin/item_editor.py:159
 #, python-format
 msgid "You may add another %s below."
 msgstr "Es kann ein weiteres Element des Typs %s angelegt werden."
 
-#: admin/tree_editor.py:78
+#: admin/tree_editor.py:65
 msgid "Database error"
 msgstr "Datenbankfehler"
 
@@ -151,8 +151,8 @@ msgid "rich texts"
 msgstr "Texte"
 
 #: content/rss/models.py:12 module/blog/models.py:26
-#: module/medialibrary/models.py:19 module/page/models.py:116
-#: module/page/models.py:167
+#: module/medialibrary/models.py:19 module/page/models.py:117
+#: module/page/models.py:168
 msgid "title"
 msgstr "Titel"
 
@@ -225,16 +225,24 @@ msgstr ""
 msgid "Placeholder for the %(viewname)s calling %(viewfunc)s"
 msgstr "Platzhalter für %(viewname)s, welche %(viewfunc)s aufruft"
 
+#: infanta/models.py:30
+msgid "viewname"
+msgstr "Name"
+
 #: infanta/models.py:32
 #, python-format
 msgid "Placeholder for calling %(viewfunc)s"
 msgstr "Platzhalter um %(viewfunc)s aufzurufen"
 
+#: infanta/models.py:32
+msgid "viewfunc"
+msgstr "Funktion"
+
 #: module/blog/models.py:25
 msgid "published"
 msgstr "veröffentlicht"
 
-#: module/blog/models.py:27 module/page/models.py:117
+#: module/blog/models.py:27 module/page/models.py:118
 msgid "This is used for the generated navigation too."
 msgstr "Dies wird auch für die generierte Navigation verwendet."
 
@@ -291,7 +299,7 @@ msgid "Leave this empty for entries in the primary language (%s)."
 msgstr "Dieses Feld für Einträge in der Primärsprache (%s) leer lassen."
 
 #: module/blog/extensions/translations.py:37
-#: templates/admin/feincms/item_editor.html:137
+#: templates/admin/feincms/item_editor.html:86
 msgid "available translations"
 msgstr "Verfügbare Übersetzungen"
 
@@ -351,23 +359,23 @@ msgstr "Mediendatei-Übersetzung"
 msgid "media file translations"
 msgstr "Mediendatei-Übersetzungen"
 
-#: module/page/models.py:113
+#: module/page/models.py:114
 msgid "active"
 msgstr "Aktiv"
 
-#: module/page/models.py:118
+#: module/page/models.py:119
 msgid "slug"
 msgstr "Slug"
 
-#: module/page/models.py:120 module/page/models.py:324
+#: module/page/models.py:121 module/page/models.py:385
 msgid "in navigation"
 msgstr "Im Menü"
 
-#: module/page/models.py:121
+#: module/page/models.py:122
 msgid "override URL"
 msgstr "Überschriebene URL"
 
-#: module/page/models.py:122
+#: module/page/models.py:123
 msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL. This affects both the navigation and subpages' "
@@ -377,39 +385,39 @@ msgstr ""
 "eine lokale URL handelt. Dieses Feld bestimmt die Navigation und die URLs "
 "von Unterseiten."
 
-#: module/page/models.py:123
+#: module/page/models.py:124
 msgid "redirect to"
 msgstr "Weiterleiten zu"
 
-#: module/page/models.py:124
+#: module/page/models.py:125
 msgid "Target URL for automatic redirects."
 msgstr "Ziel-URL für automatische Weiterleitungen."
 
-#: module/page/models.py:125 module/page/models.py:322
+#: module/page/models.py:126 module/page/models.py:383
 msgid "Cached URL"
 msgstr "Zwischengespeicherte URL"
 
-#: module/page/models.py:133
+#: module/page/models.py:134
 msgid "page"
 msgstr "Seite"
 
-#: module/page/models.py:134
+#: module/page/models.py:135
 msgid "pages"
 msgstr "Seiten"
 
-#: module/page/models.py:279
+#: module/page/models.py:340
 msgid "Other options"
 msgstr "Weitere Optionen"
 
-#: module/page/models.py:307
+#: module/page/models.py:368
 msgid "inherited"
 msgstr "geerbt"
 
-#: module/page/models.py:309 module/page/models.py:312
+#: module/page/models.py:370 module/page/models.py:373
 msgid "not active"
 msgstr "inaktiv"
 
-#: module/page/models.py:316
+#: module/page/models.py:377
 msgid "is visible"
 msgstr "ist sichtbar"
 
@@ -511,7 +519,7 @@ msgid "Tree saved successfully."
 msgstr "Baum erfolgreich gespeichert"
 
 #: templates/admin/feincms/_messages.html:7
-#: templates/admin/feincms/item_editor.html:155
+#: templates/admin/feincms/item_editor.html:104
 msgid "Change template"
 msgstr "Template ändern"
 
@@ -526,8 +534,8 @@ msgid "Cannot make a node a child of itself."
 msgstr "Kann ein Element nicht unterhalb von sich selbst einfügen."
 
 #: templates/admin/feincms/fe_editor.html:51
-#: templates/admin/feincms/item_editor.html:121
-#: templates/admin/feincms/item_editor.html:212
+#: templates/admin/feincms/item_editor.html:70
+#: templates/admin/feincms/item_editor.html:161
 msgid "Save"
 msgstr "Sichern"
 
@@ -548,46 +556,50 @@ msgid "down"
 msgstr "runter"
 
 #: templates/admin/feincms/fe_tools.html:8
+#: templates/admin/feincms/splitpane_editor_tree.html:91
 msgid "remove"
 msgstr "entfernen"
 
-#: templates/admin/feincms/item_editor.html:95
+#: templates/admin/feincms/item_editor.html:44
+#: templates/admin/feincms/splitpane_editor_blank.html:7
 msgid "Home"
 msgstr "Startseite"
 
-#: templates/admin/feincms/item_editor.html:109
+#: templates/admin/feincms/item_editor.html:58
 msgid "Preview"
 msgstr "Vorschau"
 
-#: templates/admin/feincms/item_editor.html:112
+#: templates/admin/feincms/item_editor.html:61
 msgid "View on site"
 msgstr "Auf der Webseite anzeigen"
 
-#: templates/admin/feincms/item_editor.html:122
-#: templates/admin/feincms/item_editor.html:213
+#: templates/admin/feincms/item_editor.html:71
+#: templates/admin/feincms/item_editor.html:162
+#: templates/admin/feincms/splitpane_editor_tree.html:109
+#: templates/admin/feincms/splitpane_editor_tree.html:116
 #: templates/admin/feincms/tree_editor.html:52
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/admin/feincms/item_editor.html:124
-#: templates/admin/feincms/item_editor.html:215
+#: templates/admin/feincms/item_editor.html:73
+#: templates/admin/feincms/item_editor.html:164
 msgid "Save and add another"
 msgstr "Sichern und neu hinzufügen"
 
-#: templates/admin/feincms/item_editor.html:125
-#: templates/admin/feincms/item_editor.html:216
+#: templates/admin/feincms/item_editor.html:74
+#: templates/admin/feincms/item_editor.html:165
 msgid "Save and continue editing"
 msgstr "Sichern und weiter bearbeiten"
 
-#: templates/admin/feincms/item_editor.html:164
+#: templates/admin/feincms/item_editor.html:113
 msgid "Properties"
 msgstr "Eigenschaften"
 
-#: templates/admin/feincms/item_editor.html:178
+#: templates/admin/feincms/item_editor.html:127
 msgid "Region empty"
 msgstr "Region leer"
 
-#: templates/admin/feincms/item_editor.html:182
+#: templates/admin/feincms/item_editor.html:131
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
@@ -595,22 +607,57 @@ msgstr ""
 "Inhalt wird von der übergeordneten Seite geerbt. Füge Inhalt hinzu, um "
 "dieses Verhalten zu ändern"
 
-#: templates/admin/feincms/item_editor.html:190
+#: templates/admin/feincms/item_editor.html:139
 msgid "Add new item"
 msgstr "Neues Element hinzufügen"
 
-#: templates/admin/feincms/item_editor.html:198
+#: templates/admin/feincms/item_editor.html:147
 msgid "Move selected item to"
 msgstr "Element verschieben nach"
 
-#: templates/admin/feincms/item_editor.html:202
+#: templates/admin/feincms/item_editor.html:151
 msgid "OK"
 msgstr "OK"
 
+#: templates/admin/feincms/splitpane_editor_blank.html:23
+#: templates/admin/feincms/splitpane_editor_tree.html:105
 #: templates/admin/feincms/tree_editor.html:34
 #, python-format
 msgid "Add %(name)s"
 msgstr "%(name)s hinzufügen"
+
+#: templates/admin/feincms/splitpane_editor_blank.html:28
+msgid "Select an item on the left side if you want to edit it."
+msgstr "Wähle ein Element auf der linken Seite aus um es zu bearbeiten."
+
+#: templates/admin/feincms/splitpane_editor_blank.html:29
+msgid ""
+"You can change the structure of the tree by drag-dropping elements. Please "
+"note that changes will be saved immediately. "
+msgstr ""
+"Die Struktur des Baumes kann mit Drag-Drop verändert werden. Änderungen "
+"werden sofort gespeichert."
+
+#: templates/admin/feincms/splitpane_editor_blank.html:30
+msgid ""
+"The context menu on the tree root and tree nodes provide you with additional "
+"modes of operation."
+msgstr ""
+"Das Kontextmenü der Elemente des Baumes beinhaltet zusätzliche "
+"Bearbeitungsmöglichkeiten."
+
+#: templates/admin/feincms/splitpane_editor_tree.html:38
+msgid "Cannot remove this frame while inside this admin section."
+msgstr "Kann das Frame in diesem Bereich der Administration nicht entfernen."
+
+#: templates/admin/feincms/splitpane_editor_tree.html:106
+msgid "Reload"
+msgstr "Neu laden"
+
+#: templates/admin/feincms/splitpane_editor_tree.html:108
+#: templates/admin/feincms/splitpane_editor_tree.html:115
+msgid "Edit"
+msgstr "Bearbeiten"
 
 #: templates/admin/feincms/tree_editor.html:38
 msgid "Save tree"

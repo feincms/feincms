@@ -35,7 +35,7 @@ function frame_goto(location) {
 }
 function close_tree() {
     if(top.frames.frame_content.location.href.indexOf(top.location.href)!=-1) {
-        alert('Cannot remove this frame while inside this admin section.');
+        alert("{% trans "Cannot remove this frame while inside this admin section." %}");
         return false;
     }
     top.location.assign(top.frames.frame_content.location);
@@ -102,18 +102,18 @@ $(document).ready(function(){
 
 <div class="contextMenu" id="myMenu1">
     <ul>
-        <li id="add"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_add.png" /> Add {{ opts.verbose_name }}</li>
-        <li id="reload"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/arrow_refresh.png" /> Reload</li>
+        <li id="add"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_add.png" /> {% blocktrans with opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}</li>
+        <li id="reload"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/arrow_refresh.png" /> {% trans "Reload" %}</li>
         {% comment %}
-        <li id="edit"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_edit.png" /> Edit</li>
-        <li id="delete"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_delete.png" /> Delete</li>
+        <li id="edit"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_edit.png" /> {% trans "Edit" %}</li>
+        <li id="delete"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_delete.png" /> {% trans "Delete" %}</li>
         {% endcomment %}
     </ul>
 </div>
 <div class="contextMenu" id="myMenu2">
     <ul>
-        <li id="edit"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/page_edit.png" /> Edit</li>
-        <li id="delete"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/page_delete.png" /> Delete</li>
+        <li id="edit"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/page_edit.png" /> {% trans "Edit" %}</li>
+        <li id="delete"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/page_delete.png" /> {% trans "Delete" %}</li>
     </ul>
 </div>
 

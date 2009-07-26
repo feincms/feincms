@@ -26,7 +26,7 @@
       margin: '0px',
       backgroundColor: '#fff',
       border: '1px solid #999',
-      width: '100px'
+      width: '125px'
     },
     itemStyle: {
       margin: '0px',
