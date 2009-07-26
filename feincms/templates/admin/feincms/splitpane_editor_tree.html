@@ -28,13 +28,16 @@
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}jquery.simple.tree.css" />
 
 <script type="text/javascript">
+function frame_goto(location) {
+    top.frames.frame_content.location.assign(top.location.pathname+location);
+}
+
 var simpleTreeCollection;
 $(document).ready(function(){
     simpleTreeCollection = $('.simpleTree').simpleTree({
         autoclose: false,
         afterClick:function(node){
-            top.frames.frame_content.location.assign(top.location.pathname+node.attr('id').substr(4)+'/')
-            //alert("text-"+$('span:first',node).text());
+            frame_goto(node.attr('id').substr(4)+'/');
         },
         afterDblClick:function(node){
             //alert("text-"+$('span:first',node).text());
@@ -48,7 +51,6 @@ $(document).ready(function(){
             }, function(data) {
                 alert(data);
             });
-            //alert("destination-"+destination.attr('id')+" source-"+source.attr('id')+" pos-"+pos);
         },
         afterAjax:function()
         {
@@ -59,11 +61,16 @@ $(document).ready(function(){
         imagesBasePath: '{{ FEINCMS_ADMIN_MEDIA }}images/'
     });
 
-    $('.simpleTree .root span').contextMenu('myMenu1', {});
-    $('.simpleTree ul span').contextMenu('myMenu2', {
+    $('.simpleTree .root span').contextMenu('myMenu1', {
         bindings: {
-            'edit': function(trigger) { console.log('edit '+trigger); },
-            'delete': function(trigger) { console.log('delete '+trigger); }
+            'add': function(trigger) { frame_goto('add/'); },
+            'reload': function(trigger) { window.location.reload(); },
+        }
+    });
+    $('.simpleTree ul li span').contextMenu('myMenu2', {
+        bindings: {
+            'edit': function(trigger) { frame_goto(trigger.parentNode.id.substr(4)+'/'); },
+            'delete': function(trigger) { frame_goto(trigger.parentNode.id.substr(4)+'/delete/'); }
         }
     });
 });
@@ -88,10 +95,12 @@ $(document).ready(function(){
 
 <div class="contextMenu" id="myMenu1">
     <ul>
-        <li id="add"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_add.png" /> Add child</li>
+        <li id="add"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_add.png" /> Add {{ opts.verbose_name }}</li>
         <li id="reload"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/arrow_refresh.png" /> Reload</li>
+        {% comment %}
         <li id="edit"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_edit.png" /> Edit</li>
         <li id="delete"><img src="{{ FEINCMS_ADMIN_MEDIA }}images/folder_delete.png" /> Delete</li>
+        {% endcomment %}
     </ul>
 </div>
 <div class="contextMenu" id="myMenu2">
