@@ -89,19 +89,11 @@ $(document).ready(function(){
 
 {% block branding %}
     <div style="float:right;padding:3px 10px 0 0;cursor:pointer;" onclick="return close_tree()">{% trans "remove" %}</div>
-    <h1 id="site-name">{{ opts.verbose_name_plural|capfirst }}</h1>
+    <h1 id="site-name">&nbsp;</h1>
 {% endblock %}
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
-  <a href="../../" target="top">
-    {% trans "Home" %}
-  </a>
-   &rsaquo; 
-   <a href="../" target="top">
-     {{ opts.app_label|capfirst }}
-  </a>
-  &rsaquo; 
   {{ opts.verbose_name_plural|capfirst }}
 </div>
 {% endblock %}
