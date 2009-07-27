@@ -225,10 +225,17 @@ $(document).ready(function(){
 
     attach_dragdrop_handlers();
 
-    if(window.location.hash) {
-        $('#'+window.location.hash.substr(5)+'_tab').trigger('click');
+    var errors = $('#main .errors');
+
+    if(errors.length) {
+        var id = errors.parents('fieldset.module').attr('id');
+        $('#'+id.replace('_body', '_tab')).trigger('click');
     } else {
-        $('#main_wrapper>div.navi_tab:first-child').trigger('click');
+        if(window.location.hash) {
+            $('#'+window.location.hash.substr(5)+'_tab').trigger('click');
+        } else {
+            $('#main_wrapper>div.navi_tab:first-child').trigger('click');
+        }
     }
 
     // bring order to chaos
