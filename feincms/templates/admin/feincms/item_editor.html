@@ -76,7 +76,7 @@
 
 
 <fieldset class="module aligned">
-    {% for field in top_fieldset %}
+    {% for field in top_fields %}
     <div class="form-row{% if field.errors %} errors{% endif %}">
         {% ifequal field.name "language" %}
             {# Maybe this should be moved somewhere else, since this is specific for translated objects... #}
@@ -92,6 +92,7 @@
             {% endwith %}
         {% endifequal %}
 
+        {{ field.errors }}
         <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
         {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
     </div>
@@ -113,8 +114,9 @@
     <div class="navi_tab" id="settings_tab">{% trans "Properties" %}</div>
     <div id="main">
         <fieldset class="module aligned" id="settings_body">
-            {% for field in settings_fieldset %}
+            {% for field in settings_fields %}
             <div class="form-row{% if field.errors %} errors{% endif %}">
+                {{ field.errors }}
                 <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
                 {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
             </div>
@@ -178,6 +180,7 @@
                         {{ field }}
                     {% else %}
                         <div class="form-row{% if field.errors %} errors{% endif %}">
+                            {{ field.errors }}
                             <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
                             {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
                         </div>

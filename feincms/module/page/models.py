@@ -3,10 +3,12 @@
 # $Id$
 # ------------------------------------------------------------------------
 
+from django import forms
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, signals
+from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import condition
@@ -324,12 +326,62 @@ Page.register_request_processors(Page.require_path_active_request_processor,
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
 
+class PageAdminForm(forms.ModelForm):
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        current_id = None
+        active_pages = Page.objects.active()
+
+        if 'id' in self.initial:
+            current_id = self.initial['id']
+            active_pages = active_pages.exclude(id=current_id)
+
+        if not cleaned_data['active']:
+            # If the current item is inactive, we do not need to conduct
+            # further validation. Note that we only check for the flag, not
+            # for any other active filters. This is because we do not want
+            # to inspect the active filters to determine whether two pages
+            # really won't be active at the same time.
+            return cleaned_data
+
+        if cleaned_data['override_url']:
+            if active_pages.filter(_cached_url=cleaned_data['override_url']).count():
+                self._errors['override_url'] = ErrorList([_('This URL is already taken by an active page.')])
+                del cleaned_data['override_url']
+        elif current_id:
+            # We are editing an existing page
+            page = Page.objects.get(pk=current_id)
+            if page.parent:
+                new_url = '%s%s/' % (page.parent._cached_url, cleaned_data['slug'])
+            else:
+                new_url = '/%s/' % cleaned_data['slug']
+
+            if active_pages.filter(_cached_url=new_url).count():
+                self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
+                del cleaned_data['active']
+        else:
+            # The user tries to create a new page
+            if cleaned_data['parent']:
+                new_url = '%s%s/' % (cleaned_data['parent']._cached_url, cleaned_data['slug'])
+            else:
+                new_url = '/%s/' % cleaned_data['slug']
+
+            if active_pages.filter(_cached_url=new_url).count():
+                self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
+                del cleaned_data['active']
+
+        return cleaned_data
+
+
 if settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
     list_modeladmin = editor.SplitPaneEditor
 else:
     list_modeladmin = editor.TreeEditor
 
 class PageAdmin(editor.ItemEditor, list_modeladmin):
+    form = PageAdminForm
+
     # the fieldsets config here is used for the add_view, it has no effect
     # for the change_view which is completely customized anyway
     fieldsets = (

@@ -112,13 +112,9 @@ class ItemEditor(admin.ModelAdmin):
         if res:
             return self._frontend_editing_view(request, res.group(1), res.group(2), res.group(3))
 
-        # The ModelForm class is used to actually store the data, the SettingsForm is used
-        # strictly for presentation.
         ModelForm = modelform_factory(self.model, exclude=('parent',),
-            formfield_callback=self._formfield_callback(request=request))
-        SettingsForm = modelform_factory(self.model,
-            exclude=self.show_on_top + ('template_key', 'parent'),
-            formfield_callback=self._formfield_callback(request=request))
+            formfield_callback=self._formfield_callback(request=request),
+            form=self.form)
 
         # generate a formset type for every concrete content type
         inline_formset_types = [(
@@ -161,16 +157,11 @@ class ItemEditor(admin.ModelAdmin):
                 else:
                     self.message_user(request, msg)
                     return HttpResponseRedirect("../")
-
-            settings_fieldset = SettingsForm(request.POST, instance=obj)
-            settings_fieldset.is_valid()
         else:
             model_form = ModelForm(instance=obj)
             inline_formsets = [
                 formset_class(instance=obj, prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types]
-
-            settings_fieldset = SettingsForm(instance=obj)
 
         # Prepare mapping of content types to their prettified names
         content_types = []
@@ -185,8 +176,8 @@ class ItemEditor(admin.ModelAdmin):
             'object_form': model_form,
             'inline_formsets': inline_formsets,
             'content_types': content_types,
-            'settings_fieldset': settings_fieldset,
-            'top_fieldset': [model_form[field] for field in self.show_on_top],
+            'top_fields': [model_form[field] for field in self.show_on_top],
+            'settings_fields': [field for field in model_form if field.name not in self.show_on_top],
             'media': self.media + model_form.media,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
