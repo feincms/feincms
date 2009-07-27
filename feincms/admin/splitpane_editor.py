@@ -15,6 +15,12 @@ from feincms import settings
 
 
 class SplitPaneEditor(admin.ModelAdmin):
+
+    # This can be replaced dynamically with another condition if the need
+    # should arise. Using AJAX if the tree node count exceeds 25 tries to
+    # be a sane default only, nothing more.
+    delayed_tree_loading = lambda self: self.model._tree_manager.count() > 25
+
     def changelist_view(self, request, extra_context=None):
         if 'mptt' not in django_settings.INSTALLED_APPS:
             # mptt_tags is needed to build the nested tree for the tree view
@@ -63,9 +69,7 @@ class SplitPaneEditor(admin.ModelAdmin):
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             }
 
-        # XXX Maybe replace the condition with the next line?
-        # if self.model._tree_manager.count() >= 25:
-        if settings.FEINCMS_SPLIT_PANE_TREE_AJAX:
+        if self.delayed_tree_loading():
             context['object_list'] = self.model._tree_manager.root_nodes()
         else:
             context['object_list'] = self.model._tree_manager.all()
