@@ -690,3 +690,12 @@ msgstr "Senden"
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
 msgstr "Danke!"
+
+msgid "This URL is already taken by another active page."
+msgstr "Die URL wird schon von einer anderen aktiven Seite verwendet."
+
+msgid "Please correct the error below."
+msgstr "Bitte den aufgeführten Fehler korrigieren."
+
+msgid "Please correct the errors below."
+msgstr "Bitte die aufgeführten Fehler korrigieren."
