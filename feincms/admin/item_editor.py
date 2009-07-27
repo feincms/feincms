@@ -2,6 +2,7 @@ import re
 
 from django import forms, template
 from django.contrib import admin
+from django.contrib.admin import helpers
 from django.contrib.admin.util import unquote
 from django.db import models
 from django.db.models import loading
@@ -179,6 +180,7 @@ class ItemEditor(admin.ModelAdmin):
             'top_fields': [model_form[field] for field in self.show_on_top],
             'settings_fields': [field for field in model_form if field.name not in self.show_on_top],
             'media': self.media + model_form.media,
+            'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
         }
