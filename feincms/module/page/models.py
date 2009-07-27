@@ -349,27 +349,24 @@ class PageAdminForm(forms.ModelForm):
             if active_pages.filter(_cached_url=cleaned_data['override_url']).count():
                 self._errors['override_url'] = ErrorList([_('This URL is already taken by an active page.')])
                 del cleaned_data['override_url']
-        elif current_id:
-            # We are editing an existing page
-            page = Page.objects.get(pk=current_id)
-            if page.parent:
-                new_url = '%s%s/' % (page.parent._cached_url, cleaned_data['slug'])
-            else:
-                new_url = '/%s/' % cleaned_data['slug']
 
-            if active_pages.filter(_cached_url=new_url).count():
-                self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
-                del cleaned_data['active']
+            return cleaned_data
+
+        if current_id:
+            # We are editing an existing page
+            parent = Page.objects.get(pk=current_id).parent
         else:
             # The user tries to create a new page
-            if cleaned_data['parent']:
-                new_url = '%s%s/' % (cleaned_data['parent']._cached_url, cleaned_data['slug'])
-            else:
-                new_url = '/%s/' % cleaned_data['slug']
+            parent = cleaned_data['parent']
 
-            if active_pages.filter(_cached_url=new_url).count():
-                self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
-                del cleaned_data['active']
+        if parent:
+            new_url = '%s%s/' % (parent._cached_url, cleaned_data['slug'])
+        else:
+            new_url = '/%s/' % cleaned_data['slug']
+
+        if active_pages.filter(_cached_url=new_url).count():
+            self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
+            del cleaned_data['active']
 
         return cleaned_data
 
