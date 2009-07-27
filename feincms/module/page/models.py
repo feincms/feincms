@@ -324,7 +324,7 @@ Page.register_request_processors(Page.require_path_active_request_processor,
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
 
-if settings._FEINCMS_PAGE_USE_SPLIT_EDITOR:
+if settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
     list_modeladmin = editor.SplitPaneEditor
 else:
     list_modeladmin = editor.TreeEditor

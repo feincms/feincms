@@ -63,12 +63,13 @@ class SplitPaneEditor(admin.ModelAdmin):
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             }
 
+        # XXX Maybe replace the condition with the next line?
+        # if self.model._tree_manager.count() >= 25:
         if settings.FEINCMS_SPLIT_PANE_TREE_AJAX:
             context['object_list'] = self.model._tree_manager.root_nodes()
         else:
             context['object_list'] = self.model._tree_manager.all()
             context['full_object_list'] = True
-
 
         return render_to_response([
             'admin/feincms/%s/%s/splitpane_editor_tree.html' % (opts.app_label, opts.object_name.lower()),

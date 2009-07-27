@@ -40,9 +40,8 @@ INFANTA_EXCLUDE_URLS = getattr(settings, 'INFANTA_EXCLUDE_URLS', ['/admin/', '/m
 # ------------------------------------------------------------------------
 # Settings for the page module
 
-# Please note that this setting might be replaced by a more general one
-# in the (near) future or might disappear completely!
-_FEINCMS_PAGE_USE_SPLIT_EDITOR = getattr(settings, '_FEINCMS_PAGE_USE_SPLIT_EDITOR', False)
+# Use SplitPaneEditor instead of TreeEditor in the page administration
+FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = getattr(settings, 'FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR', False)
 
 # Load subtrees with AJAX calls in split pane editor tree view
 FEINCMS_SPLIT_PANE_TREE_AJAX = getattr(settings, 'FEINCMS_SPLIT_PANE_TREE_AJAX', False)
