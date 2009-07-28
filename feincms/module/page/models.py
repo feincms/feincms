@@ -8,6 +8,7 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, signals
+from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
 from django.utils.safestring import mark_safe
@@ -32,6 +33,10 @@ class PageManager(models.Manager):
     active_filters = [
         Q(active=True),
         ]
+
+    # The fields which should be excluded when creating a copy. The mptt fields are
+    # excluded automatically by other mechanisms
+    exclude_from_copy = ['id']
 
     @classmethod
     def apply_active_filters(cls, queryset):
@@ -111,6 +116,42 @@ class PageManager(models.Manager):
             return request._feincms_page
 
         return self.for_request(request)
+
+    def create_copy(self, page):
+        """
+        Creates an identical copy of a page except that the new one is
+        inactive.
+        """
+
+        data = model_to_dict(page)
+        print data
+
+        for field in self.exclude_from_copy:
+            del data[field]
+        data['active'] = False
+        new = Page.objects.create(**data)
+        new.copy_content_from(page)
+
+        return new
+
+    def replace(self, page, with_page):
+        page.active = False
+        page.save()
+        with_page.active = True
+        with_page.save()
+
+        for child in page.children.all():
+            child.parent = Page.objects.get(pk=with_page.pk)
+            child.save()
+
+        # reload to ensure that the mptt attributes in the DB
+        # and in our objects are equal
+        page = Page.objects.get(pk=page.pk)
+        with_page = Page.objects.get(pk=with_page.pk)
+        with_page.move_to(page, 'right')
+
+        return Page.objects.get(pk=with_page.pk)
+
 
 # ------------------------------------------------------------------------
 class Page(Base):
