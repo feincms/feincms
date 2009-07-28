@@ -126,7 +126,6 @@ class ItemEditor(admin.ModelAdmin):
             ) for content_type in self.model._feincms_content_types]
 
         opts = self.model._meta
-        app_label = opts.app_label
         try:
             obj = self.model._default_manager.get(pk=unquote(object_id))
         except self.model.DoesNotExist:
@@ -193,9 +192,13 @@ class ItemEditor(admin.ModelAdmin):
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
         })
 
+        return self.render_item_editor(request, obj, context)
+
+    def render_item_editor(self, request, object, context):
+        opts = self.model._meta
         return render_to_response([
-            'admin/feincms/%s/%s/item_editor.html' % (app_label, opts.object_name.lower()),
-            'admin/feincms/%s/item_editor.html' % app_label,
+            'admin/feincms/%s/%s/item_editor.html' % (opts.app_label, opts.object_name.lower()),
+            'admin/feincms/%s/item_editor.html' % opts.app_label,
             'admin/feincms/item_editor.html',
             ], context, context_instance=template.RequestContext(request,
                 processors=self.model.feincms_item_editor_context_processors))
