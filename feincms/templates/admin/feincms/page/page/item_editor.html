@@ -1,0 +1,19 @@
+{% extends "admin/feincms/item_editor.html" %}
+
+{% load i18n %}
+
+{% block object-tools %}
+<ul class="object-tools">
+    <li><a href="?edit_copy=1">{% trans "Edit a copy" %}</a></li>
+    {% if to_replace %}
+        <li><a href="?replace={{ to_replace.id }}">{% blocktrans %}Replace page {{ to_replace }}{% endblocktrans %}</a></li>
+    {% endif %}
+
+    {% if object.get_preview_url %}
+        <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
+    {% endif %}
+    {% if object.get_absolute_url %}
+        <li><a target="_blank" href="{{ object.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
+    {% endif %}
+</ul>
+{% endblock %}
