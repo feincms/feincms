@@ -2,8 +2,9 @@
 The FeinCMS admin interface
 ===========================
 
-FeinCMS provides two ModelAdmin classes, `ItemEditor` and `TreeEditor`. Their
-purpose and their customization hooks are briefly discussed here.
+FeinCMS provides three ModelAdmin classes, `ItemEditor`, `TreeEditor` and
+`SplitPaneEditor`. Their purpose and their customization hooks are briefly
+discussed here.
 
 
 The tree editor
@@ -103,6 +104,22 @@ settings on the content type model itself:
   performed not only on page load, but also after drag-dropping a content block
   and after adding new content blocks. Take a look at the `mediafile` and
   `richtext` item editor include files to understand how this should be done.
+
+
+
+The split pane editor
+=====================
+
+The split pane editor replaces the change list with two frames, a draggable
+and collapsible tree on the left and arbitrary information on the right.
+The interface is somewhat inspired by other popular tools such as Typo3 or
+PHPMyAdmin, which offer a framed interface for editing content too.
+
+The split pane editor does not modify the content on the right hand side in
+any way -- it does not care whether you have standard django administration
+forms, an item editor or even preview functionality in the right hand side.
+
+Currently the split pane editor does not offer any customization hooks.
 
 
 
