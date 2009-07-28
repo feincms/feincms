@@ -331,7 +331,9 @@ class PageAdminForm(forms.ModelForm):
         cleaned_data = self.cleaned_data
 
         current_id = None
-        active_pages = Page.objects.active()
+        # See the comment below on why we do not use Page.objects.active(),
+        # at least for now.
+        active_pages = Page.objects.filter(active=True)
 
         if 'id' in self.initial:
             current_id = self.initial['id']
