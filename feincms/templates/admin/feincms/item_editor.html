@@ -28,6 +28,10 @@
         {% for name, value in content_types %}'{{ value }}': '{{ name|capfirst }}'{% if not forloop.last %},{% endif %}
         {% endfor %}};
     var contentblock_init_handlers = [];
+
+    var template_regions = {
+            {% for template in available_templates.values %}'{{ template.key }}': [{% for region in template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
+            {% endfor %}};
 </script>
 
 {% for inc in object.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
@@ -103,16 +107,6 @@
         {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
     </div>
     {% endfor %}
-
-    {% if object_form.template_key %}
-    <div class="form-row{% if field.errors %} errors{% endif %}">
-        {{ object_form.template_key.label_tag }}
-        <span>{{ object_form.template_key }}{{ object_form.template_key.errors }}</span>
-        <div class="change-template-button">
-            <input type="button" class="change-template" value="{% trans 'Change template' %}" />
-        </div>
-    </div>
-    {% endif %}
 </fieldset>
 
 <div id="main_wrapper">

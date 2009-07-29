@@ -170,7 +170,15 @@ class ItemEditor(admin.ModelAdmin):
             content_name = content_type._meta.verbose_name
             content_types.append((content_name, content_type.__name__.lower()))
 
-        context = {
+        context = {}
+
+        if hasattr(self.model, '_feincms_templates'):
+            if 'template_key' not in self.show_on_top:
+                self.show_on_top = ['template_key'] + list(self.show_on_top)
+
+            context['available_templates'] = self.model._feincms_templates
+
+        context.update({
             'title': _('Change %s') % force_unicode(opts.verbose_name),
             'opts': opts,
             'object': obj,
@@ -183,7 +191,7 @@ class ItemEditor(admin.ModelAdmin):
             'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
-        }
+        })
 
         return render_to_response([
             'admin/feincms/%s/%s/item_editor.html' % (app_label, opts.object_name.lower()),
