@@ -50,7 +50,7 @@ class Template(object):
     CMS object, most commonly a page.
     """
 
-    def __init__(self, title, path, regions, key=None):
+    def __init__(self, title, path, regions, key=None, preview_image=None):
         # The key is what will be stored in the database. If key is undefined
         # use the template path as fallback.
         if not key:
@@ -59,6 +59,7 @@ class Template(object):
         self.key = key
         self.title = title
         self.path = path
+        self.preview_image = preview_image
 
         def _make_region(data):
             if isinstance(data, Region):

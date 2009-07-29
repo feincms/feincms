@@ -108,7 +108,9 @@
     <div class="form-row{% if field.errors %} errors{% endif %}">
         {{ object_form.template_key.label_tag }}
         <span>{{ object_form.template_key }}{{ object_form.template_key.errors }}</span>
-        <input type="button" class="change-template" value="{% trans 'Change template' %}" />
+        <div class="change-template-button">
+            <input type="button" class="change-template" value="{% trans 'Change template' %}" />
+        </div>
     </div>
     {% endif %}
 </fieldset>

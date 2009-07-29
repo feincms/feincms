@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models import Q, signals
 from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import condition
 
@@ -327,6 +328,20 @@ signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
 
 class PageAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PageAdminForm, self).__init__(*args, **kwargs)
+        if 'instance' in kwargs:
+            choices = []
+            for key, template in kwargs['instance']._feincms_templates.items():
+                if template.preview_image:
+                    choices.append((template.key,
+                                    mark_safe(u'<img src="%s" alt="%s" /> %s' % (
+                                              template.preview_image, template.key, template.title))))
+                else:
+                    choices.append((template.key, template.title))
+
+            self.fields['template_key'].choices = choices
+
     def clean(self):
         cleaned_data = self.cleaned_data
 
@@ -404,6 +419,8 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     raw_id_fields = []
 
     show_on_top = ('title', 'active')
+
+    radio_fields = {'template_key': admin.HORIZONTAL}
 
     def changelist_view(self, *args, **kwargs):
         # get a list of all visible pages for use by is_visible_admin

@@ -276,3 +276,7 @@ tr td.nohighlight {background-color: #fff;}
 	background: url(img/item_editor_form_title.png) no-repeat left bottom;
 }
 
+.change-template-button {
+	margin-left: 7em;
+	padding-left: 30px;
+}
