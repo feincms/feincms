@@ -607,7 +607,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     # ---------------------------------------------------------------------
     def change_view(self, request, object_id, extra_context=None):
         from django.shortcuts import get_object_or_404
-        if 'edit_copy' in request.GET:
+        if 'create_copy' in request.GET:
             page = get_object_or_404(Page, pk=object_id)
             new = Page.objects.create_copy(page)
             self.message_user(request, ugettext("You may edit the copied page below."))
