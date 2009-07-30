@@ -192,6 +192,14 @@ class Page(Base):
     def __unicode__(self):
         return mark_safe('&nbsp;&nbsp;' * self.level + self.short_title())
 
+    def is_active(self):
+        """
+        Check whether this page and all its ancestors are active
+        """
+
+        pages = Page.objects.active().filter(tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght)
+        return pages.count() > self.level
+
     def are_ancestors_active(self):
         """
         Check whether all ancestors of this page are active

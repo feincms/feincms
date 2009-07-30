@@ -9,11 +9,12 @@
         <li><a href="?replace={{ to_replace.id }}">{% blocktrans %}Replace page {{ to_replace }}{% endblocktrans %}</a></li>
     {% endif %}
 
-    {% if object.get_preview_url %}
-        <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
-    {% endif %}
-    {% if object.get_absolute_url %}
+    {% if object.is_active %}
         <li><a target="_blank" href="{{ object.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
+    {% else %}
+        {% if object.get_preview_url %}
+            <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
+        {% endif %}
     {% endif %}
 </ul>
 {% endblock %}
