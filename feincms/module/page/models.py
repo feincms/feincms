@@ -429,10 +429,16 @@ class PageAdminForm(forms.ModelForm):
         return cleaned_data
 
 
-if settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
-    list_modeladmin = editor.SplitPaneEditor
+class Null(object):
+    pass
+
+if settings._FEINCMS_ALTERNATIVE_PAGE_ADMIN:
+    list_modeladmin = Null
 else:
-    list_modeladmin = editor.TreeEditor
+    if settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
+        list_modeladmin = editor.SplitPaneEditor
+    else:
+        list_modeladmin = editor.TreeEditor
 
 class PageAdmin(editor.ItemEditor, list_modeladmin):
     form = PageAdminForm
@@ -449,13 +455,14 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             'fields': ('override_url',),
         }),
         )
-    list_display = ['short_title', 'cached_url_admin', 'is_visible_admin',
+    list_display = ['short_title_admin', 'is_visible_admin',
         'in_navigation_toggle', 'template']
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
     prepopulated_fields = {
         'slug': ('title',),
         }
+
     raw_id_fields = []
 
     show_on_top = ('title', 'active')
@@ -467,6 +474,14 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         self._visible_pages = list(Page.objects.active().values_list('id', flat=True))
 
         return super(PageAdmin, self).changelist_view(*args, **kwargs)
+
+    def short_title_admin(self, page):
+        prefix = u''
+        if page.level > 0:
+            prefix = u' ↳ '
+        if page.level > 1:
+            prefix = u'   ' * (page.level-1) + prefix
+        return prefix + page.short_title() + ' (%d,%d,%d)' % ( page.tree_id, page.lft, page.rght)
 
     def is_visible_admin(self, page):
         if page.parent_id and not page.parent_id in self._visible_pages:
@@ -492,4 +507,20 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
+# ---------------
+# XXX -- Hack alert!
+# By default, django only orders by first ordering field in admin. We patch
+# up the ChangeList here so it returns "use default ordering" for any Page
+# lookups. That way, we can order by tree_id + lft and get the site's natural
+# page structure.
 
+if settings._FEINCMS_ALTERNATIVE_PAGE_ADMIN:
+    from django.contrib.admin.views.main import ChangeList
+
+    __cl_get_ordering = ChangeList.get_ordering
+    def __get_ordering(cl):
+        if cl.model == Page:
+            return '', ''
+        return __cl_get_ordering(cl)
+
+    ChangeList.get_ordering = __get_ordering
