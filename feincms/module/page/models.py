@@ -452,8 +452,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     list_display = ['short_title', 'cached_url_admin', 'is_visible_admin',
         'in_navigation_toggle', 'template']
     list_filter = ('active', 'in_navigation', 'template_key')
-    search_fields = ('title', 'slug', '_content_title', '_page_title',
-        'meta_keywords', 'meta_description')
+    search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
     prepopulated_fields = {
         'slug': ('title',),
         }
