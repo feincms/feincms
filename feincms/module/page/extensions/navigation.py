@@ -42,7 +42,7 @@ class NavigationExtension(object):
         raise NotImplementedError
 
 
-def _extended_navigation(self):
+def _extended_navigation(self, **kwargs):
     if not self.navigation_extension:
         return self.children.in_navigation()
 
@@ -50,7 +50,7 @@ def _extended_navigation(self):
     if not cls or not callable(cls):
         return self.children.in_navigation()
 
-    return cls().children(self)
+    return cls().children(self, **kwargs)
 
 
 def register(cls, admin_cls):

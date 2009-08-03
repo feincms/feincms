@@ -48,6 +48,7 @@ class SimpleNodeWithVarAndArgs(template.Node):
         self.args = args
 
     def render(self, context):
+        self.render_context = context
         try:
             instance = self.in_var.resolve(context)
         except template.VariableDoesNotExist:
@@ -72,6 +73,7 @@ class SimpleNodeWithVar(template.Node):
         self.in_var = template.Variable(in_var_name)
 
     def render(self, context):
+        self.render_context = context
         try:
             instance = self.in_var.resolve(context)
         except template.VariableDoesNotExist:
@@ -96,6 +98,7 @@ class SimpleAssignmentNode(template.Node):
         self.var_name = var_name
 
     def render(self, context):
+        self.render_context = context
         context[self.var_name] = self.what()
         return ''
 
@@ -117,6 +120,7 @@ class SimpleAssignmentNodeWithVar(template.Node):
         self.var_name = var_name
 
     def render(self, context):
+        self.render_context = context
         try:
             instance = self.in_var.resolve(context)
         except template.VariableDoesNotExist:
@@ -149,6 +153,7 @@ class SimpleAssignmentNodeWithVarAndArgs(template.Node):
         self.args = args
 
     def render(self, context):
+        self.render_context = context
         try:
             instance = self.in_var.resolve(context)
         except template.VariableDoesNotExist:
