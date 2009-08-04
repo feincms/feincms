@@ -153,3 +153,9 @@ def is_parent_of(page1, page2):
     """
 
     return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
+
+
+@register.filter
+def is_equal_or_parent_of(page1, page2):
+    return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
+
