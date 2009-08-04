@@ -4,6 +4,8 @@ the page's language is activated.
 Pages in secondary languages can be said to be a translation of a page in the
 primary language (the first language in settings.LANGUAGES), thereby enabling
 deeplinks between translated pages...
+
+This extension requires an activated LocaleMiddleware or something equivalent.
 """
 
 from django.conf import settings
