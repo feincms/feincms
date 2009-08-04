@@ -8,6 +8,7 @@ deeplinks between translated pages...
 
 from django.conf import settings
 from django.db import models
+from django.http import HttpResponseRedirect
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,8 +32,17 @@ def register(cls, admin_cls):
         translation.activate(page.language)
         request.LANGUAGE_CODE = translation.get_language()
 
-        if hasattr(request, 'session') and request.LANGUAGE_CODE != request.session.get('django_language'):
-            request.session['django_language'] = request.LANGUAGE_CODE
+        if hasattr(request, 'session') and page.language != request.session.get('django_language'):
+            request.session['django_language'] = page.language
+        elif request.method == 'GET':
+            # No session is active. We need to set a cookie for the language
+            # so that it persists when the user changes his location to somewhere
+            # not under the control of the CMS.
+            # Only do this when request method is GET (mainly, do not abort
+            # POST requests)
+            response = HttpResponseRedirect(request.get_full_path())
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, page.language)
+            return response
 
     cls.register_request_processors(translations_request_processor)
 
