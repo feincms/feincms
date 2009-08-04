@@ -25,6 +25,9 @@ def register(cls, admin_cls):
             _(settings.LANGUAGES[0][1])))
 
     def translations_request_processor(page, request):
+        if page.language == translation.get_language():
+            return
+
         translation.activate(page.language)
         request.LANGUAGE_CODE = translation.get_language()
 
