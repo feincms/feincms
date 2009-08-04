@@ -248,6 +248,9 @@ class Page(Base):
         except:
             return None
 
+    def get_navigation_url(self):
+        return self.redirect_to or self._cached_url
+
     def etag(self, request):
         """
         Generate an etag for this page.
