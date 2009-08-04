@@ -53,8 +53,8 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
 
         # special case for the navigation extension
         if getattr(instance, 'navigation_extension', None):
-            # XXX what should be done with the depth parameter here?
-            return instance.extended_navigation()
+            return instance.extended_navigation(depth=depth,
+                                                request=self.render_context.get('request', None))
         else:
             if depth == 1:
                 return instance.children.in_navigation()

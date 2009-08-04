@@ -4,10 +4,13 @@ the page's language is activated.
 Pages in secondary languages can be said to be a translation of a page in the
 primary language (the first language in settings.LANGUAGES), thereby enabling
 deeplinks between translated pages...
+
+This extension requires an activated LocaleMiddleware or something equivalent.
 """
 
 from django.conf import settings
 from django.db import models
+from django.http import HttpResponseRedirect
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
@@ -25,11 +28,23 @@ def register(cls, admin_cls):
             _(settings.LANGUAGES[0][1])))
 
     def translations_request_processor(page, request):
+        if page.language == translation.get_language():
+            return
+
         translation.activate(page.language)
         request.LANGUAGE_CODE = translation.get_language()
 
-        if hasattr(request, 'session') and request.LANGUAGE_CODE != request.session.get('django_language'):
-            request.session['django_language'] = request.LANGUAGE_CODE
+        if hasattr(request, 'session') and page.language != request.session.get('django_language'):
+            request.session['django_language'] = page.language
+        elif request.method == 'GET':
+            # No session is active. We need to set a cookie for the language
+            # so that it persists when the user changes his location to somewhere
+            # not under the control of the CMS.
+            # Only do this when request method is GET (mainly, do not abort
+            # POST requests)
+            response = HttpResponseRedirect(request.get_full_path())
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, page.language)
+            return response
 
     cls.register_request_processors(translations_request_processor)
 

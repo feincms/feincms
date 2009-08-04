@@ -30,12 +30,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
 
 
 def short_language_code(code=None):
     """
     Extract the short language code from its argument (or return the default language code).
-    
+
     from django.conf import settings
     >>> short_language_code('de')
     'de'
@@ -135,7 +136,7 @@ def Translation(model):
 
     class Inner(models.Model):
         parent = models.ForeignKey(model, related_name='translations')
-        language_code = models.CharField(max_length=10, choices=settings.LANGUAGES)
+        language_code = models.CharField(_('language'), max_length=10, choices=settings.LANGUAGES)
 
         class Meta:
             abstract = True
