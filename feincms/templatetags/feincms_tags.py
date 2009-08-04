@@ -36,7 +36,7 @@ def feincms_render_content(content, request):
 
 
 @register.simple_tag
-def feincms_prefill_entry_list(entry_list, attrs, region=None):
+def feincms_prefill_entry_list(queryset, attrs, region=None):
     """
     {% feincms_prefill_entry_list queryset "authors,richtextcontent_set" [region] %}
     """
