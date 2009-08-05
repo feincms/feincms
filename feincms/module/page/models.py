@@ -5,12 +5,16 @@
 
 from django import forms
 from django.contrib import admin
+from django.contrib.admin.util import unquote
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, signals
+from django.db.models.signals import post_save
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import condition
@@ -362,15 +366,18 @@ class Page(Base):
             fn(cls, PageAdmin)
             cls._feincms_extensions.add(ext)
 
+# ------------------------------------------------------------------------
 mptt.register(Page)
 
+# Our default request processors
 Page.register_request_processors(Page.require_path_active_request_processor,
                                  Page.frontendediting_request_processor,
                                  Page.redirect_request_processor)
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
-
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 class PageAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PageAdminForm, self).__init__(*args, **kwargs)
@@ -431,7 +438,7 @@ class PageAdminForm(forms.ModelForm):
 
         return cleaned_data
 
-
+# ------------------------------------------------------------------------
 class Null(object):
     pass
 
@@ -443,7 +450,75 @@ else:
     else:
         list_modeladmin = editor.TreeEditor
 
+# ------------------------------------------------------------------------
+def ajax_editable_boolean_cell(item, attr, text='', override=None):
+    if text:
+        text = '&nbsp;(%s)' % unicode(text)
+
+    if override is not None:
+        a = [ django_boolean_icon(override, text), text ]
+    else:
+        value = getattr(item, attr)
+        a = [ 
+              '<input type="checkbox" id="%s_%d"' % (attr, item.id),
+              value and ' checked="checked"' or '',
+              ' onclick="return toggle_boolean(this, \'%s\')";' % attr,
+              ' />',
+              text,
+            ]
+    
+    a.insert(0, '<div id="wrap_%s_%d">' % ( attr, item.id ))
+    a.append('</div>')
+    #print a
+    return unicode(''.join(a))
+
+#django_boolean_icon(False), _('inherited'))
+#    return '<a class="attr_%s" href="#" onclick="return toggle_boolean(this, \'%s\')">%s</a>' % (
+#        attr, attr, django_boolean_icon(getattr(item, attr), 'toggle %s' % attr))
+
+# ------------------------------------------------------------------------
+def ajax_editable_boolean(attr, short_description):
+    """
+    Convenience function: Assign the return value of this method to a variable
+    of your ModelAdmin class and put the variable name into list_display.
+
+    Example:
+        class MyTreeEditor(TreeEditor):
+            list_display = ('__unicode__', 'active_toggle')
+
+            active_toggle = ajax_editable_boolean('active', _('is active'))
+    """
+    def _fn(self, item):
+        return ajax_editable_boolean_cell(item, attr)
+    _fn.allow_tags = True
+    _fn.short_description = short_description
+    _fn.editable_boolean_field = attr
+    return _fn
+
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 class PageAdmin(editor.ItemEditor, list_modeladmin):
+
+    class Media:
+        css = { 'all' : (settings.FEINCMS_ADMIN_MEDIA + 'ui/jqueryui-custom-1.7.2.css', ) }
+
+        js = []
+        if settings.FEINCMS_ADMIN_MEDIA_HOTLINKING:
+            js.extend((
+                "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js",
+#                "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"
+                ))
+        else:
+            js.extend((
+                settings.FEINCMS_ADMIN_MEDIA + "jquery-1.3.2.min.js",
+#                settings.FEINCMS_ADMIN_MEDIA + "ui/jqueryui-custom-1.7.2.min.js"
+                ))
+                
+        js.extend((
+            settings.FEINCMS_ADMIN_MEDIA + "jquery.json-1.3.js",
+            ))
+
+
     form = PageAdminForm
 
     # the fieldsets config here is used for the add_view, it has no effect
@@ -465,9 +540,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
-    prepopulated_fields = {
-        'slug': ('title',),
-        }
+    prepopulated_fields = { 'slug': ('title',), }
 
     raw_id_fields = []
 
@@ -475,13 +548,13 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     radio_fields = {'template_key': admin.HORIZONTAL}
 
-    def changelist_view(self, *args, **kwargs):
-        # get a list of all visible pages for use by is_visible_admin
-        self._visible_pages = list(Page.objects.active().values_list('id', flat=True))
-
-        return super(PageAdmin, self).changelist_view(*args, **kwargs)
+    #
 
     def short_title_admin(self, page):
+        """
+        Generate a short title for a page, indent it depending on
+        the page's depth in the hierarchy.
+        """
         prefix = u''
         if page.level > 0:
             prefix = u' ↳ '
@@ -489,22 +562,45 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             prefix = u'   ' * (page.level-1) + prefix
         return prefix + page.short_title()
     short_title_admin.short_description = _('title')
+
     
     def is_visible_admin(self, page):
+        """
+        Instead of just showing an on/off boolean, also indicate whether this
+        page is not visible because of publishing dates or inherited status.
+        """
+        if not page.active:
+            return ajax_editable_boolean_cell(page, 'active', _('not active'))
+            
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
                 self._visible_pages.remove(page.id)
-                return u'%s (%s)' % (django_boolean_icon(False), _('inherited'))
-
-            return u'%s (%s)' % (django_boolean_icon(False), _('not active'))
+                return ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
+            # Fallthru: page is not in self._visible_pages, no need to repeat ourselves
+            # return u'%s (%s)' % (django_boolean_icon(False), _('not active by date'))
 
         if not page.id in self._visible_pages:
-            return u'%s (%s)' % (django_boolean_icon(False), _('not active'))
+            return ajax_editable_boolean_cell(page, 'active', override=False, text=_('by date'))
 
-        return django_boolean_icon(True)
+        return ajax_editable_boolean_cell(page, 'active')
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is visible')
+    is_visible_admin.editable_boolean_field = 'active'
+
+    # active toggle needs more sophisticated result function
+    def is_visible_recursive(self, page):
+        retval = []
+        for c in page.get_descendants(include_self=True):
+            retval.append(self.is_visible_admin(c))
+
+        return map(lambda page: self.is_visible_admin(page), page.get_descendants(include_self=True))
+
+    boolean_toggles = { 'active' : is_visible_recursive }
+
+    
+    in_navigation_toggle = ajax_editable_boolean('in_navigation', _('in navigation'))
+
 
     def cached_url_admin(self, page):
         return u'<a href="%s">%s</a>' % (page._cached_url, page._cached_url)
@@ -512,10 +608,81 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     cached_url_admin.admin_order_field = '_cached_url'
     cached_url_admin.short_description = _('Cached URL')
 
-    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
+    #
+    def _collect_editable_booleans(self):
+        """
+        Collect all fields marked as editable booleans. We do not
+        want the user to be able to edit arbitrary fields by crafting
+        an AJAX request by hand.
+        """
+        if hasattr(self, '_ajax_editable_booleans'):
+            return
 
-# ---------------
-# XXX -- Hack alert!
+        self._ajax_editable_booleans = []
+
+        for field in self.list_display:
+            # The ajax_editable_boolean return value has to be assigned
+            # to the ModelAdmin class
+            item = getattr(self.__class__, field, None)
+            if not item:
+                continue
+
+            attr = getattr(item, 'editable_boolean_field', None)
+            if attr:
+                self._ajax_editable_booleans.append(attr)
+
+    def _toggle_boolean(self, request):
+        """
+        Handle an AJAX toggle_boolean request
+        """
+        self._collect_editable_booleans()
+
+        item_id = request.POST.get('item_id')
+        attr = request.POST.get('attr')
+
+        if attr not in self._ajax_editable_booleans:
+            return HttpResponseBadRequest("not a valid attribute %s" % attr)
+
+        try:
+            obj = self.model._default_manager.get(pk=unquote(item_id))
+            setattr(obj, attr, not getattr(obj, attr))
+            obj.save()
+            self.refresh_visible_pages()    # ???: Perhaps better a post_save signal?
+        except Exception, e:
+            return HttpResponse("FAILED " + unicode(e), mimetype="text/plain")
+
+        # ???: Is there some more elegant solution for this?
+        if self.boolean_toggles.has_key(attr):
+            data = self.boolean_toggles[attr](self, obj)
+        else:
+            data = [ ajax_editable_boolean_cell(obj, attr) ]
+
+        return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+
+    def refresh_visible_pages(self, *args, **kwargs):
+        self._visible_pages = list(Page.objects.active().values_list('id', flat=True))
+
+    def changelist_view(self, request, extra_context=None, *args, **kwargs):
+        """
+        Handle the changelist view, the django view for the model instances
+        change list/actions page.
+        """
+        # get a list of all visible pages for use by is_visible_admin
+        self.refresh_visible_pages()
+
+        # handle common AJAX requests
+        if request.is_ajax():
+            cmd = request.POST.get('__cmd')
+            if cmd == 'toggle_boolean':
+                return self._toggle_boolean(request)
+
+        return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
+
+
+
+# ------------------------------------------------------------------------
+# !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
+
 # By default, django only orders by first ordering field in admin. We patch
 # up the ChangeList here so it returns "use default ordering" for any Page
 # lookups. That way, we can order by tree_id + lft and get the site's natural
@@ -531,3 +698,5 @@ if settings._FEINCMS_ALTERNATIVE_PAGE_ADMIN:
         return __cl_get_ordering(cl)
 
     ChangeList.get_ordering = __get_ordering
+
+# ------------------------------------------------------------------------

@@ -1,6 +1,37 @@
 {% extends "admin/change_list.html" %}
 {% load adminmedia admin_list i18n %}
 
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript">
+
+var extract_item_id = function(elem_id) {
+    i = elem_id.indexOf('_');
+    if(i >= 0)
+        return parseInt(elem_id.slice(i+1));
+    
+    return 0;
+}
+
+var toggle_boolean = function(elem, attr) {
+    elem_id = $(elem).attr('id');
+    item_id = extract_item_id(elem_id);
+    $.post('.', {
+        '__cmd': 'toggle_boolean',
+        'item_id': item_id,
+        'attr': attr
+        }, function(data) {
+            $.each(data, function(i, html) {
+                r_id = $(html).attr('id');
+                console.log("Replacing: ", r_id);
+                $('#' + r_id).replaceWith(html);
+                })
+        }, 'json');
+    return false;
+}
+</script>
+{% endblock %}
+
       {% block filters %}
         {% if cl.has_filters %}
           <div id="changelist-filter">
