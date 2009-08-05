@@ -469,9 +469,9 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
     else:
         value = getattr(item, attr)
         a = [ 
-              '<input type="checkbox" id="%s-%d"' % (attr, item.id),
+              '<input type="checkbox"',
               value and ' checked="checked"' or '',
-              ' onclick="return inplace_toggle_boolean(this, \'%s\')";' % attr,
+              ' onclick="return inplace_toggle_boolean(%d, \'%s\')";' % (item.id, attr),
               ' />',
               text,
             ]
@@ -505,24 +505,13 @@ def ajax_editable_boolean(attr, short_description):
 class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     class Media:
-        css = { 'all' : (settings.FEINCMS_ADMIN_MEDIA + 'ui/jqueryui-custom-1.7.2.css', ) }
-
         js = []
         if settings.FEINCMS_ADMIN_MEDIA_HOTLINKING:
-            js.extend((
-                "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js",
-#                "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"
-                ))
+            js.extend(( "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js", ))
         else:
-            js.extend((
-                settings.FEINCMS_ADMIN_MEDIA + "jquery-1.3.2.min.js",
-#                settings.FEINCMS_ADMIN_MEDIA + "ui/jqueryui-custom-1.7.2.min.js"
-                ))
+            js.extend(( settings.FEINCMS_ADMIN_MEDIA + "jquery-1.3.2.min.js", ))
                 
-        js.extend((
-            settings.FEINCMS_ADMIN_MEDIA + "jquery.json-1.3.js",
-            settings.FEINCMS_ADMIN_MEDIA + "toolbox.js",
-            ))
+        js.extend(( settings.FEINCMS_ADMIN_MEDIA + "toolbox.js", ))
 
 
     form = PageAdminForm
@@ -595,8 +584,9 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         retval = []
         for c in page.get_descendants(include_self=True):
             retval.append(self.is_visible_admin(c))
-
         return map(lambda page: self.is_visible_admin(page), page.get_descendants(include_self=True))
+    is_visible_admin.editable_boolean_result = is_visible_recursive
+
 
     boolean_toggles = { 'active' : is_visible_recursive }
 
@@ -619,7 +609,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         if hasattr(self, '_ajax_editable_booleans'):
             return
 
-        self._ajax_editable_booleans = []
+        self._ajax_editable_booleans = {}
 
         for field in self.list_display:
             # The ajax_editable_boolean return value has to be assigned
@@ -630,7 +620,9 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
             attr = getattr(item, 'editable_boolean_field', None)
             if attr:
-                self._ajax_editable_booleans.append(attr)
+                result_func = getattr(item, 'editable_boolean_result',
+                                      lambda self, page: [ ajax_editable_boolean_cell(page, attr) ])
+                self._ajax_editable_booleans[attr] = result_func
 
     def _toggle_boolean(self, request):
         """
@@ -641,26 +633,20 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         item_id = request.POST.get('item_id')
         attr = request.POST.get('attr')
 
-        if attr not in self._ajax_editable_booleans:
+        if not self._ajax_editable_booleans.has_key(attr):
             return HttpResponseBadRequest("not a valid attribute %s" % attr)
         
         try:
             obj = self.model._default_manager.get(pk=unquote(item_id))
 
-            if self.boolean_toggles.has_key(attr):
-                before_data = self.boolean_toggles[attr](self, obj)
-            else:
-                before_data = [ ajax_editable_boolean_cell(obj, attr) ]
+            before_data = self._ajax_editable_booleans[attr](self, obj)
 
             setattr(obj, attr, not getattr(obj, attr))
             obj.save()
             self.refresh_visible_pages()    # ???: Perhaps better a post_save signal?
 
-            # ???: Is there some more elegant solution for this?
-            if self.boolean_toggles.has_key(attr):
-                data = self.boolean_toggles[attr](self, obj)
-            else:
-                data = [ ajax_editable_boolean_cell(obj, attr) ]
+            # Construct html snippets to send back to client for status update
+            data = self._ajax_editable_booleans[attr](self, obj)
 
         except Exception, e:
             print e
