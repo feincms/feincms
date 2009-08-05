@@ -6,7 +6,7 @@
 <script type="text/javascript">
 
 var extract_item_id = function(elem_id) {
-    i = elem_id.indexOf('_');
+    i = elem_id.indexOf('-');
     if(i >= 0)
         return parseInt(elem_id.slice(i+1));
     

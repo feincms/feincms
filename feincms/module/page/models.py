@@ -456,7 +456,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
     else:
         value = getattr(item, attr)
         a = [ 
-              '<input type="checkbox" id="%s_%d"' % (attr, item.id),
+              '<input type="checkbox" id="%s-%d"' % (attr, item.id),
               value and ' checked="checked"' or '',
               ' onclick="return toggle_boolean(this, \'%s\')";' % attr,
               ' />',
@@ -594,7 +594,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     boolean_toggles = { 'active' : is_visible_recursive }
 
-    
     in_navigation_toggle = ajax_editable_boolean('in_navigation', _('in navigation'))
 
 
