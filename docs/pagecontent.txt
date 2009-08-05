@@ -162,6 +162,10 @@ Bundled content types
   Please note that you should set the TINYMCE_JS_URL inside your settings,
   otherwise settings.MEDIA_URL + 'js/tiny_mce/tiny_mce.js' will be used.
 
+  If you pass cleanse=True to the create_content_type invocation for your
+  RichTextContent types, the HTML code will be cleansed right before saving
+  to the database everytime the content is modified.
+
 * feincms.content.rss.models.RSSContent
 
   A feed reader widget. This also servers as an example how to build a content
