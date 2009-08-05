@@ -72,6 +72,8 @@ INSTALLED_APPS = (
 
 COVERAGE_MODULES = ['feincms.admin.editor',
                     'feincms.admin.item_editor',
+                    #'feincms.admin.splitpane_editor', # cannot be tested at the same time as the
+                                                        # tree editor currently
                     'feincms.admin.tree_editor',
                     'feincms.content.application.models',
                     'feincms.content.contactform.models',
@@ -79,6 +81,7 @@ COVERAGE_MODULES = ['feincms.admin.editor',
                     'feincms.content.image.models',
                     'feincms.content.medialibrary.models',
                     'feincms.content.raw.models',
+                    'feincms.content.richtext.cleanse',
                     'feincms.content.richtext.models',
                     'feincms.content.rss.models',
                     'feincms.content.video.models',
@@ -107,6 +110,7 @@ COVERAGE_MODULES = ['feincms.admin.editor',
                     'feincms.utils',
                     'feincms.views.applicationcontent',
                     'feincms.views.base',
+                    'feincms.views.decorators',
                     ]
 
 try:

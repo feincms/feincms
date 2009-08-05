@@ -21,3 +21,8 @@ class RichTextContent(models.Model):
     def render(self, **kwargs):
         return mark_safe(self.text)
 
+    def save(self, *args, **kwargs):
+        if getattr(self, 'cleanse', False):
+            from feincms.content.richtext.cleanse import cleanse_html
+            self.text = cleanse_html(self.text)
+        super(RichTextContent, self).save(*args, **kwargs)

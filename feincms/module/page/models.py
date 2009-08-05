@@ -439,16 +439,12 @@ class PageAdminForm(forms.ModelForm):
         return cleaned_data
 
 # ------------------------------------------------------------------------
-class Null(object):
-    pass
-
-if settings._FEINCMS_ALTERNATIVE_PAGE_ADMIN:
-    list_modeladmin = Null
+if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
+    list_modeladmin = object
+elif settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
+    list_modeladmin = editor.SplitPaneEditor
 else:
-    if settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
-        list_modeladmin = editor.SplitPaneEditor
-    else:
-        list_modeladmin = editor.TreeEditor
+    list_modeladmin = editor.TreeEditor
 
 # ------------------------------------------------------------------------
 def ajax_editable_boolean_cell(item, attr, text='', override=None):
@@ -535,7 +531,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         )
     list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
     # Use nicer title display showing hierarchy
-    if settings._FEINCMS_ALTERNATIVE_PAGE_ADMIN:
+    if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
         list_display[0] = 'short_title_admin'
 
     list_filter = ('active', 'in_navigation', 'template_key')
@@ -688,7 +684,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 # lookups. That way, we can order by tree_id + lft and get the site's natural
 # page structure.
 
-if settings._FEINCMS_ALTERNATIVE_PAGE_ADMIN:
+if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
     from django.contrib.admin.views.main import ChangeList
 
     __cl_get_ordering = ChangeList.get_ordering
