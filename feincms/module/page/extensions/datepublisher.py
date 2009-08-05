@@ -11,6 +11,19 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
+def format_date(d, if_none=''):
+    """
+    Format a date in a nice human readable way: Omit the year if it's the current
+    year. Also return a default value if no date is passed in.
+    """
+
+    if d is None: return if_none
+
+    now = datetime.now()
+    fmt = (d.year == now.year) and '%d.%m' or '%d.%m.%Y'
+    return d.strftime(fmt)
+
+
 
 def register(cls, admin_cls):
     cls.add_to_class('publication_date', models.DateTimeField(_('publication date'),
@@ -25,8 +38,8 @@ def register(cls, admin_cls):
 
     def datepublisher_admin(self, page):
         return u'%s &ndash; %s' % (
-            page.publication_date.strftime('%d.%m.%Y'),
-            page.publication_end_date and page.publication_end_date.strftime('%d.%m.%Y') or '&infin;',
+            format_date(page.publication_date),
+            format_date(page.publication_end_date, '&infin;'),
             )
     datepublisher_admin.allow_tags = True
     datepublisher_admin.short_description = _('visible from - to')

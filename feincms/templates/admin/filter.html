@@ -1,0 +1,23 @@
+{% load i18n %}
+<h3>{% blocktrans with title as filter_title %} By {{ filter_title }} {% endblocktrans %}</h3>
+<script type="text/javascript">
+var go = function(opt) { window.location = window.location.pathname + opt };
+</script>
+{% if choices|slice:"4:" %}
+
+    <select style="margin-left: 5px; width: 150px;"
+        onchange="go(this.options[this.selectedIndex].value)">
+    {% for choice in choices %}
+        <option{% if choice.selected %} selected="selected"{% endif %}
+         value="{{ choice.query_string|iriencode }}">{{ choice.display }}</option>
+    {% endfor %}
+    </select>
+
+{% else %}
+
+    {% for choice in choices %}
+            <li{% if choice.selected %} class="selected"{% endif %}>
+            <a href="{{ choice.query_string|iriencode }}">{{ choice.display }}</a></li>
+    {% endfor %}
+
+{% endif %}

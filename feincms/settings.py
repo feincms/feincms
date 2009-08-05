@@ -38,7 +38,13 @@ FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKI
 INFANTA_EXCLUDE_URLS = getattr(settings, 'INFANTA_EXCLUDE_URLS', ['/admin/', '/media/'])
 
 # ------------------------------------------------------------------------
-# Settings for the page module
+# Settings for the page module
 
 # Use SplitPaneEditor instead of TreeEditor in the page administration
 FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = getattr(settings, 'FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR', False)
+
+# ------------------------------------------------------------------------
+# Experimental settings
+
+_FEINCMS_ALTERNATIVE_PAGE_ADMIN = getattr(settings, '_FEINCMS_ALTERNATIVE_PAGE_ADMIN', False)
+# ------------------------------------------------------------------------
