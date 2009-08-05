@@ -633,22 +633,38 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
         if attr not in self._ajax_editable_booleans:
             return HttpResponseBadRequest("not a valid attribute %s" % attr)
-
+        
         try:
             obj = self.model._default_manager.get(pk=unquote(item_id))
+
+            if self.boolean_toggles.has_key(attr):
+                before_data = self.boolean_toggles[attr](self, obj)
+            else:
+                before_data = [ ajax_editable_boolean_cell(obj, attr) ]
+
             setattr(obj, attr, not getattr(obj, attr))
             obj.save()
             self.refresh_visible_pages()    # ???: Perhaps better a post_save signal?
+
+            # ???: Is there some more elegant solution for this?
+            if self.boolean_toggles.has_key(attr):
+                data = self.boolean_toggles[attr](self, obj)
+            else:
+                data = [ ajax_editable_boolean_cell(obj, attr) ]
+
         except Exception, e:
+            print e
             return HttpResponse("FAILED " + unicode(e), mimetype="text/plain")
 
-        # ???: Is there some more elegant solution for this?
-        if self.boolean_toggles.has_key(attr):
-            data = self.boolean_toggles[attr](self, obj)
-        else:
-            data = [ ajax_editable_boolean_cell(obj, attr) ]
+        # Weed out unchanged cells to keep the updates small. This assumes
+        # that the order a possible get_descendents() returns does not change
+        # before and after toggling this attribute. Unlikely, but still... 
+        d = []
+        for a, b in zip(before_data, data):
+            if a != b:
+                d.append(b)
 
-        return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+        return HttpResponse(simplejson.dumps(d), mimetype="application/json")
 
     def refresh_visible_pages(self, *args, **kwargs):
         self._visible_pages = list(Page.objects.active().values_list('id', flat=True))
