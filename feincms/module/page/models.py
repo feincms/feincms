@@ -588,8 +588,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     is_visible_admin.editable_boolean_result = is_visible_recursive
 
 
-    boolean_toggles = { 'active' : is_visible_recursive }
-
     in_navigation_toggle = ajax_editable_boolean('in_navigation', _('in navigation'))
 
 
