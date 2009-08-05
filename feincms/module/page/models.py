@@ -565,20 +565,16 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         Instead of just showing an on/off boolean, also indicate whether this
         page is not visible because of publishing dates or inherited status.
         """
-        if not page.active:
-            return ajax_editable_boolean_cell(page, 'active', _('not active'))
-            
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
                 self._visible_pages.remove(page.id)
-                return ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
-            # Fallthru: page is not in self._visible_pages, no need to repeat ourselves
-            # return u'%s (%s)' % (django_boolean_icon(False), _('not active by date'))
+            return ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
 
-        if not page.id in self._visible_pages:
-            return ajax_editable_boolean_cell(page, 'active', override=False, text=_('by date'))
-
+        if page.active and not page.id in self._visible_pages:
+            # is active but should not be shown, so visibility limited by extension: show a "not active"
+            return ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
+        
         return ajax_editable_boolean_cell(page, 'active')
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is visible')
