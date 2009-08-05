@@ -448,6 +448,19 @@ else:
 
 # ------------------------------------------------------------------------
 def ajax_editable_boolean_cell(item, attr, text='', override=None):
+    """
+    Generate a html snippet for showing a boolean value on the admin page.
+    Item is an object, attr is the attribute name we should display. Text
+    is an optional explanatory text to be included in the output.
+    
+    This function will emit code to produce a checkbox input with its state
+    corresponding to the item.attr attribute if no override value is passed.
+    This input is wired to run a JS ajax updater to toggle the value.
+    
+    If override is passed in, ignores the attr attribute and returns a
+    static image for the override boolean with no user interaction possible
+    (useful for "disabled and you can't change it" situations).
+    """
     if text:
         text = '&nbsp;(%s)' % unicode(text)
 
@@ -458,7 +471,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
         a = [ 
               '<input type="checkbox" id="%s-%d"' % (attr, item.id),
               value and ' checked="checked"' or '',
-              ' onclick="return toggle_boolean(this, \'%s\')";' % attr,
+              ' onclick="return inplace_toggle_boolean(this, \'%s\')";' % attr,
               ' />',
               text,
             ]
@@ -467,10 +480,6 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
     a.append('</div>')
     #print a
     return unicode(''.join(a))
-
-#django_boolean_icon(False), _('inherited'))
-#    return '<a class="attr_%s" href="#" onclick="return toggle_boolean(this, \'%s\')">%s</a>' % (
-#        attr, attr, django_boolean_icon(getattr(item, attr), 'toggle %s' % attr))
 
 # ------------------------------------------------------------------------
 def ajax_editable_boolean(attr, short_description):
@@ -512,6 +521,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
                 
         js.extend((
             settings.FEINCMS_ADMIN_MEDIA + "jquery.json-1.3.js",
+            settings.FEINCMS_ADMIN_MEDIA + "toolbox.js",
             ))
 
 
