@@ -42,9 +42,5 @@ INFANTA_EXCLUDE_URLS = getattr(settings, 'INFANTA_EXCLUDE_URLS', ['/admin/', '/m
 
 # Use SplitPaneEditor instead of TreeEditor in the page administration
 FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = getattr(settings, 'FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR', False)
-
-# ------------------------------------------------------------------------
-# Experimental settings
-
-_FEINCMS_ALTERNATIVE_PAGE_ADMIN = getattr(settings, '_FEINCMS_ALTERNATIVE_PAGE_ADMIN', False)
-# ------------------------------------------------------------------------
+# Use the standard Django ChangeList instead
+FEINCMS_PAGE_USE_CHANGE_LIST = getattr(settings, 'FEINCMS_PAGE_USE_CHANGE_LIST', False)
