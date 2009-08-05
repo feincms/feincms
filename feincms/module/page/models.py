@@ -458,8 +458,11 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             'fields': ('override_url',),
         }),
         )
-    list_display = ['short_title_admin', 'is_visible_admin',
-        'in_navigation_toggle', 'template']
+    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
+    # Use nicer title display showing hierarchy
+    if settings._FEINCMS_ALTERNATIVE_PAGE_ADMIN:
+        list_display[0] = 'short_title_admin'
+
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
     prepopulated_fields = {
@@ -484,8 +487,9 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             prefix = u' ↳ '
         if page.level > 1:
             prefix = u'   ' * (page.level-1) + prefix
-        return prefix + page.short_title() + ' (%d,%d,%d)' % ( page.tree_id, page.lft, page.rght)
-
+        return prefix + page.short_title()
+    short_title_admin.short_description = _('title')
+    
     def is_visible_admin(self, page):
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited
