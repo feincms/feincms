@@ -3,16 +3,17 @@
 <script type="text/javascript">
 var go = function(opt) { window.location = window.location.pathname + opt };
 </script>
-{% if choices|slice:"4:" %}
-
-    <select style="margin-left: 5px; width: 150px;"
+<ul>
+{% if choices|slice:"3:" %}
+    <li>
+    <select style="width: 95%;"
         onchange="go(this.options[this.selectedIndex].value)">
     {% for choice in choices %}
         <option{% if choice.selected %} selected="selected"{% endif %}
          value="{{ choice.query_string|iriencode }}">{{ choice.display }}</option>
     {% endfor %}
     </select>
-
+    </li>
 {% else %}
 
     {% for choice in choices %}
@@ -21,3 +22,4 @@ var go = function(opt) { window.location = window.location.pathname + opt };
     {% endfor %}
 
 {% endif %}
+</ul>
