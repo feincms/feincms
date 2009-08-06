@@ -1,11 +1,21 @@
 {% extends "admin/change_list.html" %}
 {% load adminmedia admin_list i18n %}
 
-{% comment %}
 {% block extrahead %}
 {{ block.super }}
+
+<style type="text/css">
+    table { display: none; }    /* hide table until set up */
+</style>
+
+<script type="text/javascript">
+    /* This represents the current state of the page tree. Would need to be
+       refreshed if pages are moved or deleted, but for now that is not possible */
+    var tree_structure = {{ cl.model.page_tree_json }};
+</script>
+
 {% endblock %}
-{% endcomment %}
+
 
 {% comment %}
       {% block filters %}

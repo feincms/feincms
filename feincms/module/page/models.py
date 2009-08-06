@@ -27,6 +27,7 @@ from feincms.admin.editor import django_boolean_icon
 from feincms.management.checker import check_database_schema
 from feincms.models import Region, Template, Base, ContentProxy
 from feincms.utils import get_object
+from . import build_page_tree
 
 
 class PageManager(models.Manager):
@@ -157,6 +158,7 @@ class PageManager(models.Manager):
         return Page.objects.get(pk=with_page.pk)
 
 
+# MARK: -
 # ------------------------------------------------------------------------
 class Page(Base):
     active = models.BooleanField(_('active'), default=False)
@@ -214,6 +216,19 @@ class Page(Base):
         return self.title
     short_title.admin_order_field = 'title'
     short_title.short_description = _('title')
+
+    def indented_short_title(self):
+        """
+        Generate a short title for a page, indent it depending on
+        the page's depth in the hierarchy.
+        """
+        prefix = u''
+        if self.level > 0:
+            prefix = u' ↳ '
+        if self.level > 1:
+            prefix = u'   ' * (self.level-1) + prefix
+        return prefix + self.short_title()
+    indented_short_title.short_description = _('title')
 
     def save(self, *args, **kwargs):
         cached_page_urls = {}
@@ -366,6 +381,13 @@ class Page(Base):
             fn(cls, PageAdmin)
             cls._feincms_extensions.add(ext)
 
+    @staticmethod
+    def page_tree_json():
+        """
+        Returns the site structure in a simple json encoded dictionary.
+        """
+        return mark_safe(simplejson.dumps(build_page_tree(Page)))
+    
 # ------------------------------------------------------------------------
 mptt.register(Page)
 
@@ -376,7 +398,7 @@ Page.register_request_processors(Page.require_path_active_request_processor,
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
-# ------------------------------------------------------------------------
+# MARK: -
 # ------------------------------------------------------------------------
 class PageAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -500,19 +522,21 @@ def ajax_editable_boolean(attr, short_description):
     _fn.editable_boolean_field = attr
     return _fn
 
-# ------------------------------------------------------------------------
+# MARK: -
 # ------------------------------------------------------------------------
 class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     class Media:
+        css = {}
         js = []
         if settings.FEINCMS_ADMIN_MEDIA_HOTLINKING:
             js.extend(( "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js", ))
         else:
             js.extend(( settings.FEINCMS_ADMIN_MEDIA + "jquery-1.3.2.min.js", ))
-                
-        js.extend(( settings.FEINCMS_ADMIN_MEDIA + "toolbox.js", ))
-
+        
+        if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
+            js.extend(( settings.FEINCMS_ADMIN_MEDIA + "toolbox.js", 
+                        settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js" ))
 
     form = PageAdminForm
 
@@ -528,37 +552,30 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             'fields': ('override_url',),
         }),
         )
-    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
+    list_display = [ 'short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
     # Use nicer title display showing hierarchy
     if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
-        list_display[0] = 'short_title_admin'
+        list_display[0:1] = [ 'marker_admin', 'indented_short_title' ]
+        list_display_links = (list_display[1],)
 
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
     prepopulated_fields = { 'slug': ('title',), }
 
     raw_id_fields = []
-
     show_on_top = ('title', 'active')
-
     radio_fields = {'template_key': admin.HORIZONTAL}
 
-    #
+    # ---------------------------------------------------------------------
+    def marker_admin(self, page):
+        if page.is_leaf_node():
+            return '<span id="page_marker-%d" class/>' % page.id
 
-    def short_title_admin(self, page):
-        """
-        Generate a short title for a page, indent it depending on
-        the page's depth in the hierarchy.
-        """
-        prefix = u''
-        if page.level > 0:
-            prefix = u' ↳ '
-        if page.level > 1:
-            prefix = u'   ' * (page.level-1) + prefix
-        return prefix + page.short_title()
-    short_title_admin.short_description = _('title')
+        r = '<a href="." onclick="page_tree_handler(%d); return false;" id="page_marker-%d">+</a>' % (page.id, page.id)
+        return r
+    marker_admin.short_description = ''
+    marker_admin.allow_tags = True
 
-    
     def is_visible_admin(self, page):
         """
         Instead of just showing an on/off boolean, also indicate whether this
@@ -678,8 +695,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
                 return self._toggle_boolean(request)
 
         return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
-
-
 
 # ------------------------------------------------------------------------
 # !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1

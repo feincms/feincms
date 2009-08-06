@@ -4,7 +4,7 @@
 var go = function(opt) { window.location = window.location.pathname + opt };
 </script>
 <ul>
-{% if choices|slice:"3:" %}
+{% if choices|slice:"4:" %}
     <li>
     <select style="width: 95%;"
         onchange="go(this.options[this.selectedIndex].value)">
