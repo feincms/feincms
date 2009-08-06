@@ -12,6 +12,66 @@
     /* This represents the current state of the page tree. Would need to be
        refreshed if pages are moved or deleted, but for now that is not possible */
     var tree_structure = {{ cl.model.page_tree_json }};
+    
+    /* After loading the page, show all root nodes */
+    $(function()
+        {
+        for(k in tree_structure)
+            {
+            p = page(k);
+            /* Precompute object links for no object-id lookups later */
+            m = $('#page_marker-' + k);
+            if(m.length)
+                {
+                p.ptr = m;
+                p.row = m.parents('tr:first');
+                }
+            else /* row not present in changelist, throw node away */
+                {
+                tree_structure[k] = { }
+                }
+            }
+
+        /* Clean out tree_structure: Remove non existant parents, children, descendants */
+        for(k in tree_structure)
+            {
+            p = page(k);
+            if(p.parent && !page(p.parent).ptr)
+                p.parent = null
+
+            if(p.descendants)
+                p.descendants = $.grep(p.descendants, function(o) { return page(o).ptr; });
+
+            if(p.children)
+                {
+                p.children = $.grep(p.children, function(o) { return page(o).ptr; });
+                if(p.children.length)
+                    p.ptr.text('+');
+                }
+            }
+
+        for(k in tree_structure)
+            {
+            p = page(k);
+            if(p.ptr)
+                {
+                /* Show all root (ie. has no parent) nodes */
+                if(p.parent)
+                    p.row.hide();
+                else
+                    p.row.show();
+                }
+            }
+
+        /* yuck :-) */
+        $('table thead tr th:eq(2)').attr('style', 'width: 450px;');
+        $('tr td').attr('style', 'text-align: center;');
+
+        $('tbody tr').removeClass('row1').removeClass('row2');
+        $('table').show();
+        recolor_lines();
+        });
+
 </script>
 
 {% endblock %}

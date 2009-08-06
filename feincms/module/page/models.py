@@ -571,7 +571,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         if page.is_leaf_node():
             return '<span id="page_marker-%d" class/>' % page.id
 
-        r = '<a href="." onclick="page_tree_handler(%d); return false;" id="page_marker-%d">+</a>' % (page.id, page.id)
+        r = '<a href="#" onclick="page_tree_handler(%d); return false;" id="page_marker-%d"></a>' % (page.id, page.id)
         return r
     marker_admin.short_description = ''
     marker_admin.allow_tags = True
