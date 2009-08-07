@@ -222,12 +222,10 @@ class Page(Base):
         Generate a short title for a page, indent it depending on
         the page's depth in the hierarchy.
         """
-        prefix = u''
-        if self.level > 0:
-            prefix = u'&nbsp;&nbsp;&nbsp;' * (self.level) + prefix
-        
-        r = '<span style="width: 20px; border: 1px dotted red;" onclick="page_tree_handler(%d); return false;" id="page_marker-%d">*</span>&nbsp;' % (self.id, self.id)
-        return mark_safe(prefix + r + self.short_title())
+        r = '''<span onclick="page_tree_handler(%d); return false;" id="page_marker-%d"
+            class="page_marker" style="width:%dpx; border: 1px dotted red;">&nbsp;</span>&nbsp;''' % (
+                self.id, self.id, 10+self.level*15)
+        return mark_safe(r + self.short_title())
     indented_short_title.short_description = _('title')
     indented_short_title.allow_tags = True
     
@@ -560,6 +558,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     # Use nicer title display showing hierarchy
     if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
         list_display[0] = 'indented_short_title'
+        list_display_links = ('indented_short_title',)
 
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
@@ -687,10 +686,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             cmd = request.POST.get('__cmd')
             if cmd == 'toggle_boolean':
                 return self._toggle_boolean(request)
-
-        extra_context = extra_context or {}
-        extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
-        extra_context['FEINCMS_ADMIN_MEDIA_HOTLINKING'] = settings.FEINCMS_ADMIN_MEDIA_HOTLINKING
 
         return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
 
