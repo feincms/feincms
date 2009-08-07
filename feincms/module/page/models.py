@@ -222,11 +222,10 @@ class Page(Base):
         Generate a short title for a page, indent it depending on
         the page's depth in the hierarchy.
         """
-        r = '''<a href="#" onclick="page_tree_handler(%d); return false;" id="page_marker-%d"
-            class="page_marker" style="width:%dpx">&nbsp;</a>&nbsp;''' % (
+        r = '''<span onclick="page_tree_handler(%d); return false;" id="page_marker-%d"
+            class="page_marker" style="width:%dpx">&nbsp;</span>&nbsp;''' % (
                 self.id, self.id, 10+self.level*15)
-        link = '<a href="%d/">%s</a>' % (self.id, self.short_title())
-        return mark_safe(r + link)
+        return mark_safe(r + self.short_title())
     indented_short_title.short_description = _('title')
     indented_short_title.allow_tags = True
     
@@ -559,6 +558,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     # Use nicer title display showing hierarchy
     if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
         list_display[0] = 'indented_short_title'
+        list_display_links = ('indented_short_title',)
 
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
