@@ -537,8 +537,11 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             js.extend(( settings.FEINCMS_ADMIN_MEDIA + "jquery-1.3.2.min.js", ))
         
         if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
-            js.extend(( settings.FEINCMS_ADMIN_MEDIA + "toolbox.js", 
-                        settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js" ))
+            js.extend(( settings.FEINCMS_ADMIN_MEDIA + "ie_compat.js",
+                        settings.FEINCMS_ADMIN_MEDIA + "sessvars.js" ,
+                        settings.FEINCMS_ADMIN_MEDIA + "toolbox.js", 
+                        settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js",
+                        ))
 
     form = PageAdminForm
 

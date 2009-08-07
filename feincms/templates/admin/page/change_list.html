@@ -24,51 +24,27 @@
     /* After loading the page, show all root nodes */
     $(function()
         {
-        for(k in tree_structure)
-            {
-            p = page(k);
-            /* Precompute object links for no object-id lookups later */
-            m = $('#page_marker-' + k);
-            if(m.length)
-                {
-                p.ptr = m;
-                p.row = m.parents('tr:first');
-                }
-            else /* row not present in changelist, throw node away */
-                {
-                tree_structure[k] = { }
-                }
-            }
-
-        /* Clean out tree_structure: Remove non existant parents, children, descendants */
-        for(k in tree_structure)
-            {
-            p = page(k);
-            if(p.parent && !page(p.parent).ptr)
-                p.parent = null
-
-            if(p.descendants)
-                p.descendants = $.grep(p.descendants, function(o) { return page(o).ptr; });
-
-            if(p.children)
-                {
-                p.children = $.grep(p.children, function(o) { return page(o).ptr; });
-                if(p.children.length)
-                    p.ptr.text(expand_sym);
-                }
-            }
-
+        tree_structure_clean(); /* reduce structure to actually present items */
+        
+        root_items = [];
         for(k in tree_structure)
             {
             p = page(k);
             if(p.ptr)
                 {
-                /* Show all root (ie. has no parent) nodes */
-                if(p.parent)
-                    p.row.hide();
-                else
-                    p.row.show();
+                p.row.hide(); /* default hide */
+                /* Note all root (ie. has no parent) nodes */
+                if(!p.parent)
+                    root_items.push(p);
                 }
+            }
+
+        for(i in root_items)
+            {
+            p = root_items[i];
+            p.row.show();
+            if(p.open)
+                open_subtree(p.id);
             }
 
         /* yuck :-) */
