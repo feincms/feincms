@@ -224,12 +224,14 @@ class Page(Base):
         """
         prefix = u''
         if self.level > 0:
-            prefix = u' ↳ '
-        if self.level > 1:
-            prefix = u'   ' * (self.level-1) + prefix
-        return prefix + self.short_title()
+            prefix = u'&nbsp;&nbsp;&nbsp;' * (self.level) + prefix
+        
+        r = '<a href="#" onclick="page_tree_handler(%d); return false;" id="page_marker-%d"></a>&nbsp;' % (self.id, self.id)
+        link = '<a href="%d/">%s</a>' % (self.id, self.short_title())
+        return mark_safe(prefix + r + link)
     indented_short_title.short_description = _('title')
-
+    indented_short_title.allow_tags = True
+    
     def save(self, *args, **kwargs):
         cached_page_urls = {}
 
@@ -555,8 +557,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     list_display = [ 'short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
     # Use nicer title display showing hierarchy
     if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
-        list_display[0:1] = [ 'marker_admin', 'indented_short_title' ]
-        list_display_links = (list_display[1],)
+        list_display[0] = 'indented_short_title'
 
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
@@ -567,15 +568,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     # ---------------------------------------------------------------------
-    def marker_admin(self, page):
-        if page.is_leaf_node():
-            return '<span id="page_marker-%d" class/>' % page.id
-
-        r = '<a href="#" onclick="page_tree_handler(%d); return false;" id="page_marker-%d"></a>' % (page.id, page.id)
-        return r
-    marker_admin.short_description = ''
-    marker_admin.allow_tags = True
-
     def is_visible_admin(self, page):
         """
         Instead of just showing an on/off boolean, also indicate whether this

@@ -1,5 +1,10 @@
 /* All things javascript specific for the classic page change list */
 
+/* 25b6: black right-pointing triangle, 25bc: black down-pointing triangle,
+   25b9: white right-pointing triangle, 25BD: white down-pointing triangle */
+var expand_sym = '\u25B7';
+var collapse_sym = '\u25BD';
+
 var page = function(item_id) { return tree_structure[item_id]; }
 
 var recolor_lines = function()
@@ -13,7 +18,7 @@ var recolor_lines = function()
 var open_subtree = function(item_id)
 {
     p = page(item_id)
-    p.ptr.text('-');
+    p.ptr.text(collapse_sym);
     children_ids = p.children;
     $.each(children_ids, function(i, id)
            {
@@ -31,7 +36,7 @@ var open_subtree = function(item_id)
 var close_subtree = function(item_id)
 {
     p = page(item_id)
-    p.ptr.text('+');
+    p.ptr.text(expand_sym);
     
     children_ids = p.descendants;
     $.each(children_ids, function(i, id)
