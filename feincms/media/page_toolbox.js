@@ -57,8 +57,13 @@ var close_subtree = function(item_id)
 /* Click handler */
 var page_tree_handler = function(item_id)
 {
-    open = page(item_id).open;
-    page(item_id).open = !open;
+    p = page(item_id);
+    
+    if(p.children.length == 0)
+        return;
+
+    open = p.open;
+    p.open = !open;
     
     if(open)
         {
