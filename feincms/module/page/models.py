@@ -694,6 +694,10 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             if cmd == 'toggle_boolean':
                 return self._toggle_boolean(request)
 
+        extra_context = extra_context or {}
+        extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
+        extra_context['FEINCMS_ADMIN_MEDIA_HOTLINKING'] = settings.FEINCMS_ADMIN_MEDIA_HOTLINKING
+
         return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
 
 # ------------------------------------------------------------------------
