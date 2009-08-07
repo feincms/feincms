@@ -222,13 +222,11 @@ class Page(Base):
         Generate a short title for a page, indent it depending on
         the page's depth in the hierarchy.
         """
-        prefix = u''
-        if self.level > 0:
-            prefix = u'&nbsp;&nbsp;&nbsp;' * (self.level) + prefix
-        
-        r = '<a href="#" onclick="page_tree_handler(%d); return false;" id="page_marker-%d"></a>&nbsp;' % (self.id, self.id)
+        r = '''<a href="#" onclick="page_tree_handler(%d); return false;" id="page_marker-%d"
+            class="page_marker" style="width:%dpx">&nbsp;</a>&nbsp;''' % (
+                self.id, self.id, 10+self.level*15)
         link = '<a href="%d/">%s</a>' % (self.id, self.short_title())
-        return mark_safe(prefix + r + link)
+        return mark_safe(r + link)
     indented_short_title.short_description = _('title')
     indented_short_title.allow_tags = True
     
