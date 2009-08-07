@@ -26,7 +26,7 @@ var open_subtree = function(item_id)
     if(p.children.length == 0)
         return;
 
-    p.ptr.text(collapse_sym);
+    p.ptr.html(collapse_sym);
     $.each(p.children, function(i, id)
            {
            pp = page(id)
@@ -45,7 +45,7 @@ var close_subtree = function(item_id)
     p = page(item_id)
     if(p.descendants.length == 0)
         return;
-    p.ptr.text(expand_sym);
+    p.ptr.html(expand_sym);
     $.each(p.descendants, function(i, id)
            {
            pp = page(id);
@@ -113,7 +113,7 @@ var tree_structure_clean = function()
                 {
                     p.children = $.grep(p.children, function(o) { return page(o).ptr; });
                     if(p.children.length)
-                        p.ptr.text(expand_sym);
+                        p.ptr.html(expand_sym);
                 }
         }
     for(i in sessvars.feincms_page_open_list)

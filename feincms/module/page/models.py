@@ -187,6 +187,7 @@ class Page(Base):
     objects = PageManager()
 
     def __unicode__(self):
+        return mark_safe('&nbsp;&nbsp;' * self.level + self.short_title())
         return u'%s (%s)' % (self.title, self._cached_url)
 
     def are_ancestors_active(self):
@@ -223,8 +224,8 @@ class Page(Base):
         the page's depth in the hierarchy.
         """
         r = '''<span onclick="page_tree_handler(%d); return false;" id="page_marker-%d"
-            class="page_marker" style="width:%dpx; border: 1px dotted red;">&nbsp;</span>&nbsp;''' % (
-                self.id, self.id, 10+self.level*15)
+            class="page_marker" style="padding-top: 1px; width: %dpx;">&nbsp;</span>&nbsp;''' % (
+                self.id, self.id, 14+self.level*14)
         return mark_safe(r + self.short_title())
     indented_short_title.short_description = _('title')
     indented_short_title.allow_tags = True
@@ -686,6 +687,9 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             cmd = request.POST.get('__cmd')
             if cmd == 'toggle_boolean':
                 return self._toggle_boolean(request)
+
+        extra_context = extra_context or {}
+        extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
 
         return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
 

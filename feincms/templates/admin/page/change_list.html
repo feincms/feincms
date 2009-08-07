@@ -17,6 +17,9 @@
     /* After loading the page, show all root nodes */
     $(function()
         {
+        expand_sym = '<img alt="+" src="{{ FEINCMS_ADMIN_MEDIA }}/img/disclosure-right.png">';
+        collapse_sym = '<img alt="-" src="{{ FEINCMS_ADMIN_MEDIA }}/img/disclosure-down.png">';
+
         tree_structure_clean(); /* reduce structure to actually present items */
         
         root_items = [];
