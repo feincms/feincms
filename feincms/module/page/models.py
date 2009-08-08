@@ -401,6 +401,23 @@ signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 # ------------------------------------------------------------------------
 class PageAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        if 'initial' in kwargs and 'parent' in kwargs['initial']:
+            # Prefill a few form values from the parent page
+            try:
+                page = Page.objects.get(pk=kwargs['initial']['parent'])
+                data = model_to_dict(page)
+
+                for field in PageManager.exclude_from_copy:
+                    del data[field]
+
+                # These are always excluded from prefilling
+                for field in ('title', 'slug', 'parent', 'active'):
+                    del data[field]
+
+                kwargs['initial'].update(data)
+            except Page.DoesNotExist:
+                pass
+
         super(PageAdminForm, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
             choices = []
@@ -696,6 +713,9 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
 
     def actions_column(self, page):
+        actions = [u'<a href="add/?parent=%s" title="%s">&#x21b3;</a>' % (
+            page.pk, _('Add child page'))]
+
         actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s">&#x2702;</a>' % (
             page.pk, _('Cut')))
 
@@ -708,6 +728,18 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     actions_column.allow_tags = True
     actions_column.short_description = _('actions')
     list_display.append('actions_column')
+
+    def add_view(self, request, form_url='', extra_context=None):
+        # Preserve GET parameters
+        return super(PageAdmin, self).add_view(request, request.get_full_path(), extra_context)
+
+    def response_add(self, request, *args, **kwargs):
+        response = super(PageAdmin, self).response_add(request, *args, **kwargs)
+        if 'parent' in request.GET and '_addanother' in request.POST and response.status_code in (301, 302):
+            # Preserve GET parameters if we are about to add another page
+            response['Location'] += '?parent=%s' % request.GET['parent']
+
+        return response
 
     def _move_node(self, request):
         cut_item = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
