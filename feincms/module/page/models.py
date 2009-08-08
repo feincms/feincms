@@ -223,7 +223,7 @@ class Page(Base):
         the page's depth in the hierarchy.
         """
         r = '''<span onclick="page_tree_handler(%d); return false;" id="page_marker-%d"
-            class="page_marker" style="padding-top: 1px; width: %dpx;">&nbsp;</span>&nbsp;''' % (
+            class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
                 self.id, self.id, 14+self.level*14)
         return mark_safe(r + self.short_title())
     indented_short_title.short_description = _('title')
