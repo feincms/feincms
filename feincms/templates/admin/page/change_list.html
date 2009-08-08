@@ -12,17 +12,17 @@
     /* This represents the current state of the page tree. Would need to be
        refreshed if pages are moved or deleted, but for now that is not possible */
     var tree_structure = {{ cl.model.page_tree_json }};
-    
+
     /* After loading the page, show all root nodes */
     $(function()
         {
         $('table').hide(); /* hide table until set up */
 
-        expand_sym = '<img alt="+" src="{{ FEINCMS_ADMIN_MEDIA }}/img/disclosure-right.png">';
-        collapse_sym = '<img alt="-" src="{{ FEINCMS_ADMIN_MEDIA }}/img/disclosure-down.png">';
+        expand_sym = '<img alt="+" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-right.png">';
+        collapse_sym = '<img alt="-" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-down.png">';
 
         tree_structure_clean(); /* reduce structure to actually present items */
-        
+
         root_items = [];
         for(k in tree_structure)
             {
