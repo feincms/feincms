@@ -222,7 +222,7 @@ class Page(Base):
         Generate a short title for a page, indent it depending on
         the page's depth in the hierarchy.
         """
-        r = '''<span onclick="page_tree_handler(%d); return false;" id="page_marker-%d"
+        r = '''<span onclick="return page_tree_handler('%d')" id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
                 self.id, self.id, 14+self.level*14)
         return mark_safe(r + self.short_title())
@@ -573,7 +573,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
         if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
             js.extend(( settings.FEINCMS_ADMIN_MEDIA + "ie_compat.js",
-                        settings.FEINCMS_ADMIN_MEDIA + "sessvars.js" ,
+                        settings.FEINCMS_ADMIN_MEDIA + "jquery.cookie.js" ,
                         settings.FEINCMS_ADMIN_MEDIA + "toolbox.js",
                         settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js",
                         ))

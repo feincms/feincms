@@ -5,10 +5,7 @@
 var expand_sym = '\u25B7';
 var collapse_sym = '\u25BD';
 
-/* Keep a list of open pages to save state across reloads */
-if(sessvars.feincms_page_open_list == null)
-    sessvars.feincms_page_open_list = []
-
+var feincms_page_open_list;
 
 var page = function(item_id) { return tree_structure[item_id]; }
 
@@ -58,31 +55,48 @@ var close_subtree = function(item_id)
 var page_tree_handler = function(item_id)
 {
     p = page(item_id);
-    
+
     if(p.children.length == 0)
-        return;
+        return false;
 
     open = p.open;
     p.open = !open;
-    
+
     if(open)
         {
         close_subtree(item_id);
-        sessvars.feincms_page_open_list = sessvars.feincms_page_open_list.filter(function(o) { return o != item_id });
+        feincms_page_open_list = feincms_page_open_list.filter(function(o) { return o != item_id });
         }
     else
         {
         open_subtree(item_id);
-        sessvars.feincms_page_open_list.push(item_id);
+        feincms_page_open_list.push(item_id);
         }
 
     /* Do I really want that? */
     recolor_lines();
+
+    return false;
 }
 
 /* Clean out tree_structure: Remove non existant parents, children, descendants */
 var tree_structure_clean = function()
 {
+    feincms_page_open_list = $.cookie('feincms_page_open_list');
+
+    /* Keep a list of open pages to save state across reloads */
+    if(feincms_page_open_list) {
+        lst = feincms_page_open_list.split(',');
+        feincms_page_open_list = [];
+        for(var i=0; i<lst.length; i++)
+            feincms_page_open_list.push(parseInt(lst[i]));
+    } else
+        feincms_page_open_list = [];
+
+    $(window).unload(function(){
+        $.cookie('feincms_page_open_list', feincms_page_open_list.join(','));
+    });
+
     for(k in tree_structure)
         {
             p = page(k);
@@ -98,17 +112,17 @@ var tree_structure_clean = function()
                     tree_structure[k] = { }
                 }
         }
-    
+
     /* Clean out tree_structure: Remove non existant parents, children, descendants */
     for(k in tree_structure)
         {
             p = page(k);
             if(p.parent && !page(p.parent).ptr)
                 p.parent = null
-                
+
                 if(p.descendants)
                     p.descendants = $.grep(p.descendants, function(o) { return page(o).ptr; });
-            
+
             if(p.children)
                 {
                     p.children = $.grep(p.children, function(o) { return page(o).ptr; });
@@ -116,9 +130,9 @@ var tree_structure_clean = function()
                         p.ptr.html(expand_sym);
                 }
         }
-    for(i in sessvars.feincms_page_open_list)
-        {   
-            item_id = sessvars.feincms_page_open_list[i];
+    for(i in feincms_page_open_list)
+        {
+            item_id = feincms_page_open_list[i];
             page(item_id).open = true;
         }
 }
