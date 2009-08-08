@@ -188,7 +188,6 @@ class Page(Base):
 
     def __unicode__(self):
         return mark_safe('&nbsp;&nbsp;' * self.level + self.short_title())
-        return u'%s (%s)' % (self.title, self._cached_url)
 
     def are_ancestors_active(self):
         """
