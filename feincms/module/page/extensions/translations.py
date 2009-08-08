@@ -60,7 +60,22 @@ def register(cls, admin_cls):
     cls.available_translations = available_translations
 
     def available_translations_admin(self, page):
-        translations = page.available_translations()
+        translations = dict((p.language, p.id) for p in page.available_translations())
+
+        links = []
+
+        for key, title in settings.LANGUAGES:
+            if key == page.language:
+                continue
+
+            if key in translations:
+                links.append(u'<a href="%s/" title="%s">%s</a>' % (
+                    translations[key], _('Edit translation'), key.upper()))
+            else:
+                links.append(u'<a style="color:#baa" href="add/?translation_of=%s&amp;language=%s" title="%s">%s</a>' % (
+                    page.id, key, _('Create translation'), key.upper()))
+
+        return u' | '.join(links)
 
         return u', '.join(
             u'<a href="%s/" title="%s">%s</a>' % (page.id, unicode(page), page.language.upper()) for page in translations)
@@ -71,11 +86,15 @@ def register(cls, admin_cls):
         return self.translation_of
     cls.original_translation = property(original_translation)
 
+    def get_translation(self, language):
+        return self.original_translation.translations.get(language=language)
+    cls.get_translation = get_translation
+
     available_translations_admin.allow_tags = True
     available_translations_admin.short_description = _('translations')
     admin_cls.available_translations_admin = available_translations_admin
 
-    admin_cls.fieldsets[0][1]['fields'] += ('language',)
+    admin_cls.fieldsets[0][1]['fields'] += ('language', 'translation_of',)
     admin_cls.list_display += ('language', 'available_translations_admin')
     admin_cls.show_on_top += ('language',)
 

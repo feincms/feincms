@@ -401,22 +401,42 @@ signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 # ------------------------------------------------------------------------
 class PageAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        if 'initial' in kwargs and 'parent' in kwargs['initial']:
-            # Prefill a few form values from the parent page
-            try:
-                page = Page.objects.get(pk=kwargs['initial']['parent'])
-                data = model_to_dict(page)
+        if 'initial' in kwargs:
+            if 'parent' in kwargs['initial']:
+                # Prefill a few form values from the parent page
+                try:
+                    page = Page.objects.get(pk=kwargs['initial']['parent'])
+                    data = model_to_dict(page)
 
-                for field in PageManager.exclude_from_copy:
-                    del data[field]
+                    for field in PageManager.exclude_from_copy:
+                        del data[field]
 
-                # These are always excluded from prefilling
-                for field in ('title', 'slug', 'parent', 'active'):
-                    del data[field]
+                    # These are always excluded from prefilling
+                    for field in ('title', 'slug', 'parent', 'active'):
+                        del data[field]
 
-                kwargs['initial'].update(data)
-            except Page.DoesNotExist:
-                pass
+                    kwargs['initial'].update(data)
+                except Page.DoesNotExist:
+                    pass
+
+            elif 'translation_of' in kwargs['initial']:
+                # Only if translation extension is active
+                try:
+                    page = Page.objects.get(pk=kwargs['initial']['translation_of'])
+                    original = page.original_translation
+
+                    data = {'translation_of': original.id}
+
+                    if original.parent:
+                        try:
+                            data['parent'] = original.parent.get_translation(kwargs['initial']['language']).id
+                        except Page.DoesNotExist:
+                            # ignore this -- the translation does not exist
+                            pass
+
+                    kwargs['initial'].update(data)
+                except Page.DoesNotExist:
+                    pass
 
         super(PageAdminForm, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
@@ -733,11 +753,20 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         # Preserve GET parameters
         return super(PageAdmin, self).add_view(request, request.get_full_path(), extra_context)
 
-    def response_add(self, request, *args, **kwargs):
-        response = super(PageAdmin, self).response_add(request, *args, **kwargs)
+    def response_add(self, request, obj, *args, **kwargs):
+        response = super(PageAdmin, self).response_add(request, obj, *args, **kwargs)
         if 'parent' in request.GET and '_addanother' in request.POST and response.status_code in (301, 302):
             # Preserve GET parameters if we are about to add another page
             response['Location'] += '?parent=%s' % request.GET['parent']
+        if 'translation_of' in request.GET:
+            # Copy all contents
+            try:
+                original = self.model._tree_manager.get(pk=request.GET.get('translation_of'))
+                original = original.original_translation
+                obj.copy_content_from(original)
+                obj.save()
+            except self.model.DoesNotExist:
+                pass
 
         return response
 
