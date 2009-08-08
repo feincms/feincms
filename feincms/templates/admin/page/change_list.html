@@ -5,7 +5,6 @@
 {{ block.super }}
 
 <style type="text/css">
-    table { display: none; }    /* hide table until set up */
     .page_marker { display:block; text-align: right; float: left; padding: 1px 2px 0 0; }
 </style>
 
@@ -17,6 +16,8 @@
     /* After loading the page, show all root nodes */
     $(function()
         {
+        $('table').hide(); /* hide table until set up */
+
         expand_sym = '<img alt="+" src="{{ FEINCMS_ADMIN_MEDIA }}/img/disclosure-right.png">';
         collapse_sym = '<img alt="-" src="{{ FEINCMS_ADMIN_MEDIA }}/img/disclosure-down.png">';
 
