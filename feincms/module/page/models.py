@@ -687,11 +687,43 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             cmd = request.POST.get('__cmd')
             if cmd == 'toggle_boolean':
                 return self._toggle_boolean(request)
+            elif cmd == 'move_node':
+                return self._move_node(request)
 
         extra_context = extra_context or {}
         extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
 
         return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
+
+    def actions_column(self, page):
+        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s">&#x2702;</a>' % (
+            page.pk, _('Cut')))
+
+        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'last-child\')" title="%s">&#x21b3;</a>' % (
+            page.pk, _('Insert as child')))
+        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'left\')" title="%s">&#x21b1;</a>' % (
+            page.pk, _('Insert before')))
+
+        return u' '.join(actions)
+    actions_column.allow_tags = True
+    actions_column.short_description = _('actions')
+    list_display.append('actions_column')
+
+    def _move_node(self, request):
+        cut_item = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
+        pasted_on = self.model._tree_manager.get(pk=request.POST.get('pasted_on'))
+        position = request.POST.get('position')
+
+        if position in ('last-child', 'left'):
+            self.model._tree_manager.move_node(cut_item, pasted_on, position)
+
+            # Ensure that model save has been run
+            source = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
+            source.save()
+
+            return HttpResponse('OK')
+        return HttpResponse('FAIL')
+
 
 # ------------------------------------------------------------------------
 # !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1

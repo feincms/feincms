@@ -6,6 +6,7 @@
 
 <style type="text/css">
     .page_marker { display:block; text-align: right; float: left; padding: 1px 2px 0 0; }
+    tr.cut { border: 2px dashed black; }
 </style>
 
 <script type="text/javascript">
@@ -17,6 +18,7 @@
     $(function()
         {
         $('table').hide(); /* hide table until set up */
+        $('a.paste_target').hide();
 
         expand_sym = '<img alt="+" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-right.png">';
         collapse_sym = '<img alt="-" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-down.png">';
@@ -51,6 +53,43 @@
         $('table').show();
         recolor_lines();
         });
+
+    var cut_item_pk = null;
+    function cut_item(pk, elem) {
+        var row = $(elem.parentNode.parentNode);
+
+        if(row.hasClass('cut')) {
+            cut_item_pk = null;
+            $('a.paste_target').hide();
+            row.removeClass('cut');
+        } else {
+            cut_item_pk = pk;
+            $('a.paste_target').show();
+            $('tr').removeClass('cut');
+            row.addClass('cut').find('a.paste_target').hide();
+        }
+
+        return false;
+    }
+
+    function paste_item(pk, position) {
+        if(!cut_item_pk)
+            return false;
+
+        $.post('.', {
+            '__cmd': 'move_node',
+            'position': position,
+            'cut_item': cut_item_pk,
+            'pasted_on': pk
+        }, function(data) {
+            if(data == 'OK')
+                window.location.reload();
+            else
+                alert(data);
+        });
+
+        return false;
+    }
 
 </script>
 
