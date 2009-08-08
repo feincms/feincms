@@ -228,7 +228,7 @@ class Page(Base):
         return mark_safe(r + self.short_title())
     indented_short_title.short_description = _('title')
     indented_short_title.allow_tags = True
-    
+
     def save(self, *args, **kwargs):
         cached_page_urls = {}
 
@@ -386,7 +386,7 @@ class Page(Base):
         Returns the site structure in a simple json encoded dictionary.
         """
         return mark_safe(simplejson.dumps(build_page_tree(Page)))
-    
+
 # ------------------------------------------------------------------------
 mptt.register(Page)
 
@@ -404,7 +404,8 @@ class PageAdminForm(forms.ModelForm):
         super(PageAdminForm, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
             choices = []
-            for key, template in kwargs['instance']._feincms_templates.items():
+            for key, template in kwargs['instance'].TEMPLATE_CHOICES:
+                template = kwargs['instance']._feincms_templates[key]
                 if template.preview_image:
                     choices.append((template.key,
                                     mark_safe(u'<img src="%s" alt="%s" /> %s' % (
@@ -473,11 +474,11 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
     Generate a html snippet for showing a boolean value on the admin page.
     Item is an object, attr is the attribute name we should display. Text
     is an optional explanatory text to be included in the output.
-    
+
     This function will emit code to produce a checkbox input with its state
     corresponding to the item.attr attribute if no override value is passed.
     This input is wired to run a JS ajax updater to toggle the value.
-    
+
     If override is passed in, ignores the attr attribute and returns a
     static image for the override boolean with no user interaction possible
     (useful for "disabled and you can't change it" situations).
@@ -489,14 +490,14 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
         a = [ django_boolean_icon(override, text), text ]
     else:
         value = getattr(item, attr)
-        a = [ 
+        a = [
               '<input type="checkbox"',
               value and ' checked="checked"' or '',
               ' onclick="return inplace_toggle_boolean(%d, \'%s\')";' % (item.id, attr),
               ' />',
               text,
             ]
-    
+
     a.insert(0, '<div id="wrap_%s_%d">' % ( attr, item.id ))
     a.append('</div>')
     #print a
@@ -532,11 +533,11 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             js.extend(( "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js", ))
         else:
             js.extend(( settings.FEINCMS_ADMIN_MEDIA + "jquery-1.3.2.min.js", ))
-        
+
         if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
             js.extend(( settings.FEINCMS_ADMIN_MEDIA + "ie_compat.js",
                         settings.FEINCMS_ADMIN_MEDIA + "sessvars.js" ,
-                        settings.FEINCMS_ADMIN_MEDIA + "toolbox.js", 
+                        settings.FEINCMS_ADMIN_MEDIA + "toolbox.js",
                         settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js",
                         ))
 
@@ -583,7 +584,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         if page.active and not page.id in self._visible_pages:
             # is active but should not be shown, so visibility limited by extension: show a "not active"
             return ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
-        
+
         return ajax_editable_boolean_cell(page, 'active')
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is visible')
@@ -643,7 +644,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
         if not self._ajax_editable_booleans.has_key(attr):
             return HttpResponseBadRequest("not a valid attribute %s" % attr)
-        
+
         try:
             obj = self.model._default_manager.get(pk=unquote(item_id))
 
@@ -662,7 +663,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
         # Weed out unchanged cells to keep the updates small. This assumes
         # that the order a possible get_descendents() returns does not change
-        # before and after toggling this attribute. Unlikely, but still... 
+        # before and after toggling this attribute. Unlikely, but still...
         d = []
         for a, b in zip(before_data, data):
             if a != b:
