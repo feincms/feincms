@@ -17,6 +17,11 @@
     /* After loading the page, show all root nodes */
     $(function()
         {
+        {% if is_popup %}
+        // resize window a bit, the default size is too small for the tree column
+        window.resizeTo(Math.min(window.outerWidth+300, screen.availWidth), window.outerHeight);
+        {% endif %}
+
         $('table').hide(); /* hide table until set up */
         $('a.paste_target').hide();
 
