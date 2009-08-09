@@ -286,3 +286,18 @@ class TreeEditor(admin.ModelAdmin):
         return u' '.join(self._actions_column(page))
     actions_column.allow_tags = True
     actions_column.short_description = _('actions')
+
+
+# !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
+
+# By default, django only orders by first ordering field in admin. We patch
+# up the ChangeList here so it returns "use default ordering" for any Page
+# lookups. That way, we can order by tree_id + lft and get the site's natural
+# page structure.
+from django.contrib.admin.views import main
+class ChangeList(main.ChangeList):
+    def get_ordering(self):
+        if isinstance(self.model_admin, TreeEditor):
+            return '', ''
+        return super(ChangeList, self).get_ordering()
+main.ChangeList = ChangeList
