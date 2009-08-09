@@ -9,7 +9,7 @@ from feincms import settings
 from feincms.admin.editor import django_boolean_icon
 
 
-def build_page_tree(cls):
+def _build_tree_structure(cls):
     """
     Build an in-memory representation of the page tree, trying to keep
     database accesses down to a minimum. The returned dictionary looks like
@@ -100,18 +100,15 @@ class TreelistEditor(admin.ModelAdmin):
         else:
             js.extend(( settings.FEINCMS_ADMIN_MEDIA + "jquery-1.3.2.min.js", ))
 
-        if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
-            js.extend(( settings.FEINCMS_ADMIN_MEDIA + "ie_compat.js",
-                        settings.FEINCMS_ADMIN_MEDIA + "jquery.cookie.js" ,
-                        settings.FEINCMS_ADMIN_MEDIA + "toolbox.js",
-                        settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js",
-                        ))
+        js.extend(( settings.FEINCMS_ADMIN_MEDIA + "ie_compat.js",
+                    settings.FEINCMS_ADMIN_MEDIA + "jquery.cookie.js" ,
+                    settings.FEINCMS_ADMIN_MEDIA + "toolbox.js",
+                    settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js",
+                    ))
 
     def __init__(self, *args, **kwargs):
         super(TreelistEditor, self).__init__(*args, **kwargs)
-        
-        print self.list_display
-        
+
         if 'indented_short_title' not in self.list_display:
             if self.list_display[0] == 'action_checkbox':
                 self.list_display[1] = 'indented_short_title'
@@ -134,46 +131,13 @@ class TreelistEditor(admin.ModelAdmin):
         r = '''<span onclick="return page_tree_handler('%d')" id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
                 item.id, item.id, 14+item.level*14)
-        return mark_safe(r + item.short_title())
+
+        if hasattr(item, 'short_title'):
+            return mark_safe(r + item.short_title())
+        return mark_safe(r + unicode(item))
     indented_short_title.short_description = _('title')
     indented_short_title.allow_tags = True
-    
-    def page_tree_json(self):
-        """
-        Returns the site structure in a simple json encoded dictionary.
-        """
-        return mark_safe(simplejson.dumps(build_page_tree(self.model)))
-    
-    # ---------------------------------------------------------------------
-    def is_visible_admin(self, page):
-        """
-        Instead of just showing an on/off boolean, also indicate whether this
-        page is not visible because of publishing dates or inherited status.
-        """
-        if page.parent_id and not page.parent_id in self._visible_pages:
-            # parent page's invisibility is inherited
-            if page.id in self._visible_pages:
-                self._visible_pages.remove(page.id)
-            return ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
 
-        if page.active and not page.id in self._visible_pages:
-            # is active but should not be shown, so visibility limited by extension: show a "not active"
-            return ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
-
-        return ajax_editable_boolean_cell(page, 'active')
-    is_visible_admin.allow_tags = True
-    is_visible_admin.short_description = _('is visible')
-    is_visible_admin.editable_boolean_field = 'active'
-
-    # active toggle needs more sophisticated result function
-    def is_visible_recursive(self, page):
-        retval = []
-        for c in page.get_descendants(include_self=True):
-            retval.append(self.is_visible_admin(c))
-        return map(lambda page: self.is_visible_admin(page), page.get_descendants(include_self=True))
-    is_visible_admin.editable_boolean_result = is_visible_recursive
-
-    #
     def _collect_editable_booleans(self):
         """
         Collect all fields marked as editable booleans. We do not
@@ -223,7 +187,6 @@ class TreelistEditor(admin.ModelAdmin):
             data = self._ajax_editable_booleans[attr](self, obj)
 
         except Exception, e:
-            print e
             return HttpResponse("FAILED " + unicode(e), mimetype="text/plain")
 
         # Weed out unchanged cells to keep the updates small. This assumes
@@ -236,16 +199,14 @@ class TreelistEditor(admin.ModelAdmin):
 
         return HttpResponse(simplejson.dumps(d), mimetype="application/json")
 
-    def refresh_visible_pages(self, *args, **kwargs):
-        self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
-
     def changelist_view(self, request, extra_context=None, *args, **kwargs):
         """
         Handle the changelist view, the django view for the model instances
         change list/actions page.
         """
-        # get a list of all visible pages for use by is_visible_admin
-        self.refresh_visible_pages()
+
+        if 'actions_column' not in self.list_display:
+            self.list_display.append('actions_column')
 
         # handle common AJAX requests
         if request.is_ajax():
@@ -257,7 +218,8 @@ class TreelistEditor(admin.ModelAdmin):
 
         extra_context = extra_context or {}
         extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
-        extra_context['tree_structure'] = self.page_tree_json()
+        extra_context['tree_structure'] = mark_safe(simplejson.dumps(
+                                                    _build_tree_structure(self.model)))
 
         return super(TreelistEditor, self).changelist_view(request, extra_context, *args, **kwargs)
 
@@ -284,3 +246,19 @@ class TreelistEditor(admin.ModelAdmin):
         
         # Use default ordering, always
         return self.model._default_manager.get_query_set()
+
+    def _actions_column(self, page):
+        actions = []
+        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s">&#x2702;</a>' % (
+            page.pk, _('Cut')))
+
+        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'last-child\')" title="%s">&#x21b3;</a>' % (
+            page.pk, _('Insert as child')))
+        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'left\')" title="%s">&#x21b1;</a>' % (
+            page.pk, _('Insert before')))
+        return actions
+
+    def actions_column(self, page):
+        return u' '.join(self._actions_column(page))
+    actions_column.allow_tags = True
+    actions_column.short_description = _('actions')

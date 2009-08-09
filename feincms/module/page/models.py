@@ -483,6 +483,8 @@ if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
     list_module = treelist_editor
 elif settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
     list_modeladmin = editor.SplitPaneEditor
+
+    # It does not really matter -- in_navigation_toggle is not used anyway
     list_module = tree_editor
 else:
     list_modeladmin = editor.TreeEditor
@@ -506,7 +508,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             'fields': ('override_url',),
         }),
         )
-    list_display = [ 'short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
+    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
     list_filter = ('active', 'in_navigation', 'template_key')
     search_fields = ('title', 'slug', 'meta_keywords', 'meta_description')
     prepopulated_fields = { 'slug': ('title',), }
@@ -524,22 +526,11 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     cached_url_admin.admin_order_field = '_cached_url'
     cached_url_admin.short_description = _('Cached URL')
 
-    def actions_column(self, page):
-        actions = [u'<a href="add/?parent=%s" title="%s">&#x21b3;</a>' % (
-            page.pk, _('Add child page'))]
-
-        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s">&#x2702;</a>' % (
-            page.pk, _('Cut')))
-
-        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'last-child\')" title="%s">&#x21b3;</a>' % (
-            page.pk, _('Insert as child')))
-        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'left\')" title="%s">&#x21b1;</a>' % (
-            page.pk, _('Insert before')))
-
-        return u' '.join(actions)
-    actions_column.allow_tags = True
-    actions_column.short_description = _('actions')
-    list_display.append('actions_column')
+    def _actions_column(self, page):
+        actions = super(PageAdmin, self)._actions_column(page)
+        actions.insert(0, u'<a href="add/?parent=%s" title="%s">&#x21b3;</a>' % (
+            page.pk, _('Add child page')))
+        return actions
 
     def add_view(self, request, form_url='', extra_context=None):
         # Preserve GET parameters
@@ -561,3 +552,47 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
                 pass
 
         return response
+
+    def refresh_visible_pages(self, *args, **kwargs):
+        self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
+
+    def changelist_view(self, request, extra_context=None, *args, **kwargs):
+        """
+        Handle the changelist view, the django view for the model instances
+        change list/actions page.
+        """
+
+        # get a list of all visible pages for use by is_visible_admin
+        self.refresh_visible_pages()
+
+        return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
+
+    # ---------------------------------------------------------------------
+    def is_visible_admin(self, page):
+        """
+        Instead of just showing an on/off boolean, also indicate whether this
+        page is not visible because of publishing dates or inherited status.
+        """
+        if page.parent_id and not page.parent_id in self._visible_pages:
+            # parent page's invisibility is inherited
+            if page.id in self._visible_pages:
+                self._visible_pages.remove(page.id)
+            return list_module.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
+
+        if page.active and not page.id in self._visible_pages:
+            # is active but should not be shown, so visibility limited by extension: show a "not active"
+            return list_module.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
+
+        return list_module.ajax_editable_boolean_cell(page, 'active')
+    is_visible_admin.allow_tags = True
+    is_visible_admin.short_description = _('is visible')
+    is_visible_admin.editable_boolean_field = 'active'
+
+    # active toggle needs more sophisticated result function
+    def is_visible_recursive(self, page):
+        retval = []
+        for c in page.get_descendants(include_self=True):
+            retval.append(self.is_visible_admin(c))
+        return map(lambda page: self.is_visible_admin(page), page.get_descendants(include_self=True))
+    is_visible_admin.editable_boolean_result = is_visible_recursive
+
