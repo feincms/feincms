@@ -109,6 +109,8 @@ class TreelistEditor(admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
         super(TreelistEditor, self).__init__(*args, **kwargs)
 
+        self.list_display = list(self.list_display)
+
         if 'indented_short_title' not in self.list_display:
             if self.list_display[0] == 'action_checkbox':
                 self.list_display[1] = 'indented_short_title'
