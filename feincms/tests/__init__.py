@@ -247,12 +247,6 @@ class PagesTestCase(TestCase):
         self.assertRedirects(self.client.get('/admin/page/page/?anything=anything'),
                              '/admin/page/page/?e=1')
 
-        # test that the action_checkbox gets removed by changelist_view
-        PageAdmin.list_display += ('action_checkbox',)
-        assert 'action_checkbox' in PageAdmin.list_display
-        self.client.get('/admin/page/page/')
-        assert 'action_checkbox' not in PageAdmin.list_display
-
     def test_02_add_page(self):
         self.login()
         self.assertRedirects(self.create_page(title='Test page ' * 10, slug='test-page'),
@@ -279,6 +273,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(page.get_absolute_url(), '/test-page/test-child-page/')
 
         page.active = True
+        page.in_navigation = True
         page.save()
 
         # page2 inherited the inactive flag from the toplevel page
@@ -288,9 +283,7 @@ class PagesTestCase(TestCase):
         page1.active = True
         page1.save()
 
-        # icon-yes should exist two times (active flag for both pages,
-        # in_navigation is false)
-        self.assertEqual(len(self.client.get('/admin/page/page/').content.split('icon-yes')), 3)
+        self.assertEqual(len(self.client.get('/admin/page/page/').content.split('checked="checked"')), 4)
 
     def test_05_override_url(self):
         self.create_default_page_set()
@@ -331,51 +324,37 @@ class PagesTestCase(TestCase):
         self.assertEqual(page5.get_absolute_url(), '/page5/')
 
         self.client.post('/admin/page/page/', {
-            '__cmd': 'save_tree',
-            'tree': '[[2, 0, 1], [1, 2, 1], [3, 1, 0], [4, 0, 1], [5, 4, 1]]',
+            '__cmd': 'move_node',
+            'position': 'last-child',
+            'cut_item': '1',
+            'pasted_on': '5',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertEqual(Page.objects.get(pk=1).get_absolute_url(),
-                         '/test-child-page/test-page/')
+                         '/page5/test-page/')
         self.assertEqual(Page.objects.get(pk=5).get_absolute_url(),
-                         '/page4/page5/')
+                         '/page5/')
         self.assertEqual(Page.objects.get(pk=3).get_absolute_url(),
-                         '/test-child-page/test-page/page3/')
-
-    def test_07_tree_editor_delete(self):
-        self.create_default_page_set()
-
-        self.assertContains(self.client.post('/admin/page/page/', {
-            '__cmd': 'delete_item',
-            'item_id': 2,
-            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
-            'OK')
-
-        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.get(pk=2))
-
-        self.assertContains(self.client.post('/admin/page/page/', {
-            '__cmd': 'delete_item',
-            'item_id': 2,
-            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
-            'FAILED')
+                         '/page5/test-page/test-child-page/page3/')
 
     def test_07_tree_editor_toggle_boolean(self):
         self.create_default_page_set()
 
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
+        
         self.assertContains(self.client.post('/admin/page/page/', {
             '__cmd': 'toggle_boolean',
             'item_id': 1,
             'attr': 'in_navigation',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
-            'icon-yes.gif')
+            r'checked=\"checked\"')
         self.assertEqual(Page.objects.get(pk=1).in_navigation, True)
-        self.assertContains(self.client.post('/admin/page/page/', {
+        self.assertNotContains(self.client.post('/admin/page/page/', {
             '__cmd': 'toggle_boolean',
             'item_id': 1,
             'attr': 'in_navigation',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
-            'icon-no.gif')
+            'checked="checked"')
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
 
         assert isinstance(self.client.post('/admin/page/page/', {
@@ -484,7 +463,7 @@ class PagesTestCase(TestCase):
         page2.symlinked_page = page
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
         self.assertEqual(unicode(page2.content.main[0]),
-                         'main on Test page (/test-page/), ordering 0')
+                         'main on Test page, ordering 0')
 
         self.assertEqual(len(page2.content.main), 1)
         self.assertEqual(len(page2.content.sidebar), 0)

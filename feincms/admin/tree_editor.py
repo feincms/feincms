@@ -1,7 +1,7 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -176,8 +176,10 @@ class TreeEditor(admin.ModelAdmin):
 
             attr = getattr(item, 'editable_boolean_field', None)
             if attr:
-                result_func = getattr(item, 'editable_boolean_result',
-                                      lambda self, page: [ ajax_editable_boolean_cell(page, attr) ])
+                def _fn(self, page):
+                    return [ ajax_editable_boolean_cell(page, _fn.attr) ]
+                _fn.attr = attr
+                result_func = getattr(item, 'editable_boolean_result', _fn)
                 self._ajax_editable_booleans[attr] = result_func
 
     def _toggle_boolean(self, request):
@@ -194,6 +196,8 @@ class TreeEditor(admin.ModelAdmin):
 
         try:
             obj = self.model._default_manager.get(pk=unquote(item_id))
+
+            attr = str(attr)
 
             before_data = self._ajax_editable_booleans[attr](self, obj)
 
@@ -233,6 +237,8 @@ class TreeEditor(admin.ModelAdmin):
                 return self._toggle_boolean(request)
             elif cmd == 'move_node':
                 return self._move_node(request)
+            else:
+                return HttpResponse('Oops. AJAX request not understood.')
 
         extra_context = extra_context or {}
         extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
