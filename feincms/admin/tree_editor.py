@@ -289,6 +289,7 @@ class TreeEditor(admin.ModelAdmin):
 
 
 # !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
+# Note: Patch lifted from http://code.djangoproject.com/ticket/4926 (ticket_4926_changelist_multifield_ordering.diff)
 
 # By default, django only orders by first ordering field in admin. We patch
 # up the ChangeList here so it returns "use default ordering" for any Page
