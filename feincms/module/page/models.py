@@ -4,6 +4,7 @@
 # ------------------------------------------------------------------------
 
 from django import forms
+from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
 from django.core.urlresolvers import reverse
@@ -521,8 +522,8 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     def _actions_column(self, page):
         actions = super(PageAdmin, self)._actions_column(page)
-        actions.insert(0, u'<a href="add/?parent=%s" title="%s">&#x21b3;</a>' % (
-            page.pk, _('Add child page')))
+        actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % (
+            page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
         return actions
 
     def add_view(self, request, form_url='', extra_context=None):
