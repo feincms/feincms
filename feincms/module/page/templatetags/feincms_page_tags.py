@@ -4,7 +4,6 @@ from django.http import HttpRequest
 
 from feincms.module.page.models import Page, PageManager
 from feincms.templatetags.utils import *
-
 register = template.Library()
 
 
@@ -125,6 +124,32 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
         return links
 register.tag('feincms_languagelinks', do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode))
+
+
+class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
+    """
+    {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
+    {% feincms_translatedpage for feincms_page as originalpage %}
+
+    This template tag needs the translations extension.
+
+    Returns the requested translation of the page if it exists. If the language
+    argument is omitted the primary language will be returned (the first language
+    specified in settings.LANGUAGES)
+    """
+    def what(self, page, args):
+        language = args.get('language',False)
+        if not language:
+            language = settings.LANGUAGES[0][0]
+
+        translations = dict((t.language, t) for t in page.available_translations())
+        translations[page.language] = page
+
+        if language in translations:
+            return translations[language]
+        else:
+            return None
+register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
 
 
 @register.simple_tag
