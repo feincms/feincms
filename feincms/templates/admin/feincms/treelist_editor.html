@@ -12,7 +12,7 @@
 <script type="text/javascript">
     /* This represents the current state of the page tree. Would need to be
        refreshed if pages are moved or deleted, but for now that is not possible */
-    var tree_structure = {{ cl.model.page_tree_json }};
+    var tree_structure = {{ tree_structure|default:"{}" }};
 
     /* After loading the page, show all root nodes */
     $(function()
