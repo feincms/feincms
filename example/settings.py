@@ -126,7 +126,5 @@ LANGUAGES = (
     ('de', 'German'),
     )
 
-# Activate either of these (but not both) to check out another
-# possibility to select pages in the administration interface:
+# Activate this to check out the split pane editor
 #FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = True
-#FEINCMS_PAGE_USE_CHANGE_LIST = True

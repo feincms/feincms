@@ -22,7 +22,7 @@ from django.views.decorators.http import condition
 import mptt
 
 from feincms import settings
-from feincms.admin import editor, treelist_editor, tree_editor
+from feincms.admin import editor
 from feincms.admin.editor import django_boolean_icon
 from feincms.management.checker import check_database_schema
 from feincms.models import Region, Template, Base, ContentProxy
@@ -478,17 +478,10 @@ class PageAdminForm(forms.ModelForm):
         return cleaned_data
 
 # ------------------------------------------------------------------------
-if settings.FEINCMS_PAGE_USE_CHANGE_LIST:
-    list_modeladmin = editor.TreelistEditor
-    list_module = treelist_editor
-elif settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
+if settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
     list_modeladmin = editor.SplitPaneEditor
-
-    # It does not really matter -- in_navigation_toggle is not used anyway
-    list_module = tree_editor
 else:
     list_modeladmin = editor.TreeEditor
-    list_module = tree_editor
 
 
 # MARK: -
@@ -517,7 +510,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     show_on_top = ('title', 'active')
     radio_fields = {'template_key': admin.HORIZONTAL}
 
-    in_navigation_toggle = list_module.ajax_editable_boolean('in_navigation', _('in navigation'))
+    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
 
     def cached_url_admin(self, page):
@@ -577,13 +570,13 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
                 self._visible_pages.remove(page.id)
-            return list_module.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
+            return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
 
         if page.active and not page.id in self._visible_pages:
             # is active but should not be shown, so visibility limited by extension: show a "not active"
-            return list_module.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
+            return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
 
-        return list_module.ajax_editable_boolean_cell(page, 'active')
+        return editor.ajax_editable_boolean_cell(page, 'active')
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is visible')
     is_visible_admin.editable_boolean_field = 'active'

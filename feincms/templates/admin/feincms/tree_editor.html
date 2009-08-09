@@ -1,81 +1,117 @@
 {% extends "admin/change_list.html" %}
-{% load i18n admin_modify adminmedia %}
+{% load adminmedia admin_list i18n %}
 
-{% block title %}{{ block.super }}{% endblock %}
+{% block extrahead %}
+{{ block.super }}
 
-{% block extrahead %}{{ block.super }}
-<script type="text/javascript" src="../../../jsi18n/"></script>
+<style type="text/css">
+    .page_marker { display:block; text-align: right; float: left; padding: 1px 2px 0 0; }
+    tr.cut { border: 2px dashed black; opacity: 0.5; }
+</style>
 
-{% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
-{% else %}
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.min.js"></script>
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.css" />
-{% endif %}
-
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.json-1.3.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}tree_editor.js"></script>
 <script type="text/javascript">
-{% include "admin/feincms/_messages.html" %}
+    /* This represents the current state of the page tree. Would need to be
+       refreshed if pages are moved or deleted, but for now that is not possible */
+    var tree_structure = {{ tree_structure|default:"{}" }};
+
+    /* After loading the page, show all root nodes */
+    $(function()
+        {
+        {% if is_popup %}
+        // resize window a bit, the default size is too small for the tree column
+        window.resizeTo(Math.min(window.outerWidth+300, screen.availWidth), window.outerHeight);
+        {% endif %}
+
+        $('table').hide(); /* hide table until set up */
+        $('a.paste_target').hide();
+
+        expand_sym = '<img alt="+" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-right.png">';
+        collapse_sym = '<img alt="-" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-down.png">';
+
+        tree_structure_clean(); /* reduce structure to actually present items */
+
+        root_items = [];
+        for(k in tree_structure)
+            {
+            p = page(k);
+            if(p.ptr)
+                {
+                p.row.hide(); /* default hide */
+                /* Note all root (ie. has no parent) nodes */
+                if(!p.parent)
+                    root_items.push(p);
+                }
+            }
+
+        for(i in root_items)
+            {
+            p = root_items[i];
+            p.row.show();
+            if(p.open)
+                open_subtree(p.id);
+            }
+
+        /* yuck :-) */
+        $('table thead tr th:eq(1)').attr('style', 'width: 450px;');
+
+        $('tbody tr').removeClass('row1').removeClass('row2');
+        $('table').show();
+        recolor_lines();
+        });
+
+    var cut_item_pk = null;
+    function cut_item(pk, elem) {
+        var row = $(elem.parentNode.parentNode);
+
+        if(row.hasClass('cut')) {
+            cut_item_pk = null;
+            $('a.paste_target').hide();
+            row.removeClass('cut');
+        } else {
+            cut_item_pk = pk;
+            $('a.paste_target').show();
+            $('tr').removeClass('cut');
+            row.addClass('cut').find('a.paste_target').hide();
+        }
+
+        return false;
+    }
+
+    function paste_item(pk, position) {
+        if(!cut_item_pk)
+            return false;
+
+        $.post('.', {
+            '__cmd': 'move_node',
+            'position': position,
+            'cut_item': cut_item_pk,
+            'pasted_on': pk
+        }, function(data) {
+            if(data == 'OK')
+                window.location.reload();
+            else
+                alert(data);
+        });
+
+        return false;
+    }
+
 </script>
 
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
-
 {% endblock %}
 
-{% block content %}
 
-<div id="content-main">
-    {% block object-tools %}
-    {% if has_add_permission %}
-    <ul class="object-tools"><li><a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">{% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}</a></li></ul>
-    {% endif %}
-    {% endblock %}
+{% comment %}
+      {% block filters %}
+        {% if cl.has_filters %}
+          <div id="changelist-filter">
+            <h2>{% trans 'Filter' %}</h2>
+            {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
 
-    <input type="button" value="{% trans "Save tree" %}" class="save_tree" style="float:right;margin:0 1px 0 0" />
+	<h3>Links</h3>
+	<li class="selected"><a href="#">Dings</a> </li>
+          </div>
+        {% endif %}
 
-    <div style="padding-top: 10px;">
-        <a href="#" onclick="return expandall(1)">{% trans "Expand all" %}</a>
-        <a href="#" onclick="return expandall(0)">{% trans "Collapse all" %}</a>
-    </div>
-
-    <div id="sitetree-wrapper" style="clear:both">
-    <table id="sitetree" border="1">
-        <thead>
-        <tr id="table_header">
-        {% for header in result_headers %}
-            <th{% if forloop.first %} style="min-width:400px"{% endif %}>{{ header.text|capfirst }}
-        {% endfor %}
-            <th>{% trans "Delete" %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item, title, item_properties in tree_editor.object_list %}
-            <tr id="item{{ item.id }}" class="childof{{ item.parent_id|default:0 }} {% if not item.is_leaf_node %}parent{% endif %} level{{ item.level }}" {# % if not item.is_root_node %}style="display:none"{% endif % #}>
-                <td>
-                    <div class="expander"></div>
-                    <div class="suchadrag">
-                        <img class="move-after" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_after.png" title="{% trans "Insert after" %}" />
-                        <img class="move-before" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_before.png" title="{% trans "Insert before" %}" />
-                        <img class="move-child" src="{{ FEINCMS_ADMIN_MEDIA }}img/insert_child.png" title="{% trans "Insert as child" %}" />
-                        <a href="{{ item.id }}/" {% if is_popup %}onclick="opener.dismissRelatedLookupPopup(window, {{ item.id }}); return false"{% endif %}><strong>{{ title }}</strong></a>
-                    </div>
-                </td>
-                {% for property in item_properties %}
-                    {{ property }}
-                {% endfor %}
-                <td>
-                    <img class="del-page" src="{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif" />
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    </div>
-
-</div>
-
-{% endblock %}
+      {% endblock %}
+{% endcomment %}
