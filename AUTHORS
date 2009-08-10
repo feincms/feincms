@@ -2,12 +2,13 @@ The primary authors are:
 
     * Matthias Kestenholz <mk@spinlock.ch>
     * Daniel Renz <dr@feinheit.ch>
+    * Martin J. Laubach <mjl@laubach.at>
 
 Additional contributors include:
 
     * Maarten van Gompel (Template tag improvements, dutch translation)
-    * Martin J. Laubach (media library improvements, request processors, overall improvements and bugfixes of the code)
+    * Maciek Szczesniak (IE bugfixes)
     * Martin Mahner (Typo fixes in the documentation)
     * Denis Martinez (Django 1.0 compatibility and bug reports)
-    * Simon Schürpf (Infanta module)
-
+    * Simon Schürpf
+    * Vítor Figueiró (Translations)
