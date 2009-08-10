@@ -8,7 +8,6 @@ setup(name='FeinCMS',
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
     url='http://github.com/matthiask/feincms/',
-    download_url='http://github.com/matthiask/feincms/zipball/master',
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
