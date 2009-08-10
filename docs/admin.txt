@@ -13,6 +13,8 @@ The tree editor
 The tree editor replaces the standard change list interface with a collapsible,
 item tree. The model must be registered with ``django-mptt`` for this to work.
 
+.. image:: images/tree_editor.png
+
 Usage is as follows:
 
 ::
@@ -68,6 +70,9 @@ The tree editor replaces the edit view (NOT the add form, therefore you may
 still use ``fieldsets``, etc. to customize the form which is used to add new
 items.
 
+.. image:: images/item_editor_content.png
+.. image:: images/item_editor_properties.png
+
 Customization the item editor
 -----------------------------
 
@@ -122,6 +127,7 @@ forms, an item editor or even preview functionality in the right hand side.
 
 Currently the split pane editor does not offer any customization hooks.
 
+.. image:: images/split_pane_editor.png
 
 
 Putting it all together

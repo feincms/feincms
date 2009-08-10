@@ -54,7 +54,8 @@ generating a list of navigation entries.
 If you have a blog and you want to display the blog categories as subnavigation
 entries, you could do it as follows:
 
-1. Create a navigation extension for the blog categories:
+Create a navigation extension for the blog categories
+-----------------------------------------------------
 
 ::
 
@@ -71,11 +72,11 @@ entries, you could do it as follows:
     Page.register_extensions('navigation')
 
 
-2. Assign this navigation extension to the CMS page where you want these
-navigation entries to appear.
+Assign this navigation extension to the CMS page where you want these navigation entries to appear
+--------------------------------------------------------------------------------------------------
 
-3. Modify your template so that the extended navigation will actually be
-rendered:
+Modify your template so that the extended navigation will actually be rendered
+------------------------------------------------------------------------------
 
 ::
 

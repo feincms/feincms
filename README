@@ -73,37 +73,3 @@ Visit these sites
 * Read the documentation: http://spinlock.ch/pub/feincms/html/
 * See the google groups page at http://groups.google.com/group/django-feincms
 * FeinCMS on github: http://github.com/matthiask/feincms/tree
-
-
-Read the documentation
-~~~~~~~~~~~~~~~~~~~~~~
-
-* docs/installation.txt
-
-  Initial installation and configuration of FeinCMS
-
-* docs/howto-page.txt
-
-  Step-by-step instructions and explanations for using the built-in page
-  module. Probably one of the best starting points.
-
-* docs/howto-medialibrary.txt
-
-  Now that you have mastered pages, you might be interested in the bundled
-  media library.
-
-* docs/urlconfs-views.txt
-
-  Default CMS view and generic view drop-in replacements
-
-* docs/pagecontent.txt
-
-  Working with content types, rendering them in the template and
-  implementing your own content types. A short description of the bundled
-  content types can also be found here.
-
-* docs/admin.txt
-
-  Describes the FeinCMS admin interface classes and how to use and customize
-  them.
-
