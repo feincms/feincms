@@ -33,13 +33,13 @@ Simple:
 Implementing your own content types
 ===================================
 
-FeinCMS offers an abstract base class, `PageContent`, which provides
-references to `Page` and `Region`. The ordering attribute is used to
+FeinCMS offers an abstract base class, ``PageContent``, which provides
+references to ``Page`` and ``Region``. The ordering attribute is used to
 order page content blocks of different types.
 
 
 Implementing a textile content block
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 Without further ado, here's the first example:
 
@@ -59,7 +59,7 @@ Without further ado, here's the first example:
 
 
 There are three field names you should not use because they are added
-by ``create_content_type'': These are ``parent'', ``region'' and ``ordering''.
+by ``create_content_type``: These are ``parent``, ``region`` and ``ordering``.
 These fields are used to specify the place where the page content will be
 placed in the output.
 
@@ -68,17 +68,17 @@ placed in the output.
 Customizing the render method for different regions
 ===================================================
 
-The default `render` method uses the region key to find a render method
+The default ``render`` method uses the region key to find a render method
 in your page content subclass and calls it. This allows you to customize
 the output depending on the region; you might want to show the same
 content differently in a sidebar and in the main region for example.
-If no matching method has been found a NotImplementedError is raised.
+If no matching method has been found a ``NotImplementedError`` is raised.
 
-This `render` method tries to be a sane default, nothing more. You can
+This ``render`` method tries to be a sane default, nothing more. You can
 simply override it and put your own code there if you do not any
 differentiation, or if you want to do it differently.
 
-All `render` methods should accept `**kwargs`. Some render methods might
+All ``render`` methods should accept ``**kwargs``. Some render methods might
 need the request, for example to determine the correct Google Maps API
 key depending on the current domain without resorting to ugly hacks.
 
@@ -133,48 +133,97 @@ of context processors for this example to work.
 Bundled content types
 =====================
 
-* feincms.content.contactform.models.ContactForm
+Contact form
+------------
+.. module:: feincms.content.contactform.models.ContactForm
 
-  Simple contact form. Also serves as an example how forms might be used inside
-  content types.
+::
 
-* feincms.content.file.models.FileContent
-* feincms.content.image.models.ImageContent
+    feincms.content.contactform.models.ContactForm
 
-  These are simple content types holding just a file or an image with a
-  position. You should probably use the MediaFileContent though.
+Simple contact form. Also serves as an example how forms might be used inside
+content types.
 
-* feincms.content.medialibrary.models.MediaFileContent
 
-  Mini-framework for arbitrary file types with customizable rendering
-  methods per-filetype.
+Inline files and images
+-----------------------
+.. module:: feincms.content.file.models.FileContent
+.. module:: feincms.content.image.models.ImageContent
 
-* feincms.content.raw.models.RawContent
+::
 
-  Raw HTML code, f.e. for flash movies or javascript code.
+    feincms.content.file.models.FileContent
+    feincms.content.image.models.ImageContent
 
-* feincms.content.richtext.models.RichtextContent
+These are simple content types holding just a file or an image with a
+position. You should probably use the MediaFileContent though.
 
-  TinyMCE widget, stripped down to the essentials; no media support, only
-  a few styles activated. The TinyMCE javascript files are not included,
-  you need to put them in the right place on your own.
 
-  Please note that you should set the TINYMCE_JS_URL inside your settings,
-  otherwise settings.MEDIA_URL + 'js/tiny_mce/tiny_mce.js' will be used.
+Media library integration
+-------------------------
+.. module:: feincms.content.medialibrary.models.MediaFileContent
 
-  If you pass cleanse=True to the create_content_type invocation for your
-  RichTextContent types, the HTML code will be cleansed right before saving
-  to the database everytime the content is modified.
+::
 
-* feincms.content.rss.models.RSSContent
+    feincms.content.medialibrary.models.MediaFileContent
 
-  A feed reader widget. This also servers as an example how to build a content
-  type that needs additional processing, in this case from a cron job.
+Mini-framework for arbitrary file types with customizable rendering
+methods per-filetype.
 
-* feincms.content.video.models.VideoContent
 
-  A easy-to-use content that automatically generates flash video inclusion code
-  from a website link. Currently only youtube and vimeo links are supported.
+Raw content
+-----------
+.. module:: feincms.content.raw.models.RawContent
+
+::
+
+    feincms.content.raw.models.RawContent
+
+Raw HTML code, f.e. for flash movies or javascript code.
+
+
+Rich text
+---------
+.. module:: feincms.content.richtext.models.RichtextContent
+
+::
+
+    feincms.content.richtext.models.RichtextContent
+
+TinyMCE widget, stripped down to the essentials; no media support, only
+a few styles activated. The TinyMCE javascript files are not included,
+you need to put them in the right place on your own.
+
+Please note that you should set the TINYMCE_JS_URL inside your settings,
+otherwise settings.MEDIA_URL + 'js/tiny_mce/tiny_mce.js' will be used.
+
+If you pass cleanse=True to the create_content_type invocation for your
+RichTextContent types, the HTML code will be cleansed right before saving
+to the database everytime the content is modified.
+
+
+RSS feeds
+---------
+.. module:: feincms.content.rss.models.RSSContent
+
+::
+
+    feincms.content.rss.models.RSSContent
+
+A feed reader widget. This also servers as an example how to build a content
+type that needs additional processing, in this case from a cron job.
+
+
+Video inclusion code for youtube, vimeo etc.
+--------------------------------------------
+.. module:: feincms.content.video.models.VideoContent
+
+::
+
+    feincms.content.video.models.VideoContent
+
+A easy-to-use content that automatically generates flash video inclusion code
+from a website link. Currently only youtube and vimeo links are supported.
 
 
 
@@ -187,6 +236,7 @@ content type to a subset of regions, the only thing you have to do is pass a
 tuple of region keys to the create_content_type method:
 
 ::
+
     Page.create_content_type(SomeSidebarContent, regions=('sidebar',))
 
 
@@ -214,9 +264,8 @@ include it in a page by simply selecting the previously uploaded media file.
 
 
 
-Configuring content types at creation time, checking whether constraints are
-fulfilled etc.
-============================================================================
+Configuring content types at creation time, checking whether constraints are fulfilled etc.
+===========================================================================================
 
 So you'd like to check whether Django is properly configured for your content
 type, or maybe add model/form fields depending on arguments passed at content
@@ -225,7 +274,7 @@ do is adding a classmethod named `initialize_type' to your content type, and
 pass additional keyword arguments to create_content_type.
 
 If you want to see an example of these two uses, have a look at the
-`MediaFileContent'.
+``MediaFileContent``.
 
 It is generally recommended to use this hook to configure content types
 compared to putting the configuration into the site-wide settings file. This
@@ -238,16 +287,17 @@ Obtaining a concrete content type model
 
 The concrete content type models are stored in the same module as the CMS base
 class, but they do not have a name using which you could import them. Using
-Base._feincms_content_types seems hacky, so what is the best way to get a hold
+``Base._feincms_content_types`` seems hacky, so what is the best way to get a hold
 onto the concrete content type?
 
-There are two recommended ways. The example use a RawContent content type and
+There are two recommended ways. The example use a ``RawContent`` content type and
 the Page CMS base class.
 
-You could take advantage of the fact that create_content_type returns the
+You could take advantage of the fact that ``create_content_type`` returns the
 created model:
 
 ::
+
     from feincms.module.page.models import Page
     from feincms.content.raw.models import RawContent
 
@@ -257,12 +307,13 @@ created model:
 Or you could use the Django app/model cache:
 
 ::
+
     from django.db.models import loading
 
     PageRawContent = loading.get_model('page', 'RawContent')
 
 
-Please note that you need to pass 'page' as module, not the place where the
-RawContent abstract content type has been defined. That's because
-create_content_type puts the created content type into the same module as the
+Please note that you need to pass ``page`` as module, not the place where the
+``RawContent`` abstract content type has been defined. That's because
+``create_content_type`` puts the created content type into the same module as the
 CMS base class, as has been written above already.

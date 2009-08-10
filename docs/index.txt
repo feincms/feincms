@@ -1,0 +1,28 @@
+.. FeinCMS documentation master file, created by
+   sphinx-quickstart on Mon Aug 10 17:03:33 2009.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to FeinCMS's documentation!
+===================================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2
+   :numbered:
+
+   installation
+   howto-page
+   urlconfs-views
+   pagecontent
+   admin
+   howto-medialibrary
+   faq
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

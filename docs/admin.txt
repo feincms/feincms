@@ -2,8 +2,8 @@
 The FeinCMS admin interface
 ===========================
 
-FeinCMS provides three ModelAdmin classes, `ItemEditor`, `TreeEditor` and
-`SplitPaneEditor`. Their purpose and their customization hooks are briefly
+FeinCMS provides three ModelAdmin classes, ``ItemEditor``, ``TreeEditor`` and
+``SplitPaneEditor``. Their purpose and their customization hooks are briefly
 discussed here.
 
 
@@ -11,12 +11,12 @@ The tree editor
 ===============
 
 The tree editor replaces the standard change list interface with a collapsible,
-drag-drop-enabled item tree. The model must be registered with `django-mptt`
-for this to work.
+item tree. The model must be registered with ``django-mptt`` for this to work.
 
 Usage is as follows:
 
 ::
+
     from django.contrib import admin
     from feincms.admin import editor
     from yourapp.models import YourModel
@@ -27,14 +27,14 @@ Usage is as follows:
     admin.site.register(YourModel, YourModelAdmin)
 
 
-The columns shown in the tree editor can be specified using list_display. Please
-note that the first column is hardcoded as the value of __unicode__ currently.
-In the future, the tree editor might even take the setting `list_editable`
+The columns shown in the tree editor can be specified using ``list_display``. Please
+note that the first column is hardcoded as the value of ``__unicode__`` currently.
+In the future, the tree editor might even take the setting ``list_editable``
 into account.
 
 
 Using the ajax boolean toggle functionality
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 
 The tree editor allows you to define boolean columns which let the website
 administrator change the value of the boolean using a simple click on the icon.
@@ -42,6 +42,7 @@ administrator change the value of the boolean using a simple click on the icon.
 Usage:
 
 ::
+
     from django.contrib import admin
     from feincms.admin import editor
     import mptt
@@ -64,35 +65,35 @@ The item editor
 ===============
 
 The tree editor replaces the edit view (NOT the add form, therefore you may
-still use `fieldsets`, etc. to customize the form which is used to add new
+still use ``fieldsets``, etc. to customize the form which is used to add new
 items.
 
 Customization the item editor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
-* show_on_top
+* ``show_on_top``
 
   A tuple which describes, which fields should be shown above the tabbed item
   editor interface.
 
 
 Customizing the individual content type forms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------
 
 Customizing the individual content type editors is easily possible through two
 settings on the content type model itself:
 
-* feincms_item_editor_context_processors:
+* ``feincms_item_editor_context_processors``:
 
   A list of callables using which you may add additional values to the item
   editor templates.
 
-* feincms_item_editor_form:
+* ``feincms_item_editor_form``:
 
   You can specify the base class which should be used for the content type
-  model. The default value is `django.forms.ModelForm`.
+  model. The default value is ``django.forms.ModelForm``.
 
-* feincms_item_editor_includes:
+* ``feincms_item_editor_includes``:
 
   If you need additional javascript or CSS files or need to perform additional
   initialization on your content type forms, you can specify template fragments
@@ -102,8 +103,8 @@ settings on the content type model itself:
   it is recommended to add the initialization functions to the
   `contentblock_init_handlers` array, because the initialization needs to be
   performed not only on page load, but also after drag-dropping a content block
-  and after adding new content blocks. Take a look at the `mediafile` and
-  `richtext` item editor include files to understand how this should be done.
+  and after adding new content blocks. Take a look at the ``mediafile`` and
+  ``richtext`` item editor include files to understand how this should be done.
 
 
 
@@ -126,4 +127,4 @@ Currently the split pane editor does not offer any customization hooks.
 Putting it all together
 =======================
 
-Best advice here is taking a look at the files inside `feincms/module/page/`.
+Best advice here is taking a look at the files inside ``feincms/module/page/``.

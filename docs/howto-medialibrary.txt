@@ -1,6 +1,6 @@
-=====================================
-HOWTO: Use the built-in media library
-=====================================
+================================
+Using the built-in media library
+================================
 
 The media library module provides a way to store, transform and display files
 of arbitrary types.
@@ -11,7 +11,7 @@ of the page module -- you can use it with any CMS base model.
 
 To activate the media library and use it together with the page module, it is
 best to first get the page module working with a few content types. Afterwards,
-add ``feincms.module.medialibrary'' to your ``INSTALLED_APPS'' setting, and
+add ``feincms.module.medialibrary`` to your ``INSTALLED_APPS`` setting, and
 create a content type for a media file as follows:
 
 ::
@@ -36,18 +36,18 @@ Configuring the media library
 =============================
 
 The location and URL of the media library may be configured either by setting
-the appropriate variables in your settings.py file or in your CMS defining
+the appropriate variables in your ``settings.py`` file or in your CMS defining
 module.
 
 The file system path for all media library files is defined using the
-FEINCMS_MEDIALIBRARY_ROOT setting (defaults to MEDIA_ROOT). Below that
-location, FEINCMS_MEDIALIBRARY_UPLOAD_TO (defaults to 'medialibrary/%Y/%m/')
+``FEINCMS_MEDIALIBRARY_ROOT`` setting (defaults to ``MEDIA_ROOT``). Below that
+location, ``FEINCMS_MEDIALIBRARY_UPLOAD_TO`` (defaults to ``medialibrary/%Y/%m/``)
 defines the directory to upload individual files to.
-The external URL to the media library can be set with FEINCMS_MEDIALIBRARY_URL
-(defaults to MEDIA_URL).
+The external URL to the media library can be set with ``FEINCMS_MEDIALIBRARY_URL``
+(defaults to ``MEDIA_URL``).
 
 These settings can also be defined programmatically using
-MediaFile.reconfigure(upload_to=..., storage=...)
+``MediaFile.reconfigure(upload_to=..., storage=...)``
 
 
 Rendering media file contents
@@ -55,30 +55,30 @@ Rendering media file contents
 
 A set of recognition functions will be run on the file name to determine the file
 type. Using combinations of the name and type, the default render method tries to
-find a template for rendering the ``MediaFileContent''.
+find a template for rendering the ``MediaFileContent``.
 
 The default set of pre-defined content types and recognition functions is:
 
 ::
 
     MediaFile.register_filetypes(
-            ( 'image', _('Image'),        
+            ( 'image', _('Image'),
               lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f) ),
             ( 'pdf',   _('PDF document'), lambda f: f.lower().endswith('.pdf') ),
             ( 'txt',   _('Text'),         lambda f: f.lower().endswith('.txt') ),
             ( 'other', _('Binary'),       lambda f: True ), # Must be last
         )
 
-You can add to that set by calling MediaFile.register_filetypes() with your new
+You can add to that set by calling ``MediaFile.register_filetypes()`` with your new
 file types similar to the above.
 
-If we've got an example file '2009/06/foobar.jpg' and a selected position of
-'left', the templates tried to render the media file are the following:
+If we've got an example file ``2009/06/foobar.jpg`` and a selected position of
+``left``, the templates tried to render the media file are the following:
 
-* ``content/mediafile/image_left.html''
-* ``content/mediafile/image.html''
-* ``content/mediafile/left.html''
-* ``content/mediafile/default.html''
+* ``content/mediafile/image_left.html``
+* ``content/mediafile/image.html``
+* ``content/mediafile/left.html``
+* ``content/mediafile/default.html``
 
 You are of course free to do with the file what you want inside the template,
 f.e. a thumbnail and a lightbox version of the image file, and put everything
@@ -94,5 +94,5 @@ library allows that. The caption may even be translated into different
 languages. This is most often not necessary or does not apply to copyrights,
 therefore the copyright can only be entered once, not once per language.
 
-The default image template ``content/mediafile/image.html'' demonstrates how
+The default image template ``content/mediafile/image.html`` demonstrates how
 the values of those fields can be retrieved and used.

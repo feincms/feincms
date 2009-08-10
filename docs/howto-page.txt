@@ -1,6 +1,8 @@
-===================================
-HOWTO: Use the built-in page module
-===================================
+==============================
+Using the built-in page module
+==============================
+
+.. module:: feincms.module.page
 
 FeinCMS is primarily a system to work with lists of content blocks which
 you can assign to arbitrary other objects. You do not necessarily have to
@@ -10,14 +12,14 @@ pieces is interesting for other uses too, i.e. for weblog entries where you
 have rich text content interspersed with images, videos or maybe even galleries.
 
 To activate the page module, you need to follow the instructions in
-installation.txt and afterwards add ``feincms.module.page'' to your
-``INSTALLED_APPS''.
+:doc:`installation` and afterwards add ``feincms.module.page`` to your
+``INSTALLED_APPS``.
 
 You need to create some content models. No models are created by default,
 because there is no possibility to unregister models. A sane default might
-be to create ``ImageContent``and ``RichTextContent'' models; you can do this
+be to create ``ImageContent``and ``RichTextContent`` models; you can do this
 by adding the following lines somewhere into your project, for example in a
-``models.py'' file that will be processed anyway:
+``models.py`` file that will be processed anyway:
 
 ::
 
@@ -47,22 +49,22 @@ were registered.
 Setting up the admin interface
 ==============================
 
-The customized admin interface code is contained inside the ``ModelAdmin''
+The customized admin interface code is contained inside the ``ModelAdmin``
 subclass, so you do not need to do anything special here. You only need to set
-``FEINCMS_ADMIN_MEDIA'' as described in the installation documentation.
+``FEINCMS_ADMIN_MEDIA`` as described in the installation documentation.
 
 If you use the RichTextContent, you need to download TinyMCE and set
-``TINYMCE_JS_URL'' to the absolute path to the main javascript file.
+``TINYMCE_JS_URL`` to the absolute path to the main javascript file.
 
 
 Wiring up the views
 ===================
 
-Just add the following lines to your ``urls.py'' to get a catch-all URL pattern:
+Just add the following lines to your ``urls.py`` to get a catch-all URL pattern:
 
 ::
 
-    urlpatterns += patterns('',
+    urlpatterns += patterns(``,
         url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
     )
 
@@ -73,7 +75,7 @@ I often do the following:
 
 ::
 
-    urlpatterns += patterns('',
+    urlpatterns += patterns(``,
         url(r'^$', 'myproject.views.home'),
 
         # include urls for other django applications
@@ -82,7 +84,7 @@ I often do the following:
     )
 
 
-And inside ``views.py'':
+And inside ``views.py``:
 
 ::
 
@@ -102,7 +104,7 @@ Adding another content type
 ===========================
 
 Imagine you've got a third-party gallery application and you'd like to include
-excerpts of galleries inside your content. You'd need to write a ``GalleryContent''
+excerpts of galleries inside your content. You'd need to write a ``GalleryContent``
 base class and let FeinCMS create a model class for you with some important
 attributes added.
 
@@ -127,8 +129,8 @@ attributes added.
     Page.create_content_type(GalleryContent)
 
 
-The newly created ``GalleryContent'' for ``Page'' will live in the database
-table ``page_page_gallerycontent''.
+The newly created ``GalleryContent`` for ``Page`` will live in the database
+table ``page_page_gallerycontent``.
 
 It is generally recommended to make your model base class abstract, because
 FeinCMS will create another class inheriting from your class, and you should
@@ -143,52 +145,76 @@ Extensions are a way to put often-used functionality easily accessible without
 cluttering up the core page model for those who do not need them. Currently,
 the following extensions are available:
 
-* changedate
 
-  Adds automatically maintained creation and modification date fields
-  to the page.
+Creation and modification dates
+-------------------------------
+.. module:: feincms.module.page.extension.changedate
 
-* datepublisher
+Adds automatically maintained creation and modification date fields
+to the page.
 
-  Adds publication date and end date fields to the page, thereby enabling the
-  administrator to define a date range where a page will be available to
-  website visitors.
 
-* navigation
+Date-based publishing
+---------------------
+.. module:: feincms.module.page.extension.datepublisher
 
-  Adds navigation extensions to the page model. You can define subclasses of
-  ``NavigationExtension'', which provide submenus to the navigation generation
-  mechanism. This extension is bound to change and is only in proof-of-concept
-  stage currently.
+Adds publication date and end date fields to the page, thereby enabling the
+administrator to define a date range where a page will be available to
+website visitors.
 
-* seo
 
-  Adds fields to the page relevant for search engine optimization (SEO),
-  currently only meta keywords and description.
+Navigation extensions
+---------------------
+.. module:: feincms.module.page.extension.navigation
 
-* symlinks
+Adds navigation extensions to the page model. You can define subclasses of
+``NavigationExtension``, which provide submenus to the navigation generation
+mechanism. This extension is bound to change and is only in proof-of-concept
+stage currently.
 
-  Sometimes you want to reuse all content from a page in another place. This
-  extension lets you do that.
 
-* titles
+Search engine optimization
+--------------------------
+.. module:: feincms.module.page.extension.seo
 
-  Adds additional title fields to the page model. You may not only define a
-  single title for the page to be used in the navigation, the <title> tag and
-  inside the content area, you are not only allowed to define different titles
-  for the three uses but also enabld to define titles and subtitles for the
-  content area.
+Adds fields to the page relevant for search engine optimization (SEO),
+currently only meta keywords and description.
 
-* translations
 
-  Adds a language field and a recursive translations many to many field to the
-  page, so that you can define the language the page is in and assign
-  translations. I am currently very unhappy with state of things concerning
-  the definition of translations, so that extension might change somewhat too.
-  This extension also adds new instructions to the setup_request method where
-  the Django i18n tools are initialized with the language given on the page
-  object.
+Symlinked content extension
+---------------------------
+.. module:: feincms.module.page.extension.symlinks
 
+Sometimes you want to reuse all content from a page in another place. This
+extension lets you do that.
+
+
+Additional titles
+-----------------
+.. module:: feincms.module.page.extension.titles
+
+Adds additional title fields to the page model. You may not only define a
+single title for the page to be used in the navigation, the <title> tag and
+inside the content area, you are not only allowed to define different titles
+for the three uses but also enabld to define titles and subtitles for the
+content area.
+
+
+Page translations
+-----------------
+.. module:: feincms.module.page.extension.translations
+
+Adds a language field and a recursive translations many to many field to the
+page, so that you can define the language the page is in and assign
+translations. I am currently very unhappy with state of things concerning
+the definition of translations, so that extension might change somewhat too.
+This extension also adds new instructions to the setup_request method where
+the Django i18n tools are initialized with the language given on the page
+object.
+
+
+Activating extensions
+---------------------
 
 You can either import the register method in the extension models yourself or
 call a helper function on the Page class as follows to activate the extensions:
@@ -215,7 +241,7 @@ simple user access check can be implemented like this:
     def authenticated_request_processor(page, request):
         if not request.user.is_authenticated():
             return HttpResponseForbidden()
-            
+
     Page.register_request_processors(authenticated_request_processor)
 
 
@@ -234,7 +260,7 @@ for whatever purposes you have in mind.
 
     def set_random_header_response_processor(page, request, response):
         response['X-Random-Number'] = 42
-    
+
     Page.register_response_processors(set_random_header_response_processor)
 
 
@@ -254,9 +280,9 @@ method for the Page.
     # as its id and slug do not change. You definitely want something more
     # involved, like including last change dates or whatever.
     def my_etag(page, request):
-        return 'PAGE-%d-%s' % ( page.id, page.slug ) 
+        return 'PAGE-%d-%s' % ( page.id, page.slug )
     Page.etag = my_etag
-    
+
     Page.register_request_processors(Page.etag_request_processor)
     Page.register_response_processors(Page.etag_response_processor)
 

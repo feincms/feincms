@@ -9,7 +9,8 @@ their own documentation file.
 
 
 
-* Should I extend the builtin modules and contents, or should I write my own?
+Should I extend the builtin modules and contents, or should I write my own?
+===========================================================================
 
 The answer is, as often, the nearly useless "It depends". The built-in modules
 serve two purposes: On one hand, they should be ready to use and demonstrate
@@ -30,12 +31,14 @@ included PageManager...
 
 
 
-* How can I let 3rd-party apps extend the navigation?
+How can I let 3rd-party apps extend the navigation?
+===================================================
 
-Short answer: You need the `navigation' extension module. Activate it like
+Short answer: You need the ``navigation`` extension module. Activate it like
 this:
 
 ::
+
     Page.register_extensions('navigation')
 
 
@@ -54,6 +57,7 @@ entries, you could do it as follows:
 1. Create a navigation extension for the blog categories:
 
 ::
+
     class BlogCategoriesNavigationExtension(NavigationExtension):
         name = _('blog categories')
 
@@ -73,6 +77,8 @@ navigation entries to appear.
 3. Modify your template so that the extended navigation will actually be
 rendered:
 
+::
+
     TODO redo this section with the improved feincms_navigation tag
 
     {% if feincms_page.navigation_extension %}
@@ -88,6 +94,7 @@ This extension could be used to pass through the children of the current
 page unmodified -- you could also apply some filtering to the entries:
 
 ::
+
     class PassthroughExtension(NavigationExtension):
         name = 'passthrough extension'
 
