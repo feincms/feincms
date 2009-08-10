@@ -1,3 +1,5 @@
+.. _howto-medialibrary:
+
 ================================
 Using the built-in media library
 ================================

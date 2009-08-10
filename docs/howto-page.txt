@@ -1,3 +1,5 @@
+.. _howto-page:
+
 ==============================
 Using the built-in page module
 ==============================
@@ -12,12 +14,13 @@ pieces is interesting for other uses too, i.e. for weblog entries where you
 have rich text content interspersed with images, videos or maybe even galleries.
 
 To activate the page module, you need to follow the instructions in
-:doc:`installation` and afterwards add ``feincms.module.page`` to your
-``INSTALLED_APPS``.
+:doc:`installation` and afterwards add :mod:`feincms.module.page` to your
+:data:`INSTALLED_APPS`.
 
 You need to create some content models. No models are created by default,
 because there is no possibility to unregister models. A sane default might
-be to create ``ImageContent``and ``RichTextContent`` models; you can do this
+be to create :class:`~feincms.content.image.models.ImageContent` and
+:class:`~feincms.content.richtext.models.RichTextContent` models; you can do this
 by adding the following lines somewhere into your project, for example in a
 ``models.py`` file that will be processed anyway:
 
@@ -40,7 +43,8 @@ by adding the following lines somewhere into your project, for example in a
     Page.create_content_type(ImageContent)
 
 
-It will be a good idea most of the time to register the RichTextContent
+It will be a good idea most of the time to register the
+:class:`~feincms.content.richtext.models.RichTextContent`
 first, because it's the most used content type for many applications. The
 content type dropdown will contain content types in the same order as they
 were registered.
@@ -49,12 +53,13 @@ were registered.
 Setting up the admin interface
 ==============================
 
-The customized admin interface code is contained inside the ``ModelAdmin``
+The customized admin interface code is contained inside the :class:`ModelAdmin`
 subclass, so you do not need to do anything special here. You only need to set
-``FEINCMS_ADMIN_MEDIA`` as described in the installation documentation.
+:data:`~feincms.settings.FEINCMS_ADMIN_MEDIA` as described in the installation documentation.
 
-If you use the RichTextContent, you need to download TinyMCE and set
-``TINYMCE_JS_URL`` to the absolute path to the main javascript file.
+If you use the :class:`~feincms.content.richtext.models.RichTextContent`, you
+need to download `TinyMCE <http://tinymce.moxiecode.com/>`_ and set
+:data:`TINYMCE_JS_URL` to the absolute path to the main javascript file.
 
 
 Wiring up the views
@@ -69,33 +74,8 @@ Just add the following lines to your ``urls.py`` to get a catch-all URL pattern:
     )
 
 
-There isn't a possibility (yet?) to specify a homepage; the needs are
-often different, and it's not a big problem writing your own home page view.
-I often do the following:
-
-::
-
-    urlpatterns += patterns(``,
-        url(r'^$', 'myproject.views.home'),
-
-        # include urls for other django applications
-
-        url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
-    )
-
-
-And inside ``views.py``:
-
-::
-
-    from feincms.views.base import handler
-
-    def home(request):
-        return handler(request, '/home/')
-
-
-The home view would also be the place to decide which webpage to show f.e. for
-multilingual sites or sites that can be accessed under different domains.
+If you want to define a page as home page for the whole site, you can give it
+an :attr:`~Page.override_url` value of ``'/'``.
 
 More information can be found in urlconfs-views.txt
 
@@ -104,7 +84,7 @@ Adding another content type
 ===========================
 
 Imagine you've got a third-party gallery application and you'd like to include
-excerpts of galleries inside your content. You'd need to write a ``GalleryContent``
+excerpts of galleries inside your content. You'd need to write a :class:`GalleryContent`
 base class and let FeinCMS create a model class for you with some important
 attributes added.
 
@@ -129,8 +109,8 @@ attributes added.
     Page.create_content_type(GalleryContent)
 
 
-The newly created ``GalleryContent`` for ``Page`` will live in the database
-table ``page_page_gallerycontent``.
+The newly created :class:`GalleryContent` for :class:`~feincms.module.page.models.Page`
+will live in the database table ``page_page_gallerycontent``.
 
 It is generally recommended to make your model base class abstract, because
 FeinCMS will create another class inheriting from your class, and you should
@@ -217,7 +197,7 @@ Activating extensions
 ---------------------
 
 You can either import the register method in the extension models yourself or
-call a helper function on the Page class as follows to activate the extensions:
+call a helper function on :class:`Page` as follows to activate the extensions:
 
 ::
 
@@ -230,7 +210,7 @@ Using page request processors
 A request processor is a function that gets the currently selected page and the
 request as parameters and returns either None (or nothing) or a HttpResponse.
 All registered request processors are run before the page is actually rendered.
-If the request processor indeed returns a HttpResponse, further rendering of
+If the request processor indeed returns a :class:`HttpResponse`, further rendering of
 the page is cut short and this response is returned immediately to the client.
 
 This allows for various actions dependent on page and request, for example a
@@ -272,7 +252,7 @@ An ETag is a string that is associated with a page -- it should change if
 may depend on more than just the raw page data in the database (e.g. it
 might list its children or a navigation tree or an excerpt from some other
 place in the CMS alltogether), you are required to write an etag producing
-method for the Page.
+method for the page.
 
 ::
 

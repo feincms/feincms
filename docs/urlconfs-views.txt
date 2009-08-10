@@ -1,3 +1,5 @@
+.. _urlconfs-views:
+
 ================================
 Integrating FeinCMS on your site
 ================================

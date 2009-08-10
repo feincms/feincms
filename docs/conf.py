@@ -40,7 +40,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'FeinCMS'
-copyright = u'2009, Matthias Kestenholz'
+copyright = u'2009, Feinheit GmbH and contributors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -72,7 +72,7 @@ exclude_trees = ['_build']
 #default_role = None
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
-#add_function_parentheses = True
+add_function_parentheses = True
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
@@ -175,7 +175,7 @@ htmlhelp_basename = 'FeinCMSdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'FeinCMS.tex', u'FeinCMS Documentation',
-   u'Matthias Kestenholz', 'manual'),
+   u'Feinheit GmbH and contributors', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

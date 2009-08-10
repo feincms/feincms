@@ -1,3 +1,5 @@
+.. _pagecontent:
+
 =========================
 Working with page content
 =========================
@@ -147,8 +149,10 @@ content types.
 
 Inline files and images
 -----------------------
-.. module:: feincms.content.file.models.FileContent
-.. module:: feincms.content.image.models.ImageContent
+.. module:: feincms.content.file.models
+.. class:: FileContent()
+.. module:: feincms.content.image.models
+.. class:: ImageContent()
 
 ::
 
@@ -184,7 +188,8 @@ Raw HTML code, f.e. for flash movies or javascript code.
 
 Rich text
 ---------
-.. module:: feincms.content.richtext.models.RichtextContent
+.. module:: feincms.content.richtext.models
+.. class:: RichTextContent()
 
 ::
 
