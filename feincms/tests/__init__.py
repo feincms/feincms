@@ -25,7 +25,7 @@ from feincms.content.video.models import VideoContent
 from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
-from feincms.module.page.models import Page, PageAdmin
+from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
 from feincms.utils import collect_dict_values, get_object, prefill_entry_list, \
@@ -67,16 +67,12 @@ class ModelsTest(TestCase):
 
 class UtilsTest(TestCase):
     def test_get_object(self):
-        from feincms.utils import get_object
-
         self.assertRaises(AttributeError, lambda: get_object('feincms.does_not_exist'))
         self.assertRaises(ImportError, lambda: get_object('feincms.does_not_exist.fn'))
 
         self.assertEqual(get_object, get_object('feincms.utils.get_object'))
 
     def test_collect_dict_values(self):
-        from feincms.utils import collect_dict_values
-
         self.assertEqual({'a': [1, 2], 'b': [3]},
             collect_dict_values([('a', 1), ('a', 2), ('b', 3)]))
 
@@ -341,7 +337,7 @@ class PagesTestCase(TestCase):
         self.create_default_page_set()
 
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
-        
+
         self.assertContains(self.client.post('/admin/page/page/', {
             '__cmd': 'toggle_boolean',
             'item_id': 1,

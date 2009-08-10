@@ -424,7 +424,7 @@ class Base(models.Model):
     def _needs_content_types(cls):
         # Check whether any content types have been created for this base class
         if not hasattr(cls, '_feincms_content_types') or not cls._feincms_content_types:
-            raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (self.model.__name__)
+            raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (cls.__name__)
 
     def copy_content_from(self, obj):
         """

@@ -1,6 +1,5 @@
 import re
 
-from django.conf import settings
 from django.core import urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse, NoReverseMatch
 from django.db import models

@@ -1,15 +1,10 @@
 from django import template
 from django.conf import settings as django_settings
 from django.contrib import admin
-from django.contrib.admin.util import unquote
-from django.core.exceptions import ImproperlyConfigured
-from django.db import connection, models
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
+from django.http import HttpResponse
 from django.shortcuts import render_to_response
-from django.utils import simplejson
-from django.utils.encoding import force_unicode, smart_unicode
 from django.utils.text import capfirst
-from django.utils.translation import ugettext as _
 
 from feincms import settings
 

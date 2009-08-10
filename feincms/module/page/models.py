@@ -6,16 +6,12 @@
 from django import forms
 from django.conf import settings as django_settings
 from django.contrib import admin
-from django.contrib.admin.util import unquote
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, signals
-from django.db.models.signals import post_save
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.http import condition
@@ -24,9 +20,8 @@ import mptt
 
 from feincms import settings
 from feincms.admin import editor
-from feincms.admin.editor import django_boolean_icon
 from feincms.management.checker import check_database_schema
-from feincms.models import Region, Template, Base, ContentProxy
+from feincms.models import Base
 from feincms.utils import get_object
 
 

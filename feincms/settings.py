@@ -5,7 +5,6 @@
 
 import django
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from os.path import join
 
 # Whether Django 1.0 compatibilty mode should be active or not

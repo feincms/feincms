@@ -117,7 +117,7 @@ class TranslatedObjectMixin(object):
     def __unicode__(self):
         try:
             translation = self.translation
-        except models.ObjectDoesNotExist:
+        except ObjectDoesNotExist:
             return self.__class__.__name__
 
         if translation:

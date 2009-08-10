@@ -1,7 +1,7 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _

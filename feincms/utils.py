@@ -42,7 +42,7 @@ Example:
 """
 
 from django.core.urlresolvers import get_callable
-from django.db import connection, models
+from django.db import connection
 from django.db.models.fields import related
 
 

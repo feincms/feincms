@@ -4,18 +4,17 @@ from django import forms, template
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.admin.util import unquote
-from django.db import models
+from django.core.exceptions import PermissionDenied
 from django.db.models import loading
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.utils.encoding import force_unicode
 from django.utils.functional import curry
 from django.utils.translation import ugettext as _
 
 from feincms import settings
-from feincms.models import Region
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
 

@@ -1,10 +1,8 @@
 from datetime import datetime
 
-from django.conf import settings
 from django.contrib import admin
 from django.db import models
-from django.db.models import Q, signals
-from django.http import Http404
+from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin import editor
