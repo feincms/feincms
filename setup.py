@@ -4,18 +4,24 @@ from setuptools import setup, find_packages
 
 setup(name='FeinCMS',
     version='1.0',
-    description='Django-based CMS building toolkit.',
+    description='Django-based Page CMS and CMS building toolkit.',
+    long_description='Offers a CMS for a hierarchy of pages, and tools which allow you to build your own CMS on top of Django easily if the standard page module does not fulfil your needs.',
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
     url='http://github.com/matthiask/feincms/',
+    license='BSD License',
+    platforms=['OS Independent'],
     classifiers=[
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
+        'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Framework :: Django',
+        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development',
+        'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
     requires=[
         #'lxml', # only needed for rich text cleansing
