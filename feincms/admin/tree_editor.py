@@ -27,10 +27,10 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
 
 def _build_tree_structure(cls):
     """
-    Build an in-memory representation of the page tree, trying to keep
+    Build an in-memory representation of the item tree, trying to keep
     database accesses down to a minimum. The returned dictionary looks like
     this (as json dump):
-    
+
         {"6": {"id": 6, "children": [7, 8, 10], "parent": null, "descendants": [7, 12, 13, 8, 10]},
          "7": {"id": 7, "children": [12], "parent": 6, "descendants": [12, 13]},
          "8": {"id": 8, "children": [], "parent": 6, "descendants": []},
@@ -182,6 +182,16 @@ class TreeEditor(admin.ModelAdmin):
                 result_func = getattr(item, 'editable_boolean_result', _fn)
                 self._ajax_editable_booleans[attr] = result_func
 
+    def _refresh_changelist_caches(self):
+        """
+        Refresh information used to show the changelist tree structure such as
+        inherited active/inactive states etc.
+
+        XXX: This is somewhat hacky, but since it's an internal method, so be it.
+        """
+
+        pass
+
     def _toggle_boolean(self, request):
         """
         Handle an AJAX toggle_boolean request
@@ -203,7 +213,8 @@ class TreeEditor(admin.ModelAdmin):
 
             setattr(obj, attr, not getattr(obj, attr))
             obj.save()
-            self.refresh_visible_pages()    # ???: Perhaps better a post_save signal?
+
+            self._refresh_changelist_caches() # ???: Perhaps better a post_save signal?
 
             # Construct html snippets to send back to client for status update
             data = self._ajax_editable_booleans[attr](self, obj)
@@ -240,6 +251,8 @@ class TreeEditor(admin.ModelAdmin):
             else:
                 return HttpResponse('Oops. AJAX request not understood.')
 
+        self._refresh_changelist_caches()
+
         extra_context = extra_context or {}
         extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
         extra_context['tree_structure'] = mark_safe(simplejson.dumps(
@@ -267,7 +280,7 @@ class TreeEditor(admin.ModelAdmin):
         Returns a QuerySet of all model instances that can be edited by the
         admin site. This is used by changelist_view.
         """
-        
+
         # Use default ordering, always
         return self.model._default_manager.get_query_set()
 

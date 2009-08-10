@@ -547,19 +547,8 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
         return response
 
-    def refresh_visible_pages(self, *args, **kwargs):
+    def _refresh_changelist_caches(self, *args, **kwargs):
         self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
-
-    def changelist_view(self, request, extra_context=None, *args, **kwargs):
-        """
-        Handle the changelist view, the django view for the model instances
-        change list/actions page.
-        """
-
-        # get a list of all visible pages for use by is_visible_admin
-        self.refresh_visible_pages()
-
-        return super(PageAdmin, self).changelist_view(request, extra_context, *args, **kwargs)
 
     # ---------------------------------------------------------------------
     def is_visible_admin(self, page):
