@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
+import os
 from setuptools import setup, find_packages
 
 setup(name='FeinCMS',
     version='1.0',
     description='Django-based Page CMS and CMS building toolkit.',
-    long_description='Offers a CMS for a hierarchy of pages, and tools which allow you to build your own CMS on top of Django easily if the standard page module does not fulfil your needs.',
+    long_description=open(os.path.join(os.path.dirname(__file__), 'README')).read(),
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
     url='http://github.com/matthiask/feincms/',
