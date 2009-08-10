@@ -13,3 +13,4 @@ def register(cls, admin_cls):
         help_text=_('This will be prepended to the default description.')))
 
     admin_cls.fieldsets[1][1]['fields'] += ('meta_keywords', 'meta_description')
+    admin_cls.search_fields += ('meta_keywords', 'meta_description')
