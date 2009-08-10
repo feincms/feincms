@@ -61,5 +61,5 @@ The page module
 The tools contained in FeinCMS can be used for many CMS-related
 activities. The most common use of a CMS is to manage a hierarchy of
 pages and this is the most advanced module of FeinCMS too. Please
-proceed to :doc:`howto-page` to find out how you can get the page module
+proceed to :doc:`page` to find out how you can get the page module
 up and running.

@@ -1,15 +1,15 @@
-.. _pagecontent:
+.. _contenttypes:
 
-=========================
-Working with page content
-=========================
+==========================
+Working with content types
+==========================
 
-You will learn how to add your own page content types and how you can
+You will learn how to add your own content types and how you can
 render them in a template.
 
 
-Rendering page contents in your templates
-=========================================
+Rendering contents in your templates
+====================================
 
 Simple:
 
@@ -35,9 +35,22 @@ Simple:
 Implementing your own content types
 ===================================
 
-FeinCMS offers an abstract base class, ``PageContent``, which provides
-references to ``Page`` and ``Region``. The ordering attribute is used to
-order page content blocks of different types.
+FeinCMS offers a method on :class:`feincms.models.Base` called
+:func:`create_content_type` which will create concrete content types from
+your abstract content types. Since content types can be used for different
+CMS base models such as pages and blog entries (implementing a rich text
+or an image content once and using it for both models makes lots of sense)
+your implementation needs to be abstract. :func:`create_content_type` adds
+a few utility methods and a few model fields to build the concrete type,
+a foreign key to the base model (f.e. the :class:`Page`) and
+several properties indicating where the content block will be positioned
+in the rendered result.
+
+
+.. note::
+   The examples on this page assume that you use the
+   :class:`~feincms.module.page.models.Page` CMS base model. The principles
+   outlined apply for all other CMS base types.
 
 
 Implementing a textile content block
@@ -54,6 +67,9 @@ Without further ado, here's the first example:
     class TextilePageContent(models.Model):
         content = models.TextField()
 
+        class Meta:
+            abstract = True
+
         def render(self, **kwargs):
             return textile(self.content)
 
@@ -62,7 +78,7 @@ Without further ado, here's the first example:
 
 There are three field names you should not use because they are added
 by ``create_content_type``: These are ``parent``, ``region`` and ``ordering``.
-These fields are used to specify the place where the page content will be
+These fields are used to specify the place where the content will be
 placed in the output.
 
 
@@ -71,7 +87,7 @@ Customizing the render method for different regions
 ===================================================
 
 The default ``render`` method uses the region key to find a render method
-in your page content subclass and calls it. This allows you to customize
+in your concrete content type and calls it. This allows you to customize
 the output depending on the region; you might want to show the same
 content differently in a sidebar and in the main region for example.
 If no matching method has been found a ``NotImplementedError`` is raised.
@@ -137,11 +153,8 @@ Bundled content types
 
 Contact form
 ------------
-.. module:: feincms.content.contactform.models.ContactForm
-
-::
-
-    feincms.content.contactform.models.ContactForm
+.. module:: feincms.content.contactform.models
+.. class:: ContactForm()
 
 Simple contact form. Also serves as an example how forms might be used inside
 content types.
@@ -154,34 +167,29 @@ Inline files and images
 .. module:: feincms.content.image.models
 .. class:: ImageContent()
 
-::
-
-    feincms.content.file.models.FileContent
-    feincms.content.image.models.ImageContent
-
 These are simple content types holding just a file or an image with a
 position. You should probably use the MediaFileContent though.
 
 
 Media library integration
 -------------------------
-.. module:: feincms.content.medialibrary.models.MediaFileContent
-
-::
-
-    feincms.content.medialibrary.models.MediaFileContent
+.. module:: feincms.content.medialibrary.models
+.. class:: MediaFileContent()
 
 Mini-framework for arbitrary file types with customizable rendering
 methods per-filetype.
 
+Additional arguments for :func:`~feincms.models.Base.create_content_type`:
+
+* ``POSITION_CHOICES``: (mandatory)
+
+  A list of tuples for the position dropdown.
+
 
 Raw content
 -----------
-.. module:: feincms.content.raw.models.RawContent
-
-::
-
-    feincms.content.raw.models.RawContent
+.. module:: feincms.content.raw.models
+.. class:: RawContent()
 
 Raw HTML code, f.e. for flash movies or javascript code.
 
@@ -190,10 +198,6 @@ Rich text
 ---------
 .. module:: feincms.content.richtext.models
 .. class:: RichTextContent()
-
-::
-
-    feincms.content.richtext.models.RichtextContent
 
 TinyMCE widget, stripped down to the essentials; no media support, only
 a few styles activated. The TinyMCE javascript files are not included,
@@ -206,26 +210,27 @@ If you pass cleanse=True to the create_content_type invocation for your
 RichTextContent types, the HTML code will be cleansed right before saving
 to the database everytime the content is modified.
 
+Additional arguments for :func:`~feincms.models.Base.create_content_type`:
+
+* ``cleanse``:
+
+  Whether the HTML code should be cleansed of all tags and attributes
+  which are not explicitly whitelisted. The default is ``False``.
+
 
 RSS feeds
 ---------
-.. module:: feincms.content.rss.models.RSSContent
+.. module:: feincms.content.rss.models
+.. class:: RSSContent
 
-::
-
-    feincms.content.rss.models.RSSContent
-
-A feed reader widget. This also servers as an example how to build a content
+A feed reader widget. This also serves as an example how to build a content
 type that needs additional processing, in this case from a cron job.
 
 
 Video inclusion code for youtube, vimeo etc.
 --------------------------------------------
-.. module:: feincms.content.video.models.VideoContent
-
-::
-
-    feincms.content.video.models.VideoContent
+.. module:: feincms.content.video.models
+.. class:: VideoContent
 
 A easy-to-use content that automatically generates flash video inclusion code
 from a website link. Currently only youtube and vimeo links are supported.
@@ -264,22 +269,22 @@ FileContent and ImageContent models can be viewed as bad style in this respect,
 because if you want to use a image or file more than once you need to upload it
 for every single use instead of being able to reuse the uploaded file. The
 media library module and MediaFileContent resolve at least this issue nicely by
-allowing the website administrator to attach metainformation to a file and
+allowing the website administrator to attach meta informations to a file and
 include it in a page by simply selecting the previously uploaded media file.
 
 
 
-Configuring content types at creation time, checking whether constraints are fulfilled etc.
-===========================================================================================
+Configuring and self-checking content types at creation time
+============================================================
 
 So you'd like to check whether Django is properly configured for your content
 type, or maybe add model/form fields depending on arguments passed at content
 type creation time? This is very easy to achieve. The only thing you need to
-do is adding a classmethod named `initialize_type' to your content type, and
-pass additional keyword arguments to create_content_type.
+do is adding a classmethod named :func:`initialize_type` to your content type, and
+pass additional keyword arguments to :func:`create_content_type`.
 
 If you want to see an example of these two uses, have a look at the
-``MediaFileContent``.
+:class:`~feincms.content.medialibrary.models.MediaFileContent`.
 
 It is generally recommended to use this hook to configure content types
 compared to putting the configuration into the site-wide settings file. This
@@ -291,9 +296,9 @@ Obtaining a concrete content type model
 =======================================
 
 The concrete content type models are stored in the same module as the CMS base
-class, but they do not have a name using which you could import them. Using
-``Base._feincms_content_types`` seems hacky, so what is the best way to get a hold
-onto the concrete content type?
+class, but they do not have a name using which you could import them. Accessing
+internal attributes is hacky, so what is the best way to get a hold onto the
+concrete content type?
 
 There are two recommended ways. The example use a ``RawContent`` content type and
 the Page CMS base class.
@@ -309,16 +314,10 @@ created model:
     PageRawContent = Page.create_content_type(RawContent)
 
 
-Or you could use the Django app/model cache:
+Or you could use :func:`content_type_for`:
 
 ::
 
-    from django.db.models import loading
+    from feincms.content.raw.models import RawContent
 
-    PageRawContent = loading.get_model('page', 'RawContent')
-
-
-Please note that you need to pass ``page`` as module, not the place where the
-``RawContent`` abstract content type has been defined. That's because
-``create_content_type`` puts the created content type into the same module as the
-CMS base class, as has been written above already.
+    PageRawContent = Page.content_type_for(RawContent)

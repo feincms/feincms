@@ -1,28 +1,38 @@
-.. FeinCMS documentation master file, created by
-   sphinx-quickstart on Mon Aug 10 17:03:33 2009.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. _index:
 
 ========================================
 FeinCMS - An extensible Django-based CMS
 ========================================
 
 
-Contents:
-=========
+Getting help
+============
+
+* Try the :doc:`faq`
+
+* Search for information in the `archives of the django-feincms mailing list`_,
+  or `post a question`_.
+
+.. _archives of the django-feincms mailing list: http://groups.google.com/group/django-feincms/
+.. _post a question: http://groups.google.com/group/django-feincms/
+
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
    :numbered:
-
+   
    overview
    installation
-   howto-page
-   urlconfs-views
-   pagecontent
+   page
+   contenttypes
    admin
-   howto-medialibrary
+   urlconfs-views
+   medialibrary
    faq
+
 
 Indices and tables
 ==================

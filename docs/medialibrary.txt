@@ -1,8 +1,10 @@
-.. _howto-medialibrary:
+.. _medialibrary:
 
 ================================
 Using the built-in media library
 ================================
+
+.. module:: feincms.module.medialibrary
 
 The media library module provides a way to store, transform and display files
 of arbitrary types.
@@ -57,7 +59,8 @@ Rendering media file contents
 
 A set of recognition functions will be run on the file name to determine the file
 type. Using combinations of the name and type, the default render method tries to
-find a template for rendering the ``MediaFileContent``.
+find a template for rendering the
+:class:`~feincms.content.medialibrary.models.MediaFileContent`.
 
 The default set of pre-defined content types and recognition functions is:
 

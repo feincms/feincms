@@ -53,13 +53,16 @@ CMS without being forced to use whatever the developers deemed best:
     class TextilePageContent(models.Model):
         content = models.TextField()
 
+        class Meta:
+            abstract = True
+
         def render(self, **kwargs):
             return textile(self.content)
 
     Page.create_content_type(TextilePageContent)
 
 
-That's it. Not even ten lines for your own page content type.
+That's it. Not even ten code lines for your own page content type.
 
 
 

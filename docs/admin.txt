@@ -4,13 +4,17 @@
 The FeinCMS admin interface
 ===========================
 
-FeinCMS provides three ModelAdmin classes, ``ItemEditor``, ``TreeEditor`` and
-``SplitPaneEditor``. Their purpose and their customization hooks are briefly
-discussed here.
+FeinCMS provides three ModelAdmin classes, :class:`~feincms.admin.item_editor.ItemEditor`,
+:class:`~feincms.admin.tree_editor.TreeEditor` and
+:class:`~feincms.admin.splitpane_editor.SplitPaneEditor`. Their purpose and
+their customization hooks are briefly discussed here.
 
 
 The tree editor
 ===============
+
+.. module:: feincms.admin.tree_editor
+.. class:: TreeEditor
 
 The tree editor replaces the standard change list interface with a collapsible,
 item tree. The model must be registered with ``django-mptt`` for this to work.
@@ -68,15 +72,18 @@ Usage:
 The item editor
 ===============
 
-The tree editor replaces the edit view (NOT the add form, therefore you may
+.. module:: feincms.admin.item_editor
+.. class:: ItemEditor
+
+The item editor replaces the edit view (NOT the add form, therefore you may
 still use ``fieldsets``, etc. to customize the form which is used to add new
 items.
 
 .. image:: images/item_editor_content.png
 .. image:: images/item_editor_properties.png
 
-Customization the item editor
------------------------------
+Customizing the item editor
+---------------------------
 
 * ``show_on_top``
 
@@ -118,6 +125,9 @@ settings on the content type model itself:
 The split pane editor
 =====================
 
+.. module:: feincms.admin.splitpane_editor
+.. class:: SplitPaneEditor
+
 The split pane editor replaces the change list with two frames, a draggable
 and collapsible tree on the left and arbitrary information on the right.
 The interface is somewhat inspired by other popular tools such as Typo3 or
@@ -135,4 +145,4 @@ Currently the split pane editor does not offer any customization hooks.
 Putting it all together
 =======================
 
-Best advice here is taking a look at the files inside ``feincms/module/page/``.
+Best advice here is taking a look at the files inside :mod:`feincms/module/page/`.
