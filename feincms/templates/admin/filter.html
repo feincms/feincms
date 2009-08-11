@@ -1,13 +1,10 @@
 {% load i18n %}
 <h3>{% blocktrans with title as filter_title %} By {{ filter_title }} {% endblocktrans %}</h3>
-<script type="text/javascript">
-var go = function(opt) { window.location = window.location.pathname + opt };
-</script>
-<ul>
+<ul class="admin-filter-{{ title|cut:' ' }}">
 {% if choices|slice:"4:" %}
     <li>
     <select style="width: 95%;"
-        onchange="go(this.options[this.selectedIndex].value)">
+        onchange="go_from_select(this.options[this.selectedIndex].value)">
     {% for choice in choices %}
         <option{% if choice.selected %} selected="selected"{% endif %}
          value="{{ choice.query_string|iriencode }}">{{ choice.display }}</option>

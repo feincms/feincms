@@ -36,3 +36,6 @@ var inplace_toggle_boolean = function(item_id, attr) {
            'json');
     return false;
 }
+
+/* Submit a form from a drop down select */
+var go_from_select = function(opt) { window.location = window.location.pathname + opt };
