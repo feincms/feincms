@@ -1,0 +1,60 @@
+.. _utils:
+
+General utilities
+=================
+
+.. function:: get_object(path, [fail_silently])
+
+   Helper function which can be used to import a python object. ``path``
+   should be the absolute dotted path to the object. You can optionally pass
+   ``fail_silently=True`` if the function should not raise an ``Exception``
+   in case of a failure to import the object::
+
+       MyClass = get_object('module.MyClass')
+
+       myfunc = get_object('anothermodule.module2.my_function', fail_silently=True)
+
+.. function:: collect_dict_values(data)
+
+   Converts a list of 2-tuples to a dict.
+
+
+.. _utils-prefilledattributes:
+
+Prefilled attributes
+====================
+
+The two functions prefilled_attribute and prefill_entry_list help you avoid
+massive amounts of database queries when displaying a list of CMS items with
+content objects. This is especially useful if f.e. your blog content is derived
+from FeinCMS and you want to show a list of recent blog entries.
+
+::
+
+    from feincms.content.image.models import ImageContent
+    from feincms.content.richtext.models import RichTextContent
+    from feincms.models import Base
+    from feincms.utils import prefilled_attribute, prefill_entry_list
+
+    class Author(models.Model):
+        # ...
+
+    class Entry(Base):
+        authors = models.ManyToManyField
+
+        author_list = prefilled_attr('authors')
+        richtexts = prefilled_attr('richtextcontent_set')
+        images = prefilled_attr('imagecontent_set')
+
+    Entry.create_content_type(RichTextContent)
+    Entry.create_content_type(ImageContent)
+
+Then, inside your view function or inside a template tag, call
+prefill_entry_list with the attribute names::
+
+    prefill_entry_list(queryset, 'authors', 'richtextcontent_set', 'imagecontent_set')
+
+or::
+
+    {% load feincms_tags %}
+    {% feincms_prefill_entry_list object_list "authors,richtextcontent_set,imagecontent_set" %}

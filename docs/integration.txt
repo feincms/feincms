@@ -1,8 +1,8 @@
-.. _urlconfs-views:
+.. _integration:
 
-================================
-Integrating FeinCMS on your site
-================================
+=====================================================
+Integrating FeinCMS and 3rd party apps with your site
+=====================================================
 
 With FeinCMS come a set of standard views which you might want to check
 out before starting to write your own. Included is a standard view for
@@ -44,3 +44,10 @@ use Django's generic views like you already know it).
 The only thing the FeinCMS views additionally do is finding the best
 matching page for the current request and add it as ``feincms_page`` to
 the ``extra_context`` argument for the generic view.
+
+
+Integrating 3rd party apps
+==========================
+
+The :class:`~feincms.content.application.models.ApplicationContent` will
+help you with this.

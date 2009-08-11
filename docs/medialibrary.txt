@@ -1,8 +1,8 @@
 .. _medialibrary:
 
-================================
-Using the built-in media library
-================================
+=============
+Media library
+=============
 
 .. module:: feincms.module.medialibrary
 
@@ -15,7 +15,7 @@ of the page module -- you can use it with any CMS base model.
 
 To activate the media library and use it together with the page module, it is
 best to first get the page module working with a few content types. Afterwards,
-add ``feincms.module.medialibrary`` to your ``INSTALLED_APPS`` setting, and
+add :mod:`feincms.module.medialibrary` to your ``INSTALLED_APPS`` setting, and
 create a content type for a media file as follows:
 
 ::
@@ -36,8 +36,8 @@ media file types however, because the choice cannot be customized per file
 type.
 
 
-Configuring the media library
-=============================
+Configuration
+=============
 
 The location and URL of the media library may be configured either by setting
 the appropriate variables in your ``settings.py`` file or in your CMS defining

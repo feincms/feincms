@@ -88,7 +88,7 @@ Just add the following lines to your ``urls.py`` to get a catch-all URL pattern:
 If you want to define a page as home page for the whole site, you can give it
 an :attr:`~Page.override_url` value of ``'/'``.
 
-More information can be found in urlconfs-views.txt
+More information can be found in :ref:`integration`
 
 
 Adding another content type

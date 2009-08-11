@@ -29,8 +29,9 @@ Contents
    page
    contenttypes
    admin
-   urlconfs-views
+   integration
    medialibrary
+   tools/index
    faq
 
 
