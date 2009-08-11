@@ -21,7 +21,7 @@ def handler(request, path=None):
 
     for content in applicationcontents:
         r = content.process(request)
-        if r and r.status_code != 200:
+        if r and (r.status_code != 200 or request.is_ajax()):
             return r
 
     return build_page_response(page, request)
