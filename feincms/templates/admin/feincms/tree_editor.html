@@ -57,6 +57,18 @@
         $('tbody tr').removeClass('row1').removeClass('row2');
         $('table').show();
         recolor_lines();
+
+        /* If a parent filter is present, remove all leaf elements */
+        $(".admin-filter-parent option").each(function(idx, opt)
+            {
+            valstr = $(opt).attr('value').split('=')[1]; // Ugh, extract page id from query string
+            if(valstr)
+                {
+                p = page(parseInt(valstr));
+                if(p.children.length == 0)
+                   $(opt).replaceWith('');
+                }
+            });
         });
 
     var cut_item_pk = null;
