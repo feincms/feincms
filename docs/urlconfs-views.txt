@@ -13,8 +13,8 @@ the CMS.
 Default page handler
 ====================
 
-The default CMS handler view is feincms.views.base.handler. You can
-add the following as last line in your `urls.py` to make a catch-all
+The default CMS handler view is ``feincms.views.base.handler``. You can
+add the following as last line in your ``urls.py`` to make a catch-all
 for any pages which were not matched before:
 
 ::
@@ -23,9 +23,9 @@ for any pages which were not matched before:
         url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
     )
 
-Note that this default handler can also take a keyword parameter "page"
+Note that this default handler can also take a keyword parameter ``page``
 to specify which url to render. You can use that functionality to
-implement a default page by adding a clause to your urls.py:
+implement a default page by adding another entry to your ``urls.py``:
 
 ::
 
@@ -37,11 +37,10 @@ Generic views replacements
 
 FeinCMS does not force you to leave the awesome generic views of Django
 behind. To the contrary, the exactly same code can be used by simply
-replacing `django.views.generic` with `feincms.views.generic` (if you
+replacing ``django.views.generic`` with ``feincms.views.generic`` (if you
 want to use CMS content of course, if you do not want that then you can
 use Django's generic views like you already know it).
 
 The only thing the FeinCMS views additionally do is finding the best
-matching page for the current request and add it as `feincms_page` to
-the `extra_context` argument for the generic view.
-
+matching page for the current request and add it as ``feincms_page`` to
+the ``extra_context`` argument for the generic view.
