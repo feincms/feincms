@@ -151,6 +151,15 @@ of context processors for this example to work.
 Bundled content types
 =====================
 
+Application content
+-------------------
+.. module:: feincms.content.application.models
+.. class:: ApplicationContent()
+
+Used to let the administrator freely integrate 3rd party applications into
+the CMS. Described in :ref:`integration-applicationcontent`.
+
+
 Contact form
 ------------
 .. module:: feincms.content.contactform.models

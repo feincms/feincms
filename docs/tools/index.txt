@@ -1,7 +1,0 @@
-==================
-CMS building tools
-==================
-
-.. toctree::
-
-   utils

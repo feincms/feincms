@@ -31,7 +31,7 @@ Contents
    admin
    integration
    medialibrary
-   tools/index
+   advanced/index
    faq
 
 
