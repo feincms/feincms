@@ -8,7 +8,7 @@ FeinCMS - An extensible Django-based CMS
 Getting help
 ============
 
-* Try the :doc:`faq`
+* Try the :ref:`faq`
 
 * Search for information in the `archives of the django-feincms mailing list`_,
   or `post a question`_.
@@ -23,7 +23,7 @@ Contents
 .. toctree::
    :maxdepth: 2
    :numbered:
-   
+
    overview
    installation
    page

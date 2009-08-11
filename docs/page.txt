@@ -20,7 +20,7 @@ Activating the page module and creating content types
 =====================================================
 
 To activate the page module, you need to follow the instructions in
-:doc:`installation` and afterwards add :mod:`feincms.module.page` to your
+:ref:`installation` and afterwards add :mod:`feincms.module.page` to your
 :data:`INSTALLED_APPS`.
 
 You need to create some content models. No models are created by default,
