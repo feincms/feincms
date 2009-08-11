@@ -32,6 +32,24 @@ class ItemEditor(admin.ModelAdmin):
         A list of fields which should be displayed at the top of the form.
         This does not need to (and should not) include ``template''
     """
+    class Media:
+        css_files = []
+        
+        js = []
+        if settings.FEINCMS_ADMIN_MEDIA_HOTLINKING:
+            js.extend(( "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js", ))
+            css_files.extend(( "http://jqueryui.com/latest/themes/base/ui.all.css", ))
+        else:
+            js.extend(( settings.FEINCMS_ADMIN_MEDIA + "ui/jqueryui-custom-1.7.2.min.js", ))
+            css_files.extend(( settings.FEINCMS_ADMIN_MEDIA + "ui/jqueryui-custom-1.7.2.css", ))
+
+        js.extend(( settings.FEINCMS_ADMIN_MEDIA + "jquery.alerts.js",
+                    settings.FEINCMS_ADMIN_MEDIA + "item_editor.js" ))
+
+        css_files.extend(( settings.FEINCMS_ADMIN_MEDIA + "style.css", ))
+
+        css = { 'screen' : css_files }
+
 
     def _formfield_callback(self, request):
         if settings.DJANGO10_COMPAT:
