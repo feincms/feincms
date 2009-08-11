@@ -137,3 +137,43 @@ var tree_structure_clean = function()
         }
 }
 
+/* Cut/Copy/Paste support */
+// FIXME: This changes the site structure and would need to refresh the tree_structure at least (if not more, eg. page filter).
+var cut_item_pk = null;
+function cut_item(pk, elem) {
+    var row = $(elem.parentNode.parentNode);
+    
+    if(row.hasClass('cut')) {
+        cut_item_pk = null;
+        $('a.paste_target').hide();
+        row.removeClass('cut');
+    } else {
+        cut_item_pk = pk;
+        $('a.paste_target').show();
+        $('tr').removeClass('cut');
+        row.addClass('cut').find('a.paste_target').hide();
+    }
+    
+    return false;
+}
+
+function paste_item(pk, position) {
+    if(!cut_item_pk)
+        return false;
+    
+    $.post('.', {
+           '__cmd': 'move_node',
+           'position': position,
+           'cut_item': cut_item_pk,
+           'pasted_on': pk
+           }, function(data) {
+           if(data == 'OK')
+           window.location.reload();
+           else
+           alert(data);
+           });
+    
+    return false;
+}
+
+

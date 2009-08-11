@@ -7,13 +7,15 @@
 <style type="text/css">
     .page_marker { display:block; text-align: right; float: left; padding: 1px 2px 0 0; }
     tr.cut { border: 2px dashed black; opacity: 0.5; }
+    .title-column { width: 450px; }
+
 </style>
 
 <script type="text/javascript">
     /* This represents the current state of the page tree. Would need to be
        refreshed if pages are moved or deleted, but for now that is not possible */
     var tree_structure = {{ tree_structure|default:"{}" }};
-
+ 
     /* After loading the page, show all root nodes */
     $(function()
         {
@@ -65,51 +67,13 @@
             }
 
         /* yuck :-) */
-        $('table thead tr th:eq(1)').attr('style', 'width: 450px;');
+        $('table thead tr th:eq(1)').addClass('title-column');
 
+        /* Recolor lines to correctly alternate again */
         $('tbody tr').removeClass('row1').removeClass('row2');
         $('table').show();
         recolor_lines();
-
         });
-
-    var cut_item_pk = null;
-    function cut_item(pk, elem) {
-        var row = $(elem.parentNode.parentNode);
-
-        if(row.hasClass('cut')) {
-            cut_item_pk = null;
-            $('a.paste_target').hide();
-            row.removeClass('cut');
-        } else {
-            cut_item_pk = pk;
-            $('a.paste_target').show();
-            $('tr').removeClass('cut');
-            row.addClass('cut').find('a.paste_target').hide();
-        }
-
-        return false;
-    }
-
-    function paste_item(pk, position) {
-        if(!cut_item_pk)
-            return false;
-
-        $.post('.', {
-            '__cmd': 'move_node',
-            'position': position,
-            'cut_item': cut_item_pk,
-            'pasted_on': pk
-        }, function(data) {
-            if(data == 'OK')
-                window.location.reload();
-            else
-                alert(data);
-        });
-
-        return false;
-    }
-
 </script>
 
 {% endblock %}
