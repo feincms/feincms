@@ -28,6 +28,19 @@
         expand_sym = '<img alt="+" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-right.png">';
         collapse_sym = '<img alt="-" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-down.png">';
 
+        /* If a parent filter is present, remove all leaf elements */
+        /* Must come before tree cleansing! */
+        $(".admin-filter-parent option").each(function(idx, opt)
+            {
+            valstr = $(opt).attr('value').split('=')[1]; // Ugh, extract page id from query string
+            if(valstr)
+                {
+                p = page(parseInt(valstr));
+                if(!p.children || p.children.length == 0)
+                   $(opt).replaceWith('');
+                }
+            });
+
         tree_structure_clean(); /* reduce structure to actually present items */
 
         root_items = [];
@@ -58,17 +71,6 @@
         $('table').show();
         recolor_lines();
 
-        /* If a parent filter is present, remove all leaf elements */
-        $(".admin-filter-parent option").each(function(idx, opt)
-            {
-            valstr = $(opt).attr('value').split('=')[1]; // Ugh, extract page id from query string
-            if(valstr)
-                {
-                p = page(parseInt(valstr));
-                if(p.children.length == 0)
-                   $(opt).replaceWith('');
-                }
-            });
         });
 
     var cut_item_pk = null;
