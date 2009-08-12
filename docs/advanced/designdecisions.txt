@@ -30,6 +30,12 @@ other than going directly into the HTML code. Plus, if someone really
 knows what he's doing, I'd still like to give him the power to shot
 his own foot).
 
+If this does not seem convincing you can always add your own rich text
+content type with a different configuration (or just override the rich
+text editor initialization template in your own project). We do not want
+to force our world view on you, it's just that we think that in this
+case, more choice has the bigger potential to hurt than to help.
+
 
 Content blocks
 --------------
