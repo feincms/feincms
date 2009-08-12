@@ -92,7 +92,7 @@ class PageManager(models.Manager):
 
         if path:
             tokens = path.split('/')
-            paths += ['/%s/' % '/'.join(tokens[:i]) for i in range(len(tokens)+1)]
+            paths += ['/%s/' % '/'.join(tokens[:i]) for i in range(1, len(tokens)+1)]
 
         try:
             return self.active().filter(_cached_url__in=paths).extra(
