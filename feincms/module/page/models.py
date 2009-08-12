@@ -518,17 +518,12 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
-
-    def cached_url_admin(self, page):
-        return u'<a href="%s">%s</a>' % (page._cached_url, page._cached_url)
-    cached_url_admin.allow_tags = True
-    cached_url_admin.admin_order_field = '_cached_url'
-    cached_url_admin.short_description = _('Cached URL')
-
     def _actions_column(self, page):
         actions = super(PageAdmin, self)._actions_column(page)
         actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % (
             page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
+        actions.insert(0, u'<a href="%s" title="%s"><img src="%simg/admin/selector-search.gif" alt="%s" /></a>' % (
+            page.get_absolute_url(), _('View on site'), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
         return actions
 
     def add_view(self, request, form_url='', extra_context=None):
