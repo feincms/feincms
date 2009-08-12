@@ -133,7 +133,9 @@ var tree_structure_clean = function()
     for(i in feincms_page_open_list)
         {
             item_id = feincms_page_open_list[i];
-            page(item_id).open = true;
+            var p = page(item_id);
+            // pages could have been deleted
+            if(p) p.open = true;
         }
 }
 
@@ -142,7 +144,7 @@ var tree_structure_clean = function()
 var cut_item_pk = null;
 function cut_item(pk, elem) {
     var row = $(elem.parentNode.parentNode);
-    
+
     if(row.hasClass('cut')) {
         cut_item_pk = null;
         $('a.paste_target').hide();
@@ -153,14 +155,14 @@ function cut_item(pk, elem) {
         $('tr').removeClass('cut');
         row.addClass('cut').find('a.paste_target').hide();
     }
-    
+
     return false;
 }
 
 function paste_item(pk, position) {
     if(!cut_item_pk)
         return false;
-    
+
     $.post('.', {
            '__cmd': 'move_node',
            'position': position,
@@ -172,7 +174,7 @@ function paste_item(pk, position) {
            else
            alert(data);
            });
-    
+
     return false;
 }
 
