@@ -135,7 +135,6 @@ class PageManager(models.Manager):
         """
 
         data = model_to_dict(page)
-        print data
 
         for field in self.exclude_from_copy:
             del data[field]
