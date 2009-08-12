@@ -80,16 +80,20 @@ class PageManager(models.Manager):
         Return the best match for a path.
         """
 
-        tokens = path.strip('/').split('/')
+        paths = ['/']
+        path = path.strip('/')
 
-        for count in range(len(tokens), -1, -1):
-            try:
-                return self.page_for_path('/'.join(tokens[:count]))
-            except self.model.DoesNotExist:
-                pass
+        if path:
+            tokens = path.split('/')
+            paths += ['/%s/' % '/'.join(tokens[:i]) for i in range(len(tokens)+1)]
 
-        if raise404:
-            raise Http404
+        try:
+            return self.active().filter(_cached_url__in=paths).extra(
+                select={'_url_length': 'LENGTH(_cached_url)'}).order_by('-_url_length')[0]
+        except IndexError:
+            if raise404:
+                raise Http404
+
         return None
 
     def in_navigation(self):
