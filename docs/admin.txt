@@ -35,10 +35,11 @@ Usage is as follows:
     admin.site.register(YourModel, YourModelAdmin)
 
 
-The columns shown in the tree editor can be specified using ``list_display``. Please
-note that the first column is hardcoded as the value of ``__unicode__`` currently.
-In the future, the tree editor might even take the setting ``list_editable``
-into account.
+All standard :class:`~django.contrib.admin.options.ModelAdmin` attributes such as
+:attr:`ModelAdmin.list_display`, :attr:`ModelAdmin.list_editable`,
+:attr:`ModelAdmin.list_filter` work as normally. The only exception to this
+rule is the column showing the tree structure (the second column in the image).
+There, we always show the value of :attr:`Model.__unicode__` currently.
 
 
 AJAX checkboxes
