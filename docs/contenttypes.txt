@@ -137,7 +137,7 @@ Or even like this:
 
     <div id="sidebar">
         {% block content %}
-        {% feincms_render_region feincms_page "main" request %}
+        {% feincms_render_region feincms_page "sidebar" request %}
         {% endblock %}
     </div>
 
