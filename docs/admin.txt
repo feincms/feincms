@@ -17,7 +17,8 @@ The tree editor
 .. class:: TreeEditor
 
 The tree editor replaces the standard change list interface with a collapsible,
-item tree. The model must be registered with ``django-mptt`` for this to work.
+item tree. The model must be registered with `django-mptt <http://code.google.com/p/django-mptt/>`_
+for this to work.
 
 .. image:: images/tree_editor.png
 
@@ -56,9 +57,7 @@ Currently, documentation for this feature is not available yet. You can take a
 look at the implementation of the ``is_visible`` and ``in_navigation`` columns of
 the page editor however.
 
-Usage:
-
-::
+Usage::
 
     from django.contrib import admin
     from feincms.admin import editor

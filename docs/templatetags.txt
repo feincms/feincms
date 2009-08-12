@@ -1,0 +1,109 @@
+.. _templatetags:
+
+=============
+Template tags
+=============
+
+
+General template tags
+=====================
+
+.. module:: feincms.templatetags.feincms_tags
+
+.. function:: feincms_render_region:
+
+   ::
+
+       {% feincms_render_region feincms_page "main" request %}
+
+
+.. function:: feincms_render_content:
+
+   ::
+
+       {% feincms_render_content contentblock request %}
+
+
+.. function:: feincms_prefill_entry_list:
+
+   See :ref:`tools-utils-prefilledattributes`.
+
+   ::
+
+       {% feincms_prefill_entry_list queryset "authors,richtextcontent_set" [region] %}
+
+.. function:: feincms_frontend_editing:
+
+
+Page-module specific template tags
+==================================
+
+.. module:: feincms.module.page.templatetags.feincms_page_tags
+
+.. function:: feincms_navigation:
+
+   Return a list of pages to be used for the navigation
+
+   level: 1 = toplevel, 2 = sublevel, 3 = sub-sublevel
+   depth: 1 = only one level, 2 = subpages too
+
+   If you set depth to something else than 1, you might want to look into
+   the tree_info template tag from the mptt_tags library.
+
+   Example::
+
+       {% feincms_navigation of feincms_page as sublevel level=2,depth=1 %}
+       {% for p in sublevel %}
+           <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
+       {% endfor %}
+
+
+.. function:: feincms_parentlink:
+
+.. function:: feincms_languagelinks:
+
+   This template tag needs the translations extension.
+
+   Arguments can be any combination of:
+
+       * all or existing: Return all languages or only those where a translation exists
+       * excludecurrent: Excludes the item in the current language from the list
+
+   The default behavior is to return an entry for all languages including the
+   current language.
+
+   Example::
+
+       {% feincms_languagelinks for entry as links all,excludecurrent %}
+       {% for key, name, link in links %}
+           <a href="{% if link %}{{ link }}{% else %}/{{ key }}/{% endif %}">{% trans name %}</a>
+       {% endfor %}
+
+
+.. function:: feincms_translatedpage:
+
+   {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
+   {% feincms_translatedpage for feincms_page as originalpage %}
+
+   This template tag needs the translations extension.
+
+   Returns the requested translation of the page if it exists. If the language
+   argument is omitted the primary language will be returned (the first language
+   specified in settings.LANGUAGES)
+
+
+.. function:: feincms_breadcrumbs:
+
+.. function:: is_parent_of:
+
+.. function:: is_equal_or_parent_of:
+
+
+Application content template tags
+=================================
+
+.. module:: feincms.templatetags.applicationcontent_tags:
+
+.. function:: fragment:
+
+.. function:: get_fragment:
