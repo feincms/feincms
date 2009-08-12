@@ -239,7 +239,6 @@ $(document).ready(function(){
     // register regions as sortable for drag N drop
     $(".order-machine").sortable({
         handle: '.handle',
-        helper: 'clone',
         placeholder: 'highlight',
         stop: function(event, ui) {
             richify_poor($(ui.item));
