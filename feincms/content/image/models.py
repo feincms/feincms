@@ -8,12 +8,12 @@ class ImageContent(models.Model):
     # instead.
 
     """
-    Create an ImageContent like this:
+    Create an ImageContent like this::
 
-    Cls.create_content_type(ImageContent, POSITION_CHOICES=(
-        ('left', 'Left'),
-        ('right', Right'),
-        ))
+        Cls.create_content_type(ImageContent, POSITION_CHOICES=(
+            ('left', 'Left'),
+            ('right', Right'),
+            ))
     """
 
     image = models.ImageField(_('image'), upload_to='imagecontent')

@@ -28,9 +28,9 @@ class ItemEditor(admin.ModelAdmin):
     """
     This ModelAdmin class needs an attribute:
 
-    show_on_top::
+    show_on_top:
         A list of fields which should be displayed at the top of the form.
-        This does not need to (and should not) include ``template''
+        This does not need to (and should not) include ``template``
     """
 
     def _formfield_callback(self, request):

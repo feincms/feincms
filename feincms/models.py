@@ -86,8 +86,9 @@ class Base(models.Model):
     @classmethod
     def register_regions(cls, *regions):
         """
+        Register a list of regions. Only use this if you do not want to use
+        multiple templates with this model (read: not use ``register_templates``)::
 
-        Example:
             BlogEntry.register_regions(
                 ('main', _('Main content area')),
                 )
@@ -101,8 +102,9 @@ class Base(models.Model):
     @classmethod
     def register_templates(cls, *templates):
         """
+        Register templates and add a ``template_key`` field to the model for
+        saving the selected template::
 
-        Example:
             Page.register_templates({
                 'key': 'base',
                 'title': _('Standard template'),
@@ -201,10 +203,10 @@ class Base(models.Model):
     def _create_content_base(cls):
         """
         This is purely an internal method. Here, we create a base class for the
-        concrete content types, which are built in `create_content_type`.
+        concrete content types, which are built in ``create_content_type``.
 
         The three fields added to build a concrete content type class/model are
-        `parent`, `region` and `ordering`.
+        ``parent``, ``region`` and ``ordering``.
         """
 
         # We need a template, because of the possibility of restricting content types
@@ -398,9 +400,7 @@ class Base(models.Model):
     @classmethod
     def content_type_for(cls, model):
         """
-        Return the concrete content type for an abstract content type.
-
-        Example:
+        Return the concrete content type for an abstract content type::
 
             from feincms.content.video.models import VideoContent
             concrete_type = Page.content_type_for(VideoContent)
@@ -465,12 +465,11 @@ class Base(models.Model):
 
 class ContentProxy(object):
     """
-    This proxy offers attribute-style access to the page contents of regions.
+    This proxy offers attribute-style access to the page contents of regions::
 
-    Example:
-    >> page = Page.objects.all()[0]
-    >> page.content.main
-    [A list of all page contents which are assigned to the region with key 'main']
+        >> page = Page.objects.all()[0]
+        >> page.content.main
+        [A list of all page contents which are assigned to the region with key 'main']
     """
 
     def __init__(self, item):
