@@ -131,90 +131,75 @@ it.
 
 .. _page-extensions:
 
-Using page extensions
-=====================
+Page extension modules
+======================
+
+.. module:: feincms.module.page.extension
 
 Extensions are a way to put often-used functionality easily accessible without
-cluttering up the core page model for those who do not need them. Currently,
-the following extensions are available:
+cluttering up the core page model for those who do not need them. The extensions
+are standard python modules with a :func:`register` method which will be called
+upon registering the extension. The :func:`register` method receives the
+:class:`~feincms.module.page.models.Page` class itself and the model admin class
+:class:`~feincms.module.page.models.PageAdmin` as arguments. The extensions can
+be activated as follows::
+
+     Page.register_extensions('navigation', 'titles', 'translations')
 
 
-Creation and modification dates
--------------------------------
-.. module:: feincms.module.page.extension.changedate
+The following extensions are available currently:
 
-Adds automatically maintained creation and modification date fields
-to the page.
+* :mod:`~feincms.module.page.extension.changedate` --- Creation and modification dates
 
-
-Date-based publishing
----------------------
-.. module:: feincms.module.page.extension.datepublisher
-
-Adds publication date and end date fields to the page, thereby enabling the
-administrator to define a date range where a page will be available to
-website visitors.
+  Adds automatically maintained creation and modification date fields
+  to the page.
 
 
-Navigation extensions
----------------------
-.. module:: feincms.module.page.extension.navigation
+* :mod:`~feincms.module.page.extension.datepublisher` --- Date-based publishing
 
-Adds navigation extensions to the page model. You can define subclasses of
-``NavigationExtension``, which provide submenus to the navigation generation
-mechanism. See :ref:`page-ext-navigation` for more information on how to use
-this extension.
+  Adds publication date and end date fields to the page, thereby enabling the
+  administrator to define a date range where a page will be available to
+  website visitors.
 
 
-Search engine optimization
---------------------------
-.. module:: feincms.module.page.extension.seo
+* :mod:`~feincms.module.page.extension.navigation` --- Navigation extensions
 
-Adds fields to the page relevant for search engine optimization (SEO),
-currently only meta keywords and description.
-
-
-Symlinked content extension
----------------------------
-.. module:: feincms.module.page.extension.symlinks
-
-Sometimes you want to reuse all content from a page in another place. This
-extension lets you do that.
+  Adds navigation extensions to the page model. You can define subclasses of
+  ``NavigationExtension``, which provide submenus to the navigation generation
+  mechanism. See :ref:`page-ext-navigation` for more information on how to use
+  this extension.
 
 
-Additional titles
------------------
-.. module:: feincms.module.page.extension.titles
+* :mod:`~feincms.module.page.extension.seo` --- Search engine optimization
 
-Adds additional title fields to the page model. You may not only define a
-single title for the page to be used in the navigation, the <title> tag and
-inside the content area, you are not only allowed to define different titles
-for the three uses but also enabld to define titles and subtitles for the
-content area.
+  Adds fields to the page relevant for search engine optimization (SEO),
+  currently only meta keywords and description.
 
 
-Page translations
------------------
-.. module:: feincms.module.page.extension.translations
+* :mod:`~feincms.module.page.extension.symlinks` --- Symlinked content extension
 
-Adds a language field and a recursive translations many to many field to the
-page, so that you can define the language the page is in and assign
-translations. I am currently very unhappy with state of things concerning
-the definition of translations, so that extension might change somewhat too.
-This extension also adds new instructions to the setup_request method where
-the Django i18n tools are initialized with the language given on the page
-object.
+  Sometimes you want to reuse all content from a page in another place. This
+  extension lets you do that.
 
 
-Activating extensions
----------------------
+* :mod:`~feincms.module.page.extension.titles` --- Additional titles
 
-You can either import the register method in the extension models yourself or
-call a helper function on :class:`Page` as follows to activate the extensions:
+  Adds additional title fields to the page model. You may not only define a
+  single title for the page to be used in the navigation, the <title> tag and
+  inside the content area, you are not only allowed to define different titles
+  for the three uses but also enabld to define titles and subtitles for the
+  content area.
 
-::
 
-    Page.register_extensions('navigation', 'titles', 'translations')
+* :mod:`~feincms.module.page.extension.translations` --- Page translations
+
+  Adds a language field and a recursive translations many to many field to the
+  page, so that you can define the language the page is in and assign
+  translations. I am currently very unhappy with state of things concerning
+  the definition of translations, so that extension might change somewhat too.
+  This extension also adds new instructions to the setup_request method where
+  the Django i18n tools are initialized with the language given on the page
+  object.
 
 
 Using page request processors
@@ -278,59 +263,3 @@ method for the page.
 
     Page.register_request_processors(Page.etag_request_processor)
     Page.register_response_processors(Page.etag_response_processor)
-
-
-.. _page-ext-navigation:
-
-How can I let 3rd-party apps extend the navigation?
-===================================================
-
-Short answer: You need the ``navigation`` extension module. Activate it like
-this:
-
-::
-
-    Page.register_extensions('navigation')
-
-
-Please note however, that this call needs to come after all
-NavigationExtension subclasses have been processed, because otherwise they
-will not be available for selection in the page administration! (Yes, this is
-lame and yes, this is going to change as soon as I find the time to whip up a
-better solution.)
-
-Because the use cases for extended navigations are so different, FeinCMS
-does not go to great lengths trying to cover them all. What it does though
-is to let you execute code to filter, replace or add navigation entries when
-generating a list of navigation entries.
-
-If you have a blog and you want to display the blog categories as subnavigation
-entries, you could do it as follows:
-
-#. Create a navigation extension for the blog categories
-
-#. Assign this navigation extension to the CMS page where you want these navigation entries to appear
-
-You don't need to do anything else as long as you use the built-in
-``feincms_navigation`` template tag -- it knows how to handle extended navigations.
-
-::
-
-    class BlogCategoriesNavigationExtension(NavigationExtension):
-        name = _('blog categories')
-
-        def children(self, page):
-            for category in Category.objects.all():
-                yield PagePretender(
-                    title=category.name,
-                    url=category.get_absolute_url(),
-                    )
-
-    class PassthroughExtension(NavigationExtension):
-        name = 'passthrough extension'
-
-        def children(self, page):
-            for p in page.children.in_navigation():
-                yield p
-
-    Page.register_extensions('navigation')
