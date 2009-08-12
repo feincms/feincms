@@ -77,7 +77,6 @@ class ApplicationContent(models.Model):
             if output.status_code == 200:
                 request._feincms_applicationcontents[self.id] = mark_safe(output.content.decode('utf-8'))
 
-            # return response if view returned a HttpResponse, but not a 200
             return output
         else:
             request._feincms_applicationcontents[self.id] = mark_safe(output)
