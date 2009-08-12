@@ -8,10 +8,11 @@ the feincms_ namespace.
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models import Max
-from django.forms.models import model_to_dict
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
+
+from feincms.utils import copy_model_instance
 
 try:
     any
@@ -435,10 +436,7 @@ class Base(models.Model):
 
         for cls in self._feincms_content_types:
             for content in cls.objects.filter(parent=obj):
-                data = model_to_dict(content)
-                del data['id']
-                del data['parent']
-                new = cls(**data)
+                new = copy_model_instance(content, exclude=('id', 'parent'))
                 new.parent = self
                 new.save()
 
@@ -457,12 +455,9 @@ class Base(models.Model):
 
         for cls in self._feincms_content_types:
             for content in cls.objects.filter(parent=obj):
-                data = model_to_dict(content)
-                del data['id']
-                del data['parent']
+                new = copy_model_instance(content, exclude=('id', 'parent'))
                 # Adjust ordering value so that new contents will be appended
-                data['ordering'] += ordering[data['region']] + 1
-                new = cls(**data)
+                new.ordering += ordering[data['region']] + 1
                 new.parent = self
                 new.save()
 

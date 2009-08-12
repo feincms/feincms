@@ -22,7 +22,7 @@ from feincms import settings
 from feincms.admin import editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
-from feincms.utils import get_object
+from feincms.utils import get_object, copy_model_instance
 
 
 class PageManager(models.Manager):
@@ -36,7 +36,7 @@ class PageManager(models.Manager):
 
     # The fields which should be excluded when creating a copy. The mptt fields are
     # excluded automatically by other mechanisms
-    exclude_from_copy = ['id']
+    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level']
 
     @classmethod
     def apply_active_filters(cls, queryset):
@@ -134,12 +134,9 @@ class PageManager(models.Manager):
         inactive.
         """
 
-        data = model_to_dict(page)
-
-        for field in self.exclude_from_copy:
-            del data[field]
-        data['active'] = False
-        new = Page.objects.create(**data)
+        new = copy_model_instance(page, exclude=self.exclude_from_copy)
+        new.active = False
+        new.save()
         new.copy_content_from(page)
 
         return new

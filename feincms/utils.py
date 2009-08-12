@@ -43,6 +43,7 @@ Example:
 
 from django.core.urlresolvers import get_callable
 from django.db import connection
+from django.db.models import AutoField
 from django.db.models.fields import related
 
 
@@ -156,3 +157,17 @@ def prefill_entry_list(queryset, *attrs, **kwargs):
 
     return queryset
 
+
+def copy_model_instance(obj, exclude=None):
+    """
+    Copy a model instance, excluding primary key and optionally a list
+    of specified fields.
+    """
+
+    exclude = exclude or ()
+    initial = dict([(f.name, getattr(obj, f.name))
+                    for f in obj._meta.fields
+                    if not isinstance(f, AutoField) and \
+                       not f.name in exclude and \
+                       not f in obj._meta.parents.values()])
+    return obj.__class__(**initial)
