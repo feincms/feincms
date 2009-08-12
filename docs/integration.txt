@@ -206,6 +206,8 @@ a page, and handles pages with application contents slightly differently. Take a
 at the code until the documentation here is more complete.
 
 
+.. _integration-applicationcontent-morecontrol:
+
 Giving more control to the 3rd party application
 ------------------------------------------------
 

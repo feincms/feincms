@@ -11,17 +11,26 @@ General template tags
 .. module:: feincms.templatetags.feincms_tags
 
 .. function:: feincms_render_region:
+.. function:: feincms_render_content:
 
-   ::
+   Some content types will need the request object to work properly. Contact forms
+   will need to access POSTed data, a Google Map content type needs to use a
+   different API key depending on the current domain etc.
+
+   These two template tags allow you to pass the request from the template to the
+   content type. :func:`feincms_render_content` allows you to surround the individual
+   content blocks with custom markup, :func:`feicms_render_region` simply concatenates
+   the output of all content blocks::
 
        {% feincms_render_region feincms_page "main" request %}
 
+    or::
 
-.. function:: feincms_render_content:
-
-   ::
-
-       {% feincms_render_content contentblock request %}
+       {% for content in feincms_page.content.main %}
+           <div class="block">
+               {% feincms_render_content content request %}
+           </div>
+       {% endfor %}
 
 
 .. function:: feincms_prefill_entry_list:
@@ -60,6 +69,17 @@ Page-module specific template tags
 
 .. function:: feincms_parentlink:
 
+   Return a link to an ancestor of the passed page.
+
+   You'd determine the link to the top level ancestor of the current page
+   like this::
+
+       {% feincms_parentlink of feincms_page level=1 %}
+
+   Please note that this is not the same as simply getting the URL of the
+   parent of the current page.
+
+
 .. function:: feincms_languagelinks:
 
    This template tag needs the translations extension.
@@ -94,10 +114,27 @@ Page-module specific template tags
 
 .. function:: feincms_breadcrumbs:
 
+   ::
+
+       {% feincms_breadcrumbs feincms_page %}
+
 .. function:: is_parent_of:
+
+   ::
+
+       {% if page1|is_parent_of:page2 %}
+           page1 is a parent of page2
+       {% endif %}
 
 .. function:: is_equal_or_parent_of:
 
+   ::
+
+       {% feincms_navigation of feincms_page as main level=1 %}
+       {% for entry in main %}
+           <a {% if entry|is_equal_or_parent_of:feincms_page %}class="mark"{% endif %}
+               href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
+       {% endfor %}
 
 Application content template tags
 =================================
@@ -105,5 +142,6 @@ Application content template tags
 .. module:: feincms.templatetags.applicationcontent_tags:
 
 .. function:: fragment:
-
 .. function:: get_fragment:
+
+   See :ref:`integration-applicationcontent-morecontrol`.
