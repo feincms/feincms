@@ -21,6 +21,7 @@ Contents
    medialibrary
    templatetags
    advanced/index
+   api/index
    faq
 
 

@@ -1,0 +1,15 @@
+=================
+API documentation
+=================
+
+
+.. toctree::
+
+   base
+   page
+   medialibrary
+   admin
+   contenttypes
+   translations
+
+
