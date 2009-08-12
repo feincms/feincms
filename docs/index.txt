@@ -5,18 +5,6 @@ FeinCMS - An extensible Django-based CMS
 ========================================
 
 
-Getting help
-============
-
-* Try the :ref:`faq`
-
-* Search for information in the `archives of the django-feincms mailing list`_,
-  or `post a question`_.
-
-.. _archives of the django-feincms mailing list: http://groups.google.com/group/django-feincms/
-.. _post a question: http://groups.google.com/group/django-feincms/
-
-
 Contents
 ========
 
