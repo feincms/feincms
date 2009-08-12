@@ -2,9 +2,10 @@
 
 import os
 from setuptools import setup, find_packages
+import feincms
 
 setup(name='FeinCMS',
-    version='1.0.1',
+    version=feincms.__version__,
     description='Django-based Page CMS and CMS building toolkit.',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README')).read(),
     author='Matthias Kestenholz',
