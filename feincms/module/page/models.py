@@ -356,6 +356,30 @@ class Page(Base):
         if etag is not None:
             response['ETag'] = etag
 
+    def debug_sql_queries_response_processor(self, request, response):
+        if django_settings.DEBUG:
+            from django.db import connection
+            
+            print_sql = lambda x: x
+            try:
+                import sqlparse
+                print_sql = lambda x: sqlparse.format(x, reindent=True, keyword_case='upper')
+            except:
+                pass
+
+            print "--------------------------------------------------------------"
+            time = 0.0
+            i = 0
+            for q in connection.queries:
+                i += 1
+                print "%d : [%s]\n%s\n" % ( i, q['time'], print_sql(q['sql']))
+                time += float(q['time'])
+
+            print "--------------------------------------------------------------"
+            print "Total: %d queries, %f ms" % (i, time)
+            print "--------------------------------------------------------------"
+
+        
     @classmethod
     def register_request_processors(cls, *processors):
         cls.request_processors[0:0] = processors
