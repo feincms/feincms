@@ -299,6 +299,11 @@ class Base(models.Model):
         # by content types
         cls.feincms_item_editor_includes = {}
 
+        # Fetch django's content type
+        from django.contrib.contenttypes.models import ContentType
+        ct = ContentType.objects.get_for_model(cls)
+        cls._content_type = ct
+            
     @classmethod
     def create_content_type(cls, model, regions=None, **kwargs):
         """

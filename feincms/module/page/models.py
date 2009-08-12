@@ -259,6 +259,13 @@ class Page(Base):
     def get_navigation_url(self):
         return self.redirect_to or self._cached_url
 
+    def cache_key(self):
+        """
+        Return a string that may be used as cache key for the current page.
+        The cache_key is unique for each content type and content instance.
+        """
+        return '%d-%d' % ( self._content_type.id, self.id )
+
     def etag(self, request):
         """
         Generate an etag for this page.
