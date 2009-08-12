@@ -411,7 +411,7 @@ class PageAdminForm(forms.ModelForm):
                     page = Page.objects.get(pk=kwargs['initial']['translation_of'])
                     original = page.original_translation
 
-                    data = {'translation_of': original.id}
+                    data = {'translation_of': original.id, 'template_key': original.template_key}
 
                     if original.parent:
                         try:
