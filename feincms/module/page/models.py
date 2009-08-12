@@ -180,6 +180,8 @@ class Page(Base):
 
     request_processors = []
     response_processors = []
+    cache_key_components = [ lambda p: p._content_type.id,
+                             lambda p: p.id ]
 
     class Meta:
         ordering = ['tree_id', 'lft']
@@ -264,7 +266,7 @@ class Page(Base):
         Return a string that may be used as cache key for the current page.
         The cache_key is unique for each content type and content instance.
         """
-        return '%d-%d' % ( self._content_type.id, self.id )
+        return '-'.join(unicode(x(self)) for x in self.cache_key_components)
 
     def etag(self, request):
         """
