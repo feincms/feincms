@@ -309,18 +309,18 @@ class Base(models.Model):
         """
         This is the method you'll use to create concrete content types.
 
-        If the CMS base class is `page.models.Page`, its database table will be
-        `page_page`. A concrete content type which is created from `ImageContent`
-        will use `page_page_imagecontent` as its table.
+        If the CMS base class is ``page.models.Page``, its database table will be
+        ``page_page``. A concrete content type which is created from ``ImageContent``
+        will use ``page_page_imagecontent`` as its table.
 
         If you want a content type only available in a subset of regions, you can
-        pass a list/tuple of region keys as `regions'. The content type will only
+        pass a list/tuple of region keys as ``regions``. The content type will only
         appear in the corresponding tabs in the item editor.
 
         You can pass additional keyword arguments to this factory function. These
         keyword arguments will be passed on to the concrete content type, provided
-        that it has a `initialize_type` classmethod. This is used f.e. in
-        `MediaFileContent` to pass a set of possible media positions (f.e. left,
+        that it has a ``initialize_type`` classmethod. This is used f.e. in
+        ``MediaFileContent`` to pass a set of possible media positions (f.e. left,
         right, centered) through to the content type.
         """
 
