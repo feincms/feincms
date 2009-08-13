@@ -728,6 +728,9 @@ class PagesTestCase(TestCase):
         t = template.Template('{% load feincms_page_tags %}{% if feincms_page|is_parent_of:page3 %}yes{% endif %}|{% if page3|is_parent_of:feincms_page %}yes{% endif %}')
         self.assertEqual(t.render(ctx), 'yes|')
 
+        t = template.Template('{% load feincms_page_tags %}{% if feincms_page|is_equal_or_parent_of:page3 %}yes{% endif %}|{% if page3|is_equal_or_parent_of:feincms_page %}yes{% endif %}')
+        self.assertEqual(t.render(ctx), 'yes|')
+
         t = template.Template('{% load feincms_page_tags %}{% feincms_translatedpage for feincms_page as t1 language=de %}{% feincms_translatedpage for feincms_page as t2 %}{{ t1.id }}|{{ t2.id }}')
         self.assertEqual(t.render(ctx), '2|1')
 
