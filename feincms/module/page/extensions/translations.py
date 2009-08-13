@@ -31,19 +31,31 @@ def register(cls, admin_cls):
         if page.language == translation.get_language():
             return
 
-        translation.activate(page.language)
+        if translation.check_for_language(page.language):
+            select_language = page.language
+            fallback = False
+        else:
+            # The page is in a language that Django has no messages for.
+            # We display anyhow, but fall back to primary language for
+            # other messages and other applications. It is *highly* recommended to
+            # create a new django.po for the language instead of
+            # using this behaviour.
+            select_language = settings.LANGUAGES[0][0]
+            fallback = True
+
+        translation.activate(select_language)
         request.LANGUAGE_CODE = translation.get_language()
 
-        if hasattr(request, 'session') and page.language != request.session.get('django_language'):
-            request.session['django_language'] = page.language
-        elif request.method == 'GET':
+        if hasattr(request, 'session') and select_language != request.session.get('django_language'):
+            request.session['django_language'] = select_language
+        elif request.method == 'GET' and not fallback:
             # No session is active. We need to set a cookie for the language
             # so that it persists when the user changes his location to somewhere
             # not under the control of the CMS.
             # Only do this when request method is GET (mainly, do not abort
             # POST requests)
             response = HttpResponseRedirect(request.get_full_path())
-            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, page.language)
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, select_language)
             return response
 
     cls.register_request_processors(translations_request_processor)

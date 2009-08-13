@@ -445,7 +445,7 @@ class PagesTestCase(TestCase):
             }
         data.update(kwargs)
 
-        return self.client.post('/admin/page/page/1/', data)
+        return self.client.post('/admin/page/page/%s/' % page.pk, data)
 
     def test_09_pagecontent(self):
         self.create_default_page_set()
@@ -916,6 +916,52 @@ class PagesTestCase(TestCase):
 
         self.assertRedirects(self.client.get(page.get_absolute_url() + 'redirect/'),
                              page.get_absolute_url())
+
+    def test_26_page_form_initial(self):
+        self.create_default_page_set()
+
+        assert self.client.get('/admin/page/page/add/?translation_of=1&lang=de').status_code == 200
+        assert self.client.get('/admin/page/page/add/?parent=1').status_code == 200
+        assert self.client.get('/admin/page/page/add/?parent=2').status_code == 200
+
+    def test_27_copy_replace_page(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        page.active = True
+        page.save()
+
+        self.create_pagecontent(page)
+
+        new = Page.objects.create_copy(page)
+
+        self.assertEqual(u''.join(c.render() for c in page.content.main),
+                         u''.join(c.render() for c in new.content.main))
+
+        self.assertEqual(new.active, False)
+
+        now_live = Page.objects.replace(page, new)
+
+        self.assertEqual(new.id, now_live.id)
+        self.assertEqual(now_live.active, True)
+
+        # reload
+        page = Page.objects.get(pk=1)
+
+        self.assertEqual(page.active, False)
+
+    def test_28_cached_url_clash(self):
+        self.create_default_page_set()
+
+        page1 = Page.objects.get(pk=1)
+        page2 = Page.objects.get(pk=2)
+
+        page1.override_url = '/'
+        page1.active = True
+        page1.save()
+
+        self.assertContains(self.create_pagecontent(page2, active=True, override_url='/'),
+            'already taken by')
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
