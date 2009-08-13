@@ -922,6 +922,33 @@ class PagesTestCase(TestCase):
 
         assert self.client.get('/admin/page/page/add/?translation_of=1&lang=de').status_code == 200
         assert self.client.get('/admin/page/page/add/?parent=1').status_code == 200
+        assert self.client.get('/admin/page/page/add/?parent=2').status_code == 200
+
+    def test_27_copy_replace_page(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        page.active = True
+        page.save()
+
+        self.create_pagecontent(page)
+
+        new = Page.objects.create_copy(page)
+
+        self.assertEqual(u''.join(c.render() for c in page.content.main),
+                         u''.join(c.render() for c in new.content.main))
+
+        self.assertEqual(new.active, False)
+
+        now_live = Page.objects.replace(page, new)
+
+        self.assertEqual(new.id, now_live.id)
+        self.assertEqual(now_live.active, True)
+
+        # reload
+        page = Page.objects.get(pk=1)
+
+        self.assertEqual(page.active, False)
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
