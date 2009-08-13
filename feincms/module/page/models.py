@@ -425,7 +425,7 @@ class PageAdminForm(forms.ModelForm):
                     data = model_to_dict(page)
 
                     for field in PageManager.exclude_from_copy:
-                        del data[field]
+                        if data.has_key(field): del data[field]
 
                     # These are always excluded from prefilling
                     for field in ('title', 'slug', 'parent', 'active'):
