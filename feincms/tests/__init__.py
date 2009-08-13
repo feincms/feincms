@@ -860,6 +860,10 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(len(page.extended_navigation()), 1)
 
+        page.navigation_extension = 'feincms.tests.navigation_extensions.PretenderExtension'
+
+        self.assertEqual(page.extended_navigation()[0].get_absolute_url(), '/asdsa/')
+
     def test_24_admin_redirects(self):
         self.create_default_page_set()
         page = Page.objects.get(pk=1)

@@ -1,4 +1,4 @@
-from feincms.module.page.extensions.navigation import NavigationExtension
+from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
 
 
 class PassthroughExtension(NavigationExtension):
@@ -8,3 +8,10 @@ class PassthroughExtension(NavigationExtension):
     def children(self, page):
         for p in page.children.in_navigation():
             yield p
+
+
+class PretenderExtension(NavigationExtension):
+    name = 'pretender extension'
+
+    def children(self, page):
+        return [PagePretender(title='blabla', url='/asdsa/')]
