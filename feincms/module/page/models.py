@@ -287,6 +287,7 @@ class Page(Base):
         immediately to the client.
         """
         request._feincms_page = self
+        request._feincms_extra_context = {}
 
         for fn in self.request_processors:
             r = fn(self, request)

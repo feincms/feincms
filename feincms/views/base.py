@@ -6,10 +6,13 @@ from feincms.module.page.models import Page
 
 
 def build_page_response(page, request):
-    response = page.setup_request(request) or \
-               render_to_response(page.template.path, {
-                    'feincms_page': page,
-                    }, context_instance=RequestContext(request))
+    response = page.setup_request(request)
+    
+    if response is None:
+        extra_context = request._feincms_extra_context
+        response = render_to_response(page.template.path, {
+            'feincms_page': page,
+            }, context_instance=RequestContext(request, extra_context))
 
     return response
 
