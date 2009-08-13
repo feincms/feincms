@@ -7,6 +7,7 @@ This extension lets you do that.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from feincms._internal import monkeypatch_property
 
 def register(cls, admin_cls):
     cls.add_to_class('_content_title', models.TextField(_('content title'), blank=True,
@@ -14,7 +15,8 @@ def register(cls, admin_cls):
     cls.add_to_class('_page_title', models.CharField(_('page title'), max_length=100, blank=True,
         help_text=_('Page title for browser window. Same as title by default.')))
 
-    def _page_title(self):
+    @monkeypatch_property(cls)
+    def page_title(self):
         """
         Use this for the browser window (<title>-tag in the <head> of the HTML document)
         """
@@ -23,9 +25,8 @@ def register(cls, admin_cls):
             return self._page_title
         return self.content_title
 
-    cls.page_title = property(_page_title)
-
-    def _content_title(self):
+    @monkeypatch_property(cls)
+    def content_title(self):
         """
         This should be used f.e. for the <h1>-tag
         """
@@ -35,10 +36,7 @@ def register(cls, admin_cls):
 
         return self._content_title.splitlines()[0]
 
-    cls.content_title = property(_content_title)
-
-    def _content_subtitle(self):
+    @monkeypatch_property(cls)
+    def content_subtitle(self):
         return u'\n'.join(self._content_title.splitlines()[1:])
-
-    cls.content_subtitle = property(_content_subtitle)
 

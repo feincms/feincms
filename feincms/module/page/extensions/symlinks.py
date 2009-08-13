@@ -7,13 +7,14 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.models import ContentProxy
-
+from feincms._internal import monkeypatch_property
 
 def register(cls, admin_cls):
     cls.add_to_class('symlinked_page', models.ForeignKey('self', blank=True, null=True,
         verbose_name=_('symlinked page'),
         help_text=_('All content is inherited from this page if given.')))
 
+    @monkeypatch_property(cls)
     def content(self):
         if not hasattr(self, '_content_proxy'):
             if self.symlinked_page:
@@ -22,7 +23,5 @@ def register(cls, admin_cls):
                 self._content_proxy = ContentProxy(self)
 
         return self._content_proxy
-
-    setattr(cls, 'content', property(content))
 
     admin_cls.raw_id_fields.append('symlinked_page')

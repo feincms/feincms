@@ -15,7 +15,7 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.translations import is_primary_language
-
+from feincms._internal import monkeypatch_method, monkeypatch_property
 
 def register(cls, admin_cls):
     cls.add_to_class('language', models.CharField(_('language'), max_length=10,
@@ -60,6 +60,7 @@ def register(cls, admin_cls):
 
     cls.register_request_processors(translations_request_processor)
 
+    @monkeypatch_method(cls)
     def available_translations(self):
         if is_primary_language(self.language):
             return self.translations.all()
@@ -69,7 +70,15 @@ def register(cls, admin_cls):
         else:
             return []
 
-    cls.available_translations = available_translations
+    @monkeypatch_property(cls)
+    def original_translation(self):
+        if is_primary_language(self.language):
+            return self
+        return self.translation_of
+
+    @monkeypatch_method(cls)
+    def get_translation(self, language):
+        return self.original_translation.translations.get(language=language)
 
     def available_translations_admin(self, page):
         translations = dict((p.language, p.id) for p in page.available_translations())
@@ -88,16 +97,6 @@ def register(cls, admin_cls):
                     page.id, key, _('Create translation'), key.upper()))
 
         return u' | '.join(links)
-
-    def original_translation(self):
-        if is_primary_language(self.language):
-            return self
-        return self.translation_of
-    cls.original_translation = property(original_translation)
-
-    def get_translation(self, language):
-        return self.original_translation.translations.get(language=language)
-    cls.get_translation = get_translation
 
     available_translations_admin.allow_tags = True
     available_translations_admin.short_description = _('translations')
