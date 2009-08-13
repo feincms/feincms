@@ -5,7 +5,7 @@ from django.template import RequestContext
 from feincms.module.page.models import Page
 
 
-def build_page_response(page, request):
+def _build_page_response(page, request):
     response = page.setup_request(request)
     
     if response is None:
@@ -16,6 +16,10 @@ def build_page_response(page, request):
 
     return response
 
+def build_page_response(page, request):
+    response = _build_page_response(page, request)
+    page.finalize_response(request, response)
+    return response
 
 def handler(request, path=None):
     """
@@ -27,7 +31,6 @@ def handler(request, path=None):
     page = Page.objects.page_for_path_or_404(path)
 
     response = build_page_response(page, request)
-    page.finalize_response(request, response)
 
     return response
 
@@ -40,4 +43,4 @@ def preview_handler(request, page_id):
     is active or expired. To balance that, it requires a logged in user.
     """
     page = get_object_or_404(Page, pk=page_id)
-    return build_page_response(page, request)
+    return _build_page_response(page, request)
