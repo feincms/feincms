@@ -361,7 +361,7 @@ class Page(Base):
     def debug_sql_queries_response_processor(self, request, response):
         if django_settings.DEBUG:
             from django.db import connection
-            
+
             print_sql = lambda x: x
             try:
                 import sqlparse
@@ -381,7 +381,7 @@ class Page(Base):
             print "Total: %d queries, %f ms" % (i, time)
             print "--------------------------------------------------------------"
 
-        
+
     @classmethod
     def register_request_processors(cls, *processors):
         cls.request_processors[0:0] = processors
@@ -425,7 +425,8 @@ class PageAdminForm(forms.ModelForm):
                     data = model_to_dict(page)
 
                     for field in PageManager.exclude_from_copy:
-                        del data[field]
+                        if field in data:
+                            del data[field]
 
                     # These are always excluded from prefilling
                     for field in ('title', 'slug', 'parent', 'active'):
