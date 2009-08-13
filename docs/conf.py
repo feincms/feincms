@@ -101,7 +101,26 @@ html_theme = 'default'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'footerbgcolor': '#213C63', # (CSS color): Background color for the footer line.
+    #'footertextcolor': '', # (CSS color): Text color for the footer line.
+    'sidebarbgcolor': '#305791', # (CSS color): Background color for the sidebar.
+    #'sidebartextcolor': '', # (CSS color): Text color for the sidebar.
+    'sidebarlinkcolor': '#98CCDB', # (CSS color): Link color for the sidebar.
+    'relbarbgcolor': '#213C63', # (CSS color): Background color for the relation bar.
+    #'relbartextcolor': '', # (CSS color): Text color for the relation bar.
+    #'relbarlinkcolor': '', # (CSS color): Link color for the relation bar.
+    #'bgcolor': '', # (CSS color): Body background color.
+    #'textcolor': '', # (CSS color): Body text color.
+    #'linkcolor': '', # (CSS color): Body link color.
+    #'headbgcolor': '', # (CSS color): Background color for headings.
+    #'headtextcolor': '', # (CSS color): Text color for headings.
+    #'headlinkcolor': '', # (CSS color): Link color for headings.
+    'codebgcolor': '#E0E8FF', # (CSS color): Background color for code blocks.
+    #'codetextcolor': '', # (CSS color): Default text color for code blocks, if not set differently by the highlighting style.
+    'bodyfont': 'Helvetica, Arial, sans-serif', # (CSS font-family): Font for normal text.
+    'headfont': 'Helvetica, Arial, sans-serif', # (CSS font-family): Font for headings.
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
@@ -169,10 +188,10 @@ htmlhelp_basename = 'FeinCMSdoc'
 # -- Options for LaTeX output --------------------------------------------------
 
 # The paper size ('letter' or 'a4').
-#latex_paper_size = 'letter'
+latex_paper_size = 'a4'
 
 # The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
+latex_font_size = '10pt'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
