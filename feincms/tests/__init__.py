@@ -917,6 +917,12 @@ class PagesTestCase(TestCase):
         self.assertRedirects(self.client.get(page.get_absolute_url() + 'redirect/'),
                              page.get_absolute_url())
 
+    def test_26_page_form_initial(self):
+        self.create_default_page_set()
+
+        assert self.client.get('/admin/page/page/add/?translation_of=1&lang=de').status_code == 200
+        assert self.client.get('/admin/page/page/add/?parent=1').status_code == 200
+
 
 Entry.register_extensions('seo', 'translations', 'seo')
 class BlogTestCase(TestCase):
