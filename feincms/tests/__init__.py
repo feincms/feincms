@@ -924,7 +924,7 @@ class PagesTestCase(TestCase):
         assert self.client.get('/admin/page/page/add/?parent=1').status_code == 200
         assert self.client.get('/admin/page/page/add/?parent=2').status_code == 200
 
-    def test_27_copy_replace_page(self):
+    def test_27_copy_replace_append_page(self):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
@@ -949,6 +949,19 @@ class PagesTestCase(TestCase):
         page = Page.objects.get(pk=1)
 
         self.assertEqual(page.active, False)
+
+        c = now_live.rawcontent_set.all()[0]
+        c.text = 'somethinggg'
+        c.save()
+
+        page.replace_content_with(now_live)
+
+        self.assertEqual(u''.join(c.render() for c in page.content.main), 'somethinggg')
+
+        page.append_content_from(now_live)
+        page.append_content_from(page)
+
+        self.assertEqual(u''.join(c.render() for c in page.content.main), 'somethinggg'*4)
 
     def test_28_cached_url_clash(self):
         self.create_default_page_set()

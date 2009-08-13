@@ -303,7 +303,7 @@ class Base(models.Model):
         from django.contrib.contenttypes.models import ContentType
         ct = ContentType.objects.get_for_model(cls)
         cls._content_type = ct
-            
+
     @classmethod
     def create_content_type(cls, model, regions=None, **kwargs):
         """
@@ -462,7 +462,7 @@ class Base(models.Model):
             for content in cls.objects.filter(parent=obj):
                 new = copy_model_instance(content, exclude=('id', 'parent'))
                 # Adjust ordering value so that new contents will be appended
-                new.ordering += ordering[data['region']] + 1
+                new.ordering += ordering[new.region] + 1
                 new.parent = self
                 new.save()
 
