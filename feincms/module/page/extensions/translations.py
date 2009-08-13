@@ -89,9 +89,6 @@ def register(cls, admin_cls):
 
         return u' | '.join(links)
 
-        return u', '.join(
-            u'<a href="%s/" title="%s">%s</a>' % (page.id, unicode(page), page.language.upper()) for page in translations)
-
     def original_translation(self):
         if is_primary_language(self.language):
             return self
