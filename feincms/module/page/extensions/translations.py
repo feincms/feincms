@@ -103,9 +103,9 @@ def register(cls, admin_cls):
     available_translations_admin.short_description = _('translations')
     admin_cls.available_translations_admin = available_translations_admin
 
-    admin_cls.fieldsets[0][1]['fields'] += ('language', 'translation_of',)
-    admin_cls.list_display += ('language', 'available_translations_admin')
-    admin_cls.list_filter += ('language',)
-    admin_cls.show_on_top += ('language',)
+    admin_cls.fieldsets[0][1]['fields'].extend(['language', 'translation_of'])
+    admin_cls.list_display.extend(['language', 'available_translations_admin'])
+    admin_cls.list_filter.extend(['language'])
+    admin_cls.show_on_top.extend(['language'])
 
     admin_cls.raw_id_fields.append('translation_of')
