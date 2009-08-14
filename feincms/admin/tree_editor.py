@@ -148,7 +148,7 @@ class TreeEditor(admin.ModelAdmin):
         """
         r = '''<span onclick="return page_tree_handler('%d')" id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
-                item.id, item.id, 14+item.level*14)
+                item.id, item.id, 14+item.level*18)
 
         if hasattr(item, 'short_title'):
             return mark_safe(r + item.short_title())

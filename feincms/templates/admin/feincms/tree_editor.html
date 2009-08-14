@@ -5,7 +5,7 @@
 {{ block.super }}
 
 <style type="text/css">
-    .page_marker { display:block; text-align: right; float: left; padding: 1px 2px 0 0; }
+    .page_marker { display:block; text-align: right; float: left; padding: 1px 1px 0 0; }
     tr.cut { border: 2px dashed black; opacity: 0.5; }
     .title-column { width: 450px; }
 
@@ -15,7 +15,7 @@
     /* This represents the current state of the page tree. Would need to be
        refreshed if pages are moved or deleted, but for now that is not possible */
     var tree_structure = {{ tree_structure|default:"{}" }};
- 
+
     /* After loading the page, show all root nodes */
     $(function()
         {
