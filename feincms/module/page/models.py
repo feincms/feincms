@@ -400,7 +400,11 @@ class Page(Base):
             if ext in cls._feincms_extensions:
                 continue
 
-            fn = get_object('feincms.module.page.extensions.%s.register' % ext)
+            try:
+                fn = get_object(ext + '.register')
+            except ImportError:
+                fn = get_object('feincms.module.page.extensions.%s.register' % ext)
+
             fn(cls, PageAdmin)
             cls._feincms_extensions.add(ext)
 
