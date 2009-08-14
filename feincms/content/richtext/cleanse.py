@@ -20,6 +20,8 @@ cleanse_html_allowed = {
 
 cleanse_html_allowed_empty_tags = ('br',)
 
+cleanse_html_merge = ('h2', 'h3', 'strong', 'em', 'ul', 'ol')
+
 
 def cleanse_html(html):
     """
@@ -79,17 +81,46 @@ def cleanse_html(html):
 
     html = lxml.html.tostring(doc, method='xml')
 
+    html = html.replace('\n', '').replace('\r', '')
     html = re.sub(r'</?anything>', '', html)
 
     # remove elements containing only whitespace or linebreaks
-    whitespace_re = re.compile(r'<([a-z]+)>(<br\s*/>|&#160;|\s)*</\1>')
+    whitespace_re = re.compile(r'<([a-z]+)>(<br\s*/>|\&nbsp;|\&#160;|\s)*</\1>')
     while True:
         new = whitespace_re.sub('', html)
         if new == html:
             break
         html = new
 
+    # merge tags
+    for tag in cleanse_html_merge:
+        merge_str = u'</%s><%s>'
+        while True:
+            new = html.replace(merge_str, u'')
+            if new == html:
+                break
+            html = new
+
+    # fix p-in-p tags
+    p_in_p_start_str = '<p><p>'
+    p_in_p_end_str = '</p></p>'
+
+    for tag in cleanse_html_merge:
+        merge_start_str = '<p><%s><p>' % tag
+        merge_end_str = '</p></%s></p>' % tag
+
+        while True:
+            new = html.replace(merge_start_str, '<p>')
+            new = new.replace(merge_end_str, '</p>')
+            new = new.replace(p_in_p_start_str, '<p>')
+            new = new.replace(p_in_p_end_str, '</p>')
+
+            if new == html:
+                break
+            html = new
+
     # add a space before the closing slash in empty tags
     html = re.sub(r'<([^/>]+)/>', r'<\1 />', html)
 
     return html
+
