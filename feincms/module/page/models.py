@@ -529,23 +529,23 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     # the fieldsets config here is used for the add_view, it has no effect
     # for the change_view which is completely customized anyway
-    fieldsets = (
+    fieldsets = [
         (None, {
-            'fields': ('active', 'in_navigation', 'template_key', 'title', 'slug',
-                'parent'),
+            'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
+                'parent'],
         }),
         (_('Other options'), {
-            'classes': ('collapse',),
-            'fields': ('override_url',),
+            'classes': ['collapse',],
+            'fields': ['override_url',],
         }),
-        )
+        ]
     list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
-    list_filter = ('active', 'in_navigation', 'template_key', 'parent')
-    search_fields = ('title', 'slug')
+    list_filter = ['active', 'in_navigation', 'template_key', 'parent']
+    search_fields = ['title', 'slug']
     prepopulated_fields = { 'slug': ('title',), }
 
     raw_id_fields = []
-    show_on_top = ('title', 'active')
+    show_on_top = ['title', 'active']
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))

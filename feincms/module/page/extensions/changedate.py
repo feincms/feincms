@@ -22,6 +22,6 @@ def register(cls, admin_cls):
     cls.add_to_class('creation_date',     models.DateTimeField(_('creation date'),     editable=False))
     cls.add_to_class('modification_date', models.DateTimeField(_('modification date'), editable=False))
 
-    cls.cache_key_components.append(lambda page: page.modification_date.strftime('%Y%m%d-%H%M%S'))
+    cls.cache_key_components.append(lambda page: page.modification_date and page.modification_date.strftime('%s'))
 
     pre_save.connect(pre_save_handler, sender=cls)
