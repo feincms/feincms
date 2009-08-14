@@ -7,6 +7,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.utils import get_object
+from feincms._internal import monkeypatch_method
 
 
 class TypeRegistryMetaClass(type):
@@ -42,17 +43,6 @@ class NavigationExtension(object):
         raise NotImplementedError
 
 
-def _extended_navigation(self, **kwargs):
-    if not self.navigation_extension:
-        return self.children.in_navigation()
-
-    cls = get_object(self.navigation_extension, fail_silently=True)
-    if not cls or not callable(cls):
-        return self.children.in_navigation()
-
-    return cls().children(self, **kwargs)
-
-
 def register(cls, admin_cls):
     cls.NE_CHOICES = [(
         '%s.%s' % (ext.__module__, ext.__name__), ext.name) for ext in NavigationExtension.types]
@@ -61,7 +51,16 @@ def register(cls, admin_cls):
         choices=cls.NE_CHOICES, blank=True, max_length=50,
         help_text=_('Select the module providing subpages for this page if you need to customize the navigation.')))
 
-    cls.extended_navigation = _extended_navigation
+    @monkeypatch_method(cls)
+    def extended_navigation(self, **kwargs):
+        if not self.navigation_extension:
+            return self.children.in_navigation()
+
+        cls = get_object(self.navigation_extension, fail_silently=True)
+        if not cls or not callable(cls):
+            return self.children.in_navigation()
+
+        return cls().children(self, **kwargs)
 
 
 

@@ -5,6 +5,8 @@ FeinCMS - An extensible Django-based CMS
 ========================================
 
 
+.. image:: images/tree_editor.png
+
 Contents
 ========
 
