@@ -4,16 +4,51 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 
+
 def plain_formatter(data):
-    if not data:
-        return u''
-
-    data = simplejson.loads(data)
-
     return u'<table>%s</table>' % u''.join(
             u'<tr>%s</tr>' % u''.join(
              u'<td>%s</td>' % cell for cell in row
             ) for row in data)
+
+
+def titlerow_formatter(data):
+    html = [u'<table>']
+    first = True
+
+    for row in data:
+        html.append('<tr>')
+
+        if first:
+            html.extend([u'<th scope="col">%s</th>' % cell for cell in row])
+            first = False
+        else:
+            html.extend([u'<td>%s</td>' % cell for cell in row])
+
+        html.append('</tr>')
+
+    html.append(u'</table>')
+    return u''.join(html)
+
+
+def titlerowcol_formatter(data):
+    html = [u'<table>']
+    first = True
+
+    for row in data:
+        html.append('<tr>')
+
+        if first:
+            html.extend([u'<th scope="col">%s</th>' % cell for cell in row])
+            first = False
+        else:
+            html.append(u'<th scope="row">%s</th>' % row[0])
+            html.extend([u'<td>%s</td>' % cell for cell in row[1:]])
+
+        html.append('</tr>')
+
+    html.append(u'</table>')
+    return u''.join(html)
 
 
 class TableContent(models.Model):
@@ -23,6 +58,12 @@ class TableContent(models.Model):
 
     html = models.TextField('HTML', blank=True, editable=False)
 
+    DEFAULT_TYPES = [
+        ('plain', _('plain'), plain_formatter),
+        ('titlerow', _('title row'), titlerow_formatter),
+        ('titlerowcol', _('title row and column'), titlerowcol_formatter),
+        ]
+
     class Meta:
         abstract = True
         verbose_name = _('table')
@@ -30,7 +71,7 @@ class TableContent(models.Model):
 
     @classmethod
     def initialize_type(cls, TYPES=None):
-        TYPES = TYPES or (('plain', _('plain'), plain_formatter),)
+        TYPES = TYPES or cls.DEFAULT_TYPES
 
         cls.FORMATTERS = dict((t[0], t[2]) for t in TYPES)
         cls.TYPE_CHOICES = [(t[0], t[1]) for t in TYPES]
@@ -46,6 +87,6 @@ class TableContent(models.Model):
         return mark_safe(self.html)
 
     def save(self, *args, **kwargs):
-        self.html = self.FORMATTERS[self.type](self.data)
+        self.html = self.data and self.FORMATTERS[self.type](simplejson.loads(self.data)) or u''
 
         super(TableContent, self).save(*args, **kwargs)
