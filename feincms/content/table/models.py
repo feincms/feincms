@@ -4,51 +4,37 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 
+class TableFormatter(object):
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
-def plain_formatter(data):
-    return u'<table>%s</table>' % u''.join(
-            u'<tr>%s</tr>' % u''.join(
-             u'<td>%s</td>' % cell for cell in row
-            ) for row in data)
+    def __call__(self, data):
+        return self.format_table(data)
 
+    def format_table(self, data):
+        return u'<table class="table">%s</table>' % u''.join(
+            self.format_row(index, row) for index, row in enumerate(data))
 
-def titlerow_formatter(data):
-    html = [u'<table>']
-    first = True
+    def format_row(self, index, row):
+        self.row_index = index
+        return u'<tr>%s</tr>' % u''.join(
+            self.format_cell(index, cell) for index, cell in enumerate(row))
 
-    for row in data:
-        html.append('<tr>')
-
-        if first:
-            html.extend([u'<th scope="col">%s</th>' % cell for cell in row])
-            first = False
-        else:
-            html.extend([u'<td>%s</td>' % cell for cell in row])
-
-        html.append('</tr>')
-
-    html.append(u'</table>')
-    return u''.join(html)
+    def format_cell(self, index, cell):
+        return u'<td>%s</td>' % cell
 
 
-def titlerowcol_formatter(data):
-    html = [u'<table>']
-    first = True
+class TitleTableFormatter(TableFormatter):
+    """
+    TitleTableFormatter(first_row_title=True, first_column_title=True)
+    """
 
-    for row in data:
-        html.append('<tr>')
-
-        if first:
-            html.extend([u'<th scope="col">%s</th>' % cell for cell in row])
-            first = False
-        else:
-            html.append(u'<th scope="row">%s</th>' % row[0])
-            html.extend([u'<td>%s</td>' % cell for cell in row[1:]])
-
-        html.append('</tr>')
-
-    html.append(u'</table>')
-    return u''.join(html)
+    def format_cell(self, index, cell):
+        if (not self.row_index and getattr(self, 'first_row_title', True)) or \
+                (not index and getattr(self, 'first_column_title', True)):
+            return u'<th>%s</th>' % cell
+        return u'<td>%s</td>' % cell
 
 
 class TableContent(models.Model):
@@ -59,9 +45,11 @@ class TableContent(models.Model):
     html = models.TextField('HTML', blank=True, editable=False)
 
     DEFAULT_TYPES = [
-        ('plain', _('plain'), plain_formatter),
-        ('titlerow', _('title row'), titlerow_formatter),
-        ('titlerowcol', _('title row and column'), titlerowcol_formatter),
+        ('plain', _('plain'), TableFormatter()),
+        ('titlerow', _('title row'), TitleTableFormatter(
+            first_row_title=True, first_column_title=False)),
+        ('titlerowcol', _('title row and column'), TitleTableFormatter(
+            first_row_title=True, first_column_title=True)),
         ]
 
     class Meta:
