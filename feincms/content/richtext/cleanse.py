@@ -126,6 +126,9 @@ def cleanse_html(html):
                 break
             html = new
 
+    # remove list markers with <li> tags before them
+    html = re.sub(r'<li>\s*(-|\*)\s*', '<li>', html)
+
     # add a space before the closing slash in empty tags
     html = re.sub(r'<([^/>]+)/>', r'<\1 />', html)
 
