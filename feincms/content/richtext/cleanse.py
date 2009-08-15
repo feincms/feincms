@@ -15,12 +15,14 @@ cleanse_html_allowed = {
     'li': (),
     'span': (),
     'br': (),
+    'sub': (),
+    'sup': (),
     'anything': (),
     }
 
 cleanse_html_allowed_empty_tags = ('br',)
 
-cleanse_html_merge = ('h2', 'h3', 'strong', 'em', 'ul', 'ol')
+cleanse_html_merge = ('h2', 'h3', 'strong', 'em', 'ul', 'ol', 'sub', 'sup')
 
 
 def cleanse_html(html):
