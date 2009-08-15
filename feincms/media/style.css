@@ -67,7 +67,8 @@
     margin: 2px 0px 0px 0;
 }
 .active-item {
-    background-color:#eee;
+    background-color:#f8f8f8;
+    border-color: #888888;
 }
 
 .highlight {
