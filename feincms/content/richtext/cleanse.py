@@ -109,7 +109,7 @@ def cleanse_html(html):
     html = re.sub(r'</?anything>', '', html)
 
     # remove elements containing only whitespace or linebreaks
-    whitespace_re = re.compile(r'<([a-z]+)>(<br\s*/>|\&nbsp;|\&#160;|\s)*</\1>')
+    whitespace_re = re.compile(r'<([a-z0-9]+)>(<br\s*/>|\&nbsp;|\&#160;|\s)*</\1>')
     while True:
         new = whitespace_re.sub('', html)
         if new == html:
