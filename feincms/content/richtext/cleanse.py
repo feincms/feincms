@@ -42,7 +42,7 @@ def cleanse_html(html):
         doc = soupparser.fromstring(u'<anything>%s</anything>' % html)
 
     cleaner = lxml.html.clean.Cleaner(
-        allow_tags=cleanse_html_allowed.keys(),
+        allow_tags=cleanse_html_allowed.keys() + ['style'],
         remove_unknown_tags=False, # preserve surrounding 'anything' tag
         style=False, safe_attrs_only=False, # do not strip out style
                                             # attributes; we still need
@@ -50,13 +50,20 @@ def cleanse_html(html):
                                             # convert spans into em/strong
                                             # tags
         )
-    doc = cleaner.clean_html(doc)
 
+    cleaner(doc)
+
+    # walk the tree recursively, because we want to be able to remove
+    # previously emptied elements completely
     for element in reversed(list(doc.iterdescendants())):
+        if element.tag == 'style':
+            element.drop_tree()
+            continue
+
         # convert span elements into em/strong if a matching style rule
         # has been found. strong has precedence, strong & em at the same
         # time is not supported
-        if element.tag == 'span':
+        elif element.tag == 'span':
             style = element.attrib.get('style')
             if style:
                 if 'bold' in style:
@@ -80,6 +87,16 @@ def cleanse_html(html):
         for key in element.attrib.keys():
             if key not in allowed:
                 del element.attrib[key]
+
+    # just to be sure, run cleaner again, but this time with even more
+    # strict settings
+    cleaner = lxml.html.clean.Cleaner(
+        allow_tags=cleanse_html_allowed.keys(),
+        remove_unknown_tags=False, # preserve surrounding 'anything' tag
+        style=True, safe_attrs_only=True
+        )
+
+    cleaner(doc)
 
     html = lxml.html.tostring(doc, method='xml')
 
@@ -127,7 +144,7 @@ def cleanse_html(html):
             html = new
 
     # remove list markers with <li> tags before them
-    html = re.sub(r'<li>\s*(-|\*)\s*', '<li>', html)
+    html = re.sub(r'<li>(\&nbsp;|\&#160;|\s)*(-|\*|&#183;)(\&nbsp;|\&#160;|\s)*', '<li>', html)
 
     # add a space before the closing slash in empty tags
     html = re.sub(r'<([^/>]+)/>', r'<\1 />', html)
