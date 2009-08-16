@@ -126,18 +126,18 @@ def cleanse_html(html):
             html = new
 
     # fix p-in-p tags
-    p_in_p_start_str = '<p><p>'
-    p_in_p_end_str = '</p></p>'
+    p_in_p_start_re = re.compile(r'<p>(\&nbsp;|\&#160;|\s)*<p>')
+    p_in_p_end_re = re.compile('</p>(\&nbsp;|\&#160;|\s)*</p>')
 
     for tag in cleanse_html_merge:
-        merge_start_str = '<p><%s><p>' % tag
-        merge_end_str = '</p></%s></p>' % tag
+        merge_start_re = re.compile('<p>(\\&nbsp;|\\&#160;|\\s)*<%s>(\\&nbsp;|\\&#160;|\\s)*<p>' % tag)
+        merge_end_re = re.compile('</p>(\\&nbsp;|\\&#160;|\\s)*</%s>(\\&nbsp;|\\&#160;|\\s)*</p>' % tag)
 
         while True:
-            new = html.replace(merge_start_str, '<p>')
-            new = new.replace(merge_end_str, '</p>')
-            new = new.replace(p_in_p_start_str, '<p>')
-            new = new.replace(p_in_p_end_str, '</p>')
+            new = merge_start_re.sub('<p>', html)
+            new = merge_end_re.sub('</p>', new)
+            new = p_in_p_start_re.sub('<p>', new)
+            new = p_in_p_end_re.sub('</p>', new)
 
             if new == html:
                 break
