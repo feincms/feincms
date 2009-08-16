@@ -58,7 +58,7 @@ function poorify_rich(item){
 function richify_poor(item){
     item.children(".item-content").show();
     if (item.find("div[id^=richtext]").length > 0) {
-        var editor_id = item.find('textarea[name*=richtext]:visible').attr("id");
+        var editor_id = item.find('textarea[name*=richtext]').attr("id");
         tinyMCE.execCommand('mceAddControl', false, editor_id);
     }
 }
@@ -239,6 +239,7 @@ $(document).ready(function(){
     // register regions as sortable for drag N drop
     $(".order-machine").sortable({
         handle: '.handle',
+        helper: 'clone',
         placeholder: 'highlight',
         stop: function(event, ui) {
             richify_poor($(ui.item));
