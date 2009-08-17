@@ -7,7 +7,6 @@ the feincms_ namespace.
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.db.models import Max
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
@@ -449,23 +448,6 @@ class Base(models.Model):
         for cls in self._feincms_content_types:
             cls.objects.filter(parent=self).delete()
         self.copy_content_from(obj)
-
-    def append_content_from(self, obj):
-        ordering = dict((region.key, -1) for region in self.template.regions)
-        # determine highest orderings for every content type
-        for cls in self._feincms_content_types:
-            values = cls.objects.filter(parent=self).values('region').annotate(Max('ordering'))
-            for dic in values:
-                ordering[dic['region']] = max(ordering[dic['region']], dic['ordering__max'])
-
-        for cls in self._feincms_content_types:
-            for content in cls.objects.filter(parent=obj):
-                new = copy_model_instance(content, exclude=('id', 'parent'))
-                # Adjust ordering value so that new contents will be appended
-                new.ordering += ordering[new.region] + 1
-                new.parent = self
-                new.save()
-
 
 
 class ContentProxy(object):

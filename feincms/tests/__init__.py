@@ -968,11 +968,6 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(u''.join(c.render() for c in page.content.main), 'somethinggg')
 
-        page.append_content_from(now_live)
-        page.append_content_from(page)
-
-        self.assertEqual(u''.join(c.render() for c in page.content.main), 'somethinggg'*4)
-
     def test_28_cached_url_clash(self):
         self.create_default_page_set()
 
