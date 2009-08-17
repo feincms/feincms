@@ -13,8 +13,6 @@ case of course. Being able to put content together in small manageable
 pieces is interesting for other uses too, i.e. for weblog entries where you
 have rich text content interspersed with images, videos or maybe even galleries.
 
-.. contents::
-
 
 Activating the page module and creating content types
 =====================================================
