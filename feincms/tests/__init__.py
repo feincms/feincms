@@ -776,6 +776,10 @@ class PagesTestCase(TestCase):
         request.GET = []
         request.user = AnonymousUser()
 
+        # tadaa
+        from django.utils import translation
+        translation.activate(page.language)
+
         page.active = False
         page.save()
 
@@ -784,10 +788,6 @@ class PagesTestCase(TestCase):
         page.active = True
         page.save()
 
-        self.assertEqual(page, Page.objects.for_request_or_404(request))
-
-        page.parent.active = False
-        page.parent.save()
         self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
 
         page.parent.active = True
