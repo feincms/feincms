@@ -27,7 +27,11 @@ Example:
         images = prefilled_attr('imagecontent_set')
 
     Entry.create_content_type(RichTextContent)
-    Entry.create_content_type(ImageContent)
+    Entry.create_content_type(ImageContent, POSITION_CHOICES=(
+        ('block', _('block')),
+        ('left', _('left')),
+        ('right', _('right')),
+        )
 
 
     Then, inside your view function or inside a template tag, call

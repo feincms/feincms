@@ -44,7 +44,11 @@ by adding the following lines somewhere into your project, for example in a
         })
 
     Page.create_content_type(RichTextContent)
-    Page.create_content_type(ImageContent)
+    Page.create_content_type(ImageContent, POSITION_CHOICES=(
+        ('block', _('block')),
+        ('left', _('left')),
+        ('right', _('right')),
+        ))
 
 
 It will be a good idea most of the time to register the
