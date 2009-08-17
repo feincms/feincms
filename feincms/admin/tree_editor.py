@@ -302,16 +302,12 @@ class TreeEditor(admin.ModelAdmin):
 
 
 # !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
-# Note: Patch lifted from http://code.djangoproject.com/ticket/4926 (ticket_4926_changelist_multifield_ordering.diff)
-
-# By default, django only orders by first ordering field in admin. We patch
-# up the ChangeList here so it returns "use default ordering" for any Page
-# lookups. That way, we can order by tree_id + lft and get the site's natural
-# page structure.
+# If the ChangeList is used by a TreEditor, we always need to order by 'tree_id' and 'lft'.
 from django.contrib.admin.views import main
 class ChangeList(main.ChangeList):
-    def get_ordering(self):
+    def get_query_set(self):
+        qs = super(ChangeList, self).get_query_set()
         if isinstance(self.model_admin, TreeEditor):
-            return '', ''
-        return super(ChangeList, self).get_ordering()
+            return qs.order_by('tree_id', 'lft')
+        return qs
 main.ChangeList = ChangeList

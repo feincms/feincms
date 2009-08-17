@@ -22,9 +22,18 @@ for this to work.
 
 .. image:: images/tree_editor.png
 
-Usage is as follows:
+Usage is as follows::
 
-::
+    from django.db import models
+
+    class YourModel(models.Model):
+        # model field definitions
+
+        class Meta:
+            ordering = ['tree_id', 'lft'] # The TreeEditor needs this ordering definition
+
+
+And inside your ``admin.py`` file::
 
     from django.contrib import admin
     from feincms.admin import editor
