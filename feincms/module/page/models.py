@@ -14,7 +14,6 @@ from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.http import condition
 
 import mptt
 
@@ -337,6 +336,10 @@ class Page(Base):
         def etagger(request, page, *args, **kwargs):
             etag = page.etag(request)
             return etag
+
+        # Unavailable in Django 1.0 -- the current implementation of ETag support
+        # requires Django 1.1 unfortunately.
+        from django.views.decorators.http import condition
 
         # Now wrap the condition decorator around our dummy handler:
         # the net effect is that we will be getting a DummyResponse from
