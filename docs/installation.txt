@@ -46,7 +46,7 @@ Configuration
 There isn't much left to do apart from adding ``feincms`` to ``INSTALLED_APPS``.
 The customized administration interface needs some media and javascript
 libraries, which you have to make available to the browser. You should
-publish the files in the folder ``feincms/media/`` somewhere on your site
+publish the files in the folder ``feincms/media/feincms/`` somewhere on your site
 and set the ``FEINCMS_ADMIN_MEDIA`` to the location. You can do this either
 by copying the media files into your media folder or by installing a
 symlink to the correct place.
