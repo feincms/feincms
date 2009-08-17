@@ -11,6 +11,8 @@ from FeinCMS and you want to show a list of recent blog entries.
 
 Example:
 
+    from django.utils.translation import ugettext_lazy as _
+
     from feincms.content.image.models import ImageContent
     from feincms.content.richtext.models import RichTextContent
     from feincms.models import Base
