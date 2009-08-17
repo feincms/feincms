@@ -21,7 +21,12 @@ To activate the page module, you need to follow the instructions in
 :ref:`installation` and afterwards add :mod:`feincms.module.page` to your
 :data:`INSTALLED_APPS`.
 
-You need to create some content models. No models are created by default,
+Before proceeding with ``manage.py syncdb``, it might be a good idea to take
+a look at :ref:`page-extensions` -- the page model does have the minimum of
+features in the default configuration and you will probably want to enable
+several extensions.
+
+You need to create some content models too. No models are created by default,
 because there is no possibility to unregister models. A sane default might
 be to create :class:`~feincms.content.image.models.ImageContent` and
 :class:`~feincms.content.richtext.models.RichTextContent` models; you can do this
@@ -35,6 +40,8 @@ by adding the following lines somewhere into your project, for example in a
     from feincms.module.page.models import Page
     from feincms.content.richtext.models import RichTextContent
     from feincms.content.image.models import ImageContent
+
+    Page.register_extensions('datepublisher', 'translations') # Example set of extensions
 
     Page.register_templates({
         'title': _('Standard template'),
@@ -58,11 +65,6 @@ It will be a good idea most of the time to register the
 first, because it's the most used content type for many applications. The
 content type dropdown will contain content types in the same order as they
 were registered.
-
-Before proceeding with ``manage.py syncdb``, it might be a good idea to take
-a look at :ref:`page-extensions` -- the page model does have the minimum of
-features in the default configuration and you will probably want to enable
-several extensions.
 
 
 Setting up the admin interface
