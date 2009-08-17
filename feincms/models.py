@@ -5,6 +5,7 @@ All models defined here are abstract, which means no tables are created in
 the feincms_ namespace.
 """
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string
@@ -298,11 +299,6 @@ class Base(models.Model):
         # by content types
         cls.feincms_item_editor_includes = {}
 
-        # Fetch django's content type
-        from django.contrib.contenttypes.models import ContentType
-        ct = ContentType.objects.get_for_model(cls)
-        cls._content_type = ct
-
     @classmethod
     def create_content_type(cls, model, regions=None, **kwargs):
         """
@@ -400,6 +396,12 @@ class Base(models.Model):
                 cls.feincms_item_editor_includes.setdefault(key, []).extend(includes)
 
         return new_type
+
+    @property
+    def _django_content_type(self):
+        if not hasattr(self.__class__, '_django_content_type'):
+            self.__class__._django_content_type = ContentType.objects.get_for_model(self)
+        return self.__class__._django_content_type
 
     @classmethod
     def content_type_for(cls, model):

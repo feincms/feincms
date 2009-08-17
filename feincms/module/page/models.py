@@ -179,7 +179,7 @@ class Page(Base):
 
     request_processors = []
     response_processors = []
-    cache_key_components = [ lambda p: p._content_type.id,
+    cache_key_components = [ lambda p: p._django_content_type.id,
                              lambda p: p.id ]
 
     class Meta:
