@@ -771,14 +771,27 @@ class PagesTestCase(TestCase):
 
         request = Empty()
         request.path = page.get_absolute_url()
+        request.method = 'GET'
+        request.get_full_path = lambda: '/xyz/'
         request.GET = []
         request.user = AnonymousUser()
 
-        self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
-        page1 = Page.objects.get(pk=1)
-        page1.active = True
-        page1.save()
+        page.active = False
+        page.save()
 
+        self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
+
+        page.active = True
+        page.save()
+
+        self.assertEqual(page, Page.objects.for_request_or_404(request))
+
+        page.parent.active = False
+        page.parent.save()
+        self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
+
+        page.parent.active = True
+        page.parent.save()
         self.assertEqual(page, Page.objects.for_request_or_404(request))
 
         request.path += 'hello/'
