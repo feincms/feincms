@@ -23,7 +23,6 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
      <a href="../../../">{% trans "Home" %}</a> &rsaquo;
-     <a href="../../">{{ opts.app_label|capfirst|escape }}</a> &rsaquo;
      <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
      
      {% for p in object.get_ancestors %}
