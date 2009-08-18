@@ -100,7 +100,7 @@ class PageManager(models.Manager):
             if raise404:
                 raise Http404
 
-        return None
+        raise self.model.DoesNotExist
 
     def in_navigation(self):
         return self.active().filter(in_navigation=True)
