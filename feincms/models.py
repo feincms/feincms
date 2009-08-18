@@ -139,7 +139,7 @@ class Base(models.Model):
 
         cls.TEMPLATE_CHOICES = choices
 
-        cls.add_to_class('template_key', models.CharField(_('template'), max_length=20,
+        cls.add_to_class('template_key', models.CharField(_('template'), max_length=255,
             choices=cls.TEMPLATE_CHOICES, default=choices[0][0]))
 
         cls._feincms_templates = instances
@@ -283,7 +283,7 @@ class Base(models.Model):
             'fe_identifier': fe_identifier,
             'Meta': Meta,
             'parent': models.ForeignKey(cls, related_name='%(class)s_set'),
-            'region': models.CharField(max_length=20),
+            'region': models.CharField(max_length=255),
             'ordering': models.IntegerField(_('ordering'), default=0),
             }
 
