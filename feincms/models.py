@@ -83,6 +83,8 @@ class Base(models.Model):
     class Meta:
         abstract = True
 
+    _cached_django_content_type = None
+
     @classmethod
     def register_regions(cls, *regions):
         """
@@ -399,9 +401,9 @@ class Base(models.Model):
 
     @property
     def _django_content_type(self):
-        if not hasattr(self.__class__, '_django_content_type'):
-            self.__class__._django_content_type = ContentType.objects.get_for_model(self)
-        return self.__class__._django_content_type
+        if getattr(self.__class__, '_cached_django_content_type', None) is None:
+            self.__class__._cached_django_content_type = ContentType.objects.get_for_model(self)
+        return self.__class__._cached_django_content_type
 
     @classmethod
     def content_type_for(cls, model):
