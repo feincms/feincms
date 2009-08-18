@@ -767,7 +767,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(page, Page.objects.best_match_for_path(page.get_absolute_url() + 'something/hello/'))
 
         self.assertRaises(Http404, lambda: Page.objects.best_match_for_path('/blabla/blabla/', raise404=True))
-        self.assertEqual(None, Page.objects.best_match_for_path('/blabla/blabla/'))
+        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
 
         request = Empty()
         request.path = page.get_absolute_url()
