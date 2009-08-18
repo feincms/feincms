@@ -49,3 +49,21 @@ There are several ways how you might find out what's going wrong. Raise the
 debugging level, try importing the page module (and other modules) from the
 shell you get when you use ``./manage.py shell`` are some possibilities how
 you might debug this problem.
+
+
+
+I run ``syncdb`` and get a message about missing columns in the page table
+==========================================================================
+
+You enabled the page module (added :mod:`feincms.module.page` to
+``INSTALLED_APPS``), run syncdb, and afterwards registered a few
+extensions. The extensions you activated
+(:mod:`~feincms.module.page.extensions.datepublisher` and
+:mod:`~feincms.module.page.extensions.translations`) add new fields to
+the page model, but your first ``syncdb`` did not know about them and
+therefore did not create the columns for those extensions.
+
+You can either remove the line ``Page.register_extensions(...)`` from
+your code or drop the page_page table and re-run ``syncdb``. If you want
+to keep the pages you've already created, you need to figure out the
+correct ALTER TABLE statements for your database yourself.
