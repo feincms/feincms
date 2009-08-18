@@ -1,0 +1,10 @@
+{% extends "admin/feincms/tree_editor.html" %}
+
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+     <a href="../../../">{% trans "Home" %}</a> &rsaquo;
+     {{ cl.opts.verbose_name_plural|capfirst }}
+</div>
+{% endblock %}
