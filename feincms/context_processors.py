@@ -8,6 +8,9 @@ def add_page_if_missing(request):
     if hasattr(request, '_feincms_page'):
         return {}
 
-    return {
-        'feincms_page': Page.objects.best_match_for_request(request),
-        }
+    try:
+        return {
+            'feincms_page': Page.objects.best_match_for_request(request),
+            }
+    except Page.DoesNotExist:
+        return {}
