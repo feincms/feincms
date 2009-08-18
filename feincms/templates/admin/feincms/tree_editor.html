@@ -32,16 +32,15 @@
 
         /* If a parent filter is present, remove all leaf elements */
         /* Must come before tree cleansing! */
-        $(".admin-filter-parent option").each(function(idx, opt)
-            {
-            valstr = $(opt).attr('value').split('=')[1]; // Ugh, extract page id from query string
-            if(valstr)
-                {
-                p = page(parseInt(valstr));
-                if(!p.children || p.children.length == 0)
-                   $(opt).replaceWith('');
-                }
-            });
+        $(".admin-filter-parent option").each(function(idx, opt) {
+            var valstr = $(opt).attr('value').match(/parent__id__exact=(\d+)/);
+            if(!valstr)
+                return;
+
+            p = page(parseInt(valstr[1]));
+            if(!p.children || p.children.length == 0)
+               $(opt).replaceWith('');
+        });
 
         tree_structure_clean(); /* reduce structure to actually present items */
 
