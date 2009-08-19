@@ -14,6 +14,7 @@ from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.db.models.query import QuerySet
 
 import mptt
 
@@ -23,7 +24,32 @@ from feincms.management.checker import check_database_schema
 from feincms.models import Base
 from feincms.utils import get_object, copy_model_instance
 
+# ------------------------------------------------------------------------
+class PageAdminQuerySet(QuerySet):
+    """
+    The PageAdminQuerySet is a special query set used only in the Page Admin
+    ChangeList page. The only difference to a regular QuerySet is that it
+    will enforce:
+    
+        (a) The result is ordered in correct tree order so that
+            the TreeAdmin works all right.
+            
+        (b) It ensures that all ancestors of selected pages are included
+            in the result set, so the resulting tree display actually
+            makes sense.
+    """
+    def iterator(self):
+        include_pages = set()
+        for p in super(PageAdminQuerySet, self).iterator():
+            include_pages.update( [ x.id for x in p.get_ancestors() ] )
 
+        qs = self | Page.objects.filter(id__in=include_pages)
+        qs = qs.distinct().order_by('tree_id', 'lft')
+
+        for obj in super(PageAdminQuerySet, qs).iterator():
+            yield obj
+        
+# ------------------------------------------------------------------------
 class PageManager(models.Manager):
 
     # A list of filters which are used to determine whether a page is active or not.
@@ -49,6 +75,11 @@ class PageManager(models.Manager):
 
     def active(self):
         return self.apply_active_filters(self)
+
+    def get_list_query_set(self):
+        qs = self.get_query_set()
+        qs.__class__ = PageAdminQuerySet
+        return qs
 
     def page_for_path(self, path, raise404=False):
         """

@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from feincms import settings
 
 
+# ------------------------------------------------------------------------
 def django_boolean_icon(field_val, alt_text=None, title=None):
     """
     Return HTML code for a nice representation of true/false.
@@ -106,6 +107,9 @@ def ajax_editable_boolean(attr, short_description):
     _fn.editable_boolean_field = attr
     return _fn
 
+# ------------------------------------------------------------------------
+# MARK: -
+# ------------------------------------------------------------------------
 
 class TreeEditor(admin.ModelAdmin):
     class Media:
@@ -281,8 +285,8 @@ class TreeEditor(admin.ModelAdmin):
         admin site. This is used by changelist_view.
         """
 
-        # Use default ordering, always
-        return self.model._default_manager.get_query_set()
+        # Use modified PageAdminQuerySet which returns all parents and ensures ordering
+        return self.model._default_manager.get_list_query_set()
 
     def _actions_column(self, page):
         actions = []
@@ -300,14 +304,3 @@ class TreeEditor(admin.ModelAdmin):
     actions_column.allow_tags = True
     actions_column.short_description = _('actions')
 
-
-# !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
-# If the ChangeList is used by a TreEditor, we always need to order by 'tree_id' and 'lft'.
-from django.contrib.admin.views import main
-class ChangeList(main.ChangeList):
-    def get_query_set(self):
-        qs = super(ChangeList, self).get_query_set()
-        if isinstance(self.model_admin, TreeEditor):
-            return qs.order_by('tree_id', 'lft')
-        return qs
-main.ChangeList = ChangeList
