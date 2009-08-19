@@ -41,7 +41,7 @@ var close_subtree = function(item_id)
 {
     p = page(item_id)
 
-    if(!p.id || p.children.length == 0)
+    if(!p.id || !p.children || p.children.length == 0)
         return false;
 
     p.ptr.html(expand_sym);
@@ -58,7 +58,7 @@ var page_tree_handler = function(item_id)
 {
     p = page(item_id);
 
-    if(!p.id || p.children.length == 0)
+    if(!p.id || !p.children || p.children.length == 0)
         return false;
 
     open = p.open;
@@ -156,7 +156,7 @@ var open_entire_tree = function()
     feincms_page_open_list = []
     for(k in tree_structure)
     {
-        if(page(k).children.length > 0)
+        if(page(k) && page(k).children)
         {
             open_subtree(k);
             feincms_page_open_list.push(k);
