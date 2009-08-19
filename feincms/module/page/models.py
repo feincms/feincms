@@ -45,10 +45,13 @@ class PageAdminQuerySet(QuerySet):
 
         qs = self | Page.objects.filter(id__in=include_pages)
         qs = qs.distinct().order_by('tree_id', 'lft')
-
         for obj in super(PageAdminQuerySet, qs).iterator():
             yield obj
-        
+
+    def __getitem__(self, index):
+        # Don't even try to slice
+        return self
+
 # ------------------------------------------------------------------------
 class PageManager(models.Manager):
 
@@ -600,6 +603,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     raw_id_fields = []
     show_on_top = ['title', 'active']
     radio_fields = {'template_key': admin.HORIZONTAL}
+    list_per_page = 999999999
 
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
