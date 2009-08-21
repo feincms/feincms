@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     # This entry is here strictly for application content testing
     # XXX this really needs to go into a URLconf file which is only used by the
     # application content testcases
-    url(r'^(.*)/$', 'feincms.views.applicationcontent.handler'),
+    #url(r'^(.*)/$', 'feincms.views.applicationcontent.handler'),
 
     url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
 )
