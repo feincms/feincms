@@ -40,8 +40,10 @@ var open_subtree = function(item_id)
 var close_subtree = function(item_id)
 {
     p = page(item_id)
-    if(p.descendants.length == 0)
-        return;
+
+    if(!p.id || !p.children || p.children.length == 0)
+        return false;
+
     p.ptr.html(expand_sym);
     $.each(p.descendants, function(i, id)
            {
@@ -56,7 +58,7 @@ var page_tree_handler = function(item_id)
 {
     p = page(item_id);
 
-    if(p.children.length == 0)
+    if(!p.id || !p.children || p.children.length == 0)
         return false;
 
     open = p.open;
@@ -109,7 +111,7 @@ var tree_structure_clean = function()
                 }
             else /* row not present in changelist, throw node away */
                 {
-                    tree_structure[k] = { }
+                     tree_structure[k] = { }
                 }
         }
 
@@ -139,8 +141,34 @@ var tree_structure_clean = function()
         }
 }
 
+var close_entire_tree = function()
+{
+    for(k in tree_structure)
+    {
+        close_subtree(k);
+    }
+    feincms_page_open_list = []
+    recolor_lines();
+}
+
+var open_entire_tree = function()
+{
+    feincms_page_open_list = []
+    for(k in tree_structure)
+    {
+        if(page(k) && page(k).children)
+        {
+            open_subtree(k);
+            feincms_page_open_list.push(k);
+        }
+    }
+    recolor_lines();
+}
+
 /* Cut/Copy/Paste support */
-// FIXME: This changes the site structure and would need to refresh the tree_structure at least (if not more, eg. page filter).
+// FIXME: This changes the site structure and would need to refresh at least the
+// tree_structure (if not more, eg. page filter). Easy way out: reload the page.
+
 var cut_item_pk = null;
 function cut_item(pk, elem) {
     var row = $(elem.parentNode.parentNode);

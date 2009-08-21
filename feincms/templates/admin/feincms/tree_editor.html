@@ -78,17 +78,18 @@
 {% endblock %}
 
 
-{% comment %}
-      {% block filters %}
-        {% if cl.has_filters %}
-          <div id="changelist-filter">
-            <h2>{% trans 'Filter' %}</h2>
-            {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+{% block filters %}
+{% if cl.has_filters %}
 
-	<h3>Links</h3>
-	<li class="selected"><a href="#">Dings</a> </li>
-          </div>
-        {% endif %}
+<div id="changelist-filter">
+<h2>Navigation</h2>
+<ul>
+<li><a href="javascript: close_entire_tree();">{% trans 'Collapse tree' %}</a></li>
+<li><a href="javascript: open_entire_tree();">{% trans 'Expand tree' %}</a></li>
+</ul>
+<h2>{% trans 'Filter' %}</h2>
+{% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+</div>
+{% endif %}
 
-      {% endblock %}
-{% endcomment %}
+{% endblock %}
