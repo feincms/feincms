@@ -180,7 +180,7 @@ First, you need to create the content type::
 
     Page.create_content_type(ApplicationContent, APPLICATIONS=(
         ('news.urls', 'News application'),
-        )
+        ))
 
 Your base template does not have to be structured differently just because
 you are using application contents now. You must use the bundled FeinCMS
