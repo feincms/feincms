@@ -200,7 +200,14 @@ The 3rd party application might know how to handle more than one URL (the exampl
 news application does). These subpages won't necessarily exist, and because of this
 the standard CMS view (:func:`feincms.views.base.handler`) will return a 404. You
 must use the application-content aware view :func:`feincms.views.applicationcontent.handler`
-or use the code there inside your own custom view. Mainly, the view does not use
+or use the code there inside your own custom view::
+
+    urlpatterns = patterns('',
+        url(r'^$|^(.*)/$', 'feincms.views.applicationcontent.handler'),
+    )
+
+The regular expression covers empty strings (for the root page) as well as any subpage.
+Mainly, the view does not use
 :meth:`Page.page_for_path_or_404` but :meth:`Page.best_match_for_path` to find
 a page, and handles pages with application contents slightly differently. Take a look
 at the code until the documentation here is more complete.
