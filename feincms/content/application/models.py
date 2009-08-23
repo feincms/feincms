@@ -11,8 +11,63 @@ from django.utils.translation import ugettext_lazy as _
 
 _urlconfs = {}
 
+OTHER_APPLICATIONCONTENT_SEPARATOR = '/'
+
 def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs, **vkwargs):
+    """
+    This reverse replacement adds two new capabilities to the Django reverse method:
+
+    - If reverse is called from inside ``ApplicationContent.process``, it
+      automatically prepends the URL of the page the ``ApplicationContent``
+      is attached to, thereby allowing ``reverse`` and ``{% url %}`` to
+      return correct URLs without hard-coding the application integration
+      point into the templates or URLconf files.
+    - If the viewname contains a slash, the part before the slash is
+      interpreted as the path to an URLconf file. This allows the template
+      author to resolve URLs only reachable via an ``ApplicationContent``,
+      even inside another application contents' ``process`` method::
+
+          {% url registration.urls/auth_logout %}
+    """
+
     ct = currentThread()
+
+    if OTHER_APPLICATIONCONTENT_SEPARATOR in viewname:
+        # try to reverse an URL inside another applicationcontent
+        other_urlconf, other_viewname = viewname.split(OTHER_APPLICATIONCONTENT_SEPARATOR)
+
+        # TODO do not use internal feincms data structures as much
+        contents = ApplicationContent._feincms_content_models[0].objects.filter(urlconf_path=other_urlconf)
+
+        # TODO find best matching ac (using language, nearness in tree etc)
+        content = contents[0] # :-)
+
+        # Save information from _urlconfs in case we are inside another
+        # application contents' ``process`` method currently
+        saved_cfg = None
+        if ct in _urlconfs:
+            saved_cfg = _urlconfs[ct]
+
+        # Initialize application content reverse hackery for the other application
+        _urlconfs[ct] = (other_urlconf, content.parent.get_absolute_url())
+
+        try:
+            url = reverse(other_viewname, other_urlconf, args, kwargs, prefix, *vargs, **vkwargs)
+        except:
+            # We really must not fail here. We absolutely need to remove/restore
+            # the _urlconfs information
+            url = None
+
+        if saved_cfg:
+            _urlconfs[ct] = saved_cfg
+        else:
+            del _urlconfs[ct]
+
+        # We found an URL somewhere in here... return it. Otherwise, we continue
+        # below
+        if url:
+            return url
+
     if ct in _urlconfs:
         # Special handling inside ApplicationContent.render; override urlconf
         # and prefix variables so that reverse works as expected.
