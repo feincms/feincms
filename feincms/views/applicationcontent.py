@@ -1,5 +1,6 @@
 from django.http import Http404
 
+from feincms.content.application.models import retrieve_page_information
 from feincms.module.page.models import Page
 from feincms.views.base import build_page_response
 
@@ -18,6 +19,11 @@ def handler(request, path=None):
 
         if not applicationcontents:
             raise Http404
+
+    # The monkey-patched reverse() method needs some information
+    # for proximity analysis when determining the nearest
+    # application integration point
+    retrieve_page_information(page)
 
     for content in applicationcontents:
         r = content.process(request)

@@ -5,11 +5,18 @@ from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse, 
 from django.db import models
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
-from django.utils.thread_support import currentThread
 from django.utils.translation import ugettext_lazy as _
 
+try:
+    from threading import local
+except ImportError:
+    from django.utils._threading_local import local
 
-_urlconfs = {}
+_local = local()
+
+
+def retrieve_page_information(page):
+    _local.proximity_info = (page.tree_id, page.lft, page.rght, page.level)
 
 OTHER_APPLICATIONCONTENT_SEPARATOR = '/'
 
@@ -30,48 +37,61 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
           {% url registration.urls/auth_logout %}
     """
 
-    ct = currentThread()
-
     if OTHER_APPLICATIONCONTENT_SEPARATOR in viewname:
         # try to reverse an URL inside another applicationcontent
         other_urlconf, other_viewname = viewname.split(OTHER_APPLICATIONCONTENT_SEPARATOR)
 
         # TODO do not use internal feincms data structures as much
-        contents = ApplicationContent._feincms_content_models[0].objects.filter(urlconf_path=other_urlconf)
+        model_class = ApplicationContent._feincms_content_models[0]
+        contents = model_class.objects.filter(
+            urlconf_path=other_urlconf).select_related('parent')
 
-        # TODO find best matching ac (using language, nearness in tree etc)
-        content = contents[0] # :-)
+        proximity_info = getattr(_local, 'proximity_info', None)
 
-        # Save information from _urlconfs in case we are inside another
-        # application contents' ``process`` method currently
-        saved_cfg = None
-        if ct in _urlconfs:
-            saved_cfg = _urlconfs[ct]
-
-        # Initialize application content reverse hackery for the other application
-        _urlconfs[ct] = (other_urlconf, content.parent.get_absolute_url())
-
-        try:
-            url = reverse(other_viewname, other_urlconf, args, kwargs, prefix, *vargs, **vkwargs)
-        except:
-            # We really must not fail here. We absolutely need to remove/restore
-            # the _urlconfs information
-            url = None
-
-        if saved_cfg:
-            _urlconfs[ct] = saved_cfg
+        if proximity_info:
+            # Poor man's proximity analysis. Filter by tree_id :-)
+            try:
+                content = contents.get(parent__tree_id=proximity_info[0])
+            except (model_class.DoesNotExist, model_class.MultipleObjectsReturned):
+                try:
+                    content = contents[0]
+                except IndexError:
+                    content = None
         else:
-            del _urlconfs[ct]
+            try:
+                content = contents[0]
+            except IndexError:
+                content = None
 
-        # We found an URL somewhere in here... return it. Otherwise, we continue
-        # below
-        if url:
-            return url
+        if content:
+            # Save information from _urlconfs in case we are inside another
+            # application contents' ``process`` method currently
+            saved_cfg = getattr(_local, 'urlconf', None)
 
-    if ct in _urlconfs:
+            # Initialize application content reverse hackery for the other application
+            _local.urlconf = (other_urlconf, content.parent.get_absolute_url())
+
+            try:
+                url = reverse(other_viewname, other_urlconf, args, kwargs, prefix, *vargs, **vkwargs)
+            except:
+                # We really must not fail here. We absolutely need to remove/restore
+                # the _urlconfs information
+                url = None
+
+            if saved_cfg:
+                _local.urlconf = saved_cfg
+            else:
+                del _local.urlconf
+
+            # We found an URL somewhere in here... return it. Otherwise, we continue
+            # below
+            if url:
+                return url
+
+    if hasattr(_local, 'urlconf'):
         # Special handling inside ApplicationContent.render; override urlconf
         # and prefix variables so that reverse works as expected.
-        urlconf1, prefix1 = _urlconfs[ct]
+        urlconf1, prefix1 = _local.urlconf
         try:
             return _reverse(viewname, urlconf1, args, kwargs, prefix1, *vargs, **vkwargs)
         except NoReverseMatch:
@@ -108,13 +128,13 @@ class ApplicationContent(models.Model):
         path = re.sub('^' + re.escape(page_url[:-1]), '', request.path)
 
         # Change the prefix and urlconf for the monkey-patched reverse function ...
-        _urlconfs[currentThread()] = (self.urlconf_path, page_url)
+        _local.urlconf = (self.urlconf_path, page_url)
 
         try:
             fn, args, kwargs = resolve(path, self.urlconf_path)
         except (ValueError, Resolver404):
             # Silent failure if resolving failed
-            del _urlconfs[currentThread()]
+            del _local.urlconf
             return
 
         try:
@@ -122,11 +142,11 @@ class ApplicationContent(models.Model):
         except:
             # We want exceptions to propagate, but we cannot allow the
             # modifications to reverse() to stay here.
-            del _urlconfs[currentThread()]
+            del _local.urlconf
             raise
 
         # ... and restore it after processing the view
-        del _urlconfs[currentThread()]
+        del _local.urlconf
 
         if isinstance(output, HttpResponse):
             if output.status_code == 200:
