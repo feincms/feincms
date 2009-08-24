@@ -41,7 +41,8 @@ class PageAdminQuerySet(QuerySet):
     def iterator(self):
         include_pages = set()
         for p in super(PageAdminQuerySet, self).iterator():
-            include_pages.update( [ x.id for x in p.get_ancestors() ] )
+            if p.parent_id not in include_pages:
+                include_pages.update( [ x.id for x in p.get_ancestors() ] )
 
         qs = self | Page.objects.filter(id__in=include_pages)
         qs = qs.distinct().order_by('tree_id', 'lft')
@@ -52,6 +53,7 @@ class PageAdminQuerySet(QuerySet):
         # Don't even try to slice
         return self
 
+# MARK: -
 # ------------------------------------------------------------------------
 class PageManager(models.Manager):
 
