@@ -37,5 +37,7 @@ FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKI
 # Use SplitPaneEditor instead of TreeEditor in the page administration
 FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = getattr(settings, 'FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR', False)
 
+FEINCMS_PAGE_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_PAGE_INCLUDE_ANCESTORS', False)
+
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
