@@ -117,6 +117,7 @@ MediaFile.register_filetypes(
         ('image', _('Image'), lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f)),
         ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
         ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
+        ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
         ('other', _('Binary'), lambda f: True), # Must be last
     )
 
