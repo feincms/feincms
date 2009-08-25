@@ -47,13 +47,14 @@ class PageAdminQuerySet(QuerySet):
                     include_pages.update( [ x.id for x in p.get_ancestors() ] )
 
             qs = qs | Page.objects.filter(id__in=include_pages)
-        qs = qs.distinct().order_by('tree_id', 'lft')
+            qs = qs.distinct().order_by('tree_id', 'lft')
         for obj in super(PageAdminQuerySet, qs).iterator():
             yield obj
 
     def __getitem__(self, index):
         if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS: return self   # Don't even try to slice
-        return super(PageAdminQuerySet, self).__getitem__(index)
+        qs = self.order_by('tree_id', 'lft')
+        return super(PageAdminQuerySet, qs).__getitem__(index)
 
 # MARK: -
 # ------------------------------------------------------------------------
