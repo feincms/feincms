@@ -284,9 +284,7 @@ class TreeEditor(admin.ModelAdmin):
         Returns a QuerySet of all model instances that can be edited by the
         admin site. This is used by changelist_view.
         """
-
-        # Use modified PageAdminQuerySet which returns all parents and ensures ordering
-        return self.model._default_manager.get_list_query_set()
+        return self.model._default_manager.get_query_set()
 
     def _actions_column(self, page):
         actions = []

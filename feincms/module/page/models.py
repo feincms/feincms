@@ -653,6 +653,15 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
 
     # ---------------------------------------------------------------------
+    def queryset(self, request):
+        """
+        Returns a QuerySet of all model instances that can be edited by the
+        admin site. This is used by changelist_view.
+        Note: Overrides same method in TreeEditor.
+        """
+        # Use modified PageAdminQuerySet which returns all parents and ensures ordering
+        return self.model._default_manager.get_list_query_set()
+
     def change_view(self, request, object_id, extra_context=None):
         from django.shortcuts import get_object_or_404
         if 'create_copy' in request.GET:
