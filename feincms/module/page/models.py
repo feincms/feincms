@@ -51,6 +51,9 @@ class PageAdminQuerySet(QuerySet):
         for obj in super(PageAdminQuerySet, qs).iterator():
             yield obj
 
+        # TODO: Make this method independent from "Page" and remove override in PageAdmin.
+        # Instead use this generalized query set in TreeEditor's queryset() method so
+        # that all content types can benefit.
     def __getitem__(self, index):
         if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS: return self   # Don't even try to slice
         qs = self.order_by('tree_id', 'lft')
