@@ -608,6 +608,11 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     show_on_top = ['title', 'active']
     radio_fields = {'template_key': admin.HORIZONTAL}
 
+    def __init__(self, *args, **kwargs):
+        if len(Page._feincms_templates) > 4:
+            del(self.radio_fields['template_key'])
+        return super(PageAdmin, self).__init__(*args, **kwargs)
+
     # PageAdminQuerySet does not support slicing, so disable pagination
     if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS:
         list_per_page = 999999999
