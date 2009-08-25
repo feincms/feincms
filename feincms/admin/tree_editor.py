@@ -288,7 +288,7 @@ class TreeEditor(admin.ModelAdmin):
 
     def _actions_column(self, page):
         actions = []
-        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s">&#x2702;</a>' % (
+        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s"><big>&#x2702;</big></a>' % (
             page.pk, _('Cut')))
 
         actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'last-child\')" title="%s">&#x21b3;</a>' % (
