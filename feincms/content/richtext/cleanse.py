@@ -4,7 +4,7 @@ import re
 
 
 cleanse_html_allowed = {
-    'a': ('href', 'target', 'title'),
+    'a': ('href', 'name', 'target', 'title'),
     'h2': (),
     'h3': (),
     'strong': (),
