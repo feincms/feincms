@@ -120,6 +120,7 @@ class ItemEditor(admin.ModelAdmin):
         inline_formset_types = [(
             content_type,
             inlineformset_factory(self.model, content_type, extra=1,
+                fk_name='parent', #added so multiple foreign keys are not a problem
                 form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm),
                 formfield_callback=self._formfield_callback(request=request))
             ) for content_type in self.model._feincms_content_types]
