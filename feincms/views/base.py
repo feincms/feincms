@@ -6,17 +6,16 @@ from feincms.module.page.models import Page
 
 
 def _build_page_response(page, request):
-    response = page.setup_request(request)
-    
-    if response is None:
-        extra_context = request._feincms_extra_context
-        response = render_to_response(page.template.path, {
-            'feincms_page': page,
-            }, context_instance=RequestContext(request, extra_context))
-
-    return response
+    extra_context = request._feincms_extra_context
+    return render_to_response(page.template.path, {
+        'feincms_page': page,
+        }, context_instance=RequestContext(request, extra_context))
 
 def build_page_response(page, request):
+    response = page.setup_request(request)
+    if response:
+        return response
+
     response = _build_page_response(page, request)
     page.finalize_response(request, response)
     return response
@@ -43,4 +42,5 @@ def preview_handler(request, page_id):
     is active or expired. To balance that, it requires a logged in user.
     """
     page = get_object_or_404(Page, pk=page_id)
+    page.setup_request(request)
     return _build_page_response(page, request)

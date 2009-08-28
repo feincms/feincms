@@ -2,7 +2,7 @@ from django.http import Http404
 
 from feincms.content.application.models import retrieve_page_information
 from feincms.module.page.models import Page
-from feincms.views.base import build_page_response
+from feincms.views.base import _build_page_response
 
 
 def handler(request, path=None):
@@ -25,10 +25,15 @@ def handler(request, path=None):
     # application integration point
     retrieve_page_information(page)
 
+    response = page.setup_request(request)
+    if response:
+        return response
+
     for content in applicationcontents:
         r = content.process(request)
         if r and (r.status_code != 200 or request.is_ajax()):
             return r
 
-    return build_page_response(page, request)
-
+    response = _build_page_response(page, request)
+    page.finalize_response(request, response)
+    return response
