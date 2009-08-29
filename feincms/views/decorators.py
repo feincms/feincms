@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 try:
     from functools import wraps
 except ImportError:
@@ -17,4 +18,19 @@ def add_page_to_extra_context(view_func):
         kwargs['extra_context']['feincms_page'] = Page.objects.best_match_for_request(request)
 
         return view_func(request, *args, **kwargs)
+    return wraps(view_func)(inner)
+
+
+def standalone(view_func):
+    """
+    Marks the view method as standalone view; this means that
+    ``HttpResponse`` objects returned from ``ApplicationContent``
+    are returned directly, without further processing.
+    """
+
+    def inner(request, *args, **kwargs):
+        response = view_func(request, *args, **kwargs)
+        if isinstance(response, HttpResponse):
+            response.standalone = True
+        return response
     return wraps(view_func)(inner)

@@ -31,7 +31,7 @@ def handler(request, path=None):
 
     for content in applicationcontents:
         r = content.process(request)
-        if r and (r.status_code != 200 or request.is_ajax()):
+        if r and (r.status_code != 200 or request.is_ajax() or getattr(r, 'standalone', False)):
             return r
 
     response = _build_page_response(page, request)
