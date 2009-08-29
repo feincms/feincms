@@ -9,14 +9,14 @@ var extract_item_id = function(elem_id) {
     i = elem_id.indexOf('-');
     if(i >= 0)
         return parseInt(elem_id.slice(i+1));
-    
+
     return 0;
 }
 
 /* Given an html snippet (in text form), parses it to extract the id attribute,
    then replace the corresponding element in the page with the snippet. The
    first parameter is ignored (so the signature matches what $.each expects).
- 
+
        replace_element(0, '<div id="replace_me">New Stuff!</div>')
  */
 var replace_element = function(i, html) {
@@ -36,6 +36,3 @@ var inplace_toggle_boolean = function(item_id, attr) {
            'json');
     return false;
 }
-
-/* Submit a form from a drop down select */
-var go_from_select = function(opt) { window.location = window.location.pathname + opt };
