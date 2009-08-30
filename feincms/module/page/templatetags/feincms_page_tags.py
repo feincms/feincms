@@ -13,6 +13,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
 
     level: 1 = toplevel, 2 = sublevel, 3 = sub-sublevel
     depth: 1 = only one level, 2 = subpages too
+    extended: run navigation extension on returned pages, not only on top-level node
 
     If you set depth to something else than 1, you might want to look into
     the tree_info template tag from the mptt_tags library.
@@ -31,6 +32,22 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         if isinstance(instance, HttpRequest):
             instance = Page.objects.from_request(instance)
 
+        entries = self._what(instance, level, depth)
+
+        if args.get('extended', False):
+            _entries = list(entries)
+            entries = []
+
+            for entry in _entries:
+                entries.append(entry)
+
+                if getattr(entry, 'navigation_extension', None):
+                    entries.extend(entry.extended_navigation(depth=depth,
+                        request=self.render_context.get('request', None)))
+
+        return entries
+
+    def _what(self, instance, level, depth):
         if level <= 1:
             if depth == 1:
                 return Page.objects.toplevel_navigation()
