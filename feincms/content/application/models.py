@@ -37,7 +37,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
           {% url registration.urls/auth_logout %}
     """
 
-    if OTHER_APPLICATIONCONTENT_SEPARATOR in viewname:
+    if isinstance(viewname, basestring) and OTHER_APPLICATIONCONTENT_SEPARATOR in viewname:
         # try to reverse an URL inside another applicationcontent
         other_urlconf, other_viewname = viewname.split(OTHER_APPLICATIONCONTENT_SEPARATOR)
 
