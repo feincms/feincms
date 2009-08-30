@@ -48,7 +48,7 @@ def register(cls, admin_cls):
         '%s.%s' % (ext.__module__, ext.__name__), ext.name) for ext in NavigationExtension.types]
 
     cls.add_to_class('navigation_extension', models.CharField(_('navigation extension'),
-        choices=cls.NE_CHOICES, blank=True, max_length=50,
+        choices=cls.NE_CHOICES, blank=True, max_length=200,
         help_text=_('Select the module providing subpages for this page if you need to customize the navigation.')))
 
     @monkeypatch_method(cls)
