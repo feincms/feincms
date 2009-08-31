@@ -38,6 +38,10 @@ var inplace_toggle_boolean = function(item_id, attr) {
 }
 
 /* ChangeList keydown handler for navigating in CL */
+var changelist_itemid = function(elem) {
+    return extract_item_id($('span', elem).attr('id'));
+}
+
 var changelist_tab = function(elem, event, direction) {
     event.preventDefault();
     ne = ((direction > 0) ? elem.nextAll() : elem.prevAll()).filter(':visible')[0];
@@ -47,4 +51,14 @@ var changelist_tab = function(elem, event, direction) {
         $(ne).focus();
     }
 };
+
+var changelist_openclose = function(elem, openclose) {
+    item_id = changelist_itemid(elem);
+    p = page(item_id);
+    if(p && ((openclose && !p.open) || (!openclose && p.open))) {
+        page_tree_handler(item_id);
+    }
+};
+
+
 

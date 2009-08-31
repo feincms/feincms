@@ -9,7 +9,7 @@
     tr.cut { border: 2px dashed black; opacity: 0.5; }
     .title-column { width: 450px; }
     
-    :focus { background-color: #ccddff !important; }
+    :focus { background-color: #ccddff !important; outline: 0px; }
 </style>
 
 <script type="text/javascript">
@@ -76,7 +76,7 @@
         $('tr:eq(1)').attr('tabindex', '0')
         $('tr').keydown(
             function(event) {
-                /* 38 up, 40 down, 37 left, 38 right */
+                /* 38 up, 40 down, 37 left, 39 right */
                 // console.log('keydown', this, event.keyCode);
                 switch(event.keyCode) {
                     case 40: // down
@@ -86,7 +86,15 @@
                         changelist_tab($(this), event, -1);
                         break;
                     case 37: // left
-                    case 38: //right
+                        changelist_openclose(this, 0);
+                        break;
+                    case 39: // right
+                        changelist_openclose(this, 1);
+                        break;
+                    case 13: // return
+                        item_id = changelist_itemid(this);
+                        document.location = document.location.pathname + item_id + '/'
+                        break;
                     default:
                         break;
                     };
