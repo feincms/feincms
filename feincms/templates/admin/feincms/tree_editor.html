@@ -8,6 +8,8 @@
     .page_marker { display:block; text-align: right; float: left; padding: 1px 1px 0 0; }
     tr.cut { border: 2px dashed black; opacity: 0.5; }
     .title-column { width: 450px; }
+    
+    :focus { background-color: #ccddff !important; }
 </style>
 
 <script type="text/javascript">
@@ -69,6 +71,37 @@
         /* yuck :-) */
         $('table thead tr th:eq(1)').addClass('title-column');
 
+        /* patch list entries into tabindex */
+        $('tr').attr('tabindex', '-1')
+        $('tr:eq(1)').attr('tabindex', '0')
+        $('tr').keydown(
+            function(event) {
+                /* 38 up, 40 down, 37 left, 38 right */
+                // console.log('keydown', this, event.keyCode);
+                switch(event.keyCode) {
+                    case 40:
+                        event.preventDefault();
+                        ne = $(this).nextAll().filter(':visible')[0]
+                        if(ne) {
+                            $(this).attr('tabindex', -1);
+                            $(ne).attr('tabindex', '0');
+                            $(ne).focus();
+                            }
+                        break;
+                    case 38:
+                        event.preventDefault();
+                        ne = $(this).prevAll().filter(':visible')[0]
+                        if(ne) {
+                            $(this).attr('tabindex', -1);
+                            $(ne).attr('tabindex', '0');
+                            $(ne).focus();
+                            }
+                        break;
+                    default:
+                        break;
+                    };
+                }
+        );
         /* Recolor lines to correctly alternate again */
         $('tbody tr').removeClass('row1').removeClass('row2');
         $('table').show();

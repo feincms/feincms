@@ -154,9 +154,13 @@ class TreeEditor(admin.ModelAdmin):
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
                 item.id, item.id, 14+item.level*18)
 
+#        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):
-            return mark_safe(r + item.short_title())
-        return mark_safe(r + unicode(item))
+            r += item.short_title()
+        else:
+            r += unicode(item)
+#        r += '</span>'
+        return mark_safe(r)
     indented_short_title.short_description = _('title')
     indented_short_title.allow_tags = True
 
