@@ -26,7 +26,7 @@
      <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
      
      {% for p in object.get_ancestors %}
-       <a href="../{{ p.id }}/">{{ p.short_title }}</a> :
+       <a href="../?parent__id__exact={{ p.id }}">{{ p.short_title }}</a> :
      {% endfor %}
      {{ object.short_title }}
      
