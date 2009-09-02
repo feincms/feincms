@@ -134,7 +134,14 @@ $(document).ready(function(){
 
     $("input.order-machine-move-button").click(function(){
         var moveTo = $(this).prev().val();
-        move_item(REGION_MAP.indexOf(moveTo), $("#main div.order-machine fieldset.active-item"));
+        var active_item = $("#main div.order-machine fieldset.active-item");
+
+        if (!active_item.length) {
+            jAlert(NO_ITEM_SELECTED_MESSAGE);
+            return false;
+        }
+
+        move_item(REGION_MAP.indexOf(moveTo), active_item);
     });
 
     $("h2 img.item-delete").live('click', function(){
