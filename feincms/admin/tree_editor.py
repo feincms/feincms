@@ -150,20 +150,6 @@ class TreeEditorQuerySet(QuerySet):
 # ------------------------------------------------------------------------
 
 class TreeEditor(admin.ModelAdmin):
-    class Media:
-        css = {}
-        js = []
-        if settings.FEINCMS_ADMIN_MEDIA_HOTLINKING:
-            js.extend(( "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js", ))
-        else:
-            js.extend(( settings.FEINCMS_ADMIN_MEDIA + "jquery-1.3.2.min.js", ))
-
-        js.extend(( settings.FEINCMS_ADMIN_MEDIA + "ie_compat.js",
-                    settings.FEINCMS_ADMIN_MEDIA + "jquery.cookie.js" ,
-                    settings.FEINCMS_ADMIN_MEDIA + "toolbox.js",
-                    settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js",
-                    ))
-
     # TreeEditorQuerySet does not support slicing, so disable pagination
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
         list_per_page = 999999999
@@ -305,6 +291,7 @@ class TreeEditor(admin.ModelAdmin):
 
         extra_context = extra_context or {}
         extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
+        extra_context['FEINCMS_ADMIN_MEDIA_HOTLINKING'] = settings.FEINCMS_ADMIN_MEDIA_HOTLINKING
         extra_context['tree_structure'] = mark_safe(simplejson.dumps(
                                                     _build_tree_structure(self.model)))
 
