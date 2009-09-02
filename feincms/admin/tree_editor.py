@@ -125,7 +125,7 @@ class TreeEditorQuerySet(QuerySet):
     """
     def iterator(self):
         qs = self
-        if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS:
+        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
             include_pages = set()
             for p in super(TreeEditorQuerySet, self).iterator():
                 if p.parent_id not in include_pages:
@@ -140,7 +140,7 @@ class TreeEditorQuerySet(QuerySet):
             yield obj
 
     def __getitem__(self, index):
-        if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS: return self   # Don't even try to slice
+        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS: return self   # Don't even try to slice
         qs = self.order_by('tree_id', 'lft')
         return super(TreeEditorQuerySet, qs).__getitem__(index)
 
@@ -165,7 +165,7 @@ class TreeEditor(admin.ModelAdmin):
                     ))
 
     # TreeEditorQuerySet does not support slicing, so disable pagination
-    if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS:
+    if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
         list_per_page = 999999999
 
     def __init__(self, *args, **kwargs):
