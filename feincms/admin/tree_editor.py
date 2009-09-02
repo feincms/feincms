@@ -1,6 +1,7 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
+from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
@@ -107,6 +108,43 @@ def ajax_editable_boolean(attr, short_description):
     _fn.editable_boolean_field = attr
     return _fn
 
+
+# ------------------------------------------------------------------------
+class TreeEditorQuerySet(QuerySet):
+    """
+    The TreeEditorQuerySet is a special query set used only in the TreeEditor
+    ChangeList page. The only difference to a regular QuerySet is that it
+    will enforce:
+
+        (a) The result is ordered in correct tree order so that
+            the TreeAdmin works all right.
+
+        (b) It ensures that all ancestors of selected items are included
+            in the result set, so the resulting tree display actually
+            makes sense.
+    """
+    def iterator(self):
+        qs = self
+        if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS:
+            include_pages = set()
+            for p in super(TreeEditorQuerySet, self).iterator():
+                if p.parent_id not in include_pages:
+                    include_pages.update( [ x.id for x in p.get_ancestors() ] )
+
+            qs = qs | self.model.objects.filter(id__in=include_pages)
+            qs = qs.distinct()
+
+        qs = qs.order_by('tree_id', 'lft')
+
+        for obj in super(TreeEditorQuerySet, qs).iterator():
+            yield obj
+
+    def __getitem__(self, index):
+        if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS: return self   # Don't even try to slice
+        qs = self.order_by('tree_id', 'lft')
+        return super(TreeEditorQuerySet, qs).__getitem__(index)
+
+
 # ------------------------------------------------------------------------
 # MARK: -
 # ------------------------------------------------------------------------
@@ -125,6 +163,10 @@ class TreeEditor(admin.ModelAdmin):
                     settings.FEINCMS_ADMIN_MEDIA + "toolbox.js",
                     settings.FEINCMS_ADMIN_MEDIA + "page_toolbox.js",
                     ))
+
+    # TreeEditorQuerySet does not support slicing, so disable pagination
+    if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS:
+        list_per_page = 999999999
 
     def __init__(self, *args, **kwargs):
         super(TreeEditor, self).__init__(*args, **kwargs)
@@ -288,7 +330,9 @@ class TreeEditor(admin.ModelAdmin):
         Returns a QuerySet of all model instances that can be edited by the
         admin site. This is used by changelist_view.
         """
-        return self.model._default_manager.get_query_set()
+        qs = self.model._default_manager.get_query_set()
+        qs.__class__ = TreeEditorQuerySet
+        return qs
 
     def _actions_column(self, page):
         actions = []

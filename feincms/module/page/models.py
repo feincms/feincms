@@ -14,7 +14,6 @@ from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
-from django.db.models.query import QuerySet
 
 import mptt
 
@@ -24,40 +23,6 @@ from feincms.management.checker import check_database_schema
 from feincms.models import Base
 from feincms.utils import get_object, copy_model_instance
 
-# ------------------------------------------------------------------------
-class PageAdminQuerySet(QuerySet):
-    """
-    The PageAdminQuerySet is a special query set used only in the Page Admin
-    ChangeList page. The only difference to a regular QuerySet is that it
-    will enforce:
-    
-        (a) The result is ordered in correct tree order so that
-            the TreeAdmin works all right.
-            
-        (b) It ensures that all ancestors of selected pages are included
-            in the result set, so the resulting tree display actually
-            makes sense.
-    """
-    def iterator(self):
-        qs = self
-        if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS:
-            include_pages = set()
-            for p in super(PageAdminQuerySet, self).iterator():
-                if p.parent_id not in include_pages:
-                    include_pages.update( [ x.id for x in p.get_ancestors() ] )
-
-            qs = qs | Page.objects.filter(id__in=include_pages)
-            qs = qs.distinct().order_by('tree_id', 'lft')
-        for obj in super(PageAdminQuerySet, qs).iterator():
-            yield obj
-
-        # TODO: Make this method independent from "Page" and remove override in PageAdmin.
-        # Instead use this generalized query set in TreeEditor's queryset() method so
-        # that all content types can benefit.
-    def __getitem__(self, index):
-        if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS: return self   # Don't even try to slice
-        qs = self.order_by('tree_id', 'lft')
-        return super(PageAdminQuerySet, qs).__getitem__(index)
 
 # MARK: -
 # ------------------------------------------------------------------------
@@ -86,11 +51,6 @@ class PageManager(models.Manager):
 
     def active(self):
         return self.apply_active_filters(self)
-
-    def get_list_query_set(self):
-        qs = self.get_query_set()
-        qs.__class__ = PageAdminQuerySet
-        return qs
 
     def page_for_path(self, path, raise404=False):
         """
@@ -617,10 +577,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             del(self.radio_fields['template_key'])
         return super(PageAdmin, self).__init__(*args, **kwargs)
 
-    # PageAdminQuerySet does not support slicing, so disable pagination
-    if settings.FEINCMS_PAGE_INCLUDE_ANCESTORS:
-        list_per_page = 999999999
-
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
     def _actions_column(self, page):
@@ -654,16 +610,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     def _refresh_changelist_caches(self, *args, **kwargs):
         self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
-
-    # ---------------------------------------------------------------------
-    def queryset(self, request):
-        """
-        Returns a QuerySet of all model instances that can be edited by the
-        admin site. This is used by changelist_view.
-        Note: Overrides same method in TreeEditor.
-        """
-        # Use modified PageAdminQuerySet which returns all parents and ensures ordering
-        return self.model._default_manager.get_list_query_set()
 
     def change_view(self, request, object_id, extra_context=None):
         from django.shortcuts import get_object_or_404
