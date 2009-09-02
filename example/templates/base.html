@@ -3,37 +3,116 @@
 <head>
     <title>{{ feincms_page.title }}</title>
 </head>
+<style type="text/css">
+body {
+    font-family: Lucida, Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    padding: 0;
+    margin: 0;
+}
+
+h1 {
+    background: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+    color: #20435c;
+    padding: 10px 0 10px 10px;
+    margin: 0;
+}
+
+#navigation {
+    background: #e2e2e2;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+    padding: 0 0 0 10px;
+}
+
+#navigation a {
+    float: left;
+    display: block;
+    padding: 10px 15px;
+    margin: 10px 10px 10px 0;
+    background: #20435c;
+    color: #f2f2f2;
+}
+
+#navigation a:hover,
+#navigation a.mark {
+    background: #40637c;
+}
+
+#wrapper {
+    width: 830px;
+}
+
+#main {
+    float: right;
+    width: 500px;
+}
+
+#sidebar {
+    float: left;
+    width: 300px;
+    background: #f2f2f2;
+    border-right: 1px solid #ccc;
+    min-height: 300px;
+    padding: 0 0 0 10px;
+}
+
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+
+.clearfix {
+	display: inline-block;
+}
+
+html[xmlns] .clearfix {
+	display: block;
+}
+
+* html .clearfix {
+	height: 1%;
+}
+</style>
 <body>
     <h1>{{ feincms_page.title }}</h1>
 
-    <h2>Toplevel navigation</h2>
+    <div id="navigation" class="clearfix">
     {% feincms_navigation of feincms_page as toplevel level=1 %}
     {% for p in toplevel %}
-        <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
-        {% if not forloop.last %}|{% endif %}
+        <a {% if p|is_equal_or_parent_of:feincms_page %}class="mark"{% endif %} href="{{ p.get_absolute_url }}">{{ p.title }}</a>
     {% endfor %}
+    </div>
 
-    <h2>This page's navigation</h2>
-    {% if not feincms_page.is_root_node %}
-        <a href="{{ feincms_page.parent.get_absolute_url }}">Parent: {{ feincms_page.parent.title }}</a><br />
-    {% endif %}
+    <div id="wrapper">
+    <div id="main">
+        <h2>Main content</h2>
+        {% feincms_render_region feincms_page "main" request %}
+    </div>
 
-    Subpages:
-    {% feincms_navigation of feincms_page as toplevel level=1 %}
-    {% if feincms_page.children.all %} {# stupid django 1.0 compatibility ... :-) #}
-        {% for p in feincms_page.children.all %}
-            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
-            {% if not forloop.last %}|{% endif %}
-        {% endfor %}
-    {% else %}
-        No subpages
-    {% endif %}
+    <div id="sidebar">
+        <h2>Sidebar content</h2>
 
-    <h2>Main content</h2>
-    {% feincms_render_region feincms_page "main" request %}
+        {% feincms_navigation of feincms_page as sublevel level=2 %}
+        {% if sublevel %} {# stupid django 1.0 compatibility ... :-) #}
+            {% for p in sublevel %}
+                {% if forloop.first %}<ul>{% endif %}
+                    <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></li>
+                {% if forloop.last %}</ul>{% endif %}
+            {% endfor %}
+        {% else %}
+            No subpages
+        {% endif %}
 
-    <h2>Sidebar content</h2>
-    {% feincms_render_region feincms_page "sidebar" request %}
+        {% feincms_render_region feincms_page "sidebar" request %}
+    </div>
+    </div>
 
     {% feincms_frontend_editing feincms_page request %}
 
