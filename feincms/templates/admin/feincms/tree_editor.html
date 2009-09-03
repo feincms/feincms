@@ -74,8 +74,6 @@
         $('table thead tr th:eq(1)').addClass('title-column');
 
         /* patch list entries into tabindex */
-        $('tr').attr('tabindex', '-1');
-        $('tr:eq(1)').attr('tabindex', '0').focus();
         $('tr').keydown(
             function(event) {
                 /* 38 up, 40 down, 37 left, 39 right */
@@ -94,6 +92,7 @@
                         changelist_openclose(this, 1);
                         break;
                     case 13: // return
+                    case 10:
                         item_id = changelist_itemid(this);
                         document.location = document.location.pathname + item_id + '/'
                         break;
@@ -102,11 +101,31 @@
                     };
                 }
         );
+        $('tr').keypress(
+            function(event) {
+                //console.log('keypress', event.charCode);
+                switch(event.charCode) {
+                    case 43: // +
+                        open_entire_tree();
+                        break;
+                    case 45: // -
+                        close_entire_tree();
+                        break;
+                    }
+                });
+
+
         /* Recolor lines to correctly alternate again */
         $('tbody tr').removeClass('row1').removeClass('row2');
         $('table').show();
+
+        /* after visible */
+        $('tr').attr('tabindex', '-1');
+        $('tr:eq(1)').attr('tabindex', '0').focus();
+
         recolor_lines();
         });
+        
 </script>
 
 {% endblock %}
