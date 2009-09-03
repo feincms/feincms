@@ -131,7 +131,7 @@ class TreeEditorQuerySet(QuerySet):
                 if p.parent_id not in include_pages:
                     include_pages.update( [ x.id for x in p.get_ancestors() ] )
 
-            qs = qs | self.model.objects.filter(id__in=include_pages)
+            qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
 
         qs = qs.order_by('tree_id', 'lft')
@@ -143,6 +143,17 @@ class TreeEditorQuerySet(QuerySet):
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS: return self   # Don't even try to slice
         qs = self.order_by('tree_id', 'lft')
         return super(TreeEditorQuerySet, qs).__getitem__(index)
+
+    if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
+        def get(self, *args, **kwargs):
+            """
+            Quick and dirty hack to fix change_view and delete_view; they use
+            self.queryset(request).get(...) to get the object they should work
+            with. Our modifications to the queryset when INCLUDE_ANCESTORS is
+            enabled make get() fail often with a MultipleObjectsReturned
+            exception.
+            """
+            return self.model._default_manager.get(*args, **kwargs)
 
 
 # ------------------------------------------------------------------------
