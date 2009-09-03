@@ -2,6 +2,8 @@
 {% load adminmedia admin_list i18n %}
 
 {% block extrahead %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
+
 {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 {% else %}
@@ -11,14 +13,6 @@
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.cookie.js"></script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}toolbox.js"></script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}page_toolbox.js"></script>
-
-<style type="text/css">
-    .page_marker { display:block; text-align: right; float: left; padding: 1px 1px 0 0; }
-    tr.cut { border: 2px dashed black; opacity: 0.5; }
-    .title-column { width: 450px; }
-
-    :focus { background-color: #ccddff !important; outline: 0px; }
-</style>
 
 <script type="text/javascript">
     /* hide table until set up */
@@ -80,8 +74,8 @@
         $('table thead tr th:eq(1)').addClass('title-column');
 
         /* patch list entries into tabindex */
-        $('tr').attr('tabindex', '-1')
-        $('tr:eq(1)').attr('tabindex', '0')
+        $('tr').attr('tabindex', '-1');
+        $('tr:eq(1)').attr('tabindex', '0').focus();
         $('tr').keydown(
             function(event) {
                 /* 38 up, 40 down, 37 left, 39 right */
