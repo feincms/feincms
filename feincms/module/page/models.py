@@ -549,6 +549,10 @@ else:
 # MARK: -
 # ------------------------------------------------------------------------
 class PageAdmin(editor.ItemEditor, list_modeladmin):
+    class Media:
+        css = {}
+        js = []
+
     form = PageAdminForm
 
     # the fieldsets config here is used for the add_view, it has no effect

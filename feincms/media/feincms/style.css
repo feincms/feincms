@@ -281,3 +281,12 @@ tr td.nohighlight {background-color: #fff;}
 	margin-left: 7em;
 	padding-left: 30px;
 }
+
+/* tree editor */
+
+.page_marker { display:block; text-align: right; float: left; padding: 1px 1px 0 0; }
+tr.cut { border: 2px dashed black; opacity: 0.5; }
+.title-column { width: 400px; }
+
+:focus { background-color: #ccddff !important; outline: 0px; }
+
