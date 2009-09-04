@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-10 08:09+0100\n"
+"POT-Creation-Date: 2009-09-04 16:22+0200\n"
 "PO-Revision-Date: 2009-08-10 08:09+0100\n"
 "Last-Translator: proycon <proycon@anaproy.nl>\n"
 "Language-Team: es <proycon@anaproy.nl>\n"
@@ -18,37 +18,75 @@ msgstr ""
 "X-Poedit-Country: SPAIN\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: models.py:133
+#: models.py:142
 msgid "template"
 msgstr "modelo"
 
-#: models.py:278
+#: models.py:287
 msgid "ordering"
 msgstr "orden"
 
-#: admin/item_editor.py:100
-#: admin/item_editor.py:185
+#: translations.py:139 module/blog/extensions/translations.py:9
+#: module/page/extensions/translations.py:21
+msgid "language"
+msgstr "idioma"
+
+#: admin/item_editor.py:94 admin/item_editor.py:181
 #, python-format
 msgid "Change %s"
 msgstr "Modificar %s"
 
-#: admin/item_editor.py:157
+#: admin/item_editor.py:150
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was changed successfully."
 msgstr "%(name)s \"%(obj)s\" fue modificado con éxito."
 
-#: admin/item_editor.py:159
+#: admin/item_editor.py:152
 msgid "You may edit it again below."
 msgstr "Puedes volver a editar el elemento."
 
-#: admin/item_editor.py:162
+#: admin/item_editor.py:155
 #, python-format
 msgid "You may add another %s below."
 msgstr "Puedes añadir un nuevo %s aquí debajo."
 
-#: admin/tree_editor.py:62
-msgid "Database error"
-msgstr "Error de base de dados"
+#: admin/tree_editor.py:203 content/rss/models.py:12 module/blog/models.py:24
+#: module/medialibrary/models.py:19 module/page/models.py:170
+#: module/page/models.py:231
+msgid "title"
+msgstr "título"
+
+#: admin/tree_editor.py:338
+msgid "Cut"
+msgstr ""
+
+#: admin/tree_editor.py:341
+msgid "Insert as child"
+msgstr "Incluir como descendente"
+
+#: admin/tree_editor.py:343
+msgid "Insert before"
+msgstr "Incluir antes"
+
+#: admin/tree_editor.py:349
+#, fuzzy
+msgid "actions"
+msgstr "leyenda"
+
+#: content/application/models.py:108
+#, fuzzy
+msgid "application content"
+msgstr "fecha de publicación"
+
+#: content/application/models.py:109
+#, fuzzy
+msgid "application contents"
+msgstr "fecha de publicación"
+
+#: content/application/models.py:113
+#, fuzzy
+msgid "application"
+msgstr "leyenda"
 
 #: content/contactform/models.py:9
 msgid "name"
@@ -62,8 +100,7 @@ msgstr "e-mail"
 msgid "subject"
 msgstr "assunto"
 
-#: content/contactform/models.py:14
-#: content/raw/models.py:7
+#: content/contactform/models.py:14 content/raw/models.py:7
 msgid "content"
 msgstr "contenido"
 
@@ -75,8 +112,7 @@ msgstr "formulario de contacto"
 msgid "contact forms"
 msgstr "formularios de contacto"
 
-#: content/file/models.py:11
-#: content/file/models.py:15
+#: content/file/models.py:11 content/file/models.py:15
 #: module/medialibrary/models.py:43
 msgid "file"
 msgstr "archivo"
@@ -85,8 +121,7 @@ msgstr "archivo"
 msgid "files"
 msgstr "archivos"
 
-#: content/image/models.py:19
-#: content/image/models.py:23
+#: content/image/models.py:19 content/image/models.py:23
 msgid "image"
 msgstr "imagen"
 
@@ -94,36 +129,33 @@ msgstr "imagen"
 msgid "images"
 msgstr "imágenes"
 
-#: content/image/models.py:37
-#: content/medialibrary/models.py:70
-#: content/medialibrary/models.py:78
+#: content/image/models.py:37 content/medialibrary/models.py:68
+#: content/medialibrary/models.py:76
 msgid "position"
 msgstr "posición"
 
-#: content/medialibrary/models.py:29
+#: content/medialibrary/models.py:27
 msgid "(no caption)"
 msgstr "(sin leyenda)"
 
-#: content/medialibrary/models.py:55
-#: content/medialibrary/models.py:66
-#: module/medialibrary/models.py:51
+#: content/medialibrary/models.py:53 content/medialibrary/models.py:64
+#: module/medialibrary/models.py:52
 msgid "media file"
 msgstr "archivo de media"
 
-#: content/medialibrary/models.py:56
-#: module/medialibrary/models.py:52
+#: content/medialibrary/models.py:54 module/medialibrary/models.py:53
 msgid "media files"
 msgstr "archivos de media"
 
-#: content/medialibrary/models.py:95
+#: content/medialibrary/models.py:93
 msgid "block"
 msgstr "bloque"
 
-#: content/medialibrary/models.py:96
+#: content/medialibrary/models.py:94
 msgid "left"
 msgstr "izquierda"
 
-#: content/medialibrary/models.py:97
+#: content/medialibrary/models.py:95
 msgid "right"
 msgstr "derecha"
 
@@ -147,17 +179,13 @@ msgstr "texto rico"
 msgid "rich texts"
 msgstr "textos ricos"
 
-#: content/rss/models.py:12
-#: module/blog/models.py:25
-#: module/medialibrary/models.py:19
-#: module/page/models.py:115
-#: module/page/models.py:165
-msgid "title"
-msgstr "título"
-
 #: content/rss/models.py:13
-msgid "The rss field is updated several times a day. A change in the title will only be visible on the home page after the next feed update."
-msgstr "El feed RSS es actualizado varias veces por dia. Cambios en el título solo aparecen en la página después de la actualización del feed RSS siguiente."
+msgid ""
+"The rss field is updated several times a day. A change in the title will "
+"only be visible on the home page after the next feed update."
+msgstr ""
+"El feed RSS es actualizado varias veces por dia. Cambios en el título solo "
+"aparecen en la página después de la actualización del feed RSS siguiente."
 
 #: content/rss/models.py:14
 msgid "link"
@@ -183,82 +211,98 @@ msgstr "feed RSS"
 msgid "RSS feeds"
 msgstr "feeds RSS"
 
-#: content/video/models.py:15
+#: content/table/models.py:48
+#, fuzzy
+msgid "plain"
+msgstr "enlace"
+
+#: content/table/models.py:49
+#, fuzzy
+msgid "title row"
+msgstr "título"
+
+#: content/table/models.py:51
+msgid "title row and column"
+msgstr ""
+
+#: content/table/models.py:57
+#, fuzzy
+msgid "table"
+msgstr "título"
+
+#: content/table/models.py:58
+#, fuzzy
+msgid "tables"
+msgstr "etiquetas"
+
+#: content/table/models.py:67
+#, fuzzy
+msgid "type"
+msgstr "tipo de archivo"
+
+#: content/table/models.py:72
+msgid "data"
+msgstr ""
+
+#: content/video/models.py:14
 msgid "video link"
 msgstr "enlace de vídeo"
 
-#: content/video/models.py:16
-msgid "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
-msgstr "Este debe ser un enlace a un vídeo de YouTube o Vimeo. Por ejemplo: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
+#: content/video/models.py:15
+msgid ""
+"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
+"com/watch?v=zmj1rpzDRZ0"
+msgstr ""
+"Este debe ser un enlace a un vídeo de YouTube o Vimeo. Por ejemplo: http://"
+"www.youtube.com/watch?v=zmj1rpzDRZ0"
 
-#: content/video/models.py:20
+#: content/video/models.py:19
 msgid "video"
 msgstr "vídeo"
 
-#: content/video/models.py:21
+#: content/video/models.py:20
 msgid "videos"
 msgstr "vídeos"
 
-#: infanta/models.py:20
-msgid "view content"
-msgstr "mostrar contenido"
-
-#: infanta/models.py:27
-msgid "Could not parse the view content because the view is excluded from infanta handling."
-msgstr "No fue posible leer el contenido de la vista, porque esta está excluida del tratamiento de infanta."
-
-#: infanta/models.py:30
-#, python-format
-msgid "Placeholder for the %(viewname)s calling %(viewfunc)s"
-msgstr "Substituto para %(viewname)s, que llama %(viewfunc)s"
-
-#: infanta/models.py:32
-#, python-format
-msgid "Placeholder for calling %(viewfunc)s"
-msgstr "Substituto para llamar %(viewfunc)s"
-
-#: module/blog/models.py:24
+#: module/blog/models.py:23
 msgid "published"
 msgstr "publicado"
 
-#: module/blog/models.py:26
-#: module/page/models.py:116
+#: module/blog/models.py:25 module/page/models.py:171
 msgid "This is used for the generated navigation too."
 msgstr "Esto también es usado para la navegación generada automáticamente."
 
-#: module/blog/models.py:29
+#: module/blog/models.py:28
 msgid "published on"
 msgstr "publicado en"
 
-#: module/blog/models.py:30
+#: module/blog/models.py:29
 msgid "Will be set automatically once you tick the `published` checkbox above."
-msgstr "Será definido automáticamente cuando se activa la caja de verificación 'publicado' encima."
+msgstr ""
+"Será definido automáticamente cuando se activa la caja de verificación "
+"'publicado' encima."
 
-#: module/blog/models.py:34
+#: module/blog/models.py:33
 msgid "entry"
 msgstr "entrada"
 
-#: module/blog/models.py:35
+#: module/blog/models.py:34
 msgid "entries"
 msgstr "entradas"
 
-#: module/blog/extensions/seo.py:6
-#: module/page/extensions/seo.py:10
+#: module/blog/extensions/seo.py:6 module/page/extensions/seo.py:10
 msgid "meta keywords"
 msgstr "palabras-llave meta"
 
-#: module/blog/extensions/seo.py:7
-#: module/page/extensions/seo.py:11
+#: module/blog/extensions/seo.py:7 module/page/extensions/seo.py:11
 msgid "This will be prepended to the default keyword list."
 msgstr "Esto será incluido antes de la lista de palabras-llave padrón."
 
-#: module/blog/extensions/seo.py:8
-#: module/page/extensions/seo.py:12
+#: module/blog/extensions/seo.py:8 module/page/extensions/seo.py:12
 msgid "meta description"
 msgstr "descripción meta"
 
-#: module/blog/extensions/seo.py:9
-#: module/page/extensions/seo.py:13
+#: module/blog/extensions/seo.py:9 module/page/extensions/seo.py:13
 msgid "This will be prepended to the default description."
 msgstr "Esto será incluido antes de la descripción padrón."
 
@@ -266,24 +310,20 @@ msgstr "Esto será incluido antes de la descripción padrón."
 msgid "tags"
 msgstr "etiquetas"
 
-#: module/blog/extensions/translations.py:10
-#: module/page/extensions/translations.py:18
-msgid "language"
-msgstr "idioma"
-
-#: module/blog/extensions/translations.py:13
-#: module/page/extensions/translations.py:21
+#: module/blog/extensions/translations.py:12
+#: module/page/extensions/translations.py:24
 msgid "translation of"
 msgstr "tradución de"
 
-#: module/blog/extensions/translations.py:16
-#: module/page/extensions/translations.py:24
+#: module/blog/extensions/translations.py:15
+#: module/page/extensions/translations.py:27
 #, python-format
 msgid "Leave this empty for entries in the primary language (%s)."
-msgstr "Deja este campo vacío para todas las entradas en el idioma original (%s)."
+msgstr ""
+"Deja este campo vacío para todas las entradas en el idioma original (%s)."
 
-#: module/blog/extensions/translations.py:37
-#: templates/admin/feincms/item_editor.html:137
+#: module/blog/extensions/translations.py:36
+#: templates/admin/feincms/item_editor.html:96
 msgid "available translations"
 msgstr "traducciones disponibles"
 
@@ -295,13 +335,11 @@ msgstr "ascendente"
 msgid "category"
 msgstr "categoría"
 
-#: module/medialibrary/models.py:27
-#: module/medialibrary/models.py:48
+#: module/medialibrary/models.py:27 module/medialibrary/models.py:48
 msgid "categories"
 msgstr "categorías"
 
-#: module/medialibrary/models.py:44
-#: module/medialibrary/models.py:85
+#: module/medialibrary/models.py:44 module/medialibrary/models.py:86
 msgid "file type"
 msgstr "tipo de archivo"
 
@@ -313,111 +351,168 @@ msgstr "creado en"
 msgid "copyright"
 msgstr "copyright"
 
-#: module/medialibrary/models.py:116
+#: module/medialibrary/models.py:117
 msgid "Image"
 msgstr "Imagen"
 
-#: module/medialibrary/models.py:117
+#: module/medialibrary/models.py:118
 msgid "PDF document"
 msgstr "documento PDF"
 
-#: module/medialibrary/models.py:118
+#: module/medialibrary/models.py:119
 msgid "Text"
 msgstr "Texto"
 
-#: module/medialibrary/models.py:119
+#: module/medialibrary/models.py:120
+msgid "Flash"
+msgstr ""
+
+#: module/medialibrary/models.py:121
 msgid "Binary"
 msgstr "Binario"
 
-#: module/medialibrary/models.py:124
+#: module/medialibrary/models.py:126
 msgid "caption"
 msgstr "leyenda"
 
 #: module/medialibrary/models.py:127
+#, fuzzy
+msgid "description"
+msgstr "descripción meta"
+
+#: module/medialibrary/models.py:130
 msgid "media file translation"
 msgstr "tradución del archivo de media"
 
-#: module/medialibrary/models.py:128
+#: module/medialibrary/models.py:131
 msgid "media file translations"
 msgstr "traducciones del archivo de media"
 
-#: module/page/models.py:112
+#: module/page/models.py:167
 msgid "active"
 msgstr "activo"
 
-#: module/page/models.py:117
+#: module/page/models.py:172
 msgid "slug"
 msgstr "slug"
 
-#: module/page/models.py:119
-#: module/page/models.py:301
+#: module/page/models.py:174 module/page/models.py:584
 msgid "in navigation"
 msgstr "en la navegación"
 
-#: module/page/models.py:120
+#: module/page/models.py:175
 msgid "override URL"
 msgstr "URL efectivo"
 
-#: module/page/models.py:121
-msgid "Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages' URLs."
-msgstr "URL efectivo. Debe contener una '/' cuando se trata de un URL local. Este campo afecta la navegación y los URLs de las sub-páginas."
+#: module/page/models.py:176
+msgid ""
+"Override the target URL. Be sure to include slashes at the beginning and at "
+"the end if it is a local URL. This affects both the navigation and subpages' "
+"URLs."
+msgstr ""
+"URL efectivo. Debe contener una '/' cuando se trata de un URL local. Este "
+"campo afecta la navegación y los URLs de las sub-páginas."
 
-#: module/page/models.py:122
+#: module/page/models.py:177
 msgid "redirect to"
 msgstr "redirección para"
 
-#: module/page/models.py:123
+#: module/page/models.py:178
 msgid "Target URL for automatic redirects."
 msgstr "URL de destino para redirecciones automáticas."
 
-#: module/page/models.py:124
+#: module/page/models.py:179
 msgid "Cached URL"
 msgstr "URL en cache"
 
-#: module/page/models.py:131
+#: module/page/models.py:189
 msgid "page"
 msgstr "página"
 
-#: module/page/models.py:132
+#: module/page/models.py:190
 msgid "pages"
 msgstr "páginas"
 
-#: module/page/models.py:263
+#: module/page/models.py:519
+msgid "This URL is already taken by an active page."
+msgstr ""
+
+#: module/page/models.py:537
+msgid "This URL is already taken by another active page."
+msgstr ""
+
+#: module/page/models.py:565
 msgid "Other options"
 msgstr "otras opciones"
 
-#: module/page/models.py:290
+#: module/page/models.py:589
+msgid "Add child page"
+msgstr ""
+
+#: module/page/models.py:591 templates/admin/feincms/item_editor.html:65
+#: templates/admin/feincms/page/page/item_editor.html:13
+msgid "View on site"
+msgstr "Ver en sitio"
+
+#: module/page/models.py:623
+#, fuzzy
+msgid "You may edit the copied page below."
+msgstr "Puedes volver a editar el elemento."
+
+#: module/page/models.py:629
+#, python-format
+msgid ""
+"You have replaced %s. You may continue editing the now-active page below."
+msgstr ""
+
+#: module/page/models.py:652
 msgid "inherited"
 msgstr "heredado"
 
-#: module/page/models.py:292
-#: module/page/models.py:295
-msgid "not active"
-msgstr "inactivo"
+#: module/page/models.py:656
+#, fuzzy
+msgid "extensions"
+msgstr "traducciones"
 
-#: module/page/models.py:299
+#: module/page/models.py:660
 msgid "is visible"
 msgstr "es visible"
 
-#: module/page/extensions/datepublisher.py:16
+#: module/page/extensions/changedate.py:22
+#, fuzzy
+msgid "creation date"
+msgstr "fecha de publicación"
+
+#: module/page/extensions/changedate.py:23
+#, fuzzy
+msgid "modification date"
+msgstr "fecha de publicación"
+
+#: module/page/extensions/datepublisher.py:29
 msgid "publication date"
 msgstr "fecha de publicación"
 
-#: module/page/extensions/datepublisher.py:18
+#: module/page/extensions/datepublisher.py:31
 msgid "publication end date"
 msgstr "publicar hasta"
 
-#: module/page/extensions/datepublisher.py:31
+#: module/page/extensions/datepublisher.py:33
+msgid "Leave empty if the entry should stay active forever."
+msgstr ""
+
+#: module/page/extensions/datepublisher.py:45
 msgid "visible from - to"
 msgstr "visible de - hasta"
 
-#: module/page/extensions/navigation.py:35
-#: module/page/extensions/navigation.py:56
+#: module/page/extensions/navigation.py:40
+#: module/page/extensions/navigation.py:50
 msgid "navigation extension"
 msgstr "extensión de navegación"
 
-#: module/page/extensions/navigation.py:58
-msgid "Select the module providing subpages for this page if you need to customize the navigation."
+#: module/page/extensions/navigation.py:52
+msgid ""
+"Select the module providing subpages for this page if you need to customize "
+"the navigation."
 msgstr "Selecciona el módulo que provee sub-páginas."
 
 #: module/page/extensions/symlinks.py:14
@@ -428,27 +523,45 @@ msgstr "página direccionada"
 msgid "All content is inherited from this page if given."
 msgstr "Todo el contenido es heredado de esta página."
 
-#: module/page/extensions/titles.py:12
+#: module/page/extensions/titles.py:13
 msgid "content title"
 msgstr "título del contenido"
 
-#: module/page/extensions/titles.py:13
-msgid "The first line is the main title, the following lines are subtitles."
-msgstr "La primera línea es el título principal. Otras líneas serán subtítulos."
-
 #: module/page/extensions/titles.py:14
+msgid "The first line is the main title, the following lines are subtitles."
+msgstr ""
+"La primera línea es el título principal. Otras líneas serán subtítulos."
+
+#: module/page/extensions/titles.py:15
 msgid "page title"
 msgstr "título de la página"
 
-#: module/page/extensions/titles.py:15
+#: module/page/extensions/titles.py:16
 msgid "Page title for browser window. Same as title by default."
-msgstr "Título de la página para la ventana del navegador. Si omitido toma el mismo título."
+msgstr ""
+"Título de la página para la ventana del navegador. Si omitido toma el mismo "
+"título."
 
-#: module/page/extensions/translations.py:54
+#: module/page/extensions/translations.py:94
+#, fuzzy
+msgid "Edit translation"
+msgstr "traducciones"
+
+#: module/page/extensions/translations.py:97
+#, fuzzy
+msgid "Create translation"
+msgstr "tradución del archivo de media"
+
+#: module/page/extensions/translations.py:102
 msgid "translations"
 msgstr "traducciones"
 
-#: templates/admin/content/mediafile/init.html:21
+#: templates/admin/filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr ""
+
+#: templates/admin/content/mediafile/init.html:8
 msgid "Search"
 msgstr "Buscar"
 
@@ -474,28 +587,43 @@ msgstr "Imposible de eliminar el elemento"
 
 #: templates/admin/feincms/_messages.html:5
 msgid "Cannot delete item, because it is parent of at least one other item."
-msgstr "Imposible de eliminar el elemento, porque es padrón de al menos un elemento dependiente."
+msgstr ""
+"Imposible de eliminar el elemento, porque es padrón de al menos un elemento "
+"dependiente."
 
 #: templates/admin/feincms/_messages.html:6
 msgid "Tree saved successfully."
 msgstr "Árbol guardado con éxito."
 
 #: templates/admin/feincms/_messages.html:7
-#: templates/admin/feincms/item_editor.html:155
 msgid "Change template"
 msgstr "Alterar el modelo"
 
 #: templates/admin/feincms/_messages.html:8
-msgid "Really change template? <br/>All content will be moved to main region."
-msgstr "Confirma el cambiamiento de modelo?? <br />Todos los contenidos serán movidos para la región principal."
+#, fuzzy
+msgid "Really change template? <br />All changes are saved."
+msgstr ""
+"Confirma el cambiamiento de modelo?? <br />Todos los contenidos serán "
+"movidos para la región principal."
 
 #: templates/admin/feincms/_messages.html:9
+#, python-format
+msgid ""
+"Really change template? <br />All changes are saved and content from <strong>"
+"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+msgstr ""
+
+#: templates/admin/feincms/_messages.html:10
 msgid "Cannot make a node a child of itself."
 msgstr "No se puede ser dependiente de si mismo."
 
+#: templates/admin/feincms/_messages.html:11
+msgid "No item has been selected."
+msgstr ""
+
 #: templates/admin/feincms/fe_editor.html:51
-#: templates/admin/feincms/item_editor.html:121
-#: templates/admin/feincms/item_editor.html:212
+#: templates/admin/feincms/item_editor.html:74
+#: templates/admin/feincms/item_editor.html:165
 msgid "Save"
 msgstr "Guardar"
 
@@ -516,89 +644,134 @@ msgid "down"
 msgstr "para bajo"
 
 #: templates/admin/feincms/fe_tools.html:8
+#: templates/admin/feincms/splitpane_editor_tree.html:92
 msgid "remove"
 msgstr "borrar"
 
-#: templates/admin/feincms/item_editor.html:95
+#: templates/admin/feincms/item_editor.html:48
+#: templates/admin/feincms/splitpane_editor_blank.html:7
+#: templates/admin/feincms/page/page/item_editor.html:25
+#: templates/admin/feincms/page/page/tree_editor.html:7
 msgid "Home"
 msgstr "Página inicial"
 
-#: templates/admin/feincms/item_editor.html:109
+#: templates/admin/feincms/item_editor.html:62
+#: templates/admin/feincms/page/page/item_editor.html:16
 msgid "Preview"
 msgstr "Pre-visualización"
 
-#: templates/admin/feincms/item_editor.html:112
-msgid "View on site"
-msgstr "Ver en sitio"
-
-#: templates/admin/feincms/item_editor.html:122
-#: templates/admin/feincms/item_editor.html:213
-#: templates/admin/feincms/tree_editor.html:52
+#: templates/admin/feincms/item_editor.html:75
+#: templates/admin/feincms/item_editor.html:166
+#: templates/admin/feincms/splitpane_editor_tree.html:110
+#: templates/admin/feincms/splitpane_editor_tree.html:117
 msgid "Delete"
 msgstr "Borrar"
 
-#: templates/admin/feincms/item_editor.html:124
-#: templates/admin/feincms/item_editor.html:215
+#: templates/admin/feincms/item_editor.html:77
+#: templates/admin/feincms/item_editor.html:168
 msgid "Save and add another"
 msgstr "Guardar y añadir otro"
 
-#: templates/admin/feincms/item_editor.html:125
-#: templates/admin/feincms/item_editor.html:216
+#: templates/admin/feincms/item_editor.html:78
+#: templates/admin/feincms/item_editor.html:169
 msgid "Save and continue editing"
 msgstr "Guardar y continuar a editar"
 
-#: templates/admin/feincms/item_editor.html:164
+#: templates/admin/feincms/item_editor.html:83
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/admin/feincms/item_editor.html:116
 msgid "Properties"
 msgstr "Propiedades"
 
-#: templates/admin/feincms/item_editor.html:178
+#: templates/admin/feincms/item_editor.html:131
 msgid "Region empty"
 msgstr "Región vacía"
 
-#: templates/admin/feincms/item_editor.html:182
-msgid "Content from the parent site is automatically inherited. To override this behaviour, add some content."
+#: templates/admin/feincms/item_editor.html:135
+msgid ""
+"Content from the parent site is automatically inherited. To override this "
+"behaviour, add some content."
 msgstr "O conteúdo é herdado da página ascendente, excepto se o indicar aqui."
 
-#: templates/admin/feincms/item_editor.html:190
+#: templates/admin/feincms/item_editor.html:143
 msgid "Add new item"
 msgstr "Añadir nuevo elemento"
 
-#: templates/admin/feincms/item_editor.html:198
+#: templates/admin/feincms/item_editor.html:151
 msgid "Move selected item to"
 msgstr "Mover elemento seleccionado para"
 
-#: templates/admin/feincms/item_editor.html:202
+#: templates/admin/feincms/item_editor.html:155
 msgid "OK"
 msgstr "Vale"
 
-#: templates/admin/feincms/tree_editor.html:34
+#: templates/admin/feincms/splitpane_editor_blank.html:23
+#: templates/admin/feincms/splitpane_editor_tree.html:106
 #, python-format
 msgid "Add %(name)s"
 msgstr "Añadir %(name)s"
 
-#: templates/admin/feincms/tree_editor.html:38
-msgid "Save tree"
-msgstr "Guardar árbol"
+#: templates/admin/feincms/splitpane_editor_blank.html:28
+msgid "Select an item on the left side if you want to edit it."
+msgstr ""
 
-#: templates/admin/feincms/tree_editor.html:41
-msgid "Expand all"
-msgstr "Expandir todos"
+#: templates/admin/feincms/splitpane_editor_blank.html:29
+msgid ""
+"You can change the structure of the tree by drag-dropping elements. Please "
+"note that changes will be saved immediately. "
+msgstr ""
 
-#: templates/admin/feincms/tree_editor.html:42
-msgid "Collapse all"
+#: templates/admin/feincms/splitpane_editor_blank.html:30
+msgid ""
+"The context menu on the tree root and tree nodes provide you with additional "
+"modes of operation."
+msgstr ""
+
+#: templates/admin/feincms/splitpane_editor_tree.html:39
+msgid "Cannot remove this frame while inside this admin section."
+msgstr ""
+
+#: templates/admin/feincms/splitpane_editor_tree.html:107
+msgid "Reload"
+msgstr ""
+
+#: templates/admin/feincms/splitpane_editor_tree.html:109
+#: templates/admin/feincms/splitpane_editor_tree.html:116
+#, fuzzy
+msgid "Edit"
+msgstr "editar"
+
+#: templates/admin/feincms/tree_editor.html:138
+msgid "Shortcuts"
+msgstr ""
+
+#: templates/admin/feincms/tree_editor.html:140
+#, fuzzy
+msgid "Collapse tree"
 msgstr "Colapsar todos"
 
-#: templates/admin/feincms/tree_editor.html:61
-msgid "Insert after"
-msgstr "Incluir atrás"
+#: templates/admin/feincms/tree_editor.html:141
+#, fuzzy
+msgid "Expand tree"
+msgstr "Expandir todos"
 
-#: templates/admin/feincms/tree_editor.html:62
-msgid "Insert before"
-msgstr "Incluir antes"
+#: templates/admin/feincms/tree_editor.html:143
+#, fuzzy
+msgid "Filter"
+msgstr "archivo"
 
-#: templates/admin/feincms/tree_editor.html:63
-msgid "Insert as child"
-msgstr "Incluir como descendente"
+#: templates/admin/feincms/page/page/item_editor.html:8
+#, python-format
+msgid "Replace page %(to_replace)s"
+msgstr ""
+
+#: templates/admin/feincms/page/page/item_editor.html:12
+msgid "Create hidden copy of this page"
+msgstr ""
 
 #: templates/content/contactform/form.html:8
 msgid "Submit"
@@ -608,12 +781,42 @@ msgstr "Enviar"
 msgid "Thanks!"
 msgstr "¡Gracias!"
 
+#~ msgid "Database error"
+#~ msgstr "Error de base de dados"
+
+#~ msgid "view content"
+#~ msgstr "mostrar contenido"
+
+#~ msgid ""
+#~ "Could not parse the view content because the view is excluded from "
+#~ "infanta handling."
+#~ msgstr ""
+#~ "No fue posible leer el contenido de la vista, porque esta está excluida "
+#~ "del tratamiento de infanta."
+
+#~ msgid "Placeholder for the %(viewname)s calling %(viewfunc)s"
+#~ msgstr "Substituto para %(viewname)s, que llama %(viewfunc)s"
+
+#~ msgid "Placeholder for calling %(viewfunc)s"
+#~ msgstr "Substituto para llamar %(viewfunc)s"
+
+#~ msgid "not active"
+#~ msgstr "inactivo"
+
+#~ msgid "Save tree"
+#~ msgstr "Guardar árbol"
+
+#~ msgid "Insert after"
+#~ msgstr "Incluir atrás"
+
 #~ msgid "%(icon)s (not active)"
 #~ msgstr "%(icon)s (inactivo)"
+
 #~ msgid "%(icon)s (until %(from)s)"
 #~ msgstr "%(icon)s (hasta %(from)s)"
+
 #~ msgid "%(icon)s (since %(to)s)"
 #~ msgstr "%(icon)s (a partir de %(to)s)"
+
 #~ msgid "%(icon)s (%(from)s &ndash; %(to)s)"
 #~ msgstr "%(icon)s (%(from)s &ndash; %(to)s)"
-
