@@ -133,9 +133,8 @@ class ApplicationContent(models.Model):
         try:
             fn, args, kwargs = resolve(path, self.urlconf_path)
         except (ValueError, Resolver404):
-            # Silent failure if resolving failed
             del _local.urlconf
-            return
+            raise Resolver404
 
         try:
             output = fn(request, *args, **kwargs)
