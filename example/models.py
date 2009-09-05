@@ -6,6 +6,9 @@ from feincms.content.raw.models import RawContent
 from feincms.content.image.models import ImageContent
 from feincms.content.medialibrary.models import MediaFileContent
 
+import mptt
+
+
 Page.register_templates({
     'key': 'base',
     'title': 'Base Template',
@@ -34,6 +37,7 @@ Entry.create_content_type(ImageContent, POSITION_CHOICES=(
 class Category(models.Model):
     name = models.CharField(max_length=20)
     slug = models.SlugField()
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
 
     class Meta:
         ordering = ['name']
@@ -42,7 +46,7 @@ class Category(models.Model):
 
     def __unicode__(self):
         return self.name
-
+mptt.register(Category)
 
 # add m2m field to entry so it shows up in entry admin
 Entry.add_to_class('categories', models.ManyToManyField(Category, blank=True, null=True))
