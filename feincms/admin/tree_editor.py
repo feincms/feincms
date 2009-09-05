@@ -152,6 +152,18 @@ class TreeEditorQuerySet(QuerySet):
             return self.model._default_manager.get(*args, **kwargs)
 
 
+# !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
+# If the ChangeList is used by a TreEditor, we always need to order by 'tree_id' and 'lft'.
+from django.contrib.admin.views import main
+class ChangeList(main.ChangeList):
+    def get_query_set(self):
+        qs = super(ChangeList, self).get_query_set()
+        if isinstance(self.model_admin, TreeEditor):
+            return qs.order_by('tree_id', 'lft')
+        return qs
+main.ChangeList = ChangeList
+
+
 # ------------------------------------------------------------------------
 # MARK: -
 # ------------------------------------------------------------------------
@@ -326,7 +338,7 @@ class TreeEditor(admin.ModelAdmin):
         """
         qs = self.model._default_manager.get_query_set()
         qs.__class__ = TreeEditorQuerySet
-        return qs.order_by('tree_id', 'lft')
+        return qs
 
     def _actions_column(self, page):
         actions = []
