@@ -169,8 +169,9 @@ main.ChangeList = ChangeList
 # ------------------------------------------------------------------------
 
 class TreeEditor(admin.ModelAdmin):
-    # TreeEditorQuerySet does not support slicing, so disable pagination
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
+        # Make sure that no pagination is displayed. Slicing is disabled anyway,
+        # therefore this value does not have an influence on the queryset
         list_per_page = 999999999
 
     def __init__(self, *args, **kwargs):
