@@ -134,17 +134,13 @@ class TreeEditorQuerySet(QuerySet):
             qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
 
-        qs = qs.order_by('tree_id', 'lft')
-
         for obj in super(TreeEditorQuerySet, qs).iterator():
             yield obj
 
-    def __getitem__(self, index):
-        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS: return self   # Don't even try to slice
-        qs = self.order_by('tree_id', 'lft')
-        return super(TreeEditorQuerySet, qs).__getitem__(index)
-
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
+        def __getitem__(self, index):
+            return self   # Don't even try to slice
+
         def get(self, *args, **kwargs):
             """
             Quick and dirty hack to fix change_view and delete_view; they use
@@ -330,7 +326,7 @@ class TreeEditor(admin.ModelAdmin):
         """
         qs = self.model._default_manager.get_query_set()
         qs.__class__ = TreeEditorQuerySet
-        return qs
+        return qs.order_by('tree_id', 'lft')
 
     def _actions_column(self, page):
         actions = []
