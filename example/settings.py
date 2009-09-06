@@ -59,12 +59,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
 
-    'django.contrib.admin',
     'feincms',
     'feincms.module.blog',
     'feincms.module.page',
     'feincms.module.medialibrary',
     'example',
+
+    'django.contrib.admin',
 
     'mptt',
 )
@@ -128,3 +129,5 @@ LANGUAGES = (
 
 # Activate this to check out the split pane editor
 #FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = True
+
+FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = True

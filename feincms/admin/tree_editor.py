@@ -134,17 +134,13 @@ class TreeEditorQuerySet(QuerySet):
             qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
 
-        qs = qs.order_by('tree_id', 'lft')
-
         for obj in super(TreeEditorQuerySet, qs).iterator():
             yield obj
 
-    def __getitem__(self, index):
-        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS: return self   # Don't even try to slice
-        qs = self.order_by('tree_id', 'lft')
-        return super(TreeEditorQuerySet, qs).__getitem__(index)
-
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
+        def __getitem__(self, index):
+            return self   # Don't even try to slice
+
         def get(self, *args, **kwargs):
             """
             Quick and dirty hack to fix change_view and delete_view; they use
@@ -156,13 +152,26 @@ class TreeEditorQuerySet(QuerySet):
             return self.model._default_manager.get(*args, **kwargs)
 
 
+# !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
+# If the ChangeList is used by a TreEditor, we always need to order by 'tree_id' and 'lft'.
+from django.contrib.admin.views import main
+class ChangeList(main.ChangeList):
+    def get_query_set(self):
+        qs = super(ChangeList, self).get_query_set()
+        if isinstance(self.model_admin, TreeEditor):
+            return qs.order_by('tree_id', 'lft')
+        return qs
+main.ChangeList = ChangeList
+
+
 # ------------------------------------------------------------------------
 # MARK: -
 # ------------------------------------------------------------------------
 
 class TreeEditor(admin.ModelAdmin):
-    # TreeEditorQuerySet does not support slicing, so disable pagination
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
+        # Make sure that no pagination is displayed. Slicing is disabled anyway,
+        # therefore this value does not have an influence on the queryset
         list_per_page = 999999999
 
     def __init__(self, *args, **kwargs):
