@@ -15,6 +15,14 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from ..tagging.fields import TagField
 
 # ------------------------------------------------------------------------
+def taglist_to_string(taglist):
+    retval = ''
+    if len(taglist) >= 1:
+        taglist.sort()
+        retval = ','.join(taglist)
+    return retval
+
+# ------------------------------------------------------------------------
 # The following is lifted from:
 # http://code.google.com/p/django-tagging/issues/detail?id=189
 
@@ -32,7 +40,7 @@ class MyModel(models.Model):
 
 class TagSelectFormField(forms.MultipleChoiceField):
     def clean(self, value):
-        return ', '.join(['%s' % tag for tag in value ])
+        return taglist_to_string(list(value));
                 
 class TagSelectField(TagField):
     def __init__(self, filter_horizontal=False, *args, **kwargs):
@@ -65,11 +73,7 @@ def pre_save_handler(sender, instance, **kwargs):
     from ..tagging.utils import parse_tag_input
 
     taglist = parse_tag_input(instance.tags)
-    if len(taglist) > 1:
-        taglist.sort()
-        instance.tags = ','.join(taglist)
-    elif len(taglist) == 0:
-        instance.tags = ''
+    instance.tags = taglist_to_string(taglist)
 
 # ------------------------------------------------------------------------
 def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False):
@@ -85,7 +89,7 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
                 This is useful in case you want a canonical representation
                 for a tag collection, as when you're presenting a list of
                 tag combinations (e.g. in an admin filter list).
-    select_field If True, show a multi select instead of the standar
+    select_field If True, show a multi select instead of the standard
                 CharField for tag entry.
     """
     from ..tagging.fields import TagField
