@@ -9,7 +9,53 @@
 # ------------------------------------------------------------------------
 
 from django.db.models.signals import pre_save
+from django import forms
+from django.contrib.admin.widgets import FilteredSelectMultiple
 
+from ..tagging.fields import TagField
+
+# ------------------------------------------------------------------------
+# The following is lifted from:
+# http://code.google.com/p/django-tagging/issues/detail?id=189
+
+"""
+TagSelectField
+
+A variation of the django-tagging TagField which uses a 
+SelectMultiple widget instead of free text field.
+
+class MyModel(models.Model):
+    ...
+    tags = TagSelectField(filter_horizontal=True, blank=False)
+
+"""
+
+class TagSelectFormField(forms.MultipleChoiceField):
+    def clean(self, value):
+        return ', '.join(['%s' % tag for tag in value ])
+                
+class TagSelectField(TagField):
+    def __init__(self, filter_horizontal=False, *args, **kwargs):
+        super(TagSelectField, self).__init__(*args, **kwargs)
+        self.filter_horizontal = filter_horizontal
+        
+    def formfield(self, **defaults):
+        from ..tagging.models import Tag, TaggedItem
+        from ..tagging.utils import parse_tag_input
+
+        if self.filter_horizontal:
+            widget = FilteredSelectMultiple(self.verbose_name, is_stacked=False)
+        else:
+            widget = forms.SelectMultiple()
+        def _render(name, value, attrs=None, *args, **kwargs):
+            value = parse_tag_input(value)
+            return type(widget).render(widget, name, value, attrs, *args, **kwargs)
+        widget.render = _render
+        defaults['widget'] = widget
+        choices = [ (str(t), str(t)) for t in Tag.objects.all() ]
+        return TagSelectFormField(choices=choices, required=not self.blank, **defaults)
+
+# ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
 def pre_save_handler(sender, instance, **kwargs):
     """
@@ -43,7 +89,7 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False):
     from ..tagging.fields import TagField
     from ..tagging import register as tagging_register
 
-    cls.add_to_class(field_name, TagField(field_name.capitalize(), blank=True))
+    cls.add_to_class(field_name, TagSelectField(field_name.capitalize(), blank=True))
     # use another name for the tag descriptor
     # See http://code.google.com/p/django-tagging/issues/detail?id=95 for the reason why
     tagging_register(cls, tag_descriptor_attr='tagging_' + field_name)
