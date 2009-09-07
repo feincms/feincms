@@ -72,7 +72,7 @@ def pre_save_handler(sender, instance, **kwargs):
         instance.tags = ''
 
 # ------------------------------------------------------------------------
-def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False):
+def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False):
     """
     tag_model accepts a number of named parameters:
     
@@ -85,11 +85,13 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False):
                 This is useful in case you want a canonical representation
                 for a tag collection, as when you're presenting a list of
                 tag combinations (e.g. in an admin filter list).
+    select_field If True, show a multi select instead of the standar
+                CharField for tag entry.
     """
     from ..tagging.fields import TagField
     from ..tagging import register as tagging_register
 
-    cls.add_to_class(field_name, TagSelectField(field_name.capitalize(), blank=True))
+    cls.add_to_class(field_name, (select_field and TagSelectField or TagField)(field_name.capitalize(), blank=True))
     # use another name for the tag descriptor
     # See http://code.google.com/p/django-tagging/issues/detail?id=95 for the reason why
     tagging_register(cls, tag_descriptor_attr='tagging_' + field_name)
