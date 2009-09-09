@@ -8,7 +8,7 @@ from feincms import settings
 class RichTextContent(models.Model):
     feincms_item_editor_context_processors = ( lambda x: dict(TINYMCE_JS_URL = settings.TINYMCE_JS_URL), )
     feincms_item_editor_includes = {
-        'head': ['admin/content/richtext/init.html'],
+        'head': [ settings.TINYMCE_CONFIG_URL ],
         }
 
     text = models.TextField(_('text'), blank=True)
