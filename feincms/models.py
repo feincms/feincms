@@ -486,9 +486,9 @@ class ContentProxy(object):
             contents = obj._content_for_region(region)
 
             # go to parent if this model has a parent attribute
-            # TODO this should be abstracted into a property/method or something
+            # TODO: this should be abstracted into a property/method or something
             # The link which should be followed is not always '.parent'
-            if not contents and hasattr(obj, 'parent_id') and obj.parent_id and region.inherited:
+            if region.inherited and not contents and hasattr(obj, 'parent_id') and obj.parent_id:
                 return collect_items(obj.parent)
 
             return contents
