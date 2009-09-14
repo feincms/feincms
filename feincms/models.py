@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
+from feincms import settings
 from feincms.utils import copy_model_instance
 
 try:
@@ -167,23 +168,36 @@ class Base(models.Model):
         """
         This method is used primarily by the ContentProxy
         """
-
         self._needs_content_types()
 
-        # find all concrete content type tables which have at least one entry for
-        # the current CMS object and region
-        sql = ' UNION '.join([
-            'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
-                idx,
-                cls._meta.db_table,
-                self.pk) for idx, cls in enumerate(self._feincms_content_types)])
-        sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
+        from django.core.cache import cache as django_cache
 
-        from django.db import connection
-        cursor = connection.cursor()
-        cursor.execute(sql, [region.key] * len(self._feincms_content_types))
+        counts = None
+        ck = None
+        # ???: Should we move the cache_key() method to Base, so we can avoid
+        # the if-it-supports-it dance?
+        if settings.FEINCMS_USE_CACHE and getattr(self, 'cache_key', None):
+            ck = 'CNT-FOR-REGION-' + region.key + '-' + self.cache_key()
+            counts = django_cache.get(ck)
 
-        counts = [row[1] for row in cursor.fetchall()]
+        if counts is None:
+            # find all concrete content type tables which have at least one entry for
+            # the current CMS object and region
+            sql = ' UNION '.join([
+                'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
+                    idx,
+                    cls._meta.db_table,
+                    self.pk) for idx, cls in enumerate(self._feincms_content_types)])
+            sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
+
+            from django.db import connection
+            cursor = connection.cursor()
+            cursor.execute(sql, [region.key] * len(self._feincms_content_types))
+
+            counts = [row[1] for row in cursor.fetchall()]
+
+            if ck:
+                django_cache.set(ck, counts)
 
         if not any(counts):
             return []
