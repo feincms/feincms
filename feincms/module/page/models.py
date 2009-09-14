@@ -91,13 +91,32 @@ class PageManager(models.Manager):
         paths = ['/']
         path = path.strip('/')
 
+        # Cache path -> page resolving.
+        # Note: The only possibility that this returns a stale association
+        # is if a page at an url is removed and/or replaced by another page
+        # at that url. This might happen either by manual intervention (admin
+        # moving the page) or automatically via the datepublisher extension
+        # (a page expiring and another becoming active).
+        # Both cases can handle a short time of "being wrong", so this should
+        # be OK.
+
+        from django.core.cache import cache as django_cache
+        if settings.FEINCMS_USE_CACHE:
+            ck = 'PAGE-FOR-URL-' + path
+            page = django_cache.get(ck)
+            if page:
+                return page
+
         if path:
             tokens = path.split('/')
             paths += ['/%s/' % '/'.join(tokens[:i]) for i in range(1, len(tokens)+1)]
 
         try:
-            return self.active().filter(_cached_url__in=paths).extra(
+            page = self.active().filter(_cached_url__in=paths).extra(
                 select={'_url_length': 'LENGTH(_cached_url)'}).order_by('-_url_length')[0]
+            if settings.FEINCMS_USE_CACHE:
+                django_cache.set(ck, page)
+            return page
         except IndexError:
             if raise404:
                 raise Http404
