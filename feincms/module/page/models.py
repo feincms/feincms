@@ -417,7 +417,7 @@ class Page(Base):
                 time += float(q['time'])
 
             print "--------------------------------------------------------------"
-            print "Total: %d queries, %f ms" % (i, time)
+            print "Total: %d queries, %.3f ms" % (i, time)
             print "--------------------------------------------------------------"
 
         return processor
