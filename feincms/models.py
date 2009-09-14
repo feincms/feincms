@@ -380,6 +380,9 @@ class Base(models.Model):
 
         model._feincms_content_models.append(new_type)
 
+        # Add a backlink from content-type to content holder class
+        new_type._feincms_content_class = cls
+
         # customization hook.
         if hasattr(new_type, 'initialize_type'):
             new_type.initialize_type(**kwargs)
