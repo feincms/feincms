@@ -211,7 +211,7 @@ class Base(models.Model):
                 contents += list(
                     self._feincms_content_types[idx].objects.filter(
                         parent=self,
-                        region=region.key).select_related())
+                        region=region.key))
 
         return contents
 
