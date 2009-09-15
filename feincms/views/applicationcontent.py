@@ -26,7 +26,7 @@ def handler(request, path=None):
     has_appcontent = True
     if settings.FEINCMS_USE_CACHE:
         ck = 'HAS-APP-CONTENT-' + page.cache_key()
-        has_appcontent = django_cache.get(ck)
+        has_appcontent = django_cache.get(ck, True)
 
     if has_appcontent:
         applicationcontents = page.applicationcontent_set.all()
