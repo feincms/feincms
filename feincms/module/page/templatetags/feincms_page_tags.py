@@ -3,7 +3,7 @@ from django.conf import settings
 from django.http import HttpRequest
 
 from feincms.module.page.models import Page, PageManager
-from feincms.templatetags.utils import *
+from feincms.utils.templatetags import *
 register = template.Library()
 
 
