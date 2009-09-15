@@ -31,27 +31,27 @@ class SectionContent(models.Model):
         verbose_name_plural = _('sections')
 
     @classmethod
-    def initialize_type(cls, POSITION_CHOICES=None, cleanse=False):
+    def initialize_type(cls, TYPE_CHOICES=None, cleanse=False):
         if 'feincms.module.medialibrary' not in django_settings.INSTALLED_APPS:
             raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
 
-        if POSITION_CHOICES is None:
-            raise ImproperlyConfigured, 'You need to set POSITION_CHOICES when creating a %s' % cls.__name__
+        if TYPE_CHOICES is None:
+            raise ImproperlyConfigured, 'You need to set TYPE_CHOICES when creating a %s' % cls.__name__
 
         cls.add_to_class('mediafile', models.ForeignKey(MediaFile, verbose_name=_('media file'),
             related_name='%s_%s_set' % (cls._meta.app_label, cls._meta.module_name),
             blank=True, null=True,
             ))
 
-        cls.add_to_class('position', models.CharField(_('position'),
-            max_length=10, choices=POSITION_CHOICES,
-            default=POSITION_CHOICES[0][0]))
+        cls.add_to_class('type', models.CharField(_('type'),
+            max_length=10, choices=TYPE_CHOICES,
+            default=TYPE_CHOICES[0][0]))
 
         class MediaFileContentAdminForm(ItemEditorForm):
             mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.all(),
                 widget=MediaFileWidget, required=False)
-            position = forms.ChoiceField(choices=POSITION_CHOICES,
-                initial=POSITION_CHOICES[0][0], label=_('position'),
+            position = forms.ChoiceField(choices=TYPE_CHOICES,
+                initial=TYPE_CHOICES[0][0], label=_('position'),
                 widget=AdminRadioSelect(attrs={'class': 'radiolist'}))
 
         cls.feincms_item_editor_form = MediaFileContentAdminForm
@@ -59,9 +59,9 @@ class SectionContent(models.Model):
 
     def render(self, **kwargs):
         return render_to_string([
-            'content/section/%s_%s.html' % (self.mediafile.type, self.position),
+            'content/section/%s_%s.html' % (self.mediafile.type, self.type),
             'content/section/%s.html' % self.mediafile.type,
-            'content/section/%s.html' % self.position,
+            'content/section/%s.html' % self.type,
             'content/section/default.html',
             ], {'content': self})
 
