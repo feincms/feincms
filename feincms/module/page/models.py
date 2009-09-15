@@ -473,7 +473,7 @@ class PageAdminForm(forms.ModelForm):
                             del data[field]
 
                     # These are always excluded from prefilling
-                    for field in ('title', 'slug', 'parent', 'active'):
+                    for field in ('title', 'slug', 'parent', 'active', 'override_url'):
                         del data[field]
 
                     kwargs['initial'].update(data)
