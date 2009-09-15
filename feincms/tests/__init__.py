@@ -1083,7 +1083,7 @@ class BlogTestCase(TestCase):
 
 class CleanseTestCase(TestCase):
     def test_01_cleanse(self):
-        from feincms.content.richtext.cleanse import cleanse_html
+        from feincms.utils.cleanse import cleanse_html
 
         entries = [
             (u'<p>&nbsp;</p>', u''),
