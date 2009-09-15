@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.editor import ItemEditorForm
 from feincms.module.medialibrary.models import MediaFile
+from feincms.templatetags import feincms_thumbnail
 
 
 class MediaFileWidget(forms.TextInput):
@@ -26,11 +27,18 @@ class MediaFileWidget(forms.TextInput):
                 except ObjectDoesNotExist:
                     caption = _('(no caption)')
 
+                if mf.type == 'image':
+                    image = feincms_thumbnail.thumbnail(mf.file.name, '240x120')
+                    image = u'<img src="%(url)s" alt="" /><br />' % {'url': image}
+                else:
+                    image = u''
+
                 return mark_safe(u"""
-                    <div style="margin-left:10em">
+                    <div style="margin-left:10em">%(image)s
                     <a href="%(url)s" target="_blank">%(caption)s (%(url)s)</a><br />
                     %(inputfield)s
                     </div>""" % {
+                        'image': image,
                         'url': mf.file.url,
                         'caption': caption,
                         'inputfield': inputfield})
