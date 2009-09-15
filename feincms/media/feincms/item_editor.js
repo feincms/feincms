@@ -260,10 +260,10 @@ $(document).ready(function(){
 
     $('#inlines').hide();
 
-    var errors = $('#main .errors');
+    var errors = $('#main div.errors');
 
     if(errors.length) {
-        var id = errors.parents('fieldset.module').attr('id');
+        var id = errors.parents('fieldset[id$=_body], div[id$=_body]').attr('id');
         $('#'+id.replace('_body', '_tab')).trigger('click');
     } else {
         if(window.location.hash) {
