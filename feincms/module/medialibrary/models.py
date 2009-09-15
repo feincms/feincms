@@ -13,6 +13,7 @@ from feincms.translations import TranslatedObjectMixin, Translation, \
     TranslatedObjectManager
 
 import re
+import os
 
 # ------------------------------------------------------------------------
 class Category(models.Model):
@@ -57,7 +58,6 @@ class MediaFile(models.Model, TranslatedObjectMixin):
     filetypes = [ ]
     filetypes_dict = { }
 
-
     @classmethod
     def reconfigure(cls, upload_to=None, storage=None):
         f = cls._meta.get_field('file')
@@ -76,6 +76,12 @@ class MediaFile(models.Model, TranslatedObjectMixin):
         choices = [ t[0:2] for t in cls.filetypes ]
         cls.filetypes_dict = dict(choices)
         cls._meta.get_field('type').choices[:] = choices
+
+    def __unicode__(self):
+        try:
+            return unicode(self.translation)
+        except models.ObjectDoesNotExist:
+            return os.path.basename(self.file.name)
 
     def get_absolute_url(self):
         return self.file.url
