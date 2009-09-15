@@ -43,4 +43,10 @@ FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = getattr(settings, 'FEINCMS_PAGE_USE_SPLIT_P
 FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS', False)
 
 # ------------------------------------------------------------------------
+# Enable caching intermediate results in feincms. Be aware that this might deliver
+# slightly out of date pages if you are not using the 'changedate' page extension.
+
+FEINCMS_USE_CACHE = getattr(settings, 'FEINCMS_USE_CACHE', False)
+
+# ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
