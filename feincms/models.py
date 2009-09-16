@@ -211,8 +211,10 @@ class Base(models.Model):
                 contents += list(
                     self._feincms_content_types[idx].objects.filter(
                         parent=self,
-                        region=region.key))
-
+                        region=region.key).select_related())
+                # Note: the select_related() helps for content types that
+                # reference stuff (eg. media files) and doesn't hurt much
+                # when not needed.
         return contents
 
     @classmethod
