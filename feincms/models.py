@@ -414,7 +414,7 @@ class Base(models.Model):
         # collect item editor includes from the content type
         if hasattr(model, 'feincms_item_editor_includes'):
             for key, includes in model.feincms_item_editor_includes.items():
-                cls.feincms_item_editor_includes.setdefault(key, []).extend(includes)
+                cls.feincms_item_editor_includes.setdefault(key, set()).update(includes)
 
         return new_type
 
