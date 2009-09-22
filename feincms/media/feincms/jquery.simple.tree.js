@@ -131,7 +131,7 @@ $.fn.simpleTree = function(opt){
 						}
 					});
 				}
-				
+
 			}
 		};
 		TREE.setTreeNodes = function(obj, useParent){

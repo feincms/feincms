@@ -1,7 +1,7 @@
 /* Re-implement some methods IE sadly does not */
 
 if(typeof(Array.prototype.indexOf) == 'undefined') {
-    // indexOf() function prototype for IE6/7/8 compatibility, taken from 
+    // indexOf() function prototype for IE6/7/8 compatibility, taken from
     // JavaScript Standard Library - http://www.devpro.it/JSL/
     Array.prototype.indexOf=function(elm,i){
         var j=this.length;
@@ -22,7 +22,7 @@ if (!Array.prototype.filter)
         var len = this.length;
         if (typeof fun != "function")
             throw new TypeError();
-        
+
         var res = new Array();
         var thisp = arguments[1];
         for (var i = 0; i < len; i++)
@@ -34,7 +34,7 @@ if (!Array.prototype.filter)
                             res.push(val);
                     }
             }
-        
+
         return res;
     };
 }

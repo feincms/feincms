@@ -52,7 +52,7 @@ def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_
       coverage_modules.append(__import__(module, globals(), locals(), ['']))
 
     coverage.report(coverage_modules, show_missing=1)
-    
+
     # Print code metrics footer
     print '----------------------------------------------------------------------'
 

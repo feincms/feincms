@@ -29,7 +29,7 @@ def taglist_to_string(taglist):
 """
 TagSelectField
 
-A variation of the django-tagging TagField which uses a 
+A variation of the django-tagging TagField which uses a
 SelectMultiple widget instead of free text field.
 
 class MyModel(models.Model):
@@ -41,12 +41,12 @@ class MyModel(models.Model):
 class TagSelectFormField(forms.MultipleChoiceField):
     def clean(self, value):
         return taglist_to_string(list(value));
-                
+
 class TagSelectField(TagField):
     def __init__(self, filter_horizontal=False, *args, **kwargs):
         super(TagSelectField, self).__init__(*args, **kwargs)
         self.filter_horizontal = filter_horizontal
-        
+
     def formfield(self, **defaults):
         from ..tagging.models import Tag, TaggedItem
         from ..tagging.utils import parse_tag_input
@@ -79,7 +79,7 @@ def pre_save_handler(sender, instance, **kwargs):
 def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False):
     """
     tag_model accepts a number of named parameters:
-    
+
     admin_cls   If set to a subclass of ModelAdmin, will insert the tag
                 field into the list_display and list_filter fields.
     field_name  Defaults to "tags", can be used to name your tag field

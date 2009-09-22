@@ -14,7 +14,7 @@ class Command(NoArgsCommand):
     @staticmethod
     def seq(start = 1):
         """
-        Returns an ever-increasing stream of numbers. The starting point can 
+        Returns an ever-increasing stream of numbers. The starting point can
         be freely defined.
         """
         while True:
@@ -33,7 +33,7 @@ class Command(NoArgsCommand):
             page.tree_id = root # Renumber tree_id for good measure
 
             self.renumber_mptt_tree(page, self.seq(1))
-            
+
             root += 1
             transaction.commit()
 
