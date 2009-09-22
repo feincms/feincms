@@ -29,6 +29,7 @@ class Entry(Base):
         help_text=_('Will be set automatically once you tick the `published` checkbox above.'))
 
     class Meta:
+        get_latest_by = 'published_on'
         ordering = ['-published_on']
         verbose_name = _('entry')
         verbose_name_plural = _('entries')
