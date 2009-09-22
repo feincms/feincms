@@ -7,10 +7,18 @@ from django.conf import settings
 
 register = template.Library()
 
+
+def tryint(v):
+    try:
+        return int(v)
+    except ValueError:
+        return 999999 # Arbitrarily big number
+
+
 @register.filter
 def thumbnail(filename, size='200x200'):
     # defining the size
-    x, y = [int(x) for x in size.split('x')]
+    x, y = [tryint(x) for x in size.split('x')]
     # defining the filename and the miniature filename
     basename, format = filename.rsplit('.', 1)
     miniature = basename + '_thumb_' + size + '.' +  format
@@ -27,7 +35,7 @@ def thumbnail(filename, size='200x200'):
 
 @register.filter
 def cropscale(filename, size='200x200'):
-    w, h = [int(x) for x in size.split('x')]
+    w, h = [tryint(x) for x in size.split('x')]
 
     basename, format = filename.rsplit('.', 1)
     miniature = basename + '_cropscale_' + size + '.' +  format
