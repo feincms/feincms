@@ -168,8 +168,8 @@ class Base(models.Model):
             cls._feincms_extensions = set()
 
         here = cls.__module__.split('.')[:-1]
-        here.append('extensions')
-        here_path = '.'.join(here)
+        here_path = '.'.join(here + ['extensions'])
+        common_path = '.'.join(here[:-1] + ['extensions'])
 
         for ext in extensions:
             if ext in cls._feincms_extensions:
@@ -178,7 +178,10 @@ class Base(models.Model):
             try:
                 fn = get_object(ext + '.register')
             except ImportError:
-                fn = get_object('%s.%s.register' % ( here_path, ext ) )
+                try:
+                    fn = get_object('%s.%s.register' % ( here_path, ext ) )
+                except ImportError:
+                    fn = get_object('%s.%s.register' % ( common_path, ext ) )
 
             cls.register_extension(fn)
             cls._feincms_extensions.add(ext)
