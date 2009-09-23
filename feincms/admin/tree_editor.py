@@ -41,18 +41,21 @@ def _build_tree_structure(cls):
     """
     all_nodes = { }
     def add_as_descendant(n, p):
-        if not n: return
-        all_nodes[n.id]['descendants'].append(p.id)
-        add_as_descendant(n.parent, p)
+        all_nodes[n]['descendants'].append(p)
+
+        n_parent_id = all_nodes[n]['parent']
+
+        if n_parent_id:
+            add_as_descendant(n_parent_id, p)
 
     # TODO: Use .values_list to avoid creating full objects when all we want are id and parent
-    for p in cls.objects.order_by('tree_id', 'lft').select_related("parent", "children").only("id", "parent"):
+    for p in cls.objects.order_by('tree_id', 'lft').only("parent"):
 
         all_nodes[p.id] = { 'id': p.id, 'children' : [ ], 'descendants' : [ ], 'parent' : p.parent_id }
 
-        if(p.parent_id):
+        if p.parent_id:
             all_nodes[p.parent_id]['children'].append(p.id)
-            add_as_descendant(p.parent, p)
+            add_as_descendant(p.parent_id, p.id)
 
     return all_nodes
 
