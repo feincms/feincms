@@ -1,6 +1,5 @@
 # ------------------------------------------------------------------------
 # coding=utf-8
-# $Id$
 # ------------------------------------------------------------------------
 
 from datetime import datetime
@@ -34,7 +33,7 @@ class Category(models.Model):
         return self.title
 
 # ------------------------------------------------------------------------
-class MediaFile(models.Model, TranslatedObjectMixin):
+class MediaFileBase(models.Model, TranslatedObjectMixin):
 
     # XXX maybe have a look at settings.DEFAULT_FILE_STORAGE here?
     from django.core.files.storage import FileSystemStorage
@@ -50,6 +49,7 @@ class MediaFile(models.Model, TranslatedObjectMixin):
                                         blank=True, null=True)
 
     class Meta:
+        abstract = True
         verbose_name = _('media file')
         verbose_name_plural = _('media files')
 
@@ -117,15 +117,19 @@ class MediaFile(models.Model, TranslatedObjectMixin):
 
         super(MediaFile, self).save(*args, **kwargs)
 
-
-
-MediaFile.register_filetypes(
+# ------------------------------------------------------------------------
+MediaFileBase.register_filetypes(
         ('image', _('Image'), lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f)),
         ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
         ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
         ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
         ('other', _('Binary'), lambda f: True), # Must be last
     )
+
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
+class MediaFile(MediaFileBase):
+    pass
 
 # ------------------------------------------------------------------------
 class MediaFileTranslation(Translation(MediaFile)):
