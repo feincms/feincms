@@ -160,6 +160,10 @@ class Base(models.Model):
         if not hasattr(cls, '_feincms_extensions'):
             cls._feincms_extensions = set()
 
+        here = cls.__module__.split('.')[:-1]
+        here.append('extensions')
+        here_path = '.'.join(here)
+
         for ext in extensions:
             if ext in cls._feincms_extensions:
                 continue
@@ -167,7 +171,7 @@ class Base(models.Model):
             try:
                 fn = get_object(ext + '.register')
             except ImportError:
-                fn = get_object('feincms.module.page.extensions.%s.register' % ext)
+                fn = get_object('%s.%s.register' % ( here_path, ext ) )
 
             fn(cls, cls.admin_class)
             cls._feincms_extensions.add(ext)
