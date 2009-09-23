@@ -431,6 +431,10 @@ class Page(Base):
     def register_response_processors(cls, *processors):
         cls.response_processors.extend(processors)
 
+    @classmethod
+    def register_extension(cls, register_fn):
+        register_fn(cls, PageAdmin)
+
 
 # ------------------------------------------------------------------------
 mptt.register(Page)
@@ -672,7 +676,5 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         return map(lambda page: self.is_visible_admin(page), page.get_descendants(include_self=True))
     is_visible_admin.editable_boolean_result = is_visible_recursive
 
-# ------------------------------------------------------------------------
-Page.admin_class = PageAdmin
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------

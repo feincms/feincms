@@ -84,8 +84,6 @@ class Base(models.Model):
     class Meta:
         abstract = True
 
-    admin_class = None
-    
     _cached_django_content_type = None
 
     @classmethod
@@ -156,6 +154,15 @@ class Base(models.Model):
             cls._feincms_all_regions += template.regions
 
     @classmethod
+    def register_extension(cls, register_fn):
+        """
+        Call the register function of an extension. You must override this
+        if you provide a custom ModelAdmin class and want your extensions to
+        be able to patch stuff in.
+        """
+        register_fn(cls, None)
+
+    @classmethod
     def register_extensions(cls, *extensions):
         if not hasattr(cls, '_feincms_extensions'):
             cls._feincms_extensions = set()
@@ -173,7 +180,7 @@ class Base(models.Model):
             except ImportError:
                 fn = get_object('%s.%s.register' % ( here_path, ext ) )
 
-            fn(cls, cls.admin_class)
+            cls.register_extension(fn)
             cls._feincms_extensions.add(ext)
 
     @property
