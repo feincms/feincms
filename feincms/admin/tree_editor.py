@@ -134,7 +134,13 @@ class TreeEditorQuerySet(QuerySet):
 
             t = qs.aggregate(r_max=Max("rght"), l_min=Min("lft"))
 
-            qs = qs.filter(rght__lte=t['r_max'], lft__gte=t['l_min']).distinct()
+            r_max = t.get('r_max', None)
+            l_min = t.get('l_min', None)
+
+            # Avoid an error if these aren't defined because there are no
+            # pages in the database, as on a fresh install:
+            if r_max and l_min:
+                qs = qs.filter(rght__lte=r_max, lft__gte=l_min).distinct()
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
             yield obj
