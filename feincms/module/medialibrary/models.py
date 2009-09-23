@@ -8,6 +8,8 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
+from feincms.models import Base
+
 from feincms.translations import TranslatedObjectMixin, Translation, \
     TranslatedObjectManager
 
@@ -33,7 +35,7 @@ class Category(models.Model):
         return self.title
 
 # ------------------------------------------------------------------------
-class MediaFileBase(models.Model, TranslatedObjectMixin):
+class MediaFileBase(Base, TranslatedObjectMixin):
 
     # XXX maybe have a look at settings.DEFAULT_FILE_STORAGE here?
     from django.core.files.storage import FileSystemStorage
@@ -81,8 +83,12 @@ class MediaFileBase(models.Model, TranslatedObjectMixin):
         try:
             return unicode(self.translation)
         except models.ObjectDoesNotExist:
-            return os.path.basename(self.file.name)
-
+            pass
+        except AttributeError, e:
+            pass
+        
+        return os.path.basename(self.file.name)
+            
     def get_absolute_url(self):
         return self.file.url
 
@@ -93,7 +99,7 @@ class MediaFileBase(models.Model, TranslatedObjectMixin):
 
     def determine_file_type(self, name):
         """
-        >>> t = MediaFile()
+        >>> t = MediaFileBase()
         >>> t.determine_file_type('foobar.jpg')
         'image'
         >>> t.determine_file_type('foobar.PDF')
@@ -115,7 +121,7 @@ class MediaFileBase(models.Model, TranslatedObjectMixin):
             created = datetime.now()
         self.type = self.determine_file_type(self.file.name)
 
-        super(MediaFile, self).save(*args, **kwargs)
+        super(MediaFileBase, self).save(*args, **kwargs)
 
 # ------------------------------------------------------------------------
 MediaFileBase.register_filetypes(

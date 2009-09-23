@@ -183,6 +183,7 @@ class PageManager(models.Manager):
 # MARK: -
 # ------------------------------------------------------------------------
 class Page(Base):
+
     active = models.BooleanField(_('active'), default=False)
 
     # structure and navigation
@@ -430,22 +431,6 @@ class Page(Base):
     def register_response_processors(cls, *processors):
         cls.response_processors.extend(processors)
 
-    @classmethod
-    def register_extensions(cls, *extensions):
-        if not hasattr(cls, '_feincms_extensions'):
-            cls._feincms_extensions = set()
-
-        for ext in extensions:
-            if ext in cls._feincms_extensions:
-                continue
-
-            try:
-                fn = get_object(ext + '.register')
-            except ImportError:
-                fn = get_object('feincms.module.page.extensions.%s.register' % ext)
-
-            fn(cls, PageAdmin)
-            cls._feincms_extensions.add(ext)
 
 # ------------------------------------------------------------------------
 mptt.register(Page)
@@ -687,3 +672,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         return map(lambda page: self.is_visible_admin(page), page.get_descendants(include_self=True))
     is_visible_admin.editable_boolean_result = is_visible_recursive
 
+# ------------------------------------------------------------------------
+Page.admin_class = PageAdmin
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------

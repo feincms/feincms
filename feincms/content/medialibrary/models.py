@@ -62,14 +62,17 @@ class MediaFileContent(models.Model):
         verbose_name_plural = _('media files')
 
     @classmethod
-    def initialize_type(cls, POSITION_CHOICES=None):
+    def initialize_type(cls, POSITION_CHOICES=None, MEDIAFILE_CLASS=None):
         if 'feincms.module.medialibrary' not in settings.INSTALLED_APPS:
             raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
 
+        if MEDIAFILE_CLASS is None:
+            MEDIAFILE_CLASS = MediaFile
+    
         if POSITION_CHOICES is None:
             raise ImproperlyConfigured, 'You need to set POSITION_CHOICES when creating a %s' % cls.__name__
 
-        cls.add_to_class('mediafile', models.ForeignKey(MediaFile, verbose_name=_('media file'),
+        cls.add_to_class('mediafile', models.ForeignKey(MEDIAFILE_CLASS, verbose_name=_('media file'),
             related_name='%s_%s_set' % (cls._meta.app_label, cls._meta.module_name)
             ))
 
@@ -78,7 +81,7 @@ class MediaFileContent(models.Model):
             default=POSITION_CHOICES[0][0]))
 
         class MediaFileContentAdminForm(ItemEditorForm):
-            mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.all(),
+            mediafile = forms.ModelChoiceField(queryset=MEDIAFILE_CLASS.objects.all(),
                 widget=MediaFileWidget)
             position = forms.ChoiceField(choices=POSITION_CHOICES,
                 initial=POSITION_CHOICES[0][0], label=_('position'),

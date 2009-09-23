@@ -13,7 +13,7 @@ from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
-from feincms.utils import copy_model_instance
+from feincms.utils import get_object, copy_model_instance
 
 try:
     any
@@ -84,6 +84,8 @@ class Base(models.Model):
     class Meta:
         abstract = True
 
+    admin_class = None
+    
     _cached_django_content_type = None
 
     @classmethod
@@ -152,6 +154,23 @@ class Base(models.Model):
         cls._feincms_all_regions = []
         for template in cls._feincms_templates.values():
             cls._feincms_all_regions += template.regions
+
+    @classmethod
+    def register_extensions(cls, *extensions):
+        if not hasattr(cls, '_feincms_extensions'):
+            cls._feincms_extensions = set()
+
+        for ext in extensions:
+            if ext in cls._feincms_extensions:
+                continue
+
+            try:
+                fn = get_object(ext + '.register')
+            except ImportError:
+                fn = get_object('feincms.module.page.extensions.%s.register' % ext)
+
+            fn(cls, cls.admin_class)
+            cls._feincms_extensions.add(ext)
 
     @property
     def content(self):
