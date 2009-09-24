@@ -41,15 +41,21 @@ def _build_tree_structure(cls):
     """
     all_nodes = { }
     def add_as_descendant(n, p):
-        if not n: return
-        all_nodes[n.id]['descendants'].append(p.id)
-        add_as_descendant(n.parent, p)
+        all_nodes[n]['descendants'].append(p)
 
-    for p in cls.objects.order_by('tree_id', 'lft'):
+        n_parent_id = all_nodes[n]['parent']
+
+        if n_parent_id:
+            add_as_descendant(n_parent_id, p)
+
+    # TODO: Use .values_list to avoid creating full objects when all we want are id and parent
+    for p in cls.objects.order_by('tree_id', 'lft').only("parent"):
+
         all_nodes[p.id] = { 'id': p.id, 'children' : [ ], 'descendants' : [ ], 'parent' : p.parent_id }
-        if(p.parent_id):
+
+        if p.parent_id:
             all_nodes[p.parent_id]['children'].append(p.id)
-            add_as_descendant(p.parent, p)
+            add_as_descendant(p.parent_id, p.id)
 
     return all_nodes
 
@@ -131,8 +137,18 @@ class TreeEditorQuerySet(QuerySet):
                 if p.parent_id not in include_pages:
                     include_pages.update( [ x.id for x in p.get_ancestors() ] )
 
+<<<<<<< HEAD:feincms/admin/tree_editor.py
             qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
+=======
+            r_max = t.get('r_max', None)
+            l_min = t.get('l_min', None)
+
+            # Avoid an error if these aren't defined because there are no
+            # pages in the database, as on a fresh install:
+            if r_max and l_min:
+                qs = qs.filter(rght__lte=r_max, lft__gte=l_min).distinct()
+>>>>>>> upstream/master:feincms/admin/tree_editor.py
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
             yield obj
