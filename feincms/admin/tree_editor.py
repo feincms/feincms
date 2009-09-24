@@ -45,11 +45,8 @@ def _build_tree_structure(cls):
         all_nodes[n.id]['descendants'].append(p.id)
         add_as_descendant(n.parent, p)
 
-    # TODO: Use .values_list to avoid creating full objects when all we want are id and parent
-    for p in cls.objects.order_by('tree_id', 'lft').select_related("parent", "children").only("id", "parent"):
-
+    for p in cls.objects.order_by('tree_id', 'lft'):
         all_nodes[p.id] = { 'id': p.id, 'children' : [ ], 'descendants' : [ ], 'parent' : p.parent_id }
-
         if(p.parent_id):
             all_nodes[p.parent_id]['children'].append(p.id)
             add_as_descendant(p.parent, p)
@@ -162,7 +159,7 @@ class ChangeList(main.ChangeList):
     def get_query_set(self):
         qs = super(ChangeList, self).get_query_set()
         if isinstance(self.model_admin, TreeEditor):
-            return qs.order_by('tree_id', 'lft').select_related("parent", "children")
+            return qs.order_by('tree_id', 'lft')
         return qs
 main.ChangeList = ChangeList
 
