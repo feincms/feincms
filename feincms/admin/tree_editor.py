@@ -137,18 +137,8 @@ class TreeEditorQuerySet(QuerySet):
                 if p.parent_id not in include_pages:
                     include_pages.update( [ x.id for x in p.get_ancestors() ] )
 
-<<<<<<< HEAD:feincms/admin/tree_editor.py
             qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
-=======
-            r_max = t.get('r_max', None)
-            l_min = t.get('l_min', None)
-
-            # Avoid an error if these aren't defined because there are no
-            # pages in the database, as on a fresh install:
-            if r_max and l_min:
-                qs = qs.filter(rght__lte=r_max, lft__gte=l_min).distinct()
->>>>>>> upstream/master:feincms/admin/tree_editor.py
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
             yield obj
