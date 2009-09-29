@@ -212,7 +212,7 @@ class Page(Base):
     objects = PageManager()
 
     def __unicode__(self):
-        return mark_safe('&nbsp;&nbsp;' * self.level + self.short_title())
+        return self.short_title()
 
     def is_active(self):
         """
