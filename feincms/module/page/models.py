@@ -21,6 +21,7 @@ from feincms.admin import editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
 from feincms.utils import get_object, copy_model_instance
+import feincms.admin.filterspecs
 
 
 # ------------------------------------------------------------------------
@@ -189,6 +190,7 @@ class Page(Base):
         help_text=_('This is used for the generated navigation too.'))
     slug = models.SlugField(_('slug'))
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
+    parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=200, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
