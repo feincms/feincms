@@ -133,7 +133,12 @@ class TreeEditorQuerySet(QuerySet):
     def iterator(self):
         qs = self
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            for p in set(self.values_list('tree_id', 'lft', 'rght')):
+            seen = set()
+            for p in self.values_list('tree_id', 'lft', 'rght', 'parent'):
+                if p[3] in seen:
+                    continue
+
+                seen.add(p[3])
                 qs |= self.model._default_manager.filter(
                     Q(tree_id=p[0]) &
                     Q(lft__lte=p[1]) &
