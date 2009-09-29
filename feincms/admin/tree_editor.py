@@ -131,19 +131,14 @@ class TreeEditorQuerySet(QuerySet):
     """
     def iterator(self):
         qs = self
-
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            from django.db.models import Max, Min
+            include_pages = set()
+            for p in super(TreeEditorQuerySet, self).iterator():
+                if p.parent_id not in include_pages:
+                    include_pages.update( [ x.id for x in p.get_ancestors() ] )
 
-            t = qs.aggregate(r_max=Max("rght"), l_min=Min("lft"))
-
-            r_max = t.get('r_max', None)
-            l_min = t.get('l_min', None)
-
-            # Avoid an error if these aren't defined because there are no
-            # pages in the database, as on a fresh install:
-            if r_max and l_min:
-                qs = qs.filter(rght__lte=r_max, lft__gte=l_min).distinct()
+            qs = qs | self.model._default_manager.filter(id__in=include_pages)
+            qs = qs.distinct()
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
             yield obj
@@ -170,7 +165,7 @@ class ChangeList(main.ChangeList):
     def get_query_set(self):
         qs = super(ChangeList, self).get_query_set()
         if isinstance(self.model_admin, TreeEditor):
-            return qs.order_by('tree_id', 'lft').select_related("parent")
+            return qs.order_by('tree_id', 'lft')
         return qs
 main.ChangeList = ChangeList
 

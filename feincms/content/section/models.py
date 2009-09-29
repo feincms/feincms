@@ -50,8 +50,8 @@ class SectionContent(models.Model):
         class MediaFileContentAdminForm(ItemEditorForm):
             mediafile = forms.ModelChoiceField(queryset=MediaFile.objects.all(),
                 widget=MediaFileWidget, required=False)
-            position = forms.ChoiceField(choices=TYPE_CHOICES,
-                initial=TYPE_CHOICES[0][0], label=_('position'),
+            type = forms.ChoiceField(choices=TYPE_CHOICES,
+                initial=TYPE_CHOICES[0][0], label=_('type'),
                 widget=AdminRadioSelect(attrs={'class': 'radiolist'}))
 
         cls.feincms_item_editor_form = MediaFileContentAdminForm
