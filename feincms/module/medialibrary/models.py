@@ -97,6 +97,19 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
 
+    def file_info(self):
+        from os.path import basename
+        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s' % (
+                self.id,
+                self.file.name,
+                basename(self.file.name), )
+    file_info.short_description = _('file info')
+    file_info.allow_tags = True
+
+    def file_size(self):
+        return filesizeformat(self.file.size)
+    file_size.short_description = _('file size')
+
     def determine_file_type(self, name):
         """
         >>> t = MediaFileBase()
@@ -147,13 +160,7 @@ class MediaFileTranslation(Translation(MediaFile)):
         verbose_name_plural = _('media file translations')
 
     def __unicode__(self):
-        from os.path import basename
-
-        return u'%s (%s / %s)' % (
-            self.caption,
-            basename(self.parent.file.name),
-            filesizeformat(self.parent.file.size),
-            )
+        return self.caption
 
 #-------------------------------------------------------------------------
 #-------------------------------------------------------------------------
