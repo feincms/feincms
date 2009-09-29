@@ -1,6 +1,7 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
+from django.db.models import Q, Max, Min
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
@@ -132,12 +133,13 @@ class TreeEditorQuerySet(QuerySet):
     def iterator(self):
         qs = self
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            include_pages = set()
-            for p in super(TreeEditorQuerySet, self).iterator():
-                if p.parent_id not in include_pages:
-                    include_pages.update( [ x.id for x in p.get_ancestors() ] )
+            for p in set(self.values_list('tree_id', 'lft', 'rght')):
+                qs |= self.model._default_manager.filter(
+                    Q(tree_id=p[0]) &
+                    Q(lft__lte=p[1]) &
+                    Q(rght__gte=p[2])
+                    )
 
-            qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
