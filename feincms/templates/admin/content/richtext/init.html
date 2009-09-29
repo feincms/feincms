@@ -1,5 +1,7 @@
 <script type="text/javascript" src="{{ TINYMCE_JS_URL }}"></script>
 
+{# FIXME: At the very least, the tinyMCE content_css path should come from settings.py to avoid 404s. Perhaps this should be a separate static file under MEDIA_URL since serious users are going to want to customize it completely? #}
+
 <script type="text/javascript">
     tinyMCE.init({
         mode: "none",
