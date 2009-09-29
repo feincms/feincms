@@ -98,6 +98,13 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     file_type.short_description = _('file type')
 
     def file_info(self):
+        """
+        Method for showing the file name in admin.
+
+        Note: This also includes a hidden field that can be used to extract
+        the file name later on, this can be used to access the file name from
+        JS, like for example a TinyMCE connector shim.
+        """
         from os.path import basename
         return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s' % (
                 self.id,
