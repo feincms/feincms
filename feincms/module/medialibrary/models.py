@@ -3,6 +3,9 @@
 # ------------------------------------------------------------------------
 
 from datetime import datetime
+
+from django.contrib import admin
+from django.conf import settings as django_settings
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.translation import ugettext_lazy as _
@@ -153,10 +156,13 @@ MediaFileBase.register_filetypes(
     )
 
 # ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
 class MediaFile(MediaFileBase):
-    pass
+    @classmethod
+    def register_extension(cls, register_fn):
+        register_fn(cls, MediaFileAdmin)
+        pass
 
+# ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
 class MediaFileTranslation(Translation(MediaFile)):
     caption = models.CharField(_('caption'), max_length=200)
@@ -170,4 +176,15 @@ class MediaFileTranslation(Translation(MediaFile)):
         return self.caption
 
 #-------------------------------------------------------------------------
+class MediaFileTranslationInline(admin.StackedInline):
+    model   = MediaFileTranslation
+    max_num = len(django_settings.LANGUAGES)
+
+class MediaFileAdmin(admin.ModelAdmin):
+    date_hierarchy = 'created'
+    inlines        = [MediaFileTranslationInline]
+    list_display   = ['__unicode__', 'file_type', 'copyright', 'file_info', 'file_size', 'created']
+    list_filter    = ['categories', 'type']
+    search_fields  = ['copyright', 'file', 'translations__caption']
+
 #-------------------------------------------------------------------------
