@@ -1,6 +1,5 @@
 # ------------------------------------------------------------------------
 # coding=utf-8
-# $Id$
 # ------------------------------------------------------------------------
 
 from django import forms
@@ -24,7 +23,6 @@ from feincms.models import Base
 from feincms.utils import get_object, copy_model_instance
 
 
-# MARK: -
 # ------------------------------------------------------------------------
 class PageManager(models.Manager):
 
