@@ -49,17 +49,9 @@ class Entry(Base):
         return ('blog_entry_detail', (self.id,), {})
 
     @classmethod
-    def register_extensions(cls, *extensions):
-        if not hasattr(cls, '_feincms_extensions'):
-            cls._feincms_extensions = set()
+    def register_extension(cls, register_fn):
+        register_fn(cls, EntryAdmin)
 
-        for ext in extensions:
-            if ext in cls._feincms_extensions:
-                continue
-
-            fn = get_object('feincms.module.blog.extensions.%s.register' % ext)
-            fn(cls, EntryAdmin)
-            cls._feincms_extensions.add(ext)
 
 signals.post_syncdb.connect(check_database_schema(Entry, __name__), weak=False)
 

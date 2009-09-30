@@ -1,6 +1,7 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
+from django.db.models import Q, Max, Min
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
@@ -131,19 +132,20 @@ class TreeEditorQuerySet(QuerySet):
     """
     def iterator(self):
         qs = self
-
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            from django.db.models import Max, Min
+            seen = set()
+            for p in self.values_list('tree_id', 'lft', 'rght', 'parent'):
+                if p[3] in seen:
+                    continue
 
-            t = qs.aggregate(r_max=Max("rght"), l_min=Min("lft"))
+                seen.add(p[3])
+                qs |= self.model._default_manager.filter(
+                    Q(tree_id=p[0]) &
+                    Q(lft__lte=p[1]) &
+                    Q(rght__gte=p[2])
+                    )
 
-            r_max = t.get('r_max', None)
-            l_min = t.get('l_min', None)
-
-            # Avoid an error if these aren't defined because there are no
-            # pages in the database, as on a fresh install:
-            if r_max and l_min:
-                qs = qs.filter(rght__lte=r_max, lft__gte=l_min).distinct()
+            qs = qs.distinct()
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
             yield obj
@@ -170,7 +172,7 @@ class ChangeList(main.ChangeList):
     def get_query_set(self):
         qs = super(ChangeList, self).get_query_set()
         if isinstance(self.model_admin, TreeEditor):
-            return qs.order_by('tree_id', 'lft').select_related("parent")
+            return qs.order_by('tree_id', 'lft')
         return qs
 main.ChangeList = ChangeList
 
