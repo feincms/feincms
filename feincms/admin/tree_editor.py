@@ -131,11 +131,20 @@ class TreeEditorQuerySet(QuerySet):
     """
     def iterator(self):
         qs = self
-        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
+        # Reaching into the bowels of query sets to find out whether the qs is
+        # actually filtered and we need to do the INCLUDE_ANCESTORS dance at all.
+        # INCLUDE_ANCESTORS is quite expensive, so don't do it if not needed.
+        is_filtered = bool(qs.query.where.children)
+        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS and is_filtered:
             include_pages = set()
-            for p in super(TreeEditorQuerySet, self).iterator():
-                if p.parent_id not in include_pages:
-                    include_pages.update( [ x.id for x in p.get_ancestors() ] )
+            # Order by 'rght' will return the tree deepest nodes first;
+            # this cuts down the number of queries considerably since all ancestors
+            # will already be in include_pages when they are checked, thus not 
+            # trigger additional queries.
+            for p in super(TreeEditorQuerySet, self.order_by('rght')).iterator():
+                if p.parent_id and p.parent_id not in include_pages:
+                    ancestor_id_list = p.get_ancestors().values_list('id', flat=True)
+                    include_pages.update(ancestor_id_list)
 
             qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
