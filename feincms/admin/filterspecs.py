@@ -20,14 +20,11 @@ class ParentFilterSpec(ChoicesFilterSpec):
     """
 
     def __init__(self, f, request, params, model, model_admin):
-        import logging
         super(ParentFilterSpec, self).__init__(f, request, params, model, model_admin)
 
         parent_ids = model.tree.exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
         parents = model.tree.filter(pk__in=parent_ids).values_list("pk", "title", "level")
         self.lookup_choices = [(pk, "%s%s" % ("&nbsp;" * level, title)) for pk, title, level in parents]
-
-        logging.info("ParentFilter initialized with %d choices" % len(self.lookup_choices))
 
     def choices(self, cl):
         yield { 
