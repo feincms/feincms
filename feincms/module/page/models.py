@@ -212,7 +212,9 @@ class Page(Base):
     objects = PageManager()
 
     def __unicode__(self):
-        return mark_safe('&nbsp;&nbsp;' * self.level + self.short_title())
+        # Note: These are actually two "no-break spaces". They are here so that the
+        # "filter by parent" drop down shows a hierarchical outline.
+        return mark_safe(u'  ' * self.level + self.short_title())
 
     def is_active(self):
         """
