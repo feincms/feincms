@@ -169,19 +169,28 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
 register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
 
 
-@register.simple_tag
-def feincms_breadcrumbs(page):
+@register.inclusion_tag("breadcrumbs.html")
+def feincms_breadcrumbs(page, include_self=True):
     """
+    Generate a list of the page's ancestors suitable for use as breadcrumb navigation.
+    
+    By default, generates an unordered list with the id "breadcrumbs" -
+    override breadcrumbs.html to change this.
+    
     {% feincms_breadcrumbs feincms_page %}
     """
+    
+    if not page or not isinstance(page, Page):
+        raise ValueError("feincms_breadcrumbs must be called with a valid Page object")
+    
     ancs = page.get_ancestors()
-    if not ancs:
-        return ""
-    bc = []
-    for anc in ancs:
-        bc.append('<a href="%s">%s</a> &gt; ' % (anc.get_absolute_url(), anc.title))
-    bc.append(page.title)
-    return "".join(bc)
+
+    bc = [(anc.get_absolute_url(), anc.short_title()) for anc in ancs]
+
+    if include_self:
+        bc.append((None, page.title))
+        
+    return {"trail": bc}
 
 
 @register.filter
