@@ -1,7 +1,6 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
-from django.db.models import Q, Max, Min
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
@@ -132,19 +131,22 @@ class TreeEditorQuerySet(QuerySet):
     """
     def iterator(self):
         qs = self
-        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            seen = set()
-            for p in self.values_list('tree_id', 'lft', 'rght', 'parent'):
-                if p[3] in seen:
-                    continue
+        # Reaching into the bowels of query sets to find out whether the qs is
+        # actually filtered and we need to do the INCLUDE_ANCESTORS dance at all.
+        # INCLUDE_ANCESTORS is quite expensive, so don't do it if not needed.
+        is_filtered = bool(qs.query.where.children)
+        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS and is_filtered:
+            include_pages = set()
+            # Order by 'rght' will return the tree deepest nodes first;
+            # this cuts down the number of queries considerably since all ancestors
+            # will already be in include_pages when they are checked, thus not 
+            # trigger additional queries.
+            for p in super(TreeEditorQuerySet, self.order_by('rght')).iterator():
+                if p.parent_id and p.parent_id not in include_pages:
+                    ancestor_id_list = p.get_ancestors().values_list('id', flat=True)
+                    include_pages.update(ancestor_id_list)
 
-                seen.add(p[3])
-                qs |= self.model._default_manager.filter(
-                    Q(tree_id=p[0]) &
-                    Q(lft__lte=p[1]) &
-                    Q(rght__gte=p[2])
-                    )
-
+            qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
