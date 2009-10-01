@@ -4,7 +4,6 @@
 # Authors: Marinho Brandao <marinho at gmail.com>
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
-
 from django.contrib.admin.filterspecs import FilterSpec, ChoicesFilterSpec
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
@@ -20,11 +19,13 @@ class ParentFilterSpec(ChoicesFilterSpec):
     """
 
     def __init__(self, f, request, params, model, model_admin):
+        from feincms.utils import shorten_string
+
         super(ParentFilterSpec, self).__init__(f, request, params, model, model_admin)
 
-        parent_ids = model.tree.exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
-        parents = model.tree.filter(pk__in=parent_ids).values_list("pk", "title", "level")
-        self.lookup_choices = [(pk, "%s%s" % ("&nbsp;" * level, title)) for pk, title, level in parents]
+        parent_ids = model.objects.exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
+        parents = model.objects.filter(pk__in=parent_ids).values_list("pk", "title", "level")
+        self.lookup_choices = [(pk, "%s%s" % ("&nbsp;" * level, shorten_string(title, max_length=25))) for pk, title, level in parents]
 
     def choices(self, cl):
         yield { 
@@ -35,9 +36,9 @@ class ParentFilterSpec(ChoicesFilterSpec):
         
         for pk, title in self.lookup_choices:
             yield {
-                'selected':     pk == self.lookup_val,
+                'selected':     pk == int(self.lookup_val or '0'),
                 'query_string': cl.get_query_string({self.lookup_kwarg: pk}),
-                'display':      mark_safe(smart_unicode(title))
+                'display':      mark_safe(title)
             }
             
     def title(self):
