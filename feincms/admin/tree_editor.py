@@ -143,11 +143,14 @@ class TreeEditorQuerySet(QuerySet):
             # will already be in include_pages when they are checked, thus not 
             # trigger additional queries.
             for p in super(TreeEditorQuerySet, self.order_by('rght')).iterator():
-                if p.parent_id and p.parent_id not in include_pages:
+                if p.parent_id and p.parent_id not in include_pages and \
+                                   p.id not in include_pages:
                     ancestor_id_list = p.get_ancestors().values_list('id', flat=True)
+                    #print ">>>", ancestor_id_list
                     include_pages.update(ancestor_id_list)
 
-            qs = qs | self.model._default_manager.filter(id__in=include_pages)
+            if include_pages:
+                qs = qs | self.model._default_manager.filter(id__in=include_pages)
             qs = qs.distinct()
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
