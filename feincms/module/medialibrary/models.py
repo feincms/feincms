@@ -63,6 +63,11 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     filetypes = [ ]
     filetypes_dict = { }
 
+    def get_categories_as_string(self):
+        categories_tmp = self.categories.values_list('title', flat=True)
+        return ', '.join(categories_tmp)
+    get_categories_as_string.short_description = _('categories')
+
     @classmethod
     def reconfigure(cls, upload_to=None, storage=None):
         f = cls._meta.get_field('file')
@@ -183,8 +188,9 @@ class MediaFileTranslationInline(admin.StackedInline):
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     inlines        = [MediaFileTranslationInline]
-    list_display   = ['__unicode__', 'file_type', 'copyright', 'file_info', 'file_size', 'created']
+    list_display   = ['__unicode__', 'file_type', 'copyright', 'file_info', 'file_size', 'created', 'get_categories_as_string']
     list_filter    = ['categories', 'type']
     search_fields  = ['copyright', 'file', 'translations__caption']
 
 #-------------------------------------------------------------------------
+
