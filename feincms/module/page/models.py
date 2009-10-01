@@ -235,18 +235,10 @@ class Page(Base):
 
     def short_title(self):
         """
-        Do a short version of the title, truncate it intelligently when too long.
-        Try to cut it in 2/3 + ellipsis + 1/3 of the original title. The first part
-        also tries to cut at white space instead of in mid-word.
+        Title shortened for display.
         """
-        max_length = 50
-        if len(self.title) >= max_length:
-            first_part = int(max_length * 0.6)
-            next_space = self.title[first_part:(max_length / 2 - first_part)].find(' ')
-            if next_space >= 0:
-                first_part += next_space
-            return self.title[:first_part] + u' … ' + self.title[-(max_length - first_part):]
-        return self.title
+        from feincms.utils import shorten_string
+        return shorten_string(self.title)
     short_title.admin_order_field = 'title'
     short_title.short_description = _('title')
 
