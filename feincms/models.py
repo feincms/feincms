@@ -197,6 +197,23 @@ class Base(models.Model):
 
         return self._content_proxy
 
+    def _get_content_types_for_region(self, region):
+        # find all concrete content type tables which have at least one entry for
+        # the current CMS object and region
+        sql = ' UNION '.join([
+            'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
+                idx,
+                cls._meta.db_table,
+                self.pk) for idx, cls in enumerate(self._feincms_content_types)])
+        sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
+
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute(sql, [region.key] * len(self._feincms_content_types))
+
+        counts = [row[1] for row in cursor.fetchall()]
+        return counts
+
     def _content_for_region(self, region):
         """
         This method is used primarily by the ContentProxy
@@ -214,21 +231,7 @@ class Base(models.Model):
             counts = django_cache.get(ck)
 
         if counts is None:
-            # find all concrete content type tables which have at least one entry for
-            # the current CMS object and region
-            sql = ' UNION '.join([
-                'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
-                    idx,
-                    cls._meta.db_table,
-                    self.pk) for idx, cls in enumerate(self._feincms_content_types)])
-            sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
-
-            from django.db import connection
-            cursor = connection.cursor()
-            cursor.execute(sql, [region.key] * len(self._feincms_content_types))
-
-            counts = [row[1] for row in cursor.fetchall()]
-
+            counts = self._get_content_types_for_region(region)
             if ck:
                 django_cache.set(ck, counts)
 
