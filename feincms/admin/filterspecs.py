@@ -9,6 +9,7 @@ from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
+
 class ParentFilterSpec(ChoicesFilterSpec):
     """
     Improved list_filter display for parent Pages by nicely indenting hierarchy
@@ -38,7 +39,7 @@ class ParentFilterSpec(ChoicesFilterSpec):
             yield {
                 'selected':     pk == int(self.lookup_val or '0'),
                 'query_string': cl.get_query_string({self.lookup_kwarg: pk}),
-                'display':      mark_safe(title)
+                'display':      mark_safe(smart_unicode(title))
             }
             
     def title(self):
