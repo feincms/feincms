@@ -115,7 +115,7 @@ class MediaFileBase(models.Model, TranslatedObjectMixin):
             created = datetime.now()
         self.type = self.determine_file_type(self.file.name)
 
-        super(MediaFile, self).save(*args, **kwargs)
+        super(MediaFileBase, self).save(*args, **kwargs)
 
 # ------------------------------------------------------------------------
 MediaFileBase.register_filetypes(
