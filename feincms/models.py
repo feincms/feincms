@@ -414,6 +414,7 @@ class Base(models.Model):
             (model, feincms_content_base,),
             attrs)
         cls._feincms_content_types.append(new_type)
+        new_type.django_content_type = ContentType.objects.get_for_model(new_type)
 
         # content types can be limited to a subset of regions
         if not regions:
