@@ -1,7 +1,6 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.util import unquote
-from django.db.models import Q, Max, Min
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
@@ -49,14 +48,13 @@ def _build_tree_structure(cls):
         if n_parent_id:
             add_as_descendant(n_parent_id, p)
 
-    # TODO: Use .values_list to avoid creating full objects when all we want are id and parent
-    for p in cls.objects.order_by('tree_id', 'lft').only("parent"):
+    for p_id, parent_id in cls.objects.order_by('tree_id', 'lft').values_list("pk", "parent_id"):
 
-        all_nodes[p.id] = { 'id': p.id, 'children' : [ ], 'descendants' : [ ], 'parent' : p.parent_id }
+        all_nodes[p_id] = { 'id': p_id, 'children' : [ ], 'descendants' : [ ], 'parent' : parent_id }
 
-        if p.parent_id:
-            all_nodes[p.parent_id]['children'].append(p.id)
-            add_as_descendant(p.parent_id, p.id)
+        if parent_id:
+            all_nodes[parent_id]['children'].append(p_id)
+            add_as_descendant(parent_id, p_id)
 
     return all_nodes
 
@@ -146,11 +144,11 @@ class TreeEditorQuerySet(QuerySet):
                 if p.parent_id and p.parent_id not in include_pages and \
                                    p.id not in include_pages:
                     ancestor_id_list = p.get_ancestors().values_list('id', flat=True)
-                    #print ">>>", ancestor_id_list
                     include_pages.update(ancestor_id_list)
 
             if include_pages:
                 qs = qs | self.model._default_manager.filter(id__in=include_pages)
+
             qs = qs.distinct()
 
         for obj in super(TreeEditorQuerySet, qs).iterator():
