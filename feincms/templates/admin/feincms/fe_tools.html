@@ -20,7 +20,7 @@ $(function(){
     fe_tools.children('a').click(function(){
         var fe_box = $(this).parents('div.fe_box');
 
-        if(this.id=='fe_tools_edit') {
+        if(this.id == 'fe_tools_edit') {
             res = fe_box.attr('id').match(/([^\-]+)-(\d+)-(\d+)/);
 
             window.open(admin_base+res[2]+'/'+res[1]+'/'+res[3]+'/',
@@ -34,13 +34,16 @@ $(function(){
 
 function fe_init_animations() {
     var fe_tools = $('#fe_tools');
-    $('.fe_box').hover(function(){
-        $(this).append(fe_tools).css('background', '#e8e8ff').animate({'opacity': 1}, 100);
-        fe_tools.show();
-    }, function(){
-        $(this).animate({'opacity': 0.6}, 100).css('background', 'none');
-        fe_tools.hide();
-    });
+    $('.fe_box').hover(
+        function(){
+            $(this).append(fe_tools).css('background', '#e8e8ff').animate({'opacity': 1}, 100);
+            fe_tools.show();
+        },
+        function(){
+            $(this).animate({'opacity': 0.6}, 100).css('background', 'none');
+            fe_tools.hide();
+        }
+    );
 }
 
 function fe_update_content(identifier, content) {
@@ -57,14 +60,17 @@ function fe_update_content(identifier, content) {
 }
 
 #fe_tools {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    z-index: 100;
+
+    display: none;
+
     background: #fff;
     border: 1px solid #000;
     padding: 13px 5 13px 15px;
 
-    display: none;
-    position: absolute;
-    left: 10px;
-    bottom: -25px;
     font-size: 70%;
     opacity: 0.8;
 }
