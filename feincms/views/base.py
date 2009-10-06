@@ -42,5 +42,8 @@ def preview_handler(request, page_id):
     is active or expired. To balance that, it requires a logged in user.
     """
     page = get_object_or_404(Page, pk=page_id)
+    # Note: Does not call finalize_response so that response processors
+    # will not kick in, as they might cache the page or do something
+    # equally inappropriate. We are just previewing the page, move along.
     page.setup_request(request)
     return _build_page_response(page, request)
