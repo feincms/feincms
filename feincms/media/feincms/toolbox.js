@@ -31,9 +31,19 @@ var replace_elements = function(data) {
 
 /* OnClick handler to toggle a boolean field via AJAX */
 var inplace_toggle_boolean = function(item_id, attr) {
-    $.post('.', { '__cmd': 'toggle_boolean', 'item_id': item_id, 'attr': attr },
-           replace_elements,
-           'json');
+    $.ajax({
+      url: ".",
+      type: "POST",
+      dataType: "json",
+      data: { '__cmd': 'toggle_boolean', 'item_id': item_id, 'attr': attr },
+
+      success: replace_elements,
+
+      error: function(xhr, status, err) {
+          alert("Unable to toggle " + attr + ": " + xhr.responseText);
+      },
+    });
+
     return false;
 }
 

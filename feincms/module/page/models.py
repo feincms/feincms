@@ -645,6 +645,10 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         Instead of just showing an on/off boolean, also indicate whether this
         page is not visible because of publishing dates or inherited status.
         """
+        if not hasattr(self, "_visible_pages"):
+            self._visible_pages = list() # Sanity check in case this is not already defined
+
+        # TODO: Couldn't this simply check page.get_ancestors(visible=False).count()?
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
@@ -665,7 +669,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         retval = []
         for c in page.get_descendants(include_self=True):
             retval.append(self.is_visible_admin(c))
-        return map(lambda page: self.is_visible_admin(page), page.get_descendants(include_self=True))
+        return retval
     is_visible_admin.editable_boolean_result = is_visible_recursive
 
 # ------------------------------------------------------------------------

@@ -112,9 +112,23 @@ class ItemEditor(admin.ModelAdmin):
         if res:
             return self._frontend_editing_view(request, res.group(1), res.group(2), res.group(3))
 
-        ModelForm = modelform_factory(self.model, exclude=('parent',),
+        opts = self.model._meta
+        try:
+            obj = self.model._default_manager.get(pk=unquote(object_id))
+        except self.model.DoesNotExist:
+            raise Http404
+
+        if not self.has_change_permission(request, obj):
+            raise PermissionDenied
+
+
+        ModelForm = self.get_form(
+            request,
+            obj,
+            exclude=['parent'],
             formfield_callback=self._formfield_callback(request=request),
-            form=self.form)
+            form=self.form
+        )
 
         # generate a formset type for every concrete content type
         inline_formset_types = [(
@@ -124,15 +138,6 @@ class ItemEditor(admin.ModelAdmin):
                 form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm),
                 formfield_callback=self._formfield_callback(request=request))
             ) for content_type in self.model._feincms_content_types]
-
-        opts = self.model._meta
-        try:
-            obj = self.model._default_manager.get(pk=unquote(object_id))
-        except self.model.DoesNotExist:
-            raise Http404
-
-        if not self.has_change_permission(request, obj):
-            raise PermissionDenied
 
         if request.method == 'POST':
             model_form = ModelForm(request.POST, request.FILES, instance=obj)

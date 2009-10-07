@@ -1,13 +1,14 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
-from django.contrib.admin.util import unquote
 from django.db.models.query import QuerySet
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
+
+import logging
 
 
 # ------------------------------------------------------------------------
@@ -138,7 +139,7 @@ class TreeEditorQuerySet(QuerySet):
             include_pages = set()
             # Order by 'rght' will return the tree deepest nodes first;
             # this cuts down the number of queries considerably since all ancestors
-            # will already be in include_pages when they are checked, thus not 
+            # will already be in include_pages when they are checked, thus not
             # trigger additional queries.
             for p in super(TreeEditorQuerySet, self.order_by('rght')).iterator():
                 if p.parent_id and p.parent_id not in include_pages and \
@@ -269,19 +270,40 @@ class TreeEditor(admin.ModelAdmin):
         """
         Handle an AJAX toggle_boolean request
         """
-        self._collect_editable_booleans()
+        try:
+            item_id = int(request.POST.get('item_id', None))
+            attr = str(request.POST.get('attr', None))
+        except:
+            return HttpResponseBadRequest("Malformed request")
 
-        item_id = request.POST.get('item_id')
-        attr = request.POST.get('attr')
+        if not request.user.is_staff:
+            logging.warning("Denied AJAX request by non-staff %s to toggle boolean %s for page #%s", request.user, attr, item_id)
+            return HttpResponseForbidden("You do not have permission to access this page")
+
+        self._collect_editable_booleans()
 
         if not self._ajax_editable_booleans.has_key(attr):
             return HttpResponseBadRequest("not a valid attribute %s" % attr)
 
         try:
-            obj = self.model._default_manager.get(pk=unquote(item_id))
+            obj = self.model._default_manager.get(pk=item_id)
+        except self.model.DoesNotExist:
+            return HttpResponseNotFound("Object does not exist")
 
-            attr = str(attr)
+        can_change = False
 
+        if hasattr(obj, "user_can") and obj.user_can(request.user, change_page=True):
+            can_change = True
+        else:
+            can_change = request.user.has_perm("feincms.change_page")
+
+        if not can_change:
+            logging.warning("Denied AJAX request by %s to toggle boolean %s for page %s", request.user, attr, item_id)
+            return HttpResponseForbidden("You do not have permission to access this page")
+
+        logging.info("Processing request by %s to toggle %s on %s", request.user, attr, obj)
+
+        try:
             before_data = self._ajax_editable_booleans[attr](self, obj)
 
             setattr(obj, attr, not getattr(obj, attr))
@@ -293,7 +315,8 @@ class TreeEditor(admin.ModelAdmin):
             data = self._ajax_editable_booleans[attr](self, obj)
 
         except Exception, e:
-            return HttpResponse("FAILED " + unicode(e), mimetype="text/plain")
+            logging.exception("Unhandled exception while toggling %s on %s", attr, obj)
+            return HttpResponseServerError("Unable to toggle %s on %s" % (attr, obj))
 
         # Weed out unchanged cells to keep the updates small. This assumes
         # that the order a possible get_descendents() returns does not change
