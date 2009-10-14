@@ -22,7 +22,10 @@ def handler(request, path=None):
         request._feincms_applicationcontents_fragments = {}
 
     page = Page.objects.best_match_for_path(path, raise404=True)
+    return build_page_response(page, request)
 
+
+def build_page_response(page, request):
     from django.core.cache import cache as django_cache
 
     # Try to avoid the lookup of app contents by caching, since nodes
