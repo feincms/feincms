@@ -37,7 +37,7 @@ You don't need to do anything else as long as you use the built-in
     class BlogCategoriesNavigationExtension(NavigationExtension):
         name = _('blog categories')
 
-        def children(self, page):
+        def children(self, page, **kwargs):
             for category in Category.objects.all():
                 yield PagePretender(
                     title=category.name,
@@ -47,7 +47,7 @@ You don't need to do anything else as long as you use the built-in
     class PassthroughExtension(NavigationExtension):
         name = 'passthrough extension'
 
-        def children(self, page):
+        def children(self, page, **kwargs):
             for p in page.children.in_navigation():
                 yield p
 
