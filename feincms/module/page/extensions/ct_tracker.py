@@ -54,7 +54,7 @@ def page_count_content_types(self):
         if count:
             if not ct_inventory.has_key(region):
                 ct_inventory[region] = []
-            ct_inventory[region].append(self._feincms_content_types[ct_idx].django_content_type.id)
+            ct_inventory[region].append(self._feincms_content_types[ct_idx]._django_content_type.id)
     return ct_inventory
 
 # ------------------------------------------------------------------------
@@ -68,7 +68,7 @@ def page_get_content_types_for_region(self, region):
     if inv is not None:
         region_ct_inventory = inv.get(region.key, [])
         for ct in self._feincms_content_types:
-            retval.append( (ct.django_content_type.id in region_ct_inventory) and 1 or 0 )
+            retval.append( (ct._django_content_type.id in region_ct_inventory) and 1 or 0 )
 
     # print "1", retval
     # print "2", self.orig_get_content_types_for_region(region)
