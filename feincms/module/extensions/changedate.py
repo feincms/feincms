@@ -19,8 +19,8 @@ def pre_save_handler(sender, instance, **kwargs):
     instance.modification_date = now
 
 def register(cls, admin_cls):
-    cls.add_to_class('creation_date',     models.DateTimeField(_('creation date'),     editable=False))
-    cls.add_to_class('modification_date', models.DateTimeField(_('modification date'), editable=False))
+    cls.add_to_class('creation_date',     models.DateTimeField(_('creation date'),     null=True, editable=False))
+    cls.add_to_class('modification_date', models.DateTimeField(_('modification date'), null=True, editable=False))
 
     cls.cache_key_components.append(lambda page: page.modification_date and page.modification_date.strftime('%s'))
 

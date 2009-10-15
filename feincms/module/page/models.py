@@ -13,6 +13,7 @@ from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.db.transaction import commit_on_success
 
 import mptt
 
@@ -242,6 +243,13 @@ class Page(Base):
     short_title.admin_order_field = 'title'
     short_title.short_description = _('title')
 
+    def __init__(self, *args, **kwargs):
+        super(Page, self).__init__(*args, **kwargs)
+        # Cache a copy of the loaded _cached_url value so we can reliably
+        # determine whether it has been changed in the save handler:
+        self._original_cached_url = self._cached_url
+
+    @commit_on_success
     def save(self, *args, **kwargs):
         cached_page_urls = {}
 
@@ -256,8 +264,15 @@ class Page(Base):
         cached_page_urls[self.id] = self._cached_url
         super(Page, self).save(*args, **kwargs)
 
-        # make sure that we get the descendants back after their parents
+        # If our cached URL changed we need to update all descendants to
+        # reflect the changes. Since this is a very expensive operation
+        # on large sites we'll check whether our _cached_url actually changed
+        # or if the updates weren't navigation related:
+        if self._cached_url == self._original_cached_url:
+            return
+
         pages = self.get_descendants().order_by('lft')
+
         for page in pages:
             if page.override_url:
                 page._cached_url = page.override_url

@@ -121,11 +121,6 @@ class ApplicationContent(models.Model):
         return request._feincms_applicationcontents.get(self.id, u'')
 
     def process(self, request):
-        # prepare storage for rendered application contents
-        if not hasattr(request, '_feincms_applicationcontents'):
-            request._feincms_applicationcontents = {}
-            request._feincms_applicationcontents_fragments = {}
-
         page_url = self.parent.get_absolute_url()
 
         # Get the rest of the URL

@@ -16,6 +16,11 @@ def handler(request, path=None):
     if path is None:
         path = request.path
 
+    # prepare storage for rendered application contents
+    if not hasattr(request, '_feincms_applicationcontents'):
+        request._feincms_applicationcontents = {}
+        request._feincms_applicationcontents_fragments = {}
+
     page = Page.objects.best_match_for_path(path, raise404=True)
     return build_page_response(page, request)
 
