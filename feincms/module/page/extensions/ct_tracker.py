@@ -23,19 +23,6 @@ from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 
 # ------------------------------------------------------------------------
-_django_content_type_cache = {}
-
-def get_django_content_type(cls):
-    key = cls # cls.__module__ + '.' + cls.__name__
-    dct = _django_content_type_cache.get(key, None)
-    if dct is None:
-        #print "### miss"
-        _django_content_type_cache[key] = dct = ContentType.objects.get_for_model(cls)
-
-    #print "django content type for", cls, "with key", key, "is", dct
-    return dct
-
-# ------------------------------------------------------------------------
 def page_count_content_types(self):
     """
     Returns a representation of all the content types present on a page.
@@ -68,7 +55,7 @@ def page_count_content_types(self):
         if count:
             if not ct_inventory.has_key(region):
                 ct_inventory[region] = []
-            ct_inventory[region].append(get_django_content_type(self._feincms_content_types[ct_idx]).id)
+            ct_inventory[region].append(ContentType.objects.get_for_model(self._feincms_content_types[ct_idx]).id)
     return ct_inventory
 
 # ------------------------------------------------------------------------
@@ -76,16 +63,24 @@ def page_get_content_types_for_region(self, region):
     """
     Overrides Page.get_content_types_for_region.
     """
+
+    # Prime translation map and cache it in the class. This needs to be
+    # done late as opposed to at class definition time as not all information
+    # is ready, especially when we are doing a "syncdb" the ContentType table
+    # does not yet exist
+    tr_map = getattr(self.__class__, '_django_ct_to_feincms_ct_map', None)
+    if tr_map is None:
+        tr_map = { }
+        for idx, ct in enumerate(self._feincms_content_types):
+            tr_map[ContentType.objects.get_for_model(ct).id] = idx
+        setattr(self.__class__, '_django_ct_to_feincms_ct_map', tr_map)
+
     inv = simplejson.loads(self._ct_inventory)
 
-    retval = []
-    if inv is not None:
-        region_ct_inventory = inv.get(region.key, [])
-        for ct in self._feincms_content_types:
-            retval.append( (get_django_content_type(ct).id in region_ct_inventory) and 1 or 0 )
-
-    # print "1", retval
-    # print "2", self.orig_get_content_types_for_region(region)
+    retval = [0] * len(self._feincms_content_types)
+    region_ct_inventory = inv.get(region.key, [])
+    for django_ct in region_ct_inventory:
+        retval[tr_map[django_ct]] = 1
     
     return retval
 
