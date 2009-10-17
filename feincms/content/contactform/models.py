@@ -48,7 +48,12 @@ class ContactFormContent(models.Model):
 
                 return render_to_string('content/contactform/thanks.html')
         else:
-            form = self.form(initial={'subject': self.subject})
+            initial = {'subject': self.subject}
+            if request.user.is_authenticated():
+                initial['email'] = request.user.email
+                initial['name'] = request.user.get_full_name()
+
+            form = self.form(initial=initial)
 
         return render_to_string('content/contactform/form.html', {
             'content': self,
