@@ -58,9 +58,14 @@ class SectionContent(models.Model):
         cls.cleanse = cleanse
 
     def render(self, **kwargs):
+        if self.mediafile:
+            mediafile_type = self.mediafile.type
+        else:
+            mediafile_type = 'nomedia'
+
         return render_to_string([
-            'content/section/%s_%s.html' % (self.mediafile.type, self.type),
-            'content/section/%s.html' % self.mediafile.type,
+            'content/section/%s_%s.html' % (mediafile_type, self.type),
+            'content/section/%s.html' % mediafile_type,
             'content/section/%s.html' % self.type,
             'content/section/default.html',
             ], {'content': self})

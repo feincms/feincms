@@ -147,7 +147,7 @@ def prefill_entry_list(queryset, *attrs, **kwargs):
             # Process reverse foreign keys
 
             related_queryset = related_model.objects.filter(
-                    parent__in=queryset).select_related('parent', 'region')
+                    parent__in=queryset).select_related('parent', 'region').order_by('ordering')
 
             # Apply region filtering if a region has been passed
             # We do not need to apply the same filtering to m2m relations, because
