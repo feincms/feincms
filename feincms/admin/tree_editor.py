@@ -295,7 +295,7 @@ class TreeEditor(admin.ModelAdmin):
         if hasattr(obj, "user_can") and obj.user_can(request.user, change_page=True):
             can_change = True
         else:
-            can_change = request.user.has_perm("feincms.change_page")
+            can_change = request.user.has_perm("page.change_page")
 
         if not can_change:
             logging.warning("Denied AJAX request by %s to toggle boolean %s for page %s", request.user, attr, item_id)
