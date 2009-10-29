@@ -50,6 +50,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
     created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
+    file_size  = models.IntegerField(_("file size"), blank=True, null=True, editable=False)
 
     categories = models.ManyToManyField(Category, verbose_name=_('categories'),
                                         blank=True, null=True)
@@ -68,6 +69,10 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         categories_tmp = self.categories.values_list('title', flat=True)
         return ', '.join(categories_tmp)
     get_categories_as_string.short_description = _('categories')
+
+    def formatted_file_size(self):
+        return filesizeformat(self.file_size)
+    formatted_file_size.short_description = _("file size")
 
     @classmethod
     def reconfigure(cls, upload_to=None, storage=None):
@@ -122,16 +127,6 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     file_info.short_description = _('file info')
     file_info.allow_tags = True
 
-    def file_size(self):
-        # TODO: Strongly consider moving this to a cached value in the DB to avoid large numbers of stat() calls in the admin:
-        try:
-            return filesizeformat(self.file.size)
-        except (OSError, IOError, ValueError), e:
-            logging.error("Unable to read file size for %s: %s", self, e)
-            return -1
-
-    file_size.short_description = _('file size')
-
     def determine_file_type(self, name):
         """
         >>> t = MediaFileBase()
@@ -155,6 +150,12 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         if self.id is None:
             created = datetime.now()
         self.type = self.determine_file_type(self.file.name)
+
+        if self.file and not self.file_size:
+            try:
+                self.file_size = self.file.size
+            except (OSError, IOError, ValueError), e:
+                logging.error("Unable to read file size for %s: %s", self, e)
 
         super(MediaFileBase, self).save(*args, **kwargs)
 
@@ -195,7 +196,7 @@ class MediaFileTranslationInline(admin.StackedInline):
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     inlines        = [MediaFileTranslationInline]
-    list_display   = ['__unicode__', 'file_type', 'copyright', 'file_info', 'file_size', 'created', 'get_categories_as_string']
+    list_display   = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'created', 'get_categories_as_string']
     list_filter    = ['categories', 'type']
     search_fields  = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
