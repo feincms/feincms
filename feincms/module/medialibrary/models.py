@@ -198,6 +198,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_display   = ['__unicode__', 'file_type', 'copyright', 'file_info', 'file_size', 'created', 'get_categories_as_string']
     list_filter    = ['categories', 'type']
     search_fields  = ['copyright', 'file', 'translations__caption']
+    filter_horizontal = ("categories",)
 
 #-------------------------------------------------------------------------
 
