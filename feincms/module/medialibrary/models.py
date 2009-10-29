@@ -18,6 +18,7 @@ from feincms.translations import TranslatedObjectMixin, Translation, \
 
 import re
 import os
+import logging
 
 # ------------------------------------------------------------------------
 class Category(models.Model):
@@ -45,7 +46,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     fs = FileSystemStorage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
                            base_url=settings.FEINCMS_MEDIALIBRARY_URL)
 
-    file = models.FileField(_('file'), upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=fs)
+    file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=fs)
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
     created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
@@ -94,9 +95,9 @@ class MediaFileBase(Base, TranslatedObjectMixin):
             pass
         except AttributeError, e:
             pass
-        
+
         return os.path.basename(self.file.name)
-            
+
     def get_absolute_url(self):
         return self.file.url
 
@@ -122,7 +123,13 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     file_info.allow_tags = True
 
     def file_size(self):
-        return filesizeformat(self.file.size)
+        # TODO: Strongly consider moving this to a cached value in the DB to avoid large numbers of stat() calls in the admin:
+        try:
+            return filesizeformat(self.file.size)
+        except (OSError, IOError, ValueError), e:
+            logging.error("Unable to read file size for %s: %s", self, e)
+            return -1
+
     file_size.short_description = _('file size')
 
     def determine_file_type(self, name):
