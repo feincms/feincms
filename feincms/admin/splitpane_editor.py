@@ -2,7 +2,7 @@ from django import template
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render_to_response
 from django.utils.text import capfirst
 
@@ -31,7 +31,7 @@ class SplitPaneEditor(admin.ModelAdmin):
             elif cmd == 'subtree':
                 return self._subtree_view(request)
 
-            return HttpResponse('Oops. AJAX request not understood.')
+            return HttpResponseBadRequest('Oops. AJAX request not understood.')
 
         if '_tree' in request.GET:
             # Left frame

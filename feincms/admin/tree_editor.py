@@ -345,7 +345,7 @@ class TreeEditor(admin.ModelAdmin):
             elif cmd == 'move_node':
                 return self._move_node(request)
             else:
-                return HttpResponse('Oops. AJAX request not understood.')
+                return HttpResponseBadRequest('Oops. AJAX request not understood.')
 
         self._refresh_changelist_caches()
 
