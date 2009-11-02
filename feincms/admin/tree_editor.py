@@ -49,7 +49,7 @@ def _build_tree_structure(cls):
         if n_parent_id:
             add_as_descendant(n_parent_id, p)
 
-    for p_id, parent_id in cls.objects.order_by('tree_id', 'lft').values_list("pk", "parent_id"):
+    for p_id, parent_id in cls.objects.order_by(cls._meta.tree_id_attr, cls._meta.left_attr).values_list("pk", "%s_id" % cls._meta.parent_attr):
 
         all_nodes[p_id] = { 'id': p_id, 'children' : [ ], 'descendants' : [ ], 'parent' : parent_id }
 
