@@ -147,8 +147,9 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         return self.filetypes[-1][0]
 
     def save(self, *args, **kwargs):
-        if self.id is None:
-            created = datetime.now()
+        if not self.id and not self.created:
+            self.created = datetime.now()
+
         self.type = self.determine_file_type(self.file.name)
 
         if self.file and not self.file_size:
