@@ -7,6 +7,9 @@ from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.admin.editor import ItemEditorForm
+from feincms.contrib.fields import JSONField
+
 try:
     from threading import local
 except ImportError:
@@ -107,6 +110,11 @@ urlresolvers.reverse = reverse
 
 
 class ApplicationContent(models.Model):
+    #: parameters is used to serialize instance-specific data which will be
+    # provided to the view code. This allows customization (e.g. "Embed
+    # MyBlogApp for blog <slug>")
+    parameters = JSONField(null=True, editable=False)
+
     class Meta:
         abstract = True
         verbose_name = _('application content')
@@ -114,8 +122,60 @@ class ApplicationContent(models.Model):
 
     @classmethod
     def initialize_type(cls, APPLICATIONS):
-        cls.add_to_class('urlconf_path', models.CharField(_('application'), max_length=100,
-                                                          choices=APPLICATIONS))
+        # Generate a more flexible application configuration structure from
+        # the legacy pattern:
+
+        # TODO: Consider changing the input signature to something cleaner, at
+        # the cost of a one-time backwards incompatible change
+
+        APP_CONFIG = {}
+        for i in APPLICATIONS:
+            if not 2 <= len(i) <= 3:
+                raise ValueError("APPLICATIONS must be provided with tuples containing at least two parameters (urls, name) and an optional extra config dict")
+
+            urls, name = i[0:2]
+
+            if len(i) == 3:
+                app_conf = i[2]
+                if not isinstance(app_conf, dict):
+                    raise ValueError("The third parameter of an APPLICATIONS entry must be a dict!")
+            else:
+                app_conf = {}
+
+            APP_CONFIG[urls] = {
+                "urls":     urls,
+                "name":     name,
+                "config":   app_conf
+            }
+
+        cls.add_to_class("APP_CONFIG",  APP_CONFIG)
+
+        cls.add_to_class('urlconf_path',
+            models.CharField(_('application'), max_length=100, choices=[(c['urls'], c['name']) for c in APP_CONFIG.values()])
+        )
+
+
+        class ApplicationContentItemEditorForm(ItemEditorForm):
+            app_config = {}
+
+            def __init__(self, instance=None, *args, **kwargs):
+                super(ApplicationContentItemEditorForm, self).__init__(instance=instance, *args, **kwargs)
+
+                if instance:
+                    self.app_config = APP_CONFIG[instance.urlconf_path]['config']
+                    if self.app_config['register_appcontent_form']:
+                        self.app_config['register_appcontent_form'](self, *args, **kwargs)
+
+
+            def clean(self, *args, **kwargs):
+                cleaned_data = super(ApplicationContentItemEditorForm, self).clean(*args, **kwargs)
+
+                # TODO: Check for newly added instances so we can force a re-validation of their custom fields
+
+                return cleaned_data
+
+        #: This provides hooks for us to customize the admin interface for embedded instances:
+        cls.feincms_item_editor_form = ApplicationContentItemEditorForm
 
     def render(self, request, **kwargs):
         return request._feincms_applicationcontents.get(self.id, u'')
