@@ -116,6 +116,8 @@ class ApplicationContent(models.Model):
     # MyBlogApp for blog <slug>")
     parameters = JSONField(null=True, editable=False)
 
+    ALL_APPS_CONFIG = {}
+
     class Meta:
         abstract = True
         verbose_name = _('application content')
@@ -129,7 +131,6 @@ class ApplicationContent(models.Model):
         # TODO: Consider changing the input signature to something cleaner, at
         # the cost of a one-time backwards incompatible change
 
-        ALL_APPS_CONFIG = {}
         for i in APPLICATIONS:
             if not 2 <= len(i) <= 3:
                 raise ValueError("APPLICATIONS must be provided with tuples containing at least two parameters (urls, name) and an optional extra config dict")
@@ -144,16 +145,14 @@ class ApplicationContent(models.Model):
             else:
                 app_conf = {}
 
-            ALL_APPS_CONFIG[urls] = {
+            cls.ALL_APPS_CONFIG[urls] = {
                 "urls":     urls,
                 "name":     name,
                 "config":   app_conf
             }
 
-        cls.ALL_APPS_CONFIG = ALL_APPS_CONFIG
-
         cls.add_to_class('urlconf_path',
-            models.CharField(_('application'), max_length=100, choices=[(c['urls'], c['name']) for c in ALL_APPS_CONFIG.values()])
+            models.CharField(_('application'), max_length=100, choices=[(c['urls'], c['name']) for c in cls.ALL_APPS_CONFIG.values()])
         )
 
         class ApplicationContentItemEditorForm(ItemEditorForm):
@@ -164,8 +163,8 @@ class ApplicationContent(models.Model):
                 super(ApplicationContentItemEditorForm, self).__init__(instance=instance, *args, **kwargs)
 
                 if instance:
-                    self.app_config   = ALL_APPS_CONFIG[instance.urlconf_path]['config']
-                    admin_fields = self.app_config.get('admin_fields', {})
+                    self.app_config = cls.ALL_APPS_CONFIG[instance.urlconf_path]['config']
+                    admin_fields    = self.app_config.get('admin_fields', {})
 
                     if isinstance(admin_fields, dict):
                         self.custom_fields.update(admin_fields)
@@ -204,7 +203,7 @@ class ApplicationContent(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(ApplicationContent, self).__init__(*args, **kwargs)
-        self.app_config = self.ALL_APPS_CONFIG[self.urlconf_path]['config']
+        self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get('config', {})
 
     def render(self, request, **kwargs):
         return request._feincms_applicationcontents.get(self.id, u'')
