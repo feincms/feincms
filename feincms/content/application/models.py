@@ -1,3 +1,4 @@
+import functools
 import re
 
 from django.core import urlresolvers
@@ -128,7 +129,7 @@ class ApplicationContent(models.Model):
         # TODO: Consider changing the input signature to something cleaner, at
         # the cost of a one-time backwards incompatible change
 
-        APP_CONFIG = {}
+        ALL_APPS_CONFIG = {}
         for i in APPLICATIONS:
             if not 2 <= len(i) <= 3:
                 raise ValueError("APPLICATIONS must be provided with tuples containing at least two parameters (urls, name) and an optional extra config dict")
@@ -143,18 +144,17 @@ class ApplicationContent(models.Model):
             else:
                 app_conf = {}
 
-            APP_CONFIG[urls] = {
+            ALL_APPS_CONFIG[urls] = {
                 "urls":     urls,
                 "name":     name,
                 "config":   app_conf
             }
 
-        cls.add_to_class("APP_CONFIG",  APP_CONFIG)
+        cls.ALL_APPS_CONFIG = ALL_APPS_CONFIG
 
         cls.add_to_class('urlconf_path',
-            models.CharField(_('application'), max_length=100, choices=[(c['urls'], c['name']) for c in APP_CONFIG.values()])
+            models.CharField(_('application'), max_length=100, choices=[(c['urls'], c['name']) for c in ALL_APPS_CONFIG.values()])
         )
-
 
         class ApplicationContentItemEditorForm(ItemEditorForm):
             app_config    = {}
@@ -164,7 +164,7 @@ class ApplicationContent(models.Model):
                 super(ApplicationContentItemEditorForm, self).__init__(instance=instance, *args, **kwargs)
 
                 if instance:
-                    self.app_config   = APP_CONFIG[instance.urlconf_path]['config']
+                    self.app_config   = ALL_APPS_CONFIG[instance.urlconf_path]['config']
                     admin_fields = self.app_config.get('admin_fields', {})
 
                     if isinstance(admin_fields, dict):
@@ -202,6 +202,10 @@ class ApplicationContent(models.Model):
         #: This provides hooks for us to customize the admin interface for embedded instances:
         cls.feincms_item_editor_form = ApplicationContentItemEditorForm
 
+    def __init__(self, *args, **kwargs):
+        super(ApplicationContent, self).__init__(*args, **kwargs)
+        self.app_config = self.ALL_APPS_CONFIG[self.urlconf_path]['config']
+
     def render(self, request, **kwargs):
         return request._feincms_applicationcontents.get(self.id, u'')
 
@@ -219,6 +223,10 @@ class ApplicationContent(models.Model):
         except (ValueError, Resolver404):
             del _local.urlconf
             raise Resolver404
+
+        view_wrapper = self.app_config.get("view_wrapper", None)
+        if view_wrapper:
+            fn = functools.partial(urlresolvers.get_callable(view_wrapper), view=fn)
 
         try:
             output = fn(request, *args, **kwargs)
