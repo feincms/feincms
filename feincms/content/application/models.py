@@ -223,6 +223,12 @@ class ApplicationContent(models.Model):
             del _local.urlconf
             raise Resolver404
 
+        #: Variables from the ApplicationContent parameters are added to request
+        #  so we can expose them to our templates via the appcontent_parameters
+        #  context_processor
+
+        request._feincms_appcontent_parameters = self.parameters
+
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
             fn = functools.partial(urlresolvers.get_callable(view_wrapper), view=fn)
