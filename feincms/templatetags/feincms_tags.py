@@ -15,12 +15,15 @@ def _render_content(content, **kwargs):
 
 
 @register.simple_tag
-def feincms_render_region(page, region, request):
+def feincms_render_region(page, region, request, content_class=None):
     """
     {% feincms_render_region feincms_page "main" request %}
     """
 
     contents = getattr(page.content, region)
+
+    if content_class:
+        contents = [ c for c in contents if isinstance(c, content_class) ]
 
     return u''.join(_render_content(content, request=request) for content in contents)
 

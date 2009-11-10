@@ -55,3 +55,23 @@ def get_fragment(request, identifier):
         return request._feincms_applicationcontents_fragments[identifier]
     except (AttributeError, KeyError):
         return u''
+
+@register.simple_tag
+def feincms_render_region_appcontent(page, region, request):
+    """Render only the application content for the region
+
+    This allows template authors to choose whether their page behaves
+    differently when displaying embedded application subpages by doing
+    something like this::
+
+        {% if not in_appcontent_subpage %}
+            {% feincms_render_region feincms_page "main" request %}
+        {% else %}
+            {% feincms_render_region_appcontent feincms_page "main" request %}
+        {% endif %}
+    """
+    from feincms.templatetags.feincms_tags import feincms_render_region
+    from feincms.content.application.models import ApplicationContent
+
+    return feincms_render_region(page, region, request, content_class=ApplicationContent)
+

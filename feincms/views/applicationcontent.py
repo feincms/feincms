@@ -21,6 +21,10 @@ def handler(request, path=None):
         request._feincms_applicationcontents = {}
         request._feincms_applicationcontents_fragments = {}
 
+    # Used to provide additional app-specific context variables:
+    if not hasattr(request, '_feincms_appcontent_parameters'):
+        request._feincms_appcontent_parameters = {"in_appcontent_subpage": False}
+
     page = Page.objects.best_match_for_path(path, raise404=True)
     return build_page_response(page, request)
 
@@ -47,6 +51,8 @@ def build_page_response(page, request):
         # application content for this page, and raise a 404 otherwise.
         if not has_appcontent:
             raise Http404
+        else:
+            request._feincms_appcontent_parameters['in_appcontent_subpage'] = True
 
     # The monkey-patched reverse() method needs some information
     # for proximity analysis when determining the nearest
