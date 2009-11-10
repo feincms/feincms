@@ -137,8 +137,9 @@ class ApplicationContent(models.Model):
 
             if len(i) == 3:
                 app_conf = i[2]
+
                 if not isinstance(app_conf, dict):
-                    raise ValueError("The third parameter of an APPLICATIONS entry must be a dict!")
+                    raise ValueError("The third parameter of an APPLICATIONS entry must be a dict or the name of one!")
             else:
                 app_conf = {}
 
@@ -156,15 +157,24 @@ class ApplicationContent(models.Model):
 
 
         class ApplicationContentItemEditorForm(ItemEditorForm):
-            app_config = {}
+            app_config    = {}
+            custom_fields = {}
 
             def __init__(self, instance=None, *args, **kwargs):
                 super(ApplicationContentItemEditorForm, self).__init__(instance=instance, *args, **kwargs)
 
                 if instance:
-                    self.app_config = APP_CONFIG[instance.urlconf_path]['config']
-                    if self.app_config['register_appcontent_form']:
-                        self.app_config['register_appcontent_form'](self, *args, **kwargs)
+                    self.app_config   = APP_CONFIG[instance.urlconf_path]['config']
+                    admin_fields = self.app_config.get('admin_fields', {})
+
+                    if isinstance(admin_fields, dict):
+                        self.custom_fields.update(admin_fields)
+                    else:
+                        get_fields = urlresolvers.get_callable(admin_fields)
+                        self.custom_fields.update(get_fields(self, *args, **kwargs))
+
+                    for k, v in self.custom_fields.items():
+                        self.fields[k] = v
 
 
             def clean(self, *args, **kwargs):
@@ -173,6 +183,21 @@ class ApplicationContent(models.Model):
                 # TODO: Check for newly added instances so we can force a re-validation of their custom fields
 
                 return cleaned_data
+
+            def save(self, commit=True, *args, **kwargs):
+                # Django ModelForms return the model instance from save. We'll
+                # call save with commit=False first to do any necessary work &
+                # get the model so we can set .parameters to the values of our
+                # custom fields before calling save(commit=True)
+
+                m = super(ApplicationContentItemEditorForm, self).save(commit=False, *args, **kwargs)
+
+                m.parameters = dict((k, self.cleaned_data[k]) for k in self.custom_fields)
+
+                if commit:
+                    m.save(**kwargs)
+
+                return m
 
         #: This provides hooks for us to customize the admin interface for embedded instances:
         cls.feincms_item_editor_form = ApplicationContentItemEditorForm
