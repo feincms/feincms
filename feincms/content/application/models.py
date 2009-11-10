@@ -159,8 +159,10 @@ class ApplicationContent(models.Model):
             app_config    = {}
             custom_fields = {}
 
-            def __init__(self, instance=None, *args, **kwargs):
-                super(ApplicationContentItemEditorForm, self).__init__(instance=instance, *args, **kwargs)
+            def __init__(self, *args, **kwargs):
+                super(ApplicationContentItemEditorForm, self).__init__(*args, **kwargs)
+
+                instance = kwargs.get("instance", None)
 
                 if instance:
                     self.app_config = cls.ALL_APPS_CONFIG[instance.urlconf_path]['config']
@@ -206,7 +208,7 @@ class ApplicationContent(models.Model):
         self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get('config', {})
 
     def render(self, request, **kwargs):
-        return request._feincms_applicationcontents.get(self.id, u'')
+        return getattr(request, "_feincms_applicationcontents", {}).get(self.id, u'')
 
     def process(self, request):
         page_url = self.parent.get_absolute_url()
