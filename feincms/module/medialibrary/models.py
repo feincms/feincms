@@ -166,6 +166,7 @@ MediaFileBase.register_filetypes(
         ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
         ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
         ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
+        ('mp3', _('MP3'), lambda f: f.lower().endswith('.mp3')),
         ('other', _('Binary'), lambda f: True), # Must be last
     )
 

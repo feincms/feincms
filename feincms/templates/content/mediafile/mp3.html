@@ -1,0 +1,6 @@
+<p id="audioplayer_{{ content.id }}">{{ content.mediafile.translation.caption }}</p>
+<script type="text/javascript">  
+AudioPlayer.embed("audioplayer_{{ content.id }}", {soundFile: "{{ content.mediafile.file.url }}"});  
+</script> 
+<p>{{ content.mediafile.translation.caption }} <a href="{{ content.mediafile.file.url }}">(Download)</a></p>
+
