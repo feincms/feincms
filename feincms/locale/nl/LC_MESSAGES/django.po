@@ -511,7 +511,7 @@ msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr ""
-"Kies de module die subpagina's voor deze pagina definieert als jede "
+"Kies de module die subpagina's voor deze pagina definieert als je de "
 "navigatie wilt uitbreiden."
 
 #: module/page/extensions/symlinks.py:14
