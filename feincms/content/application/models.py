@@ -214,7 +214,18 @@ class ApplicationContent(models.Model):
         page_url = self.parent.get_absolute_url()
 
         # Get the rest of the URL
-        path = re.sub('^' + re.escape(page_url[:-1]), '', request.path)
+
+        # Provide a way for appcontent items to customize URL processing by
+        # altering the perceived path of the page:
+        if "path_mapper" in self.app_config:
+            path_mapper = urlresolvers.get_callable(self.app_config["path_mapper"])
+            path, page_url = path_mapper(
+                request.path,
+                page_url,
+                appcontent_parameters=self.parameters
+            )
+        else:
+            path = re.sub('^' + re.escape(page_url[:-1]), '', request.path)
 
         # Change the prefix and urlconf for the monkey-patched reverse function ...
         _local.urlconf = (self.urlconf_path, page_url)
@@ -232,7 +243,11 @@ class ApplicationContent(models.Model):
 
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
-            fn = functools.partial(urlresolvers.get_callable(view_wrapper), view=fn, appcontent_parameters=self.parameters)
+            fn = functools.partial(
+                urlresolvers.get_callable(view_wrapper),
+                view=fn,
+                appcontent_parameters=self.parameters
+            )
 
         try:
             output = fn(request, *args, **kwargs)
