@@ -48,7 +48,10 @@ def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_
     use_coverage = hasattr(settings, 'COVERAGE_MODULES') and len(settings.COVERAGE_MODULES)
     if use_coverage:
         cov = coverage()
-        cov.use_cache(0) # Do not cache any of the coverage.py stuff
+        cov.use_cache(0)                    # Do not cache any of the coverage.py stuff
+        cov.exclude('^\s*$')                # Exclude empty lines
+        cov.exclude('^\s*#.*$')             # Exclude comment blocks
+        cov.exclude('^\s*(import|from)\s')  # Exclude import statements
         cov.start()
 
     settings.DEBUG = False
