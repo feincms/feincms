@@ -364,7 +364,8 @@ class PagesTestCase(TestCase):
         self.assertContains(self.client.post('/admin/page/page/', {
             '__cmd': 'notexists',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
-            'Oops. AJAX request not understood.')
+            'Oops. AJAX request not understood.',
+            status_code=400)
 
     def test_08_publishing(self):
         self.create_default_page_set()
@@ -711,7 +712,10 @@ class PagesTestCase(TestCase):
         self.assertEqual(t.render(ctx), '')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_breadcrumbs feincms_page %}')
-        self.assertEqual(t.render(ctx), u'<a href="/test-page/">Test page</a> &gt; Test child page')
+        rendered = t.render(ctx)
+        self.assertTrue("Test child page" in rendered)
+        self.assertTrue('href="/test-page/">Test Page</a>' in rendered, msg="The parent page should be a breadcrumb link")
+        self.assertTrue('href="/test-page/test-child-page/"' not in rendered, msg="The current page should not be a link in the breadcrumbs")
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
         self.assertEqual(t.render(ctx), '/test-page/test-child-page/,/test-page/test-child-page/page3/')
