@@ -17,45 +17,70 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-import os, shutil, sys, unittest
+import os, sys, logging
+from coverage import coverage
 
 sys.path = [os.path.join(os.path.dirname(__file__), "lib")] + sys.path
 
-import coverage
 from django.test.simple import run_tests as django_test_runner
-
 from django.conf import settings
+from django.db.models import get_app, get_apps
 
 def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_tests=[]):
-  """Custom test runner.  Follows the django.test.simple.run_tests() interface."""
-  # Start code coverage before anything else if necessary
-  if hasattr(settings, 'COVERAGE_MODULES') and not test_labels:
-    coverage.use_cache(0) # Do not cache any of the coverage.py stuff
-    coverage.start()
+    """Custom test runner.  Follows the django.test.simple.run_tests() interface."""
 
-  test_results = django_test_runner(test_labels, verbosity, interactive, extra_tests)
+    site_name = settings.SETTINGS_MODULE.split(".")[0]
+    output_dir = "/tmp/%s" % site_name
 
-  # Stop code coverage after tests have completed
-  if hasattr(settings, 'COVERAGE_MODULES') and not test_labels:
-    coverage.stop()
+    # If the user provided modules on the command-line we'll only test the listed modules:
+    if not test_labels:
+        test_labels = []
+
+
+        for app in get_apps():
+            pkg = app.__package__ or "" # Avoid issue with Nones
+            if pkg and pkg.startswith(site_name):
+                test_labels.append(pkg.split(".")[-1])
+
+        test_labels.sort()
+
+        logging.info("Automatically generated test labels for %s: %s", site_name, ", ".join(test_labels))
+
+    # Start code coverage before anything else if necessary
+    use_coverage = hasattr(settings, 'COVERAGE_MODULES') and len(settings.COVERAGE_MODULES)
+    if use_coverage:
+        cov = coverage()
+        cov.use_cache(0)                    # Do not cache any of the coverage.py stuff
+        cov.exclude('^\s*$')                # Exclude empty lines
+        cov.exclude('^\s*#.*$')             # Exclude comment blocks
+        cov.exclude('^\s*(import|from)\s')  # Exclude import statements
+        cov.start()
+
+    settings.DEBUG = False
+
+    test_results = django_test_runner(test_labels, verbosity, interactive, extra_tests)
+
+    # Stop code coverage after tests have completed
+    if use_coverage:
+        cov.stop()
+
+    coverage_modules = filter(None, [
+        sys.modules[k] for k in sys.modules if any(l for l in test_labels if k.startswith(get_app(l).__package__))
+    ])
 
     # Print code metrics header
     print ''
-    print '----------------------------------------------------------------------'
+    print '-------------------------------------------------------------------------'
     print ' Unit Test Code Coverage Results'
-    print '----------------------------------------------------------------------'
+    print '-------------------------------------------------------------------------'
 
-  # Report code coverage metrics
-  if hasattr(settings, 'COVERAGE_MODULES') and not test_labels:
-    coverage_modules = []
-    for module in settings.COVERAGE_MODULES:
-      coverage_modules.append(__import__(module, globals(), locals(), ['']))
+    # Report code coverage metrics
+    cov.report(coverage_modules)
 
-    coverage.report(coverage_modules, show_missing=1)
+    cov.html_report(coverage_modules, directory=output_dir)
+    cov.xml_report(coverage_modules, outfile=os.path.join(output_dir, "coverage.xml"))
 
     # Print code metrics footer
-    print '----------------------------------------------------------------------'
+    print '-------------------------------------------------------------------------'
 
-  return test_results
-
-# test_runner_with_coverage()
+    return test_results
