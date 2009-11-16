@@ -12,7 +12,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'
-DATABASE_NAME = 'example.db'
+DATABASE_NAME = os.path.join(os.path.dirname(__file__), 'example.db')
 
 TIME_ZONE = 'America/Chicago'
 
