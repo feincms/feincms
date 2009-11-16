@@ -26,14 +26,16 @@ from django.test.simple import run_tests as django_test_runner
 from django.conf import settings
 from django.db.models import get_app, get_apps
 
-def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_tests=[], output_dir="/tmp/nasascience"):
+def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_tests=[]):
     """Custom test runner.  Follows the django.test.simple.run_tests() interface."""
+
+    site_name = settings.SETTINGS_MODULE.split(".")[0]
+    output_dir = "/tmp/%s" % site_name
 
     # If the user provided modules on the command-line we'll only test the listed modules:
     if not test_labels:
         test_labels = []
 
-        site_name = settings.SETTINGS_MODULE.split(".")[0]
 
         for app in get_apps():
             pkg = app.__package__ or "" # Avoid issue with Nones
