@@ -26,10 +26,9 @@ from django.test.simple import run_tests as django_test_runner
 from django.conf import settings
 from django.db.models import get_app, get_apps
 
-def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_tests=[], html_output_dir="/tmp/nasascience"):
+def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_tests=[], output_dir="/tmp/nasascience"):
     """Custom test runner.  Follows the django.test.simple.run_tests() interface."""
 
-    use_coverage = hasattr(settings, 'COVERAGE_MODULES') and len(settings.COVERAGE_MODULES)
     # If the user provided modules on the command-line we'll only test the listed modules:
     if not test_labels:
         test_labels = []
@@ -45,22 +44,24 @@ def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_
 
         logging.info("Automatically generated test labels for %s: %s", site_name, ", ".join(test_labels))
 
-
-    coverage_modules = map(get_app, test_labels)
-
-    settings.DEBUG = False
-
     # Start code coverage before anything else if necessary
+    use_coverage = hasattr(settings, 'COVERAGE_MODULES') and len(settings.COVERAGE_MODULES)
     if use_coverage:
         cov = coverage()
         cov.use_cache(0) # Do not cache any of the coverage.py stuff
         cov.start()
+
+    settings.DEBUG = False
 
     test_results = django_test_runner(test_labels, verbosity, interactive, extra_tests)
 
     # Stop code coverage after tests have completed
     if use_coverage:
         cov.stop()
+
+    coverage_modules = filter(None, [
+        sys.modules[k] for k in sys.modules if any(l for l in test_labels if k.startswith(get_app(l).__package__))
+    ])
 
     # Print code metrics header
     print ''
@@ -71,7 +72,8 @@ def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_
     # Report code coverage metrics
     cov.report(coverage_modules)
 
-    cov.html_report(coverage_modules, directory=html_output_dir)
+    cov.html_report(coverage_modules, directory=output_dir)
+    cov.xml_report(coverage_modules, outfile=os.path.join(output_dir, "coverage.xml"))
 
     # Print code metrics footer
     print '-------------------------------------------------------------------------'
