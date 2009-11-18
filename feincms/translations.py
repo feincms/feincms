@@ -106,6 +106,8 @@ class TranslatedObjectMixin(object):
             trans = self._get_translation_object(self.translations.all(), language_code)
             cache.set(key, trans)
 
+        # Assign self to prevent additional database queries
+        trans.parent = self
         return trans
 
     translation = property(get_translation)
