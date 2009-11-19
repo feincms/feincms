@@ -198,7 +198,7 @@ class MediaFileTranslationInline(admin.StackedInline):
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
-    list_display      = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'created', 'get_categories_as_string']
+    list_display      = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'created']
     list_filter       = ['categories', 'type']
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
