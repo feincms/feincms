@@ -21,8 +21,18 @@ import re
 import os
 import logging
 
+class CategoryManager(models.Manager):
+    """
+    Simple manager which exists only to supply ``.select_related("parent")``
+    on querysets since we can't even __unicode__ efficiently without it.
+    """
+    def get_query_set(self):
+        return super(CategoryManager, self).get_query_set().select_related("parent")
+
 # ------------------------------------------------------------------------
 class Category(models.Model):
+    objects = CategoryManager()
+
     title = models.CharField(_('title'), max_length=200)
     parent = models.ForeignKey('self', blank=True, null=True,
         related_name='children', limit_choices_to={'parent__isnull': True},
