@@ -1,4 +1,3 @@
-import functools
 import re
 
 from django.core import urlresolvers
@@ -7,6 +6,11 @@ from django.db import models
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
+try:
+    from functools import partial
+except ImportError:
+    from django.utils.functional import curry as partial
 
 from feincms.admin.editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
@@ -243,7 +247,7 @@ class ApplicationContent(models.Model):
 
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
-            fn = functools.partial(
+            fn = partial(
                 urlresolvers.get_callable(view_wrapper),
                 view=fn,
                 appcontent_parameters=self.parameters
