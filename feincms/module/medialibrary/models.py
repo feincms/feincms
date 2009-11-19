@@ -8,6 +8,7 @@ from django.contrib import admin
 from django.conf import settings as django_settings
 from django.db import models
 from django.template.defaultfilters import filesizeformat
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
@@ -94,14 +95,23 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         cls._meta.get_field('type').choices[:] = choices
 
     def __unicode__(self):
-        try:
-            return unicode(self.translation)
-        except models.ObjectDoesNotExist:
-            pass
-        except AttributeError, e:
-            pass
+        trans = None
 
-        return os.path.basename(self.file.name)
+        # This might be provided using a .extra() clause to avoid hundreds of extra queries:
+        if hasattr(self, "preferred_translation"):
+            trans = getattr(self, "preferred_translation", u"")
+        else:
+            try:
+                trans = unicode(self.translation)
+            except models.ObjectDoesNotExist:
+                pass
+            except AttributeError, e:
+                pass
+
+        if trans:
+            return trans
+        else:
+            return os.path.basename(self.file.name)
 
     def get_absolute_url(self):
         return self.file.url
@@ -203,6 +213,28 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
+
+    def queryset(self, request):
+        qs = super(MediaFileAdmin, self).queryset(request)
+
+        # FIXME: This is an ugly hack but it avoids 1-3 queries per *FILE*
+        # retrieving the translation information
+        if django_settings.DATABASE_ENGINE == 'postgresql_psycopg2':
+            qs = qs.extra(
+                select = {
+                    'preferred_translation':
+                        """SELECT caption FROM medialibrary_mediafiletranslation
+                        WHERE medialibrary_mediafiletranslation.parent_id = medialibrary_mediafile.id
+                        ORDER BY
+                            language_code = %s DESC,
+                            language_code = %s DESC,
+                            LENGTH(language_code) DESC
+                        LIMIT 1
+                        """
+                },
+                select_params = (translation.get_language(), django_settings.LANGUAGE_CODE)
+            )
+        return qs
 
 #-------------------------------------------------------------------------
 
