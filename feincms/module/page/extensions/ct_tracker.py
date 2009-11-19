@@ -29,33 +29,33 @@ def page_count_content_types(self):
     Note that the content types are stored as the id of the django_content_type
     so that it does not depend on the order/number of registered CTs.
     """
-    if self.id is None:
-        return []
-
-    # find all concrete content type tables which have at least one entry for
-    # the current CMS object
-    sql = ' UNION '.join([
-        'SELECT %d AS ct_idx, region, COUNT(*) FROM %s WHERE parent_id=%s GROUP BY region' % (
-            idx,
-            cls._meta.db_table,
-            self.pk) for idx, cls in enumerate(self._feincms_content_types)])
-
-    from django.db import connection
-    cursor = connection.cursor()
-    cursor.execute(sql)
-
-    row = cursor.fetchall()
-
-    # Now convert the content types to django ContentType.id, so the result
-    # set is stable wrt. registered feincms content types.
     ct_inventory = {}
-    for ct_idx, region, count in row:
-        from django.contrib.contenttypes.models import ContentType
 
-        if count:
-            if not ct_inventory.has_key(region):
-                ct_inventory[region] = []
-            ct_inventory[region].append(ContentType.objects.get_for_model(self._feincms_content_types[ct_idx]).id)
+    if self.id is not None:
+        # find all concrete content type tables which have at least one entry for
+        # the current CMS object
+        sql = ' UNION '.join([
+            'SELECT %d AS ct_idx, region, COUNT(*) FROM %s WHERE parent_id=%s GROUP BY region' % (
+                idx,
+                cls._meta.db_table,
+                self.pk) for idx, cls in enumerate(self._feincms_content_types)])
+
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute(sql)
+
+        row = cursor.fetchall()
+
+        # Now convert the content types to django ContentType.id, so the result
+        # set is stable wrt. registered feincms content types.
+        for ct_idx, region, count in row:
+            from django.contrib.contenttypes.models import ContentType
+
+            if count:
+                if not ct_inventory.has_key(region):
+                    ct_inventory[region] = []
+                ct_inventory[region].append(ContentType.objects.get_for_model(self._feincms_content_types[ct_idx]).id)
+
     return ct_inventory
 
 # ------------------------------------------------------------------------
