@@ -65,6 +65,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
 
     categories = models.ManyToManyField(Category, verbose_name=_('categories'),
                                         blank=True, null=True)
+    categories.category_filter = True
 
     class Meta:
         abstract = True
