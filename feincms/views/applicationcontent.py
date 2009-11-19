@@ -9,6 +9,12 @@ from feincms.content.application.models import retrieve_page_information
 from feincms.module.page.models import Page
 from feincms.views.base import _build_page_response
 
+try:
+    any
+except NameError:
+    # For Python 2.4
+    from feincms.compat import c_any as any
+
 # ------------------------------------------------------------------------
 # TODO: This routine is very similar to the one in base.py, perhaps we should look into unifying them?
 
