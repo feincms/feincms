@@ -8,6 +8,7 @@ from django.contrib import admin
 from django.conf import settings as django_settings
 from django.db import models
 from django.template.defaultfilters import filesizeformat
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
@@ -20,8 +21,18 @@ import re
 import os
 import logging
 
+class CategoryManager(models.Manager):
+    """
+    Simple manager which exists only to supply ``.select_related("parent")``
+    on querysets since we can't even __unicode__ efficiently without it.
+    """
+    def get_query_set(self):
+        return super(CategoryManager, self).get_query_set().select_related("parent")
+
 # ------------------------------------------------------------------------
 class Category(models.Model):
+    objects = CategoryManager()
+
     title = models.CharField(_('title'), max_length=200)
     parent = models.ForeignKey('self', blank=True, null=True,
         related_name='children', limit_choices_to={'parent__isnull': True},
@@ -54,6 +65,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
 
     categories = models.ManyToManyField(Category, verbose_name=_('categories'),
                                         blank=True, null=True)
+    categories.category_filter = True
 
     class Meta:
         abstract = True
@@ -94,14 +106,23 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         cls._meta.get_field('type').choices[:] = choices
 
     def __unicode__(self):
-        try:
-            return unicode(self.translation)
-        except models.ObjectDoesNotExist:
-            pass
-        except AttributeError, e:
-            pass
+        trans = None
 
-        return os.path.basename(self.file.name)
+        # This might be provided using a .extra() clause to avoid hundreds of extra queries:
+        if hasattr(self, "preferred_translation"):
+            trans = getattr(self, "preferred_translation", u"")
+        else:
+            try:
+                trans = unicode(self.translation)
+            except models.ObjectDoesNotExist:
+                pass
+            except AttributeError, e:
+                pass
+
+        if trans:
+            return trans
+        else:
+            return os.path.basename(self.file.name)
 
     def get_absolute_url(self):
         return self.file.url
@@ -196,12 +217,35 @@ class MediaFileTranslationInline(admin.StackedInline):
     max_num = len(django_settings.LANGUAGES)
 
 class MediaFileAdmin(admin.ModelAdmin):
-    date_hierarchy = 'created'
-    inlines        = [MediaFileTranslationInline]
-    list_display   = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'created', 'get_categories_as_string']
-    list_filter    = ['categories', 'type']
-    search_fields  = ['copyright', 'file', 'translations__caption']
+    date_hierarchy    = 'created'
+    inlines           = [MediaFileTranslationInline]
+    list_display      = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'created']
+    list_filter       = ['categories', 'type']
+    list_per_page     = 25
+    search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
+
+    def queryset(self, request):
+        qs = super(MediaFileAdmin, self).queryset(request)
+
+        # FIXME: This is an ugly hack but it avoids 1-3 queries per *FILE*
+        # retrieving the translation information
+        if django_settings.DATABASE_ENGINE == 'postgresql_psycopg2':
+            qs = qs.extra(
+                select = {
+                    'preferred_translation':
+                        """SELECT caption FROM medialibrary_mediafiletranslation
+                        WHERE medialibrary_mediafiletranslation.parent_id = medialibrary_mediafile.id
+                        ORDER BY
+                            language_code = %s DESC,
+                            language_code = %s DESC,
+                            LENGTH(language_code) DESC
+                        LIMIT 1
+                        """
+                },
+                select_params = (translation.get_language(), django_settings.LANGUAGE_CODE)
+            )
+        return qs
 
 #-------------------------------------------------------------------------
 
