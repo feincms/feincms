@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     #(r'^admin/', include(admin.site.urls)),
-    (r'^admin/(.*)', admin.site.root), # try to stay compatible with Django 1.0
+    (r'^admin/', include(admin.site.urls) ),
 
     (r'^feincms_media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms/media/feincms/')}),
