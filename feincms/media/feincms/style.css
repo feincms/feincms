@@ -56,9 +56,9 @@
 }
 
 .order-item .collapse {
-	cursor: pointer;
-	color: #444;
-	font-weight: normal;
+    cursor: pointer;
+    color: #444;
+    font-weight: normal;
 }
 
 .item-delete {
@@ -180,9 +180,9 @@ td span select {
 }
 
 .suchadrag a {
-	display: block;
-	margin-right: 28px;
-	overflow: hidden;
+    display: block;
+    margin-right: 28px;
+    overflow: hidden;
 }
 
 .del-page {
@@ -216,70 +216,70 @@ tr td.nohighlight {background-color: #fff;}
 
 /* jQuery alerts */
 #popup_container {
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	min-width: 300px; /* Dialog will be no smaller than this */
-	max-width: 600px; /* Dialog will wrap after this width */
-	background: #FFF;
-	border: solid 1px #666;
-	color: #000;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    min-width: 300px; /* Dialog will be no smaller than this */
+    max-width: 600px; /* Dialog will wrap after this width */
+    background: #FFF;
+    border: solid 1px #666;
+    color: #000;
 }
 
 #popup_title {
-	font-size: 14px;
-	font-weight: bold;
-	text-align: center;
-	line-height: 1.75em;
-	color: #666;
-	background: #eee url(images/title.gif) top repeat-x;
-	border: solid 1px #FFF;
-	border-bottom: solid 1px #666;
-	cursor: default;
-	padding: 0em;
-	margin: 0em;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.75em;
+    color: #666;
+    background: #eee url(images/title.gif) top repeat-x;
+    border: solid 1px #FFF;
+    border-bottom: solid 1px #666;
+    cursor: default;
+    padding: 0em;
+    margin: 0em;
 }
 
 #popup_content {
-	background: 16px 16px no-repeat url(img/info.gif);
-	padding: 1em 1.75em;
-	margin: 0em;
+    background: 16px 16px no-repeat url(img/info.gif);
+    padding: 1em 1.75em;
+    margin: 0em;
 }
 
 #popup_content.alert {
-	background-image: url(img/info.gif);
+    background-image: url(img/info.gif);
 }
 
 #popup_content.confirm {
-	background-image: url(img/important.gif);
+    background-image: url(img/important.gif);
 }
 
 #popup_content.prompt {
-	background-image: url(img/help.gif);
+    background-image: url(img/help.gif);
 }
 
 #popup_message {
-	padding-left: 48px;
+    padding-left: 48px;
 }
 
 #popup_panel {
-	text-align: center;
-	margin: 1em 0em 0em 1em;
+    text-align: center;
+    margin: 1em 0em 0em 1em;
 }
 
 #popup_prompt {
-	margin: .5em 0em;
+    margin: .5em 0em;
 }
 
 
 /* override Django admin styles */
 .order-machine .module h2 {
-	padding: 4px 5px 6px 17px;
-	background: url(img/item_editor_form_title.png) no-repeat left bottom;
+    padding: 4px 5px 6px 17px;
+    background: url(img/item_editor_form_title.png) no-repeat left bottom;
 }
 
 .change-template-button {
-	margin-left: 7em;
-	padding-left: 30px;
+    margin-left: 7em;
+    padding-left: 30px;
 }
 
 /* tree editor */
@@ -290,3 +290,13 @@ tr.cut { border: 2px dashed black; opacity: 0.5; }
 
 :focus { background-color: #ccddff !important; outline: 0px; }
 
+/* Positioning Fixes for multiple object-tools: */
+
+#content-main ul.object-tools {
+    float: right;
+    margin: 0 0 1em;
+}
+
+#page_form {
+    clear: both;
+}

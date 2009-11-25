@@ -4,4 +4,3 @@ from feincms.module.medialibrary.models import Category, MediaFile, MediaFileAdm
 
 admin.site.register(Category)
 admin.site.register(MediaFile, MediaFileAdmin)
-
