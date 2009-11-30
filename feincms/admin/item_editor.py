@@ -113,6 +113,7 @@ class ItemEditor(admin.ModelAdmin):
             return self._frontend_editing_view(request, res.group(1), res.group(2), res.group(3))
 
         opts = self.model._meta
+
         try:
             obj = self.model._default_manager.get(pk=unquote(object_id))
         except self.model.DoesNotExist:
@@ -120,6 +121,20 @@ class ItemEditor(admin.ModelAdmin):
 
         if not self.has_change_permission(request, obj):
             raise PermissionDenied
+
+        messages = list()
+
+        if "revision" in request.GET:
+            from reversion.models import Revision
+
+            try:
+                revision = Revision.objects.get(pk=request.GET['revision'])
+            except Revision.DoesNotExist:
+                raise Http404
+
+            messages.append(_('Click save to replace the current content with this version'))
+        else:
+            revision = None
 
         ModelForm = self.get_form(
             request,
@@ -167,11 +182,52 @@ class ItemEditor(admin.ModelAdmin):
                 else:
                     self.message_user(request, msg)
                     return HttpResponseRedirect("../")
+        elif revision:
+            FORM_DATA = {}
+
+            total_forms = dict(
+                [(ct.__name__.lower(), 0) for ct in self.model._feincms_content_types]
+            )
+
+            for version in revision.version_set.all().select_related("content_type"):
+                if version.object_version.object == obj:
+                    FORM_DATA.update(version.field_dict)
+                    continue
+
+                version_prefix = "%s-%s" % (
+                    version.content_type.model,
+                    total_forms[version.content_type.model]
+                )
+
+
+                for k, v in version.field_dict.items():
+                    form_key = "%s-%s" % (version_prefix, k)
+                    assert form_key not in FORM_DATA
+                    FORM_DATA[form_key] = v
+
+                # defaultdict would be cleaner but this works with Python 2.4:
+                total_forms[version.content_type.model] += 1
+
+
+            for k, v in total_forms.items():
+                FORM_DATA["%s-INITIAL_FORMS" % k] = v
+                # TOTAL FORMS should be one for each actual object and one for
+                # the "Add new" feature. We'll bump the total up if we actually
+                # have existing content:
+                if v:
+                    FORM_DATA["%s-TOTAL_FORMS" % k] = v + 1
+                else:
+                    FORM_DATA["%s-TOTAL_FORMS" % k] = 0
+
+            # BUG: This somehow does not correctly initialize the initial form for adding new content correctly
         else:
-            model_form = ModelForm(instance=obj)
-            inline_formsets = [
-                formset_class(instance=obj, prefix=content_type.__name__.lower())
-                for content_type, formset_class in inline_formset_types]
+            FORM_DATA = None
+
+        model_form = ModelForm(FORM_DATA, instance=obj)
+        inline_formsets = [
+            formset_class(FORM_DATA, instance=obj, prefix=content_type.__name__.lower())
+            for content_type, formset_class in inline_formset_types
+        ]
 
         # Prepare mapping of content types to their prettified names
         content_types = []
@@ -201,6 +257,7 @@ class ItemEditor(admin.ModelAdmin):
             'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'messages': messages,
         })
 
         return self.render_item_editor(request, obj, context)
