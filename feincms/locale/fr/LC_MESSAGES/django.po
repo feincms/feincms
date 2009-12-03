@@ -665,8 +665,8 @@ msgstr "Enregistrer et continuer les modifications"
 #: templates/admin/feincms/item_editor.html:83
 msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "SVP corrigez l'erreur ci-après"
+msgstr[1] "SVP corrigez les erreurs ci-après"
 
 #: templates/admin/feincms/item_editor.html:116
 msgid "Properties"
