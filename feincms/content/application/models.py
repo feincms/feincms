@@ -197,7 +197,7 @@ class ApplicationContent(models.Model):
 
                 m = super(ApplicationContentItemEditorForm, self).save(commit=False, *args, **kwargs)
 
-                m.parameters = dict((k, self.cleaned_data[k]) for k in self.custom_fields)
+                m.parameters = dict((k, self.cleaned_data[k]) for k in self.custom_fields if k in self.cleaned_data)
 
                 if commit:
                     m.save(**kwargs)
