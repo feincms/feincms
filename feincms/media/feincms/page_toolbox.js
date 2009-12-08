@@ -19,7 +19,7 @@ var recolor_lines = function()
 /* show all immediate children, then open all children that are marked as open */
 var open_subtree = function(item_id)
 {
-    p = page(item_id)
+    var p = page(item_id)
     if(p.children.length == 0)
         return;
 
@@ -39,7 +39,7 @@ var open_subtree = function(item_id)
 /* hide all descendants */
 var close_subtree = function(item_id)
 {
-    p = page(item_id)
+    var p = page(item_id)
 
     if(!p.id || !p.children || p.children.length == 0)
         return false;
@@ -47,7 +47,7 @@ var close_subtree = function(item_id)
     p.ptr.html(expand_sym);
     $.each(p.descendants, function(i, id)
            {
-           pp = page(id);
+           var pp = page(id);
            if(pp.ptr)
                 pp.row.hide()
            });
@@ -56,12 +56,12 @@ var close_subtree = function(item_id)
 /* Click handler */
 var page_tree_handler = function(item_id)
 {
-    p = page(item_id);
+    var p = page(item_id);
 
     if(!p.id || !p.children || p.children.length == 0)
         return false;
 
-    open = p.open;
+    var open = p.open;
     p.open = !open;
 
     if(open)
@@ -88,7 +88,7 @@ var tree_structure_clean = function()
 
     /* Keep a list of open pages to save state across reloads */
     if(feincms_page_open_list) {
-        lst = feincms_page_open_list.split(',');
+        var lst = feincms_page_open_list.split(',');
         feincms_page_open_list = [];
         for(var i=0; i<lst.length; i++)
             feincms_page_open_list.push(parseInt(lst[i]));
@@ -101,7 +101,7 @@ var tree_structure_clean = function()
 
     for(k in tree_structure)
         {
-            p = page(k);
+            var p = page(k);
             /* Precompute object links for no object-id lookups later */
             m = $('#page_marker-' + k);
             if(m.length)
@@ -118,7 +118,7 @@ var tree_structure_clean = function()
     /* Clean out tree_structure: Remove non existant parents, children, descendants */
     for(k in tree_structure)
         {
-            p = page(k);
+            var p = page(k);
             if(p.parent && !page(p.parent).ptr)
                 p.parent = null
 
@@ -134,7 +134,7 @@ var tree_structure_clean = function()
         }
     for(i in feincms_page_open_list)
         {
-            item_id = feincms_page_open_list[i];
+            var item_id = feincms_page_open_list[i];
             var p = page(item_id);
             // pages could have been deleted
             if(p) p.open = true;

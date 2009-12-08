@@ -55,7 +55,8 @@
             p = page(k);
             if(p.ptr)
                 {
-                p.row.hide(); /* default hide */
+                if(p.row)
+                    p.row.hide(); /* default hide */
                 /* Note all root (ie. has no parent) nodes */
                 if(!p.parent)
                     root_items.push(p);
@@ -65,7 +66,8 @@
         for(i in root_items)
             {
             p = root_items[i];
-            p.row.show();
+            if(p.row)
+                p.row.show();
             if(p.open)
                 open_subtree(p.id);
             }
