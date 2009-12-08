@@ -6,7 +6,7 @@
        extract_item_id('foo_bar_baz-327') -> 327
  */
 var extract_item_id = function(elem_id) {
-    i = elem_id.indexOf('-');
+    var i = elem_id.indexOf('-');
     if(i >= 0)
         return parseInt(elem_id.slice(i+1));
 
@@ -20,7 +20,7 @@ var extract_item_id = function(elem_id) {
        replace_element(0, '<div id="replace_me">New Stuff!</div>')
  */
 var replace_element = function(i, html) {
-    r_id = $(html).attr('id');
+    var r_id = $(html).attr('id');
     $('#' + r_id).replaceWith(html);
 }
 
@@ -54,7 +54,7 @@ var changelist_itemid = function(elem) {
 
 var changelist_tab = function(elem, event, direction) {
     event.preventDefault();
-    ne = ((direction > 0) ? elem.nextAll() : elem.prevAll()).filter(':visible')[0];
+    var ne = ((direction > 0) ? elem.nextAll() : elem.prevAll()).filter(':visible')[0];
     if(ne) {
         elem.attr('tabindex', -1);
         $(ne).attr('tabindex', '0');
@@ -63,8 +63,8 @@ var changelist_tab = function(elem, event, direction) {
 };
 
 var changelist_openclose = function(elem, openclose) {
-    item_id = changelist_itemid(elem);
-    p = page(item_id);
+    var item_id = changelist_itemid(elem);
+    var p = page(item_id);
     if(p && ((openclose && !p.open) || (!openclose && p.open))) {
         page_tree_handler(item_id);
     }
