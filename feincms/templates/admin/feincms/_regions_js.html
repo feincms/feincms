@@ -1,0 +1,18 @@
+<script type="text/javascript" charset="utf-8">
+IMG_DELETELINK_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif";
+
+REGION_MAP = [{% for region in object.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+ACTIVE_REGION = 0;
+
+CONTENT_NAMES = {
+    {% for name, value in content_types %}'{{ value }}': '{{ name|capfirst }}'{% if not forloop.last %},{% endif %}
+    {% endfor %}
+};
+
+var contentblock_init_handlers = [];
+
+var template_regions = {
+        {% for template in available_templates.values %}'{{ template.key }}': [{% for region in template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
+        {% endfor %}
+};
+</script>
