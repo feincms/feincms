@@ -30,39 +30,18 @@ $(function(){
 
         return false;
     });
-
-    /* TODO: Make this use the same hotlinking setting as the other admin tools */
-    $.getScript("http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js", function () {
-        $(".fe_box").parent().sortable({
-            handle: ".thumb",
-            items: ".fe_box",
-            forceHelperSize: true,
-            forcePlaceholderSize: true,
-            helper: "clone",
-            placeholder: "ui-sortable-placeholder",
-
-
-            start: function (evt, ui) {
-                $(ui.item).parent().find(".fe_box > .content").height(48);
-                $(this).sortable('refreshPositions');
-            },
-            stop: function (evt, ui) {
-                $(ui.item).parent().find(".fe_box > .content").height("auto");
-            },
-        });
-    });
-
 });
 
 function fe_init_animations() {
     var fe_tools = $('#fe_tools');
-    $('.fe_box > .content').hover(
+    $('.fe_box').hover(
         function(){
-            $(this).css('background', '#e8e8ff').animate({'opacity': 1}, 100).parent().append(fe_tools);
+            $(this).append(fe_tools).css('background', '#e8e8ff').animate({'opacity': 1}, 100);
             fe_tools.show();
         },
         function(){
-            $(this).animate({'opacity': 0.6}, 100).css('background', 'none').parent().remove(fe_tools);
+            $(this).animate({'opacity': 0.6}, 100).css('background', 'none');
+            fe_tools.hide();
         }
     );
 }
@@ -78,11 +57,6 @@ function fe_update_content(identifier, content) {
 .fe_box {
     position: relative;
     opacity: 0.6;
-    width: 100%!important;
-}
-
-.fe_box .content {
-    overflow: hidden;
 }
 
 #fe_tools {
@@ -110,33 +84,4 @@ function fe_update_content(identifier, content) {
     display: block;
     float: left;
 }
-
-.thumb {
-    display: block;
-    width: 100%;
-    height: 1.1em;
-    background-color: black;
-    color: white;
-    padding: 4pt;
-    text-align: center;
-    cursor: move;
-}
-
-.ui-sortable-placeholder {
-    border: 1px dotted gray;
-    height: 32px !important;
-    width: 100%!important;
-}
-
-.ui-sortable-helper {
-    height: 68px !important;
-    overflow: hidden;
-
-    box-shadow: 0px 0px 8px #000;
-    -webkit-box-shadow: 0px 0px 8px #000;
-
-    border-radius: 4px;
-    -webkit-border-radius: 4px;
-}
-
 </style>

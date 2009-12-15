@@ -39,20 +39,20 @@
 {% block content %}
 <div class="content_main" id="frontend_editor">
 
-    <form method="post" action=".">
-        <div>
-            {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+<form method="post" action=".">
+<div>
+{% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
 
-            <table>
-                {{ form }}
-            </table>
+    <table>
+        {{ form }}
+    </table>
 
-            <div class="submit-row" >
-                <input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
-            </div>
+    <div class="submit-row" >
+        <input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
+    </div>
 
-        </div>
-    </form>
+</div>
+</form>
 
 </div>
 {% endblock %}
