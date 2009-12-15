@@ -61,6 +61,7 @@ function move_item (region_id, item) {
 
 function poorify_rich(item){
     item.children(".item-content").hide();
+    // TODO: Change this to allow other editors:
     if (item.find("div[id^=richtext]").length > 0) {
         var editor_id = item.find(".mceEditor").prev().attr("id");
         tinyMCE.execCommand('mceRemoveControl', false, editor_id);
@@ -68,6 +69,7 @@ function poorify_rich(item){
 }
 function richify_poor(item){
     item.children(".item-content").show();
+    // TODO: Change this to allow other editors:
     if (item.find("div[id^=richtext]").length > 0) {
         var editor_id = item.find('textarea[name*=richtext]').attr("id");
         tinyMCE.execCommand('mceAddControl', false, editor_id);

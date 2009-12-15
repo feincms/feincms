@@ -21,16 +21,6 @@
 
 {% for inc in object.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
 
-<script type="text/javascript">
-    function init_contentblocks() {
-        for(var k in contentblock_init_handlers)
-            contentblock_init_handlers[k]();
-    }
-
-    $(function(){
-        init_contentblocks();
-    });
-</script>
 {% endblock %}
 
 {% block content %}
