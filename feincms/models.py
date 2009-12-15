@@ -509,20 +509,6 @@ class Base(models.Model):
         self.copy_content_from(obj)
 
 
-from django.utils.functional import memoize
-
-def collect_items(obj, region):
-    contents = obj._content_for_region(region)
-
-    # go to parent if this model has a parent attribute
-    # TODO: this should be abstracted into a property/method or something
-    # The link which should be followed is not always '.parent'
-    if region.inherited and not contents and hasattr(obj, 'parent_id') and obj.parent_id:
-        return collect_items(obj.parent)
-
-    return contents
-collect_items = memoize(collect_items, {}, 2)
-
 class ContentProxy(object):
     """
     This proxy offers attribute-style access to the page contents of regions::
@@ -531,6 +517,7 @@ class ContentProxy(object):
         >> page.content.main
         [A list of all page contents which are assigned to the region with key 'main']
     """
+
     def __init__(self, item):
         self.item = item
 
@@ -550,8 +537,18 @@ class ContentProxy(object):
         except KeyError:
             return []
 
-        contents = collect_items(item, region)
+        def collect_items(obj):
+            contents = obj._content_for_region(region)
+
+            # go to parent if this model has a parent attribute
+            # TODO: this should be abstracted into a property/method or something
+            # The link which should be followed is not always '.parent'
+            if region.inherited and not contents and hasattr(obj, 'parent_id') and obj.parent_id:
+                return collect_items(obj.parent)
+
+            return contents
+
+        contents = collect_items(item)
         contents.sort(key=lambda c: c.ordering)
         return contents
-
 
