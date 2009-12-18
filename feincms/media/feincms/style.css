@@ -276,7 +276,7 @@ tr td.nohighlight {background-color: #fff;}
 
 
 /* override Django admin styles */
-.order-machine .module h2 {
+.order-machine .module fieldset > h2 {
     padding: 4px 5px 6px 17px;
     background: url(img/item_editor_form_title.png) no-repeat left bottom;
 }
