@@ -355,7 +355,12 @@ class Page(Base):
 
     def frontendediting_request_processor(self, request):
         if 'frontend_editing' in request.GET and request.user.has_module_perms('page'):
-            request.session['frontend_editing'] = request.GET['frontend_editing'] and True or False
+            try:
+                enable_fe = int(request.GET['frontend_editing']) > 0
+            except ValueError:
+                enable_fe = False
+
+            request.session['frontend_editing'] = enable_fe
 
     def etag_request_processor(self, request):
 
