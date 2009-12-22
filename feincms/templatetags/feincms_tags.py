@@ -1,5 +1,6 @@
 from django import template
 from django.template.loader import render_to_string
+from feincms import settings as feincms_settings
 
 from feincms import utils
 
@@ -55,6 +56,11 @@ def feincms_frontend_editing(cms_obj, request):
     """
 
     if hasattr(request, 'session') and request.session.get('frontend_editing'):
-        return render_to_string('admin/feincms/fe_tools.html')
+        ctx = template.RequestContext(request, {
+            "feincms_page": cms_obj,
+            'FEINCMS_ADMIN_MEDIA': feincms_settings.FEINCMS_ADMIN_MEDIA,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': feincms_settings.FEINCMS_ADMIN_MEDIA_HOTLINKING
+            })
+        return render_to_string('admin/feincms/fe_tools.html', ctx)
 
     return u''

@@ -11,6 +11,7 @@
     {% if object.is_active %}
         <li><a href="?create_copy=1">{% trans "Create hidden copy of this page" %}</a></li>
         <li><a target="_blank" href="{{ object.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
+        <li><a target="_blank" href="{{ object.get_absolute_url }}?frontend_editing=1" class="frontend_editing_link">{% trans "Edit on site" %}</a></li>
     {% endif %}
 </ul>
 {{ block.super }}

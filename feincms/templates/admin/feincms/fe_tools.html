@@ -1,4 +1,13 @@
 {% load i18n %}
+
+<script src="{{ FEINCMS_ADMIN_MEDIA }}/frontend_editing.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="{{ FEINCMS_ADMIN_MEDIA }}/frontend_editing.css" type="text/css" media="screen" charset="utf-8">
+
+<div id="fe_controls">
+    <a href="?frontend_editing=0">{% trans "Stop Editing" %}</a>
+    <a href="{% url admin:page_page_change feincms_page.pk %}">Admin Page</a>
+</div>
+
 <div id="fe_tools">
     <a id="fe_tools_edit" href="#">{% trans "edit" %}</a>
     <!--
@@ -8,80 +17,3 @@
     <a id="fe_tools_remove" href="#">{% trans "remove" %}</a>
     -->
 </div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-<script type="text/javascript">
-$(function(){
-
-    var admin_base = '/admin/page/page/';
-
-    fe_init_animations();
-
-    var fe_tools = $('#fe_tools');
-    fe_tools.children('a').click(function(){
-        var fe_box = $(this).parents('div.fe_box');
-
-        if(this.id == 'fe_tools_edit') {
-            res = fe_box.attr('id').match(/([^\-]+)-(\d+)-(\d+)/);
-
-            window.open(admin_base+res[2]+'/'+res[1]+'/'+res[3]+'/',
-                'fe_editor',
-                'height=500,width=800,resizable=yes,scrollbars=yes');
-        }
-
-        return false;
-    });
-});
-
-function fe_init_animations() {
-    var fe_tools = $('#fe_tools');
-    $('.fe_box').hover(
-        function(){
-            $(this).append(fe_tools).css('background', '#e8e8ff').animate({'opacity': 1}, 100);
-            fe_tools.show();
-        },
-        function(){
-            $(this).animate({'opacity': 0.6}, 100).css('background', 'none');
-            fe_tools.hide();
-        }
-    );
-}
-
-function fe_update_content(identifier, content) {
-    var region = $('#'+identifier);
-    region.animate({'opacity': 0}).html(content);
-    region.animate({'opacity': 1.5}).animate({'opacity': 0.6});
-    fe_init_animations();
-}
-</script>
-<style type="text/css">
-.fe_box {
-    position: relative;
-    opacity: 0.6;
-}
-
-#fe_tools {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    z-index: 100;
-
-    display: none;
-
-    background: #fff;
-    border: 1px solid #000;
-    padding: 13px 5 13px 15px;
-
-    font-size: 70%;
-    opacity: 0.8;
-}
-
-#fe_tools a {
-    background: #000;
-    color: #fff;
-    text-decoration: none;
-    margin: 0 10px 0 0;
-    padding: 4px 5px;
-    display: block;
-    float: left;
-}
-</style>

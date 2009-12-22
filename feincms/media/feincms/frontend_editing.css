@@ -1,0 +1,68 @@
+.fe_box {
+    position: relative;
+    opacity: 0.6;
+    width: 100%!important;
+}
+
+.fe_box .content {
+    overflow: hidden;
+}
+
+#fe_controls, #fe_tools {
+    z-index: 100;
+    background-color: white;
+    /* CSS3 standard: */
+    opacity: 0.8;
+    /* IE proprietary: */
+    filter: alpha(opacity=80);
+}
+
+#fe_controls {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 0;
+    font-size: smaller;
+    padding: 3px 3px 3px 4px;
+    border-left: solid #7f7f7f 2px;
+    border-bottom: solid #7f7f7f 2px;
+    border-bottom-left-radius: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+}
+
+#fe_controls > a {
+    display: inline-block;
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border: 1px solid #7f7f7f;
+    white-space: nowrap;
+    text-decoration: none;
+    padding: 1px 3px 2px;
+    background-color: #e8e8e8;
+    color: #000;
+}
+
+#fe_controls > a:hover {
+    background-color: #b4d5ff;
+}
+
+#fe_tools {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    display: none;
+    border: 1px solid #000;
+    font-size: 70%;
+}
+
+#fe_tools a {
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px 0 0;
+    padding: 4px 5px;
+    display: block;
+    float: left;
+}
