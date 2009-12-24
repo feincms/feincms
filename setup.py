@@ -2,6 +2,14 @@
 
 import os
 from setuptools import setup, find_packages
+from setuptools.dist import Distribution
+
+Distribution({
+    "setup_requires": [
+        'Django >=1.1.1'
+    ]
+})
+
 import feincms
 
 setup(name='FeinCMS',
@@ -24,6 +32,9 @@ setup(name='FeinCMS',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
+    ],
+    install_requires=[
+        'Django >=1.1.1',
     ],
     requires=[
         #'lxml', # only needed for rich text cleansing
