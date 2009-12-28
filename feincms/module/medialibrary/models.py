@@ -183,11 +183,17 @@ class MediaFileBase(Base, TranslatedObjectMixin):
 
 # ------------------------------------------------------------------------
 MediaFileBase.register_filetypes(
-        ('image', _('Image'), lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f)),
+        # Should we be using imghdr.what instead of extension guessing?
+        ('image', _('Image'), lambda f: re.compile(r'\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?)$', re.IGNORECASE).search(f)),
+        ('video', _('Video'), lambda f: re.compile(r'\.(mov|m[14]v|mp4|avi|mpe?g|qt|ogv|wmv)$', re.IGNORECASE).search(f)),
+        ('audio', _('Audio'), lambda f: re.compile(r'\.(au|mp3|m4a|wma|oga|ram|wav)$', re.IGNORECASE).search(f)),
         ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
-        ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
         ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
-        ('mp3', _('MP3'), lambda f: f.lower().endswith('.mp3')),
+        ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
+        ('rtf', _('Rich Text'), lambda f: f.lower().endswith('.rtf')),
+        ('doc', _('Microsoft Word'), lambda f: re.compile(r'\.docx?$', re.IGNORECASE).search(f)),
+        ('xls', _('Microsoft Excel'), lambda f: re.compile(r'\.xlsx?$', re.IGNORECASE).search(f)),
+        ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(r'\.pptx?$', re.IGNORECASE).search(f)),
         ('other', _('Binary'), lambda f: True), # Must be last
     )
 
