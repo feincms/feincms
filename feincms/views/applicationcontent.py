@@ -3,6 +3,7 @@
 # ------------------------------------------------------------------------
 
 from django.http import Http404
+from django.utils.cache import add_never_cache_headers
 
 from feincms import settings
 from feincms.content.application.models import retrieve_page_information
@@ -32,7 +33,12 @@ def handler(request, path=None):
         request._feincms_appcontent_parameters = {"in_appcontent_subpage": False}
 
     page = Page.objects.best_match_for_path(path, raise404=True)
-    return build_page_response(page, request)
+    response = build_page_response(page, request)
+
+    if request.session and request.session.get('frontend_editing', False):
+        add_never_cache_headers(response)
+
+    return response
 
 
 def build_page_response(page, request):
@@ -77,6 +83,7 @@ def build_page_response(page, request):
 
     response = _build_page_response(page, request)
     page.finalize_response(request, response)
+
     return response
 
 # ------------------------------------------------------------------------

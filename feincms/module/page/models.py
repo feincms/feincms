@@ -354,13 +354,19 @@ class Page(Base):
             return HttpResponseRedirect(self.redirect_to)
 
     def frontendediting_request_processor(self, request):
-        if 'frontend_editing' in request.GET and request.user.has_module_perms('page'):
+        if not 'frontend_editing' in request.GET:
+            return
+
+        if request.user.has_module_perms('page'):
             try:
                 enable_fe = int(request.GET['frontend_editing']) > 0
             except ValueError:
                 enable_fe = False
 
             request.session['frontend_editing'] = enable_fe
+
+        # Redirect to cleanup URLs
+        return HttpResponseRedirect(request.path)
 
     def etag_request_processor(self, request):
 

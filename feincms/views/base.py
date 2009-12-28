@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.utils.cache import add_never_cache_headers
+
 
 from feincms.module.page.models import Page
 
@@ -30,6 +32,9 @@ def handler(request, path=None):
     page = Page.objects.page_for_path_or_404(path)
 
     response = build_page_response(page, request)
+
+    if request.session and request.session.get('frontend_editing', False):
+        add_never_cache_headers(response)
 
     return response
 
