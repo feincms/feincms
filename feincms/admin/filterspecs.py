@@ -78,7 +78,7 @@ class CategoryFilterSpec(ChoicesFilterSpec):
             }
 
     def title(self):
-        return _('Parent')
+        return _('Category')
 
 
 # registering the filter
