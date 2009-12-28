@@ -55,7 +55,12 @@ class CategoryFilterSpec(ChoicesFilterSpec):
     def __init__(self, f, request, params, model, model_admin):
         super(CategoryFilterSpec, self).__init__(f, request, params, model, model_admin)
 
-        self.lookup_choices = [(i.pk, unicode(i)) for i in f.related.parent_model.objects.all() ]
+        # Restrict results to categories which are actually in use:
+        self.lookup_choices = [
+            (i.pk, unicode(i)) for i in f.related.parent_model.objects.exclude(**{
+                f.related.var_name: None
+            })
+        ]
         self.lookup_choices.sort(key=lambda i: i[1])
 
     def choices(self, cl):
