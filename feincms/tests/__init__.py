@@ -714,7 +714,7 @@ class PagesTestCase(TestCase):
         t = template.Template('{% load feincms_page_tags %}{% feincms_breadcrumbs feincms_page %}')
         rendered = t.render(ctx)
         self.assertTrue("Test child page" in rendered)
-        self.assertTrue('href="/test-page/">Test Page</a>' in rendered, msg="The parent page should be a breadcrumb link")
+        self.assertTrue('href="/test-page/">Test page</a>' in rendered, msg="The parent page should be a breadcrumb link")
         self.assertTrue('href="/test-page/test-child-page/"' not in rendered, msg="The current page should not be a link in the breadcrumbs")
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
@@ -851,6 +851,8 @@ class PagesTestCase(TestCase):
 
         request = Empty()
         request.method = 'GET'
+        request.user = Empty()
+        request.user.is_authenticated = lambda: False
         assert 'form' in page.content.main[0].render(request=request)
 
         self.client.post(page.get_absolute_url(), {

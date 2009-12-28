@@ -159,6 +159,7 @@ class ItemEditor(admin.ModelAdmin):
             ) for content_type in self.model._feincms_content_types]
 
         if request.method == 'POST':
+            FORM_DATA = {}
             model_form = ModelForm(request.POST, request.FILES, instance=obj)
 
             inline_formsets = [
