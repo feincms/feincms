@@ -103,7 +103,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         cls.filetypes[0:0] = types
         choices = [ t[0:2] for t in cls.filetypes ]
         cls.filetypes_dict = dict(choices)
-        cls._meta.get_field('type').choices[:] = sorted(choices, key=lambda i: i[1])
+        cls._meta.get_field('type').choices[:] = choices
 
     def __unicode__(self):
         trans = None
