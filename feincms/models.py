@@ -245,9 +245,9 @@ class Base(models.Model):
                 # of different type will have to be sorted into a list according
                 # to their 'ordering' attribute later
                 contents += list(
-                    self._feincms_content_types[idx].objects.filter(
+                    self._feincms_content_types[idx].objects.select_related().filter(
                         parent=self,
-                        region=region.key).select_related())
+                        region=region.key))
                 # Note: the select_related() helps for content types that
                 # reference stuff (eg. media files) and doesn't hurt much
                 # when not needed.
