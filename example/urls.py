@@ -9,6 +9,10 @@ urlpatterns = patterns('',
     # Example:
     # (r'^example/', include('example.foo.urls')),
 
+    # This avoids breaking Django admin's localization JavaScript when using
+    # the FeinCMS frontend editing:
+    url(r'admin/page/page/jsi18n/',     'django.views.generic.simple.redirect_to', {'url': '/admin/jsi18n/'}),
+
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
