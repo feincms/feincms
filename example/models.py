@@ -5,6 +5,7 @@ from feincms.module.page.models import Page
 from feincms.content.raw.models import RawContent
 from feincms.content.image.models import ImageContent
 from feincms.content.medialibrary.models import MediaFileContent
+from feincms.content.application.models import ApplicationContent
 
 import mptt
 
@@ -23,6 +24,9 @@ MediaFileContent.default_create_content_type(Page)
 Page.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),
     ))
+Page.create_content_type(ApplicationContent, APPLICATIONS=(
+    ('blog_urls', 'Blog'),
+    ))    
 
 
 Entry.register_regions(
@@ -32,6 +36,7 @@ Entry.create_content_type(RawContent)
 Entry.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),
     ))
+    
 
 
 class Category(models.Model):

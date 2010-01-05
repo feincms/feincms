@@ -1,0 +1,6 @@
+{% for object in object_list %}
+
+<h3><a href="{% url blog_entry_details object_id=object.id %}">{{ object.title }}</a></h3>
+
+
+{% endfor %}
