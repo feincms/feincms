@@ -3,11 +3,10 @@ jQuery(function($){
 
     fe_init_animations();
 
-    var fe_tools = $('#fe_tools');
-    fe_tools.children('a').click(function(){
+    $("#fe_tools > a").live("click", function() {
         var fe_box = $(this).parents('div.fe_box');
 
-        if(this.id == 'fe_tools_edit') {
+        if (this.id == 'fe_tools_edit') {
             res = fe_box.attr('id').match(/([^\-]+)-(\d+)-(\d+)/);
 
             window.open(admin_base+res[2]+'/'+res[1]+'/'+res[3]+'/',
@@ -39,7 +38,7 @@ function fe_init_animations() {
 }
 
 function fe_update_content(identifier, content) {
-    var region = $('#'+identifier);
+    var region = $('#' + identifier);
     region.animate({'opacity': 0}).html(content);
     region.animate({'opacity': 1.5}).animate({'opacity': 0.6});
     fe_init_animations();
