@@ -529,6 +529,8 @@ class ContentProxy(object):
         has the inherited flag set, this method will go up the ancestor chain
         until either some item contents have found or no ancestors are left.
         """
+        if (attr.startswith('__')):
+            raise AttributeError
 
         item = self.__dict__['item']
 
