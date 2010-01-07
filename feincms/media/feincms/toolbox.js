@@ -41,7 +41,7 @@ var inplace_toggle_boolean = function(item_id, attr) {
 
       error: function(xhr, status, err) {
           alert("Unable to toggle " + attr + ": " + xhr.responseText);
-      },
+      }
     });
 
     return false;
