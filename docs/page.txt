@@ -22,7 +22,7 @@ To activate the page module, you need to follow the instructions in
 :data:`INSTALLED_APPS`.
 
 Before proceeding with ``manage.py syncdb``, it might be a good idea to take
-a look at :ref:`page-extensions` -- the page model does have the minimum of
+a look at :ref:`page-extensions` -- the page module does have the minimum of
 features in the default configuration and you will probably want to enable
 several extensions.
 
