@@ -23,7 +23,7 @@ for any pages which were not matched before:
         url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
     )
 
-Note that this default handler can also take a keyword parameter ``page``
+Note that this default handler can also take a keyword parameter ``path``
 to specify which url to render. You can use that functionality to
 implement a default page by adding another entry to your ``urls.py``:
 
