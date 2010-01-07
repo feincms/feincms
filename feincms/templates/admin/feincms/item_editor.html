@@ -1,5 +1,5 @@
 {% extends "admin/change_form.html" %}
-{% load i18n admin_modify adminmedia %}
+{% load feincms_compat_tags i18n admin_modify adminmedia %}
 
 {% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
@@ -55,6 +55,7 @@
 {% endblock %}
 
 <form name="main_form" enctype="multipart/form-data" action="." method="post" id="{{ opts.module_name }}_form">
+{% csrf_token %}
 {% block form_top %}{% endblock %}
 <div>
 
