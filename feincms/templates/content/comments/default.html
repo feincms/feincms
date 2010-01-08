@@ -1,0 +1,31 @@
+{% load comments i18n %}
+
+{% block comment-separator %}
+    <br />
+{% endblock %}
+
+{% get_comment_count for parent as comment_count %}
+
+{% if comment_count %}
+    {% blocktrans  %}{{ comment_count }} comments.{% endblocktrans %}
+
+    {% block comment-list %}
+        <ul class="comment-list">
+        {% get_comment_list for parent as comment_list %}
+        {% for comment in comment_list %}
+            <li class="comment-list-entry">
+            {% block comment-list-entry %}
+                {{ comment.user.username }} said on {{ comment.submit_date }}:<br />
+                    {{ comment.comment }}
+            {% endblock comment-list-entry%}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endblock comment-list %}
+{% else %}
+    {% trans "No comments." %}
+{% endif %}
+
+{% block comment-form %}
+    {% render_comment_form for parent %}
+{% endblock comment-form %}
