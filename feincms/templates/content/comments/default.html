@@ -15,7 +15,7 @@
         {% for comment in comment_list %}
             <li class="comment-list-entry">
             {% block comment-list-entry %}
-                {{ comment.user.username }} said on {{ comment.submit_date }}:<br />
+                {% blocktrans %}{{ comment.user.username }} said on {{ comment.submit_date }}:{% endblocktrans %}<br />
                     {{ comment.comment }}
             {% endblock comment-list-entry%}
             </li>
@@ -27,5 +27,7 @@
 {% endif %}
 
 {% block comment-form %}
-    {% render_comment_form for parent %}
+    {% if self.comments_enabled %}
+        {% render_comment_form for parent %}
+    {% endif %}
 {% endblock comment-form %}
