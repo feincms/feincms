@@ -22,9 +22,9 @@ def thumbnail(filename, size='200x200'):
     # defining the filename and the miniature filename
     basename, format = filename.rsplit('.', 1)
     miniature = basename + '_thumb_' + size + '.' +  format
-    miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature)
-    miniature_url = os.path.join(settings.MEDIA_URL, miniature)
-    orig_filename = os.path.join(settings.MEDIA_ROOT, filename)
+    miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature).encode('utf-8')
+    miniature_url = os.path.join(settings.MEDIA_URL, miniature).encode('utf-8')
+    orig_filename = os.path.join(settings.MEDIA_ROOT, filename).encode('utf-8')
     # if the image wasn't already resized, resize it
     if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
         image = Image.open(orig_filename)
