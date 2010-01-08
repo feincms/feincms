@@ -3,6 +3,7 @@ The primary authors are:
     * Matthias Kestenholz <mk@spinlock.ch>
     * Daniel Renz <dr@feinheit.ch>
     * Martin J. Laubach <mjl@laubach.at>
+    * Chris Adams <chris@improbable.org>
 
 Additional contributors include:
 
@@ -12,3 +13,8 @@ Additional contributors include:
     * Denis Martinez (Django 1.0 compatibility and bug reports)
     * Simon Schürpf
     * Vítor Figueiró (Translations)
+    * Bojan Mihelac
+    * Mikhail Korobov
+    * Sebastian Hillig
+    * Simon Schmid
+    * Paul Garner
