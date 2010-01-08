@@ -8,6 +8,7 @@ the feincms_ namespace.
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
@@ -245,9 +246,8 @@ class Base(models.Model):
                 # of different type will have to be sorted into a list according
                 # to their 'ordering' attribute later
                 contents += list(
-                    self._feincms_content_types[idx].objects.select_related().filter(
-                        parent=self,
-                        region=region.key))
+                    self._feincms_content_types[idx].get_queryset(
+                        Q(parent=self) & Q(region=region.key)))
                 # Note: the select_related() helps for content types that
                 # reference stuff (eg. media files) and doesn't hurt much
                 # when not needed.
@@ -322,6 +322,9 @@ class Base(models.Model):
                 self.id,
                 )
 
+        def get_queryset(cls, filter_args):
+            return cls.objects.select_related().filter(filter_args)
+
         attrs = {
             '__module__': cls.__module__, # The basic content type is put into
                                           # the same module as the CMS base type.
@@ -333,6 +336,7 @@ class Base(models.Model):
             'render': render,
             'fe_render': fe_render,
             'fe_identifier': fe_identifier,
+            'get_queryset': classmethod(get_queryset),
             'Meta': Meta,
             'parent': models.ForeignKey(cls, related_name='%(class)s_set'),
             'region': models.CharField(max_length=255),

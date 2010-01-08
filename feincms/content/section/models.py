@@ -57,6 +57,11 @@ class SectionContent(models.Model):
         cls.feincms_item_editor_form = MediaFileContentAdminForm
         cls.cleanse = cleanse
 
+    @classmethod
+    def get_queryset(cls, filter_args):
+        # Explicitly add nullable FK mediafile to minimize the DB query count
+        return cls.objects.select_related('parent', 'mediafile').filter(filter_args)
+
     def render(self, **kwargs):
         if self.mediafile:
             mediafile_type = self.mediafile.type
@@ -64,9 +69,9 @@ class SectionContent(models.Model):
             mediafile_type = 'nomedia'
 
         return render_to_string([
-            'content/section/%s_%s.html' % (mediafile_type, self.type),
-            'content/section/%s.html' % mediafile_type,
+            'content/section/%s_%s.html' % (self.type, mediafile_type),
             'content/section/%s.html' % self.type,
+            'content/section/%s.html' % mediafile_type,
             'content/section/default.html',
             ], {'content': self})
 
