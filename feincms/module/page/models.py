@@ -627,7 +627,10 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     def add_view(self, request, form_url='', extra_context=None):
         # Preserve GET parameters
-        return super(PageAdmin, self).add_view(request, request.get_full_path(), extra_context)
+        return super(PageAdmin, self).add_view(
+            request=request,
+            form_url=request.get_full_path(),
+            extra_context=extra_context)
 
     def response_add(self, request, obj, *args, **kwargs):
         response = super(PageAdmin, self).response_add(request, obj, *args, **kwargs)
