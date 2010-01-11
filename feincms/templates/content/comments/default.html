@@ -19,7 +19,7 @@
                     {{ comment_username }} said on {{ comment_submit_date }}<br />
                 {% endblocktrans %}
                 {{ comment.comment }}
-            {% endblock comment-list-entry%}
+            {% endblock comment-list-entry %}
             </li>
         {% endfor %}
         </ul>
@@ -29,7 +29,7 @@
 {% endif %}
 
 {% block comment-form %}
-    {% if self.comments_enabled %}
+    {% if content.comments_enabled %}
         {% render_comment_form for parent %}
     {% endif %}
 {% endblock comment-form %}
