@@ -45,6 +45,7 @@ function close_tree() {
 var simpleTreeCollection;
 $(document).ready(function(){
     simpleTreeCollection = $('.simpleTree').simpleTree({
+        drag: {{ FEINCMS_ADMIN_TREE_DRAG_AND_DROP|yesno:"true,false" }},
         autoclose: false,
         afterClick:function(node){
             frame_goto(node.attr('id').substr(4)+'/');
