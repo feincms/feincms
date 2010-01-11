@@ -529,7 +529,7 @@ class PageAdminForm(forms.ModelForm):
             self.fields['template_key'].choices = choices
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(PageAdminForm, self).clean()
 
         current_id = None
         # See the comment below on why we do not use Page.objects.active(),
