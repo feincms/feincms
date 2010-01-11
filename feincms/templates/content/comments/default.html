@@ -7,7 +7,7 @@
 {% get_comment_count for parent as comment_count %}
 
 {% if comment_count %}
-    {% blocktrans  %}{{ comment_count }} comments.{% endblocktrans %}
+    {% blocktrans %}{{ comment_count }} comments.{% endblocktrans %}
 
     {% block comment-list %}
         <ul class="comment-list">
@@ -15,9 +15,11 @@
         {% for comment in comment_list %}
             <li class="comment-list-entry">
             {% block comment-list-entry %}
-                {% blocktrans %}{{ comment.user.username }} said on {{ comment.submit_date }}:{% endblocktrans %}<br />
-                    {{ comment.comment }}
-            {% endblock comment-list-entry%}
+                {% blocktrans with comment.user.username as comment_username and comment.submit_date|date:"Y-m-d H:i" as comment_submit_date %}
+                    {{ comment_username }} said on {{ comment_submit_date }}<br />
+                {% endblocktrans %}
+                {{ comment.comment }}
+            {% endblock comment-list-entry %}
             </li>
         {% endfor %}
         </ul>
@@ -27,7 +29,7 @@
 {% endif %}
 
 {% block comment-form %}
-    {% if self.comments_enabled %}
+    {% if content.comments_enabled %}
         {% render_comment_form for parent %}
     {% endif %}
 {% endblock comment-form %}
