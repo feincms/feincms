@@ -139,7 +139,6 @@ class ItemEditor(admin.ModelAdmin):
         ModelForm = self.get_form(
             request,
             obj,
-            exclude=['parent'],
             # NOTE: Fields *MUST* be set to None to avoid breaking
             # django.contrib.admin.option.ModelAdmin's default get_form()
             # will generate a very abbreviated field list which will cause
