@@ -77,8 +77,8 @@ def test_runner_with_coverage(test_labels, verbosity=1, interactive=True, extra_
     # Report code coverage metrics
     cov.report(coverage_modules)
 
-    cov.html_report(coverage_modules, directory=output_dir)
-    cov.xml_report(coverage_modules, outfile=os.path.join(output_dir, "coverage.xml"))
+    #cov.html_report(coverage_modules, directory=output_dir)
+    #cov.xml_report(coverage_modules, outfile=os.path.join(output_dir, "coverage.xml"))
 
     # Print code metrics footer
     print '-------------------------------------------------------------------------'
