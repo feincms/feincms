@@ -95,7 +95,7 @@ class TranslatedObjectMixin(object):
             language_code = translation.get_language()
 
         key = '-'.join(['%s' % s for s in
-            self.__class__.__name__,
+            self._meta.db_table,
             self.id,
             language_code,
             ])
