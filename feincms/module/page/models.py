@@ -606,13 +606,14 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     search_fields = ['title', 'slug']
     prepopulated_fields = { 'slug': ('title',), }
 
-    raw_id_fields = []
-    show_on_top = ['title', 'active']
+    raw_id_fields = ('parent', )
+    show_on_top = ['title', 'active', 'parent']
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     def __init__(self, *args, **kwargs):
         if len(Page._feincms_templates) > 4:
             del(self.radio_fields['template_key'])
+
         return super(PageAdmin, self).__init__(*args, **kwargs)
 
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))

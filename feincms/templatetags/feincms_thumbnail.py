@@ -29,7 +29,7 @@ def thumbnail(filename, size='200x200'):
     if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
         image = Image.open(orig_filename)
         image.thumbnail([x, y], Image.ANTIALIAS) # generate a 200x200 thumbnail
-        image.save(miniature_filename, image.format)
+        image.save(miniature_filename, image.format, quality=100)
     return miniature_url
 
 
@@ -64,7 +64,7 @@ def cropscale(filename, size='200x200'):
 
         image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
         image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
-        image.save(miniature_filename, image.format)
+        image.save(miniature_filename, image.format, quality=100)
 
     return miniature_url
 
