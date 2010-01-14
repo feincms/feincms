@@ -606,7 +606,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     search_fields = ['title', 'slug']
     prepopulated_fields = { 'slug': ('title',), }
 
-    raw_id_fields = ('parent', )
+    raw_id_fields = ['parent']
     show_on_top = ['title', 'active', 'parent']
     radio_fields = {'template_key': admin.HORIZONTAL}
 
