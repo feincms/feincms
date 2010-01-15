@@ -74,13 +74,12 @@ def register(cls, admin_cls):
         """
         target = self.redirect_to
         if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
-            page = cls.objects.page_for_path(target)
-            if page:
-                try:
-                    page = page.get_translation(request.LANGUAGE_CODE)
-                except cls.DoesNotExist:
-                    pass
+            try:
+                page = cls.objects.page_for_path(target)
+                page = page.get_translation(request.LANGUAGE_CODE)
                 target = page.get_absolute_url()
+            except cls.DoesNotExist:
+                pass
         return target
 
     @monkeypatch_method(cls)
