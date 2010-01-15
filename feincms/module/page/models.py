@@ -538,6 +538,10 @@ class PageAdminForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(PageAdminForm, self).clean()
 
+        # No need to think further, let the user correct errors first
+        if self._errors:
+            return cleaned_data
+
         current_id = None
         # See the comment below on why we do not use Page.objects.active(),
         # at least for now.
