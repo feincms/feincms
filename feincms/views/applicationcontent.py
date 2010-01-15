@@ -30,7 +30,7 @@ def handler(request, path=None):
 
     # Used to provide additional app-specific context variables:
     if not hasattr(request, '_feincms_appcontent_parameters'):
-        request._feincms_appcontent_parameters = {"in_appcontent_subpage": False}
+        request._feincms_appcontent_parameters = dict(in_appcontent_subpage = False)
 
     page = Page.objects.best_match_for_path(path, raise404=True)
     response = build_page_response(page, request)
@@ -47,6 +47,7 @@ def build_page_response(page, request):
     # Try to avoid the lookup of app contents by caching, since nodes
     # with app content are a rather rare occurrence, this is a win in
     # most cases.
+    # TODO: This could be substantially simplified if ct_tracker is enabled
     has_appcontent = True
     if settings.FEINCMS_USE_CACHE:
         ck = 'HAS-APP-CONTENT-' + page.cache_key()
@@ -62,9 +63,13 @@ def build_page_response(page, request):
         # The best_match logic kicked in. See if we have at least one
         # application content for this page, and raise a 404 otherwise.
         if not has_appcontent:
-            raise Http404
+            if not settings.FEINCMS_ALLOW_EXTRA_PATH:
+                raise Http404
         else:
             request._feincms_appcontent_parameters['in_appcontent_subpage'] = True
+
+        extra = request.path[len(page.get_absolute_url()):].strip('/').split('/')
+        request._feincms_appcontent_parameters['page_extra_path'] = extra
 
     # The monkey-patched reverse() method needs some information
     # for proximity analysis when determining the nearest
