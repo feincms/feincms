@@ -706,7 +706,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
         return editor.ajax_editable_boolean_cell(page, 'active')
     is_visible_admin.allow_tags = True
-    is_visible_admin.short_description = _('is visible')
+    is_visible_admin.short_description = _('is active')
     is_visible_admin.editable_boolean_field = 'active'
 
     # active toggle needs more sophisticated result function
