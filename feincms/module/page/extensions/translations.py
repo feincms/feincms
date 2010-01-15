@@ -19,7 +19,7 @@ from feincms._internal import monkeypatch_method, monkeypatch_property
 
 def register(cls, admin_cls):
     cls.add_to_class('language', models.CharField(_('language'), max_length=10,
-        choices=settings.LANGUAGES))
+        choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0]))
     cls.add_to_class('translation_of', models.ForeignKey('self',
         blank=True, null=True, verbose_name=_('translation of'),
         related_name='translations',
