@@ -40,24 +40,18 @@ def handler(request, path=None):
 
     return response
 
+def _page_has_appcontent(page):
+    # Very dumb implementation, will be overridden with a more efficient
+    # version if ct_tracker is enabled.
+    applicationcontents = page.applicationcontent_set.all()
+    has_appcontent = any(applicationcontents)
+
+    return has_appcontent
+
+page_has_appcontent = _page_has_appcontent
 
 def build_page_response(page, request):
-    from django.core.cache import cache as django_cache
-
-    # Try to avoid the lookup of app contents by caching, since nodes
-    # with app content are a rather rare occurrence, this is a win in
-    # most cases.
-    # TODO: This could be substantially simplified if ct_tracker is enabled
-    has_appcontent = True
-    if settings.FEINCMS_USE_CACHE:
-        ck = 'HAS-APP-CONTENT-' + page.cache_key()
-        has_appcontent = django_cache.get(ck, True)
-
-    if has_appcontent:
-        applicationcontents = page.applicationcontent_set.all()
-        has_appcontent = any(applicationcontents)
-        if settings.FEINCMS_USE_CACHE:
-            django_cache.set(ck, has_appcontent)
+    has_appcontent = page_has_appcontent(page)
 
     if request.path != page.get_absolute_url():
         # The best_match logic kicked in. See if we have at least one
@@ -81,7 +75,7 @@ def build_page_response(page, request):
         return response
 
     if has_appcontent:
-        for content in applicationcontents:
+        for content in page.applicationcontent_set.all():
             r = content.process(request)
             if r and (r.status_code != 200 or request.is_ajax() or getattr(r, 'standalone', False)):
                 return r
