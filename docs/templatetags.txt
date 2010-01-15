@@ -127,6 +127,7 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 
    {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
    {% feincms_translatedpage for feincms_page as originalpage %}
+   {% feincms_translatedpage for some_page as translatedpage language=feincms_page.language %}
 
    This template tag needs the translations extension.
 
