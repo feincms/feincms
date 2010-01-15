@@ -349,9 +349,16 @@ class Page(Base):
         if not self.are_ancestors_active():
             raise Http404()
 
+    def get_redirect_to_target(self, request):
+        """
+        This might be overriden/extended by extension modules.
+        """
+        return self.redirect_to
+
     def redirect_request_processor(self, request):
-        if self.redirect_to:
-            return HttpResponseRedirect(self.redirect_to)
+        target = self.get_redirect_to_target(request)
+        if target:
+            return HttpResponseRedirect(target)
 
     def frontendediting_request_processor(self, request):
         if not 'frontend_editing' in request.GET:

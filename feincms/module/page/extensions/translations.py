@@ -28,6 +28,10 @@ def register(cls, admin_cls):
             _(settings.LANGUAGES[0][1])))
 
     def translations_request_processor(page, request):
+        # If this page is just a redirect, don't do any language specific setup
+        if page.redirect_to:
+            return
+
         if page.language == translation.get_language():
             return
 
@@ -59,6 +63,25 @@ def register(cls, admin_cls):
             return response
 
     cls.register_request_processors(translations_request_processor)
+
+    @monkeypatch_method(cls)
+    def get_redirect_to_target(self, request):
+        """
+        Find an acceptable redirect target. If this is a local link, then try
+        to find the page this redirect references and translate it according
+        to the user's language. This way, one can easily implement a localized
+        "/"-url to welcome page redirection.
+        """
+        target = self.redirect_to
+        if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
+            page = cls.objects.page_for_path(target)
+            if page:
+                try:
+                    page = page.get_translation(request.LANGUAGE_CODE)
+                except cls.DoesNotExist:
+                    pass
+                target = page.get_absolute_url()
+        return target
 
     @monkeypatch_method(cls)
     def available_translations(self):
