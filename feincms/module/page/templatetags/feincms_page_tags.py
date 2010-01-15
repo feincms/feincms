@@ -147,17 +147,24 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
     """
     {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
     {% feincms_translatedpage for feincms_page as originalpage %}
+    {% feincms_translatedpage for some_page as translatedpage language=feincms_page.language %}
 
     This template tag needs the translations extension.
 
     Returns the requested translation of the page if it exists. If the language
     argument is omitted the primary language will be returned (the first language
-    specified in settings.LANGUAGES)
+    specified in settings.LANGUAGES).
+
+    Note: To distinguish between a bare language code and a variable we check whether
+    settings LANGUAGES contains that code -- so naming a variable "en" will probably
+    not do what is intended.
     """
     def what(self, page, args):
         language = args.get('language',False)
         if not language:
             language = settings.LANGUAGES[0][0]
+        elif language not in (x[0] for x in settings.LANGUAGES):
+            language = template.Variable(language).resolve(self.render_context)
 
         translations = dict((t.language, t) for t in page.available_translations())
         translations[page.language] = page
