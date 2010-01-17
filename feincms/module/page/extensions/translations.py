@@ -107,7 +107,7 @@ def register(cls, admin_cls):
 
         links = []
 
-        for key, title in settings.LANGUAGES:
+        for key, title in django_settings.LANGUAGES:
             if key == page.language:
                 continue
 
@@ -130,3 +130,6 @@ def register(cls, admin_cls):
     admin_cls.show_on_top.extend(['language'])
 
     admin_cls.raw_id_fields.append('translation_of')
+
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------

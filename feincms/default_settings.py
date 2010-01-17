@@ -61,3 +61,12 @@ FEINCMS_LOGGING_CLASS = getattr(settings, 'FEINCMS_LOGGING_CLASS', 'feincms.logg
 FEINCMS_ALLOW_EXTRA_PATH = getattr(settings, 'FEINCMS_ALLOW_EXTRA_PATH', False)
 
 # ------------------------------------------------------------------------
+# How to switch languages.
+#   STANDARD = the page a user navigates to sets the site's language and overwrites
+#              whatever was set before
+#   EXPLICIT = the language set has priority, may only be overridden by explicitely
+#              setting a language with ?set_language=xx
+
+FEINCMS_TRANSLATION_POLICY = getattr(settings, 'FEINCMS_TRANSLATION_POLICY', 'STANDARD')
+
+# ------------------------------------------------------------------------
