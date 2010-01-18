@@ -253,9 +253,6 @@ class Base(models.Model):
                 contents += list(
                     self._feincms_content_types[idx].get_queryset(
                         Q(parent=self) & Q(region=region.key)))
-                # Note: the select_related() helps for content types that
-                # reference stuff (eg. media files) and doesn't hurt much
-                # when not needed.
 
         return contents
 
