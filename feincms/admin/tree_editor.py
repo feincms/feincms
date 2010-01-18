@@ -1,5 +1,6 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
+from django.contrib.admin.views import main
 from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
@@ -116,7 +117,6 @@ def ajax_editable_boolean(attr, short_description):
     return _fn
 
 
-from django.contrib.admin.views import main
 class ChangeList(main.ChangeList):
     def get_query_set(self):
         return super(ChangeList, self).get_query_set().order_by('tree_id', 'lft')
