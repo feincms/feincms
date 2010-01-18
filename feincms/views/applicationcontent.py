@@ -66,6 +66,8 @@ def build_page_response(page, request):
         extra = extra_path.strip('/').split('/')
         request._feincms_appcontent_parameters['page_extra_path'] = extra
         request.extra_path = extra_path
+    else:
+        request.extra_path = ""
 
     # The monkey-patched reverse() method needs some information
     # for proximity analysis when determining the nearest
