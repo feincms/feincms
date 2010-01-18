@@ -201,25 +201,8 @@ class Base(models.Model):
     def _get_content_types_for_region(self, region):
         # find all concrete content type tables which have at least one entry for
         # the current CMS object and region
-        sql = ' UNION '.join([
-            'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
-                idx,
-                cls._meta.db_table,
-                self.pk) for idx, cls in enumerate(self._feincms_content_types)])
-        sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
-
-        from django.db import connection
-        cursor = connection.cursor()
-        cursor.execute(sql, [region.key] * len(self._feincms_content_types))
-
-        counts = [row[1] for row in cursor.fetchall()]
-        return counts
-
-    def _content_for_region(self, region):
-        """
-        This method is used primarily by the ContentProxy
-        """
-        self._needs_content_types()
+        # This method is overridden by a more efficient implementation if
+        # the ct_tracker extension is active.
 
         from django.core.cache import cache as django_cache
 
@@ -232,9 +215,31 @@ class Base(models.Model):
             counts = django_cache.get(ck)
 
         if counts is None:
-            counts = self._get_content_types_for_region(region)
+            sql = ' UNION '.join([
+                'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
+                    idx,
+                    cls._meta.db_table,
+                    self.pk) for idx, cls in enumerate(self._feincms_content_types)])
+            sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
+
+            from django.db import connection
+            cursor = connection.cursor()
+            cursor.execute(sql, [region.key] * len(self._feincms_content_types))
+
+            counts = [row[1] for row in cursor.fetchall()]
+
             if ck:
                 django_cache.set(ck, counts)
+
+        return counts
+
+    def _content_for_region(self, region):
+        """
+        This method is used primarily by the ContentProxy
+        """
+        self._needs_content_types()
+
+        counts = self._get_content_types_for_region(region)
 
         if not any(counts):
             return []
@@ -251,6 +256,7 @@ class Base(models.Model):
                 # Note: the select_related() helps for content types that
                 # reference stuff (eg. media files) and doesn't hurt much
                 # when not needed.
+
         return contents
 
     @classmethod
