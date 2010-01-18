@@ -116,18 +116,13 @@ def ajax_editable_boolean(attr, short_description):
     _fn.editable_boolean_field = attr
     return _fn
 
-# !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
-# If the ChangeList is used by a TreeEditor, we always need to order by 'tree_id' and 'lft'.
+
 class ChangeList(main.ChangeList):
     def get_query_set(self):
-        qs = super(ChangeList, self).get_query_set()
-        if isinstance(self.model_admin, TreeEditor):
-            return qs.order_by('tree_id', 'lft')
-        return qs
+        return super(ChangeList, self).get_query_set().order_by('tree_id', 'lft')
 
     def get_results(self, request):
-        if isinstance(self.model_admin, TreeEditor) and \
-                settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
+        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
             clauses = [Q(
                 tree_id=tree_id,
                 lft__lte=lft,
@@ -138,7 +133,6 @@ class ChangeList(main.ChangeList):
                 self.query_set = self.model._default_manager.filter(reduce(lambda p, q: p|q, clauses))
 
         return super(ChangeList, self).get_results(request)
-main.ChangeList = ChangeList
 
 # ------------------------------------------------------------------------
 # MARK: -
@@ -291,6 +285,9 @@ class TreeEditor(admin.ModelAdmin):
                 d.append(b)
 
         return HttpResponse(simplejson.dumps(d), mimetype="application/json")
+
+    def get_changelist(self, request, **kwargs):
+        return ChangeList
 
     def changelist_view(self, request, extra_context=None, *args, **kwargs):
         """
