@@ -594,17 +594,6 @@ else:
 # MARK: -
 # ------------------------------------------------------------------------
 
-# We'll create a replacement for the normal "delete_selected" action which is
-# slower, calling .delete() on each object rather than the queryset .delete()
-# but avoids problems with hierarchy leading to all pages being deleted.
-#
-# See the warning here:
-# http://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/ for details
-def delete_page_action(modeladmin, request, queryset):
-    for i in queryset:
-        i.delete()
-delete_page_action.short_description = "Delete selected pages"
-
 class PageAdmin(editor.ItemEditor, list_modeladmin):
     class Media:
         css = {}
@@ -633,8 +622,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     show_on_top = ['title', 'active', 'parent']
     radio_fields = {'template_key': admin.HORIZONTAL}
 
-    actions = [ delete_page_action ]
-
     def __init__(self, *args, **kwargs):
         if len(Page._feincms_templates) > 4:
             del(self.radio_fields['template_key'])
@@ -642,11 +629,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         return super(PageAdmin, self).__init__(*args, **kwargs)
 
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
-
-    def get_actions(self, request):
-        actions = super(PageAdmin, self).get_actions(request)
-        del actions['delete_selected']
-        return actions
 
     def _actions_column(self, page):
         actions = super(PageAdmin, self)._actions_column(page)

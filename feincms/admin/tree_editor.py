@@ -1,5 +1,6 @@
 from django.conf import settings as django_settings
 from django.contrib import admin
+from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.utils import simplejson
@@ -115,61 +116,6 @@ def ajax_editable_boolean(attr, short_description):
     return _fn
 
 
-# ------------------------------------------------------------------------
-class TreeEditorQuerySet(QuerySet):
-    """
-    The TreeEditorQuerySet is a special query set used only in the TreeEditor
-    ChangeList page. The only difference to a regular QuerySet is that it
-    will enforce:
-
-        (a) The result is ordered in correct tree order so that
-            the TreeAdmin works all right.
-
-        (b) It ensures that all ancestors of selected items are included
-            in the result set, so the resulting tree display actually
-            makes sense.
-    """
-    def iterator(self):
-        qs = self
-        # Reaching into the bowels of query sets to find out whether the qs is
-        # actually filtered and we need to do the INCLUDE_ANCESTORS dance at all.
-        # INCLUDE_ANCESTORS is quite expensive, so don't do it if not needed.
-        is_filtered = bool(qs.query.where.children)
-        if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS and is_filtered:
-            include_pages = set()
-            # Order by 'rght' will return the tree deepest nodes first;
-            # this cuts down the number of queries considerably since all ancestors
-            # will already be in include_pages when they are checked, thus not
-            # trigger additional queries.
-            for p in super(TreeEditorQuerySet, self.order_by('rght')).iterator():
-                if p.parent_id and p.parent_id not in include_pages and \
-                                   p.id not in include_pages:
-                    ancestor_id_list = p.get_ancestors().values_list('id', flat=True)
-                    include_pages.update(ancestor_id_list)
-
-            if include_pages:
-                qs = qs | self.model._default_manager.filter(id__in=include_pages)
-
-            qs = qs.distinct()
-
-        for obj in super(TreeEditorQuerySet, qs).iterator():
-            yield obj
-
-    if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-        def __getitem__(self, index):
-            return self   # Don't even try to slice
-
-        def get(self, *args, **kwargs):
-            """
-            Quick and dirty hack to fix change_view and delete_view; they use
-            self.queryset(request).get(...) to get the object they should work
-            with. Our modifications to the queryset when INCLUDE_ANCESTORS is
-            enabled make get() fail often with a MultipleObjectsReturned
-            exception.
-            """
-            return self.model._default_manager.get(*args, **kwargs)
-
-
 # !!!: Hack alert! Patching ChangeList, check whether this still applies post Django 1.1
 # If the ChangeList is used by a TreEditor, we always need to order by 'tree_id' and 'lft'.
 from django.contrib.admin.views import main
@@ -179,6 +125,20 @@ class ChangeList(main.ChangeList):
         if isinstance(self.model_admin, TreeEditor):
             return qs.order_by('tree_id', 'lft')
         return qs
+
+    def get_results(self, request):
+        if isinstance(self.model_admin, TreeEditor) and\
+                settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
+            clauses = [Q(
+                tree_id=tree_id,
+                lft__lte=lft,
+                rght__gte=rght,
+                ) for lft, rght, tree_id in \
+                    self.query_set.values_list('lft', 'rght', 'tree_id')]
+            self.query_set = self.model._default_manager.filter(reduce(
+                lambda p, q: p|q, clauses))
+
+        return super(ChangeList, self).get_results(request)
 main.ChangeList = ChangeList
 
 
@@ -378,15 +338,6 @@ class TreeEditor(admin.ModelAdmin):
             return HttpResponse('OK')
         return HttpResponse('FAIL')
 
-    def queryset(self, request):
-        """
-        Returns a QuerySet of all model instances that can be edited by the
-        admin site. This is used by changelist_view.
-        """
-        qs = self.model._default_manager.get_query_set()
-        qs.__class__ = TreeEditorQuerySet
-        return qs
-
     def _actions_column(self, page):
         actions = []
         actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s"><big>&#x2702;</big></a>' % (
@@ -402,4 +353,3 @@ class TreeEditor(admin.ModelAdmin):
         return u' '.join(self._actions_column(page))
     actions_column.allow_tags = True
     actions_column.short_description = _('actions')
-
