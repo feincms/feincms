@@ -216,8 +216,9 @@ class TreeEditor(admin.ModelAdmin):
         Generate a short title for a page, indent it depending on
         the page's depth in the hierarchy.
         """
-        r = '''<span onclick="return page_tree_handler('%d')" id="page_marker-%d"
+        r = '''<input type="hidden" class="medialibrary_file_path" value="%s"><span onclick="return page_tree_handler('%d')" id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
+                item.get_absolute_url(),
                 item.id, item.id, 14+item.level*18)
 
 #        r += '<span tabindex="0">'
