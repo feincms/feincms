@@ -135,6 +135,16 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
    argument is omitted the primary language will be returned (the first language
    specified in settings.LANGUAGES)
 
+.. function:: feincms_translatedpage_or_base:
+
+   {% load feincms_page_tags %}
+
+   {% feincms_translatedpage_or_base for some_page as some_transpage language=gr %}
+
+   This template tag needs the translations extensions.
+
+   Similar in function and arguments to feincms_translatedpage, but if no translation
+   for the requested language exists, the base language page will be returned.
 
 .. function:: feincms_breadcrumbs:
 
