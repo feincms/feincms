@@ -175,6 +175,11 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
             return None
 register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
 
+class TranslatedPageNodeOrBase(TranslatedPageNode):
+    def what(self, page, args):
+        r = super(TranslatedPageNodeOrBase, self).what(page, args)
+        return r or page.original_translation
+register.tag('feincms_translatedpage_or_base', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNodeOrBase))
 
 @register.inclusion_tag("breadcrumbs.html")
 def feincms_breadcrumbs(page, include_self=True):
