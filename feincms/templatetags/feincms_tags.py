@@ -9,11 +9,27 @@ register = template.Library()
 
 
 def _render_content(content, **kwargs):
-    try:
-        return content.fe_render(**kwargs)
-    except AttributeError:
-        return content.render(**kwargs)
+    # Track current render level and abort if we nest too deep. Avoids
+    # crashing in recursive page contents (eg. a page list that contains
+    # itself or similar).
+    request = kwargs.get('request')
+    if request is not None:
+        level = getattr(request, 'feincms_render_level', 0)
+        if level > 10:
+            # TODO: Log this
+            return
+        setattr(request, 'feincms_render_level', level + 1)
 
+    try:
+        r = content.fe_render(**kwargs)
+    except AttributeError:
+        r = content.render(**kwargs)
+
+    if request is not None:
+        level = getattr(request, 'feincms_render_level', 1)
+        setattr(request, 'feincms_render_level', max(level - 1, 0))
+
+    return r
 
 @register.simple_tag
 def feincms_render_region(page, region, request, content_class=None):
