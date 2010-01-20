@@ -30,6 +30,9 @@
 
 {% block comment-form %}
     {% if content.comments_enabled %}
-        {% render_comment_form for parent %}
+        <form action="{{ feincms_page.get_absolute_url }}post-comment/" method="post" id="form-comment">
+            {{ form.as_p }}
+            <input type="submit" name="post" id="submit" value="{% trans "Post Comment" %}" />
+        </form>
     {% endif %}
 {% endblock comment-form %}
