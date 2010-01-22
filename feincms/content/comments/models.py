@@ -44,8 +44,9 @@ class CommentsContent(models.Model):
         parent_type = self.parent.__class__.__name__.lower()
         request = kwargs.get('request')
 
-        # TODO: Check for translation extension before use!
-        comment_page = self.parent.original_translation
+        comment_page = self.parent
+        if hasattr(comment_page, 'original_translation'):
+            comment_page = comment_page.original_translation
 
         f = None
         if self.comments_enabled and request.POST:
