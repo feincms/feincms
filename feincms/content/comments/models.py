@@ -16,8 +16,6 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-# from feincms.admin.editor import ItemEditorForm
-
 # ------------------------------------------------------------------------
 class CommentsContent(models.Model):
     comments_enabled = models.BooleanField(_('enabled'), default=True, help_text=_('New comments may be added'))
@@ -27,18 +25,23 @@ class CommentsContent(models.Model):
         verbose_name = _('comments')
         verbose_name_plural = _('comments')
 
- #   @classmethod
- #   def initialize_type(cls):
- #       class CommentContentAdminForm(ItemEditorForm):
- #           def __init__(self, *args, **kwargs):
- #               parent = kwargs.get('instance', None)
- #               if parent is not None:
- #                   for c in Comment.objects.order_by('submit_date'):
- #                       self.base_fields['comment_%d' % c.id] = forms.BooleanField('comment')
- #               super(CommentContentAdminForm, self).__init__(*args, **kwargs)
+    @classmethod
+    def initialize_type(cls):
+        from feincms.admin.editor import ItemEditorForm
+        class CommentContentAdminForm(ItemEditorForm):
+            def __init__(self, *args, **kwargs):
+                super(CommentContentAdminForm, self).__init__(*args, **kwargs)
+                parent = kwargs.get('instance', None)
+                if parent is not None:
+                    f = self.fields['comments_enabled']
+                    r = f.help_text
+                    r += u'<hr />'
+                    for c in Comment.objects.for_model(parent.parent).order_by('-submit_date'):
+                        r += '<div class="form-row" style="margin-left: 60px"># %d <a href="/admin/comments/comment/%d/">%s</a> - %s</div>' % \
+                            ( c.id, c.id, c.comment[:80], c.is_public and _('public') or _('not public') )
+                    f.help_text = r
 
-
- #       cls.feincms_item_editor_form = CommentContentAdminForm
+        cls.feincms_item_editor_form = CommentContentAdminForm
 
     def render(self, **kwargs):
         parent_type = self.parent.__class__.__name__.lower()
