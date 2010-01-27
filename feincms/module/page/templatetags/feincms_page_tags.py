@@ -7,6 +7,8 @@ from feincms.utils.templatetags import *
 register = template.Library()
 
 
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
     """
     Return a list of pages to be used for the navigation
@@ -79,7 +81,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 return PageManager.apply_active_filters(queryset)
 register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
-
+# ------------------------------------------------------------------------
 class ParentLinkNode(SimpleNodeWithVarAndArgs):
     """
     {% feincms_parentlink of feincms_page level=1 %}
@@ -99,7 +101,7 @@ class ParentLinkNode(SimpleNodeWithVarAndArgs):
             return '#'
 register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(ParentLinkNode))
 
-
+# ------------------------------------------------------------------------
 class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
     """
     {% feincms_languagelinks for feincms_page as links [args] %}
@@ -142,7 +144,27 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
         return links
 register.tag('feincms_languagelinks', do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode))
 
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
+def _translate_page_into(page, language, default=None):
+    """
+    Return the translation for a given page
+    """
+    # Optimisation shortcut: No need to dive into translations if page already what we want
+    if page.language == language:
+        return page
 
+    translations = dict((t.language, t) for t in page.available_translations())
+    translations[page.language] = page
+
+    if language in translations:
+        return translations[language]
+    else:
+        if hasattr(default, '__call__'):
+            return default(page=page)
+        return default
+
+# ------------------------------------------------------------------------
 class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
     """
     {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
@@ -159,28 +181,31 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
     settings LANGUAGES contains that code -- so naming a variable "en" will probably
     not do what is intended.
     """
-    def what(self, page, args):
+    def what(self, page, args, default=None):
         language = args.get('language',False)
         if not language:
             language = settings.LANGUAGES[0][0]
         elif language not in (x[0] for x in settings.LANGUAGES):
             language = template.Variable(language).resolve(self.render_context)
 
-        translations = dict((t.language, t) for t in page.available_translations())
-        translations[page.language] = page
-
-        if language in translations:
-            return translations[language]
-        else:
-            return None
+        return _translate_page_into(page, language, default=default)
 register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
 
+# ------------------------------------------------------------------------
 class TranslatedPageNodeOrBase(TranslatedPageNode):
     def what(self, page, args):
-        r = super(TranslatedPageNodeOrBase, self).what(page, args)
-        return r or page.original_translation
+        return super(TranslatedPageNodeOrBase, self).what(page, args, default=page.get_original_translation)
 register.tag('feincms_translatedpage_or_base', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNodeOrBase))
 
+# ------------------------------------------------------------------------
+@register.filter
+def feincms_translated_or_base(pages, language=None):
+    if not hasattr(pages, '__iter__'):
+        pages = [ pages ]
+    for page in pages:
+        yield _translate_page_into(page, language, default=page.get_original_translation)
+
+# ------------------------------------------------------------------------
 @register.inclusion_tag("breadcrumbs.html")
 def feincms_breadcrumbs(page, include_self=True):
     """
@@ -204,7 +229,7 @@ def feincms_breadcrumbs(page, include_self=True):
 
     return {"trail": bc}
 
-
+# ------------------------------------------------------------------------
 @register.filter
 def is_parent_of(page1, page2):
     """
@@ -217,8 +242,10 @@ def is_parent_of(page1, page2):
 
     return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
 
-
+# ------------------------------------------------------------------------
 @register.filter
 def is_equal_or_parent_of(page1, page2):
     return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
 
+# ------------------------------------------------------------------------
+# ------------------------------------------------------------------------
