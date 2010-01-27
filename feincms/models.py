@@ -177,15 +177,19 @@ class Base(models.Model):
                 continue
 
             try:
-                fn = get_object(ext + '.register')
-            except ImportError:
                 try:
-                    fn = get_object('%s.%s.register' % ( here_path, ext ) )
+                    fn = get_object(ext + '.register')
                 except ImportError:
-                    fn = get_object('%s.%s.register' % ( common_path, ext ) )
+                    try:
+                        fn = get_object('%s.%s.register' % ( here_path, ext ) )
+                    except ImportError:
+                        fn = get_object('%s.%s.register' % ( common_path, ext ) )
 
-            cls.register_extension(fn)
-            cls._feincms_extensions.add(ext)
+                cls.register_extension(fn)
+                cls._feincms_extensions.add(ext)
+            except Exception, e:
+                raise ImproperlyConfigured("%s.register_extensions('%s') raised an '%s' exception" %
+                                            (cls.__name__, ext, e.message))
 
     @property
     def content(self):
