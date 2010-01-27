@@ -141,11 +141,15 @@ def register(cls, admin_cls):
         else:
             return []
 
-    @monkeypatch_property(cls)
-    def original_translation(self):
+    @monkeypatch_method(cls)
+    def get_original_translation(self, *args, **kwargs):
         if is_primary_language(self.language):
             return self
         return self.translation_of
+
+    @monkeypatch_property(cls)
+    def original_translation(self):
+        return self.get_original_translation()
 
     @monkeypatch_method(cls)
     def get_translation(self, language):
