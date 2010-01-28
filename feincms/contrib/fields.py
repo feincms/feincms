@@ -48,3 +48,12 @@ class JSONField(models.TextField):
             value = json.dumps(value, cls=DjangoJSONEncoder)
 
         return super(JSONField, self).get_db_prep_save(value)
+
+try:
+    from south.modelsinspector import add_introspection_rules
+
+    JSONField_introspection_rule = ( (JSONField,), [], {}, )
+
+    add_introspection_rules(rules=[JSONField_introspection_rule], patterns=["^feincms\.contrib\.fields"])
+except ImportError:
+    pass
