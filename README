@@ -76,3 +76,19 @@ Visit these sites
 * Read the documentation: http://spinlock.ch/pub/feincms/html/
 * See the google groups page at http://groups.google.com/group/django-feincms
 * FeinCMS on github: http://github.com/matthiask/feincms/tree
+
+Optional Packages
+-----------------
+
+* `pytidylib <http://countergram.com/open-source/pytidylib/>`_ can be
+  installed to perform HTML validation and cleanup using `HTML Tidy
+  <http://tidy.sourceforge.net>`_ while editing content. Install pytidylib and
+  add ``FEINCMS_TIDY_HTML = True`` to your settings.py.
+
+* Alternately, `lxml <http://pypi.python.org/pypi/lxml>`_ can be installed to perform
+  silent HTML cleanup to remove non-standard markup while editing content.
+  Install lxml and add ``cleanse=True`` when you register ``RichTextContent``
+  or ``SectionContent``::
+
+    RichTextContentType = Page.create_content_type(RichTextContent, cleanse=True)
+

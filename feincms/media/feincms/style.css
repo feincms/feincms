@@ -286,6 +286,19 @@ tr td.nohighlight {background-color: #fff;}
     padding-left: 30px;
 }
 
+/* Allow nested lists in error items */
+ul.errorlist ul {
+	margin-left: 1em;
+	padding-left: 0;
+	list-style-type: square;
+}
+
+ul.errorlist li li {
+	/* Avoid repeating the warning image every time*/
+	background-image:none;
+	padding: 0;
+}
+
 /* tree editor */
 
 .page_marker { display:block; text-align: right; float: left; padding: 1px 1px 0 0; }

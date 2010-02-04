@@ -77,6 +77,6 @@ class SectionContent(models.Model):
 
     def save(self, *args, **kwargs):
         if getattr(self, 'cleanse', False):
-            from feincms.utils.cleanse import cleanse_html
+            from feincms.utils.html.cleanse import cleanse_html
             self.richtext = cleanse_html(self.richtext)
         super(SectionContent, self).save(*args, **kwargs)

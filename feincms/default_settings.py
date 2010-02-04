@@ -3,9 +3,10 @@
 # $Id$
 # ------------------------------------------------------------------------
 
+from os.path import join
+
 import django
 from django.conf import settings
-from os.path import join
 
 # Whether Django 1.0 compatibilty mode should be active or not
 DJANGO10_COMPAT = django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1)
@@ -68,5 +69,17 @@ FEINCMS_ALLOW_EXTRA_PATH = getattr(settings, 'FEINCMS_ALLOW_EXTRA_PATH', False)
 #              setting a language with ?set_language=xx
 
 FEINCMS_TRANSLATION_POLICY = getattr(settings, 'FEINCMS_TRANSLATION_POLICY', 'STANDARD')
+
+# ------------------------------------------------------------------------
+# Settings for HTML validation
+
+#: If True, HTML will be run through a tidy function before saving:
+FEINCMS_TIDY_HTML = getattr(settings, 'FEINCMS_TIDY_HTML', False)
+#: If True, displays form validation errors so the user can see how their HTML has been changed:
+FEINCMS_TIDY_SHOW_WARNINGS = getattr(settings, 'FEINCMS_TIDY_SHOW_WARNINGS', True)
+#: If True, users will be allowed to ignore HTML warnings (errors are always blocked):
+FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE = getattr(settings, 'FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE', True)
+#: Name of the tidy function - anything which takes (html) and returns (html, errors, warnings) can be used:
+FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION', 'feincms.utils.html.tidy.tidy_html')
 
 # ------------------------------------------------------------------------
