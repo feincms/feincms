@@ -220,14 +220,17 @@ class ItemEditor(admin.ModelAdmin):
                     FORM_DATA["%s-TOTAL_FORMS" % k] = 0
 
             # BUG: This somehow does not correctly initialize the initial form for adding new content correctly
+            model_form = ModelForm(FORM_DATA, instance=obj)
+            inline_formsets = [
+                formset_class(FORM_DATA, instance=obj, prefix=content_type.__name__.lower())
+                for content_type, formset_class in inline_formset_types
+            ]
         else:
-            FORM_DATA = None
-
-        model_form = ModelForm(FORM_DATA, instance=obj)
-        inline_formsets = [
-            formset_class(FORM_DATA, instance=obj, prefix=content_type.__name__.lower())
-            for content_type, formset_class in inline_formset_types
-        ]
+            model_form = ModelForm(instance=obj)
+            inline_formsets = [
+                formset_class(instance=obj, prefix=content_type.__name__.lower())
+                for content_type, formset_class in inline_formset_types
+            ]
 
         # Prepare mapping of content types to their prettified names
         content_types = []
