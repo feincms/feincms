@@ -67,6 +67,8 @@ def tidy_html(html):
             continue
         if "Warning: inserting missing 'title' element" in msg:
             continue
+        if "Warning: inserting implicit <body>" in msg:
+            continue
 
         if "Error:" in msg:
             errors.append(msg)
