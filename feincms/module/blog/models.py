@@ -15,7 +15,7 @@ class EntryManager(models.Manager):
     def published(self):
         return self.filter(
             published__isnull=False,
-            published__lte=datetime.now(),
+            published_on__lte=datetime.now(),
             )
 
 
