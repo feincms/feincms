@@ -43,7 +43,11 @@ def handler(request, path=None):
 def _page_has_appcontent(page):
     # Very dumb implementation, will be overridden with a more efficient
     # version if ct_tracker is enabled.
-    applicationcontents = page.applicationcontent_set.all()
+    try:
+        applicationcontents = page.applicationcontent_set.all()
+    except AttributeError:
+        return False
+
     has_appcontent = any(applicationcontents)
 
     return has_appcontent
