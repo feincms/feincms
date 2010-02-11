@@ -17,7 +17,7 @@ def register(cls, admin_cls):
         admin_cls.search_fields += ('meta_keywords', 'meta_description')
 
         if admin_cls.fieldsets:
-            fieldsets = [ f for f in admin_cls.fieldsets if f[0] == "Other options"]
+            fieldsets = [ f for f in admin_cls.fieldsets if f[0] == _('Other options')]
             if fieldsets:
                 fieldsets[0][1]['fields'].extend(['meta_keywords', 'meta_description'])
             else:
