@@ -81,6 +81,20 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 return PageManager.apply_active_filters(queryset)
 register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
+class ExtendedNavigationNode(NavigationNode):
+    def render(self, context):
+        self.render_context = context
+        try:
+            instance = self.in_var.resolve(context)
+        except template.VariableDoesNotExist:
+            context[self.var_name] = []
+            return ''
+
+        context[self.var_name] = self.what(instance, feincms_parse_args(self.args, context))
+
+        return ''
+register.tag('feincms_navigation_extended', do_simple_assignment_node_with_var_and_args_helper(ExtendedNavigationNode))
+
 # ------------------------------------------------------------------------
 class ParentLinkNode(SimpleNodeWithVarAndArgs):
     """
