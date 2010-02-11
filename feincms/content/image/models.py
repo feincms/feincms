@@ -12,7 +12,7 @@ class ImageContent(models.Model):
 
         Cls.create_content_type(ImageContent, POSITION_CHOICES=(
             ('left', 'Left'),
-            ('right', Right'),
+            ('right', 'Right'),
             ))
     """
 
