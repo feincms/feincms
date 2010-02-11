@@ -76,16 +76,28 @@ function richify_poor(item){
     }
 }
 
-function zucht_und_ordnung(move_item) {
-    for (var i=0; i<REGION_MAP.length;i++) {
-        var container = $("#"+REGION_MAP[i]+"_body div.order-machine");
-        for (var j=0; j<container.children().length; j++) {
-            if (move_item)
-                container.find("input.order-field[value="+j+"]").parents("fieldset.order-item").appendTo(container);
-            else
-                set_item_field_value(container.find("fieldset.order-item:eq("+j+")"), "order-field", j);
-        }
+function sort_by_ordering(e1, e2) {
+  var v1 = parseInt($('.order-field', e1).val()) || 0;
+  var v2 = parseInt($('.order-field', e2).val()) || 0;
+  return  v1 > v2 ? 1 : -1;
+};
+
+function give_ordering_to_content_types() {
+  for (var i=0; i<REGION_MAP.length;i++) {
+    var container = $("#"+REGION_MAP[i]+"_body div.order-machine");
+    for (var j=0; j<container.children().length; j++) {
+      set_item_field_value(container.find("fieldset.order-item:eq("+j+")"), "order-field", j);
     }
+  }
+}
+
+function order_content_types_in_regions() {
+  for (var i=0; i<REGION_MAP.length;i++) {
+    var container = $("#"+REGION_MAP[i]+"_body div.order-machine");
+    container.children().sort(sort_by_ordering).each(function() {
+      container.append(this);
+    });
+  }
 }
 
 function attach_dragdrop_handlers() {
@@ -234,7 +246,7 @@ $(document).ready(function(){
     });
 
     $('form').submit(function(){
-        zucht_und_ordnung(false);
+        give_ordering_to_content_types();
         var form = $(this);
         form.attr('action', form.attr('action')+window.location.hash);
         return true;
@@ -268,8 +280,7 @@ $(document).ready(function(){
 
     attach_dragdrop_handlers();
 
-    // bring order to chaos
-    zucht_und_ordnung(true);
+    order_content_types_in_regions();
 
     $('#inlines').hide();
 

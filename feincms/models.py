@@ -404,7 +404,7 @@ class Base(models.Model):
 
         feincms_content_base = cls._feincms_content_model
 
-        class Meta:
+        class Meta(feincms_content_base.Meta):
             db_table = '%s_%s' % (cls._meta.db_table, model.__name__.lower())
             verbose_name = model._meta.verbose_name
             verbose_name_plural = model._meta.verbose_name_plural
