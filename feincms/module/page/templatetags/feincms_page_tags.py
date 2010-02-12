@@ -4,6 +4,8 @@ from django.http import HttpRequest
 
 from feincms.module.page.models import Page, PageManager
 from feincms.utils.templatetags import *
+from feincms.utils.templatetags import _parse_args
+
 register = template.Library()
 
 
@@ -90,7 +92,7 @@ class ExtendedNavigationNode(NavigationNode):
             context[self.var_name] = []
             return ''
 
-        context[self.var_name] = self.what(instance, feincms_parse_args(self.args, context))
+        context[self.var_name] = self.what(instance, _parse_args(self.args, context))
 
         return ''
 register.tag('feincms_navigation_extended', do_simple_assignment_node_with_var_and_args_helper(ExtendedNavigationNode))
