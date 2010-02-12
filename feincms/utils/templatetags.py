@@ -32,9 +32,6 @@ def _parse_args(argstr, context=None):
     except TypeError:
         raise template.TemplateSyntaxError('Malformed arguments')
 
-def feincms_parse_args(*args, **kwargs):
-    return _parse_args(*args, **kwargs)
-
 def do_simple_node_with_var_and_args_helper(cls):
     def _func(parser, token):
         try:
