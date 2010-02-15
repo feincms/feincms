@@ -222,6 +222,7 @@ class Page(Base):
 
         pages = Page.objects.active().filter(tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght)
         return pages.count() > self.level
+    is_active.short_description = _('is active')
 
     def are_ancestors_active(self):
         """
