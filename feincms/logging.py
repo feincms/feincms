@@ -79,17 +79,41 @@ class LogBase(object):
         pass
 
 # ------------------------------------------------------------------------
-class LogStdout(LogBase):
+class LogStderr(LogBase):
     """
-    Example logging class, logs to stdout.
+    Example logging class, logs to stderr.
     """
+    from sys import stderr
+
     subsys = { LogBase.ANY: '*', LogBase.DB: '#', LogBase.CACHE: '@', LogBase.AUTH: '!' }
+    log_file = stderr
+
+    def make_log_string(self, subsys, *args):
+        s = u'%s %s' % (self.subsys[subsys], u', '.join(args))
+        return s
 
     def do_log(self, subsys, level, *args):
+        print >>self.log_file, self.make_log_string(subsys, *args)
+
+# ------------------------------------------------------------------------
+class LogDatedStderr(LogStderr):
+    """
+    Another simple logging class, prefixes log output with current time.
+    """
+    def make_log_string(self, subsys, *args):
         from datetime import datetime
 
         now = datetime.now().isoformat()
-        print 'LOG:', now, self.subsys[subsys], ', '.join(args)
+        return u"%s %s" % ( now, super(LogDatedStderr, self).make_log_string(subsys, *args) )
+
+# ------------------------------------------------------------------------
+class LogStdout(LogDatedStderr):
+    """
+    Compat class.
+    """
+    def __init__(self):
+        from sys import stdout
+        self.log_file = stdout
 
 # ------------------------------------------------------------------------
 # Instanciate the logger, yeah!
