@@ -11,13 +11,19 @@ and
 
 from django import template
 
-def _parse_args(argstr):
+def _parse_args(argstr, context=None):
     try:
         args = {}
         for token in argstr.split(','):
             if '=' in token:
                 k, v = token.split('=', 1)
-                args[k] = v
+                if context:
+                    try:
+                        args[k] = template.Variable(v).resolve(context)
+                    except template.VariableDoesNotExist:
+                        args[k] = v
+                else:
+                    args[k] = v
             else:
                 args[token] = True
 
