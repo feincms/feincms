@@ -5,3 +5,4 @@
 /secrets.py
 .DS_Store
 ._*
+/FeinCMS.egg-info
