@@ -395,6 +395,7 @@ class Base(models.Model):
                     cls.__module__, cls.__name__,
                     model.__name__.lower()),
                 RuntimeWarning)
+            return
         except AttributeError:
             # everything ok
             pass
