@@ -119,10 +119,11 @@ class CMSBaseTest(TestCase):
 
         assert 'yahoo' in obj.render()
 
-    def test_03_double_creation(self):
-        # creating a content type twice is forbidden
-        self.assertRaises(ImproperlyConfigured,
-            lambda: ExampleCMSBase.create_content_type(RawContent))
+    #Creating a content type twice isn't forbidden anymore
+    #def test_03_double_creation(self):
+    #    # creating a content type twice is forbidden
+    #    self.assertRaises(ImproperlyConfigured,
+    #        lambda: ExampleCMSBase.create_content_type(RawContent))
 
     def test_04_mediafilecontent_creation(self):
         # the medialibrary needs to be enabled, otherwise this test fails
@@ -490,9 +491,7 @@ class PagesTestCase(TestCase):
             position='block',
             ordering=1)
 
-        self.assertContains(self.client.get('/admin/page/page/1/'), 'no caption')
-
-        self.assertEqual(unicode(mediafile), 'MediaFile')
+        self.assertEqual(unicode(mediafile), 'somefile.jpg')
 
         mediafile.translations.create(caption='something',
             language_code='%s-ha' % short_language_code())
@@ -504,7 +503,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(mf.translation.caption, 'something')
         self.assertEqual(mf.translation.short_language_code(), short_language_code())
         self.assertNotEqual(mf.get_absolute_url(), '')
-        self.assertEqual(unicode(mf), 'something (somefile.jpg / 6 bytes)')
+        self.assertEqual(unicode(mf), 'something')
         self.assertEqual(mf.file_type(), 'Image')
 
         self.assertEqual(MediaFile.objects.only_language('de').count(), 0)
@@ -643,9 +642,9 @@ class PagesTestCase(TestCase):
         page = Page.objects.get(pk=1)
         self.create_pagecontent(page)
 
-        self.assertEqual(feincms_tags.feincms_render_region(page, 'main', {}),
+        self.assertEqual(feincms_tags.feincms_render_region(page, 'main', Empty()),
                          'This is some example content')
-        self.assertEqual(feincms_tags.feincms_render_content(page.content.main[0], {}),
+        self.assertEqual(feincms_tags.feincms_render_content(page.content.main[0], Empty()),
                          'This is some example content')
 
     def test_17_page_template_tags(self):
@@ -934,7 +933,7 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'base:/test/')
 
         # This should not raise
-        assert self.client.get(page.get_absolute_url() + 'notexists/').status_code == 200
+        assert self.client.get(page.get_absolute_url() + 'notexists/').status_code == 404
 
         # This should raise (the view raises an error)
         self.assertRaises(NotImplementedError, lambda: self.client.get(page.get_absolute_url() + 'raises/'))

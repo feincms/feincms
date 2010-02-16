@@ -388,10 +388,14 @@ class Base(models.Model):
         # with the same class name because of related_name clashes
         try:
             getattr(cls, '%s_set' % model.__name__.lower())
-            raise ImproperlyConfigured, 'Cannot create content type using %s.%s for %s.%s, because %s_set is already taken.' % (
-                model.__module__, model.__name__,
-                cls.__module__, cls.__name__,
-                model.__name__.lower())
+            import warnings
+            warnings.warn(
+                'Cannot create content type using %s.%s for %s.%s, because %s_set is already taken.' % (
+                    model.__module__, model.__name__,
+                    cls.__module__, cls.__name__,
+                    model.__name__.lower()),
+                RuntimeWarning)
+            return
         except AttributeError:
             # everything ok
             pass
@@ -404,7 +408,7 @@ class Base(models.Model):
 
         feincms_content_base = cls._feincms_content_model
 
-        class Meta:
+        class Meta(feincms_content_base.Meta):
             db_table = '%s_%s' % (cls._meta.db_table, model.__name__.lower())
             verbose_name = model._meta.verbose_name
             verbose_name_plural = model._meta.verbose_name_plural
@@ -493,7 +497,9 @@ class Base(models.Model):
         # helper which can be used to ensure that either register_regions or
         # register_templates has been executed before proceeding
         if not hasattr(cls, 'template'):
-            raise ImproperlyConfigured, 'You need to register at least one template for Page before the admin code is included.'
+            raise ImproperlyConfigured, 'You need to register at least one template or one region on %s.' % (
+                cls.__name__,
+                )
 
     @classmethod
     def _needs_content_types(cls):

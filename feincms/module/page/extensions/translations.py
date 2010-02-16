@@ -125,7 +125,7 @@ def register(cls, admin_cls):
         if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
             try:
                 page = cls.objects.page_for_path(target)
-                page = page.get_translation(request.LANGUAGE_CODE)
+                page = page.get_translation(getattr(request, 'LANGUAGE_CODE', None))
                 target = page.get_absolute_url()
             except cls.DoesNotExist:
                 pass
