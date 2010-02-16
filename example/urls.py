@@ -33,5 +33,5 @@ urlpatterns = patterns('',
     # application content testcases
     #url(r'^(.*)/$', 'feincms.views.applicationcontent.handler'),
 
-    url(r'^$|^(.*)/$', 'feincms.views.applicationcontent.handler'),
+    url(r'^(.*)/$|^$', 'feincms.views.applicationcontent.handler'),
 )
