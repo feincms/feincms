@@ -143,6 +143,14 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
         only_existing = args.get('existing', False)
         exclude_current = args.get('excludecurrent', False)
 
+        # Preserve the trailing path when switching languages if
+        # we are inside an ApplicationContent
+        trailing_path = u''
+        request = args.get('request', None)
+        if hasattr(request, '_feincms_appcontent_parameters'):
+            if request._feincms_appcontent_parameters.get('in_appcontent_subpage'):
+                trailing_path = request.path[len(page.get_absolute_url()):]
+
         translations = dict((t.language, t) for t in page.available_translations())
         translations[page.language] = page
 
@@ -153,7 +161,7 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
             # hardcoded paths... bleh
             if key in translations:
-                links.append((key, name, translations[key].get_absolute_url()))
+                links.append((key, name, translations[key].get_absolute_url()+trailing_path))
             elif not only_existing:
                 links.append((key, name, None))
 
