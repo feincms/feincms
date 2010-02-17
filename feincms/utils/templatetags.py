@@ -60,7 +60,7 @@ class SimpleNodeWithVarAndArgs(template.Node):
         except template.VariableDoesNotExist:
             return ''
 
-        return self.what(instance, _parse_args(self.args))
+        return self.what(instance, _parse_args(self.args, context))
 
 def do_simple_node_with_var_helper(cls):
     def _func(parser, token):
@@ -166,7 +166,7 @@ class SimpleAssignmentNodeWithVarAndArgs(template.Node):
             context[self.var_name] = []
             return ''
 
-        context[self.var_name] = self.what(instance, _parse_args(self.args))
+        context[self.var_name] = self.what(instance, _parse_args(self.args, context))
 
         return ''
 
