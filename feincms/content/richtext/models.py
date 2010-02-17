@@ -84,7 +84,9 @@ class RichTextContent(models.Model):
         super(RichTextContent, self).save(*args, **kwargs)
 
     @classmethod
-    def initialize_type(cls):
+    def initialize_type(cls, cleanse=False):
+        cls.cleanse = cleanse
+
         # TODO: Move this into somewhere more generic:
         if settings.FEINCMS_TIDY_HTML:
             # Make sure we can load the tidy function without dependency failures:
