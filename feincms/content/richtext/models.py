@@ -83,7 +83,7 @@ class RichTextContent(models.Model):
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?
         if getattr(self, 'cleanse', False):
-            from feincms.utils.cleanse import cleanse_html
+            from feincms.utils.html.cleanse import cleanse_html
             self.text = cleanse_html(self.text)
         super(RichTextContent, self).save(*args, **kwargs)
 
