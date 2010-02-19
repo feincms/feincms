@@ -1,7 +1,5 @@
 <script type="text/javascript" src="{{ TINYMCE_JS_URL }}"></script>
 
-{# FIXME: At the very least, the tinyMCE content_css path should come from settings.py to avoid 404s. Perhaps this should be a separate static file under MEDIA_URL since serious users are going to want to customize it completely? #}
-
 <script type="text/javascript">
     tinyMCE.init({
         mode: "none",
@@ -18,7 +16,8 @@
         theme_advanced_resizing: true,
         width: '680',
         height: '300',
-  /*      content_css: "/path_to_your_media/css/preview.css", */
+        {% if TINYMCE_CONTENT_CSS_URL %}content_css: "{{ TINYMCE_CONTENT_CSS_URL }}",{% endif %}
+        {% if TINYMCE_LINK_LIST_URL %}external_link_list_url: "{{ TINYMCE_LINK_LIST_URL }}",{% endif %}
         plugins: "fullscreen,paste",
         paste_auto_cleanup_on_paste : true,
         relative_urls: false
