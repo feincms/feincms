@@ -28,6 +28,10 @@ TINYMCE_JS_URL = getattr(settings, 'TINYMCE_JS_URL', join(settings.MEDIA_URL, 'j
 
 TINYMCE_CONFIG_URL = getattr(settings, 'TINYMCE_CONFIG_URL', 'admin/content/richtext/init.html')
 
+TINYMCE_CONTENT_CSS_URL = getattr(settings, 'TINYMCE_CONTENT_CSS_URL', None)
+
+TINYMCE_LINK_LIST_URL = getattr(settings, 'TINYMCE_LINK_LIST_URL', None)
+
 # ------------------------------------------------------------------------
 # Admin settings
 
