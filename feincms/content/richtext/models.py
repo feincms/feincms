@@ -13,11 +13,14 @@ from feincms.utils import get_object
 class RichTextContentAdminForm(ItemEditorForm):
     text = forms.CharField(widget=forms.Textarea, required=False, label=_('text'))
 
-    feincms_item_editor_class = 'tinymce'
+    feincms_item_editor_classes = {
+        'text': 'tinymce',
+    }
 
     def __init__(self, *args, **kwargs):
         super(RichTextContentAdminForm, self).__init__(*args, **kwargs)
-        self.fields['text'].widget.attrs.update({'class': 'item-richtext-%s' % self.feincms_item_editor_class})
+        for field in self.feincms_item_editor_classes.keys():
+            self.fields[field].widget.attrs.update({'class': 'item-richtext-%s' % self.feincms_item_editor_classes[field]})
 
     #: If FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE allows, we'll convert this into
     # a checkbox so the user can choose whether to ignore HTML validation
