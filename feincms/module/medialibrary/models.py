@@ -10,6 +10,7 @@ from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
+from django.template.defaultfilters import slugify
 
 from feincms import settings
 from feincms.models import Base
@@ -38,6 +39,8 @@ class Category(models.Model):
         related_name='children', limit_choices_to={'parent__isnull': True},
         verbose_name=_('parent'))
 
+    slug = models.SlugField(_('slug'), max_length=150)
+
     class Meta:
         ordering = ['parent__title', 'title']
         verbose_name = _('category')
@@ -48,6 +51,21 @@ class Category(models.Model):
             return u'%s - %s' % (self.parent.title, self.title)
 
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+
+        super(Category, self).save(*args, **kwargs)
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display      = ['parent', 'title']
+    list_filter       = ['parent']
+    list_per_page     = 25
+    search_fields     = ['title']
+    prepopulated_fields = { 'slug': ('title',), }
+
 
 # ------------------------------------------------------------------------
 class MediaFileBase(Base, TranslatedObjectMixin):
