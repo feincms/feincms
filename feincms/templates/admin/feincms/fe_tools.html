@@ -1,10 +1,16 @@
 {% load i18n %}
 
-{% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-{% else %}
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.2.min.js"></script>
-{% endif %}
+<script type="text/javascript" charset="utf-8">
+(function () {
+    /* Avoid loading jQuery twice, which will break sites by resetting any pre-existing jQuery and its plugins: */
+    if (typeof(jQuery) == "undefined") {
+        var jQuery_scr = document.createElement("script");
+        jQuery_scr.type = "text/javascript";
+        jQuery_scr.src = {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"{% else %}"{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.2.min.js"{% endif %};
+        document.head.appendChild(jQuery_scr);
+    }
+})();
+</script>
 
 <script src="{{ FEINCMS_ADMIN_MEDIA }}/frontend_editing.js" type="text/javascript" charset="utf-8"></script>
 <link rel="stylesheet" href="{{ FEINCMS_ADMIN_MEDIA }}/frontend_editing.css" type="text/css" media="screen" charset="utf-8">
