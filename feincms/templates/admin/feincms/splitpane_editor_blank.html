@@ -3,7 +3,9 @@
 
 {% block extrahead %}
 <script type="text/javascript" charset="utf-8">
-    top.frames["frame_navigation"].location.reload();
+    if (top && "frame_navigation" in top.frames) {
+        top.frames["frame_navigation"].location.reload();
+    }
 </script>
 {% endblock extrahead %}
 
