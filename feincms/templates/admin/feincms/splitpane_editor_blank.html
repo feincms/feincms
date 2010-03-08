@@ -1,6 +1,12 @@
 {% extends "admin/change_list.html" %}
 {% load i18n admin_modify adminmedia %}
 
+{% block extrahead %}
+<script type="text/javascript" charset="utf-8">
+    top.frames["frame_navigation"].location.reload();
+</script>
+{% endblock extrahead %}
+
 {% block breadcrumbs %}
 <div class="breadcrumbs">
   <a href="../../">
