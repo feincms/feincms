@@ -51,7 +51,7 @@
     {% if object.get_preview_url %}
         <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
     {% endif %}
-    {% if perms.page.add_page %}
+    {% if has_add_permission %}
         <li><a href="../add/?parent={{ object.pk }}" class="addchild">{% trans "Add Child Page" %}</a></li>
     {% endif %}
 </ul>

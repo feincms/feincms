@@ -247,6 +247,9 @@ class ItemEditor(admin.ModelAdmin):
             context['available_templates'] = self.model._feincms_templates
 
         context.update({
+            'has_add_permission': self.has_add_permission(request),
+            'has_change_permission': self.has_change_permission(request, obj=obj),
+            'has_delete_permission': self.has_delete_permission(request, obj=obj),
             'change': obj.pk is not None,
             'title': _('Change %s') % force_unicode(opts.verbose_name),
             'opts': opts,
