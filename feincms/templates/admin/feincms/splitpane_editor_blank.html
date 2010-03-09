@@ -4,7 +4,13 @@
 {% block extrahead %}
 <script type="text/javascript" charset="utf-8">
     if (top && "frame_navigation" in top.frames) {
-        top.frames["frame_navigation"].location.reload();
+        // Avoid a race condition in Firefox:
+        var nav_href = document.location.href.replace("_blank=1", "_tree=1");
+        if (top.frames["frame_navigation"].location.href == nav_href) {
+            top.frames["frame_navigation"].location.reload();
+        } else {
+            top.frames["frame_navigation"].location.href = nav_href;
+        }
     }
 </script>
 {% endblock extrahead %}
