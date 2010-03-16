@@ -35,6 +35,10 @@ class JSONField(models.TextField):
         if isinstance(value, dict):
             return value
         elif isinstance(value, basestring):
+            # Avoid asking the JSON decoder to handle empty values:
+            if not value:
+                return {}
+
             try:
                 return json.loads(value)
             except ValueError:
