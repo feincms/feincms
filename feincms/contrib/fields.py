@@ -50,6 +50,7 @@ class JSONField(models.TextField):
 
     def value_to_string(self, obj):
         """Extract our value from the passed object and return it in string form"""
+
         if hasattr(obj, self.attname):
             value = getattr(obj, self.attname)
         else:
@@ -59,9 +60,9 @@ class JSONField(models.TextField):
         return self._flatten_value(value)
 
     def _flatten_value(self, value):
-        """Return either a string or None, JSON-encoding dict()s as necessary"""
+        """Return either a string, JSON-encoding dict()s as necessary"""
         if not value:
-            return None
+            return ""
 
         if isinstance(value, dict):
             value = json.dumps(value, cls=DjangoJSONEncoder)
