@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # GABRIEL KOVACS <kovacs.gabi@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: FienCMS\n"
@@ -14,10 +14,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Romanian\n"
-"X-Poedit-Country: ROMANIA\n"
-"X-Poedit-SourceCharset: utf-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Romanian\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Country: ROMANIA\n"
 
 #: models.py:142
 msgid "template"
@@ -70,22 +70,18 @@ msgid "Insert before"
 msgstr "Inserează inainte"
 
 #: admin/tree_editor.py:349
-#, fuzzy
 msgid "actions"
 msgstr "acțiuni"
 
 #: content/application/models.py:108
-#, fuzzy
 msgid "application content"
 msgstr "conținutul aplicației"
 
 #: content/application/models.py:109
-#, fuzzy
 msgid "application contents"
-msgstr "conținuturi ale aplicației"
+msgstr "conținuturile aplicației"
 
 #: content/application/models.py:113
-#, fuzzy
 msgid "application"
 msgstr "aplicație"
 
@@ -181,12 +177,8 @@ msgid "rich texts"
 msgstr "texte formatabile"
 
 #: content/rss/models.py:13
-msgid ""
-"The rss field is updated several times a day. A change in the title will "
-"only be visible on the home page after the next feed update."
-msgstr ""
-"Fluxul RSS este actualizat de mai multe ori pe zi. O modificare a titlului va fi "
-"vizibilă in prima pagină după următoarea actualizare a fluxului."
+msgid "The rss field is updated several times a day. A change in the title will only be visible on the home page after the next feed update."
+msgstr "Fluxul RSS este actualizat de mai multe ori pe zi. O modificare a titlului va fi vizibilă in prima pagină după următoarea actualizare a fluxului."
 
 #: content/rss/models.py:14
 msgid "link"
@@ -213,12 +205,10 @@ msgid "RSS feeds"
 msgstr "fluxuri RSS"
 
 #: content/table/models.py:48
-#, fuzzy
 msgid "plain"
 msgstr "simplu"
 
 #: content/table/models.py:49
-#, fuzzy
 msgid "title row"
 msgstr "titlu"
 
@@ -227,17 +217,14 @@ msgid "title row and column"
 msgstr "titlu rând și coloană"
 
 #: content/table/models.py:57
-#, fuzzy
 msgid "table"
 msgstr "tabel"
 
 #: content/table/models.py:58
-#, fuzzy
 msgid "tables"
 msgstr "tabele"
 
 #: content/table/models.py:67
-#, fuzzy
 msgid "type"
 msgstr "tip"
 
@@ -250,12 +237,8 @@ msgid "video link"
 msgstr "legătură film"
 
 #: content/video/models.py:15
-msgid ""
-"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
-"com/watch?v=zmj1rpzDRZ0"
-msgstr ""
-"Aceasta ar trebui să fie o legătură către un film de pe youtube sau vimeo, de ex.: "
-"http://www.youtube.com/watch?v=zmj1rpzDRZ0"
+msgid "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
+msgstr "Aceasta ar trebui să fie o legătură către un film de pe youtube sau vimeo, de ex.: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
 
 #: content/video/models.py:19
 msgid "video"
@@ -279,8 +262,7 @@ msgstr "publicat la"
 
 #: module/blog/models.py:29
 msgid "Will be set automatically once you tick the `published` checkbox above."
-msgstr ""
-"Va fi trimis automat în momentul in care bifați butonul `publicat` de mai sus."
+msgstr "Va fi trimis automat în momentul in care bifați butonul `publicat` de mai sus."
 
 #: module/blog/models.py:33
 msgid "entry"
@@ -375,7 +357,6 @@ msgid "caption"
 msgstr "legendă"
 
 #: module/medialibrary/models.py:127
-#, fuzzy
 msgid "description"
 msgstr "descriere"
 
@@ -404,13 +385,8 @@ msgid "override URL"
 msgstr "suprascrie URL"
 
 #: module/page/models.py:176
-msgid ""
-"Override the target URL. Be sure to include slashes at the beginning and at "
-"the end if it is a local URL. This affects both the navigation and subpages' "
-"URLs."
-msgstr ""
-"Suprascrie URL-ul țintă. Aveți grijă să scrieti / la început și la șfârșit dacă este un URL local."
-"Aceasta afectează atât navigația cât și subpaginile."
+msgid "Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages' URLs."
+msgstr "Suprascrie URL-ul țintă. Aveți grijă să scrieti / la început și la șfârșit dacă este un URL local.Aceasta afectează atât navigația cât și subpaginile."
 
 #: module/page/models.py:177
 msgid "redirect to"
@@ -454,14 +430,12 @@ msgid "View on site"
 msgstr "Vezi pe site"
 
 #: module/page/models.py:623
-#, fuzzy
 msgid "You may edit the copied page below."
 msgstr "Puteți modifica pagina copiată mai jos."
 
 #: module/page/models.py:629
 #, python-format
-msgid ""
-"You have replaced %s. You may continue editing the now-active page below."
+msgid "You have replaced %s. You may continue editing the now-active page below."
 msgstr "Ai înlocuit %s. Poți continua să modifici actuala pagină activă."
 
 #: module/page/models.py:652
@@ -469,7 +443,6 @@ msgid "inherited"
 msgstr "moștenit"
 
 #: module/page/models.py:656
-#, fuzzy
 msgid "extensions"
 msgstr "extensii"
 
@@ -478,12 +451,10 @@ msgid "is visible"
 msgstr "este vizibil"
 
 #: module/page/extensions/changedate.py:22
-#, fuzzy
 msgid "creation date"
 msgstr "data creerii"
 
 #: module/page/extensions/changedate.py:23
-#, fuzzy
 msgid "modification date"
 msgstr "data modificării"
 
@@ -509,9 +480,7 @@ msgid "navigation extension"
 msgstr "navigare extinsă"
 
 #: module/page/extensions/navigation.py:52
-msgid ""
-"Select the module providing subpages for this page if you need to customize "
-"the navigation."
+msgid "Select the module providing subpages for this page if you need to customize the navigation."
 msgstr "Selectați modulul care furnizează subpaginile pentru această pagină dacă doriți să personalizaţi."
 
 #: module/page/extensions/symlinks.py:14
@@ -528,8 +497,7 @@ msgstr "titlu conținut"
 
 #: module/page/extensions/titles.py:14
 msgid "The first line is the main title, the following lines are subtitles."
-msgstr ""
-"Prima linie reprezintă titlul principal, următoarele sunt subtitluri."
+msgstr "Prima linie reprezintă titlul principal, următoarele sunt subtitluri."
 
 #: module/page/extensions/titles.py:15
 msgid "page title"
@@ -537,18 +505,15 @@ msgstr "titlul paginii"
 
 #: module/page/extensions/titles.py:16
 msgid "Page title for browser window. Same as title by default."
-msgstr ""
-"Titlul paginii pentru fereastra navigatorului. Implicit este la fel cu titlul paginii."
+msgstr "Titlul paginii pentru fereastra navigatorului. Implicit este la fel cu titlul paginii."
 
 #: module/page/extensions/translations.py:94
-#, fuzzy
 msgid "Edit translation"
 msgstr "Modifică translatarea"
 
 #: module/page/extensions/translations.py:97
-#, fuzzy
 msgid "Create translation"
-msgstr "Creează translatare"
+msgstr "Creează o translatare"
 
 #: module/page/extensions/translations.py:102
 msgid "translations"
@@ -596,18 +561,13 @@ msgid "Change template"
 msgstr "Modifică șablon"
 
 #: templates/admin/feincms/_messages.html:8
-#, fuzzy
 msgid "Really change template? <br />All changes are saved."
-msgstr ""
-"Doriți ștergerea șablonului? <br />Toate schimbările au fost salvate."
+msgstr "Doriți ștergerea șablonului? <br />Toate modificarile au fost salvate."
 
 #: templates/admin/feincms/_messages.html:9
 #, python-format
-msgid ""
-"Really change template? <br />All changes are saved and content from <strong>"
-"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
-msgstr "Doriți ștergerea șablonului? <br />Toate schimbările au fost salvate"
-" și conținutul de la <strong>%(source_regions)s</strong> a fost mutat la <strong>%(target_region)s</strong>."
+msgid "Really change template? <br />All changes are saved and content from <strong>%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+msgstr "Doriți ștergerea șablonului? <br />Toate schimbările au fost salvate și conținutul de la <strong>%(source_regions)s</strong> a fost mutat la <strong>%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages.html:10
 msgid "Cannot make a node a child of itself."
@@ -688,11 +648,8 @@ msgid "Region empty"
 msgstr "Regiunea este goală"
 
 #: templates/admin/feincms/item_editor.html:135
-msgid ""
-"Content from the parent site is automatically inherited. To override this "
-"behaviour, add some content."
-msgstr "Conținutul de la pagina părinte este moștenită automat. Pentru a suprascrie acest lucru, "
-"adăugați conținut"
+msgid "Content from the parent site is automatically inherited. To override this behaviour, add some content."
+msgstr "Conținutul de la pagina părinte este moștenită automat. Pentru a suprascrie acest lucru, adăugați conținut"
 
 #: templates/admin/feincms/item_editor.html:143
 msgid "Add new item"
@@ -717,16 +674,11 @@ msgid "Select an item on the left side if you want to edit it."
 msgstr "Selectați un obiect din partea stângă dacă doriți să-l modificați"
 
 #: templates/admin/feincms/splitpane_editor_blank.html:29
-msgid ""
-"You can change the structure of the tree by drag-dropping elements. Please "
-"note that changes will be saved immediately. "
-msgstr "Se poate schimba structura arborelui prin tragere și lăsare ( mutare ) a unui element. Luați notă "
-"faptul că aceste schimbări for fi salvate imediat"
+msgid "You can change the structure of the tree by drag-dropping elements. Please note that changes will be saved immediately. "
+msgstr "Se poate schimba structura arborelui prin tragere și lăsare ( mutare ) a unui element. Luați notă faptul că aceste schimbări for fi salvate imediat"
 
 #: templates/admin/feincms/splitpane_editor_blank.html:30
-msgid ""
-"The context menu on the tree root and tree nodes provide you with additional "
-"modes of operation."
+msgid "The context menu on the tree root and tree nodes provide you with additional modes of operation."
 msgstr "Meniul contextual al arborelui rădăcină și ale nodurilor pune la dispoziție moduri de operare adiționale."
 
 #: templates/admin/feincms/splitpane_editor_tree.html:39
@@ -739,7 +691,6 @@ msgstr "Reîncarcă"
 
 #: templates/admin/feincms/splitpane_editor_tree.html:109
 #: templates/admin/feincms/splitpane_editor_tree.html:116
-#, fuzzy
 msgid "Edit"
 msgstr "Modifică"
 
@@ -748,17 +699,14 @@ msgid "Shortcuts"
 msgstr "Scurtături"
 
 #: templates/admin/feincms/tree_editor.html:140
-#, fuzzy
 msgid "Collapse tree"
 msgstr "Închide arborele"
 
 #: templates/admin/feincms/tree_editor.html:141
-#, fuzzy
 msgid "Expand tree"
 msgstr "Deschide arborele"
 
 #: templates/admin/feincms/tree_editor.html:143
-#, fuzzy
 msgid "Filter"
 msgstr "Filtrează"
 
@@ -785,12 +733,8 @@ msgstr "Mulțumesc!"
 #~ msgid "view content"
 #~ msgstr "vizualizează conținutul"
 
-#~ msgid ""
-#~ "Could not parse the view content because the view is excluded from "
-#~ "infanta handling."
-#~ msgstr ""
-#~ "Nu s-a putut parcurge view-ul deoarec view-ul este exclus din  "
-#~ "manipularea infantei."
+#~ msgid "Could not parse the view content because the view is excluded from infanta handling."
+#~ msgstr "Nu s-a putut parcurge view-ul deoarec view-ul este exclus din  manipularea infantei."
 
 #~ msgid "Placeholder for the %(viewname)s calling %(viewfunc)s"
 #~ msgstr "Cadru pentru %(viewname)s, care cheamă %(viewfunc)s"
