@@ -17,6 +17,7 @@ msgstr ""
 "X-Poedit-Language: Romanian\n"
 "X-Poedit-Country: ROMANIA\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: models.py:142
 msgid "template"
@@ -461,7 +462,7 @@ msgstr "Puteți modifica pagina copiată mai jos."
 #, python-format
 msgid ""
 "You have replaced %s. You may continue editing the now-active page below."
-msgstr "Ai inlocuit %s. Poți continua să modifici actuala pagină activă"
+msgstr "Ai înlocuit %s. Poți continua să modifici actuala pagină activă."
 
 #: module/page/models.py:652
 msgid "inherited"
@@ -470,7 +471,7 @@ msgstr "moștenit"
 #: module/page/models.py:656
 #, fuzzy
 msgid "extensions"
-msgstr "enxtensii"
+msgstr "extensii"
 
 #: module/page/models.py:660
 msgid "is visible"
@@ -674,9 +675,9 @@ msgstr "Salvează și continuă să modifici"
 
 #: templates/admin/feincms/item_editor.html:83
 msgid "Please correct the error below."
-msgid_plural "Vă rugăm să corectați erorile de mai jos."
-msgstr[0] ""
-msgstr[1] ""
+msgid_plural "Please correct the errors below."
+msgstr[0] "Vă rugăm să corectați eroarea de mai jos"
+msgstr[1] "Vă rugăm să corectați erorile de mai jos"
 
 #: templates/admin/feincms/item_editor.html:116
 msgid "Properties"
