@@ -1,3 +1,5 @@
+import logging
+
 from django import forms
 from django.db import models
 from django.core.serializers.json import DjangoJSONEncoder
@@ -33,21 +35,40 @@ class JSONField(models.TextField):
         if isinstance(value, dict):
             return value
         elif isinstance(value, basestring):
-            return json.loads(value)
+            try:
+                return json.loads(value)
+            except ValueError:
+                logging.getLogger("feincms.contrib.fields").exception("Unable to deserialize store JSONField data: %s", value)
+                return {}
         else:
             assert value is None
             return {}
 
-    def get_db_prep_save(self, value):
+    def get_db_prep_value(self, value):
         """Convert our JSON object to a string before we save"""
+        return self._flatten_value(value)
 
-        if value == "":
+    def value_to_string(self, obj):
+        """Extract our value from the passed object and return it in string form"""
+        if hasattr(obj, self.attname):
+            value = getattr(obj, self.attname)
+        else:
+            assert isinstance(obj, dict)
+            value = obj.get(self.attname, "")
+
+        return self._flatten_value(value)
+
+    def _flatten_value(self, value):
+        """Return either a string or None, JSON-encoding dict()s as necessary"""
+        if not value:
             return None
 
         if isinstance(value, dict):
             value = json.dumps(value, cls=DjangoJSONEncoder)
 
-        return super(JSONField, self).get_db_prep_save(value)
+        assert isinstance(value, basestring)
+
+        return value
 
 try:
     from south.modelsinspector import add_introspection_rules

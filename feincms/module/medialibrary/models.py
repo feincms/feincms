@@ -199,6 +199,8 @@ class MediaFileBase(Base, TranslatedObjectMixin):
 
         super(MediaFileBase, self).save(*args, **kwargs)
 
+        self.purge_translation_cache()
+
 # ------------------------------------------------------------------------
 MediaFileBase.register_filetypes(
         # Should we be using imghdr.what instead of extension guessing?
@@ -270,6 +272,11 @@ class MediaFileAdmin(admin.ModelAdmin):
                 select_params = (translation.get_language(), django_settings.LANGUAGE_CODE)
             )
         return qs
+
+    def save_model(self, request, obj, form, change):
+        obj.purge_translation_cache()
+        return super(MediaFileAdmin, self).save_model(request, obj, form, change)
+
 
 #-------------------------------------------------------------------------
 
