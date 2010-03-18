@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
-
+from django.contrib.sites.models import RequestSite
 
 from feincms.module.page.models import Page
 
@@ -10,7 +10,8 @@ from feincms.module.page.models import Page
 def _build_page_response(page, request):
     extra_context = request._feincms_extra_context
     return render_to_response(page.template.path, {
-        'feincms_page': page,
+        'feincms_page' : page,
+        'feincms_site' : RequestSite(request),
         }, context_instance=RequestContext(request, extra_context))
 
 def build_page_response(page, request):
