@@ -79,24 +79,32 @@ class LogBase(object):
         pass
 
 # ------------------------------------------------------------------------
-class LogStderr(LogBase):
+class LogFile(LogBase):
     """
-    Example logging class, logs to stderr.
+    Example logging class, logs to a file.
     """
     from sys import stderr
+    def __init__(self, file = stderr):
+        self.log_file = file
 
     subsys = { LogBase.ANY: '*', LogBase.DB: '#', LogBase.CACHE: '@', LogBase.AUTH: '!' }
-    log_file = stderr
 
     def make_log_string(self, subsys, *args):
         s = u'%s %s' % (self.subsys[subsys], u', '.join(args))
         return s
 
     def do_log(self, subsys, level, *args):
-        print >>self.log_file, self.make_log_string(subsys, *args)
+        print >>self.log_file, self.make_log_string(subsys, *args).encode('utf-8')
 
 # ------------------------------------------------------------------------
-class LogDatedStderr(LogStderr):
+class LogStderr(LogFile):
+    """
+    Compat class
+    """
+    pass
+
+# ------------------------------------------------------------------------
+class LogDatedStderr(LogFile):
     """
     Another simple logging class, prefixes log output with current time.
     """
@@ -113,10 +121,10 @@ class LogStdout(LogDatedStderr):
     """
     def __init__(self):
         from sys import stdout
-        self.log_file = stdout
+        super(LogStdout, self).__init__(file=stdout)
 
 # ------------------------------------------------------------------------
-# Instanciate the logger, yeah!
+# Finally instanciate the logger, yeah!
 
 logger = get_object(settings.FEINCMS_LOGGING_CLASS)()
 
