@@ -1,0 +1,32 @@
+<script type="text/javascript" src="{{ CKEDITOR_JS_URL }}"></script>
+
+<style type="text/css">
+    span.cke_skin_kama { border: none !important; }
+    span.cke_wrapper { margin-left: 107px; }
+</style>
+
+<script type="text/javascript">
+    CKEDITOR.config.width = '787';
+    CKEDITOR.config.height= '300';
+    CKEDITOR.config.toolbar_Full = [
+        ['Maximize','-','Format','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','NumberedList','BulletedList','-','Anchor', 'Link','Unlink','-','Source',],
+    ];
+
+    contentblock_init_handlers.push(function(){
+        $('.order-machine textarea[class=item-richtext-ckeditor], #frontend_editor textarea[class=item-richtext-ckeditor]').each(function(){
+            feincms_richtext_add_ckeditor($(this));
+        });
+    });
+
+    function feincms_richtext_remove_ckeditor(field) {
+        if (field.attr("id") in CKEDITOR.instances) {
+            CKEDITOR.instances[field.attr("id")].destroy();
+        }
+    }
+
+    function feincms_richtext_add_ckeditor(field) {
+        if (!(field.attr("id") in CKEDITOR.instances)) {
+            CKEDITOR.replace(field.attr("id"));
+        }
+    }
+</script>

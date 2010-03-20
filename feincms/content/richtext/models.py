@@ -13,6 +13,15 @@ from feincms.utils import get_object
 class RichTextContentAdminForm(ItemEditorForm):
     text = forms.CharField(widget=forms.Textarea, required=False, label=_('text'))
 
+    feincms_item_editor_classes = {
+        'text': 'tinymce',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(RichTextContentAdminForm, self).__init__(*args, **kwargs)
+        for field in self.feincms_item_editor_classes.keys():
+            self.fields[field].widget.attrs.update({'class': 'item-richtext-%s' % self.feincms_item_editor_classes[field]})
+
     #: If FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE allows, we'll convert this into
     # a checkbox so the user can choose whether to ignore HTML validation
     # warnings instead of fixing them:
@@ -98,3 +107,24 @@ class RichTextContent(models.Model):
                 get_object(settings.FEINCMS_TIDY_FUNCTION)
             except ImportError, e:
                 raise ImproperlyConfigured("FEINCMS_TIDY_HTML is enabled but the HTML tidy function %s could not be imported: %s" % (settings.FEINCMS_TIDY_FUNCTION, e))
+
+
+class CkEditorRichTextContentAdminForm(RichTextContentAdminForm):
+    feincms_item_editor_class = 'ckeditor'
+
+class CkEditorRichTextContent(RichTextContent):
+    form = CkEditorRichTextContentAdminForm
+    feincms_item_editor_form = CkEditorRichTextContentAdminForm
+
+    feincms_item_editor_context_processors = (
+        lambda x: dict(CKEDITOR_JS_URL = settings.CKEDITOR_JS_URL),
+    )
+
+    feincms_item_editor_includes = {
+        'head': [ settings.CKEDITOR_CONFIG_URL, ],
+    }
+
+    class Meta(RichTextContent.Meta):
+        abstract = True
+        verbose_name = _('rich text (ckeditor)')
+        verbose_name_plural = _('rich texts (ckeditor)')

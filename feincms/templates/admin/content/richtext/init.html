@@ -24,8 +24,16 @@
     });
 
     contentblock_init_handlers.push(function(){
-        $('.order-machine textarea[name*=richtext], #frontend_editor textarea[name*=richtext]').each(function(){
-            tinyMCE.execCommand('mceAddControl', true, this.id);
+        $('.order-machine textarea[class=item-richtext-tinymce], #frontend_editor textarea[class=item-richtext-tinymce]').each(function(){
+            feincms_richtext_add_tinymce($(this));
         });
     });
+
+    function feincms_richtext_remove_tinymce(field) {
+        tinyMCE.execCommand('mceRemoveControl', false, field.attr("id"));
+    }
+
+    function feincms_richtext_add_tinymce(field) {
+        tinyMCE.execCommand('mceAddControl', false, field.attr("id"));
+    }
 </script>

@@ -32,6 +32,10 @@ TINYMCE_CONTENT_CSS_URL = getattr(settings, 'TINYMCE_CONTENT_CSS_URL', None)
 
 TINYMCE_LINK_LIST_URL = getattr(settings, 'TINYMCE_LINK_LIST_URL', None)
 
+CKEDITOR_JS_URL = getattr(settings, 'CKEDITOR_JS_URL', join(settings.MEDIA_URL, 'js/ckeditor/ckeditor.js'))
+
+CKEDITOR_CONFIG_URL = getattr(settings, 'CKEDITOR_CONFIG_URL', 'admin/content/richtext/init_ckeditor.html')
+
 # ------------------------------------------------------------------------
 # Admin settings
 
