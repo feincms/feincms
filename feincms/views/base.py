@@ -33,7 +33,7 @@ def handler(request, path=None):
 
     response = build_page_response(page, request)
 
-    if request.session and request.session.get('frontend_editing', False):
+    if hasattr(request, "session") and request.session.get('frontend_editing', False):
         add_never_cache_headers(response)
 
     return response
