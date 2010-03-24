@@ -134,8 +134,8 @@ class ChangeList(main.ChangeList):
                 rght__gte=rght,
                 ) for lft, rght, tree_id in \
                     self.query_set.values_list('lft', 'rght', 'tree_id')]
-            self.query_set = self.model._default_manager.filter(reduce(
-                lambda p, q: p|q, clauses))
+            if clauses:
+                self.query_set = self.model._default_manager.filter(reduce(lambda p, q: p|q, clauses))
 
         return super(ChangeList, self).get_results(request)
 main.ChangeList = ChangeList
