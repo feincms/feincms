@@ -722,7 +722,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         if not hasattr(self, "_visible_pages"):
             self._visible_pages = list() # Sanity check in case this is not already defined
 
-        # TODO: Couldn't this simply check page.get_ancestors(visible=False).count()?
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
