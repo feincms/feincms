@@ -195,6 +195,17 @@ the request object::
        {% feincms_render_region feincms_page "main" request %}
     {% endblock %}
 
+Please note that this necessitates the use of
+``django.core.context_processors.request``::
+
+    TEMPLATE_CONTEXT_PROCESSORS = (
+        'django.core.context_processors.auth',
+        'django.core.context_processors.debug',
+        'django.core.context_processors.i18n',
+        'django.core.context_processors.media',
+        'django.core.context_processors.request',
+    )
+
 
 The 3rd party application might know how to handle more than one URL (the example
 news application does). These subpages won't necessarily exist, and because of this
