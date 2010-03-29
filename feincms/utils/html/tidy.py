@@ -41,7 +41,16 @@ def tidy_html(html):
             set(ord(i) for i in CONTROL_CHAR_RE.findall(html))
         ))
 
-    html, messages = tidylib.tidy_fragment(
+    # tidylib.tidy_fragment will choke if given a full HTML document. This is a
+    # primitive content sniff to decide whether to call tidy_document instead:
+    if "<html" in html[:1024]:
+        tidy_f = tidylib.tidy_document
+        doc_mode = True
+    else:
+        tidy_f = tidylib.tidy_fragment
+        doc_mode = False
+
+    html, messages = tidy_f(
         html.strip(),
         {
             "char-encoding":               "utf8",
@@ -63,11 +72,11 @@ def tidy_html(html):
     warnings = list()
 
     for msg in messages:
-        if "Warning: missing <!DOCTYPE> declaration" in msg:
+        if not doc_mode and "Warning: missing <!DOCTYPE> declaration" in msg:
             continue
-        if "Warning: inserting missing 'title' element" in msg:
+        if not doc_mode and "Warning: inserting missing 'title' element" in msg:
             continue
-        if "Warning: inserting implicit <body>" in msg:
+        if not doc_mode and "Warning: inserting implicit <body>" in msg:
             continue
 
         if "Error:" in msg:
