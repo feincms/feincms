@@ -26,17 +26,22 @@ which you can download using the Git_ version control system::
     $ git clone git://github.com/matthiask/feincms.git
 
 In addition, you will need a django-mptt_ installation (The released
-version 0.2.1 is incompatible with Django SVN trunk, you need to get a
-django-mptt version from SVN too.)
+version 0.2.1 is incompatible with Django SVN trunk. The django-mptt_
+version from SVN is fixed to work with current versions of Django_,
+but seems to be unmaintained and has several small bugs. Consider
+getting the version from the github repository linked to above.)
 
 Finally, some content types or extensions require recent versions of
-``lxml`` and ``django-tagging``.
+lxml_, django-tagging_ and feedparser_.
 
 
 .. _Django: http://www.djangoproject.com/
 .. _Git: http://git-scm.com/
 .. _Subversion: http://subversion.tigris.org/
-.. _django-mptt: http://code.google.com/p/django-mptt/
+.. _django-mptt: http://github.com/matthiask/django-mptt/
+.. _django-tagging: http://code.google.com/p/django-tagging/
+.. _lxml: http://codespeak.net/lxml/
+.. _feedparser: http://www.feedparser.org/
 
 
 
