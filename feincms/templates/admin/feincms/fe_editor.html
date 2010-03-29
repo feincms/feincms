@@ -1,5 +1,5 @@
 {% extends "admin/change_form.html" %}
-{% load i18n admin_modify adminmedia %}
+{% load feincms_compat_tags i18n admin_modify adminmedia %}
 
 
 {% block extrahead %}{{ block.super }}
@@ -27,6 +27,7 @@
 <div class="content_main" id="frontend_editor">
 
 <form method="post" action=".">
+{% csrf_token %}
 <div>
 {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
 

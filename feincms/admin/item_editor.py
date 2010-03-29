@@ -16,7 +16,7 @@ from django.utils.translation import ugettext as _
 
 from feincms import settings
 
-FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)/(\w+)/(\d+)')
+FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 
 
 class ItemEditorForm(forms.ModelForm):

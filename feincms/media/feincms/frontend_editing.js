@@ -9,7 +9,7 @@ jQuery(function($){
         if (this.id == 'fe_tools_edit') {
             res = fe_box.attr('id').match(/([^\-]+)-(\d+)-(\d+)/);
 
-            window.open(admin_base+res[2]+'/'+res[1]+'/'+res[3]+'/',
+            window.open(admin_base+res[2]+'|'+res[1]+'|'+res[3]+'/',
                 'fe_editor',
                 'height=500,width=800,resizable=yes,scrollbars=yes');
         }
@@ -18,7 +18,7 @@ jQuery(function($){
     });
 });
 
-/* 
+/*
     These are outside of the on-load closure so they're visible to outside
     callers such as feincms/templates/admin/feincms/fe_editor_done.html
 */
