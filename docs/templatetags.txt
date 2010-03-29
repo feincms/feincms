@@ -105,8 +105,8 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 
    Arguments can be any combination of:
 
-       * all or existing: Return all languages or only those where a translation exists
-       * excludecurrent: Excludes the item in the current language from the list
+       * ``all`` or ``existing``: Return all languages or only those where a translation exists
+       * ``excludecurrent``: Excludes the item in the current language from the list
 
    The default behavior is to return an entry for all languages including the
    current language.
@@ -123,28 +123,28 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 
 .. function:: feincms_translatedpage:
 
-   {% load feincms_page_tags %}
-
-   {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
-   {% feincms_translatedpage for feincms_page as originalpage %}
-   {% feincms_translatedpage for some_page as translatedpage language=feincms_page.language %}
-
    This template tag needs the translations extension.
 
    Returns the requested translation of the page if it exists. If the language
    argument is omitted the primary language will be returned (the first language
-   specified in settings.LANGUAGES)
+   specified in settings.LANGUAGES)::
+
+       {% load feincms_page_tags %}
+
+       {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
+       {% feincms_translatedpage for feincms_page as originalpage %}
+       {% feincms_translatedpage for some_page as translatedpage language=feincms_page.language %}
 
 .. function:: feincms_translatedpage_or_base:
-
-   {% load feincms_page_tags %}
-
-   {% feincms_translatedpage_or_base for some_page as some_transpage language=gr %}
 
    This template tag needs the translations extensions.
 
    Similar in function and arguments to feincms_translatedpage, but if no translation
-   for the requested language exists, the base language page will be returned.
+   for the requested language exists, the base language page will be returned::
+
+       {% load feincms_page_tags %}
+
+       {% feincms_translatedpage_or_base for some_page as some_transpage language=gr %}
 
 .. function:: feincms_breadcrumbs:
 
