@@ -1,12 +1,12 @@
 #!/bin/sh
-# 
+#
 # This script downloads all the software needed to run FeinCMS
 #
 
-echo "Downloading Django and django-mptt via subversion... (this will take some time)"
+echo "Downloading Django and django-mptt via git... (this will take some time)"
 
-svn checkout http://code.djangoproject.com/svn/django/trunk/django django > /dev/null
-svn checkout http://django-mptt.googlecode.com/svn/trunk/mptt mptt > /dev/null
+git clone git://github.com/django/django.git django
+git clone git://github.com/matthiask/django-mptt.git mptt
 
 cat <<EOD
 Everything should be ready now. Type the following commands into the shell
