@@ -32,7 +32,8 @@ but seems to be unmaintained and has several small bugs. Consider
 getting the version from the github repository linked to above.)
 
 Finally, some content types or extensions require recent versions of
-lxml_, django-tagging_ and feedparser_.
+lxml_, django-tagging_, feedparser_ and the python imaging library PIL_
+(PIL_ is actually a dependency of Django_'s ImageField).
 
 
 .. _Django: http://www.djangoproject.com/
@@ -42,7 +43,7 @@ lxml_, django-tagging_ and feedparser_.
 .. _django-tagging: http://code.google.com/p/django-tagging/
 .. _lxml: http://codespeak.net/lxml/
 .. _feedparser: http://www.feedparser.org/
-
+.. _PIL: http://www.pythonware.com/products/pil/
 
 
 Configuration
