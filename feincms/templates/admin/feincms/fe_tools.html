@@ -7,7 +7,7 @@
         var jQuery_scr = document.createElement("script");
         jQuery_scr.type = "text/javascript";
         jQuery_scr.src = {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"{% else %}"{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.2.min.js"{% endif %};
-        document.head.appendChild(jQuery_scr);
+        document.getElementsByTagName('head')[0].appendChild(jQuery_scr);
     }
 })();
 </script>
