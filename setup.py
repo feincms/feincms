@@ -34,7 +34,7 @@ setup(name='FeinCMS',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
     install_requires=[
-        'Django >=1.1.1',
+        #'Django >=1.1.1',
     ],
     requires=[
         #'lxml', # only needed for rich text cleansing
