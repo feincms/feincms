@@ -110,7 +110,9 @@ class RichTextContent(models.Model):
 
 
 class CkEditorRichTextContentAdminForm(RichTextContentAdminForm):
-    feincms_item_editor_class = 'ckeditor'
+    feincms_item_editor_classes = {
+        'text': 'ckeditor',
+    }
 
 class CkEditorRichTextContent(RichTextContent):
     form = CkEditorRichTextContentAdminForm
