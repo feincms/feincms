@@ -91,3 +91,5 @@ FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE = getattr(settings, 'FEINCMS_TIDY_ALLOW_WAR
 FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION', 'feincms.utils.html.tidy.tidy_html')
 
 # ------------------------------------------------------------------------
+#: Set to True if you want to run the FeinCMS test suite unconditionally:
+FEINCMS_RUN_TESTS = getattr(settings, 'FEINCMS_RUN_TESTS', False)
