@@ -25,6 +25,7 @@ for news in News.objects.filter(translations__language_code='en'):
 """
 
 from django.conf import settings
+from django.contrib import admin
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -171,3 +172,8 @@ def Translation(model):
 
     return Inner
 
+
+def admin_translationinline(model, inline_class=admin.StackedInline, **kwargs):
+    kwargs['max_num'] = len(settings.LANGUAGES)
+    kwargs['model'] = model
+    return type(model.__class__.__name__ + 'Inline', (inline_class,), kwargs)
