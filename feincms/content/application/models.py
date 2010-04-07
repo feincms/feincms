@@ -1,6 +1,6 @@
 import re
 
-from django.core import signals, urlresolvers
+from django.core import urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse, NoReverseMatch
 from django.db import models
 from django.http import HttpResponse
@@ -21,11 +21,6 @@ except ImportError:
     from django.utils._threading_local import local
 
 _local = local()
-
-
-def clear_applicationcontent_reverse_cache(**kwargs):
-    _local.reverse_cache = {}
-signals.request_started.connect(clear_applicationcontent_reverse_cache)
 
 
 def retrieve_page_information(page):
@@ -57,6 +52,9 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         if hasattr(_local, 'urlconf') and other_urlconf == _local.urlconf[0]:
             # We are reversing an URL from our own ApplicationContent
             return _reverse(other_viewname, other_urlconf, args, kwargs, _local.urlconf[1], *vargs, **vkwargs)
+
+        if not hasattr(_local, 'reverse_cache'):
+            _local.reverse_cache = {}
 
         if other_urlconf not in _local.reverse_cache:
             # TODO do not use internal feincms data structures as much
