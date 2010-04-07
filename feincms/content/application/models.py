@@ -1,6 +1,6 @@
 import re
 
-from django.core import urlresolvers
+from django.core import signals, urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse, NoReverseMatch
 from django.db import models
 from django.http import HttpResponse
@@ -21,6 +21,11 @@ except ImportError:
     from django.utils._threading_local import local
 
 _local = local()
+
+
+def clear_applicationcontent_reverse_cache(**kwargs):
+    _local.reverse_cache = {}
+signals.request_started.connect(clear_applicationcontent_reverse_cache)
 
 
 def retrieve_page_information(page):
@@ -53,27 +58,31 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
             # We are reversing an URL from our own ApplicationContent
             return _reverse(other_viewname, other_urlconf, args, kwargs, _local.urlconf[1], *vargs, **vkwargs)
 
-        # TODO do not use internal feincms data structures as much
-        model_class = ApplicationContent._feincms_content_models[0]
-        contents = model_class.objects.filter(
-            urlconf_path=other_urlconf).select_related('parent')
+        if other_urlconf not in _local.reverse_cache:
+            # TODO do not use internal feincms data structures as much
+            model_class = ApplicationContent._feincms_content_models[0]
+            contents = model_class.objects.filter(
+                urlconf_path=other_urlconf).select_related('parent')
 
-        proximity_info = getattr(_local, 'proximity_info', None)
+            proximity_info = getattr(_local, 'proximity_info', None)
 
-        if proximity_info:
-            # Poor man's proximity analysis. Filter by tree_id :-)
-            try:
-                content = contents.get(parent__tree_id=proximity_info[0])
-            except (model_class.DoesNotExist, model_class.MultipleObjectsReturned):
+            if proximity_info:
+                # Poor man's proximity analysis. Filter by tree_id :-)
+                try:
+                    content = contents.get(parent__tree_id=proximity_info[0])
+                except (model_class.DoesNotExist, model_class.MultipleObjectsReturned):
+                    try:
+                        content = contents[0]
+                    except IndexError:
+                        content = None
+            else:
                 try:
                     content = contents[0]
                 except IndexError:
                     content = None
+            _local.reverse_cache[other_urlconf] = content
         else:
-            try:
-                content = contents[0]
-            except IndexError:
-                content = None
+            content = _local.reverse_cache[other_urlconf]
 
         if content:
             # Save information from _urlconfs in case we are inside another
