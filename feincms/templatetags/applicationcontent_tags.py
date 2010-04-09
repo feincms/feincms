@@ -56,6 +56,15 @@ def get_fragment(request, identifier):
     except (AttributeError, KeyError):
         return u''
 
+
+@register.filter
+def has_fragment(request, identifier):
+    """
+    {% if request|has_fragment:"title" %}
+    """
+    return request._feincms_applicationcontents_fragments.get(identifier)        
+
+
 @register.simple_tag
 def feincms_render_region_appcontent(page, region, request):
     """Render only the application content for the region
