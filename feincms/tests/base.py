@@ -620,11 +620,11 @@ class PagesTestCase(TestCase):
         self.create_pagecontent(page)
 
         # this should return a 404
-        self.is_published('/admin/page/page/10/rawcontent/1/', should_be=False)
-        self.is_published('/admin/page/page/1/rawcontent/10/', should_be=False)
+        self.is_published('/admin/page/page/10|rawcontent|1/', should_be=False)
+        self.is_published('/admin/page/page/1|rawcontent|10/', should_be=False)
 
-        assert self.client.get('/admin/page/page/1/rawcontent/1/').status_code == 200
-        assert self.client.post('/admin/page/page/1/rawcontent/1/', {
+        assert self.client.get('/admin/page/page/1|rawcontent|1/').status_code == 200
+        assert self.client.post('/admin/page/page/1|rawcontent|1/', {
             'rawcontent-text': 'blablabla',
             }).status_code == 200
 
