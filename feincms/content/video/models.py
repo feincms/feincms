@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class VideoContent(models.Model):
     PORTALS = (
-        ('youtube', re.compile(r'youtube'), lambda url: {'v': re.search(r'[?&]v=(\w+)', url).group(1)}),
+        ('youtube', re.compile(r'youtube'), lambda url: {'v': re.search(r'[?&]v=([^#&]+)', url).group(1)}),
         ('vimeo', re.compile(r'vimeo'), lambda url: {'id': re.search(r'/(\d+)', url).group(1)}),
         ('sf', re.compile(r'sf\.tv'), lambda url: {'id': re.search(r'/([a-z0-9\-]+)', url).group(1)}),
         )
