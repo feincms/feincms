@@ -177,13 +177,17 @@ class Base(models.Model):
                 continue
 
             try:
-                try:
-                    fn = get_object(ext + '.register')
-                except ImportError:
+                if isinstance(ext, basestring):
                     try:
-                        fn = get_object('%s.%s.register' % ( here_path, ext ) )
+                        fn = get_object(ext + '.register')
                     except ImportError:
-                        fn = get_object('%s.%s.register' % ( common_path, ext ) )
+                        try:
+                            fn = get_object('%s.%s.register' % ( here_path, ext ) )
+                        except ImportError:
+                            fn = get_object('%s.%s.register' % ( common_path, ext ) )
+                # Not a string, so take our chances and just try to access "register"
+                else:
+                    fn = ext.register
 
                 cls.register_extension(fn)
                 cls._feincms_extensions.add(ext)
