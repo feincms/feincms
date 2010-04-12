@@ -26,7 +26,7 @@ def raises(request):
 
 def fragment(request):
     t = template.Template('{% load applicationcontent_tags %}{% fragment request "something" %}some things{% endfragment %}')
-    return t.render({'request': request})
+    return t.render(template.Context({'request': request}))
 
 
 def redirect(request):
