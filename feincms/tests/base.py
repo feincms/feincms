@@ -1007,6 +1007,31 @@ class PagesTestCase(TestCase):
 
         self.assertContains(self.create_pagecontent(page2, active=True, override_url='/'),
             'already taken by')
+            
+    def test_29_applicationcontent_reverse(self):
+        self.create_default_page_set()
+        page1 = Page.objects.get(pk=1)
+        page1.active = True
+        page1.save()
+
+        page = Page.objects.get(pk=2)
+        page.active = True
+        page.template_key = 'theother'
+        page.save()
+        page.applicationcontent_set.create(
+            region='main', ordering=0,
+            urlconf_path='feincms.tests.applicationcontent_urls')
+
+        from django.core.urlresolvers import reverse
+
+        # test reverse replacement
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+                         page.get_absolute_url())
+        
+        # applicationcontent has been added twice, should find right one by tree_id
+        page_de = self.create_page(title='Home DE', language='de', active=True)
+        page_de_1 = self.create_page(title='Child 1 DE', language='de', parent=page_de.id, active=True)
+        
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
