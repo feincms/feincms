@@ -190,7 +190,7 @@ class Page(Base):
     title = models.CharField(_('title'), max_length=200,
         help_text=_('This is used for the generated navigation too.'))
     slug = models.SlugField(_('slug'), max_length=150)
-    parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
+    parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=400, blank=True,
