@@ -157,6 +157,7 @@ class ItemEditor(admin.ModelAdmin):
                 formfield_callback=self._formfield_callback(request=request))
             ) for content_type in self.model._feincms_content_types]
 
+        formsets = []
         if request.method == 'POST':
             FORM_DATA = {}
             model_form = ModelForm(request.POST, request.FILES, instance=obj)
@@ -166,11 +167,31 @@ class ItemEditor(admin.ModelAdmin):
                     prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types]
 
-            if model_form.is_valid() and all_valid(inline_formsets):
-                model_form.save(commit=False)
+            if model_form.is_valid():
+                form_validated = True
+                new_object = self.save_form(request, model_form, change=True)
+            else:
+                form_validated = False
+                new_object = obj
+            prefixes = {}
+            for FormSet in self.get_formsets(request, new_object):
+                prefix = FormSet.get_default_prefix()
+                prefixes[prefix] = prefixes.get(prefix, 0) + 1
+                if prefixes[prefix] != 1:
+                    prefix = "%s-%s" % (prefix, prefixes[prefix])
+                formset = FormSet(request.POST, request.FILES,
+                                  instance=new_object, prefix=prefix)
+                formsets.append(formset)
+
+            if all_valid(inline_formsets+formsets) and form_validated:
+                #model_form.save(commit=False)
+                model_form.save_m2m()
                 for formset in inline_formsets:
                     formset.save()
-                model_form.save(commit=True)
+                #model_form.save(commit=True)
+                self.save_model(request, new_object, model_form, change=True)
+                for formset in formsets:
+                    self.save_formset(request, model_form, formset, change=True)
 
                 msg = _('The %(name)s "%(obj)s" was changed successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
                 if request.POST.has_key("_continue"):
@@ -225,12 +246,28 @@ class ItemEditor(admin.ModelAdmin):
                 formset_class(FORM_DATA, instance=obj, prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types
             ]
+            prefixes = {}
+            for FormSet in self.get_formsets(request, obj):
+                prefix = FormSet.get_default_prefix()
+                prefixes[prefix] = prefixes.get(prefix, 0) + 1
+                if prefixes[prefix] != 1:
+                    prefix = "%s-%s" % (prefix, prefixes[prefix])
+                formset = FormSet(instance=obj, prefix=prefix)
+                formsets.append(formset)
         else:
             model_form = ModelForm(instance=obj)
             inline_formsets = [
                 formset_class(instance=obj, prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types
             ]
+            prefixes = {}
+            for FormSet in self.get_formsets(request, obj):
+                prefix = FormSet.get_default_prefix()
+                prefixes[prefix] = prefixes.get(prefix, 0) + 1
+                if prefixes[prefix] != 1:
+                    prefix = "%s-%s" % (prefix, prefixes[prefix])
+                formset = FormSet(instance=obj, prefix=prefix)
+                formsets.append(formset)
 
         # Prepare mapping of content types to their prettified names
         content_types = []
@@ -239,6 +276,16 @@ class ItemEditor(admin.ModelAdmin):
             content_types.append((content_name, content_type.__name__.lower()))
 
         context = {}
+
+        media = self.media + model_form.media
+        
+        inline_admin_formsets = []
+        for inline, formset in zip(self.inline_instances, formsets):
+            fieldsets = list(inline.get_fieldsets(request, obj))
+            inline_admin_formset = helpers.InlineAdminFormSet(inline, formset, fieldsets)
+            inline_admin_formsets.append(inline_admin_formset)
+            media = media + inline_admin_formset.media
+        
 
         if hasattr(self.model, '_feincms_templates'):
             if 'template_key' not in self.show_on_top:
@@ -256,10 +303,11 @@ class ItemEditor(admin.ModelAdmin):
             'object': obj,
             'object_form': model_form,
             'inline_formsets': inline_formsets,
+            'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
             'top_fields': [model_form[field] for field in self.show_on_top],
             'settings_fields': [field for field in model_form if field.name not in self.show_on_top],
-            'media': self.media + model_form.media,
+            'media': media,
             'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,

@@ -153,6 +153,15 @@
     </div>
 </div>
 
+{% block after_field_sets %}{% endblock %}
+
+{% for inline_admin_formset in inline_admin_formsets %}
+    {% include inline_admin_formset.opts.template %}
+{% endfor %}
+
+{% block after_related_objects %}{% endblock %}
+
+
 <div class="submit-row" >
 <input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
 <p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
