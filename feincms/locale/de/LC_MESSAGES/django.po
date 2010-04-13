@@ -360,9 +360,8 @@ msgstr "Übersetzung von"
 
 #: module/blog/extensions/translations.py:15
 #: module/page/extensions/translations.py:108
-#, python-format
-msgid "Leave this empty for entries in the primary language (%s)."
-msgstr "Dieses Feld für Einträge in der Primärsprache (%s) leer lassen."
+msgid "Leave this empty for entries in the primary language."
+msgstr "Dieses Feld für Einträge in der Primärsprache leer lassen."
 
 #: module/blog/extensions/translations.py:36
 #: templates/admin/feincms/item_editor.html:88

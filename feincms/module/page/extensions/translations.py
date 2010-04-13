@@ -105,8 +105,8 @@ def register(cls, admin_cls):
         blank=True, null=True, verbose_name=_('translation of'),
         related_name='translations',
         limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
-        help_text=_('Leave this empty for entries in the primary language (%s).') % \
-            _(django_settings.LANGUAGES[0][1])))
+        help_text=_('Leave this empty for entries in the primary language.')
+        ))
 
     if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
         cls.register_request_processors(translations_request_processor_explicit)
