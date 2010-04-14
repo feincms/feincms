@@ -1,6 +1,9 @@
 from random import random
 import os
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    raise Exception, 'FeinCMS requires PIL to be installed'
 
 from django import template
 from django.conf import settings
