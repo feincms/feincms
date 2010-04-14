@@ -9,7 +9,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models import Q
+from django.db.models.fields import FieldDoesNotExist
 from django.template.loader import render_to_string
+from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
@@ -129,30 +131,36 @@ class Base(models.Model):
                 })
         """
 
-        instances = {}
-        choices = []
+        if not hasattr(cls, '_feincms_templates'):
+            cls._feincms_templates = SortedDict()
+            cls.TEMPLATES_CHOICES = []
+
+        instances = getattr(cls, '_feincms_templates', SortedDict())
 
         for template in templates:
             if not isinstance(template, Template):
                 template = Template(**template)
 
             instances[template.key] = template
-            choices.append((template.key, template.title))
 
-        cls.TEMPLATE_CHOICES = choices
+        try:
+            field = cls._meta.get_field_by_name('template_key')[0]
+        except (FieldDoesNotExist, IndexError):
+            cls.add_to_class('template_key', models.CharField(_('template'), max_length=255, choices=()))
+            field = cls._meta.get_field_by_name('template_key')[0]
 
-        cls.add_to_class('template_key', models.CharField(_('template'), max_length=255,
-            choices=cls.TEMPLATE_CHOICES, default=choices[0][0]))
+            def _template(self):
+                return self._feincms_templates[self.template_key]
 
-        cls._feincms_templates = instances
+            cls.template = property(_template)
 
-        def _template(self):
-            return self._feincms_templates[self.template_key]
+        cls.TEMPLATE_CHOICES = field._choices = [(template.key, template.title)
+            for template in cls._feincms_templates.values()]
+        field.default = field.choices[0][0]
 
-        cls.template = property(_template)
-        cls._feincms_all_regions = []
+        cls._feincms_all_regions = set()
         for template in cls._feincms_templates.values():
-            cls._feincms_all_regions += template.regions
+            cls._feincms_all_regions = cls._feincms_all_regions.union(template.regions)
 
     @classmethod
     def register_extension(cls, register_fn):
@@ -436,7 +444,7 @@ class Base(models.Model):
 
         # content types can be limited to a subset of regions
         if not regions:
-            regions = [region.key for region in cls._feincms_all_regions]
+            regions = set([region.key for region in cls._feincms_all_regions])
 
         for region in cls._feincms_all_regions:
             if region.key in regions:
