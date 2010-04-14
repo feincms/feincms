@@ -193,11 +193,11 @@ class Page(Base):
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=True)
-    override_url = models.CharField(_('override URL'), max_length=400, blank=True,
+    override_url = models.CharField(_('override URL'), max_length=300, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
-    redirect_to = models.CharField(_('redirect to'), max_length=400, blank=True,
+    redirect_to = models.CharField(_('redirect to'), max_length=300, blank=True,
         help_text=_('Target URL for automatic redirects.'))
-    _cached_url = models.CharField(_('Cached URL'), max_length=400, blank=True,
+    _cached_url = models.CharField(_('Cached URL'), max_length=300, blank=True,
         editable=False, default='', db_index=True)
 
     request_processors = []
