@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
@@ -943,6 +944,9 @@ class PagesTestCase(TestCase):
 
         self.assertRedirects(self.client.get(page.get_absolute_url() + 'redirect/'),
                              page.get_absolute_url())
+
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+            page.get_absolute_url())
 
     def test_26_page_form_initial(self):
         self.create_default_page_set()
