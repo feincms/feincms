@@ -279,3 +279,14 @@ class ApplicationContent(models.Model):
             return output
         else:
             request._feincms_applicationcontents[self.id] = mark_safe(output)
+
+    def save(self, *args, **kwargs):
+        super(ApplicationContent, self).save(*args, **kwargs)
+        # Clear reverse() cache
+        _local.reverse_cache = {}
+
+    def delete(self, *args, **kwargs):
+        super(ApplicationContent, self).delete(*args, **kwargs)
+        # Clear reverse() cache
+        _local.reverse_cache = {}
+
