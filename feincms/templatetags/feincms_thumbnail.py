@@ -3,6 +3,9 @@ import os
 try:
     from PIL import Image
 except ImportError:
+    # Django seems to silently swallow the ImportError under certain
+    # circumstances. Raise a generic exception explaining why we are
+    # unable to proceed.
     raise Exception, 'FeinCMS requires PIL to be installed'
 
 from django import template
