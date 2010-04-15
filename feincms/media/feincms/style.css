@@ -106,6 +106,10 @@ textarea {
     margin-bottom:5px;
 }
 
+.inline-group .tabular textarea {
+    width: auto;
+}
+
 .item-minimize {
     width: 15px;
     height:15px;
