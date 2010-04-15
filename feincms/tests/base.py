@@ -418,6 +418,7 @@ class PagesTestCase(TestCase):
 
             'rawcontent-TOTAL_FORMS': 1,
             'rawcontent-INITIAL_FORMS': 0,
+            'rawcontent-MAX_NUM_FORMS': 10,
 
             'rawcontent-0-parent': 1,
             'rawcontent-0-region': 'main',
@@ -426,24 +427,29 @@ class PagesTestCase(TestCase):
 
             'mediafilecontent-TOTAL_FORMS': 1,
             'mediafilecontent-INITIAL_FORMS': 0,
+            'mediafilecontent-MAX_NUM_FORMS': 10,
 
             'mediafilecontent-0-parent': 1,
             'mediafilecontent-0-position': 'block',
 
             'imagecontent-TOTAL_FORMS': 1,
             'imagecontent-INITIAL_FORMS': 0,
+            'imagecontent-MAX_NUM_FORMS': 10,
 
             'imagecontent-0-parent': 1,
             'imagecontent-0-position': 'default',
 
             'contactformcontent-TOTAL_FORMS': 1,
             'contactformcontent-INITIAL_FORMS': 0,
+            'contactformcontent-MAX_NUM_FORMS': 10,
 
             'filecontent-TOTAL_FORMS': 1,
             'filecontent-INITIAL_FORMS': 0,
+            'filecontent-MAX_NUM_FORMS': 10,
 
             'applicationcontent-TOTAL_FORMS': 1,
             'applicationcontent-INITIAL_FORMS': 0,
+            'applicationcontent-MAX_NUM_FORMS': 10,
             }
         data.update(kwargs)
 
