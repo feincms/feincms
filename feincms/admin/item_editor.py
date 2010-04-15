@@ -293,6 +293,9 @@ class ItemEditor(admin.ModelAdmin):
 
             context['available_templates'] = self.model._feincms_templates
 
+        if hasattr(self.model, 'parent'):
+            context['has_parent_attribute'] = True
+
         context.update({
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request, obj=obj),
