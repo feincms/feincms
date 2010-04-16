@@ -3,6 +3,7 @@
 # ------------------------------------------------------------------------
 
 from django import forms
+from django.core.cache import cache as django_cache
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.core.urlresolvers import reverse
@@ -100,7 +101,6 @@ class PageManager(models.Manager):
         # Both cases can handle a short time of "being wrong", so this should
         # be OK.
 
-        from django.core.cache import cache as django_cache
         if settings.FEINCMS_USE_CACHE:
             ck = 'PAGE-FOR-URL-' + path
             page = django_cache.get(ck)
@@ -271,6 +271,11 @@ class Page(Base):
         # or if the updates weren't navigation related:
         if self._cached_url == self._original_cached_url:
             return
+
+        # Okay, we changed the URL -- remove the old stale entry from the cache
+        if settings.FEINCMS_USE_CACHE:
+            ck = 'PAGE-FOR-URL-' + self._original_cached_url.strip('/')
+            django_cache.delete(ck)
 
         pages = self.get_descendants().order_by('lft')
 
