@@ -265,17 +265,17 @@ class Page(Base):
         cached_page_urls[self.id] = self._cached_url
         super(Page, self).save(*args, **kwargs)
 
+        # Okay, we changed the URL -- remove the old stale entry from the cache
+        if settings.FEINCMS_USE_CACHE:
+            ck = 'PAGE-FOR-URL-' + self._original_cached_url.strip('/')
+            django_cache.delete(ck)
+
         # If our cached URL changed we need to update all descendants to
         # reflect the changes. Since this is a very expensive operation
         # on large sites we'll check whether our _cached_url actually changed
         # or if the updates weren't navigation related:
         if self._cached_url == self._original_cached_url:
             return
-
-        # Okay, we changed the URL -- remove the old stale entry from the cache
-        if settings.FEINCMS_USE_CACHE:
-            ck = 'PAGE-FOR-URL-' + self._original_cached_url.strip('/')
-            django_cache.delete(ck)
 
         pages = self.get_descendants().order_by('lft')
 
