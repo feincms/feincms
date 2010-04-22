@@ -61,13 +61,18 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         if not hasattr(_local, 'reverse_cache'):
             _local.reverse_cache = {}
 
-        if other_urlconf not in _local.reverse_cache:
+        # Update this when more items are used for the proximity analysis below
+        proximity_info = getattr(_local, 'proximity_info', None)
+        if proximity_info:
+            urlconf_cache_key = '%s_%s' % (other_urlconf, proximity_info[0])
+        else:
+            urlconf_cache_key = '%s_noprox' % other_urlconf
+
+        if urlconf_cache_key not in _local.reverse_cache:
             # TODO do not use internal feincms data structures as much
             model_class = ApplicationContent._feincms_content_models[0]
             contents = model_class.objects.filter(
                 urlconf_path=other_urlconf).select_related('parent')
-
-            proximity_info = getattr(_local, 'proximity_info', None)
 
             if proximity_info:
                 # Poor man's proximity analysis. Filter by tree_id :-)
@@ -83,9 +88,9 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
                     content = contents[0]
                 except IndexError:
                     content = None
-            _local.reverse_cache[other_urlconf] = content
+            _local.reverse_cache[urlconf_cache_key] = content
         else:
-            content = _local.reverse_cache[other_urlconf]
+            content = _local.reverse_cache[urlconf_cache_key]
 
         if content:
             # Save information from _urlconfs in case we are inside another
