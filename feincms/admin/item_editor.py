@@ -33,6 +33,17 @@ class ItemEditor(admin.ModelAdmin):
         This does not need to (and should not) include ``template``
     """
 
+    def __init__(self, *args, **kwargs):
+        # Make sure all models are completely loaded before attempting to
+        # proceed. The dynamic nature of FeinCMS models makes this necessary.
+        # For more informations, have a look at issue #23 on github:
+        # http://github.com/matthiask/feincms/issues#issue/23
+        from django.core.management.validation import get_validation_errors
+        from StringIO import StringIO
+        get_validation_errors(StringIO(), None)
+
+        super(ItemEditor, self).__init__(*args, **kwargs)
+
     def _formfield_callback(self, request):
         if settings.DJANGO10_COMPAT:
             # This should compare for Django SVN before [9761] (From 2009-01-16),
@@ -278,14 +289,14 @@ class ItemEditor(admin.ModelAdmin):
         context = {}
 
         media = self.media + model_form.media
-        
+
         inline_admin_formsets = []
         for inline, formset in zip(self.inline_instances, formsets):
             fieldsets = list(inline.get_fieldsets(request, obj))
             inline_admin_formset = helpers.InlineAdminFormSet(inline, formset, fieldsets)
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
-        
+
 
         if hasattr(self.model, '_feincms_templates'):
             if 'template_key' not in self.show_on_top:

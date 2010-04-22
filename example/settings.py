@@ -60,14 +60,13 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.admin',
 
     'feincms',
     'feincms.module.blog',
     'feincms.module.page',
     'feincms.module.medialibrary',
     'example',
-
-    'django.contrib.admin',
 
     'mptt',
 )
