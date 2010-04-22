@@ -26,6 +26,11 @@ _local = local()
 def retrieve_page_information(page):
     _local.proximity_info = (page.tree_id, page.lft, page.rght, page.level)
 
+
+def _empty_reverse_cache():
+    _local.reverse_cache = {}
+
+
 OTHER_APPLICATIONCONTENT_SEPARATOR = '/'
 
 def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs, **vkwargs):
@@ -283,10 +288,9 @@ class ApplicationContent(models.Model):
     def save(self, *args, **kwargs):
         super(ApplicationContent, self).save(*args, **kwargs)
         # Clear reverse() cache
-        _local.reverse_cache = {}
+        _empty_reverse_cache()
 
     def delete(self, *args, **kwargs):
         super(ApplicationContent, self).delete(*args, **kwargs)
         # Clear reverse() cache
-        _local.reverse_cache = {}
-
+        _empty_reverse_cache()
