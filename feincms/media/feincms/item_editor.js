@@ -75,7 +75,10 @@ function poorify_rich(item){
             }
         });
     });
+
+    $('input[type=radio][checked]', item).addClass('radiochecked');
 }
+
 function richify_poor(item){
     item.children(".item-content").show();
 
@@ -92,6 +95,8 @@ function richify_poor(item){
             }
         });
     });
+
+    $('input.radiochecked', item).removeClass('radiochecked').trigger('click');
 }
 
 function sort_by_ordering(e1, e2) {
