@@ -15,7 +15,7 @@ from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
 
-from feincms.content.application.models import ApplicationContent
+from feincms.content.application.models import ApplicationContent, _empty_reverse_cache
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
 from feincms.content.image.models import ImageContent
@@ -1007,7 +1007,7 @@ class PagesTestCase(TestCase):
 
         self.assertContains(self.create_pagecontent(page2, active=True, override_url='/'),
             'already taken by')
-            
+
     def test_29_applicationcontent_reverse(self):
         self.create_default_page_set()
         page1 = Page.objects.get(pk=1)
@@ -1027,11 +1027,27 @@ class PagesTestCase(TestCase):
         # test reverse replacement
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
                          page.get_absolute_url())
-        
-        # applicationcontent has been added twice, should find right one by tree_id
-        page_de = self.create_page(title='Home DE', language='de', active=True)
-        page_de_1 = self.create_page(title='Child 1 DE', language='de', parent=page_de.id, active=True)
-        
+
+
+        # when specific applicationcontent exists more then once reverse should return url
+        # for the one that has tree_id same as current feincms page
+        self.create_page(title='Home DE', language='de', active=True)
+        page_de = Page.objects.get(title='Home DE')
+        self.create_page(title='Child 1 DE', language='de', parent=page_de.id, active=True)
+        page_de_1 = Page.objects.get(title='Child 1 DE')
+        page_de_1.applicationcontent_set.create(
+            region='main', ordering=0,
+            urlconf_path='feincms.tests.applicationcontent_urls')
+        _empty_reverse_cache()
+
+        settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
+        self.client.get(page_de.get_absolute_url())
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+                         page_de_1.get_absolute_url())
+
+        self.client.get(page1.get_absolute_url())
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+                      page.get_absolute_url())
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
