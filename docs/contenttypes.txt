@@ -8,6 +8,17 @@ You will learn how to add your own content types and how you can
 render them in a template.
 
 
+What is a content type anyway?
+==============================
+
+In FeinCMS, a content type is something to attach as content to a base model,
+for example a CMS Page (the base model) may have several rich text components
+associated to it (those would be RichTextContent content types).
+
+Every content type knows, amongst other things, how to render itself.
+Think of content types as "snippets" of information to appear on a page.
+
+
 Rendering contents in your templates
 ====================================
 
