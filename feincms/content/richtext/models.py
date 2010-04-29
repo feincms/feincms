@@ -1,10 +1,11 @@
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
+from django.forms.util import ErrorList
+from django.template.loader import render_to_string
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.utils.html import escape
-from django.forms.util import ErrorList
 
 from feincms import settings
 from feincms.admin.editor import ItemEditorForm
@@ -87,7 +88,8 @@ class RichTextContent(models.Model):
         verbose_name_plural = _('rich texts')
 
     def render(self, **kwargs):
-        return mark_safe(self.text)
+        return render_to_string('content/richtext/default.html',
+            {'content': self})
 
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?

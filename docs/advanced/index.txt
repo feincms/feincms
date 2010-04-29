@@ -19,3 +19,4 @@ design considerations and how to optimize your code, this section is for you.
    navigationextensions
    designdecisions
    settings
+   caching
