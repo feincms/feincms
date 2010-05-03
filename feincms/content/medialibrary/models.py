@@ -87,12 +87,13 @@ class MediaFileContent(models.Model):
         cls.feincms_item_editor_form = MediaFileContentAdminForm
 
     def render(self, **kwargs):
+        request = kwargs.get('request')
         return render_to_string([
             'content/mediafile/%s_%s.html' % (self.mediafile.type, self.position),
             'content/mediafile/%s.html' % self.mediafile.type,
             'content/mediafile/%s.html' % self.position,
             'content/mediafile/default.html',
-            ], {'content': self})
+            ], { 'content': self, 'request': request })
 
 
     @classmethod
