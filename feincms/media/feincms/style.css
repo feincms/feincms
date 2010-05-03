@@ -2,10 +2,6 @@
     top: 20px;
 }
 
-#content.colM {
-    width:845px;
-}
-
 .navi_tab {
     float:left;
     padding: 5px 14px 5px 12px;
@@ -130,7 +126,6 @@ textarea {
     padding: 5px 0px 5px 0px;
     border: 1px solid #ccc;
     background-color:#fff;
-    width:843px;
     position:absolute;
     left:-11px;
     bottom:-11px;
