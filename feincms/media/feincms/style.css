@@ -140,7 +140,11 @@ textarea {
     float:left;
     padding-left:15px;
     padding-right:10px;
-    border-right: 1px solid #eee;
+    border-left: 1px solid #eee;
+}
+
+.control-unit:first-child {
+    border-left: none;
 }
 
 .control-unit span {
