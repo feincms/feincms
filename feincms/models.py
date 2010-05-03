@@ -291,6 +291,7 @@ class Base(models.Model):
 
         class Meta:
             abstract = True
+            app_label = cls._meta.app_label
             ordering = ['ordering']
 
         def __unicode__(self):
