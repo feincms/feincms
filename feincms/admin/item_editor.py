@@ -133,8 +133,6 @@ class ItemEditor(admin.ModelAdmin):
         if not self.has_change_permission(request, obj):
             raise PermissionDenied
 
-        messages = list()
-
         if "revision" in request.GET:
             from reversion.models import Revision
 
@@ -143,7 +141,7 @@ class ItemEditor(admin.ModelAdmin):
             except Revision.DoesNotExist:
                 raise Http404
 
-            messages.append(_('Click save to replace the current content with this version'))
+            self.message_user(request, _('Click save to replace the current content with this version'))
         else:
             revision = None
 
@@ -325,7 +323,6 @@ class ItemEditor(admin.ModelAdmin):
             'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
-            'messages': messages,
         })
 
         return self.render_item_editor(request, obj, context)
