@@ -370,11 +370,17 @@ class Base(models.Model):
         cls._feincms_content_types = []
 
         # list of item editor context processors, will be extended by content types
-        cls.feincms_item_editor_context_processors = []
+        if hasattr(cls, 'feincms_item_editor_context_processors'):
+            cls.feincms_item_editor_context_processors = list(cls.feincms_item_editor_context_processors)
+        else:
+            cls.feincms_item_editor_context_processors = []
 
         # list of templates which should be included in the item editor, will be extended
         # by content types
-        cls.feincms_item_editor_includes = {}
+        if hasattr(cls, 'feincms_item_editor_includes'):
+            cls.feincms_item_editor_includes = dict(cls.feincms_item_editor_includes)
+        else:
+            cls.feincms_item_editor_includes = {}
 
     @classmethod
     def create_content_type(cls, model, regions=None, **kwargs):
