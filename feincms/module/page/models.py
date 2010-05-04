@@ -27,21 +27,22 @@ import feincms.admin.filterspecs
 
 
 # ------------------------------------------------------------------------
-class PageManager(models.Manager):
+class ActiveAwareContentManagerMixin(object):
+    """
+    Implement what's necessary to add some kind of "active" state for content
+    objects. The notion of active is defined by a number of filter rules that
+    must all match (AND) for the object to be active.
 
-    # A list of filters which are used to determine whether a page is active or not.
-    # Extended for example in the datepublisher extension (date-based publishing and
-    # un-publishing of pages)
-    active_filters = [
-        Q(active=True),
-        ]
-
-    # The fields which should be excluded when creating a copy. The mptt fields are
-    # excluded automatically by other mechanisms
-    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level']
+    A Manager for a content class using the "datepublisher" extension
+    should either adopt this mixin or implement a similar interface.
+    """
+    active_filters = ()
 
     @classmethod
     def apply_active_filters(cls, queryset):
+        """
+        Return a queryset reflecting the filters defined.
+        """
         for filt in cls.active_filters:
             if callable(filt):
                 queryset = filt(queryset)
@@ -50,8 +51,33 @@ class PageManager(models.Manager):
 
         return queryset
 
+    @classmethod
+    def add_to_active_filters(cls, filter):
+        """
+        Add a new clause to the active filters. A filter may be either
+        a Q object to be applied to the content class or a callable taking
+        a queryset and spitting out a new one.
+        """
+        if not cls.active_filters:
+            cls.active_filters = list()
+        cls.active_filters.append(filter)
+
     def active(self):
+        """
+        Return only currently active objects.
+        """
         return self.apply_active_filters(self)
+
+# ------------------------------------------------------------------------
+class PageManager(models.Manager, ActiveAwareContentManagerMixin):
+
+    # A list of filters which are used to determine whether a page is active or not.
+    # Extended for example in the datepublisher extension (date-based publishing and
+    # un-publishing of pages)
+
+    # The fields which should be excluded when creating a copy. The mptt fields are
+    # excluded automatically by other mechanisms
+    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level']
 
     def page_for_path(self, path, raise404=False):
         """
@@ -179,6 +205,7 @@ class PageManager(models.Manager):
 
         return Page.objects.get(pk=with_page.pk)
 
+PageManager.add_to_active_filters( Q(active=True) )
 
 # MARK: -
 # ------------------------------------------------------------------------
