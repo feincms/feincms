@@ -3,11 +3,24 @@
 import os
 from setuptools import setup, find_packages
 from setuptools.dist import Distribution
+import pkg_resources
+
+
+add_django_dependency = True
+# See issues #50, #57 and #58 for why this is necessary
+try:
+    pkg_resources.get_distribution('Django')
+    add_django_dependency = False
+except pkg_resources.DistributionNotFound:
+    try:
+        import django
+        if django.VERSION[0] >= 1 and django.VERSION[1] >= 1 and django.VERSION[2] >= 1:
+            add_django_dependency = False
+    except ImportError:
+        pass
 
 Distribution({
-    "setup_requires": [
-        #'Django >=1.1.1' # See http://github.com/matthiask/feincms/issues/closed#issue/50
-    ]
+    "setup_requires": add_django_dependency and  ['Django >=1.1.1'] or []
 })
 
 import feincms
