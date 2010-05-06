@@ -15,6 +15,7 @@
     font-size: 12px;
     background-image:none;
     color: #333333;
+    background: #eee url(img/nav-bg.gif) top repeat-x;
 }
 .tab_active {
     margin-top: 0;
@@ -72,9 +73,11 @@
 }
 
 .highlight {
-    height: 26px;
-    background-color:#def;
+    height: 25px;
     margin: 0 0 10px 0;
+    border: none;
+    opacity: 0.3;
+    background: url(img/item_editor_form_title.png) no-repeat left bottom;
 }
 
 .button {
