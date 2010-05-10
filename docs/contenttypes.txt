@@ -35,7 +35,7 @@ Simple:
     </div>
 
     <div id="sidebar">
-        {% block content %}
+        {% block sidebar %}
         {% for content in feincms_page.content.sidebar %}
             {{ content.render }}
         {% endfor %}
