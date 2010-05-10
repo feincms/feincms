@@ -126,7 +126,7 @@ The example above could be rewritten like this:
     </div>
 
     <div id="sidebar">
-        {% block content %}
+        {% block sidebar %}
         {% for content in feincms_page.content.sidebar %}
             {% feincms_render_content content request %}
         {% endfor %}
@@ -147,7 +147,7 @@ Or even like this:
     </div>
 
     <div id="sidebar">
-        {% block content %}
+        {% block sidebar %}
         {% feincms_render_region feincms_page "sidebar" request %}
         {% endblock %}
     </div>
