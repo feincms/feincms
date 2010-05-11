@@ -97,7 +97,7 @@ An example ``urls.py`` follows::
            name='entry_list'),
        url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[^/]+)/',
            'django.views.generic.date_based.object_detail',
-           dict(event_dict, **{'date_field': 'date', 'month_format': '%m', 'slug_field': 'slug'}),
+           dict(entry_dict, **{'date_field': 'published_date', 'month_format': '%m', 'slug_field': 'slug'}),
            name='entry_detail'),
     )
 
@@ -139,9 +139,9 @@ absolutely standard. ``models.py``::
        @models.permalink
        def get_absolute_url(self):
            return ('entry_detail', (), {
-               'year': self.parent.date.strftime('%Y'),
-               'month': self.parent.date.strftime('%m'),
-               'day': self.parent.date.strftime('%d'),
+               'year': self.published_date.strftime('%Y'),
+               'month': self.published_date.strftime('%m'),
+               'day': self.published_date.strftime('%d'),
                'slug': self.slug,
                })
 
@@ -151,20 +151,20 @@ Writing the templates for the application
 
 Nothing special here. The only thing you have to avoid is adding ``<html>`` or
 ``<body>`` tags and such, because you're only rendering content for a single
-content block, not the whole page. An example ``news/news_detail.html`` follows::
+content block, not the whole page. An example ``news/entry_detail.html`` follows::
 
     <div class="entry">
        <h2>{{ object.title }}</h2>
-       <span class="date">{{ object.published_date|date:"%d.%m.%Y" }}</span>
+       <span class="date">{{ object.published_date|date:"d.m.Y" }}</span>
 
        {{ object.description|linebreaks }}
     </div>
 
-And an example ``news/news_list.html``::
+And an example ``news/entry_list.html``::
 
     {% for entry in object_list %}
         <div class="entry">
-            {% ifchanged %}<div class="date">{{ entry.published_date|date:"%d.%m.%Y" }}</div>{% endifchanged %}
+            {% ifchanged %}<div class="date">{{ entry.published_date|date:"d.m.Y" }}</div>{% endifchanged %}
             <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
         </div>
     {% endfor %}
@@ -232,7 +232,7 @@ Giving more control to the 3rd party application
 The output of the third party app is not strictly constrained to the region;
 you can pass additional fragments around, for example to extend the page title
 with content from the 3rd party application. Suppose we'd like to add the news
-title to the title tag. Add the following lines to your ``news/news_detail.html``::
+title to the title tag. Add the following lines to your ``news/entry_detail.html``::
 
     {% load applicationcontent_tags %}
     {% fragment request "title" %}{{ object.translation.title }} - {% endfragment %}
