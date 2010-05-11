@@ -35,7 +35,7 @@ Simple:
     </div>
 
     <div id="sidebar">
-        {% block content %}
+        {% block sidebar %}
         {% for content in feincms_page.content.sidebar %}
             {{ content.render }}
         {% endfor %}
@@ -126,7 +126,7 @@ The example above could be rewritten like this:
     </div>
 
     <div id="sidebar">
-        {% block content %}
+        {% block sidebar %}
         {% for content in feincms_page.content.sidebar %}
             {% feincms_render_content content request %}
         {% endfor %}
@@ -147,7 +147,7 @@ Or even like this:
     </div>
 
     <div id="sidebar">
-        {% block content %}
+        {% block sidebar %}
         {% feincms_render_region feincms_page "sidebar" request %}
         {% endblock %}
     </div>
@@ -197,7 +197,7 @@ Media library integration
 .. class:: MediaFileContent()
 
 Mini-framework for arbitrary file types with customizable rendering
-methods per-filetype.
+methods per-filetype.  Add 'feincms.module.medialibrary' to INSTALLED_APPS.
 
 Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 
@@ -247,7 +247,7 @@ A feed reader widget. This also serves as an example how to build a content
 type that needs additional processing, in this case from a cron job. If an
 RSS feed has been added to the CMS, ``manage.py update_rsscontent`` should
 be run periodically (either through a cronjob or through other means) to
-keep the shown content up to date.
+keep the shown content up to date.  The `feedparser` module is required.
 
 
 Video inclusion code for youtube, vimeo etc.
