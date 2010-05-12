@@ -11,4 +11,7 @@ def register(cls, admin_cls):
     cls.add_to_class('related_pages', models.ManyToManyField(Page, blank=True,
         null=True, help_text=_('Select pages that should be listed as related content.')))
 
-    admin_cls.filter_horizontal = ['related_pages']
+    try:
+        admin_cls.filter_horizontal.append('related_pages')
+    except AttributeError:
+        admin_cls.filter_horizontal = ['related_pages']
