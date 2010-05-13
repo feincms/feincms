@@ -264,6 +264,7 @@ def is_parent_of(page1, page2):
     {% if page|is_parent_of:feincms_page %} ... {% endif %}
     """
 
+    if page1 is None:   return False
     return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
 
 # ------------------------------------------------------------------------

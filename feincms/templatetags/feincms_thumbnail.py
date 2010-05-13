@@ -34,8 +34,11 @@ def thumbnail(filename, size='200x200'):
     orig_filename = os.path.join(settings.MEDIA_ROOT, filename).encode('utf-8')
     # if the image wasn't already resized, resize it
     if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
-        image = Image.open(orig_filename)
-        image.thumbnail([x, y], Image.ANTIALIAS) # generate a 200x200 thumbnail
+        try:
+            image = Image.open(orig_filename)
+        except IOError:
+            return os.path.join(settings.MEDIA_URL, filename)
+        image.thumbnail([x, y], Image.ANTIALIAS)
         image.save(miniature_filename, image.format, quality=100)
     return miniature_url
 
@@ -51,7 +54,10 @@ def cropscale(filename, size='200x200'):
     orig_filename = os.path.join(settings.MEDIA_ROOT, filename)
     # if the image wasn't already resized, resize it
     if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
-        image = Image.open(orig_filename)
+        try:
+            image = Image.open(orig_filename)
+        except IOError:
+            return os.path.join(settings.MEDIA_URL, filename)
 
         src_width, src_height = image.size
         src_ratio = float(src_width) / float(src_height)
