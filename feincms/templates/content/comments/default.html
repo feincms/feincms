@@ -30,7 +30,8 @@
 
 {% block comment-form %}
     {% if content.comments_enabled %}
-        <form action="{{ feincms_page.get_absolute_url }}post-comment/" method="post" id="form-comment">
+        <form action="{{ feincms_page.get_absolute_url }}" method="post" id="form-comment">
+            {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" name="post" id="submit" value="{% trans "Post Comment" %}" />
         </form>
