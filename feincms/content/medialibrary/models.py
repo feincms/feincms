@@ -20,34 +20,29 @@ class MediaFileWidget(forms.TextInput):
     def render(self, name, value, attrs=None):
         inputfield = super(MediaFileWidget, self).render(name, value, attrs)
         if value:
+            mf = MediaFile.objects.get(pk=value)
             try:
-                mf = MediaFile.objects.get(pk=value)
-                try:
-                    caption = mf.translation.caption
-                except ObjectDoesNotExist:
-                    caption = _('(no caption)')
+                caption = mf.translation.caption
+            except ObjectDoesNotExist:
+                caption = _('(no caption)')
 
-                if mf.type == 'image':
-                    image = feincms_thumbnail.thumbnail(mf.file.name, '240x120')
-                    image = u'<img src="%(url)s" alt="" /><br />' % {'url': image}
-                else:
-                    image = u''
+            if mf.type == 'image':
+                image = feincms_thumbnail.thumbnail(mf.file.name, '240x120')
+                image = u'<img src="%(url)s" alt="" /><br />' % {'url': image}
+            else:
+                image = u''
 
-                return mark_safe(u"""
-                    <div style="margin-left:10em">%(image)s
-                    <a href="%(url)s" target="_blank">%(caption)s (%(url)s)</a><br />
-                    %(inputfield)s
-                    </div>""" % {
-                        'image': image,
-                        'url': mf.file.url,
-                        'caption': caption,
-                        'inputfield': inputfield})
-            except:
-                pass
+            return mark_safe(u"""
+                <div style="margin-left:10em">%(image)s
+                <a href="%(url)s" target="_blank">%(caption)s - %(url)s</a><br />
+                %(inputfield)s
+                </div>""" % {
+                    'image': image,
+                    'url': mf.file.url,
+                    'caption': caption,
+                    'inputfield': inputfield})
 
         return inputfield
-
-
 
 
 # FeinCMS connector
