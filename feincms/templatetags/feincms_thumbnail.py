@@ -37,7 +37,7 @@ def thumbnail(filename, size='200x200'):
         try:
             image = Image.open(orig_filename)
         except IOError:
-            return os.path.jion(settings.MEDIA_URL, filename)
+            return os.path.join(settings.MEDIA_URL, filename)
         image.thumbnail([x, y], Image.ANTIALIAS)
         image.save(miniature_filename, image.format, quality=100)
     return miniature_url
@@ -57,7 +57,7 @@ def cropscale(filename, size='200x200'):
         try:
             image = Image.open(orig_filename)
         except IOError:
-            return os.path.jion(settings.MEDIA_URL, filename)
+            return os.path.join(settings.MEDIA_URL, filename)
 
         src_width, src_height = image.size
         src_ratio = float(src_width) / float(src_height)
