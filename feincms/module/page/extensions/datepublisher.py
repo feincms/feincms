@@ -27,6 +27,9 @@ def format_date(d, if_none=''):
     fmt = (d.year == now.year) and '%d.%m' or '%d.%m.%Y'
     return d.strftime(fmt)
 
+def latest_children(self):
+    return self.get_children().order_by('-publication_date')
+
 # ------------------------------------------------------------------------
 def register(cls, admin_cls):
     cls.add_to_class('publication_date', models.DateTimeField(_('publication date'),
@@ -34,6 +37,7 @@ def register(cls, admin_cls):
     cls.add_to_class('publication_end_date', models.DateTimeField(_('publication end date'),
         blank=True, null=True,
         help_text=_('Leave empty if the entry should stay active forever.')))
+    cls.add_to_class('latest_children', latest_children)
 
     if hasattr(cls.objects, 'add_to_active_filters'):
         cls.objects.add_to_active_filters(
