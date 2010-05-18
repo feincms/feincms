@@ -1,3 +1,4 @@
+import time
 from datetime import datetime
 
 from django.db import models
@@ -24,13 +25,18 @@ class RSSContent(models.Model):
     def render(self, **kwargs):
         return mark_safe(self.rendered_content)
 
-    def cache_content(self, save=True):
+    def cache_content(self, date_format=None, save=True):
         feed = feedparser.parse(self.link)
+        entries = feed['entries'][:self.max_items]
+        if date_format:
+            for entry in entries:
+                entry.updated = time.strftime(date_format, 
+                    entry.updated_parsed)
 
         self.rendered_content = render_to_string('content/rss/content.html', {
             'feed_title': self.title,
             'feed_link': feed['feed']['link'],
-            'entries': feed['entries'][:self.max_items],
+            'entries': entries,
             })
         self.last_updated = datetime.now()
 
