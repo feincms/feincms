@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+import sys
+
 from django import forms
 from django.core.cache import cache as django_cache
 from django.conf import settings as django_settings
@@ -456,7 +458,7 @@ class Page(Base):
             response['ETag'] = etag
 
     @staticmethod
-    def debug_sql_queries_response_processor(verbose=False):
+    def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
         if not django_settings.DEBUG:
             return lambda self, request, response: None
 
@@ -471,18 +473,18 @@ class Page(Base):
                 pass
 
             if verbose:
-                print "--------------------------------------------------------------"
+                print >> file, "--------------------------------------------------------------"
             time = 0.0
             i = 0
             for q in connection.queries:
                 i += 1
                 if verbose:
-                    print "%d : [%s]\n%s\n" % ( i, q['time'], print_sql(q['sql']))
+                    print >> file, "%d : [%s]\n%s\n" % ( i, q['time'], print_sql(q['sql']))
                 time += float(q['time'])
 
-            print "--------------------------------------------------------------"
-            print "Total: %d queries, %.3f ms" % (i, time)
-            print "--------------------------------------------------------------"
+            print >> file, "--------------------------------------------------------------"
+            print >> file, "Total: %d queries, %.3f ms" % (i, time)
+            print >> file, "--------------------------------------------------------------"
 
         return processor
 
