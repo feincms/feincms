@@ -486,6 +486,10 @@ class Base(models.Model):
             for key, includes in model.feincms_item_editor_includes.items():
                 cls.feincms_item_editor_includes.setdefault(key, set()).update(includes)
 
+        # Ensure meta information is up-to-date
+        for fn in [s for s in dir(cls._meta) if s[:6]=='_fill_']:
+            getattr(cls._meta, fn)()
+
         return new_type
 
     @property
