@@ -313,13 +313,6 @@ tr.cut { border: 2px dashed black; opacity: 0.5; }
 
 :focus { background-color: #ccddff !important; outline: 0px; }
 
-/* Positioning Fixes for multiple object-tools: */
-
-#content-main ul.object-tools {
-    float: right;
-    margin: 0 0 1em;
-}
-
 #page_form {
     clear: both;
 }

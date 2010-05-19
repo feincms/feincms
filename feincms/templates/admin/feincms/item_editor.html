@@ -57,8 +57,10 @@
 <div id="content-main">
 
 {% block object-tools %}
-{{ block.super }}
 <ul class="object-tools">
+    {% if object.get_absolute_url %}
+    <li><a target="_blank" href="{{ object.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
+    {% endif %}
     {% if object.get_preview_url %}
         <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
     {% endif %}
