@@ -104,6 +104,9 @@ class ContentProxy(object):
 
         item = self.__dict__['item']
 
+        return self.get_content(item, attr)
+
+    def get_content(self, item, attr):
         try:
             region = item.template.regions_dict[attr]
         except KeyError:
