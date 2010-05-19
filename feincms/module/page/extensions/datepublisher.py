@@ -27,6 +27,22 @@ def format_date(d, if_none=''):
     fmt = (d.year == now.year) and '%d.%m' or '%d.%m.%Y'
     return d.strftime(fmt)
 
+def latest_children(self):
+    return self.get_children().order_by('-publication_date')
+
+# ------------------------------------------------------------------------
+def granular_now(n=None):
+    """
+    A datetime.now look-alike that returns times rounded to a five minute
+    boundary. This helps the backend database to optimize/reuse/cache its
+    queries by not creating a brand new query each time.
+
+    Also useful if you are using johnny-cache or a similar queryset cache.
+    """
+    if n is None:
+        n = datetime.now()
+    return datetime(n.year, n.month, n.day, n.hour, (n.minute // 5) * 5)
+
 # ------------------------------------------------------------------------
 def register(cls, admin_cls):
     cls.add_to_class('publication_date', models.DateTimeField(_('publication date'),
@@ -34,11 +50,12 @@ def register(cls, admin_cls):
     cls.add_to_class('publication_end_date', models.DateTimeField(_('publication end date'),
         blank=True, null=True,
         help_text=_('Leave empty if the entry should stay active forever.')))
+    cls.add_to_class('latest_children', latest_children)
 
     if hasattr(cls.objects, 'add_to_active_filters'):
         cls.objects.add_to_active_filters(
-            Q(publication_date__lte=datetime.now) &
-            (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=datetime.now))
+            Q(publication_date__lte=granular_now) &
+            (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=granular_now))
             )
 
     def datepublisher_admin(self, page):
