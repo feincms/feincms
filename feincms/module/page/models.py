@@ -250,6 +250,9 @@ class Page(Base):
         Check whether this page and all its ancestors are active
         """
 
+        if not self.pk:
+            return False
+
         pages = Page.objects.active().filter(tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght)
         return pages.count() > self.level
     is_active.short_description = _('is active')
@@ -742,11 +745,12 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         return super(PageAdmin, self).change_view(request, object_id, extra_context)
 
     def render_item_editor(self, request, object, context):
-        try:
-            active = Page.objects.active().exclude(pk=object.pk).get(_cached_url=object._cached_url)
-            context['to_replace'] = active
-        except Page.DoesNotExist:
-            pass
+        if object:
+            try:
+                active = Page.objects.active().exclude(pk=object.pk).get(_cached_url=object._cached_url)
+                context['to_replace'] = active
+            except Page.DoesNotExist:
+                pass
 
         return super(PageAdmin, self).render_item_editor(request, object, context)
 

@@ -5,18 +5,24 @@ from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.admin.util import unquote
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.db.models import loading
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_unicode
 from django.utils.functional import curry
 from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
+
+
+csrf_protect_m = method_decorator(csrf_protect)
 
 
 class ItemEditorForm(forms.ModelForm):
@@ -112,6 +118,150 @@ class ItemEditor(admin.ModelAdmin):
             }, context_instance=template.RequestContext(request,
                 processors=self.model.feincms_item_editor_context_processors))
 
+    def _get_inline_formset_types(self, request):
+        return [(
+            content_type,
+            inlineformset_factory(self.model, content_type, extra=1,
+                fk_name='parent', #added so multiple foreign keys are not a problem
+                form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm),
+                formfield_callback=self._formfield_callback(request=request))
+            ) for content_type in self.model._feincms_content_types]
+
+    @csrf_protect_m
+    @transaction.commit_on_success
+    def add_view(self, request, extra_context=None, form_url=None):
+        opts = self.model._meta
+
+        if not self.has_add_permission(request):
+            raise PermissionDenied
+
+        ModelForm = self.get_form(request,
+            fields=None,
+            formfield_callback=self._formfield_callback(request=request),
+            form=self.form
+        )
+
+        inline_formset_types = self._get_inline_formset_types(request)
+        formsets = []
+
+        if request.method == 'POST':
+            model_form = ModelForm(request.POST, request.FILES)
+
+            if model_form.is_valid():
+                form_validated = True
+                new_object = self.save_form(request, model_form, change=False)
+            else:
+                form_validated = False
+                new_object = self.model()
+
+            inline_formsets = [
+                formset_class(request.POST, request.FILES, instance=new_object,
+                    prefix=content_type.__name__.lower())
+                for content_type, formset_class in inline_formset_types]
+
+            prefixes = {}
+            for FormSet, inline in zip(self.get_formsets(request), self.inline_instances):
+                prefix = FormSet.get_default_prefix()
+                prefixes[prefix] = prefixes.get(prefix, 0) + 1
+                if prefixes[prefix] != 1:
+                    prefix = "%s-%s" % (prefix, prefixes[prefix])
+                formset = FormSet(data=request.POST, files=request.FILES,
+                    instance=new_object,
+                    save_as_new=request.POST.has_key('_saveasnew'),
+                    prefix=prefix, queryset=inline.queryset(request))
+                formsets.append(formset)
+
+            if all_valid(inline_formsets+formsets) and form_validated:
+                self.save_model(request, new_object, model_form, change=False)
+                model_form.save_m2m()
+                for formset in inline_formsets:
+                    formset.save()
+                for formset in formsets:
+                    self.save_formset(request, model_form, formset, change=False)
+
+                msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(new_object)}
+                if request.POST.has_key("_continue"):
+                    self.message_user(request, msg + ' ' + _("You may edit it again below."))
+                    return HttpResponseRedirect('../%s/' % new_object.pk)
+                elif request.POST.has_key('_addanother'):
+                    self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_unicode(opts.verbose_name)))
+                    return HttpResponseRedirect("../add/")
+                else:
+                    self.message_user(request, msg)
+                    return HttpResponseRedirect("../")
+        else:
+            model_form = ModelForm()
+            inline_formsets = [
+                formset_class(prefix=content_type.__name__.lower())
+                for content_type, formset_class in inline_formset_types]
+
+            prefixes = {}
+            for FormSet, inline in zip(self.get_formsets(request), self.inline_instances):
+                prefix = FormSet.get_default_prefix()
+                prefixes[prefix] = prefixes.get(prefix, 0) + 1
+                if prefixes[prefix] != 1:
+                    prefix = "%s-%s" % (prefix, prefixes[prefix])
+                formset = FormSet(instance=self.model(),
+                    prefix=prefix, queryset=inline.queryset(request))
+                formsets.append(formset)
+
+        # Prepare mapping of content types to their prettified names
+        content_types = []
+        for content_type in self.model._feincms_content_types:
+            content_name = content_type._meta.verbose_name
+            content_types.append((content_name, content_type.__name__.lower()))
+
+        context = {}
+
+        #media = self.media + model_form.media
+        adminForm = helpers.AdminForm(model_form, list(self.get_fieldsets(request)),
+            self.prepopulated_fields, self.get_readonly_fields(request),
+            model_admin=self)
+        media = self.media + adminForm.media
+
+        inline_admin_formsets = []
+        for inline, formset in zip(self.inline_instances, formsets):
+            fieldsets = list(inline.get_fieldsets(request))
+            inline_admin_formset = helpers.InlineAdminFormSet(inline, formset, fieldsets,
+                model_admin=self)
+            inline_admin_formsets.append(inline_admin_formset)
+            media = media + inline_admin_formset.media
+
+        if hasattr(self.model, '_feincms_templates'):
+            if 'template_key' not in self.show_on_top:
+                self.show_on_top = ['template_key'] + list(self.show_on_top)
+
+            context['available_templates'] = self.model._feincms_templates
+
+        if hasattr(self.model, 'parent'):
+            context['has_parent_attribute'] = True
+
+        context.update({
+            'has_add_permission': self.has_add_permission(request),
+            'has_change_permission': self.has_change_permission(request),
+            'has_delete_permission': self.has_delete_permission(request),
+            'add': True,
+            'change': False,
+            'title': _('Add %s') % force_unicode(opts.verbose_name),
+            'opts': opts,
+            'object': self.model(),
+            'object_form': model_form,
+            'adminform': adminForm,
+            'inline_formsets': inline_formsets,
+            'inline_admin_formsets': inline_admin_formsets,
+            'content_types': content_types,
+            'top_fields': [model_form[field] for field in self.show_on_top],
+            'settings_fields': [field for field in model_form if field.name not in self.show_on_top],
+            'media': media,
+            'errors': helpers.AdminErrorList(model_form, inline_formsets),
+            'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+        })
+
+        return self.render_item_editor(request, None, context)
+
+    @csrf_protect_m
+    @transaction.commit_on_success
     def change_view(self, request, object_id, extra_context=None):
         self.model._needs_content_types()
 
@@ -158,13 +308,7 @@ class ItemEditor(admin.ModelAdmin):
         )
 
         # generate a formset type for every concrete content type
-        inline_formset_types = [(
-            content_type,
-            inlineformset_factory(self.model, content_type, extra=1,
-                fk_name='parent', #added so multiple foreign keys are not a problem
-                form=getattr(content_type, 'feincms_item_editor_form', ItemEditorForm),
-                formfield_callback=self._formfield_callback(request=request))
-            ) for content_type in self.model._feincms_content_types]
+        inline_formset_types = self._get_inline_formset_types(request)
 
         formsets = []
         if request.method == 'POST':
@@ -286,7 +430,10 @@ class ItemEditor(admin.ModelAdmin):
 
         context = {}
 
-        media = self.media + model_form.media
+        adminForm = helpers.AdminForm(model_form, self.get_fieldsets(request, obj),
+            self.prepopulated_fields, self.get_readonly_fields(request, obj),
+            model_admin=self)
+        media = self.media + adminForm.media
 
         inline_admin_formsets = []
         for inline, formset in zip(self.inline_instances, formsets):
@@ -309,11 +456,13 @@ class ItemEditor(admin.ModelAdmin):
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request, obj=obj),
             'has_delete_permission': self.has_delete_permission(request, obj=obj),
+            'add': False,
             'change': obj.pk is not None,
             'title': _('Change %s') % force_unicode(opts.verbose_name),
             'opts': opts,
             'object': obj,
             'object_form': model_form,
+            'adminform': adminForm,
             'inline_formsets': inline_formsets,
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,

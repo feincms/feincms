@@ -217,6 +217,30 @@ class PagesTestCase(TestCase):
             'initial-publication_date_0': '2009-01-01',
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
+
+            'rawcontent-TOTAL_FORMS': 0,
+            'rawcontent-INITIAL_FORMS': 0,
+            'rawcontent-MAX_NUM_FORMS': 10,
+
+            'mediafilecontent-TOTAL_FORMS': 0,
+            'mediafilecontent-INITIAL_FORMS': 0,
+            'mediafilecontent-MAX_NUM_FORMS': 10,
+
+            'imagecontent-TOTAL_FORMS': 0,
+            'imagecontent-INITIAL_FORMS': 0,
+            'imagecontent-MAX_NUM_FORMS': 10,
+
+            'contactformcontent-TOTAL_FORMS': 0,
+            'contactformcontent-INITIAL_FORMS': 0,
+            'contactformcontent-MAX_NUM_FORMS': 10,
+
+            'filecontent-TOTAL_FORMS': 0,
+            'filecontent-INITIAL_FORMS': 0,
+            'filecontent-MAX_NUM_FORMS': 10,
+
+            'applicationcontent-TOTAL_FORMS': 0,
+            'applicationcontent-INITIAL_FORMS': 0,
+            'applicationcontent-MAX_NUM_FORMS': 10,
             }
         dic.update(kwargs)
         return self.client.post('/admin/page/page/add/', dic)
