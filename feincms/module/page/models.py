@@ -130,7 +130,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         # be OK.
 
         if settings.FEINCMS_USE_CACHE:
-            ck = 'PAGE-FOR-URL-' + path
+            ck = 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, path )
             page = django_cache.get(ck)
             if page:
                 return page
