@@ -297,7 +297,7 @@ class Page(Base):
 
         # Okay, we changed the URL -- remove the old stale entry from the cache
         if settings.FEINCMS_USE_CACHE:
-            ck = 'PAGE-FOR-URL-' + self._original_cached_url.strip('/')
+            ck = 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, self._original_cached_url.strip('/') )
             django_cache.delete(ck)
 
         # If our cached URL changed we need to update all descendants to
