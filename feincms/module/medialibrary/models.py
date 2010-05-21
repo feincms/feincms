@@ -297,13 +297,15 @@ class MediaFileAdmin(admin.ModelAdmin):
                         from django.template.defaultfilters import slugify
                         from django.core.files.base import ContentFile
 
-                        fname, ext = path.splitext(zi.filename)
-                        target_fname = slugify(fname) + ext.lower()
+                        bname = path.basename(zi.filename)
+                        if bname and not bname.startswith(".") and "." in bname:
+                            fname, ext = path.splitext(bname)
+                            target_fname = slugify(fname) + ext.lower()
 
-                        mf = MediaFile()
-                        mf.file.save(target_fname, ContentFile(z.read(zi)))
-                        mf.save()
-                        count += 1
+                            mf = MediaFile()
+                            mf.file.save(target_fname, ContentFile(z.read(zi)))
+                            mf.save()
+                            count += 1
 
                 request.user.message_set.create(message="%d files imported" % count)
             except Exception as e:
