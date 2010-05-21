@@ -156,7 +156,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         if self.type == 'image':
             from django.core.files.images import get_image_dimensions
             d = get_image_dimensions(self.file.file)
-            t += "<br/>%d&times;%d" % ( d[0], d[1] )
+            if d: t += "<br/>%d&times;%d" % ( d[0], d[1] )
         return t
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
