@@ -102,8 +102,15 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     get_categories_as_string.short_description = _('categories')
 
     def formatted_file_size(self):
-        return filesizeformat(self.file_size)
+        s = filesizeformat(self.file_size)
+        if self.type == 'image':
+            from django.core.files.images import get_image_dimensions
+            d = get_image_dimensions(self.file.file)
+            s = "%s<br/>%d&times;%d" % ( s, d[0], d[1] )
+        return s
+
     formatted_file_size.short_description = _("file size")
+    formatted_file_size.allow_tags = True
 
     @classmethod
     def reconfigure(cls, upload_to=None, storage=None):
