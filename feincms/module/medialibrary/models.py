@@ -102,15 +102,13 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     get_categories_as_string.short_description = _('categories')
 
     def formatted_file_size(self):
-        s = filesizeformat(self.file_size)
-        if self.type == 'image':
-            from django.core.files.images import get_image_dimensions
-            d = get_image_dimensions(self.file.file)
-            s = "%s<br/>%d&times;%d" % ( s, d[0], d[1] )
-        return s
-
+        return filesizeformat(self.file_size)
     formatted_file_size.short_description = _("file size")
-    formatted_file_size.allow_tags = True
+
+    def formatted_created(self):
+        return self.created.strftime("%Y-%m-%d %H:%M")
+    formatted_created.short_description = _("created")
+    formatted_created.admin_order_field = 'created'
 
     @classmethod
     def reconfigure(cls, upload_to=None, storage=None):
@@ -154,9 +152,15 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         return self.file.url
 
     def file_type(self):
-        return self.filetypes_dict[self.type]
+        t = self.filetypes_dict[self.type]
+        if self.type == 'image':
+            from django.core.files.images import get_image_dimensions
+            d = get_image_dimensions(self.file.file)
+            t += "<br/>%d&times;%d" % ( d[0], d[1] )
+        return t
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
+    file_type.allow_tags = True
 
     def file_info(self):
         """
@@ -167,10 +171,11 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         JS, like for example a TinyMCE connector shim.
         """
         from os.path import basename
+        from feincms.utils import shorten_string
         return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s' % (
                 self.id,
                 self.file.name,
-                basename(self.file.name), )
+                shorten_string(basename(self.file.name), max_length=28), )
     file_info.short_description = _('file info')
     file_info.allow_tags = True
 
@@ -253,7 +258,7 @@ class MediaFileTranslationInline(admin.StackedInline):
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
-    list_display      = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'created']
+    list_display      = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'formatted_created']
     list_filter       = ['type', 'categories']
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
