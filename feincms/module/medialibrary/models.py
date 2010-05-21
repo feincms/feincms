@@ -11,6 +11,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
+from django.http import HttpResponseRedirect
 
 from feincms import settings
 from feincms.models import Base
@@ -250,6 +251,61 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
+
+    def get_urls(self):
+        from django.conf.urls.defaults import url, patterns
+
+        urls = super(MediaFileAdmin, self).get_urls()
+        my_urls = patterns('',
+            url(r'^mediafile-bulk-upload/$', self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {}, name='mediafile_bulk_upload')
+            )
+
+        return my_urls + urls
+
+    @classmethod
+    def bulk_upload(cls, request):
+        from django.core.urlresolvers import reverse
+        from django.utils.functional import lazy
+
+        def import_zipfile(request, data):
+            import zipfile
+            from os import path
+
+            try:
+                z = zipfile.ZipFile(data)
+
+                storage = MediaFile.fs
+                if not storage:
+                    request.user.message_set.create(message="Could not access storage")
+                    return
+
+                count = 0
+                for zi in z.infolist():
+                    if not zi.filename.endswith('/'):
+                        from django.template.defaultfilters import slugify
+                        from django.core.files.base import ContentFile
+
+                        fname, ext = path.splitext(zi.filename)
+                        target_fname = slugify(fname) + ext.lower()
+
+                        mf = MediaFile()
+                        mf.file.save(target_fname, ContentFile(z.read(zi)))
+                        mf.save()
+                        count += 1
+
+                request.user.message_set.create(message="%d files imported" % count)
+            except Exception as e:
+                request.user.message_set.create(message="ZIP file invalid: %s" % str(e))
+                return
+
+            pass
+
+        if request.method == 'POST' and 'data' in request.FILES:
+            import_zipfile(request, request.FILES['data'])
+        else:
+            request.user.message_set.create(message="No input file given")
+
+        return HttpResponseRedirect(reverse('admin:medialibrary_mediafile_changelist'))
 
     def queryset(self, request):
         qs = super(MediaFileAdmin, self).queryset(request)

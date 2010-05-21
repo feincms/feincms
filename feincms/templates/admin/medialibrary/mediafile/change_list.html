@@ -1,0 +1,17 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+
+{{ block.super }}
+
+<div>
+<p>
+    <form action="/admin/medialibrary/mediafile/mediafile-bulk-upload/" method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<label>Bulk upload:</label>
+	<input type="file" name="data">
+	<input type="submit">
+    </form>
+</p>
+</div>
+{% endblock %}
