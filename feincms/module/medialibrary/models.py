@@ -5,6 +5,7 @@
 from datetime import datetime
 
 from django.contrib import admin
+from django.contrib.auth.decorators import permission_required
 from django.conf import settings as django_settings
 from django.db import models
 from django.template.defaultfilters import filesizeformat
@@ -12,6 +13,7 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.http import HttpResponseRedirect
+# 1.2 from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
 from feincms.models import Base
@@ -274,8 +276,10 @@ class MediaFileAdmin(admin.ModelAdmin):
 
         return my_urls + urls
 
-    @classmethod
-    def bulk_upload(cls, request):
+    @staticmethod
+    # 1.2 @csrf_protect
+    @permission_required('medialibrary.add_mediafile')
+    def bulk_upload(request):
         from django.core.urlresolvers import reverse
         from django.utils.functional import lazy
 
