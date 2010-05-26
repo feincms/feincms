@@ -72,6 +72,8 @@ class ActiveAwareContentManagerMixin(object):
 
 # ------------------------------------------------------------------------
 def path_to_cache_key(path):
+    from django.utils.encoding import iri_to_uri
+    path = iri_to_uri(path)
     return 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, path )
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
