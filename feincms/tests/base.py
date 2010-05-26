@@ -103,8 +103,8 @@ class CMSBaseTest(TestCase):
         # content_type_for should return None if it does not have a subclass registered
         self.assertEqual(ExampleCMSBase.content_type_for(Empty), None)
 
-        assert 'filecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).keys()
-        assert 'filecontent' in dict(ExampleCMSBase.template.regions[1].content_types).keys()
+        self.assertTrue('filecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).keys())
+        self.assertTrue('filecontent' in dict(ExampleCMSBase.template.regions[1].content_types).keys())
 
     def test_02_rsscontent_creation(self):
         # this test resides in its own method because the required feedparser
@@ -113,12 +113,12 @@ class CMSBaseTest(TestCase):
         type = ExampleCMSBase.create_content_type(RSSContent)
         obj = type()
 
-        assert 'yahoo' not in obj.render()
+        self.assertTrue('yahoo' not in obj.render())
 
         obj.link = 'http://rss.news.yahoo.com/rss/topstories'
         obj.cache_content(save=False)
 
-        assert 'yahoo' in obj.render()
+        self.assertTrue('yahoo' in obj.render())
 
     #Creating a content type twice isn't forbidden anymore
     #def test_03_double_creation(self):
@@ -148,13 +148,13 @@ class CMSBaseTest(TestCase):
         obj = type()
         obj.video = 'http://www.youtube.com/watch?v=zmj1rpzDRZ0'
 
-        assert 'x-shockwave-flash' in obj.render()
+        self.assertTrue('x-shockwave-flash' in obj.render())
 
         self.assertEqual(getattr(type, 'arbitrary_arg'), 'arbitrary_value')
 
         obj.video = 'http://www.example.com/'
 
-        assert obj.video in obj.render()
+        self.assertTrue(obj.video in obj.render())
 
     def test_07_default_render_method(self):
         class SomethingElse(models.Model):
@@ -204,7 +204,7 @@ class PagesTestCase(TestCase):
                 })
 
     def login(self):
-        assert self.client.login(username='test', password='test')
+        self.assertTrue(self.client.login(username='test', password='test'))
 
     def create_page(self, title='Test page', parent='', **kwargs):
         dic = {
@@ -239,7 +239,7 @@ class PagesTestCase(TestCase):
 
     def test_01_tree_editor(self):
         self.login()
-        assert self.client.get('/admin/page/page/').status_code == 200
+        self.assertEqual(self.client.get('/admin/page/page/').status_code, 200)
 
         self.assertRedirects(self.client.get('/admin/page/page/?anything=anything'),
                              '/admin/page/page/?e=1')
@@ -248,13 +248,13 @@ class PagesTestCase(TestCase):
         self.login()
         self.assertRedirects(self.create_page(title='Test page ' * 10, slug='test-page'),
                              '/admin/page/page/')
-        assert Page.objects.count() == 1
+        self.assertEqual(Page.objects.count(), 1)
         self.assertContains(self.client.get('/admin/page/page/'), '…')
 
     def test_03_item_editor(self):
         self.login()
         self.assertRedirects(self.create_page(_continue=1), '/admin/page/page/1/')
-        assert self.client.get('/admin/page/page/1/').status_code == 200
+        self.assertEqual(self.client.get('/admin/page/page/1/').status_code, 200)
         self.is_published('/admin/page/page/42/', should_be=False)
 
     def test_03_add_another(self):
@@ -264,7 +264,7 @@ class PagesTestCase(TestCase):
     def test_04_add_child(self):
         response = self.create_default_page_set()
         self.assertRedirects(response, '/admin/page/page/')
-        assert Page.objects.count() == 2
+        self.assertEqual(Page.objects.count(), 2)
 
         page = Page.objects.get(pk=2)
         self.assertEqual(page.get_absolute_url(), '/test-page/test-child-page/')
@@ -354,11 +354,11 @@ class PagesTestCase(TestCase):
             'checked="checked"')
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
 
-        assert isinstance(self.client.post('/admin/page/page/', {
+        self.assertTrue(isinstance(self.client.post('/admin/page/page/', {
             '__cmd': 'toggle_boolean',
             'item_id': 1,
             'attr': 'notexists',
-            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'), HttpResponseBadRequest)
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'), HttpResponseBadRequest))
 
     def test_07_tree_editor_invalid_ajax(self):
         self.login()
@@ -503,7 +503,7 @@ class PagesTestCase(TestCase):
         mediafile.translations.create(caption='something',
             language_code='%s-ha' % short_language_code())
 
-        assert 'something' in unicode(mediafile)
+        self.assertTrue('something' in unicode(mediafile))
 
         mf = page.content.main[1].mediafile
 
@@ -518,20 +518,20 @@ class PagesTestCase(TestCase):
         self.assertEqual(MediaFile.objects.only_language('%s-ha' % short_language_code()).count(),
                          1)
 
-        assert '%s-ha' % short_language_code() in mf.available_translations
+        self.assertTrue('%s-ha' % short_language_code() in mf.available_translations)
 
         os.unlink(path)
 
         # this should not raise
         self.client.get('/admin/page/page/1/')
 
-        assert 'alt="something"' in page.content.main[1].render()
+        self.assertTrue('alt="something"' in page.content.main[1].render())
 
         page.imagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
         page.filecontent_set.create(file='somefile.jpg', title='thetitle', region='main', ordering=3)
 
-        assert 'somefile.jpg' in page.content.main[2].render()
-        assert '<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render()
+        self.assertTrue('somefile.jpg' in page.content.main[2].render())
+        self.assertTrue('<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render())
 
         page.mediafilecontent_set.update(mediafile=3)
         # this should not raise
@@ -619,7 +619,7 @@ class PagesTestCase(TestCase):
         from django.utils.safestring import SafeData
         obj = type()
         obj.text = 'Something'
-        assert isinstance(obj.render(), SafeData)
+        self.assertTrue(isinstance(obj.render(), SafeData))
 
     def test_15_frontend_editing(self):
         self.create_default_page_set()
@@ -630,10 +630,10 @@ class PagesTestCase(TestCase):
         self.is_published('/admin/page/page/10|rawcontent|1/', should_be=False)
         self.is_published('/admin/page/page/1|rawcontent|10/', should_be=False)
 
-        assert self.client.get('/admin/page/page/1|rawcontent|1/').status_code == 200
-        assert self.client.post('/admin/page/page/1|rawcontent|1/', {
+        self.assertEqual(self.client.get('/admin/page/page/1|rawcontent|1/').status_code, 200)
+        self.assertEqual(self.client.post('/admin/page/page/1|rawcontent|1/', {
             'rawcontent-text': 'blablabla',
-            }).status_code == 200
+            }).status_code, 200)
 
         self.assertEqual(page.content.main[0].render(), 'blablabla')
         self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), u'')
@@ -641,8 +641,8 @@ class PagesTestCase(TestCase):
         request = Empty()
         request.session = {'frontend_editing': True}
 
-        assert 'class="fe_box"' in\
-            page.content.main[0].fe_render(request=request)
+        self.assertTrue('class="fe_box"' in\
+            page.content.main[0].fe_render(request=request))
 
     def test_16_template_tags(self):
         self.create_default_page_set()
@@ -858,7 +858,7 @@ class PagesTestCase(TestCase):
         request.method = 'GET'
         request.user = Empty()
         request.user.is_authenticated = lambda: False
-        assert 'form' in page.content.main[0].render(request=request)
+        self.assertTrue('form' in page.content.main[0].render(request=request))
 
         self.client.post(page.get_absolute_url(), {
             'name': 'So what\'s your name, dude?',
@@ -940,7 +940,7 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'base:/test/')
 
         # This should not raise
-        assert self.client.get(page.get_absolute_url() + 'notexists/').status_code == 404
+        self.assertEquals(elf.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
 
         # This should raise (the view raises an error)
         self.assertRaises(NotImplementedError, lambda: self.client.get(page.get_absolute_url() + 'raises/'))
@@ -957,9 +957,9 @@ class PagesTestCase(TestCase):
     def test_26_page_form_initial(self):
         self.create_default_page_set()
 
-        assert self.client.get('/admin/page/page/add/?translation_of=1&lang=de').status_code == 200
-        assert self.client.get('/admin/page/page/add/?parent=1').status_code == 200
-        assert self.client.get('/admin/page/page/add/?parent=2').status_code == 200
+        self.assertEqual(self.client.get('/admin/page/page/add/?translation_of=1&lang=de').status_code, 200)
+        self.assertEqual(self.client.get('/admin/page/page/add/?parent=1').status_code, 200)
+        self.assertEqual(self.client.get('/admin/page/page/add/?parent=2').status_code, 200)
 
     def test_27_copy_replace_append_page(self):
         self.create_default_page_set()
@@ -1062,7 +1062,7 @@ class BlogTestCase(TestCase):
         Entry.prefilled_rawcontent_set = prefilled_attribute('rawcontent_set')
 
     def login(self):
-        assert self.client.login(username='test', password='test')
+        self.assertTrue(self.client.login(username='test', password='test'))
 
     def create_entry(self):
         entry = Entry.objects.create(
@@ -1117,8 +1117,8 @@ class BlogTestCase(TestCase):
         self.assertEqual(len(objects[0]._prefill_rawcontent_set), 0)
 
         self.login()
-        assert self.client.get('/admin/blog/entry/').status_code == 200
-        assert self.client.get('/admin/blog/entry/1/').status_code == 200
+        self.assertEqual(self.client.get('/admin/blog/entry/').status_code, 200)
+        self.assertEqual(self.client.get('/admin/blog/entry/1/').status_code, 200)
 
     def test_02_translations(self):
         self.create_entries()
@@ -1132,8 +1132,8 @@ class BlogTestCase(TestCase):
     def test_03_admin(self):
         self.login()
         self.create_entries()
-        assert self.client.get('/admin/blog/entry/').status_code == 200
-        assert self.client.get('/admin/blog/entry/1/').status_code == 200
+        self.assertEqual(self.client.get('/admin/blog/entry/').status_code, 200)
+        self.assertEqual(self.client.get('/admin/blog/entry/1/').status_code, 200)
 
 
 class CleanseTestCase(TestCase):
