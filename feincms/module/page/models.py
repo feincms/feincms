@@ -71,6 +71,9 @@ class ActiveAwareContentManagerMixin(object):
         return self.apply_active_filters(self)
 
 # ------------------------------------------------------------------------
+def path_to_cache_key(path):
+    return 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, path )
+
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     # A list of filters which are used to determine whether a page is active or not.
@@ -130,7 +133,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         # be OK.
 
         if settings.FEINCMS_USE_CACHE:
-            ck = 'PAGE-FOR-URL-' + path
+            ck = path_to_cache_key(path)
             page = django_cache.get(ck)
             if page:
                 return page
@@ -297,7 +300,7 @@ class Page(Base):
 
         # Okay, we changed the URL -- remove the old stale entry from the cache
         if settings.FEINCMS_USE_CACHE:
-            ck = 'PAGE-FOR-URL-' + self._original_cached_url.strip('/')
+            ck = path_to_cache_key( self._original_cached_url.strip('/') )
             django_cache.delete(ck)
 
         # If our cached URL changed we need to update all descendants to
