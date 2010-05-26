@@ -677,35 +677,35 @@ class PagesTestCase(TestCase):
         page1 = Page.objects.get(pk=1)
         page2 = Page.objects.get(pk=2)
 
-        ctx = template.Context({'feincms_page': page2, 'page3': page3})
+        context = template.Context({'feincms_page': page2, 'page3': page3})
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_parentlink of feincms_page level=1 %}')
-        self.assertEqual(t.render(ctx), '/test-page/')
+        self.assertEqual(t.render(context), '/test-page/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for feincms_page as links %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), 'en:/test-page/,de:/test-page/test-child-page/')
+        self.assertEqual(t.render(context), 'en:/test-page/,de:/test-page/test-child-page/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for page3 as links %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), 'en:/test-page/test-child-page/page3/,de:None')
+        self.assertEqual(t.render(context), 'en:/test-page/test-child-page/page3/,de:None')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for page3 as links existing %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), 'en:/test-page/test-child-page/page3/')
+        self.assertEqual(t.render(context), 'en:/test-page/test-child-page/page3/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for feincms_page as links excludecurrent=1 %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), 'en:/test-page/')
+        self.assertEqual(t.render(context), 'en:/test-page/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), '')
+        self.assertEqual(t.render(context), '')
 
         # XXX should the other template tags not respect the in_navigation setting too?
         page1.active = True
         page1.in_navigation = True
         page1.save()
 
-        self.assertEqual(t.render(ctx), '/test-page/')
+        self.assertEqual(t.render(context), '/test-page/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), '/test-page/test-child-page/')
+        self.assertEqual(t.render(context), '/test-page/test-child-page/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of request as nav level=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
         from django.http import HttpRequest
@@ -714,34 +714,34 @@ class PagesTestCase(TestCase):
         self.assertEqual(t.render(template.Context({'request': request})), '/test-page/test-child-page/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=99 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), '')
+        self.assertEqual(t.render(context), '')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_breadcrumbs feincms_page %}')
-        rendered = t.render(ctx)
+        rendered = t.render(context)
         self.assertTrue("Test child page" in rendered)
         self.assertTrue('href="/test-page/">Test page</a>' in rendered, msg="The parent page should be a breadcrumb link")
         self.assertTrue('href="/test-page/test-child-page/"' not in rendered, msg="The current page should not be a link in the breadcrumbs")
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), '/test-page/test-child-page/,/test-page/test-child-page/page3/')
+        self.assertEqual(t.render(context), '/test-page/test-child-page/,/test-page/test-child-page/page3/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), '/test-page/,/test-page/test-child-page/')
+        self.assertEqual(t.render(context), '/test-page/,/test-page/test-child-page/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=3 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), '/test-page/,/test-page/test-child-page/,/test-page/test-child-page/page3/')
+        self.assertEqual(t.render(context), '/test-page/,/test-page/test-child-page/,/test-page/test-child-page/page3/')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=3,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(ctx), '/test-page/test-child-page/page3/')
+        self.assertEqual(t.render(context), '/test-page/test-child-page/page3/')
 
         t = template.Template('{% load feincms_page_tags %}{% if feincms_page|is_parent_of:page3 %}yes{% endif %}|{% if page3|is_parent_of:feincms_page %}yes{% endif %}')
-        self.assertEqual(t.render(ctx), 'yes|')
+        self.assertEqual(t.render(context), 'yes|')
 
         t = template.Template('{% load feincms_page_tags %}{% if feincms_page|is_equal_or_parent_of:page3 %}yes{% endif %}|{% if page3|is_equal_or_parent_of:feincms_page %}yes{% endif %}')
-        self.assertEqual(t.render(ctx), 'yes|')
+        self.assertEqual(t.render(context), 'yes|')
 
         t = template.Template('{% load feincms_page_tags %}{% feincms_translatedpage for feincms_page as t1 language=de %}{% feincms_translatedpage for feincms_page as t2 %}{{ t1.id }}|{{ t2.id }}')
-        self.assertEqual(t.render(ctx), '2|1')
+        self.assertEqual(t.render(context), '2|1')
 
     def test_18_default_render_method(self):
         """
