@@ -940,7 +940,7 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'base:/test/')
 
         # This should not raise
-        self.assertEquals(elf.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
+        self.assertEquals(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
 
         # This should raise (the view raises an error)
         self.assertRaises(NotImplementedError, lambda: self.client.get(page.get_absolute_url() + 'raises/'))
