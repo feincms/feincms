@@ -671,7 +671,9 @@ class PagesTestCase(TestCase):
                                     slug='page3',
                                     language='en',
                                     active=True,
-                                    in_navigation=True)
+                                    in_navigation=True,
+                                    publication_date=datetime(2001, 1, 1),
+                                    )
 
         # reload these two, their mptt attributes have changed
         page1 = Page.objects.get(pk=1)
