@@ -72,6 +72,8 @@ class ActiveAwareContentManagerMixin(object):
 
 # ------------------------------------------------------------------------
 def path_to_cache_key(path):
+    from django.utils.encoding import iri_to_uri
+    path = iri_to_uri(path)
     return 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, path )
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
@@ -124,13 +126,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         path = path.strip('/')
 
         # Cache path -> page resolving.
-        # Note: The only possibility that this returns a stale association
-        # is if a page at an url is removed and/or replaced by another page
-        # at that url. This might happen either by manual intervention (admin
-        # moving the page) or automatically via the datepublisher extension
-        # (a page expiring and another becoming active).
-        # Both cases can handle a short time of "being wrong", so this should
-        # be OK.
+        # We flush the cache entry on page saving, so the cache should always
+        # be up to date.
 
         if settings.FEINCMS_USE_CACHE:
             ck = path_to_cache_key(path)

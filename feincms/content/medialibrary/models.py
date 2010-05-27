@@ -20,7 +20,11 @@ class MediaFileWidget(forms.TextInput):
     def render(self, name, value, attrs=None):
         inputfield = super(MediaFileWidget, self).render(name, value, attrs)
         if value:
-            mf = MediaFile.objects.get(pk=value)
+            try:
+                mf = MediaFile.objects.get(pk=value)
+            except MediaFile.DoesNotExist:
+                return inputfield
+
             try:
                 caption = mf.translation.caption
             except ObjectDoesNotExist:

@@ -312,7 +312,7 @@ class MediaFileAdmin(admin.ModelAdmin):
                             count += 1
 
                 request.user.message_set.create(message="%d files imported" % count)
-            except Exception as e:
+            except Exception, e:
                 request.user.message_set.create(message="ZIP file invalid: %s" % str(e))
                 return
 
