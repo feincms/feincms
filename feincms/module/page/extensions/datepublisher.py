@@ -46,7 +46,7 @@ def granular_now(n=None):
 # ------------------------------------------------------------------------
 def register(cls, admin_cls):
     cls.add_to_class('publication_date', models.DateTimeField(_('publication date'),
-        default=datetime.now))
+        default=granular_now))
     cls.add_to_class('publication_end_date', models.DateTimeField(_('publication end date'),
         blank=True, null=True,
         help_text=_('Leave empty if the entry should stay active forever.')))
