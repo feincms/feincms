@@ -49,12 +49,13 @@ def register(cls, admin_cls):
         help_text=_('Leave empty if the entry should stay active forever.')))
 
     # Patch in rounding the pub and pub_end dates on save
+    orig_save = cls.save
     def granular_save(obj, *args, **kwargs):
         if obj.publication_date:
             obj.publication_date = granular_now(obj.publication_date)
         if obj.publication_end_date:
             obj.publication_end_date = granular_now(obj.publication_end_date)
-        super(cls, obj).save(*args, **kwargs)
+        orig_save(obj, *args, **kwargs)
     cls.save = granular_save
 
     # Append publication date active check
