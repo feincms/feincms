@@ -150,8 +150,9 @@ def Translation(model):
 
     class Inner(models.Model):
         parent = models.ForeignKey(model, related_name='translations')
-        language_code = models.CharField(_('language'), max_length=10,
-		choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0])
+        language_code = models.CharField(_('language'), max_length=10, 
+                choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
+                editable=len(settings.LANGUAGES) > 1)
 
         class Meta:
             abstract = True

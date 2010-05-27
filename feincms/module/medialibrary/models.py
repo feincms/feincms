@@ -5,12 +5,15 @@
 from datetime import datetime
 
 from django.contrib import admin
+from django.contrib.auth.decorators import permission_required
 from django.conf import settings as django_settings
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
+from django.http import HttpResponseRedirect
+# 1.2 from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
 from feincms.models import Base
@@ -104,6 +107,11 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         return filesizeformat(self.file_size)
     formatted_file_size.short_description = _("file size")
 
+    def formatted_created(self):
+        return self.created.strftime("%Y-%m-%d %H:%M")
+    formatted_created.short_description = _("created")
+    formatted_created.admin_order_field = 'created'
+
     @classmethod
     def reconfigure(cls, upload_to=None, storage=None):
         f = cls._meta.get_field('file')
@@ -146,9 +154,15 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         return self.file.url
 
     def file_type(self):
-        return self.filetypes_dict[self.type]
+        t = self.filetypes_dict[self.type]
+        if self.type == 'image':
+            from django.core.files.images import get_image_dimensions
+            d = get_image_dimensions(self.file.file)
+            if d: t += "<br/>%d&times;%d" % ( d[0], d[1] )
+        return t
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
+    file_type.allow_tags = True
 
     def file_info(self):
         """
@@ -159,10 +173,11 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         JS, like for example a TinyMCE connector shim.
         """
         from os.path import basename
+        from feincms.utils import shorten_string
         return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s' % (
                 self.id,
                 self.file.name,
-                basename(self.file.name), )
+                shorten_string(basename(self.file.name), max_length=28), )
     file_info.short_description = _('file info')
     file_info.allow_tags = True
 
@@ -245,11 +260,70 @@ class MediaFileTranslationInline(admin.StackedInline):
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
-    list_display      = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'created']
+    list_display      = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'formatted_created']
     list_filter       = ['type', 'categories']
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
+
+    def get_urls(self):
+        from django.conf.urls.defaults import url, patterns
+
+        urls = super(MediaFileAdmin, self).get_urls()
+        my_urls = patterns('',
+            url(r'^mediafile-bulk-upload/$', self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {}, name='mediafile_bulk_upload')
+            )
+
+        return my_urls + urls
+
+    @staticmethod
+    # 1.2 @csrf_protect
+    @permission_required('medialibrary.add_mediafile')
+    def bulk_upload(request):
+        from django.core.urlresolvers import reverse
+        from django.utils.functional import lazy
+
+        def import_zipfile(request, data):
+            import zipfile
+            from os import path
+
+            try:
+                z = zipfile.ZipFile(data)
+
+                storage = MediaFile.fs
+                if not storage:
+                    request.user.message_set.create(message="Could not access storage")
+                    return
+
+                count = 0
+                for zi in z.infolist():
+                    if not zi.filename.endswith('/'):
+                        from django.template.defaultfilters import slugify
+                        from django.core.files.base import ContentFile
+
+                        bname = path.basename(zi.filename)
+                        if bname and not bname.startswith(".") and "." in bname:
+                            fname, ext = path.splitext(bname)
+                            target_fname = slugify(fname) + ext.lower()
+
+                            mf = MediaFile()
+                            mf.file.save(target_fname, ContentFile(z.read(zi)))
+                            mf.save()
+                            count += 1
+
+                request.user.message_set.create(message="%d files imported" % count)
+            except Exception, e:
+                request.user.message_set.create(message="ZIP file invalid: %s" % str(e))
+                return
+
+            pass
+
+        if request.method == 'POST' and 'data' in request.FILES:
+            import_zipfile(request, request.FILES['data'])
+        else:
+            request.user.message_set.create(message="No input file given")
+
+        return HttpResponseRedirect(reverse('admin:medialibrary_mediafile_changelist'))
 
     def queryset(self, request):
         qs = super(MediaFileAdmin, self).queryset(request)
