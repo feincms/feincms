@@ -539,6 +539,8 @@ class Base(models.Model):
                 cls.feincms_item_editor_includes.setdefault(key, set()).update(includes)
 
         # Ensure meta information is up-to-date
+        # See issue #63 on github or more informations:
+        # http://github.com/matthiask/feincms/issues/issue/63/#issue/63/comment/256443
         for fn in [s for s in dir(cls._meta) if s[:6]=='_fill_']:
             getattr(cls._meta, fn)()
 
