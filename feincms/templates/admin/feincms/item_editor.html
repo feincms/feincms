@@ -77,7 +77,9 @@
 
 <div class="submit-row" >
 <input type="submit" value="{% trans "Save" %}" class="default save-button" name="_save" />
+{% if not add %}
 <p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
+{% endif  %}
 
 <input type="submit" value="{% trans "Save and add another" %}" class="save-add-button" name="_addanother"  />
 <input type="submit" value="{% trans "Save and continue editing" %}" class="save-continue-button" name="_continue" />
@@ -177,7 +179,9 @@
 
 <div class="submit-row" >
 <input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
+{% if not add %}
 <p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
+{% endif %}
 
 <input type="submit" value="{% trans "Save and add another" %}" name="_addanother"  />
 <input type="submit" value="{% trans "Save and continue editing" %}" name="_continue" />
