@@ -24,6 +24,10 @@ def tryint(v):
 
 @register.filter
 def thumbnail(filename, size='200x200'):
+    if not (filename and 'x' in size):
+        # Better return empty than crash
+        return u''
+
     # defining the size
     x, y = [tryint(x) for x in size.split('x')]
     # defining the filename and the miniature filename
@@ -45,6 +49,10 @@ def thumbnail(filename, size='200x200'):
 
 @register.filter
 def cropscale(filename, size='200x200'):
+    if not (filename and 'x' in size):
+        # Better return empty than crash
+        return u''
+
     w, h = [tryint(x) for x in size.split('x')]
 
     basename, format = filename.rsplit('.', 1)
