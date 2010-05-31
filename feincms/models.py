@@ -152,6 +152,13 @@ class Base(models.Model):
                 )
         """
 
+        if hasattr(cls, 'template'):
+            import warnings
+            warnings.warn(
+                'Ignoring second call to register_regions.',
+                RuntimeWarning)
+            return
+
         # implicitly creates a dummy template object -- the item editor
         # depends on the presence of a template.
         cls.template = Template('', '', regions)
