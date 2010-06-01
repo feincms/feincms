@@ -48,7 +48,7 @@
      <a href="../../../">{% trans "Home" %}</a> &rsaquo;
      <a href="../../">{{ opts.app_label|capfirst|escape }}</a> &rsaquo;
      <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
-     {{ object }}
+     {% if add %}{{ title }}{% else %}{{ object }}{% endif %}
 </div>
 {% endblock %}
 
