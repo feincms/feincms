@@ -214,6 +214,20 @@ class MediaFileBase(Base, TranslatedObjectMixin):
 
         super(MediaFileBase, self).save(*args, **kwargs)
 
+        if self.type == 'image':
+            # Rotate image based on exif data.
+            image = Image.open(self.file)
+            exif = image._getexif()
+            if exif:
+                orientation = exif.get(274)
+                if orientation == 3:
+                    image = image.rotate(180)
+                elif orientation == 6:
+                    image = image.rotate(270)
+                elif orientation == 8:
+                    image = image.rotate(90)
+                image.save(self.file.path)
+
         self.purge_translation_cache()
 
 # ------------------------------------------------------------------------
