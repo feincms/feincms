@@ -24,6 +24,7 @@ from feincms.translations import TranslatedObjectMixin, Translation, \
 import re
 import os
 import logging
+from PIL import Image
 
 class CategoryManager(models.Manager):
     """
