@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import permission_required
 from django.conf import settings as django_settings
 from django.db import models
 from django.template.defaultfilters import filesizeformat
+from django.utils.safestring import mark_safe
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
@@ -18,6 +19,7 @@ from django.http import HttpResponseRedirect
 from feincms import settings
 from feincms.models import Base
 
+from feincms.templatetags import feincms_thumbnail
 from feincms.translations import TranslatedObjectMixin, Translation, \
     TranslatedObjectManager
 
@@ -272,10 +274,24 @@ class MediaFileTranslationInline(admin.StackedInline):
     model   = MediaFileTranslation
     max_num = len(django_settings.LANGUAGES)
 
+
+def admin_thumbnail(obj):
+    if obj.type == 'image':
+        image = feincms_thumbnail.thumbnail(obj.file.name, '80x80')
+        return mark_safe(u"""
+            <a href="%(url)s" target="_blank">
+                <img src="%(image)s" alt="" />
+            </a>""" % { 
+                'url': obj.file.url,
+                'image': image,})
+    return ''
+admin_thumbnail.short_description = 'Preview'
+admin_thumbnail.allow_tags = True
+
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
-    list_display      = ['__unicode__', 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'formatted_created']
+    list_display      = ['__unicode__', admin_thumbnail, 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'formatted_created']
     list_filter       = ['type', 'categories']
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
