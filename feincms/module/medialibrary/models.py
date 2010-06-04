@@ -208,6 +208,12 @@ class MediaFileBase(Base, TranslatedObjectMixin):
             self.created = datetime.now()
 
         self.type = self.determine_file_type(self.file.name)
+        # Try to detect things that are not really images
+        if self.type == 'image':
+            try:
+                Image.open(self.file)
+            except:
+                self.type = self.determine_file_type('***') # It's binary something
 
         if self.file and not self.file_size:
             try:
@@ -217,19 +223,22 @@ class MediaFileBase(Base, TranslatedObjectMixin):
 
         super(MediaFileBase, self).save(*args, **kwargs)
 
+        # Rotate image based on exif data.
         if self.type == 'image':
-            # Rotate image based on exif data.
             image = Image.open(self.file)
             exif = image._getexif()
             if exif:
                 orientation = exif.get(274)
+                rotation = 0
                 if orientation == 3:
-                    image = image.rotate(180)
+                    rotation = 180
                 elif orientation == 6:
-                    image = image.rotate(270)
+                    rotation = 270
                 elif orientation == 8:
-                    image = image.rotate(90)
-                image.save(self.file.path)
+                    rotation = 90
+                if rotation:
+                    image = image.rotate(rotation)
+                    image.save(self.file.path)
 
         self.purge_translation_cache()
 
@@ -277,15 +286,21 @@ class MediaFileTranslationInline(admin.StackedInline):
 
 def admin_thumbnail(obj):
     if obj.type == 'image':
-        image = feincms_thumbnail.thumbnail(obj.file.name, '80x80')
-        return mark_safe(u"""
-            <a href="%(url)s" target="_blank">
-                <img src="%(image)s" alt="" />
-            </a>""" % { 
-                'url': obj.file.url,
-                'image': image,})
+        image = None
+        try:
+            image = feincms_thumbnail.thumbnail(obj.file.name, '100x60')
+        except:
+            pass
+
+        if image:
+            return mark_safe(u"""
+                <a href="%(url)s" target="_blank">
+                    <img src="%(image)s" alt="" />
+                </a>""" % {
+                    'url': obj.file.url,
+                    'image': image,})
     return ''
-admin_thumbnail.short_description = 'Preview'
+admin_thumbnail.short_description = _('Preview')
 admin_thumbnail.allow_tags = True
 
 class MediaFileAdmin(admin.ModelAdmin):
