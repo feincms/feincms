@@ -31,7 +31,8 @@ def _empty_reverse_cache():
     _local.reverse_cache = {}
 
 
-OTHER_APPLICATIONCONTENT_SEPARATOR = '/'
+APPLICATIONCONTENT_RE = re.compile(r'^([\.\w]+)/([\.\w]+)$')
+
 
 def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs, **vkwargs):
     """
@@ -50,9 +51,9 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
           {% url registration.urls/auth_logout %}
     """
 
-    if isinstance(viewname, basestring) and OTHER_APPLICATIONCONTENT_SEPARATOR in viewname:
+    if isinstance(viewname, basestring) and APPLICATIONCONTENT_RE.match(viewname):
         # try to reverse an URL inside another applicationcontent
-        other_urlconf, other_viewname = viewname.split(OTHER_APPLICATIONCONTENT_SEPARATOR)
+        other_urlconf, other_viewname = viewname.split('/')
 
         if hasattr(_local, 'urlconf') and other_urlconf == _local.urlconf[0]:
             # We are reversing an URL from our own ApplicationContent
