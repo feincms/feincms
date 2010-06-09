@@ -226,7 +226,12 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         # Rotate image based on exif data.
         if self.type == 'image':
             image = Image.open(self.file)
-            exif = image._getexif()
+            
+            try:
+                exif = image._getexif()
+            except AttributeError:
+                exif = False
+                
             if exif:
                 orientation = exif.get(274)
                 rotation = 0
