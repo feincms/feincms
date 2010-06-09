@@ -62,7 +62,7 @@ def has_fragment(request, identifier):
     """
     {% if request|has_fragment:"title" %}
     """
-    return request._feincms_applicationcontents_fragments.get(identifier)        
+    return request._feincms_applicationcontents_fragments.get(identifier)
 
 
 @register.simple_tag
@@ -79,8 +79,8 @@ def feincms_render_region_appcontent(page, region, request):
             {% feincms_render_region_appcontent feincms_page "main" request %}
         {% endif %}
     """
-    from feincms.templatetags.feincms_tags import feincms_render_region
     from feincms.content.application.models import ApplicationContent
+    from feincms.templatetags.feincms_tags import _render_content
 
-    return feincms_render_region(page, region, request, content_class=ApplicationContent)
-
+    return u''.join(_render_content(content, request=request) for content in\
+        getattr(page.content, region) if isinstance(content, ApplicationContent))
