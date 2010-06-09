@@ -26,7 +26,6 @@ def handler(request, path=None):
     # prepare storage for rendered application contents
     if not hasattr(request, '_feincms_applicationcontents'):
         request._feincms_applicationcontents = {}
-        request._feincms_applicationcontents_fragments = {}
 
     # Used to provide additional app-specific context variables:
     if not hasattr(request, '_feincms_appcontent_parameters'):
