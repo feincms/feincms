@@ -45,16 +45,42 @@ def fragment(parser, token):
     return FragmentNode(nodelist, *token.contents.split()[1:])
 
 
-@register.simple_tag
-def get_fragment(request, identifier):
+class GetFragmentNode(template.Node):
+    def __init__(self, request, fragment, as_var=None):
+        self.request = template.Variable(request)
+        self.fragment = template.Variable(fragment)
+        self.as_var = as_var
+
+    def render(self, context):
+        request = self.request.resolve(context)
+        fragment = self.fragment.resolve(context)
+
+        try:
+            value = request._feincms_applicationcontents_fragments[fragment]
+        except (AttributeError, KeyError):
+            value = u''
+
+        if self.as_var:
+            context[as_var] = value
+            return u''
+        return value
+
+
+@register.tag
+def get_fragment(parser, token):
     """
     {% get_fragment request "title" %}
+    or
+    {% get_fragment request "title" as title %}
     """
 
-    try:
-        return request._feincms_applicationcontents_fragments[identifier]
-    except (AttributeError, KeyError):
-        return u''
+    fragments = token.contents.split()
+
+    if len(fragments) == 3:
+        return GetFragmentNode(fragments[1], fragments[2])
+    elif len(fragments) == 5 and fragments[3] == 'as':
+        return GetFragmentNode(fragments[1], fragments[2], fragments[4])
+    raise template.TemplateSyntaxError, 'Invalid syntax for get_fragment: %s' % token.contents
 
 
 @register.filter
