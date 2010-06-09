@@ -62,7 +62,7 @@ class GetFragmentNode(template.Node):
             value = u''
 
         if self.as_var:
-            context[as_var] = value
+            context[self.as_var] = value
             return u''
         return value
 
