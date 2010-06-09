@@ -38,7 +38,7 @@ class TemplateContentAdminForm(ItemEditorForm):
 
     def __init__(self, *args, **kwargs):
         super(TemplateContentAdminForm, self).__init__(*args, **kwargs)
-        self.fields['filename'].choices = list(get_templates())
+        self.fields['filename'].choices = sorted(get_templates(), key=lambda p: p[1])
 
 
 class TemplateContent(models.Model):
