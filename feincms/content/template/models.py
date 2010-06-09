@@ -53,6 +53,8 @@ class TemplateContent(models.Model):
         verbose_name_plural = _('template contents')
 
     def render(self, **kwargs):
+        context = kwargs.pop('context', None)
+
         return render_to_string('content/template/%s' % self.filename, dict({
             'content': self,
-            }, **kwargs))
+            }, **kwargs), context_instance=context)
