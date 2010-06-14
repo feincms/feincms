@@ -190,7 +190,8 @@ class ItemEditor(admin.ModelAdmin):
                     self.message_user(request, msg)
                     return HttpResponseRedirect("../")
         else:
-            model_form = ModelForm()
+            initial = dict(request.GET.items())
+            model_form = ModelForm(initial=initial)
             inline_formsets = [
                 formset_class(prefix=content_type.__name__.lower())
                 for content_type, formset_class in inline_formset_types]
