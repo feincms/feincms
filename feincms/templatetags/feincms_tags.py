@@ -67,7 +67,7 @@ class RenderContentNode(template.Node):
 
     def render(self, context):
         content = self.content.resolve(context)
-        request = self.region.resolve(context)
+        request = self.request.resolve(context)
 
         return _render_content(content, request=request, context=context)
 
@@ -82,7 +82,7 @@ def feincms_render_content(parser, token):
     except ValueError:
         raise template.TemplateSyntaxError, 'Invalid syntax for feincms_render_content: %s' % token.contents
 
-    return RenderContentNode(feincms_object, region, request)
+    return RenderContentNode(content, request)
 
 
 @register.simple_tag
