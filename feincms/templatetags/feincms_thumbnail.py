@@ -10,6 +10,7 @@ except ImportError:
 
 from django import template
 from django.conf import settings
+from django.utils.encoding import force_unicode
 
 
 register = template.Library()
@@ -44,7 +45,7 @@ def thumbnail(filename, size='200x200'):
             return os.path.join(settings.MEDIA_URL, filename)
         image.thumbnail([x, y], Image.ANTIALIAS)
         image.save(miniature_filename, image.format, quality=100)
-    return miniature_url
+    return force_unicode(miniature_url)
 
 
 @register.filter
@@ -86,6 +87,4 @@ def cropscale(filename, size='200x200'):
         image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
         image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
         image.save(miniature_filename, image.format, quality=100)
-
-    return miniature_url
-
+    return force_unicode(miniature_url)
