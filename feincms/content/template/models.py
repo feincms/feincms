@@ -4,11 +4,11 @@ from django import forms
 from django.conf import settings
 from django.db import models
 from django.template.loader import find_template_loader, render_to_string, get_template
-from django.template import Context, VariableNode, TemplateDoesNotExist
+from django.template import Context, VariableNode, TemplateDoesNotExist, TemplateSyntaxError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.contrib import admin
-from feincms.fields import JSONFieldDescriptor
+from feincms.contrib.fields import JSONFieldDescriptor
 from feincms.admin.editor import ItemEditorForm
 
 
@@ -38,14 +38,14 @@ def get_templates():
                 seen.add(template)
                 yield (template, template)
 
-"""{{ tc.subtitle|default:'Feincms rulez' }}"""
+"""{{ tc.field|default:'Hello World!' }}"""
 
 
 class TemplateContentAdminForm(ItemEditorForm):    
     filename = forms.ChoiceField(label=_('template'))
     custom_fields = set()
-    def get_template_vars(self, t):
-        varnodes = t.nodelist.get_nodes_by_type(VariableNode)
+    def get_template_vars(self, template):
+        varnodes = template.nodelist.get_nodes_by_type(VariableNode)
         return [x.filter_expression.token for x in varnodes]
 
     def __init__(self, *args, **kwargs):
@@ -54,16 +54,18 @@ class TemplateContentAdminForm(ItemEditorForm):
         self.current = []
         if instance:
             self.current = [k for k in instance.extracontext.keys()]
-            c = re.compile(r'^tc\.(.*?)(?:\|.*)?$') # token
-            f = re.compile(r'^tc\..*?\|default\: ?(.*)$') #filter
+            token = re.compile(r'^tc\.(.*?)(?:\|.*)?$') # token
+            filter = re.compile(r'^tc\..*?\|default\: ?(.*)$') #filter
             try:
-                t = get_template('content/template/'+instance.filename)
+                template = get_template('content/template/'+instance.filename)
             except TemplateDoesNotExist:
                 self.fields['filename'].choices = sorted(get_templates(), key=lambda p: p[1])
                 return
-            for k in self.get_template_vars(t): # gets all template variables
+            except TemplateSyntaxError:
+                return
+            for key in self.get_template_vars(template): # gets all template variables
                 try:
-                    name = c.split(k)[1]
+                    name = token.split(key)[1]
                 except IndexError:
                     name = ""
                 if name: 
@@ -71,7 +73,7 @@ class TemplateContentAdminForm(ItemEditorForm):
                         default = instance.extracontext[name]
                     else:
                         try:
-                            default = f.split(k)[1][1:-1]
+                            default = filter.split(key)[1][1:-1]
                         except IndexError:
                             default = ""
                 
@@ -91,19 +93,17 @@ class TemplateContentAdminForm(ItemEditorForm):
         # call save with commit=False first to do any necessary work &
         # get the model so we can set .parameters to the values of our
         # custom fields before calling save(commit=True)
+        model = super(TemplateContentAdminForm, self).save(commit=False, *args, **kwargs)
         
-        m = super(TemplateContentAdminForm, self).save(commit=False, *args, **kwargs)
-        instance = kwargs.get("instance", None)
-        if instance:
-            tc = {}
-            for k in self.custom_fields:
-                tc.update({k: self.cleaned_data[k]})
-            m.extracontext = tc
+        tc = {}
+        for field in self.custom_fields:
+            tc.update({field: self.cleaned_data[field]})
+        model.extracontext = tc
         
         if commit:
-            m.save(**kwargs)
+            model.save(**kwargs)
         
-        return m     
+        return model     
 
 
 class TemplateContent(models.Model):
@@ -111,8 +111,7 @@ class TemplateContent(models.Model):
     
     filename = models.CharField(_('template'), max_length=100,
         choices=())
-    extracontext_json = models.TextField(_('configuration'), blank=True, editable=False,
-        help_text=_('If you edit this field directly, changes below will be ignored.'))
+    extracontext_json = models.TextField(_('configuration'), blank=True, editable=False,)
     extracontext = JSONFieldDescriptor('extracontext_json')
 
     class Meta:
@@ -124,11 +123,9 @@ class TemplateContent(models.Model):
         return self.filename    
 
     def render(self, **kwargs):
-        tc = Object()
-        [setattr(tc, k, mark_safe(v)) for k,v in self.extracontext.items()]
+        request = kwargs.get('request')
         context = kwargs.pop('context', None)
-        localcontext = dict({
-            'content': self, 'tc': tc,
-            }, **kwargs)
-        return render_to_string('content/template/%s' % self.filename, localcontext, context_instance=context)
+        return render_to_string('content/template/%s' % self.filename, 
+            {'content': self, 'tc': dict((k, mark_safe(v)) for k, v in self.extracontext.items()), 
+             'feincms_page': self.parent}, context_instance=context) 
 
