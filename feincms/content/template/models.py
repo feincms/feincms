@@ -54,7 +54,7 @@ class TemplateContentAdminForm(ItemEditorForm):
         instance = kwargs.get("instance", None)
         self.current = []
         if instance:
-            self.current = [k for k in instance.extracontext.keys()]
+            self.current = [k for k in instance.tccontext.keys()]
             token = re.compile(r'^tc\.(.*?)(?:\|.*)?$') # token
             filter = re.compile(r'^tc\..*?\|default\: ?(.*)$') #filter
             try:
@@ -71,7 +71,7 @@ class TemplateContentAdminForm(ItemEditorForm):
                     name = ""
                 if name: 
                     if name in self.current:
-                        default = instance.extracontext[name]
+                        default = instance.tccontext[name]
                     else:
                         try:
                             default = filter.split(key)[1][1:-1]
@@ -101,7 +101,6 @@ class TemplateContentAdminForm(ItemEditorForm):
             print field
             print self.cleaned_data[field]
             tc.update({field: self.cleaned_data[field]})
-        model.extracontext = tc
         model.tccontext = tc
         
         if commit:
