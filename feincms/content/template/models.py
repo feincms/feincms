@@ -8,7 +8,7 @@ from django.template import Context, VariableNode, TemplateDoesNotExist, Templat
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.contrib import admin
-from feincms.contrib.fields import JSONFieldDescriptor
+from feincms.contrib.fields import JSONField
 from feincms.admin.editor import ItemEditorForm
 
 
@@ -44,6 +44,7 @@ def get_templates():
 class TemplateContentAdminForm(ItemEditorForm):    
     filename = forms.ChoiceField(label=_('template'))
     custom_fields = set()
+    # http://jathan.com/2009/12/08/dynamically-determining-the-variables-for-a-django-template/
     def get_template_vars(self, template):
         varnodes = template.nodelist.get_nodes_by_type(VariableNode)
         return [x.filter_expression.token for x in varnodes]
@@ -97,13 +98,16 @@ class TemplateContentAdminForm(ItemEditorForm):
         
         tc = {}
         for field in self.custom_fields:
+            print field
+            print self.cleaned_data[field]
             tc.update({field: self.cleaned_data[field]})
         model.extracontext = tc
+        model.tccontext = tc
         
         if commit:
             model.save(**kwargs)
         
-        return model     
+        return model    
 
 
 class TemplateContent(models.Model):
@@ -111,8 +115,7 @@ class TemplateContent(models.Model):
     
     filename = models.CharField(_('template'), max_length=100,
         choices=())
-    extracontext_json = models.TextField(_('configuration'), blank=True, editable=False,)
-    extracontext = JSONFieldDescriptor('extracontext_json')
+    tccontext = JSONField(null=True, editable=False)
 
     class Meta:
         abstract = True
@@ -126,6 +129,6 @@ class TemplateContent(models.Model):
         request = kwargs.get('request')
         context = kwargs.pop('context', None)
         return render_to_string('content/template/%s' % self.filename, 
-            {'content': self, 'tc': dict((k, mark_safe(v)) for k, v in self.extracontext.items()), 
-             'feincms_page': self.parent}, context_instance=context) 
+            {'content': self, 'tc': dict((k, mark_safe(v)) for k, v in self.tccontext.items()),},
+              context_instance=context) 
 
