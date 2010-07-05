@@ -1,5 +1,5 @@
 <a href="{{ content.mediafile.file.url }}">
-    {{ content.mediafile.translation.caption }}
+    {{ content.mediafile.translation.caption|default:content.mediafile.file.name }}
     {% if content.mediafile.copyright %}
         ({{ content.mediafile.copyright }})
     {% endif %}
