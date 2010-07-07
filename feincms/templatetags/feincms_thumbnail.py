@@ -32,7 +32,10 @@ def thumbnail(filename, size='200x200'):
     # defining the size
     x, y = [tryint(x) for x in size.split('x')]
     # defining the filename and the miniature filename
-    basename, format = filename.rsplit('.', 1)
+    try:
+        basename, format = filename.rsplit('.', 1)
+    except ValueError:
+        basename, format = filename, 'jpg'
     miniature = basename + '_thumb_' + size + '.' +  format
     miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature).encode('utf-8')
     miniature_url = os.path.join(settings.MEDIA_URL, miniature).encode('utf-8')
@@ -56,7 +59,10 @@ def cropscale(filename, size='200x200'):
 
     w, h = [tryint(x) for x in size.split('x')]
 
-    basename, format = filename.rsplit('.', 1)
+    try:
+        basename, format = filename.rsplit('.', 1)
+    except ValueError:
+        basename, format = filename, 'jpg'
     miniature = basename + '_cropscale_' + size + '.' +  format
     miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature)
     miniature_url = os.path.join(settings.MEDIA_URL, miniature)
