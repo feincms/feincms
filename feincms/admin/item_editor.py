@@ -477,12 +477,19 @@ class ItemEditor(admin.ModelAdmin):
 
         return self.render_item_editor(request, obj, context)
 
-    def render_item_editor(self, request, object, context):
+    def get_template_list(self):
         opts = self.model._meta
-        return render_to_response([
-            'admin/feincms/%s/%s/item_editor.html' % (opts.app_label, opts.object_name.lower()),
+        return [
+            'admin/feincms/%s/%s/item_editor.html' % (
+                opts.app_label, opts.object_name.lower()),
             'admin/feincms/%s/item_editor.html' % opts.app_label,
             'admin/feincms/item_editor.html',
-            ], context, context_instance=template.RequestContext(request,
+            ]
+    
+    def render_item_editor(self, request, object, context):
+        return render_to_response(
+            self.get_template_list(), context,
+            context_instance=template.RequestContext(
+                request,
                 processors=self.model.feincms_item_editor_context_processors))
 
