@@ -5,6 +5,7 @@
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
 
 {% block extrahead %}{{ block.super }}
+{% block feincms_jquery_ui %}
 {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
@@ -14,6 +15,7 @@
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.css" />
 {% endif %}
+{% endblock %}
 
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
