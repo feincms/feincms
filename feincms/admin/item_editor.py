@@ -5,7 +5,7 @@ from django import forms, template
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.admin.util import unquote
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.db import transaction
 from django.db.models import loading
 from django.forms.formsets import all_valid
@@ -22,7 +22,6 @@ from feincms import settings
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
-FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 csrf_protect_m = method_decorator(csrf_protect)
 
@@ -507,9 +506,20 @@ class ItemEditor(admin.ModelAdmin):
             super(ItemEditor, self).get_fieldsets(request, obj))
         
         if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
-            fieldsets.insert(0, FEINCMS_CONTENT_FIELDSET) # add to top
+            fieldsets.insert(
+                0, (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})) 
             
         if getattr(self, 'show_on_top', ()):
+            if self.declared_fieldsets:
+                # check to ensure no duplicated fields
+                all_fields = []
+                for fieldset_data in dict(self.declared_fieldsets).values():
+                    all_fields += list(fieldset_data.get('fields', ()))
+                for field_name in self.show_on_top:
+                    if field_name in all_fields:
+                        raise ImproperlyConfigured(
+                            'Field "%s" is present in both show_on_top and '
+                            'fieldsets' % field_name)
             fieldsets.insert(0, (None, {'fields': self.show_on_top}))
 
         return fieldsets
