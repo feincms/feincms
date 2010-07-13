@@ -115,7 +115,7 @@ w.{% plural %}Please correct the errors below.{% endblocktrans %}
 {% endif %}
 
 {% for fieldset in adminform %}
-  {% if fieldset.name == 'FEINCMS_CONTENT' %}
+  {% if fieldset.name == FEINCMS_CONTENT_FIELDSET_NAME %}
     {% include "admin/feincms/content_editor.html" %}
   {% else %}
     {% include "admin/includes/fieldset.html" %}

@@ -475,6 +475,7 @@ class ItemEditor(admin.ModelAdmin):
             'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
         return self.render_item_editor(request, obj, context)
