@@ -1,4 +1,5 @@
 import re
+import copy
 
 from django import forms, template
 from django.contrib import admin
@@ -20,7 +21,8 @@ from django.views.decorators.csrf import csrf_protect
 from feincms import settings
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
-
+FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
+FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 csrf_protect_m = method_decorator(csrf_protect)
 
@@ -493,3 +495,20 @@ class ItemEditor(admin.ModelAdmin):
                 request,
                 processors=self.model.feincms_item_editor_context_processors))
 
+    def get_fieldsets(self, request, obj=None):
+        """ Convert show_on_top to fieldset for backwards compatibility.
+
+        Also insert FEINCMS_CONTENT_FIELDSET it not present.
+        Is it reasonable to assume this should always be included?
+        """
+
+        fieldsets = copy.deepcopy(
+            super(ItemEditor, self).get_fieldsets(request, obj))
+        
+        if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
+            fieldsets.insert(0, FEINCMS_CONTENT_FIELDSET) # add to top
+            
+        if getattr(self, 'show_on_top', ()):
+            fieldsets.insert(0, (None, {'fields': self.show_on_top}))
+
+        return fieldsets
