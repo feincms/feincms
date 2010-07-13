@@ -22,6 +22,7 @@ from feincms import settings
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
+FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})) 
 
 csrf_protect_m = method_decorator(csrf_protect)
 
@@ -506,8 +507,7 @@ class ItemEditor(admin.ModelAdmin):
             super(ItemEditor, self).get_fieldsets(request, obj))
         
         if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
-            fieldsets.insert(
-                0, (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})) 
+            fieldsets.insert(0, FEINCMS_CONTENT_FIELDSET)
             
         if getattr(self, 'show_on_top', ()):
             if self.declared_fieldsets:

@@ -92,26 +92,15 @@ The item editor
 .. module:: feincms.admin.item_editor
 .. class:: ItemEditor
 
-The item editor replaces the edit view (NOT the add form, therefore you may
-still use ``fieldsets``, etc. to customize the form which is used to add new
-items.
-
-The most important fields are shown beneath the submit bar at the top of the
-administration page, the tabbed interface below is used to edit content and
-other properties of the edited object. A tab is shown for every region of
-the template or element, depending on whether templates are activated for the
-object in question [#f1]_.
+The tabbed interface below is used to edit content and other properties of the 
+edited object. A tab is shown for every region of the template or element, 
+depending on whether templates are activated for the object in question [#f1]_.
 
 Here's an screenshot of a content editing pane. The media file content is
 collapsed currently. New items can be added using the control bar at the bottom,
 and all content blocks can be reordered using drag and drop:
 
 .. image:: images/item_editor_content.png
-
-The last tab is always the properties pane. Additional information concerning
-the currently edited object can be shown and modified there:
-
-.. image:: images/item_editor_properties.png
 
 .. [#f1] Templates are required for the page module; blog entries managed through
          the item editor probably wont have a use for them.
@@ -120,10 +109,35 @@ the currently edited object can be shown and modified there:
 Customizing the item editor
 ---------------------------
 
-* ``show_on_top``
+.. versionadded:: 1.1.5
+* The :class:`~feincms.admin.item_editor.ItemEditor` now plays nicely with 
+  standard Django ``fieldsets``; the content-editor is rendered as a 
+  replacement for a fieldset with the placeholder name matching
+  :const:`~feincms.admin.item_editor.FEINCMS_CONTENT_FIELDSET_NAME`. If no
+  such fieldset is present, one is inserted at the top automatically. If you 
+  wish to customise the location of the content-editor, simple include this
+  fieldset at the desired location::
+
+    from feincms.admin.item_editor import ItemEditor, FEINCMS_CONTENT_FIELDSET
+
+    class MyAdmin(ItemEditor):
+        fieldsets = (
+            ('Important things', {'fields': ('title', 'slug', 'etc')}),
+            FEINCMS_CONTENT_FIELDSET,
+            ('Less important things', 
+                {
+                    'fields': ('copyright', 'soforth'),
+                    'classes': ('collapse',)
+                }
+            )
+        )
+
+.. versionchanged:: 1.1.5
+* ``show_on_top`` (**deprecated**; use standard ``fieldsets`` instead)
 
   A tuple which describes, which fields should be shown above the tabbed item
-  editor interface.
+  editor interface. For backwards compatibility this tuple is converted to 
+  a fieldset which is prepended to ``fieldsets`` to appear at the top.
 
 
 Customizing the individual content type forms
