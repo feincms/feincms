@@ -22,7 +22,7 @@ from feincms import settings
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
-FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})) 
+FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 csrf_protect_m = method_decorator(csrf_protect)
 
@@ -33,14 +33,6 @@ class ItemEditorForm(forms.ModelForm):
 
 
 class ItemEditor(admin.ModelAdmin):
-    """
-    This ModelAdmin class needs an attribute:
-
-    show_on_top:
-        A list of fields which should be displayed at the top of the form.
-        This does not need to (and should not) include ``template``
-    """
-
     def __init__(self, *args, **kwargs):
         # Make sure all models are completely loaded before attempting to
         # proceed. The dynamic nature of FeinCMS models makes this necessary.
@@ -231,9 +223,6 @@ class ItemEditor(admin.ModelAdmin):
             media = media + inline_admin_formset.media
 
         if hasattr(self.model, '_feincms_templates'):
-            if 'template_key' not in self.show_on_top:
-                self.show_on_top = ['template_key'] + list(self.show_on_top)
-
             context['available_templates'] = self.model._feincms_templates
 
         if hasattr(self.model, 'parent'):
@@ -253,8 +242,6 @@ class ItemEditor(admin.ModelAdmin):
             'inline_formsets': inline_formsets,
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
-            'top_fields': [model_form[field] for field in self.show_on_top],
-            'settings_fields': [field for field in model_form if field.name not in self.show_on_top],
             'media': media,
             'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
@@ -447,9 +434,6 @@ class ItemEditor(admin.ModelAdmin):
 
 
         if hasattr(self.model, '_feincms_templates'):
-            if 'template_key' not in self.show_on_top:
-                self.show_on_top = ['template_key'] + list(self.show_on_top)
-
             context['available_templates'] = self.model._feincms_templates
 
         if hasattr(self.model, 'parent'):
@@ -469,8 +453,6 @@ class ItemEditor(admin.ModelAdmin):
             'inline_formsets': inline_formsets,
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
-            'top_fields': [model_form[field] for field in self.show_on_top],
-            'settings_fields': [field for field in model_form if field.name not in self.show_on_top],
             'media': media,
             'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
@@ -520,6 +502,8 @@ class ItemEditor(admin.ModelAdmin):
                         raise ImproperlyConfigured(
                             'Field "%s" is present in both show_on_top and '
                             'fieldsets' % field_name)
+            if 'template_key' not in self.show_on_top:
+                self.show_on_top = ['template_key'] + list(self.show_on_top)    
             fieldsets.insert(0, (None, {'fields': self.show_on_top}))
 
         return fieldsets
