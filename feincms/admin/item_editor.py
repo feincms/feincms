@@ -492,6 +492,10 @@ class ItemEditor(admin.ModelAdmin):
             fieldsets.insert(0, FEINCMS_CONTENT_FIELDSET)
             
         if getattr(self, 'show_on_top', ()):
+            if hasattr(self.model, '_feincms_templates'):
+                if 'template_key' not in self.show_on_top:
+                    self.show_on_top = ['template_key'] + \
+                        list(self.show_on_top) 
             if self.declared_fieldsets:
                 # check to ensure no duplicated fields
                 all_fields = []
@@ -502,8 +506,12 @@ class ItemEditor(admin.ModelAdmin):
                         raise ImproperlyConfigured(
                             'Field "%s" is present in both show_on_top and '
                             'fieldsets' % field_name)
-            if 'template_key' not in self.show_on_top:
-                self.show_on_top = ['template_key'] + list(self.show_on_top)    
+            else: # no _declared_ fieldsets,
+                # remove show_on_top fields from implicit fieldset
+                for fieldset in fieldsets:
+                    for field_name in self.show_on_top:
+                        if field_name in fieldset[1]['fields']:
+                            fieldset[1]['fields'].remove(field_name)
             fieldsets.insert(0, (None, {'fields': self.show_on_top}))
 
         return fieldsets
