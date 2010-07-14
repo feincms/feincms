@@ -661,8 +661,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     prepopulated_fields = { 'slug': ('title',), }
 
     raw_id_fields = ['parent']
-    show_on_top = () # TODO make this removable; currently, ItemEditor.change_view
-                     # falls flat on its face if show_on_top does not exist
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     def __init__(self, *args, **kwargs):
