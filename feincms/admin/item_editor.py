@@ -246,6 +246,7 @@ class ItemEditor(admin.ModelAdmin):
             'errors': helpers.AdminErrorList(model_form, inline_formsets),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
         return self.render_item_editor(request, None, context)
@@ -470,7 +471,7 @@ class ItemEditor(admin.ModelAdmin):
             'admin/feincms/%s/item_editor.html' % opts.app_label,
             'admin/feincms/item_editor.html',
             ]
-    
+
     def render_item_editor(self, request, object, context):
         return render_to_response(
             self.get_template_list(), context,
