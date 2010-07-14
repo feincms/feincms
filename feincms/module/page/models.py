@@ -22,6 +22,7 @@ import mptt
 
 from feincms import settings
 from feincms.admin import editor
+from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
 from feincms.utils import get_object, copy_model_instance
@@ -648,6 +649,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
                 'parent'],
         }),
+        item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
             'fields': ['override_url',],
@@ -659,7 +661,8 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     prepopulated_fields = { 'slug': ('title',), }
 
     raw_id_fields = ['parent']
-    show_on_top = ['title', 'active', 'parent']
+    show_on_top = () # TODO make this removable; currently, ItemEditor.change_view
+                     # falls flat on its face if show_on_top does not exist
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     def __init__(self, *args, **kwargs):
