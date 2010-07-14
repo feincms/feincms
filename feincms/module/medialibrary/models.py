@@ -211,7 +211,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         # Try to detect things that are not really images
         if self.type == 'image':
             try:
-                Image.open(self.file)
+                Image.open(self.file.path)
             except:
                 self.type = self.determine_file_type('***') # It's binary something
 
