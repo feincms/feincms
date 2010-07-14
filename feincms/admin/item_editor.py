@@ -490,13 +490,13 @@ class ItemEditor(admin.ModelAdmin):
             super(ItemEditor, self).get_fieldsets(request, obj))
         
         if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
-            fieldsets.insert(0, FEINCMS_CONTENT_FIELDSET)
-            
+            fieldsets.append(FEINCMS_CONTENT_FIELDSET)
+
         if getattr(self, 'show_on_top', ()):
             if hasattr(self.model, '_feincms_templates'):
                 if 'template_key' not in self.show_on_top:
                     self.show_on_top = ['template_key'] + \
-                        list(self.show_on_top) 
+                        list(self.show_on_top)
             if self.declared_fieldsets:
                 # check to ensure no duplicated fields
                 all_fields = []
