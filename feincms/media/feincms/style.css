@@ -312,7 +312,7 @@ ul.errorlist li li {
 tr.cut { border: 2px dashed black; opacity: 0.5; }
 .title-column { width: 400px; }
 
-:focus { background-color: #ccddff !important; outline: 0px; }
+table#result_list :focus { background-color: #ccddff !important; outline: 0px; }
 
 #page_form {
     clear: both;

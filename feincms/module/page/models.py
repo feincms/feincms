@@ -22,6 +22,7 @@ import mptt
 
 from feincms import settings
 from feincms.admin import editor
+from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
 from feincms.utils import get_object, copy_model_instance
@@ -517,6 +518,9 @@ signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 # MARK: -
 # ------------------------------------------------------------------------
 class PageAdminForm(forms.ModelForm):
+    never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
+        'translation_of')
+
     def __init__(self, *args, **kwargs):
         if 'initial' in kwargs:
             if 'parent' in kwargs['initial']:
@@ -530,8 +534,9 @@ class PageAdminForm(forms.ModelForm):
                             del data[field]
 
                     # These are always excluded from prefilling
-                    for field in ('title', 'slug', 'parent', 'active', 'override_url'):
-                        del data[field]
+                    for field in self.never_copy_fields:
+                        if field in data:
+                            del data[field]
 
                     kwargs['initial'].update(data)
                 except Page.DoesNotExist:
@@ -648,6 +653,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
             'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
                 'parent'],
         }),
+        item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
             'fields': ['override_url',],
@@ -659,7 +665,6 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     prepopulated_fields = { 'slug': ('title',), }
 
     raw_id_fields = ['parent']
-    show_on_top = ['title', 'active', 'parent']
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     def __init__(self, *args, **kwargs):

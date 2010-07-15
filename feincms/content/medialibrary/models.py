@@ -78,7 +78,7 @@ class MediaFileContent(models.Model):
 
         class MediaFileContentAdminForm(ItemEditorForm):
             mediafile = forms.ModelChoiceField(queryset=MEDIAFILE_CLASS.objects.all(),
-                widget=MediaFileWidget)
+                widget=MediaFileWidget, label=_('media file'))
             position = forms.ChoiceField(choices=POSITION_CHOICES,
                 initial=POSITION_CHOICES[0][0], label=_('position'),
                 widget=AdminRadioSelect(attrs={'class': 'radiolist'}))
