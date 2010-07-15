@@ -518,6 +518,9 @@ signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 # MARK: -
 # ------------------------------------------------------------------------
 class PageAdminForm(forms.ModelForm):
+    never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
+        'translation_of')
+
     def __init__(self, *args, **kwargs):
         if 'initial' in kwargs:
             if 'parent' in kwargs['initial']:
@@ -531,8 +534,9 @@ class PageAdminForm(forms.ModelForm):
                             del data[field]
 
                     # These are always excluded from prefilling
-                    for field in ('title', 'slug', 'parent', 'active', 'override_url'):
-                        del data[field]
+                    for field in self.never_copy_fields:
+                        if field in data:
+                            del data[field]
 
                     kwargs['initial'].update(data)
                 except Page.DoesNotExist:
