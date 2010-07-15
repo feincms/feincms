@@ -150,7 +150,7 @@ def Translation(model):
 
     class Inner(models.Model):
         parent = models.ForeignKey(model, related_name='translations')
-        language_code = models.CharField(_('language'), max_length=10, 
+        language_code = models.CharField(_('language'), max_length=10,
                 choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
                 editable=len(settings.LANGUAGES) > 1)
 
@@ -164,12 +164,6 @@ def Translation(model):
             super(Inner, self).save(*args, **kwargs)
 
             self.parent.purge_translation_cache()
-
-        def save(self, *args, **kwargs):
-            super(Inner, self).save(*args, **kwargs)
-
-            self.parent.purge_translation_cache()
-
 
     return Inner
 
