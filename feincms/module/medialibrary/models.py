@@ -208,7 +208,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
             self.created = datetime.now()
 
         self.type = self.determine_file_type(self.file.name)
-        if self.file and not self.file_size:
+        if self.file:
             try:
                 self.file_size = self.file.size
             except (OSError, IOError, ValueError), e:
