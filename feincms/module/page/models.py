@@ -656,7 +656,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
-            'fields': ['override_url',],
+            'fields': ['override_url', 'redirect_to'],
         }),
         ]
     list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
