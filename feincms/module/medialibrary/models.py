@@ -359,7 +359,7 @@ class MediaFileAdmin(admin.ModelAdmin):
                             target_fname = slugify(fname) + ext.lower()
 
                             mf = MediaFile()
-                            mf.file.save(target_fname, ContentFile(z.read(zi)))
+                            mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
                             mf.save()
                             count += 1
 
