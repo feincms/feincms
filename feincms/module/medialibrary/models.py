@@ -215,9 +215,10 @@ class MediaFileBase(Base, TranslatedObjectMixin):
                 logging.error("Unable to read file size for %s: %s", self, e)
 
         # Try to detect things that are not really images
+        fname = os.path.join(django_settings.MEDIA_ROOT, self.file.name)
         if self.type == 'image':
             try:
-                image = Image.open(self.file)
+                image = Image.open(fname)
             except (OSError, IOError):
                 try:
                     image = Image.open(self.file.path)
