@@ -130,7 +130,6 @@ class ItemEditor(admin.ModelAdmin):
             raise PermissionDenied
 
         ModelForm = self.get_form(request,
-            fields=None,
             formfield_callback=self._formfield_callback(request=request),
             form=self.form
         )
@@ -289,11 +288,6 @@ class ItemEditor(admin.ModelAdmin):
         ModelForm = self.get_form(
             request,
             obj,
-            # NOTE: Fields *MUST* be set to None to avoid breaking
-            # django.contrib.admin.option.ModelAdmin's default get_form()
-            # will generate a very abbreviated field list which will cause
-            # KeyErrors during clean() / save()
-            fields=None,
             formfield_callback=self._formfield_callback(request=request),
             form=self.form
         )
