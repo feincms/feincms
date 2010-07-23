@@ -103,7 +103,6 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
     if admin_cls:
         admin_cls.list_display.append(field_name)
         admin_cls.list_filter.append(field_name)
-        admin_cls.fieldsets[-1][1]['fields'].append(field_name)
 
     if sort_tags:
         pre_save.connect(pre_save_handler, sender=cls)
