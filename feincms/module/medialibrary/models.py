@@ -214,12 +214,13 @@ class MediaFileBase(Base, TranslatedObjectMixin):
             except (OSError, IOError, ValueError), e:
                 logging.error("Unable to read file size for %s: %s", self, e)
 
-        super(MediaFileBase, self).save(*args, **kwargs)
-
         # Try to detect things that are not really images
         if self.type == 'image':
             try:
-                image = Image.open(self.file.path)
+                try:
+                    image = Image.open(self.file)
+                except (OSError, IOError):
+                    image = Image.open(self.file.path)
 
                 # Rotate image based on exif data.
                 if image:
@@ -242,8 +243,8 @@ class MediaFileBase(Base, TranslatedObjectMixin):
                             image.save(self.file.path)
             except (OSError, IOError), e:
                 self.type = self.determine_file_type('***') # It's binary something
-                super(MediaFileBase, self).save(*args, **kwargs)
 
+        super(MediaFileBase, self).save(*args, **kwargs)
         self.purge_translation_cache()
 
 # ------------------------------------------------------------------------
