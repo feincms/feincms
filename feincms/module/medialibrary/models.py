@@ -214,38 +214,36 @@ class MediaFileBase(Base, TranslatedObjectMixin):
             except (OSError, IOError, ValueError), e:
                 logging.error("Unable to read file size for %s: %s", self, e)
 
+        super(MediaFileBase, self).save(*args, **kwargs)
+
         # Try to detect things that are not really images
         if self.type == 'image':
             try:
-                image = Image.open(self.file)
-            except (OSError, IOError):
-                try:
-                    image = Image.open(self.file.path)
-                except (OSError, IOError):
-                    image = None
-                    self.type = self.determine_file_type('***') # It's binary something
+                image = Image.open(self.file.path)
 
-            # Rotate image based on exif data.
-            if image:
-                try:
-                    exif = image._getexif()
-                except (AttributeError, IOError):
-                    exif = False
+                # Rotate image based on exif data.
+                if image:
+                    try:
+                        exif = image._getexif()
+                    except (AttributeError, IOError):
+                        exif = False
 
-                if exif:
-                    orientation = exif.get(274)
-                    rotation = 0
-                    if orientation == 3:
-                        rotation = 180
-                    elif orientation == 6:
-                        rotation = 270
-                    elif orientation == 8:
-                        rotation = 90
-                    if rotation:
-                        image = image.rotate(rotation)
-                        image.save(self.file.path)
+                    if exif:
+                        orientation = exif.get(274)
+                        rotation = 0
+                        if orientation == 3:
+                            rotation = 180
+                        elif orientation == 6:
+                            rotation = 270
+                        elif orientation == 8:
+                            rotation = 90
+                        if rotation:
+                            image = image.rotate(rotation)
+                            image.save(self.file.path)
+            except (OSError, IOError), e:
+                self.type = self.determine_file_type('***') # It's binary something
+                super(MediaFileBase, self).save(*args, **kwargs)
 
-        super(MediaFileBase, self).save(*args, **kwargs)
         self.purge_translation_cache()
 
 # ------------------------------------------------------------------------
@@ -359,7 +357,7 @@ class MediaFileAdmin(admin.ModelAdmin):
                             target_fname = slugify(fname) + ext.lower()
 
                             mf = MediaFile()
-                            mf.file.save(target_fname, ContentFile(z.read(zi)))
+                            mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
                             mf.save()
                             count += 1
 
