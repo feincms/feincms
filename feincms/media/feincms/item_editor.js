@@ -10,15 +10,93 @@ if(!Array.indexOf) {
 }
 
 
-function region_append(region, obj, modname) {
+
+function create_new_item_from_form(form, modname){
+    var fieldset = $("<fieldset>").addClass("module").addClass("aligned").addClass("order-item");
+
     var wrp = [];
-    wrp.push('<fieldset class="module aligned order-item">');
     wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span> '+modname+' &nbsp;(<span class="collapse">'+gettext('Hide')+'</span>)</h2>');
     wrp.push('<div class="item-content"></div>');
-    wrp.push('</fieldset>');
+    fieldset.append(wrp.join(""));
 
-    $("#"+REGION_MAP[region]+"_body").children("div.order-machine").append(wrp.join(""))
-        .children("fieldset.order-item:last").children(".item-content").append(obj);
+    fieldset.children(".item-content").append(form);
+    attach_dragdrop_handlers();
+    init_contentblocks();
+
+
+
+    var item_controls = $("<div>").addClass("item-controls").appendTo(fieldset);
+
+    // Insert control unit
+    var insert_control = $("<div>").addClass("item-control-unit");
+    var select_content = $("#" + REGION_MAP[ACTIVE_REGION] + "_body").find("select[name=order-machine-add-select]").clone().removeAttr("name");
+    var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", gettext('After')).click(function(){
+        var modvar = select_content.val();
+        var modname = select_content.children("option:selected").html();
+
+        var new_fieldset = create_new_fieldset_from_module(modvar, modname);
+        new_fieldset.hide();
+        new_fieldset.insertAfter(fieldset);
+        new_fieldset.fadeIn(800);
+    });
+    var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", gettext('Before')).click(function(){
+        var modvar = select_content.val();
+        var modname = select_content.children("option:selected").html();
+
+        var new_fieldset = create_new_fieldset_from_module(modvar, modname);
+        new_fieldset.hide();
+        new_fieldset.insertBefore(fieldset);
+        new_fieldset.fadeIn(800);
+    });
+    insert_control.append("<span>" + gettext('Insert new:') + "</span>").append(" ").append(select_content).append(" ").append(insert_before).append(insert_after);
+    item_controls.append(insert_control);
+
+    // Move control unit
+    var move_control = $("#move-control-unit-template").clone().removeAttr("id");
+    move_control.find(".button").click(function(){
+        var move_to = $(this).prev().val();
+        move_item(REGION_MAP.indexOf(move_to), fieldset);
+    });
+    item_controls.append(move_control);
+
+    item_controls.find("*").hide();
+
+    var timeout;
+    function hide_controls() {
+        item_controls.find("*").fadeOut(800);
+    }
+    item_controls.mouseleave(function(){
+        timeout = setTimeout(hide_controls, 1000);
+    });
+    item_controls.mouseenter(function(){
+        clearTimeout(timeout);
+        item_controls.find("*").fadeIn(800);
+    });
+
+    return fieldset;
+}
+
+function create_new_fieldset_from_module(modvar, modname) {
+    var total_forms = $('#id_'+modvar+'-TOTAL_FORMS');
+    var last_id = parseInt(total_forms.val()) - 1;
+    var form = $("#"+modvar+"_set_item_"+last_id);
+
+    // update formset bookkeeping value
+    total_forms.val(last_id+2);
+    create_new_spare_form(form, modvar, last_id);
+
+    return create_new_item_from_form(form, modname);
+}
+
+
+function region_append(region_id, item) {
+    $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine").append(item);
+    set_item_field_value(item, "region-choice-field", region_id);
+}
+
+function region_prepend(region_id, item) {
+    $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine").prepend(item);
+    set_item_field_value(item, "region-choice-field", region_id);
 }
 
 function create_new_spare_form(form, modvar, last_id) {
@@ -31,7 +109,7 @@ function create_new_spare_form(form, modvar, last_id) {
 }
 
 function set_item_field_value(item, field, value) {
-    // item: DOM object created by 'region_append' function
+    // item: DOM object for the item's fieldset.
     // field: "order-field" | "delete-field" | "region-choice-field"
     if (field=="delete-field")
         item.find("."+field).attr("checked",value);
@@ -52,11 +130,13 @@ function set_item_field_value(item, field, value) {
         item.find("."+field).val(value);
 }
 
-function move_item (region_id, item) {
+function move_item(region_id, item) {
     poorify_rich(item);
-    $("#"+REGION_MAP[region_id]+"_body").children("div.order-machine").append(item);
-    set_item_field_value(item, "region-choice-field", region_id);
-    richify_poor(item);
+    item.fadeOut(800, function() {
+        region_append(region_id, item);
+        richify_poor(item);
+        item.show();
+    });
 }
 
 function poorify_rich(item){
@@ -163,33 +243,14 @@ $(document).ready(function(){
     });
 
     $("input.order-machine-add-button").click(function(){
-        var select = $(this).prev();
-        var modvar = select.val();
-        var modname = select.children("option:selected").html();
-        var total_forms = $('#id_'+modvar+'-TOTAL_FORMS');
-        var last_id = parseInt(total_forms.val()) - 1;
-        var form = $("#"+modvar+"_set_item_"+last_id);
+        var select_content = $(this).prev();
+        var modvar = select_content.val();
+        var modname = select_content.children("option:selected").html();
 
-        // update formset bookkeeping value
-        total_forms.val(last_id+2);
-        create_new_spare_form(form, modvar, last_id);
-        region_append(ACTIVE_REGION, form, modname, modvar);
-        set_item_field_value(form, "region-choice-field", ACTIVE_REGION);
-
-        attach_dragdrop_handlers();
-        init_contentblocks();
-    });
-
-    $("input.order-machine-move-button").click(function(){
-        var moveTo = $(this).prev().val();
-        var active_item = $("#main div.order-machine fieldset.active-item");
-
-        if (!active_item.length) {
-            jAlert(NO_ITEM_SELECTED_MESSAGE);
-            return false;
-        }
-
-        move_item(REGION_MAP.indexOf(moveTo), active_item);
+        var new_fieldset = create_new_fieldset_from_module(modvar, modname);
+        new_fieldset.hide();
+        region_prepend(ACTIVE_REGION, new_fieldset);
+        new_fieldset.fadeIn(800);
     });
 
     $("h2 img.item-delete").live('click', function(){
@@ -287,11 +348,12 @@ $(document).ready(function(){
             elem.find("input[name$=-DELETE]").addClass("delete-field").parents("div.form-row").hide();
             elem.find("input[name$=-ordering]").addClass("order-field");
 
-            var region_id = elem.find(".region-choice-field").val();
-            region_id = REGION_MAP.indexOf(region_id);
-            var content_type = elem.attr("id").substr(0, elem.attr("id").indexOf("_"));
-            region_append(region_id,elem, CONTENT_NAMES[content_type]);
-            set_item_field_value(elem,"region-choice-field",region_id)
+            var region_id = REGION_MAP.indexOf(elem.find(".region-choice-field").val());
+            if (REGION_MAP[region_id] != undefined) {
+                var content_type = elem.attr("id").substr(0, elem.attr("id").indexOf("_"));
+                var item = create_new_item_from_form(elem, CONTENT_NAMES[content_type]);
+                region_append(region_id, item);
+            }
         }
     });
     // register regions as sortable for drag N drop

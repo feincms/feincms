@@ -27,14 +27,14 @@
 
 #main {
     clear:both;
-    padding: 10px 10px 10px 10px;
+    padding: 0px 10px 10px 10px;
     border: 1px solid #ccc;
     margin: 0 0 10px 0;
 }
 .panel {
      display:none;
      position:relative;
-     padding-bottom:50px;
+     padding-top:60px;
 }
 
 .order-machine {
@@ -42,7 +42,7 @@
 }
 
 .order-item {
-    margin: 0 0 10px 0;
+    margin: 10px 0 0 0;
     position:relative;
 }
 
@@ -86,7 +86,6 @@
     background-image:url('img/nav-bg.gif');
     cursor:pointer;
     border: 1px solid #678;
-    width:30px;
 }
 
 th { vertical-align: middle; }
@@ -124,6 +123,27 @@ textarea {
     margin-left:-17px;
 }
 
+.item-controls {
+    background:  url('img/cog.png') no-repeat 5px center; /*#edf3fe*/
+    padding-left:27px;
+    height: 35px;
+}
+
+.item-control-unit {
+    float:left;
+    padding-left: 5px;
+    padding-right:20px;
+    border-left: 1px solid #eee;
+}
+
+.item-control-unit:first-child {
+    border-left: none;
+}
+
+#move-control-unit-template {
+    display: none;
+}
+
 .machine-control {
     height:50px;
     padding: 5px 10px 5px 10px;
@@ -131,7 +151,7 @@ textarea {
     background-color: #edf3fe;
     position:absolute;
     left:-11px;
-    bottom:-11px;
+    top:0;
     width: 100%;
 }
 
