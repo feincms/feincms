@@ -67,10 +67,6 @@
     float:right;
     margin: 2px 0px 0px 0;
 }
-.active-item {
-    background-color:#f8f8f8;
-    border-color: #888888;
-}
 
 .highlight {
     height: 25px;

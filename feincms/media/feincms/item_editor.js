@@ -325,13 +325,6 @@ $(document).ready(function(){
     $('input[type=radio][name=template_key]').click(on_template_key_changed);
     $('select[name=template_key]').change(on_template_key_changed);
 
-    $("fieldset.order-item").live('click', function(){
-        if(!$(this).hasClass('active-item')) {
-            $("fieldset.active-item").removeClass("active-item");
-            $(this).addClass("active-item");
-        }
-    });
-
     $('form').submit(function(){
         give_ordering_to_content_types();
         var form = $(this);
