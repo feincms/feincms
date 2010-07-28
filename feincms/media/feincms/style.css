@@ -120,15 +120,14 @@ textarea {
 }
 
 .item-controls {
-    background:  url('img/cog.png') no-repeat 5px center; /*#edf3fe*/
+    background:  url('img/cog.png') no-repeat 12px center; /*#edf3fe*/
     padding-left:27px;
     height: 35px;
 }
 
 .item-control-unit {
     float:left;
-    padding-left: 5px;
-    padding-right:20px;
+    padding: 3px 10px 0 7px;
     border-left: 1px solid #eee;
 }
 
