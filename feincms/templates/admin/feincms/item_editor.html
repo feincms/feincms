@@ -66,7 +66,7 @@
     {% if object.get_preview_url %}
         <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
     {% endif %}
-    {% if has_add_permission and has_parent_attribute %}
+    {% if not add and has_add_permission and has_parent_attribute %}
         <li><a href="../add/?parent={{ object.pk }}" class="addchild">{% trans "Add child page" %}</a></li>
     {% endif %}
 </ul>
@@ -87,12 +87,6 @@
 <input type="submit" value="{% trans "Save and continue editing" %}" class="save-continue-button" name="_continue" />
 </div>
 
-{% if errors %}
-    <p class="errornote">
-    {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
-    </p>
-    <ul class="errorlist">{% for error in object_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
-{% endif %}
 
             {% with object.available_translations as translations %}
             {% if translations %}
@@ -108,8 +102,7 @@
 
 {% if errors %}
     <p class="errornote">
-    {% blocktrans count errors|length as counter %}Please correct the error belo
-w.{% plural %}Please correct the errors below.{% endblocktrans %}
+    {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
     </p>
     {{ adminform.form.non_field_errors }}
 {% endif %}

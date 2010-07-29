@@ -84,6 +84,5 @@ def register(cls, admin_cls):
         pos = len(admin_cls.list_display)
 
     admin_cls.list_display.insert(pos + 1, 'datepublisher_admin')
-    admin_cls.fieldsets[0][1]['fields'].extend(['publication_date', 'publication_end_date'])
 
 # ------------------------------------------------------------------------

@@ -592,8 +592,8 @@ class PageAdminForm(forms.ModelForm):
         # at least for now.
         active_pages = Page.objects.filter(active=True)
 
-        if 'id' in self.initial:
-            current_id = self.initial['id']
+        if self.instance:
+            current_id = self.instance.id
             active_pages = active_pages.exclude(id=current_id)
 
         if not cleaned_data['active']:
@@ -656,9 +656,10 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
-            'fields': ['override_url',],
+            'fields': [],
         }),
         ]
+    readonly_fields = []
     list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
     list_filter = ['active', 'in_navigation', 'template_key', 'parent']
     search_fields = ['title', 'slug']
@@ -671,7 +672,22 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         if len(Page._feincms_templates) > 4:
             del(self.radio_fields['template_key'])
 
-        return super(PageAdmin, self).__init__(*args, **kwargs)
+        super(PageAdmin, self).__init__(*args, **kwargs)
+
+        # The use of fieldsets makes only fields explicitly listed in there
+        # actually appear in the admin form. However, extensions should not be
+        # aware that there is a fieldsets structure and even less modify it;
+        # we therefore enumerate all of the model's field and forcibly add them
+        # to the last section in the admin. That way, nobody is left behind.
+        from django.contrib.admin.util import flatten_fieldsets
+        present_fields = flatten_fieldsets(self.fieldsets)
+
+        for f in self.model._meta.fields:
+            if not f.name.startswith('_') and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level') and \
+               not f.auto_created and not f.name in present_fields:
+                self.fieldsets[-1][1]['fields'].append(f.name)
+                if not f.editable:
+                    self.readonly_fields.append(f.name)
 
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
