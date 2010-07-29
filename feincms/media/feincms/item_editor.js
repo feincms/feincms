@@ -21,7 +21,6 @@ function create_new_item_from_form(form, modname){
 
     fieldset.children(".item-content").append(form);
     attach_dragdrop_handlers();
-    init_contentblocks();
 
 
 
@@ -92,11 +91,13 @@ function create_new_fieldset_from_module(modvar, modname) {
 function region_append(region_id, item) {
     $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine").append(item);
     set_item_field_value(item, "region-choice-field", region_id);
+    init_contentblocks();
 }
 
 function region_prepend(region_id, item) {
     $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine").prepend(item);
     set_item_field_value(item, "region-choice-field", region_id);
+    init_contentblocks();
 }
 
 function create_new_spare_form(form, modvar, last_id) {
