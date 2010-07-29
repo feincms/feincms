@@ -27,14 +27,14 @@
 
 #main {
     clear:both;
-    padding: 0px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
     border: 1px solid #ccc;
     margin: 0 0 10px 0;
 }
 .panel {
      display:none;
      position:relative;
-     padding-top:60px;
+     padding-bottom:50px;
 }
 
 .order-machine {
@@ -42,7 +42,7 @@
 }
 
 .order-item {
-    margin: 10px 0 0 0;
+    margin: 0 0 10px 0;
     position:relative;
 }
 
@@ -120,7 +120,7 @@ textarea {
 }
 
 .item-controls {
-    background:  url('img/cog.png') no-repeat 12px center; /*#edf3fe*/
+    background:  url('img/wrench.png') no-repeat 12px center;
     padding-left:27px;
     height: 35px;
 }
@@ -146,7 +146,7 @@ textarea {
     background-color: #edf3fe;
     position:absolute;
     left:-11px;
-    top:0;
+    bottom:-11px;
     width: 100%;
 }
 

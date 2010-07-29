@@ -94,11 +94,6 @@ function region_append(region_id, item) {
     set_item_field_value(item, "region-choice-field", region_id);
 }
 
-function region_prepend(region_id, item) {
-    $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine").prepend(item);
-    set_item_field_value(item, "region-choice-field", region_id);
-}
-
 function create_new_spare_form(form, modvar, last_id) {
     // create new spare form
     var new_form = form.html().replace(
@@ -249,7 +244,7 @@ $(document).ready(function(){
 
         var new_fieldset = create_new_fieldset_from_module(modvar, modname);
         new_fieldset.hide();
-        region_prepend(ACTIVE_REGION, new_fieldset);
+        region_append(ACTIVE_REGION, new_fieldset);
         new_fieldset.fadeIn(800);
     });
 
