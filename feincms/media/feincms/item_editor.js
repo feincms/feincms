@@ -257,7 +257,7 @@ $(document).ready(function(){
         var modvar = select_content.val();
         var modname = select_content.children("option:selected").html();
         var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-        add_fieldset(ACTIVE_REGION, new_fieldset, 'prepend');
+        add_fieldset(ACTIVE_REGION, new_fieldset, 'append');
     });
 
     $("h2 img.item-delete").live('click', function(){
