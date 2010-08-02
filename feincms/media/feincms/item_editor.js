@@ -22,8 +22,6 @@ function create_new_item_from_form(form, modname){
     fieldset.children(".item-content").append(form);
     attach_dragdrop_handlers();
 
-
-
     var item_controls = $("<div>").addClass("item-controls").appendTo(fieldset);
 
     // Insert control unit
@@ -33,13 +31,13 @@ function create_new_item_from_form(form, modname){
         var modvar = select_content.val();
         var modname = select_content.children("option:selected").html();
         var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-        add_fieldset(ACTIVE_REGION, new_fieldset, 'insertAfter', fieldset);
+        add_fieldset(ACTIVE_REGION, new_fieldset, {where:'insertAfter', relative_to:fieldset, animate:true});
     });
     var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", gettext('Before')).click(function(){
         var modvar = select_content.val();
         var modname = select_content.children("option:selected").html();
         var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-        add_fieldset(ACTIVE_REGION, new_fieldset, 'insertBefore', fieldset);
+        add_fieldset(ACTIVE_REGION, new_fieldset, {where:'insertBefore', relative_to:fieldset, animate:true});
     });
     insert_control.append("<span>" + gettext('Insert new:') + "</span>").append(" ").append(select_content).append(" ").append(insert_before).append(insert_after);
     item_controls.append(insert_control);
@@ -81,19 +79,28 @@ function create_new_fieldset_from_module(modvar, modname) {
     return create_new_item_from_form(form, modname);
 }
 
-function add_fieldset(region_id, item, where, relative_to){
-    /* `where` should be one of:
+function add_fieldset(region_id, item, how){
+    /* `how` should be an object.
+       `how.where` should be one of:
      - 'append' -- last region
      - 'prepend' -- first region
      - 'insertBefore' -- insert before relative_to
      - 'insertAfter' -- insert after relative_to */
+
+    // Default parameters
+    if (how) $.extend({
+        where: 'append',
+        relative_to: undefined,
+        animate: false
+    }, how);
+
     item.hide();
-    if(where == 'append' || where == 'prepend'){
-        $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine")[where](item);
+    if(how.where == 'append' || how.where == 'prepend'){
+        $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine")[how.where](item);
     }
-    else if(where == 'insertBefore' || where == 'insertAfter'){
-        if(relative_to){
-            item[where](relative_to);
+    else if(how.where == 'insertBefore' || how.where == 'insertAfter'){
+        if(how.relative_to){
+            item[how.where](how.relative_to);
         }
         else{
             window.alert('DEBUG: invalid add_fieldset usage');
@@ -106,7 +113,13 @@ function add_fieldset(region_id, item, where, relative_to){
     }
     set_item_field_value(item, "region-choice-field", region_id);
     init_contentblocks();
-    item.fadeIn(800);
+
+    if (how.animate) {
+        item.fadeIn(800);
+    }
+    else {
+        item.show();
+    }
 }
 
 function create_new_spare_form(form, modvar, last_id) {
@@ -143,7 +156,7 @@ function set_item_field_value(item, field, value) {
 function move_item(region_id, item) {
     poorify_rich(item);
     item.fadeOut(800, function() {
-        add_fieldset(region_id, item, 'append');
+        add_fieldset(region_id, item, {where:'append'});
         richify_poor(item);
         item.show();
     });
@@ -257,7 +270,7 @@ $(document).ready(function(){
         var modvar = select_content.val();
         var modname = select_content.children("option:selected").html();
         var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-        add_fieldset(ACTIVE_REGION, new_fieldset, 'append');
+        add_fieldset(ACTIVE_REGION, new_fieldset, {where:'append', animate:true});
     });
 
     $("h2 img.item-delete").live('click', function(){
@@ -352,7 +365,7 @@ $(document).ready(function(){
             if (REGION_MAP[region_id] != undefined) {
                 var content_type = elem.attr("id").substr(0, elem.attr("id").indexOf("_"));
                 var item = create_new_item_from_form(elem, CONTENT_NAMES[content_type]);
-                add_fieldset(region_id, item, 'append');
+                add_fieldset(region_id, item, {where:'append'});
             }
         }
     });
