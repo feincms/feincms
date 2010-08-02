@@ -21,7 +21,6 @@ function create_new_item_from_form(form, modname){
 
     fieldset.children(".item-content").append(form);
     attach_dragdrop_handlers();
-    init_contentblocks();
 
 
 
@@ -33,20 +32,14 @@ function create_new_item_from_form(form, modname){
     var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", gettext('After')).click(function(){
         var modvar = select_content.val();
         var modname = select_content.children("option:selected").html();
-
         var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-        new_fieldset.hide();
-        new_fieldset.insertAfter(fieldset);
-        new_fieldset.fadeIn(800);
+        add_fieldset(ACTIVE_REGION, new_fieldset, 'insertAfter', fieldset);
     });
     var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", gettext('Before')).click(function(){
         var modvar = select_content.val();
         var modname = select_content.children("option:selected").html();
-
         var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-        new_fieldset.hide();
-        new_fieldset.insertBefore(fieldset);
-        new_fieldset.fadeIn(800);
+        add_fieldset(ACTIVE_REGION, new_fieldset, 'insertBefore', fieldset);
     });
     insert_control.append("<span>" + gettext('Insert new:') + "</span>").append(" ").append(select_content).append(" ").append(insert_before).append(insert_after);
     item_controls.append(insert_control);
@@ -88,15 +81,32 @@ function create_new_fieldset_from_module(modvar, modname) {
     return create_new_item_from_form(form, modname);
 }
 
-
-function region_append(region_id, item) {
-    $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine").append(item);
+function add_fieldset(region_id, item, where, relative_to){
+    /* `where` should be one of:
+     - 'append' -- last region
+     - 'prepend' -- first region
+     - 'insertBefore' -- insert before relative_to
+     - 'insertAfter' -- insert after relative_to */
+    item.hide();
+    if(where == 'append' || where == 'prepend'){
+        $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine")[where](item);
+    }
+    else if(where == 'insertBefore' || where == 'insertAfter'){
+        if(relative_to){
+            item[where](relative_to);
+        }
+        else{
+            window.alert('DEBUG: invalid add_fieldset usage');
+            return;
+        }
+    }
+    else{
+        window.alert('DEBUG: invalid add_fieldset usage');
+        return;
+    }
     set_item_field_value(item, "region-choice-field", region_id);
-}
-
-function region_prepend(region_id, item) {
-    $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine").prepend(item);
-    set_item_field_value(item, "region-choice-field", region_id);
+    init_contentblocks();
+    item.fadeIn(800);
 }
 
 function create_new_spare_form(form, modvar, last_id) {
@@ -133,7 +143,7 @@ function set_item_field_value(item, field, value) {
 function move_item(region_id, item) {
     poorify_rich(item);
     item.fadeOut(800, function() {
-        region_append(region_id, item);
+        add_fieldset(region_id, item, 'append');
         richify_poor(item);
         item.show();
     });
@@ -246,11 +256,8 @@ $(document).ready(function(){
         var select_content = $(this).prev();
         var modvar = select_content.val();
         var modname = select_content.children("option:selected").html();
-
         var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-        new_fieldset.hide();
-        region_prepend(ACTIVE_REGION, new_fieldset);
-        new_fieldset.fadeIn(800);
+        add_fieldset(ACTIVE_REGION, new_fieldset, 'append');
     });
 
     $("h2 img.item-delete").live('click', function(){
@@ -345,7 +352,7 @@ $(document).ready(function(){
             if (REGION_MAP[region_id] != undefined) {
                 var content_type = elem.attr("id").substr(0, elem.attr("id").indexOf("_"));
                 var item = create_new_item_from_form(elem, CONTENT_NAMES[content_type]);
-                region_append(region_id, item);
+                add_fieldset(region_id, item, 'append');
             }
         }
     });
