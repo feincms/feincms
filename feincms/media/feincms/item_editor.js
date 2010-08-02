@@ -52,16 +52,21 @@ function create_new_item_from_form(form, modname){
 
     item_controls.find("*").hide();
 
-    var timeout;
+    var mouseenter_timeout;
+    var mouseleave_timeout;
     function hide_controls() {
         item_controls.find("*").fadeOut(800);
     }
+    function show_controls() {
+        item_controls.find("*").fadeIn(800);
+    }
     item_controls.mouseleave(function(){
-        timeout = setTimeout(hide_controls, 1000);
+        mouseleave_timeout = setTimeout(hide_controls, 1000);
+        clearTimeout(mouseenter_timeout);
     });
     item_controls.mouseenter(function(){
-        clearTimeout(timeout);
-        item_controls.find("*").fadeIn(800);
+        mouseenter_timeout = setTimeout(show_controls, 200); // To prevent the control bar to appear when mouse accidentally enters the zone.
+        clearTimeout(mouseleave_timeout);
     });
 
     return fieldset;
