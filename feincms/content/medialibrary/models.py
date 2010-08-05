@@ -66,7 +66,9 @@ class MediaFileContent(models.Model):
             raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
 
         if POSITION_CHOICES is None:
-            raise ImproperlyConfigured, 'You need to set POSITION_CHOICES when creating a %s' % cls.__name__
+            POSITION_CHOICES = (
+                ('default', _('Default')),
+            )
 
         cls.add_to_class('mediafile', models.ForeignKey(MEDIAFILE_CLASS, verbose_name=_('media file'),
             related_name='%s_%s_set' % (cls._meta.app_label, cls._meta.module_name)
