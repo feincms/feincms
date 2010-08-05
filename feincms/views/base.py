@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -9,7 +11,13 @@ from feincms.module.page.models import Page
 
 def _build_page_response(page, request):
     extra_context = request._feincms_extra_context
-    return render_to_response(page.template.path, {
+    
+    if request.is_ajax():
+        template = os.path.join('ajax', page.template.path)
+    else:
+        template = page.template.path
+    
+    return render_to_response(template, {
         'feincms_page' : page,
         'feincms_site' : RequestSite(request),
         }, context_instance=RequestContext(request, extra_context))
