@@ -221,8 +221,13 @@ class ItemEditor(admin.ModelAdmin):
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
+        new_object = self.model()
         if hasattr(self.model, '_feincms_templates'):
             context['available_templates'] = self.model._feincms_templates
+            if request.method == 'POST':
+                # If there are errors in the form, we need to preserve the object's template as it was set when the user
+                # attempted to save it, so that the same regions appear on screen.
+                new_object.template_key = request.POST['template_key']
 
         if hasattr(self.model, 'parent'):
             context['has_parent_attribute'] = True
@@ -235,7 +240,7 @@ class ItemEditor(admin.ModelAdmin):
             'change': False,
             'title': _('Add %s') % force_unicode(opts.verbose_name),
             'opts': opts,
-            'object': self.model(),
+            'object': new_object,
             'object_form': model_form,
             'adminform': adminForm,
             'inline_formsets': inline_formsets,
@@ -482,7 +487,7 @@ class ItemEditor(admin.ModelAdmin):
 
         fieldsets = copy.deepcopy(
             super(ItemEditor, self).get_fieldsets(request, obj))
-        
+
         if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
             fieldsets.append(FEINCMS_CONTENT_FIELDSET)
 
