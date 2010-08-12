@@ -221,6 +221,10 @@ class ItemEditor(admin.ModelAdmin):
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
+        # add media for feincms "inlines" also:
+        for formset in inline_formsets:
+            media = media + formset.media
+            
         new_object = self.model()
         if hasattr(self.model, '_feincms_templates'):
             context['available_templates'] = self.model._feincms_templates
@@ -432,6 +436,9 @@ class ItemEditor(admin.ModelAdmin):
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
+        # add media for feincms "inlines" also:
+        for formset in inline_formsets:
+            media = media + formset.media
 
         if hasattr(self.model, '_feincms_templates'):
             context['available_templates'] = self.model._feincms_templates
