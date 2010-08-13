@@ -76,16 +76,8 @@
 {% csrf_token %}
 {% block form_top %}{% endblock %}
 <div>
-
-<div class="submit-row" >
-<input type="submit" value="{% trans "Save" %}" class="default save-button" name="_save" />
-{% if not add %}
-<p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
-{% endif  %}
-
-<input type="submit" value="{% trans "Save and add another" %}" class="save-add-button" name="_addanother"  />
-<input type="submit" value="{% trans "Save and continue editing" %}" class="save-continue-button" name="_continue" />
-</div>
+{% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+{% if save_on_top %}{% submit_row %}{% endif %}
 
 
             {% with object.available_translations as translations %}
@@ -124,15 +116,7 @@
 {% block after_related_objects %}{% endblock %}
 
 
-<div class="submit-row" >
-<input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
-{% if not add %}
-<p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
-{% endif %}
-
-<input type="submit" value="{% trans "Save and add another" %}" name="_addanother"  />
-<input type="submit" value="{% trans "Save and continue editing" %}" name="_continue" />
-</div>
+{% submit_row %}
 
 <div id="inlines">
 {% for formset in inline_formsets %}
