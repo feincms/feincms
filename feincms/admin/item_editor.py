@@ -247,6 +247,9 @@ class ItemEditor(admin.ModelAdmin):
         if hasattr(self.model, 'parent'):
             context['has_parent_attribute'] = True
 
+        # Collect all the errors for: the main form, the content types, and the other inlines.
+        errors = helpers.AdminErrorList(model_form, inline_formsets + [admin_formset.formset for admin_formset in inline_admin_formsets])
+            
         context.update({
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request),
@@ -266,7 +269,7 @@ class ItemEditor(admin.ModelAdmin):
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
             'media': media,
-            'errors': helpers.AdminErrorList(model_form, inline_formsets),
+            'errors': errors,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
@@ -451,6 +454,9 @@ class ItemEditor(admin.ModelAdmin):
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
+            
+            
+            
         # add media for feincms "inlines" also:
         for formset in inline_formsets:
             media = media + formset.media
@@ -461,6 +467,9 @@ class ItemEditor(admin.ModelAdmin):
         if hasattr(self.model, 'parent'):
             context['has_parent_attribute'] = True
 
+        # Collect all the errors for: the main form, the content types, and the other inlines.
+        errors = helpers.AdminErrorList(model_form, inline_formsets + [admin_formset.formset for admin_formset in inline_admin_formsets])
+            
         context.update({
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request, obj=obj),
@@ -479,7 +488,7 @@ class ItemEditor(admin.ModelAdmin):
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
             'media': media,
-            'errors': helpers.AdminErrorList(model_form, inline_formsets),
+            'errors': errors,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
