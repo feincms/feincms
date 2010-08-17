@@ -150,7 +150,7 @@
                     {% if field.is_hidden %}
                         {{ field }}
                     {% else %}
-                        <div class="form-row{% if field.errors %} errors{% endif %}">
+                        <div class="form-row{% if field.errors %} errors{% endif %} {{ field.name }}">
                             {{ field.errors }}
                             <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
                             {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
