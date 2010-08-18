@@ -338,13 +338,14 @@ class TreeEditor(admin.ModelAdmin):
 
     def _actions_column(self, page):
         actions = []
-        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s"><big>&#x2702;</big></a>' % (
-            page.pk, _('Cut')))
+        media_url = settings.FEINCMS_ADMIN_MEDIA + 'img'
+        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s"><img src="%s/edit-cut.png" alt="%s" /></a>' % (
+            page.pk, _('Cut'), media_url, _('Cut')))
 
-        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'last-child\')" title="%s">&#x21b3;</a>' % (
-            page.pk, _('Insert as child')))
-        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'left\')" title="%s">&#x21b1;</a>' % (
-            page.pk, _('Insert before')))
+        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'last-child\')" title="%s"><img src="%s/insert-child.png" alt="%s" /></a>' % (
+            page.pk, _('Insert as child'), media_url, _('Insert as child')))
+        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'left\')" title="%s"><img src="%s/insert-before.png" alt="%s" /></a>' % (
+            page.pk, _('Insert before'), media_url, _('Insert before')))
         return actions
 
     def actions_column(self, page):
