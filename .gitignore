@@ -6,3 +6,4 @@
 .DS_Store
 ._*
 /FeinCMS.egg-info
+_build
