@@ -341,15 +341,23 @@ if(!Array.indexOf) {
                     $('form').append('<input type="hidden" name="_continue" value="1" />').submit();
                 } else {
                     $("div#popup_bg").remove();
+                    $(input_element).val($(input_element).data('original_value')); // Restore original value
                 }
             });
 
             return false;
         }
 
-        $('input[type=radio][name=template_key]').click(on_template_key_changed);
-        $('select[name=template_key]').change(on_template_key_changed);
-
+        // The template key's widget could either be a radio button or a drop-down select.
+        var template_key_radio = $('input[type=radio][name=template_key]');
+        template_key_radio.click(on_template_key_changed);
+        var template_key_select = $('select[name=template_key]');
+        template_key_select.change(on_template_key_changed);
+    
+        // Save template key's original value for easy restore if the user cancels the change.
+        template_key_radio.data('original_value', template_key_radio.val());
+        template_key_select.data('original_value', template_key_select.val());
+    
         $('form').submit(function(){
             give_ordering_to_content_types();
             var form = $(this);
