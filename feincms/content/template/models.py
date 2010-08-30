@@ -29,6 +29,8 @@ def get_templates():
             for template in templates:
                 if template in seen:
                     continue
+                if template[:4] == '.tmp':
+                    continue
                 seen.add(template)
                 yield (template, template)
 
