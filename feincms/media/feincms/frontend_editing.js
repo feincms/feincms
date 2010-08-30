@@ -1,4 +1,4 @@
-jQuery(function($){
+feincms.jQuery(function($){
     var admin_base = '/admin/page/page/';
 
     fe_init_animations();
@@ -23,23 +23,25 @@ jQuery(function($){
     callers such as feincms/templates/admin/feincms/fe_editor_done.html
 */
 
-function fe_init_animations() {
-    var fe_tools = $('#fe_tools');
-    $('.fe_box').hover(
-        function(){
-            $(this).css('background', '#e8e8ff').animate({'opacity': 1}, 100).append(fe_tools);
-            fe_tools.show();
-        },
-        function(){
-            $(this).animate({'opacity': 0.6}, 100).css('background', 'none');
-            fe_tools.hide();
-        }
-    );
-}
+(function($){
+    function fe_init_animations() {
+        var fe_tools = $('#fe_tools');
+        $('.fe_box').hover(
+            function(){
+                $(this).css('background', '#e8e8ff').animate({'opacity': 1}, 100).append(fe_tools);
+                fe_tools.show();
+            },
+            function(){
+                $(this).animate({'opacity': 0.6}, 100).css('background', 'none');
+                fe_tools.hide();
+            }
+        );
+    }
 
-function fe_update_content(identifier, content) {
-    var region = $('#' + identifier);
-    region.animate({'opacity': 0}).html(content);
-    region.animate({'opacity': 1.5}).animate({'opacity': 0.6});
-    fe_init_animations();
-}
+    function fe_update_content(identifier, content) {
+        var region = $('#' + identifier);
+        region.animate({'opacity': 0}).html(content);
+        region.animate({'opacity': 1.5}).animate({'opacity': 0.6});
+        fe_init_animations();
+    }
+})(feincms.jQuery);

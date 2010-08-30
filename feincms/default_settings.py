@@ -42,6 +42,9 @@ CKEDITOR_CONFIG_URL = getattr(settings, 'CKEDITOR_CONFIG_URL', 'admin/content/ri
 FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
 # Link to google APIs instead of using local copy of JS libraries
 FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKING', False)
+# avoid jQuery conflicts -- scripts should use feincms.jQuery instead of $
+FEINCMS_JQUERY_NO_CONFLICT = \
+    getattr(settings, 'FEINCMS_JQUERY_NO_CONFLICT', False)
 
 # ------------------------------------------------------------------------
 # Settings for the page module

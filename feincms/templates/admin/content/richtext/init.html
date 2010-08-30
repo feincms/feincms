@@ -23,11 +23,13 @@
         relative_urls: false
     });
 
-    contentblock_init_handlers.push(function(){
-        $('.order-machine textarea[class=item-richtext-tinymce], #frontend_editor textarea[class=item-richtext-tinymce]').each(function(){
-            feincms_richtext_add_tinymce($(this));
+    (function($){
+        contentblock_init_handlers.push(function(){
+            $('.order-machine textarea[class=item-richtext-tinymce], #frontend_editor textarea[class=item-richtext-tinymce]').each(function(){
+                feincms_richtext_add_tinymce($(this));
+            });
         });
-    });
+    })(feincms.jQuery);
 
     function feincms_richtext_remove_tinymce(field) {
         tinyMCE.execCommand('mceRemoveControl', false, field.attr("id"));

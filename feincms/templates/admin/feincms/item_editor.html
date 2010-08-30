@@ -19,6 +19,15 @@
 
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
+<script type="text/javascript">
+    var feincms = { 
+        {% if FEINCMS_JQUERY_NO_CONFLICT %}
+        "jQuery": jQuery.noConflict(true) 
+        {% else %}
+        "jQuery": jQuery
+        {% endif %}
+    }; 
+</script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}item_editor.js"></script>
 
 {% include "admin/feincms/_messages_js.html" %}
@@ -28,20 +37,19 @@
 {% for inc in object.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    feincms.jQuery(document).ready(function($){
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
-
-  /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
-  $(document.documentElement).keydown(function(event) {
-      if(event.which == 83 && event.metaKey) {
-          sel = event.shiftKey ? 'form:first .save-button' :
-                                 'form:first .save-continue-button';
-          $(sel).click();
-          return false;
-          }
-      });
-
-  });
+        
+        /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
+        $(document.documentElement).keydown(function(event) {
+            if(event.which == 83 && event.metaKey) {
+                sel = event.shiftKey ? 'form:first .save-button' :
+                    'form:first .save-continue-button';
+                $(sel).click();
+                return false;
+            }
+        }); 
+    });
 </script>
 {% endblock %}
 
@@ -76,16 +84,8 @@
 {% csrf_token %}
 {% block form_top %}{% endblock %}
 <div>
-
-<div class="submit-row" >
-<input type="submit" value="{% trans "Save" %}" class="default save-button" name="_save" />
-{% if not add %}
-<p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
-{% endif  %}
-
-<input type="submit" value="{% trans "Save and add another" %}" class="save-add-button" name="_addanother"  />
-<input type="submit" value="{% trans "Save and continue editing" %}" class="save-continue-button" name="_continue" />
-</div>
+{% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+{% if save_on_top %}{% submit_row %}{% endif %}
 
 
             {% with object.available_translations as translations %}
@@ -124,15 +124,7 @@
 {% block after_related_objects %}{% endblock %}
 
 
-<div class="submit-row" >
-<input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
-{% if not add %}
-<p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
-{% endif %}
-
-<input type="submit" value="{% trans "Save and add another" %}" name="_addanother"  />
-<input type="submit" value="{% trans "Save and continue editing" %}" name="_continue" />
-</div>
+{% submit_row %}
 
 <div id="inlines">
 {% for formset in inline_formsets %}
@@ -146,7 +138,7 @@
                     {% if field.is_hidden %}
                         {{ field }}
                     {% else %}
-                        <div class="form-row{% if field.errors %} errors{% endif %}">
+                        <div class="form-row{% if field.errors %} errors{% endif %} {{ field.name }}">
                             {{ field.errors }}
                             <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
                             {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}

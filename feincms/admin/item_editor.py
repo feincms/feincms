@@ -10,7 +10,8 @@ from django.db import transaction
 from django.db.models import loading
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.utils.html import escape
 from django.shortcuts import render_to_response
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_unicode
@@ -95,7 +96,10 @@ class ItemEditor(admin.ModelAdmin):
                     'content': obj.render(request=request),
                     'identifier': obj.fe_identifier(),
                     'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': \
+                        settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+                    'FEINCMS_JQUERY_NO_CONFLICT': \
+                        settings.FEINCMS_JQUERY_NO_CONFLICT,
                     })
         else:
             form = ModelForm(instance=obj, prefix=content_type)
@@ -108,7 +112,9 @@ class ItemEditor(admin.ModelAdmin):
             'is_popup': True,
             'media': self.media,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': \
+                settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             }, context_instance=template.RequestContext(request,
                 processors=self.model.feincms_item_editor_context_processors))
 
@@ -174,8 +180,18 @@ class ItemEditor(admin.ModelAdmin):
 
                 msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(new_object)}
                 if request.POST.has_key("_continue"):
+                    post_url_continue = '../%s/'
                     self.message_user(request, msg + ' ' + _("You may edit it again below."))
-                    return HttpResponseRedirect('../%s/' % new_object.pk)
+                    if request.POST.has_key("_popup"):
+                        post_url_continue += "?_popup=1"
+                    return HttpResponseRedirect(post_url_continue % new_object.pk)
+
+
+                if request.POST.has_key("_popup"):
+                    return HttpResponse(
+                        '<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
+                        # escape() calls force_unicode.
+                        (escape(new_object.pk), escape(new_object)))
                 elif request.POST.has_key('_addanother'):
                     self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_unicode(opts.verbose_name)))
                     return HttpResponseRedirect("../add/")
@@ -221,12 +237,24 @@ class ItemEditor(admin.ModelAdmin):
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
+        # add media for feincms "inlines" also:
+        for formset in inline_formsets:
+            media = media + formset.media
+            
+        new_object = self.model()
         if hasattr(self.model, '_feincms_templates'):
             context['available_templates'] = self.model._feincms_templates
+            if request.method == 'POST':
+                # If there are errors in the form, we need to preserve the object's template as it was set when the user
+                # attempted to save it, so that the same regions appear on screen.
+                new_object.template_key = request.POST['template_key']
 
         if hasattr(self.model, 'parent'):
             context['has_parent_attribute'] = True
 
+        # Collect all the errors for: the main form, the content types, and the other inlines.
+        errors = helpers.AdminErrorList(model_form, inline_formsets + [admin_formset.formset for admin_formset in inline_admin_formsets])
+            
         context.update({
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request),
@@ -234,17 +262,22 @@ class ItemEditor(admin.ModelAdmin):
             'add': True,
             'change': False,
             'title': _('Add %s') % force_unicode(opts.verbose_name),
+            'is_popup': request.REQUEST.has_key('_popup'),
+            'show_delete': False,
+            'save_as': self.save_as,
+            'save_on_top': self.save_on_top,
             'opts': opts,
-            'object': self.model(),
+            'object': new_object,
             'object_form': model_form,
             'adminform': adminForm,
             'inline_formsets': inline_formsets,
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
             'media': media,
-            'errors': helpers.AdminErrorList(model_form, inline_formsets),
+            'errors': errors,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
@@ -427,6 +460,12 @@ class ItemEditor(admin.ModelAdmin):
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
+            
+            
+            
+        # add media for feincms "inlines" also:
+        for formset in inline_formsets:
+            media = media + formset.media
 
         if hasattr(self.model, '_feincms_templates'):
             context['available_templates'] = self.model._feincms_templates
@@ -434,6 +473,9 @@ class ItemEditor(admin.ModelAdmin):
         if hasattr(self.model, 'parent'):
             context['has_parent_attribute'] = True
 
+        # Collect all the errors for: the main form, the content types, and the other inlines.
+        errors = helpers.AdminErrorList(model_form, inline_formsets + [admin_formset.formset for admin_formset in inline_admin_formsets])
+            
         context.update({
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request, obj=obj),
@@ -441,6 +483,9 @@ class ItemEditor(admin.ModelAdmin):
             'add': False,
             'change': obj.pk is not None,
             'title': _('Change %s') % force_unicode(opts.verbose_name),
+            'is_popup': request.REQUEST.has_key('_popup'),
+            'save_as': self.save_as,
+            'save_on_top': self.save_on_top,
             'opts': opts,
             'object': obj,
             'object_form': model_form,
@@ -449,9 +494,10 @@ class ItemEditor(admin.ModelAdmin):
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
             'media': media,
-            'errors': helpers.AdminErrorList(model_form, inline_formsets),
+            'errors': errors,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
@@ -482,7 +528,7 @@ class ItemEditor(admin.ModelAdmin):
 
         fieldsets = copy.deepcopy(
             super(ItemEditor, self).get_fieldsets(request, obj))
-        
+
         if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
             fieldsets.append(FEINCMS_CONTENT_FIELDSET)
 
