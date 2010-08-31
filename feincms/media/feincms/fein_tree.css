@@ -1,0 +1,30 @@
+.drag_order img {
+	cursor: move;
+}
+
+table tr.dragging {
+	opacity: .3;
+}
+
+table tr.dragging td {
+	color: #333;
+}
+
+table tr.folded {
+	background: red;
+}
+
+div#drag_line {
+	position: relative;
+	height: 3px;
+	font-size: 0px;
+	background-color: #800080;
+}
+
+div#drag_line div {
+	position: absolute;
+	height: 9px;
+	width: 9px;
+	background-image: url(images/drag_order_circle.png);
+	margin: -3px 0 0 -9px;
+}

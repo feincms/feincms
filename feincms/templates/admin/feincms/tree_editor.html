@@ -1,150 +1,44 @@
 {% extends "admin/change_list.html" %}
 {% load adminmedia admin_list i18n %}
 
-{% block extrahead %}{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
+{% block extrahead %}
+	{{ block.super }}
+	<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
+	<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}fein_tree.css" />
 
-{% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-{% else %}
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.2.min.js"></script>
-{% endif %}
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}ie_compat.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.cookie.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}toolbox.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}page_toolbox.js"></script>
-
-<script type="text/javascript">
-    /* hide table until set up */
-    document.write('<style type="text/css">table#result_list { display: none; }</style>');
-
-    /* This represents the current state of the page tree. Would need to be
-       refreshed if pages are moved or deleted, but for now that is not possible */
-    var tree_structure = {{ tree_structure|default:"{}" }};
-
-    /* After loading the page, show all root nodes */
-    $(function()
-        {
-        {% if is_popup %}
-        // resize window a bit, the default size is too small for the tree column
-        window.resizeTo(Math.min(window.outerWidth+300, screen.availWidth), window.outerHeight);
-        {% endif %}
-
-        $('a.paste_target').hide();
-
-        expand_sym = '<img alt="+" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-right.png">';
-        collapse_sym = '<img alt="-" src="{{ FEINCMS_ADMIN_MEDIA }}img/disclosure-down.png">';
-
-        /* If a parent filter is present, remove all leaf elements */
-        /* Must come before tree cleansing! */
-        $(".admin-filter-parent option").each(function(idx, opt) {
-            var valstr = $(opt).attr('value').match(/parent__id__exact=(\d+)/);
-            if(!valstr)
-                return;
-
-            p = page(parseInt(valstr[1]));
-            if(!p.children || p.children.length == 0)
-               $(opt).replaceWith('');
-        });
-
-        tree_structure_clean(); /* reduce structure to actually present items */
-
-        root_items = [];
-        for(k in tree_structure)
-            {
-            p = page(k);
-            if(p.ptr)
-                {
-                if(p.row)
-                    p.row.hide(); /* default hide */
-                /* Note all root (ie. has no parent) nodes */
-                if(!p.parent)
-                    root_items.push(p);
-                }
-            }
-
-        for(i in root_items)
-            {
-            p = root_items[i];
-            if(p.row)
-                p.row.show();
-            if(p.open)
-                open_subtree(p.id);
-            }
-
-        /* yuck :-) */
-        $('table thead tr th:eq(1)').addClass('title-column');
-
-        /* patch list entries into tabindex */
-        $('tr').keydown(
-            function(event) {
-                /* 38 up, 40 down, 37 left, 39 right */
-                // console.log('keydown', this, event.keyCode);
-                switch(event.keyCode) {
-                    case 40: // down
-                        changelist_tab($(this), event, 1);
-                        break;
-                    case 38: // up
-                        changelist_tab($(this), event, -1);
-                        break;
-                    case 37: // left
-                        changelist_openclose(this, 0);
-                        break;
-                    case 39: // right
-                        changelist_openclose(this, 1);
-                        break;
-                    case 13: // return
-                    case 10:
-                        item_id = changelist_itemid(this);
-                        document.location = document.location.pathname + item_id + '/'
-                        break;
-                    default:
-                        break;
-                    };
-                }
-        );
-        $('tr').keypress(
-            function(event) {
-                //console.log('keypress', event.charCode);
-                switch(event.charCode) {
-                    case 43: // +
-                        open_entire_tree();
-                        break;
-                    case 45: // -
-                        close_entire_tree();
-                        break;
-                    }
-                });
-
-
-        /* Recolor lines to correctly alternate again */
-        $('tbody tr').removeClass('row1').removeClass('row2');
-        $('table').show();
-
-        /* after visible */
-        $('tr').attr('tabindex', '-1');
-        $('tr:eq(1)').attr('tabindex', '0').focus();
-
-        recolor_lines();
-        });
-
-</script>
-
+	{% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+	{% else %}
+		<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.2.min.js"></script>
+	{% endif %}
+	<script type="text/javascript">
+	    var feincms = { 
+	        {% if FEINCMS_JQUERY_NO_CONFLICT %}
+	        	"jQuery": jQuery.noConflict(true) 
+	        {% else %}
+	        	"jQuery": jQuery
+	        {% endif %}
+	    };
+	</script>
+	<!-- <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}ie_compat.js"></script>
+	<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.cookie.js"></script>
+	<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}toolbox.js"></script> -->
+	<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}fein_tree.js"></script>
+	
 {% endblock %}
 
 
 {% block filters %}
-{% if cl.has_filters %}
-
-<div id="changelist-filter">
-<h2>{% trans 'Shortcuts' %}</h2>
-<ul>
-<li><a href="javascript: close_entire_tree();">{% trans 'Collapse tree' %}</a></li>
-<li><a href="javascript: open_entire_tree();">{% trans 'Expand tree' %}</a></li>
-</ul>
-<h2>{% trans 'Filter' %}</h2>
-{% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
-</div>
-{% endif %}
-
+	{% if cl.has_filters %}
+		<div id="changelist-filter">
+			<h2>{% trans 'Shortcuts' %}</h2>
+			<ul>
+				<li><a href="javascript: close_entire_tree();">{% trans 'Collapse tree' %}</a></li>
+				<li><a href="javascript: open_entire_tree();">{% trans 'Expand tree' %}</a></li>
+			</ul>
+	
+			<h2>{% trans 'Filter' %}</h2>
+			{% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+		</div>
+	{% endif %}
 {% endblock %}
