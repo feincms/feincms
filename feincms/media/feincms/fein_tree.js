@@ -1,28 +1,41 @@
 feincms.jQuery(function($){
+	/*
+	 * jQuery Untils - v1.1 - 2/18/2010
+	 * http://benalman.com/projects/jquery-untils-plugin/
+	 * 
+	 * Copyright (c) 2010 "Cowboy" Ben Alman
+	 * Dual licensed under the MIT and GPL licenses.
+	 * http://benalman.com/about/license/
+	 */
+	(function($){$.each({nextUntil:"nextAll",prevUntil:"prevAll",parentsUntil:"parents"},function(a,b){$.fn[a]=function(e,f){var c=$([]),d=this.get();if(a.indexOf("p")===0&&d.length>1){d=d.reverse()}$.each(d,function(){$(this)[b]().each(function(){var g=$(this);if(g.is(e)){return false}else{if(!f||g.is(f)){c=c.add(this)}}})});return this.pushStack(c,a,e+(f?","+f:""))}})})(jQuery);
+	
 	$.extend($.fn.disableTextSelect = function() {
-		return this.each(function(){
-			if($.browser.mozilla){//Firefox
-				$(this).css('MozUserSelect','none');
-			}else if($.browser.msie){//IE
-				$(this).bind('selectstart',function(){return false;});
-			}else{//Opera, etc.
-				$(this).mousedown(function(){return false;});
+		return this.each(function() {
+			if($.browser.mozilla) {//Firefox
+				$(this).css('MozUserSelect', 'none');
+			} else if($.browser.msie) {//IE
+				$(this).bind('selectstart', function(){ return false; });
+			} else {//Opera, etc.
+				$(this).mousedown(function(){ return false; });
 			}
 		});
 	});
 	
+	// recolor tree after expand/collapse
 	$.extend($.fn.recolorRows = function() {
-		$(this).removeClass('row1').removeClass('row2');
-		$(':visible:even', this).addClass('row1');
-		$(':visible:odd', this).addClass('row2');
-		return true;
+		$('tr', this).removeClass('row1').removeClass('row2');
+		$('tr:visible:even', this).addClass('row1');
+		$('tr:visible:odd', this).addClass('row2');
 	});
 	
+	// initialize tree drag-dropping, bind events etc.
 	$.extend($.fn.feinTree = function() {
+		// set 'level' on rel attribute
 		$('tr', this).each(function(i, el) {
 			var pixels = $(el).find('.page_marker').css('width').replace(/[^\d]/ig,"");
 			$(el).attr('rel', Math.round(pixels/18));
 		});
+		
 	    $(this).bind('mousedown', function(event) {
 			BEFORE = 0;
 			AFTER = 1;
@@ -105,37 +118,89 @@ feincms.jQuery(function($){
 						}
 					}
 				});
-
 			});
 
 			$("body").bind('mouseup', function(event) {
 				var cutItem = originalRow.find('.page_marker').attr('id').replace(/[^\d]/ig,"");
 				var pastedOn = moveTo.relativeTo.find('.page_marker').attr('id').replace(/[^\d]/ig,"");
-				var isParent = (moveTo.relativeTo.next().attr('rel') > moveTo.relativeTo.attr('rel'))
-				if(moveTo.side == 2 && !isParent) {
-					var position = 'last-child';
-				} else {
-					var position = 'left';
-				}
 				
-				$.post('.', {
-					'__cmd': 'move_node',
-					'position': position,
-					'cut_item': cutItem,
-					'pasted_on': pastedOn,
-				}, function(data) {
-					if(data == 'OK') {
-						window.location.reload();
+				// get out early if items are the same
+				if(cutItem != pastedOn) {
+					var isParent = (moveTo.relativeTo.next().attr('rel') > moveTo.relativeTo.attr('rel'));
+					// determine position
+					if(moveTo.side == CHILD && !isParent) {
+						var position = 'last-child';
 					} else {
-						alert(data);
+						var position = 'left';
 					}
-				});
+					
+					// save
+					$.post('.', {
+						'__cmd': 'move_node',
+						'position': position,
+						'cut_item': cutItem,
+						'pasted_on': pastedOn,
+					}, function(data) {
+						if(data == 'OK') {
+							// yay!
+							window.location.reload();
+						} else {
+							alert(data);
+						}
+					});
+				} else {
+					$("#drag_line").remove();
+					$("#ghost").remove();
+				}
 				$("body").unbind('mousemove').unbind('mouseup');
 			});
+			
 		});
-	});
-	
-	
+		
+		// sorry, can't get this to work :).	
+		// make levels collapseable
+		// $('tr', this).each(function(i, el) {
+		// 			console.log($(el).attr('rel'));
+		// 			var children = $(el).nextUntil('tr[rel=:lt(' + $(el).attr('rel') + ')]').length;
+		// 			console.log($('.page_marker', el).attr('id'));
+		// 			console.log(children);
+		// 			console.log('--');
+		// 			if(children > 1) {
+		// 				$('.page_marker', el).addClass('tree-open');
+		// 				
+		// 				// // toggle state
+		// 				// 				if($('.page_marker', this).attr('class') == 'tree-open') {
+		// 				// 					// close subtree
+		// 				// 					$('.page_marker', this).removeClass('tree-open').addClass('tree-closed');
+		// 				// 					
+		// 				// 				} else {
+		// 				// 					// open subtree
+		// 				// 					$('.page_marker', this).removeClass('tree-closed').addClass('tree-open');
+		// 				// 				}
+		// 				
+		// 				// prevent dragging
+		// 				// $("body").unbind('mouseup').unbind('mousemove');
+		// 				// $("#drag_line").remove();
+		// 				// $("#ghost").remove();
+		// 			}
+		// 			
+		// 			
+		// 			// if($(el).next().attr('rel') > $(el).attr('rel')) {
+		// 			// 				$('.page_marker', el).addClass('tree-open').click(function() {
+		// 								
+		// 			// 					
+		// 
+		// 			// 					
+		// 			// 
+		// 			// 					
+		// 			// 					// prevent following link
+		// 			// 					return false;
+		// 			// 				});
+		// 			// }
+		// 		});
+		
+		return this;
+	});	
 	
 	// bind the collapse all children event
 	$.extend($.fn.bindCollapseTreeEvent = function() {
@@ -144,9 +209,10 @@ feincms.jQuery(function($){
 				if($(el).attr('rel') > 1) {
 					$(el).hide();
 				}
-			}).recolorRows();
+			});
+			$('#result_list tbody').recolorRows();
 		});
-		
+		return this;
 	});
 	
 	// bind the open all chilren event
@@ -156,14 +222,14 @@ feincms.jQuery(function($){
 				if($(el).attr('rel') > 1) {
 					$(el).show();
 				}
-			}).recolorRows();
+			});
+			$('#result_list tbody').recolorRows();
 		});
-		recolerTableRows();
+		return this;
 	});
 	
 	// fire!		
-	$('#result_list tbody').feinTree();
+	$('#result_list tbody').feinTree().disableTextSelect();
 	$('#collapse_entire_tree').bindCollapseTreeEvent();
 	$('#open_entire_tree').bindOpenTreeEvent();
-	$('#result_list').disableTextSelect();
 });
