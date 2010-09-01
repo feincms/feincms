@@ -10,9 +10,14 @@ feincms.jQuery(function($){
 			}
 		});
 	});
-});
-
-feincms.jQuery(function($){
+	
+	$.extend($.fn.recolorRows = function() {
+		$(this).removeClass('row1').removeClass('row2');
+		$(':visible:even', this).addClass('row1');
+		$(':visible:odd', this).addClass('row2');
+		return true;
+	});
+	
 	$.extend($.fn.feinTree = function() {
 		$('tr', this).each(function(i, el) {
 			var pixels = $(el).find('.page_marker').css('width').replace(/[^\d]/ig,"");
@@ -130,6 +135,8 @@ feincms.jQuery(function($){
 		});
 	});
 	
+	
+	
 	// bind the collapse all children event
 	$.extend($.fn.bindCollapseTreeEvent = function() {
 		$(this).click(function() {
@@ -137,8 +144,9 @@ feincms.jQuery(function($){
 				if($(el).attr('rel') > 1) {
 					$(el).hide();
 				}
-			});
+			}).recolorRows();
 		});
+		
 	});
 	
 	// bind the open all chilren event
@@ -148,8 +156,9 @@ feincms.jQuery(function($){
 				if($(el).attr('rel') > 1) {
 					$(el).show();
 				}
-			});
+			}).recolorRows();
 		});
+		recolerTableRows();
 	});
 	
 	// fire!		
