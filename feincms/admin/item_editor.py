@@ -280,6 +280,7 @@ class ItemEditor(admin.ModelAdmin):
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
+        context.update(extra_context or {})
 
         return self.render_item_editor(request, None, context)
 
@@ -500,6 +501,7 @@ class ItemEditor(admin.ModelAdmin):
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
+        context.update(extra_context or {})
 
         return self.render_item_editor(request, obj, context)
 
