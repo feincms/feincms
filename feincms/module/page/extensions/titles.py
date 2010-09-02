@@ -4,6 +4,8 @@ titles in the navigation and in the <title>-tag.
 This extension lets you do that.
 """
 
+import logging
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -39,4 +41,15 @@ def register(cls, admin_cls):
     @monkeypatch_property(cls)
     def content_subtitle(self):
         return u'\n'.join(self._content_title.splitlines()[1:])
+    
+    
+    if admin_cls:
+        admin_cls.search_fields += ('_content_title', '_page_title')
+
+        if admin_cls.fieldsets:
+            fieldsets = [ f for f in admin_cls.fieldsets if f[0] == _('Other options')]
+            if fieldsets:
+                fieldsets[0][1]['fields'].extend(['_content_title', '_page_title'])
+            else:
+                logging.warning("Couldn't determine which fieldset on %s should have the titles fields", admin_cls)
 
