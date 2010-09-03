@@ -45,7 +45,7 @@ def get_templates():
 
 class TemplateContentAdminForm(ItemEditorForm):    
     filename = forms.ChoiceField(label=_('template'))
-    custom_fields = set()
+
     # http://jathan.com/2009/12/08/dynamically-determining-the-variables-for-a-django-template/
     def get_template_vars(self, template):
         varnodes = template.nodelist.get_nodes_by_type(VariableNode)
@@ -55,6 +55,7 @@ class TemplateContentAdminForm(ItemEditorForm):
         super(TemplateContentAdminForm, self).__init__(*args, **kwargs)
         instance = kwargs.get("instance", None)
         self.current = []
+        self.custom_fields = set()
         if instance:
             self.current = [k for k in instance.tccontext.keys()]
             token = re.compile(r'^tc\.(.*?)(?:\|.*)?$') # token
