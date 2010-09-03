@@ -100,8 +100,6 @@ class TemplateContentAdminForm(ItemEditorForm):
         
         tc = {}
         for field in self.custom_fields:
-            print field
-            print self.cleaned_data[field]
             tc.update({field: self.cleaned_data[field]})
         model.tccontext = tc
         
