@@ -209,7 +209,13 @@ class Base(models.Model):
             field = cls._meta.get_field_by_name('template_key')[0]
 
             def _template(self):
-                return self._feincms_templates[self.template_key]
+                try:
+                    return self._feincms_templates[self.template_key]
+                except KeyError:
+                    # return first template as a fallback if the template
+                    # has changed in-between
+                    return self._feincms_templates[
+                        self._feincms_templates.keys()[0]]
 
             cls.template = property(_template)
 
