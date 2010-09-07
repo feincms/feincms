@@ -1,9 +1,6 @@
 {% extends "admin/change_form.html" %}
 {% load feincms_compat_tags i18n admin_modify adminmedia %}
 
-{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
-{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
-
 {% block extrahead %}{{ block.super }}
 {% block feincms_jquery_ui %}
 {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
@@ -33,8 +30,7 @@
 {% include "admin/feincms/_messages_js.html" %}
 {% include "admin/feincms/_regions_js.html" %}
 
-
-{% for inc in object.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
+{% for inc in model.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
 
 <script type="text/javascript">
     feincms.jQuery(document).ready(function($){
@@ -43,8 +39,8 @@
         /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
         $(document.documentElement).keydown(function(event) {
             if(event.which == 83 && event.metaKey) {
-                sel = event.shiftKey ? 'form:first .save-button' :
-                    'form:first .save-continue-button';
+                sel = event.shiftKey ? 'form:first input[name=_continue]' :
+                    'form:first input[name=_save]';
                 $(sel).click();
                 return false;
             }
@@ -53,108 +49,43 @@
 </script>
 {% endblock %}
 
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-     <a href="../../../">{% trans "Home" %}</a> &rsaquo;
-     <a href="../../">{{ opts.app_label|capfirst|escape }}</a> &rsaquo;
-     <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
-     {% if add %}{{ title }}{% else %}{{ object }}{% endif %}
-</div>
-{% endblock %}
-
-{% block content %}
-
-<div id="content-main">
-
 {% block object-tools %}
-<ul class="object-tools">
-    {% if object.get_absolute_url %}
-    <li><a target="_blank" href="{{ object.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
-    {% endif %}
-    {% if object.get_preview_url %}
-        <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
-    {% endif %}
-    {% if not add and has_add_permission and has_parent_attribute %}
-        <li><a href="../add/?parent={{ object.pk }}" class="addchild">{% trans "Add child page" %}</a></li>
-    {% endif %}
+{{ block.super }}
+{% if change and not is_popup %}
+<ul class="extra-object-tools">
+  {% if original.get_preview_url %}<li><a href="{{ original.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li> {% endif %}
+  {% if has_add_permission and has_parent_attribute %}<li><a href="../add/?parent={{ object_id }}" class="addchild">{% trans "Add child page" %}</a></li> {% endif %}
 </ul>
-{% endblock %}
-
-<form name="main_form" enctype="multipart/form-data" action="." method="post" id="{{ opts.module_name }}_form">
-{% csrf_token %}
-{% block form_top %}{% endblock %}
-<div>
-{% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
-{% if save_on_top %}{% submit_row %}{% endif %}
-
-
-            {% with object.available_translations as translations %}
-            {% if translations %}
-                <div style="padding:5px 0 0 0">
-                {% trans "available translations" %}:
-                {% for translation in translations %}
-                    <a href="../{{ translation.id }}/" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
-                {% endfor %}
-                </div>
-            {% endif %}
-            {% endwith %}
-
-
-{% if errors %}
-    <p class="errornote">
-    {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
-    </p>
-    {{ adminform.form.non_field_errors }}
+<script type="text/javascript">{# DRY object-tools addition #}
+  feincms.jQuery(function($){
+    $(".extra-object-tools li").appendTo("ul.object-tools");
+    $(".extra-object-tools").remove();
+  });
+</script>
 {% endif %}
-
-{% for fieldset in adminform %}
-  {% if fieldset.name == FEINCMS_CONTENT_FIELDSET_NAME %}
-    {% include "admin/feincms/content_editor.html" %}
-  {% else %}
-    {% include "admin/includes/fieldset.html" %}
-  {% endif %}
-{% endfor %}
-
-{% block after_field_sets %}{% endblock %}
-
-{% for inline_admin_formset in inline_admin_formsets %}
-    {% include inline_admin_formset.opts.template %}
-{% endfor %}
-
-{% block after_related_objects %}{% endblock %}
-
-
-{% submit_row %}
-
-<div id="inlines">
-{% for formset in inline_formsets %}
-    <div id="{{ formset.rel_name }}">
-        <div class="header">
-            {{ formset.management_form }}
-        </div>
-        {% for form in formset.forms %}
-            <div id="{{ formset.rel_name }}_item_{{ forloop.counter0 }}">
-                {% for field in form %}
-                    {% if field.is_hidden %}
-                        {{ field }}
-                    {% else %}
-                        <div class="form-row{% if field.errors %} errors{% endif %} {{ field.name }}">
-                            {{ field.errors }}
-                            <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
-                            {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-{% endfor %}
-</div>
-
-{% prepopulated_fields_js %}
-</div>
-</form>
-
-</div>
 {% endblock %}
 
+{% block form_top %}
+  {% with model.available_translations as translations %}
+    {% if translations %}
+      <div style="padding:5px 0 0 0">
+        {% trans "available translations" %}:
+        {% for translation in translations %}
+          <a href="../{{ translation.id }}/" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+{% endblock %}
+
+{% block after_related_objects %} {# as good a place as any... #}
+  {{ block.super }}
+  <div id="content-editor-fieldset" style="display: none">
+    {% include "admin/feincms/content_editor.html" %}
+  </div>
+  <script type="text/javascript">
+    feincms.jQuery(function($){
+      $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
+    });
+  </script>
+{% endblock %}
