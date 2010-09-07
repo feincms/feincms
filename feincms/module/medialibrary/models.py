@@ -73,19 +73,19 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields     = ['title']
     prepopulated_fields = { 'slug': ('title',), }
 
-
-# ------------------------------------------------------------------------
-class MediaFileBase(Base, TranslatedObjectMixin):
-
+def get_default_storage():
     from django.core.files.storage import FileSystemStorage
+    from django.core.urlresolvers import get_callable
     default_storage_class = getattr(django_settings, 'DEFAULT_FILE_STORAGE', 
                                     'django.core.files.storage.FileSystemStorage')
     default_storage = get_callable(default_storage_class)
         
-    fs = default_storage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
+    return default_storage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
                            base_url=settings.FEINCMS_MEDIALIBRARY_URL)
 
-    file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=fs)
+# ------------------------------------------------------------------------
+class MediaFileBase(Base, TranslatedObjectMixin):
+    file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=get_default_storage())
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
     created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
