@@ -218,29 +218,29 @@ class PagesTestCase(TestCase):
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
 
-            'rawcontent-TOTAL_FORMS': 0,
-            'rawcontent-INITIAL_FORMS': 0,
-            'rawcontent-MAX_NUM_FORMS': 10,
+            'rawcontent_set-TOTAL_FORMS': 0,
+            'rawcontent_set-INITIAL_FORMS': 0,
+            'rawcontent_set-MAX_NUM_FORMS': 10,
 
-            'mediafilecontent-TOTAL_FORMS': 0,
-            'mediafilecontent-INITIAL_FORMS': 0,
-            'mediafilecontent-MAX_NUM_FORMS': 10,
+            'mediafilecontent_set-TOTAL_FORMS': 0,
+            'mediafilecontent_set-INITIAL_FORMS': 0,
+            'mediafilecontent_set-MAX_NUM_FORMS': 10,
 
-            'imagecontent-TOTAL_FORMS': 0,
-            'imagecontent-INITIAL_FORMS': 0,
-            'imagecontent-MAX_NUM_FORMS': 10,
+            'imagecontent_set-TOTAL_FORMS': 0,
+            'imagecontent_set-INITIAL_FORMS': 0,
+            'imagecontent_set-MAX_NUM_FORMS': 10,
 
-            'contactformcontent-TOTAL_FORMS': 0,
-            'contactformcontent-INITIAL_FORMS': 0,
-            'contactformcontent-MAX_NUM_FORMS': 10,
+            'contactformcontent_set-TOTAL_FORMS': 0,
+            'contactformcontent_set-INITIAL_FORMS': 0,
+            'contactformcontent_set-MAX_NUM_FORMS': 10,
 
-            'filecontent-TOTAL_FORMS': 0,
-            'filecontent-INITIAL_FORMS': 0,
-            'filecontent-MAX_NUM_FORMS': 10,
+            'filecontent_set-TOTAL_FORMS': 0,
+            'filecontent_set-INITIAL_FORMS': 0,
+            'filecontent_set-MAX_NUM_FORMS': 10,
 
-            'applicationcontent-TOTAL_FORMS': 0,
-            'applicationcontent-INITIAL_FORMS': 0,
-            'applicationcontent-MAX_NUM_FORMS': 10,
+            'applicationcontent_set-TOTAL_FORMS': 0,
+            'applicationcontent_set-INITIAL_FORMS': 0,
+            'applicationcontent_set-MAX_NUM_FORMS': 10,
             }
         dic.update(kwargs)
         return self.client.post('/admin/page/page/add/', dic)
@@ -440,40 +440,40 @@ class PagesTestCase(TestCase):
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
 
-            'rawcontent-TOTAL_FORMS': 1,
-            'rawcontent-INITIAL_FORMS': 0,
-            'rawcontent-MAX_NUM_FORMS': 10,
+            'rawcontent_set-TOTAL_FORMS': 1,
+            'rawcontent_set-INITIAL_FORMS': 0,
+            'rawcontent_set-MAX_NUM_FORMS': 10,
 
-            'rawcontent-0-parent': 1,
-            'rawcontent-0-region': 'main',
-            'rawcontent-0-ordering': 0,
-            'rawcontent-0-text': 'This is some example content',
+            'rawcontent_set-0-parent': 1,
+            'rawcontent_set-0-region': 'main',
+            'rawcontent_set-0-ordering': 0,
+            'rawcontent_set-0-text': 'This is some example content',
 
-            'mediafilecontent-TOTAL_FORMS': 1,
-            'mediafilecontent-INITIAL_FORMS': 0,
-            'mediafilecontent-MAX_NUM_FORMS': 10,
+            'mediafilecontent_set-TOTAL_FORMS': 1,
+            'mediafilecontent_set-INITIAL_FORMS': 0,
+            'mediafilecontent_set-MAX_NUM_FORMS': 10,
 
-            'mediafilecontent-0-parent': 1,
-            'mediafilecontent-0-position': 'block',
+            'mediafilecontent_set-0-parent': 1,
+            'mediafilecontent_set-0-position': 'block',
 
-            'imagecontent-TOTAL_FORMS': 1,
-            'imagecontent-INITIAL_FORMS': 0,
-            'imagecontent-MAX_NUM_FORMS': 10,
+            'imagecontent_set-TOTAL_FORMS': 1,
+            'imagecontent_set-INITIAL_FORMS': 0,
+            'imagecontent_set-MAX_NUM_FORMS': 10,
 
-            'imagecontent-0-parent': 1,
-            'imagecontent-0-position': 'default',
+            'imagecontent_set-0-parent': 1,
+            'imagecontent_set-0-position': 'default',
 
-            'contactformcontent-TOTAL_FORMS': 1,
-            'contactformcontent-INITIAL_FORMS': 0,
-            'contactformcontent-MAX_NUM_FORMS': 10,
+            'contactformcontent_set-TOTAL_FORMS': 1,
+            'contactformcontent_set-INITIAL_FORMS': 0,
+            'contactformcontent_set-MAX_NUM_FORMS': 10,
 
-            'filecontent-TOTAL_FORMS': 1,
-            'filecontent-INITIAL_FORMS': 0,
-            'filecontent-MAX_NUM_FORMS': 10,
+            'filecontent_set-TOTAL_FORMS': 1,
+            'filecontent_set-INITIAL_FORMS': 0,
+            'filecontent_set-MAX_NUM_FORMS': 10,
 
-            'applicationcontent-TOTAL_FORMS': 1,
-            'applicationcontent-INITIAL_FORMS': 0,
-            'applicationcontent-MAX_NUM_FORMS': 10,
+            'applicationcontent_set-TOTAL_FORMS': 1,
+            'applicationcontent_set-INITIAL_FORMS': 0,
+            'applicationcontent_set-MAX_NUM_FORMS': 10,
             }
         data.update(kwargs)
 
