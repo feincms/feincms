@@ -20,7 +20,7 @@ from django.db.transaction import commit_on_success
 
 import mptt
 
-from feincms import settings
+from feincms import settings, ensure_completely_loaded
 from feincms.admin import editor
 from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
@@ -669,6 +669,8 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     def __init__(self, *args, **kwargs):
+        ensure_completely_loaded()
+
         if len(Page._feincms_templates) > 4:
             del(self.radio_fields['template_key'])
 

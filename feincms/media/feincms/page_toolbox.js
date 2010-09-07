@@ -56,6 +56,15 @@ var close_subtree = function(item_id)
 /* Click handler */
 var page_tree_handler = function(item_id)
 {
+    var event = window.event;
+    if (event) {
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        } else {
+            event.cancelBubble = true;
+        }
+    }
+
     var p = page(item_id);
 
     if(!p.id || !p.children || p.children.length == 0)

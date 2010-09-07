@@ -19,7 +19,7 @@ from django.utils.functional import curry
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_protect
 
-from feincms import settings
+from feincms import settings, ensure_completely_loaded
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
@@ -35,14 +35,7 @@ class ItemEditorForm(forms.ModelForm):
 
 class ItemEditor(admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
-        # Make sure all models are completely loaded before attempting to
-        # proceed. The dynamic nature of FeinCMS models makes this necessary.
-        # For more informations, have a look at issue #23 on github:
-        # http://github.com/matthiask/feincms/issues#issue/23
-        from django.core.management.validation import get_validation_errors
-        from StringIO import StringIO
-        get_validation_errors(StringIO(), None)
-
+        ensure_completely_loaded()
         super(ItemEditor, self).__init__(*args, **kwargs)
 
     def _formfield_callback(self, request):
