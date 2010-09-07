@@ -15,7 +15,7 @@ from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
-from feincms import settings
+from feincms import settings, ensure_completely_loaded
 from feincms.utils import get_object, copy_model_instance
 
 try:
@@ -209,6 +209,8 @@ class Base(models.Model):
             field = cls._meta.get_field_by_name('template_key')[0]
 
             def _template(self):
+                ensure_completely_loaded()
+
                 try:
                     return self._feincms_templates[self.template_key]
                 except KeyError:
