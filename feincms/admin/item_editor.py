@@ -179,7 +179,7 @@ class ItemEditor(admin.ModelAdmin):
         return extra_context
     
     def add_view(self, request, form_url='', extra_context=None):
-        context = extra_context or {}
+        context = {}
 
         # insert dummy object as 'original' so template code can grab defaults
         # for template, etc.
@@ -193,6 +193,7 @@ class ItemEditor(admin.ModelAdmin):
             context['original'].template_key = request.POST['template_key']
         
         context.update(self.get_extra_context(request))
+        context.update(extra_context or {})
         return super(ItemEditor, self).add_view(request, form_url, context)
     
     def change_view(self, request, object_id, extra_context=None):
@@ -206,8 +207,9 @@ class ItemEditor(admin.ModelAdmin):
             return self._frontend_editing_view(
                 request, res.group(1), res.group(2), res.group(3))
         
-        context = extra_context or {}
+        context = {}
         context.update(self.get_extra_context(request))
+        context.update(extra_context or {})        
         return super(ItemEditor, self).change_view(request, object_id, context)
 
     @property
