@@ -7,6 +7,7 @@ from datetime import datetime
 from django.contrib import admin
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings as django_settings
+from django.core.urlresolvers import get_callable
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
@@ -84,7 +85,6 @@ def get_default_storage():
 
 # ------------------------------------------------------------------------
 class MediaFileBase(Base, TranslatedObjectMixin):
-
     file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=get_default_storage())
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
     created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
