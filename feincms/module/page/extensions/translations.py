@@ -133,6 +133,8 @@ def register(cls, admin_cls):
 
     @monkeypatch_method(cls)
     def available_translations(self):
+        if not self.id: # New, unsaved pages have no translations
+            return []
         if is_primary_language(self.language):
             return self.translations.all()
         elif self.translation_of:
@@ -180,7 +182,6 @@ def register(cls, admin_cls):
     admin_cls.fieldsets[0][1]['fields'].extend(['language', 'translation_of'])
     admin_cls.list_display.extend(['language', 'available_translations_admin'])
     admin_cls.list_filter.extend(['language'])
-    admin_cls.show_on_top.extend(['language'])
 
     admin_cls.raw_id_fields.append('translation_of')
 

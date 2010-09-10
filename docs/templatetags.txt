@@ -20,7 +20,8 @@ the ``feincms_tags`` template tag library::
 
    Some content types will need the request object to work properly. Contact forms
    will need to access POSTed data, a Google Map content type needs to use a
-   different API key depending on the current domain etc.
+   different API key depending on the current domain etc. This means you should add
+   ``django.core.context_processors.request`` to your ``TEMPLATE_CONTEXT_PROCESSORS``.
 
    These two template tags allow you to pass the request from the template to the
    content type. :func:`feincms_render_content` allows you to surround the individual

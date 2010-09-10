@@ -14,8 +14,17 @@
 {% endif %}
 
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
+<script type="text/javascript">
+    var feincms = { 
+        {% if FEINCMS_JQUERY_NO_CONFLICT %}
+        "jQuery": jQuery.noConflict(true) 
+        {% else %}
+        "jQuery": jQuery
+        {% endif %}
+    }; 
+</script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}item_editor.js"></script>
-
+       
 {% include "admin/feincms/_messages_js.html" %}
 {% include "admin/feincms/_regions_js.html" %}
 

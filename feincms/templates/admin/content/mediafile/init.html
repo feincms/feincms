@@ -1,21 +1,23 @@
 {% load adminmedia i18n %}
 <script type="text/javascript">
-contentblock_init_handlers.push(function(){
-    $('.order-machine input[name$=mediafile], #frontend_editor input[name$=mediafile]').each(function(){
-        var elem = $(this);
+(function($){
+    contentblock_init_handlers.push(function(){
+        $('.order-machine input[name$=mediafile], #frontend_editor input[name$=mediafile]').each(function(){
+            var elem = $(this);
 
-        elem.siblings('span').remove().end();
-        elem.css('width', '50px').after("<span class=\"mediafile\" id=\"lookup_"+this.id+"\"> <img src=\"{% admin_media_prefix %}img/admin/selector-search.gif\" alt=\"{% trans "Search" %}\" /></span>");
+            elem.siblings('span').remove().end();
+            elem.css('width', '50px').after("<span class=\"mediafile\" id=\"lookup_"+this.id+"\"> <img src=\"{% admin_media_prefix %}img/admin/selector-search.gif\" alt=\"{% trans "Search" %}\" /></span>");
+        });
     });
-});
-$(function(){
-    $('span.mediafile').live('click', function(){
-        var name = id_to_windowname(this.id.replace(/^lookup_/, ''));
-        var win = window.open('{% if frontend_editing %}../../{% endif %}../../../medialibrary/mediafile/?pop=1', name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-        win.focus();
-        return false;
+    $(function(){
+        $('span.mediafile').live('click', function(){
+            var name = id_to_windowname(this.id.replace(/^lookup_/, ''));
+            var win = window.open('{% if frontend_editing %}../../{% endif %}../../../medialibrary/mediafile/?pop=1', name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+            win.focus();
+            return false;
+        });
     });
-});
+})(feincms.jQuery);
 </script>
 <style type="text/css">
 span.mediafile {

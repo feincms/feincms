@@ -12,11 +12,13 @@
         ['Maximize','-','Format','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','NumberedList','BulletedList','-','Anchor', 'Link','Unlink','-','Source',],
     ];
 
-    contentblock_init_handlers.push(function(){
-        $('.order-machine textarea[class=item-richtext-ckeditor], #frontend_editor textarea[class=item-richtext-ckeditor]').each(function(){
-            feincms_richtext_add_ckeditor($(this));
+    (function($){
+        contentblock_init_handlers.push(function(){
+            $('.order-machine textarea[class=item-richtext-ckeditor], #frontend_editor textarea[class=item-richtext-ckeditor]').each(function(){
+                feincms_richtext_add_ckeditor($(this));
+            });
         });
-    });
+    })(feincms.jQuery);
 
     function feincms_richtext_remove_ckeditor(field) {
         if (field.attr("id") in CKEDITOR.instances) {

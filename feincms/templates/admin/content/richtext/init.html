@@ -23,17 +23,29 @@
         relative_urls: false
     });
 
-    contentblock_init_handlers.push(function(){
-        $('.order-machine textarea[class=item-richtext-tinymce], #frontend_editor textarea[class=item-richtext-tinymce]').each(function(){
-            feincms_richtext_add_tinymce($(this));
+    (function($){
+        contentblock_init_handlers.push(function(){
+            $('.order-machine textarea[class=item-richtext-tinymce], #frontend_editor textarea[class=item-richtext-tinymce]').each(function(){
+                feincms_richtext_add_tinymce($(this));
+            });
         });
-    });
+    })(feincms.jQuery);
+
+    var tinymce_added = {};
 
     function feincms_richtext_remove_tinymce(field) {
-        tinyMCE.execCommand('mceRemoveControl', false, field.attr("id"));
+        var id = field.attr("id");
+        if(tinymce_added[id]) {
+            tinyMCE.execCommand('mceRemoveControl', false, id);
+            tinymce_added[id] = false;
+        }
     }
 
     function feincms_richtext_add_tinymce(field) {
-        tinyMCE.execCommand('mceAddControl', false, field.attr("id"));
+        var id = field.attr("id");
+        if(!tinymce_added[id]) {
+            tinyMCE.execCommand('mceAddControl', false, id);
+            tinymce_added[id] = true;
+            }
     }
 </script>

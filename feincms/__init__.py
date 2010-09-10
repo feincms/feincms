@@ -1,4 +1,4 @@
-VERSION = (1, 1, 2)
+VERSION = (1, 1, 4)
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -17,3 +17,19 @@ class Settings(object):
                 setattr(self, setting, getattr(settings_module, setting))
 
 settings = LazySettings()
+
+COMPLETELY_LOADED = False
+def ensure_completely_loaded():
+    global COMPLETELY_LOADED
+    if COMPLETELY_LOADED:
+        return
+
+    # Make sure all models are completely loaded before attempting to
+    # proceed. The dynamic nature of FeinCMS models makes this necessary.
+    # For more informations, have a look at issue #23 on github:
+    # http://github.com/matthiask/feincms/issues#issue/23
+    from django.core.management.validation import get_validation_errors
+    from StringIO import StringIO
+    get_validation_errors(StringIO(), None)
+
+    COMPLETELY_LOADED = True

@@ -183,7 +183,7 @@ class TreeEditor(admin.ModelAdmin):
             r = '''<span onclick="return page_tree_handler('%d')" id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
                 item.id, item.id, 14+item.level*18)
-                
+
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):
             r += item.short_title()
@@ -337,15 +337,7 @@ class TreeEditor(admin.ModelAdmin):
         return HttpResponse('FAIL')
 
     def _actions_column(self, page):
-        actions = []
-        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s"><big>&#x2702;</big></a>' % (
-            page.pk, _('Cut')))
-
-        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'last-child\')" title="%s">&#x21b3;</a>' % (
-            page.pk, _('Insert as child')))
-        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'left\')" title="%s">&#x21b1;</a>' % (
-            page.pk, _('Insert before')))
-        return actions
+        return []
 
     def actions_column(self, page):
         return u' '.join(self._actions_column(page))
