@@ -121,12 +121,13 @@ if(!Array.indexOf) {
 
     function create_new_spare_form(modvar) {
         var old_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
-        // Use Django's built-in inline spawing mechanism (Django 1.2+)
-        // must use django.jQuery since that is where the bound function lives:
-        for(var i = 0; i < 3; i++){ 
-            // for some reason, the add-button click handler function 
-            // fails on the first triggerHandler call in some rare cases; 
-            // we can detect this here and retry:
+        // **** UGLY CODE WARNING, avert your gaze! **** 
+        // for some unknown reason, the add-button click handler function 
+        // fails on the first triggerHandler call in some rare cases; 
+        // we can detect this here and retry:
+        for(var i = 0; i < 2; i++){ 
+            // Use Django's built-in inline spawing mechanism (Django 1.2+)
+            // must use django.jQuery since the bound function lives there:
             var returned = django.jQuery('#'+modvar+'_set-group').find(
                 '.add-row a').triggerHandler('click');
             if(returned==false) break; // correct return value
