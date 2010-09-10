@@ -62,13 +62,12 @@ class ItemEditor(admin.ModelAdmin):
     def __init__(self, model, admin_site):
         ensure_completely_loaded()
 
-        # auto-register feincms content inlines if inlines undefined
-        # -- subclasses should manually include get_feincms_inlines
-        # if wishing to add their own standard inlines
-        if not self.__class__.inlines:
-            self.__class__.inlines = get_feincms_inlines(model)
-
         super(ItemEditor, self).__init__(model, admin_site)
+
+        # Add inline instances for FeinCMS content inlines
+        for inline_class in get_feincms_inlines(model):
+            inline_instance = inline_class(self.model, self.admin_site)
+            self.inline_instances.append(inline_instance)
 
     def _formfield_callback(self, request):
         if settings.DJANGO10_COMPAT:
