@@ -9,6 +9,7 @@ feincms.jQuery(function($){
 	 */
 	(function($){$.each({nextUntil:"nextAll",prevUntil:"prevAll",parentsUntil:"parents"},function(a,b){$.fn[a]=function(e,f){var c=$([]),d=this.get();if(a.indexOf("p")===0&&d.length>1){d=d.reverse()}$.each(d,function(){$(this)[b]().each(function(){var g=$(this);if(g.is(e)){return false}else{if(!f||g.is(f)){c=c.add(this)}}})});return this.pushStack(c,a,e+(f?","+f:""))}})})(jQuery);
 	
+	// disable text selection
 	$.extend($.fn.disableTextSelect = function() {
 		return this.each(function() {
 			if($.browser.mozilla) {//Firefox
@@ -28,15 +29,25 @@ feincms.jQuery(function($){
 		$('tr:visible:odd', this).addClass('row2');
 	});
 	
-	// initialize tree drag-dropping, bind events etc.
+	/*
+	 * FeinCMS Drag-n-drop tree reordering.
+	 * Based upon code by bright4 for Radiant CMS, rewritten for
+	 * FeinCMS by Bjorn Post.
+	 * 
+	 * September 2010
+	 *
+	 */
 	$.extend($.fn.feinTree = function() {
-		// set 'level' on rel attribute
 		$('tr', this).each(function(i, el) {
+			// set 'level' on rel attribute
 			var pixels = $(el).find('.page_marker').css('width').replace(/[^\d]/ig,"");
 			$(el).attr('rel', Math.round(pixels/18));
+			
+			// add drag handle to actions col
+			$('td:last', el).append(' <div class="drag_handle"></div>');
 		});
 		
-	    $(this).bind('mousedown', function(event) {
+	    $('div.drag_handle').bind('mousedown', function(event) {
 			BEFORE = 0;
 			AFTER = 1;
 			CHILD = 2;
@@ -51,7 +62,7 @@ feincms.jQuery(function($){
 				// attach dragged item to mouse
 				var cloned = originalRow.clone();
 				if($('#ghost').length == 0) {
-					$('<div id="ghost"></div>"').appendTo('body');
+					$('<div id="ghost"></div>').appendTo('body');
 				}
 				$('#ghost').html(cloned).css({ 'opacity': .8, 'position': 'absolute', 'top': event.pageY, 'left': event.pageX-30, 'width': 600 });
 
@@ -109,12 +120,12 @@ feincms.jQuery(function($){
 								'top': targetRow.offset().top + (targetLoc == AFTER || targetLoc == CHILD ? rowHeight: 0) -1,
 							});
 
-					        // Store the found row and options
-					        moveTo.hovering = element;
-					        moveTo.relativeTo = targetRow;
-					        moveTo.side = targetLoc;
+			        		// Store the found row and options
+							moveTo.hovering = element;
+							moveTo.relativeTo = targetRow;
+							moveTo.side = targetLoc;
 
-					        return true;
+							return true;
 						}
 					}
 				});
@@ -157,48 +168,6 @@ feincms.jQuery(function($){
 			
 		});
 		
-		// sorry, can't get this to work :).	
-		// make levels collapseable
-		// $('tr', this).each(function(i, el) {
-		// 			console.log($(el).attr('rel'));
-		// 			var children = $(el).nextUntil('tr[rel=:lt(' + $(el).attr('rel') + ')]').length;
-		// 			console.log($('.page_marker', el).attr('id'));
-		// 			console.log(children);
-		// 			console.log('--');
-		// 			if(children > 1) {
-		// 				$('.page_marker', el).addClass('tree-open');
-		// 				
-		// 				// // toggle state
-		// 				// 				if($('.page_marker', this).attr('class') == 'tree-open') {
-		// 				// 					// close subtree
-		// 				// 					$('.page_marker', this).removeClass('tree-open').addClass('tree-closed');
-		// 				// 					
-		// 				// 				} else {
-		// 				// 					// open subtree
-		// 				// 					$('.page_marker', this).removeClass('tree-closed').addClass('tree-open');
-		// 				// 				}
-		// 				
-		// 				// prevent dragging
-		// 				// $("body").unbind('mouseup').unbind('mousemove');
-		// 				// $("#drag_line").remove();
-		// 				// $("#ghost").remove();
-		// 			}
-		// 			
-		// 			
-		// 			// if($(el).next().attr('rel') > $(el).attr('rel')) {
-		// 			// 				$('.page_marker', el).addClass('tree-open').click(function() {
-		// 								
-		// 			// 					
-		// 
-		// 			// 					
-		// 			// 
-		// 			// 					
-		// 			// 					// prevent following link
-		// 			// 					return false;
-		// 			// 				});
-		// 			// }
-		// 		});
-		
 		return this;
 	});	
 	
@@ -228,8 +197,10 @@ feincms.jQuery(function($){
 		return this;
 	});
 	
-	// fire!		
-	$('#result_list tbody').feinTree().disableTextSelect();
-	$('#collapse_entire_tree').bindCollapseTreeEvent();
-	$('#open_entire_tree').bindOpenTreeEvent();
+	// fire!
+	if($('#result_list tbody tr').length > 1) {
+		$('#result_list tbody').feinTree().disableTextSelect();
+		$('#collapse_entire_tree').bindCollapseTreeEvent();
+		$('#open_entire_tree').bindOpenTreeEvent();
+	}
 });

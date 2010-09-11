@@ -1,3 +1,14 @@
+.drag_handle {
+	width: 16px;
+	height: 16px;
+	background: url(images/arrow-move.png);
+	display: inline-block;
+}
+
+.drag_handle:hover {
+	cursor: move;
+}
+
 .drag_order img {
 	cursor: move;
 }
