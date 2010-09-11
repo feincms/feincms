@@ -3,6 +3,7 @@
 	height: 16px;
 	background: url(images/arrow-move.png);
 	display: inline-block;
+	vertical-align: middle;
 }
 
 .drag_handle:hover {
