@@ -459,7 +459,7 @@ class Page(Base):
         """
         etag = self.etag(request)
         if etag is not None:
-            response['ETag'] = etag
+            response['ETag'] = '"' + etag + '"'
 
     @staticmethod
     def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
