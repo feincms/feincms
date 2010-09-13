@@ -34,10 +34,10 @@ class ItemEditorForm(forms.ModelForm):
 
 
 class FeinCMSInline(InlineModelAdmin):
-    template = 'admin/edit_inline/stacked.html' # (could customise)
-    is_feincms_inline = True
     extra = 0
-    
+    fk_name = 'parent'
+    template = 'admin/edit_inline/stacked.html' # (could customise)
+
     def __init__(self, *args, **kwargs):
         super(FeinCMSInline, self).__init__(*args, **kwargs)
         self.verbose_name_plural = \
