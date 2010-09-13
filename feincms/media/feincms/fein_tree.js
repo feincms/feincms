@@ -152,12 +152,7 @@ feincms.jQuery(function($){
 						'cut_item': cutItem,
 						'pasted_on': pastedOn,
 					}, function(data) {
-						if(data == 'OK') {
-							// yay!
-							window.location.reload();
-						} else {
-							alert(data);
-						}
+					    window.location.reload();
 					});
 				} else {
 					$("#drag_line").remove();
@@ -196,7 +191,7 @@ feincms.jQuery(function($){
 		});
 		return this;
 	});
-	
+
 	// fire!
 	if($('#result_list tbody tr').length > 1) {
 		$('#result_list tbody').feinTree().disableTextSelect();

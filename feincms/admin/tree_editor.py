@@ -6,7 +6,9 @@ from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
+
+from mptt.exceptions import InvalidMove
 
 from feincms import settings
 
@@ -327,13 +329,21 @@ class TreeEditor(admin.ModelAdmin):
         position = request.POST.get('position')
 
         if position in ('last-child', 'left'):
-            self.model._tree_manager.move_node(cut_item, pasted_on, position)
+            try:
+                self.model._tree_manager.move_node(cut_item, pasted_on, position)
+            except InvalidMove, e:
+                self.message_user(request, unicode(e))
+                return HttpResponse('FAIL')
 
             # Ensure that model save has been run
-            source = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
-            source.save()
+            cut_item = self.model._tree_manager.get(pk=cut_item.pk)
+            cut_item.save()
 
+            self.message_user(request, ugettext('%s has been moved to a new position.') %
+                cut_item)
             return HttpResponse('OK')
+
+        self.message_user(request, ugettext('Did not understand moving instruction.'))
         return HttpResponse('FAIL')
 
     def _actions_column(self, page):
