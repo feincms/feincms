@@ -191,12 +191,19 @@ feincms.jQuery(function($){
 
             if (item.hasClass('closed')) {
                 item.removeClass('closed');
-                feincms.collapsed_nodes[item_id] = false;
+
+                // remove item_id from array of collapsed nodes
+                for (var i=0; i<feincms.collapsed_nodes.length; ++i) {
+                    if (feincms.collapsed_nodes[i] == item_id)
+                        feincms.collapsed_nodes.splice(i, 1);
+                }
             } else {
                 item.addClass('closed');
                 show = false;
-                feincms.collapsed_nodes[item_id] = true;
+                feincms.collapsed_nodes.push(item_id);
             }
+
+            $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
 
             function do_toggle(id, show) {
                 var children = feincms.tree_structure[id];
@@ -207,7 +214,7 @@ feincms.jQuery(function($){
                         $('#item-' + child_id).show();
 
                         // only reveal children if current node is not collapsed
-                        if (!feincms.collapsed_nodes[child_id])
+                        if (feincms.collapsed_nodes.indexOf(child_id) == -1)
                             do_toggle(child_id, show);
                     } else {
                         $('#item-' + child_id).hide();
@@ -265,6 +272,12 @@ feincms.jQuery(function($){
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
 
-		feincms.collapsed_nodes = {};
+        feincms.collapsed_nodes = [];
+        var stored_nodes = $.cookie('feincms_collapsed_nodes');
+        if (stored_nodes) {
+            stored_nodes = eval('[' + stored_nodes + ']');
+            for (var i=0; i<stored_nodes.length; i++)
+                $('#page_marker-' + stored_nodes[i]).click();
+        }
 	}
 });
