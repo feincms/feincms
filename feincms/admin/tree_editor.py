@@ -38,28 +38,19 @@ def _build_tree_structure(cls):
     database accesses down to a minimum. The returned dictionary looks like
     this (as json dump):
 
-        {"6": {"id": 6, "children": [7, 8, 10], "parent": null, "descendants": [7, 12, 13, 8, 10]},
-         "7": {"id": 7, "children": [12], "parent": 6, "descendants": [12, 13]},
-         "8": {"id": 8, "children": [], "parent": 6, "descendants": []},
+        {"6": [7, 8, 10]
+         "7": [12],
+         "8": [],
          ...
-
+         }
     """
     all_nodes = { }
-    def add_as_descendant(n, p):
-        all_nodes[n]['descendants'].append(p)
-
-        n_parent_id = all_nodes[n]['parent']
-
-        if n_parent_id:
-            add_as_descendant(n_parent_id, p)
 
     for p_id, parent_id in cls.objects.order_by(cls._meta.tree_id_attr, cls._meta.left_attr).values_list("pk", "%s_id" % cls._meta.parent_attr):
-
-        all_nodes[p_id] = { 'id': p_id, 'children' : [ ], 'descendants' : [ ], 'parent' : parent_id }
+        all_nodes[p_id] = []
 
         if parent_id:
-            all_nodes[parent_id]['children'].append(p_id)
-            add_as_descendant(parent_id, p_id)
+            all_nodes[parent_id].append(p_id)
 
     return all_nodes
 
@@ -177,14 +168,13 @@ class TreeEditor(admin.ModelAdmin):
         the page's depth in the hierarchy.
         """
         if hasattr(item, 'get_absolute_url'):
-            r = '''<input type="hidden" class="medialibrary_file_path" value="%s" /><span onclick="return page_tree_handler('%d')" id="page_marker-%d"
+            r = '''<input type="hidden" class="medialibrary_file_path" value="%s" /><span id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
-                item.get_absolute_url(),
-                item.id, item.id, 14+item.level*18)
+                item.get_absolute_url(), item.id, 14+item.level*18)
         else:
-            r = '''<span onclick="return page_tree_handler('%d')" id="page_marker-%d"
+            r = '''<span id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
-                item.id, item.id, 14+item.level*18)
+                item.id, 14+item.level*18)
 
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):

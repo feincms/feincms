@@ -2,13 +2,13 @@ feincms.jQuery(function($){
 	/*
 	 * jQuery Untils - v1.1 - 2/18/2010
 	 * http://benalman.com/projects/jquery-untils-plugin/
-	 * 
+	 *
 	 * Copyright (c) 2010 "Cowboy" Ben Alman
 	 * Dual licensed under the MIT and GPL licenses.
 	 * http://benalman.com/about/license/
 	 */
 	(function($){$.each({nextUntil:"nextAll",prevUntil:"prevAll",parentsUntil:"parents"},function(a,b){$.fn[a]=function(e,f){var c=$([]),d=this.get();if(a.indexOf("p")===0&&d.length>1){d=d.reverse()}$.each(d,function(){$(this)[b]().each(function(){var g=$(this);if(g.is(e)){return false}else{if(!f||g.is(f)){c=c.add(this)}}})});return this.pushStack(c,a,e+(f?","+f:""))}})})(jQuery);
-	
+
 	// disable text selection
 	$.extend($.fn.disableTextSelect = function() {
 		return this.each(function() {
@@ -21,39 +21,56 @@ feincms.jQuery(function($){
 			}
 		});
 	});
-	
+
 	// recolor tree after expand/collapse
 	$.extend($.fn.recolorRows = function() {
 		$('tr', this).removeClass('row1').removeClass('row2');
 		$('tr:visible:even', this).addClass('row1');
 		$('tr:visible:odd', this).addClass('row2');
 	});
-	
+
+    var extract_id = function(s) {
+        return s.match(/-(\d+)$/)[1];
+    }
+
 	/*
 	 * FeinCMS Drag-n-drop tree reordering.
 	 * Based upon code by bright4 for Radiant CMS, rewritten for
 	 * FeinCMS by Bjorn Post.
-	 * 
+	 *
 	 * September 2010
 	 *
 	 */
 	$.extend($.fn.feinTree = function() {
-		$('tr', this).each(function(i, el) {
+	    var all_rows = $('tr', this);
+	    var last_page_marker = null;
+	    var last_rel = null;
+
+		all_rows.each(function(i, el) {
+		    var $row = $(el);
+		    var $page_marker = $row.find('.page_marker');
+		    var page_id = extract_id($page_marker.attr('id'));
+
+		    $row.attr('id', 'item-' + page_id);
+		    if (feincms.tree_structure[page_id].length)
+		        $page_marker.addClass('children');
+
 			// set 'level' on rel attribute
-			var pixels = $(el).find('.page_marker').css('width').replace(/[^\d]/ig,"");
-			$(el).attr('rel', Math.round(pixels/18));
-			
+			var pixels = $page_marker.css('width').replace(/[^\d]/ig,"");
+			var rel = Math.round(pixels/18);
+			$row.attr('rel', rel);
+
 			// add drag handle to actions col
-			$('td:last', el).append(' <div class="drag_handle"></div>');
+			$row.find('td:last').append(' <div class="drag_handle"></div>');
 		});
-		
+
 	    $('div.drag_handle').bind('mousedown', function(event) {
 			BEFORE = 0;
 			AFTER = 1;
 			CHILD = 2;
 			CHILD_PAD = 20;
 			var originalRow = $(event.target).closest('tr');
-			var rowHeight = originalRow.height();	
+			var rowHeight = originalRow.height();
 			var childEdge = $(event.target).offset().left + $(event.target).width();
 			var moveTo = new Object();
 			var expandObj = new Object();
@@ -71,7 +88,7 @@ feincms.jQuery(function($){
 					$('html,body').stop().animate({scrollTop: $(window).scrollTop()+250 }, 500);
 				} else if(event.pageY-50 < $(window).scrollTop()) {
 					$('html,body').stop().animate({scrollTop: $(window).scrollTop()-250 }, 500);
-				}	
+				}
 
 				// check if drag_line element already exists, else append
 				if($("#drag_line").length < 1) {
@@ -134,7 +151,7 @@ feincms.jQuery(function($){
 			$("body").bind('mouseup', function(event) {
 				var cutItem = originalRow.find('.page_marker').attr('id').replace(/[^\d]/ig,"");
 				var pastedOn = moveTo.relativeTo.find('.page_marker').attr('id').replace(/[^\d]/ig,"");
-				
+
 				// get out early if items are the same
 				if(cutItem != pastedOn) {
 					var isParent = (moveTo.relativeTo.next().attr('rel') > moveTo.relativeTo.attr('rel'));
@@ -144,7 +161,7 @@ feincms.jQuery(function($){
 					} else {
 						var position = 'left';
 					}
-					
+
 					// save
 					$.post('.', {
 						'__cmd': 'move_node',
@@ -160,12 +177,61 @@ feincms.jQuery(function($){
 				}
 				$("body").unbind('mousemove').unbind('mouseup');
 			});
-			
+
 		});
-		
+
 		return this;
-	});	
-	
+	});
+
+	$.extend($.fn.feinTreeToggleItem = function() {
+        $(this).click(function(event){
+            var show = true;
+            var item = $(this);
+            var item_id = extract_id(this.id);
+
+            if (item.hasClass('closed')) {
+                item.removeClass('closed');
+                feincms.collapsed_nodes[item_id] = false;
+            } else {
+                item.addClass('closed');
+                show = false;
+                feincms.collapsed_nodes[item_id] = true;
+            }
+
+            function do_toggle(id, show) {
+                var children = feincms.tree_structure[id];
+                for (var i=0; i<children.length; ++i) {
+                    var child_id = children[i];
+
+                    if (show) {
+                        $('#item-' + child_id).show();
+
+                        // only reveal children if current node is not collapsed
+                        if (!feincms.collapsed_nodes[child_id])
+                            do_toggle(child_id, show);
+                    } else {
+                        $('#item-' + child_id).hide();
+
+                        // always recursively hide children
+                        do_toggle(child_id, show);
+                    }
+                }
+            }
+
+            do_toggle(item_id, show);
+
+            if (event.stopPropagation) {
+                event.stopPropagation();
+            } else {
+                event.cancelBubble = true;
+            }
+
+            $('#result_list tbody').recolorRows();
+            return false;
+        });
+        return this;
+	});
+
 	// bind the collapse all children event
 	$.extend($.fn.bindCollapseTreeEvent = function() {
 		$(this).click(function() {
@@ -178,8 +244,8 @@ feincms.jQuery(function($){
 		});
 		return this;
 	});
-	
-	// bind the open all chilren event
+
+	// bind the open all children event
 	$.extend($.fn.bindOpenTreeEvent = function() {
 		$(this).click(function() {
 			$('#result_list tbody tr').each(function(i, el) {
@@ -195,7 +261,10 @@ feincms.jQuery(function($){
 	// fire!
 	if($('#result_list tbody tr').length > 1) {
 		$('#result_list tbody').feinTree().disableTextSelect();
+		$('#result_list span.page_marker').feinTreeToggleItem();
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
+
+		feincms.collapsed_nodes = {};
 	}
 });

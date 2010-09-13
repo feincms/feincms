@@ -40,3 +40,11 @@ div#drag_line div {
 	background-image: url(images/drag_order_circle.png);
 	margin: -3px 0 0 -9px;
 }
+
+.page_marker.children {
+    background: url(img/disclosure-down.png) no-repeat right top;
+}
+
+.page_marker.closed {
+    background-image: url(img/disclosure-right.png);
+}
