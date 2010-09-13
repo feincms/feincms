@@ -66,14 +66,19 @@
 {% endblock %}
 
 {% block form_top %}
-  {% with model.available_translations as translations %}
+  {% with original.available_translations as translations %}
     {% if translations %}
-      <div style="padding:5px 0 0 0">
+      <div style="float: right;padding: 5px 0 0 0" id="available_translations">
         {% trans "available translations" %}:
         {% for translation in translations %}
           <a href="../{{ translation.id }}/" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
         {% endfor %}
       </div>
+      <script type="text/javascript">
+        feincms.jQuery(function($){
+            $('#id_language').parent().prepend($('#available_translations'));
+        });
+      </script>
     {% endif %}
   {% endwith %}
 {% endblock %}
