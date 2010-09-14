@@ -656,7 +656,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
-            'fields': [],
+            'fields': ['override_url', 'redirect_to'],
         }),
         ]
     readonly_fields = []
