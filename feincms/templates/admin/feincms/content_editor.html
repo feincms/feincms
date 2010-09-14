@@ -37,6 +37,6 @@
         <select name="item-move-select">
         {% for r in original.template.regions %}{% ifnotequal region r %}<option value="{{ r.key }}">{{ r.title|capfirst }}</option> {% endifnotequal %}{% endfor %}
         </select>
-        <input type="button" class="button" value="{% trans "Go" %}" />
+        <input type="button" class="button" value="{% trans "Move" %}" />
     </div>
 {% endifnotequal %}
