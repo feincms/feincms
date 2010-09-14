@@ -11,6 +11,7 @@ from feincms._internal import monkeypatch_property
 
 def register(cls, admin_cls):
     cls.add_to_class('symlinked_page', models.ForeignKey('self', blank=True, null=True,
+        related_name='%(app_label)s_%(class)s_symlinks',
         verbose_name=_('symlinked page'),
         help_text=_('All content is inherited from this page if given.')))
 
