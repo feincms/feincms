@@ -63,3 +63,8 @@ def register(cls, admin_cls):
             return self.children.in_navigation()
 
         return cls().children(self, **kwargs)
+
+    admin_cls.fieldsets.append((_('Navigation extension'), {
+        'fields': ('navigation_extension',),
+        'classes': ('collapse',),
+        }))
