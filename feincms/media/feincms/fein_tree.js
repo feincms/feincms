@@ -1,14 +1,4 @@
 feincms.jQuery(function($){
-	/*
-	 * jQuery Untils - v1.1 - 2/18/2010
-	 * http://benalman.com/projects/jquery-untils-plugin/
-	 *
-	 * Copyright (c) 2010 "Cowboy" Ben Alman
-	 * Dual licensed under the MIT and GPL licenses.
-	 * http://benalman.com/about/license/
-	 */
-	(function($){$.each({nextUntil:"nextAll",prevUntil:"prevAll",parentsUntil:"parents"},function(a,b){$.fn[a]=function(e,f){var c=$([]),d=this.get();if(a.indexOf("p")===0&&d.length>1){d=d.reverse()}$.each(d,function(){$(this)[b]().each(function(){var g=$(this);if(g.is(e)){return false}else{if(!f||g.is(f)){c=c.add(this)}}})});return this.pushStack(c,a,e+(f?","+f:""))}})})(jQuery);
-
 	// disable text selection
 	$.extend($.fn.disableTextSelect = function() {
 		return this.each(function() {
@@ -28,9 +18,31 @@ feincms.jQuery(function($){
 		$('tr:visible:even', this).addClass('row1');
 		$('tr:visible:odd', this).addClass('row2');
 	});
-
-    var extract_id = function(s) {
+	
+	// extract id
+    function extractId(s) {
         return s.match(/-(\d+)$/)[1];
+    }
+
+	// toggle children
+    function doToggle(id, show) {
+        var children = feincms.tree_structure[id];
+        for (var i=0; i<children.length; ++i) {
+            var childId = children[i];
+
+            if(show) {
+                $('#item-' + childId).show();
+
+                // only reveal children if current node is not collapsed
+                if(feincms.collapsed_nodes.indexOf(childId) == -1) {
+                    doToggle(childId, show);
+				}
+            } else {
+                $('#item-' + childId).hide();
+                // always recursively hide children
+                doToggle(childId, show);
+            }
+        }
     }
 
 	/*
@@ -42,26 +54,21 @@ feincms.jQuery(function($){
 	 *
 	 */
 	$.extend($.fn.feinTree = function() {
-	    var all_rows = $('tr', this);
-	    var last_page_marker = null;
-	    var last_rel = null;
-
-		all_rows.each(function(i, el) {
-		    var $row = $(el);
-		    var $page_marker = $row.find('.page_marker');
-		    var page_id = extract_id($page_marker.attr('id'));
-
-		    $row.attr('id', 'item-' + page_id);
-		    if (feincms.tree_structure[page_id].length)
-		        $page_marker.addClass('children');
+		$('tr', this).each(function(i, el) {
+			// adds 'children' class to all parents
+		    var pageId = extractId($('.page_marker', el).attr('id'));
+		    $(el).attr('id', 'item-' + pageId);
+		    if (feincms.tree_structure[pageId].length) {
+			    $('.page_marker', el).addClass('children');
+			}
 
 			// set 'level' on rel attribute
-			var pixels = $page_marker.css('width').replace(/[^\d]/ig,"");
+			var pixels = $('.page_marker', el).css('width').replace(/[^\d]/ig,"");
 			var rel = Math.round(pixels/18);
-			$row.attr('rel', rel);
+			$(el).attr('rel', rel);
 
 			// add drag handle to actions col
-			$row.find('td:last').append(' <div class="drag_handle"></div>');
+			$(el).find('td:last').append(' <div class="drag_handle"></div>');
 		});
 
 	    $('div.drag_handle').bind('mousedown', function(event) {
@@ -104,7 +111,19 @@ feincms.jQuery(function($){
 
 					// check if mouse is over a row
 					if (event.pageY >= top && event.pageY <= top + rowHeight) {
-						// todo: check if collapsed children, if so, on hover with simple timeout
+						// check if collapsed children, if so, on hover with simple timeout
+						if(
+							$('span.page_marker', element).hasClass('children') &&
+							$('span.page_marker', element).hasClass('closed')
+						) {
+							var id = extractId($('span.page_marker', element).attr('id'));
+							setTimeout(function() {
+								doToggle(id, true);
+								$('#result_list tbody').recolorRows();
+								$('span.page_marker', element).removeClass('closed'); 
+							}, 750);
+						}
+						
 						var targetRow = null;
 						var targetLoc;
 						if(event.pageY >= top && event.pageY <= top + rowHeight / 2 && element.prev()) {
@@ -149,8 +168,8 @@ feincms.jQuery(function($){
 			});
 
 			$("body").bind('mouseup', function(event) {
-				var cutItem = originalRow.find('.page_marker').attr('id').replace(/[^\d]/ig,"");
-				var pastedOn = moveTo.relativeTo.find('.page_marker').attr('id').replace(/[^\d]/ig,"");
+				var cutItem = extractId(originalRow.find('.page_marker').attr('id'));
+				var pastedOn = extractId(moveTo.relativeTo.find('.page_marker').attr('id'));
 
 				// get out early if items are the same
 				if(cutItem != pastedOn) {
@@ -187,45 +206,25 @@ feincms.jQuery(function($){
         $(this).click(function(event){
             var show = true;
             var item = $(this);
-            var item_id = extract_id(this.id);
+            var itemId = extractId(this.id);
 
             if (item.hasClass('closed')) {
                 item.removeClass('closed');
 
-                // remove item_id from array of collapsed nodes
+                // remove itemId from array of collapsed nodes
                 for (var i=0; i<feincms.collapsed_nodes.length; ++i) {
-                    if (feincms.collapsed_nodes[i] == item_id)
+                    if (feincms.collapsed_nodes[i] == itemId)
                         feincms.collapsed_nodes.splice(i, 1);
                 }
             } else {
                 item.addClass('closed');
                 show = false;
-                feincms.collapsed_nodes.push(item_id);
+                feincms.collapsed_nodes.push(itemId);
             }
 
             $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
 
-            function do_toggle(id, show) {
-                var children = feincms.tree_structure[id];
-                for (var i=0; i<children.length; ++i) {
-                    var child_id = children[i];
-
-                    if (show) {
-                        $('#item-' + child_id).show();
-
-                        // only reveal children if current node is not collapsed
-                        if (feincms.collapsed_nodes.indexOf(child_id) == -1)
-                            do_toggle(child_id, show);
-                    } else {
-                        $('#item-' + child_id).hide();
-
-                        // always recursively hide children
-                        do_toggle(child_id, show);
-                    }
-                }
-            }
-
-            do_toggle(item_id, show);
+            doToggle(itemId, show);
 
             if (event.stopPropagation) {
                 event.stopPropagation();
@@ -271,13 +270,13 @@ feincms.jQuery(function($){
 		$('#result_list span.page_marker').feinTreeToggleItem();
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
-
+		
         feincms.collapsed_nodes = [];
-        var stored_nodes = $.cookie('feincms_collapsed_nodes');
-        if (stored_nodes) {
-            stored_nodes = eval('[' + stored_nodes + ']');
-            for (var i=0; i<stored_nodes.length; i++)
-                $('#page_marker-' + stored_nodes[i]).click();
+        var storedNodes = $.cookie('feincms_collapsed_nodes');
+        if (storedNodes) {
+            storedNodes = eval('[' + storedNodes + ']');
+            for (var i=0; i<storedNodes.length; i++)
+                $('#page_marker-' + storedNodes[i]).click();
         }
 	}
 });
