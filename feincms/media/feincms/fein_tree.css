@@ -1,7 +1,7 @@
 .drag_handle {
 	width: 16px;
 	height: 16px;
-	background: url(images/arrow-move.png);
+	background: url(img/arrow-move.png);
 	display: inline-block;
 	vertical-align: middle;
 }
@@ -37,7 +37,7 @@ div#drag_line div {
 	position: absolute;
 	height: 9px;
 	width: 9px;
-	background-image: url(images/drag_order_circle.png);
+	background-image: url(img/drag_order_circle.png);
 	margin: -3px 0 0 -9px;
 }
 
