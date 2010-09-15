@@ -84,7 +84,7 @@ msgstr "omogućeno"
 
 #: content/comments/models.py:23
 msgid "New comments may be added"
-msgstr "Novi komentari mogu biti dodati"
+msgstr "Novi komentari mogu biti dodani"
 
 #: content/comments/models.py:27 content/comments/models.py:28
 msgid "comments"
@@ -120,7 +120,7 @@ msgstr "kontaktni obrazac"
 
 #: content/contactform/models.py:27
 msgid "contact forms"
-msgstr "kontaktni obrasci"
+msgstr "kontaktni obrazci"
 
 #: content/file/models.py:11 content/file/models.py:15
 #: module/medialibrary/models.py:84
@@ -214,7 +214,7 @@ msgstr "formatirani tekstovi (ckeditor)"
 
 #: content/rss/models.py:14
 msgid "The rss field is updated several times a day. A change in the title will only be visible on the home page after the next feed update."
-msgstr "Rss polje se ažurira nekoliko puta dnevno. Promjena u naslovu će biti vidljiva na početnoj stranici nakon sljedećeg ažuriranja."
+msgstr "RSS polje se ažurira nekoliko puta dnevno. Promjena u naslovu će biti vidljiva na naslovnici nakon sljedećeg ažuriranja kanala."
 
 #: content/rss/models.py:15
 msgid "link"
@@ -234,11 +234,11 @@ msgstr "najviše zapisa"
 
 #: content/rss/models.py:22
 msgid "RSS feed"
-msgstr "RSS feed"
+msgstr "RSS kanal"
 
 #: content/rss/models.py:23
 msgid "RSS feeds"
-msgstr "RSS feedovi"
+msgstr "RSS kanali"
 
 #: content/section/models.py:34
 msgid "section"
@@ -255,7 +255,7 @@ msgstr "tip"
 
 #: content/table/models.py:48
 msgid "plain"
-msgstr "jednostavan"
+msgstr "jednostavno"
 
 #: content/table/models.py:49
 msgid "title row"
@@ -307,15 +307,15 @@ msgstr "objavljeno"
 
 #: module/blog/models.py:25 module/page/models.py:221
 msgid "This is used for the generated navigation too."
-msgstr "Ovo se koristi i za generiranu navigaciju također."
+msgstr "Ovo se koristi i za generiranu navigaciju."
 
 #: module/blog/models.py:28
 msgid "published on"
-msgstr "objevljeno"
+msgstr "objavljeno na"
 
 #: module/blog/models.py:29
 msgid "Will be set automatically once you tick the `published` checkbox above."
-msgstr "Biti će automatski postavljeno kada potvrdite `objavljeno` polje iznad."
+msgstr "Biti će automatski postavljeno kada označite `objavljeno` polje iznad."
 
 #: module/blog/models.py:34
 msgid "entry"
@@ -342,7 +342,7 @@ msgstr "Ostavite ovo prazno za zapise u primarnom jeziku."
 #: module/blog/extensions/translations.py:36
 #: templates/admin/feincms/item_editor.html:72
 msgid "available translations"
-msgstr "dotupni prijevodi"
+msgstr "dostupni prijevodi"
 
 #: module/extensions/changedate.py:22
 msgid "creation date"
@@ -366,7 +366,7 @@ msgstr "meta ključne riječi"
 
 #: module/extensions/seo.py:10
 msgid "This will be prepended to the default keyword list."
-msgstr "Ovo će biti dodano podrazumijevanoj listi ključnih riječi."
+msgstr "Ovo će biti dodano predefiniranoj listi ključnih riječi."
 
 #: module/extensions/seo.py:11
 msgid "meta description"
@@ -374,7 +374,7 @@ msgstr "meta opis"
 
 #: module/extensions/seo.py:12
 msgid "This will be prepended to the default description."
-msgstr "Ovo će biti dodano podrazumijevanom opisu."
+msgstr "Ovo će biti dodano predefiniranom opisu."
 
 #: module/extensions/seo.py:18
 msgid "Search engine optimization"
@@ -415,7 +415,7 @@ msgstr "veličina datoteke"
 
 #: module/medialibrary/models.py:184
 msgid "file info"
-msgstr "opis datoteke"
+msgstr "informacije o datoteci"
 
 #: module/medialibrary/models.py:253
 msgid "Image"
@@ -496,19 +496,19 @@ msgstr "nadjačati URL"
 
 #: module/page/models.py:227
 msgid "Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages' URLs."
-msgstr "Nadjačati ciljni URL. Budite sigurni da uključite kose crte na početku i  kraju ukoliko se odnosi na lokalni URL. Ovo se odnosi i na navigaciju i na URL-ove podstranica"
+msgstr "Nadjačati ciljnu adresu (URL). Budite sigurni da uključite kose crte na početku i  kraju ukoliko se odnosi na lokalnu adresu. Ovo se odnosi i na navigaciju i na adrese podstranica"
 
 #: module/page/models.py:228
 msgid "redirect to"
-msgstr "preusmjeri na"
+msgstr "preusmjeriti na"
 
 #: module/page/models.py:229
 msgid "Target URL for automatic redirects."
-msgstr "Ciljni URL za automatsko preusmjerenje"
+msgstr "Ciljna adresa (URL) za automatsko preusmjeravanje"
 
 #: module/page/models.py:230
 msgid "Cached URL"
-msgstr "Keširan URL"
+msgstr "Keširana adresa (URL)"
 
 #: module/page/models.py:241
 msgid "page"
@@ -524,11 +524,11 @@ msgstr "je aktivna"
 
 #: module/page/models.py:609
 msgid "This URL is already taken by an active page."
-msgstr "Ovaj URL je već zauzet od aktivne stranicom."
+msgstr "Ova adresa (URL) je već zauzeta aktivnom stranicom."
 
 #: module/page/models.py:627
 msgid "This URL is already taken by another active page."
-msgstr "Ovaj URL je već zauzet od druge aktivne stranice."
+msgstr "Ova adresa (URL) je već zauzeta drugom aktivnom stranicom."
 
 #: module/page/models.py:651
 msgid "Other options"
@@ -540,16 +540,16 @@ msgstr "Dodaj podređenu stranicu"
 
 #: module/page/models.py:695
 msgid "View on site"
-msgstr "Pogledaj na stranicama"
+msgstr "Pogledaj na internetnim stranicama"
 
 #: module/page/models.py:730
 msgid "You may edit the copied page below."
-msgstr "Možete urediti kopiranu stranicu"
+msgstr "Možete urediti kopiranu stranicu ispod."
 
 #: module/page/models.py:736
 #, python-format
 msgid "You have replaced %s. You may continue editing the now-active page below."
-msgstr "Zamijenili ste %s. Možete nastaviti uređivati neaktivnu stranicu."
+msgstr "Zamijenili ste %s. Možete nastaviti uređivati neaktivnu stranicu ispod."
 
 #: module/page/models.py:786
 msgid "inherited"
@@ -646,7 +646,7 @@ msgstr "Naslov stranice u prozoru browsera. Podrazumijevana vrijednost je jednak
 
 #: module/page/extensions/titles.py:43
 msgid "Titles"
-msgstr "nazivi"
+msgstr "Nazivi"
 
 #: module/page/extensions/translations.py:171
 msgid "Edit translation"
@@ -671,44 +671,44 @@ msgstr "Pretraživanje"
 
 #: templates/admin/feincms/_messages_js.html:4
 msgid "Really delete item?"
-msgstr "Stvarno izbrisati objekt?"
+msgstr "Stvarno izbrisati zapis?"
 
 #: templates/admin/feincms/_messages_js.html:4
 msgid "Confirm to delete item"
-msgstr "Potvrdite brisanje objekta"
+msgstr "Potvrdite brisanje zapisa"
 
 #: templates/admin/feincms/_messages_js.html:5
 msgid "Item deleted successfully."
-msgstr "Objekt je uspješno izbrisan"
+msgstr "Zapis je uspješno izbrisan"
 
 #: templates/admin/feincms/_messages_js.html:5
 msgid "Cannot delete item"
-msgstr "Objekt ne može biti obrisan"
+msgstr "Zapis ne može biti obrisan"
 
 #: templates/admin/feincms/_messages_js.html:6
 msgid "Cannot delete item, because it is parent of at least one other item."
-msgstr "Objekt ne može biti obrisan jer je nadređeni od najmanje jednog drugog objekta"
+msgstr "Zapis ne može biti obrisan jer je nadređeni od najmanje jednog drugog zapisa."
 
 #: templates/admin/feincms/_messages_js.html:7
 msgid "Change template"
-msgstr "Uredi predložak"
+msgstr "Zamjena predložka"
 
 #: templates/admin/feincms/_messages_js.html:8
 msgid "Really change template? <br />All changes are saved."
-msgstr "Zaista izmjeniti predložak? <br />Sve izmjene su spremljene."
+msgstr "Zaista zamijeniti predložak? <br />Sve izmjene će biti  spremljene."
 
 #: templates/admin/feincms/_messages_js.html:9
 #, python-format
 msgid "Really change template? <br />All changes are saved and content from <strong>%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
-msgstr "Zaista izmjeniti predložak? <br />Sve izmjene su spremljene. i sadržaj iz <strong>%(source_regions)s</strong> je premješten u <strong>%(target_region)s</strong>."
+msgstr "Zaista zamijeniti predložak? <br />Sve izmjene su spremljene. i sadržaj iz <strong>%(source_regions)s</strong> će biti premješten u <strong>%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
-msgstr "sakrij"
+msgstr "Sakrij"
 
 #: templates/admin/feincms/_messages_js.html:13
 msgid "Show"
-msgstr "pokaži"
+msgstr "Psrikaži"
 
 #: templates/admin/feincms/_messages_js.html:14
 msgid "After"
@@ -728,7 +728,7 @@ msgstr "Regija je prazna"
 
 #: templates/admin/feincms/content_editor.html:14
 msgid "Content from the parent site is automatically inherited. To override this behaviour, add some content."
-msgstr "Sadržaj nadređene stranice je automatski naslijeđen. Za promjenu ove osobine, dodajte sadržaj."
+msgstr "Sadržaj je automatski naslijeđen od nadređene stranice. Ukoliko želite to promjeniti, dodajte neke sadržaje."
 
 #: templates/admin/feincms/content_editor.html:22
 msgid "Add new item"
