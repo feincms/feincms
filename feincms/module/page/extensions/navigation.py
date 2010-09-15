@@ -34,6 +34,15 @@ class PagePretender(object):
     def get_absolute_url(self):
         return self.url
 
+    def get_navigation_url(self):
+        return self.get_absolute_url()
+
+    def get_level(self):
+        return self.level
+
+    def get_children(self):
+        return []
+
 
 class NavigationExtension(object):
     __metaclass__ = TypeRegistryMetaClass
