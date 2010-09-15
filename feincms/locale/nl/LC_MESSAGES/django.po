@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-15 09:51+0200\n"
-"PO-Revision-Date: 2009-07-14 23:59+0200\n"
+"POT-Creation-Date: 2010-09-15 11:21+0200\n"
+"PO-Revision-Date: 2010-09-15 11:21+0200\n"
 "Last-Translator: Bjorn Post <bjorn.post@gmail.com>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -56,11 +56,11 @@ msgstr "titel"
 #: admin/tree_editor.py:332
 #, python-format
 msgid "%s has been moved to a new position."
-msgstr ""
+msgstr "%s is verplaatst."
 
 #: admin/tree_editor.py:336
 msgid "Did not understand moving instruction."
-msgstr ""
+msgstr "Begreep verplaats instructie niet"
 
 #: admin/tree_editor.py:345
 msgid "actions"
@@ -213,7 +213,6 @@ msgid "rich text (ckeditor)"
 msgstr "opgemaakte tekst (ckeditor)"
 
 #: content/richtext/models.py:135
-#, fuzzy
 msgid "rich texts (ckeditor)"
 msgstr "opgemaakte teksten (ckeditor)"
 
@@ -287,14 +286,12 @@ msgid "data"
 msgstr "data"
 
 #: content/template/models.py:52
-#, fuzzy
 msgid "template content"
-msgstr "applicatie content"
+msgstr "template content"
 
 #: content/template/models.py:53
-#, fuzzy
 msgid "template contents"
-msgstr "applicatie contents"
+msgstr "template contents"
 
 #: content/video/models.py:15
 msgid "video link"
@@ -372,25 +369,29 @@ msgstr "laatst gewijzigd op"
 msgid "featured"
 msgstr "aanbevolen"
 
-#: module/extensions/seo.py:11
+#: module/extensions/featured.py:14
+msgid "Featured"
+msgstr "Aanbevolen"
+
+#: module/extensions/seo.py:9
 msgid "meta keywords"
 msgstr "meta trefwoorden"
 
-#: module/extensions/seo.py:12
+#: module/extensions/seo.py:10
 msgid "This will be prepended to the default keyword list."
 msgstr "Deze begrippen worden voor in de standaard trefwoordenlijst ingevoegd."
 
-#: module/extensions/seo.py:13
+#: module/extensions/seo.py:11
 msgid "meta description"
 msgstr "meta beschrijving"
 
-#: module/extensions/seo.py:14
+#: module/extensions/seo.py:12
 msgid "This will be prepended to the default description."
 msgstr "Deze beschrijving wordt voor in de standaard beschrijving ingevoegd."
 
-#: module/extensions/seo.py:20 module/page/models.py:657
-msgid "Other options"
-msgstr "Overige opties"
+#: module/extensions/seo.py:18
+msgid "Search engine optimization"
+msgstr "Zoekmachine optimalisatie"
 
 #: module/medialibrary/models.py:46
 msgid "parent"
@@ -548,6 +549,10 @@ msgstr "Deze URL is al in gebruik door een actieve pagina."
 msgid "This URL is already taken by another active page."
 msgstr "Deze URL is al in gebruik door een andere actieve pagina."
 
+#: module/page/models.py:657
+msgid "Other options"
+msgstr "Overige opties"
+
 #: module/page/models.py:699 templates/admin/feincms/item_editor.html:57
 msgid "Add child page"
 msgstr "Voeg subpagina toe"
@@ -595,6 +600,10 @@ msgstr "Leeglaten als het item voor altijd actief moet blijven."
 msgid "visible from - to"
 msgstr "zichtbaar van - tot"
 
+#: module/page/extensions/datepublisher.py:88
+msgid "Date-based publishing"
+msgstr "Datum-gebaseerde publicering"
+
 #: module/page/extensions/excerpt.py:9
 msgid "excerpt"
 msgstr "samenvatting"
@@ -603,6 +612,10 @@ msgstr "samenvatting"
 msgid "Add a brief excerpt summarizing the content of this page."
 msgstr ""
 "Voeg een korte samenvatting toe die de inhoud van deze pagina beschrijft."
+
+#: module/page/extensions/excerpt.py:12
+msgid "Excerpt"
+msgstr "Samenvatting"
 
 #: module/page/extensions/navigation.py:40
 #: module/page/extensions/navigation.py:52
@@ -617,18 +630,30 @@ msgstr ""
 "Kies de module die subpagina's voor deze pagina definieert als je de "
 "navigatie wilt uitbreiden."
 
-#: module/page/extensions/relatedpages.py:12
+#: module/page/extensions/navigation.py:67
+msgid "Navigation extension"
+msgstr "Navigatie-uitbreiding"
+
+#: module/page/extensions/relatedpages.py:13
 msgid "Select pages that should be listed as related content."
 msgstr "Selecteer pagina's die beschouwd moet worden als gerelateerd aan deze."
 
-#: module/page/extensions/symlinks.py:14
+#: module/page/extensions/relatedpages.py:20
+msgid "Related pages"
+msgstr "Gerelateerde pagina's"
+
+#: module/page/extensions/symlinks.py:15
 msgid "symlinked page"
 msgstr "verbonden pagina"
 
-#: module/page/extensions/symlinks.py:15
+#: module/page/extensions/symlinks.py:16
 msgid "All content is inherited from this page if given."
 msgstr ""
 "Als dit ingesteld is, dan wordt de inhoud geleverd door de aangegeven pagina."
+
+#: module/page/extensions/symlinks.py:30
+msgid "Symlinked page"
+msgstr "Verbonden pagina"
 
 #: module/page/extensions/titles.py:13
 msgid "content title"
@@ -646,6 +671,10 @@ msgstr "paginatitel"
 #: module/page/extensions/titles.py:16
 msgid "Page title for browser window. Same as title by default."
 msgstr "paginatitel voor het browservenster. Standaard gelijk aan de titel."
+
+#: module/page/extensions/titles.py:43
+msgid "Titles"
+msgstr "Titels"
 
 #: module/page/extensions/translations.py:171
 msgid "Edit translation"
@@ -691,18 +720,14 @@ msgstr ""
 "items."
 
 #: templates/admin/feincms/_messages_js.html:7
-msgid "Tree saved successfully."
-msgstr "Boomstructuur opgeslagen."
-
-#: templates/admin/feincms/_messages_js.html:8
 msgid "Change template"
 msgstr "Template veranderen"
 
-#: templates/admin/feincms/_messages_js.html:9
+#: templates/admin/feincms/_messages_js.html:8
 msgid "Really change template? <br />All changes are saved."
 msgstr "Template echt veranderen?<br />Alle wijzigingen zijn opgeslagen."
 
-#: templates/admin/feincms/_messages_js.html:10
+#: templates/admin/feincms/_messages_js.html:9
 #, python-format
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
@@ -712,13 +737,25 @@ msgstr ""
 "inhoud van <strong>%(source_regions)s</strong>is verplaatst naar <strong>%"
 "(target_region)s</strong>."
 
-#: templates/admin/feincms/_messages_js.html:11
-msgid "Cannot make a node a child of itself."
-msgstr "Een item kan geen kind van zichzelf zijn."
-
 #: templates/admin/feincms/_messages_js.html:12
-msgid "No item has been selected."
-msgstr "Er is geen item geselecteerd."
+msgid "Hide"
+msgstr "Verberg"
+
+#: templates/admin/feincms/_messages_js.html:13
+msgid "Show"
+msgstr "Laat zien"
+
+#: templates/admin/feincms/_messages_js.html:14
+msgid "After"
+msgstr "Na"
+
+#: templates/admin/feincms/_messages_js.html:15
+msgid "Before"
+msgstr "Voor"
+
+#: templates/admin/feincms/_messages_js.html:16
+msgid "Insert new:"
+msgstr "Voeg in:"
 
 #: templates/admin/feincms/content_editor.html:10
 msgid "Region empty"
@@ -738,12 +775,11 @@ msgstr "Nieuw item toevoegen"
 
 #: templates/admin/feincms/content_editor.html:36
 msgid "Move to"
-msgstr ""
+msgstr "Verplaats naar"
 
 #: templates/admin/feincms/content_editor.html:40
-#, fuzzy
 msgid "Move"
-msgstr "verwijderen"
+msgstr "Verplaats"
 
 #: templates/admin/feincms/fe_editor.html:48
 msgid "Save"
@@ -784,7 +820,7 @@ msgstr "Startpagina"
 #: templates/admin/feincms/splitpane_editor_tree.html:117
 #, python-format
 msgid "Add %(name)s"
-msgstr "%(name)s toevoegen"
+msgstr "Voeg %(name)s toe"
 
 #: templates/admin/feincms/splitpane_editor_blank.html:42
 msgid "Select an item on the left side if you want to edit it."
