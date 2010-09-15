@@ -51,8 +51,6 @@ FEINCMS_JQUERY_NO_CONFLICT = \
 
 FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS', False)
 
-FEINCMS_ADMIN_TREE_DRAG_AND_DROP = getattr(settings, 'FEINCMS_ADMIN_TREE_DRAG_AND_DROP', True)
-
 # ------------------------------------------------------------------------
 # Enable caching intermediate results in feincms. Be aware that this might deliver
 # slightly out of date pages if you are not using the 'changedate' page extension.
