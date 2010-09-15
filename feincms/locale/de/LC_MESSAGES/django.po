@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-13 17:18+0200\n"
+"POT-Creation-Date: 2010-09-15 11:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -369,25 +369,29 @@ msgstr "Verändert um"
 msgid "featured"
 msgstr "Feature"
 
-#: module/extensions/seo.py:11
+#: module/extensions/featured.py:14
+msgid "Featured"
+msgstr "Feature"
+
+#: module/extensions/seo.py:9
 msgid "meta keywords"
 msgstr "Meta Begriffe"
 
-#: module/extensions/seo.py:12
+#: module/extensions/seo.py:10
 msgid "This will be prepended to the default keyword list."
 msgstr "Diese Begriffe werden vor die Standard-Begriffsliste eingefügt."
 
-#: module/extensions/seo.py:13
+#: module/extensions/seo.py:11
 msgid "meta description"
 msgstr "Meta Beschreibung"
 
-#: module/extensions/seo.py:14
+#: module/extensions/seo.py:12
 msgid "This will be prepended to the default description."
 msgstr "Diese Beschreibung wird vor der Standard-Beschreibung eingefügt."
 
-#: module/extensions/seo.py:20 module/page/models.py:657
-msgid "Other options"
-msgstr "Weitere Optionen"
+#: module/extensions/seo.py:18
+msgid "Search engine optimization"
+msgstr "Suchmaschinenoptimierung"
 
 #: module/medialibrary/models.py:46
 msgid "parent"
@@ -545,6 +549,10 @@ msgstr "Die URL wird schon von einer aktiven Seite verwendet."
 msgid "This URL is already taken by another active page."
 msgstr "Die URL wird schon von einer anderen aktiven Seite verwendet."
 
+#: module/page/models.py:657
+msgid "Other options"
+msgstr "Weitere Optionen"
+
 #: module/page/models.py:699 templates/admin/feincms/item_editor.html:57
 msgid "Add child page"
 msgstr "Unterseite hinzufügen"
@@ -591,6 +599,10 @@ msgstr "Leer lassen wenn das Element ewig aktiv bleiben soll."
 msgid "visible from - to"
 msgstr "sichtbar von – bis"
 
+#: module/page/extensions/datepublisher.py:88
+msgid "Date-based publishing"
+msgstr "Datumsbasierte Veröffentlichung"
+
 #: module/page/extensions/excerpt.py:9
 msgid "excerpt"
 msgstr "Auszug"
@@ -598,6 +610,10 @@ msgstr "Auszug"
 #: module/page/extensions/excerpt.py:10
 msgid "Add a brief excerpt summarizing the content of this page."
 msgstr "Kurze Zusammenfassung des Seiteninhaltes."
+
+#: module/page/extensions/excerpt.py:12
+msgid "Excerpt"
+msgstr "Auszug"
 
 #: module/page/extensions/navigation.py:40
 #: module/page/extensions/navigation.py:52
@@ -610,18 +626,30 @@ msgid ""
 "the navigation."
 msgstr "Wähle das Modul aus, welches weitere Navigationspunkte erstellt."
 
-#: module/page/extensions/relatedpages.py:12
+#: module/page/extensions/navigation.py:67
+msgid "Navigation extension"
+msgstr "Navigations-Erweiterung"
+
+#: module/page/extensions/relatedpages.py:13
 msgid "Select pages that should be listed as related content."
 msgstr "Seiten auswählen, welche als ähnlicher Inhalt angezeigt werden sollen."
 
-#: module/page/extensions/symlinks.py:14
+#: module/page/extensions/relatedpages.py:20
+msgid "Related pages"
+msgstr "Verwandte Seiten"
+
+#: module/page/extensions/symlinks.py:15
 msgid "symlinked page"
 msgstr "Verbundene Seite"
 
-#: module/page/extensions/symlinks.py:15
+#: module/page/extensions/symlinks.py:16
 msgid "All content is inherited from this page if given."
 msgstr ""
 "Der angezeigte Inhalt wird durch den Inhalt der angegebenen Seite ersetzt."
+
+#: module/page/extensions/symlinks.py:30
+msgid "Symlinked page"
+msgstr "Verbundene Seite"
 
 #: module/page/extensions/titles.py:13
 msgid "content title"
@@ -639,6 +667,10 @@ msgstr "Seitentitel"
 msgid "Page title for browser window. Same as title by default."
 msgstr ""
 "Seitentitel für das Browser-Fenster. Standardmässig gleich wie der Titel."
+
+#: module/page/extensions/titles.py:43
+msgid "Titles"
+msgstr "Titel"
 
 #: module/page/extensions/translations.py:171
 msgid "Edit translation"
@@ -711,6 +743,26 @@ msgstr "Kann ein Element nicht unterhalb von sich selbst einfügen."
 msgid "No item has been selected."
 msgstr "Kein Element ausgewählt."
 
+#: templates/admin/feincms/_messages_js.html:15
+msgid "Hide"
+msgstr "Verstecken"
+
+#: templates/admin/feincms/_messages_js.html:16
+msgid "Show"
+msgstr "Anzeigen"
+
+#: templates/admin/feincms/_messages_js.html:17
+msgid "After"
+msgstr "Nachher"
+
+#: templates/admin/feincms/_messages_js.html:18
+msgid "Before"
+msgstr "Vorher"
+
+#: templates/admin/feincms/_messages_js.html:19
+msgid "Insert new:"
+msgstr "Neu einfügen:"
+
 #: templates/admin/feincms/content_editor.html:10
 msgid "Region empty"
 msgstr "Region leer"
@@ -732,8 +784,8 @@ msgid "Move to"
 msgstr "Verschieben nach"
 
 #: templates/admin/feincms/content_editor.html:40
-msgid "Go"
-msgstr "Speichern"
+msgid "Move"
+msgstr "Verschieben nach"
 
 #: templates/admin/feincms/fe_editor.html:48
 msgid "Save"
@@ -765,7 +817,7 @@ msgid "remove"
 msgstr "entfernen"
 
 #: templates/admin/feincms/splitpane_editor_blank.html:21
-#: templates/admin/feincms/page/page/item_editor.html:21
+#: templates/admin/feincms/page/page/item_editor.html:20
 #: templates/admin/feincms/page/page/tree_editor.html:7
 msgid "Home"
 msgstr "Startseite"

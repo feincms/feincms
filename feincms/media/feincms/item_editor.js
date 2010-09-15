@@ -10,12 +10,22 @@ if(!Array.indexOf) {
 }
 
 (function($){
+    function feincms_gettext(s) {
+        // Unfortunately, we cannot use Django's jsi18n view for this
+        // because it only sends translations from the package
+        // "django.conf" -- our own djangojs domain strings won't be
+        // picked up
+
+        if (FEINCMS_ITEM_EDITOR_GETTEXT[s])
+            return FEINCMS_ITEM_EDITOR_GETTEXT[s];
+        return s;
+    }
 
     function create_new_item_from_form(form, modname){
         var fieldset = $("<fieldset>").addClass("module aligned order-item");
 
         var wrp = [];
-        wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span> <span class="modname">'+modname+'</span> &nbsp;(<span class="collapse">'+gettext('Hide')+'</span>)</h2>');
+        wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span> <span class="modname">'+modname+'</span> &nbsp;(<span class="collapse">'+feincms_gettext('Hide')+'</span>)</h2>');
         wrp.push('<div class="item-content"></div>');
         fieldset.append(wrp.join(""));
 
@@ -26,19 +36,19 @@ if(!Array.indexOf) {
         // Insert control unit
         var insert_control = $("<div>").addClass("item-control-unit");
         var select_content = $("#" + REGION_MAP[ACTIVE_REGION] + "_body").find("select[name=order-machine-add-select]").clone().removeAttr("name");
-        var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", gettext('After')).click(function(){
+        var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('After')).click(function(){
             var modvar = select_content.val();
             var modname = select_content.children("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'insertAfter', relative_to:fieldset, animate:true});
         });
-        var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", gettext('Before')).click(function(){
+        var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('Before')).click(function(){
             var modvar = select_content.val();
             var modname = select_content.children("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'insertBefore', relative_to:fieldset, animate:true});
         });
-        insert_control.append("<span>" + gettext('Insert new:') + "</span>").append(" ").append(select_content).append(" ").append(insert_before).append(insert_after);
+        insert_control.append("<span>" + feincms_gettext('Insert new:') + "</span>").append(" ").append(select_content).append(" ").append(insert_before).append(insert_after);
         item_controls.append(insert_control);
 
         // Move control unit
@@ -121,11 +131,11 @@ if(!Array.indexOf) {
 
     function create_new_spare_form(modvar) {
         var old_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
-        // **** UGLY CODE WARNING, avert your gaze! **** 
-        // for some unknown reason, the add-button click handler function 
-        // fails on the first triggerHandler call in some rare cases; 
+        // **** UGLY CODE WARNING, avert your gaze! ****
+        // for some unknown reason, the add-button click handler function
+        // fails on the first triggerHandler call in some rare cases;
         // we can detect this here and retry:
-        for(var i = 0; i < 2; i++){ 
+        for(var i = 0; i < 2; i++){
             // Use Django's built-in inline spawing mechanism (Django 1.2+)
             // must use django.jQuery since the bound function lives there:
             var returned = django.jQuery('#'+modvar+'_set-group').find(
@@ -305,7 +315,7 @@ if(!Array.indexOf) {
         $('h2 span.collapse').live('click', function(){
             var node = this;
             $(this.parentNode.parentNode).children('.item-content').slideToggle(function(){
-                $(node).text(gettext($(this).is(':visible') ? 'Hide' : 'Show'));
+                $(node).text(feincms_gettext($(this).is(':visible') ? 'Hide' : 'Show'));
             });
             return false;
         });
@@ -367,11 +377,11 @@ if(!Array.indexOf) {
         template_key_radio.click(on_template_key_changed);
         var template_key_select = $('select[name=template_key]');
         template_key_select.change(on_template_key_changed);
-    
+
         // Save template key's original value for easy restore if the user cancels the change.
         template_key_radio.data('original_value', template_key_radio.val());
         template_key_select.data('original_value', template_key_select.val());
-    
+
         $('form').submit(function(){
             give_ordering_to_content_types();
             var form = $(this);
