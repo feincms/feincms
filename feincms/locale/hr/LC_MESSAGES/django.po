@@ -184,7 +184,6 @@ msgid "text"
 msgstr "tekst"
 
 #: content/richtext/models.py:31
-#, fuzzy
 msgid "HTML Tidy"
 msgstr "HTML Tidy"
 
@@ -606,17 +605,16 @@ msgid "Select the module providing subpages for this page if you need to customi
 msgstr "Odaberite modul koji će dostaviti podstranice za ovu stranicu ukoliko je potrebno prilagoditi navigaciju."
 
 #: module/page/extensions/navigation.py:67
-#, fuzzy
 msgid "Navigation extension"
 msgstr "navigacijska ekstenzija"
 
 #: module/page/extensions/relatedpages.py:13
 msgid "Select pages that should be listed as related content."
-msgstr ""
+msgstr "Odaberite stranice koje trebaju biti navedene kao povezani sadržaj."
 
 #: module/page/extensions/relatedpages.py:20
 msgid "Related pages"
-msgstr ""
+msgstr "Povezane stranice"
 
 #: module/page/extensions/symlinks.py:15
 msgid "symlinked page"
@@ -627,7 +625,6 @@ msgid "All content is inherited from this page if given."
 msgstr "Sav sadržaj je nasljeđen od ove stranice ukoliko je postavljena."
 
 #: module/page/extensions/symlinks.py:30
-#, fuzzy
 msgid "Symlinked page"
 msgstr "simbolički povezana stranica"
 
@@ -648,9 +645,8 @@ msgid "Page title for browser window. Same as title by default."
 msgstr "Naslov stranice u prozoru browsera. Podrazumijevana vrijednost je jednako kao naslov."
 
 #: module/page/extensions/titles.py:43
-#, fuzzy
 msgid "Titles"
-msgstr "naziv"
+msgstr "nazivi"
 
 #: module/page/extensions/translations.py:171
 msgid "Edit translation"
@@ -707,26 +703,24 @@ msgid "Really change template? <br />All changes are saved and content from <str
 msgstr "Zaista izmjeniti predložak? <br />Sve izmjene su spremljene. i sadržaj iz <strong>%(source_regions)s</strong> je premješten u <strong>%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
-#, fuzzy
 msgid "Hide"
-msgstr "video"
+msgstr "sakrij"
 
 #: templates/admin/feincms/_messages_js.html:13
 msgid "Show"
-msgstr ""
+msgstr "pokaži"
 
 #: templates/admin/feincms/_messages_js.html:14
 msgid "After"
-msgstr ""
+msgstr "Nakon"
 
 #: templates/admin/feincms/_messages_js.html:15
 msgid "Before"
-msgstr ""
+msgstr "Prije"
 
 #: templates/admin/feincms/_messages_js.html:16
-#, fuzzy
 msgid "Insert new:"
-msgstr "Umetni ispred"
+msgstr "Umetni ispred:"
 
 #: templates/admin/feincms/content_editor.html:10
 msgid "Region empty"
@@ -742,12 +736,11 @@ msgstr "Dodaj novi unos"
 
 #: templates/admin/feincms/content_editor.html:36
 msgid "Move to"
-msgstr ""
+msgstr "Premjesti u"
 
 #: templates/admin/feincms/content_editor.html:40
-#, fuzzy
 msgid "Move"
-msgstr "izbriši"
+msgstr "Premjesti"
 
 #: templates/admin/feincms/fe_editor.html:48
 msgid "Save"
@@ -813,11 +806,11 @@ msgstr "Home"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:12
 msgid "Bulk upload a ZIP file:"
-msgstr ""
+msgstr "Masovni prijenos ZIP datotekom:"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:15
 msgid "Send"
-msgstr ""
+msgstr "Pošalji"
 
 #: templates/content/comments/default.html:10
 #, python-format
@@ -840,9 +833,8 @@ msgid "No comments."
 msgstr "Bez komentara."
 
 #: templates/content/comments/default.html:36
-#, fuzzy
 msgid "Post Comment"
-msgstr "Bez komentara."
+msgstr "Pošalji komentar"
 
 #: templates/content/contactform/form.html:9
 msgid "Submit"
