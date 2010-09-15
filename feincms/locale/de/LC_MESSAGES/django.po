@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-15 11:10+0200\n"
+"POT-Creation-Date: 2010-09-15 14:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -499,7 +499,7 @@ msgstr "Vorschau"
 msgid "active"
 msgstr "Aktiv"
 
-#: module/page/models.py:225 module/page/models.py:694
+#: module/page/models.py:225 module/page/models.py:688
 msgid "in navigation"
 msgstr "Im Menü"
 
@@ -537,7 +537,7 @@ msgstr "Seite"
 msgid "pages"
 msgstr "Seiten"
 
-#: module/page/models.py:259 module/page/models.py:800
+#: module/page/models.py:259 module/page/models.py:794
 msgid "is active"
 msgstr "Aktiv"
 
@@ -549,33 +549,33 @@ msgstr "Die URL wird schon von einer aktiven Seite verwendet."
 msgid "This URL is already taken by another active page."
 msgstr "Die URL wird schon von einer anderen aktiven Seite verwendet."
 
-#: module/page/models.py:657
+#: module/page/models.py:651
 msgid "Other options"
 msgstr "Weitere Optionen"
 
-#: module/page/models.py:699 templates/admin/feincms/item_editor.html:57
+#: module/page/models.py:693 templates/admin/feincms/item_editor.html:57
 msgid "Add child page"
 msgstr "Unterseite hinzufügen"
 
-#: module/page/models.py:701
+#: module/page/models.py:695
 msgid "View on site"
 msgstr "Auf der Webseite anzeigen"
 
-#: module/page/models.py:736
+#: module/page/models.py:730
 msgid "You may edit the copied page below."
 msgstr "Die kopierte Seite kann jetzt erneut bearbeitet werden."
 
-#: module/page/models.py:742
+#: module/page/models.py:736
 #, python-format
 msgid ""
 "You have replaced %s. You may continue editing the now-active page below."
 msgstr "Sie haben %s ersetzt und können nun die aktive Seite weiterbearbeiten."
 
-#: module/page/models.py:792
+#: module/page/models.py:786
 msgid "inherited"
 msgstr "geerbt"
 
-#: module/page/models.py:796
+#: module/page/models.py:790
 msgid "extensions"
 msgstr "Erweiterungen"
 
@@ -714,18 +714,14 @@ msgid "Cannot delete item, because it is parent of at least one other item."
 msgstr "Kann Element nicht löschen, weil es mindestens ein Unterelement hat."
 
 #: templates/admin/feincms/_messages_js.html:7
-msgid "Tree saved successfully."
-msgstr "Baum erfolgreich gespeichert"
-
-#: templates/admin/feincms/_messages_js.html:8
 msgid "Change template"
 msgstr "Template ändern"
 
-#: templates/admin/feincms/_messages_js.html:9
+#: templates/admin/feincms/_messages_js.html:8
 msgid "Really change template? <br />All changes are saved."
 msgstr "Template wirklich ändern? <br />Alle Änderungen werden gespeichert."
 
-#: templates/admin/feincms/_messages_js.html:10
+#: templates/admin/feincms/_messages_js.html:9
 #, python-format
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
@@ -735,31 +731,23 @@ msgstr ""
 "Inhalt aus <strong>%(source_regions)s</strong> nach <strong>%(target_region)"
 "s</strong> verschoben."
 
-#: templates/admin/feincms/_messages_js.html:11
-msgid "Cannot make a node a child of itself."
-msgstr "Kann ein Element nicht unterhalb von sich selbst einfügen."
-
 #: templates/admin/feincms/_messages_js.html:12
-msgid "No item has been selected."
-msgstr "Kein Element ausgewählt."
-
-#: templates/admin/feincms/_messages_js.html:15
 msgid "Hide"
 msgstr "Verstecken"
 
-#: templates/admin/feincms/_messages_js.html:16
+#: templates/admin/feincms/_messages_js.html:13
 msgid "Show"
 msgstr "Anzeigen"
 
-#: templates/admin/feincms/_messages_js.html:17
+#: templates/admin/feincms/_messages_js.html:14
 msgid "After"
 msgstr "Nachher"
 
-#: templates/admin/feincms/_messages_js.html:18
+#: templates/admin/feincms/_messages_js.html:15
 msgid "Before"
 msgstr "Vorher"
 
-#: templates/admin/feincms/_messages_js.html:19
+#: templates/admin/feincms/_messages_js.html:16
 msgid "Insert new:"
 msgstr "Neu einfügen:"
 
@@ -812,59 +800,8 @@ msgid "down"
 msgstr "runter"
 
 #: templates/admin/feincms/fe_tools.html:36
-#: templates/admin/feincms/splitpane_editor_tree.html:103
 msgid "remove"
 msgstr "entfernen"
-
-#: templates/admin/feincms/splitpane_editor_blank.html:21
-#: templates/admin/feincms/page/page/item_editor.html:20
-#: templates/admin/feincms/page/page/tree_editor.html:7
-msgid "Home"
-msgstr "Startseite"
-
-#: templates/admin/feincms/splitpane_editor_blank.html:37
-#: templates/admin/feincms/splitpane_editor_tree.html:117
-#, python-format
-msgid "Add %(name)s"
-msgstr "%(name)s hinzufügen"
-
-#: templates/admin/feincms/splitpane_editor_blank.html:42
-msgid "Select an item on the left side if you want to edit it."
-msgstr "Wähle ein Element auf der linken Seite aus um es zu bearbeiten."
-
-#: templates/admin/feincms/splitpane_editor_blank.html:43
-msgid ""
-"You can change the structure of the tree by drag-dropping elements. Please "
-"note that changes will be saved immediately. "
-msgstr ""
-"Die Struktur des Baumes kann mit Drag-Drop verändert werden. Änderungen "
-"werden sofort gespeichert."
-
-#: templates/admin/feincms/splitpane_editor_blank.html:44
-msgid ""
-"The context menu on the tree root and tree nodes provide you with additional "
-"modes of operation."
-msgstr ""
-"Das Kontextmenü der Elemente des Baumes beinhaltet zusätzliche "
-"Bearbeitungsmöglichkeiten."
-
-#: templates/admin/feincms/splitpane_editor_tree.html:49
-msgid "Cannot remove this frame while inside this admin section."
-msgstr "Kann das Frame in diesem Bereich der Administration nicht entfernen."
-
-#: templates/admin/feincms/splitpane_editor_tree.html:118
-msgid "Reload"
-msgstr "Neu laden"
-
-#: templates/admin/feincms/splitpane_editor_tree.html:120
-#: templates/admin/feincms/splitpane_editor_tree.html:127
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: templates/admin/feincms/splitpane_editor_tree.html:121
-#: templates/admin/feincms/splitpane_editor_tree.html:128
-msgid "Delete"
-msgstr "Löschen"
 
 #: templates/admin/feincms/tree_editor.html:35
 msgid "Shortcuts"
@@ -894,6 +831,11 @@ msgstr "Versteckte Kopie dieser Seite erstellen"
 #: templates/admin/feincms/page/page/item_editor.html:13
 msgid "Edit on site"
 msgstr "In der Seite bearbeiten"
+
+#: templates/admin/feincms/page/page/item_editor.html:20
+#: templates/admin/feincms/page/page/tree_editor.html:7
+msgid "Home"
+msgstr "Startseite"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:12
 msgid "Bulk upload a ZIP file:"
