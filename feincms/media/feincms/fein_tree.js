@@ -153,7 +153,7 @@ feincms.jQuery(function($){
 							$("#drag_line").css({
 								'width': targetRow.width() - padding - (targetLoc == CHILD ? CHILD_PAD : 0 ),
 								'left': targetRow.offset().left + padding + (targetLoc == CHILD ? CHILD_PAD : 0),
-								'top': targetRow.offset().top + (targetLoc == AFTER || targetLoc == CHILD ? rowHeight: 0) -1,
+								'top': targetRow.offset().top + (targetLoc == AFTER || targetLoc == CHILD ? rowHeight: 0) -1
 							});
 
 			        		// Store the found row and options
@@ -186,7 +186,7 @@ feincms.jQuery(function($){
 						'__cmd': 'move_node',
 						'position': position,
 						'cut_item': cutItem,
-						'pasted_on': pastedOn,
+						'pasted_on': pastedOn
 					}, function(data) {
 					    window.location.reload();
 					});
