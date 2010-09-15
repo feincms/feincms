@@ -278,7 +278,7 @@ if(!Array.indexOf) {
             ACTIVE_REGION = REGION_MAP.indexOf(tab_str);
 
             // make it possible to open current tab on page reload
-            window.location.hash = '#tab_'+tab_str;
+            window.location.replace('#tab_'+tab_str);
         });
 
         $("input.order-machine-add-button").click(function(){
