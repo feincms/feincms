@@ -1,17 +1,4 @@
 feincms.jQuery(function($){
-	// disable text selection
-	$.extend($.fn.disableTextSelect = function() {
-		return this.each(function() {
-			if($.browser.mozilla) {//Firefox
-				$(this).css('MozUserSelect', 'none');
-			} else if($.browser.msie) {//IE
-				$(this).bind('selectstart', function(){ return false; });
-			} else {//Opera, etc.
-				$(this).mousedown(function(){ return false; });
-			}
-		});
-	});
-
 	// recolor tree after expand/collapse
 	$.extend($.fn.recolorRows = function() {
 		$('tr', this).removeClass('row1').removeClass('row2');
@@ -82,7 +69,7 @@ feincms.jQuery(function($){
 			var moveTo = new Object();
 			var expandObj = new Object();
 
-			$("body").bind('mousemove', function(event) {
+			$("body").disableSelection().bind('mousemove', function(event) {
 				// attach dragged item to mouse
 				var cloned = originalRow.clone();
 				if($('#ghost').length == 0) {
@@ -194,7 +181,7 @@ feincms.jQuery(function($){
 					$("#drag_line").remove();
 					$("#ghost").remove();
 				}
-				$("body").unbind('mousemove').unbind('mouseup');
+				$("body").enableSelection().unbind('mousemove').unbind('mouseup');
 			});
 
 		});
@@ -266,7 +253,7 @@ feincms.jQuery(function($){
 
 	// fire!
 	if($('#result_list tbody tr').length > 1) {
-		$('#result_list tbody').feinTree().disableTextSelect();
+		$('#result_list tbody').feinTree();
 		$('#result_list span.page_marker').feinTreeToggleItem();
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
