@@ -631,15 +631,9 @@ class PageAdminForm(forms.ModelForm):
 
 
 # ------------------------------------------------------------------------
-if settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
-    list_modeladmin = editor.SplitPaneEditor
-else:
-    list_modeladmin = editor.TreeEditor
 
-# MARK: -
-# ------------------------------------------------------------------------
 
-class PageAdmin(editor.ItemEditor, list_modeladmin):
+class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     class Media:
         css = {}
         js = []

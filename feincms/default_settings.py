@@ -49,9 +49,6 @@ FEINCMS_JQUERY_NO_CONFLICT = \
 # ------------------------------------------------------------------------
 # Settings for the page module
 
-# Use SplitPaneEditor instead of TreeEditor in the page administration
-FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = getattr(settings, 'FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR', False)
-
 FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS', False)
 
 FEINCMS_ADMIN_TREE_DRAG_AND_DROP = getattr(settings, 'FEINCMS_ADMIN_TREE_DRAG_AND_DROP', True)

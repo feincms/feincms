@@ -78,7 +78,6 @@ COVERAGE_MODULES = ['feincms',
                     'feincms.admin.editor',
                     'feincms.admin.filterspecs',
                     'feincms.admin.item_editor',
-                    'feincms.admin.splitpane_editor',
                     'feincms.admin.tree_editor',
                     'feincms.compat',
                     'feincms.content',
@@ -185,8 +184,5 @@ LANGUAGES = (
     ('en', 'English'),
     ('de', 'German'),
     )
-
-# Activate this to check out the split pane editor
-#FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR = True
 
 FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = True
