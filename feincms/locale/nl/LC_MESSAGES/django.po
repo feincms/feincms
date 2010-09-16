@@ -2,8 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS VERSION\n"
@@ -193,12 +192,8 @@ msgstr "Negeer de HTML validatie waarschuwingen"
 
 #: content/richtext/models.py:56
 #, python-format
-msgid ""
-"HTML validation produced %(count)d warnings. Please review the updated "
-"content below before continuing: %(messages)s"
-msgstr ""
-"HTML validatie leverde %(count)d waarschuwingen op. Kijk alsjeblieft de "
-"bijgewerkte content na voordat je verder gaat: %(messages)s"
+msgid "HTML validation produced %(count)d warnings. Please review the updated content below before continuing: %(messages)s"
+msgstr "HTML validatie leverde %(count)d waarschuwingen op. Kijk alsjeblieft de bijgewerkte content na voordat je verder gaat: %(messages)s"
 
 #: content/richtext/models.py:87
 msgid "rich text"
@@ -217,12 +212,8 @@ msgid "rich texts (ckeditor)"
 msgstr "opgemaakte teksten (ckeditor)"
 
 #: content/rss/models.py:14
-msgid ""
-"The rss field is updated several times a day. A change in the title will "
-"only be visible on the home page after the next feed update."
-msgstr ""
-"Het RSS veld wordt meerdere malen per dag geactualiseerd. Een verandering in "
-"de titel zal pas op de pagina verschijnen na de volgende update."
+msgid "The rss field is updated several times a day. A change in the title will only be visible on the home page after the next feed update."
+msgstr "Het RSS veld wordt meerdere malen per dag geactualiseerd. Een verandering in de titel zal pas op de pagina verschijnen na de volgende update."
 
 #: content/rss/models.py:15
 msgid "link"
@@ -298,12 +289,8 @@ msgid "video link"
 msgstr "video link"
 
 #: content/video/models.py:16
-msgid ""
-"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
-"com/watch?v=zmj1rpzDRZ0"
-msgstr ""
-"Dit moet een link naar een youtube of vimeo video zijn. Bijvoorbeeld: http://"
-"www.youtube.com/watch?v=zmj1rpzDRZ0"
+msgid "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
+msgstr "Dit moet een link naar een youtube of vimeo video zijn. Bijvoorbeeld: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
 
 #: content/video/models.py:20
 msgid "video"
@@ -327,8 +314,7 @@ msgstr "gepubliceerd op"
 
 #: module/blog/models.py:29
 msgid "Will be set automatically once you tick the `published` checkbox above."
-msgstr ""
-"Wordt automatisch eenmalig ingesteld zodra `gepubliceerd` aangevinkt is."
+msgstr "Wordt automatisch eenmalig ingesteld zodra `gepubliceerd` aangevinkt is."
 
 #: module/blog/models.py:34
 msgid "entry"
@@ -508,14 +494,8 @@ msgid "override URL"
 msgstr "overschrijf URL"
 
 #: module/page/models.py:227
-msgid ""
-"Override the target URL. Be sure to include slashes at the beginning and at "
-"the end if it is a local URL. This affects both the navigation and subpages' "
-"URLs."
-msgstr ""
-"Overschrijft de URL. Als het een lokale URL betreft moet er aan aan "
-"weerszijden  een / staan. Dit veld heeft betrekking op zowel de navigatie "
-"als de URLs van subpagina's."
+msgid "Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages' URLs."
+msgstr "Overschrijft de URL. Als het een lokale URL betreft moet er aan aan weerszijden  een / staan. Dit veld heeft betrekking op zowel de navigatie als de URLs van subpagina's."
 
 #: module/page/models.py:228
 msgid "redirect to"
@@ -567,10 +547,8 @@ msgstr "Je kunt de gekopieerde pagina hieronder wijzigen."
 
 #: module/page/models.py:736
 #, python-format
-msgid ""
-"You have replaced %s. You may continue editing the now-active page below."
-msgstr ""
-"Je hebt %s vervangen. Je kunt de nu actieve pagina hieronder verder wijzigen."
+msgid "You have replaced %s. You may continue editing the now-active page below."
+msgstr "Je hebt %s vervangen. Je kunt de nu actieve pagina hieronder verder wijzigen."
 
 #: module/page/models.py:786
 msgid "inherited"
@@ -610,8 +588,7 @@ msgstr "samenvatting"
 
 #: module/page/extensions/excerpt.py:10
 msgid "Add a brief excerpt summarizing the content of this page."
-msgstr ""
-"Voeg een korte samenvatting toe die de inhoud van deze pagina beschrijft."
+msgstr "Voeg een korte samenvatting toe die de inhoud van deze pagina beschrijft."
 
 #: module/page/extensions/excerpt.py:12
 msgid "Excerpt"
@@ -623,12 +600,8 @@ msgid "navigation extension"
 msgstr "navigatie-uitbreiding"
 
 #: module/page/extensions/navigation.py:54
-msgid ""
-"Select the module providing subpages for this page if you need to customize "
-"the navigation."
-msgstr ""
-"Kies de module die subpagina's voor deze pagina definieert als je de "
-"navigatie wilt uitbreiden."
+msgid "Select the module providing subpages for this page if you need to customize the navigation."
+msgstr "Kies de module die subpagina's voor deze pagina definieert als je de navigatie wilt uitbreiden."
 
 #: module/page/extensions/navigation.py:67
 msgid "Navigation extension"
@@ -648,8 +621,7 @@ msgstr "verbonden pagina"
 
 #: module/page/extensions/symlinks.py:16
 msgid "All content is inherited from this page if given."
-msgstr ""
-"Als dit ingesteld is, dan wordt de inhoud geleverd door de aangegeven pagina."
+msgstr "Als dit ingesteld is, dan wordt de inhoud geleverd door de aangegeven pagina."
 
 #: module/page/extensions/symlinks.py:30
 msgid "Symlinked page"
@@ -661,8 +633,7 @@ msgstr "content titel"
 
 #: module/page/extensions/titles.py:14
 msgid "The first line is the main title, the following lines are subtitles."
-msgstr ""
-"De eerste regel is de hoofd-titel, de overige regels vormen de ondertitel."
+msgstr "De eerste regel is de hoofd-titel, de overige regels vormen de ondertitel."
 
 #: module/page/extensions/titles.py:15
 msgid "page title"
@@ -715,9 +686,7 @@ msgstr "Kan item niet verwijderen"
 
 #: templates/admin/feincms/_messages_js.html:6
 msgid "Cannot delete item, because it is parent of at least one other item."
-msgstr ""
-"Kan item niet verwijderen, omdat het de ouder is van een of meerdere sub-"
-"items."
+msgstr "Kan item niet verwijderen, omdat het de ouder is van een of meerdere sub-items."
 
 #: templates/admin/feincms/_messages_js.html:7
 msgid "Change template"
@@ -729,13 +698,8 @@ msgstr "Template echt veranderen?<br />Alle wijzigingen zijn opgeslagen."
 
 #: templates/admin/feincms/_messages_js.html:9
 #, python-format
-msgid ""
-"Really change template? <br />All changes are saved and content from <strong>"
-"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
-msgstr ""
-"Template echt veranderen? <br />Alle wijzigingen zijn opgeslagen en de "
-"inhoud van <strong>%(source_regions)s</strong>is verplaatst naar <strong>%"
-"(target_region)s</strong>."
+msgid "Really change template? <br />All changes are saved and content from <strong>%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+msgstr "Template echt veranderen? <br />Alle wijzigingen zijn opgeslagen en de inhoud van <strong>%(source_regions)s</strong>is verplaatst naar <strong>%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
@@ -762,12 +726,8 @@ msgid "Region empty"
 msgstr "Leeg gebied"
 
 #: templates/admin/feincms/content_editor.html:14
-msgid ""
-"Content from the parent site is automatically inherited. To override this "
-"behaviour, add some content."
-msgstr ""
-"Inhoud van de ouder-pagina wordt automatisch geërfd. Voeg zelf inhoud toe om "
-"dit te veranderen."
+msgid "Content from the parent site is automatically inherited. To override this behaviour, add some content."
+msgstr "Inhoud van de ouder-pagina wordt automatisch geërfd. Voeg zelf inhoud toe om dit te veranderen."
 
 #: templates/admin/feincms/content_editor.html:22
 msgid "Add new item"
@@ -832,7 +792,7 @@ msgstr "Vervang pagina %(to_replace)s"
 
 #: templates/admin/feincms/page/page/item_editor.html:12
 msgid "Create hidden copy of this page"
-msgstr "Maak verborgen kopie van deze pagina"
+msgstr "Maak verborgen kopie"
 
 #: templates/admin/feincms/page/page/item_editor.html:13
 msgid "Edit on site"
@@ -860,13 +820,11 @@ msgstr "%(comment_count)s reacties"
 #, python-format
 msgid ""
 "\n"
-"                    %(comment_username)s said on %(comment_submit_date)s<br /"
-">\n"
+"                    %(comment_username)s said on %(comment_submit_date)s<br />\n"
 "                "
 msgstr ""
 "\n"
-"                    %(comment_username)s zei op %(comment_submit_date)s<br /"
-">\n"
+"                    %(comment_username)s zei op %(comment_submit_date)s<br />\n"
 "                "
 
 #: templates/content/comments/default.html:28
@@ -891,23 +849,14 @@ msgstr "Bedankt!"
 #~ msgid "Select an item on the left side if you want to edit it."
 #~ msgstr "Selecteer een item aan de linkerzijde als je het wilt wijzigen."
 
-#~ msgid ""
-#~ "You can change the structure of the tree by drag-dropping elements. "
-#~ "Please note that changes will be saved immediately. "
-#~ msgstr ""
-#~ "Je kunt de structuur veranderen door de elementen te verslepen. Alle "
-#~ "wijzigingen worden direct opgeslagen."
+#~ msgid "You can change the structure of the tree by drag-dropping elements. Please note that changes will be saved immediately. "
+#~ msgstr "Je kunt de structuur veranderen door de elementen te verslepen. Alle wijzigingen worden direct opgeslagen."
 
-#~ msgid ""
-#~ "The context menu on the tree root and tree nodes provide you with "
-#~ "additional modes of operation."
-#~ msgstr ""
-#~ "Het contextmenu in de hoofdtak en takken van de boom voorzien je van "
-#~ "extra functionaliteiten."
+#~ msgid "The context menu on the tree root and tree nodes provide you with additional modes of operation."
+#~ msgstr "Het contextmenu in de hoofdtak en takken van de boom voorzien je van extra functionaliteiten."
 
 #~ msgid "Cannot remove this frame while inside this admin section."
-#~ msgstr ""
-#~ "Kan dit frame niet verwijderen terwijl we in deze admin sectie zijn."
+#~ msgstr "Kan dit frame niet verwijderen terwijl we in deze admin sectie zijn."
 
 #~ msgid "Reload"
 #~ msgstr "Vernieuw"
