@@ -31,54 +31,41 @@ if(!Array.indexOf) {
 
         fieldset.children(".item-content").append(form); //relocates, not clone
 
-        var item_controls = $("<div>").addClass("item-controls").appendTo(fieldset);
+        $("<div>").addClass("item-controls").appendTo(fieldset);
+        
+        return fieldset;
+    }
+
+    
+    function update_item_controls(item, target_region_id){
+        var item_controls = item.find(".item-controls");
+        item_controls.find(".item-control-units").remove(); // Remove all controls, if any.
+        
+        // (Re)build controls
         var control_units = $("<div>").addClass("item-control-units").appendTo(item_controls);
 
         // Insert control unit
         var insert_control = $("<div>").addClass("item-control-unit");
-        var select_content = $("#" + REGION_MAP[ACTIVE_REGION] + "_body").find("select[name=order-machine-add-select]").clone().removeAttr("name");
+        var select_content = $("#" + REGION_MAP[target_region_id] + "_body").find("select[name=order-machine-add-select]").clone().removeAttr("name");
         var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('After')).click(function(){
             var modvar = select_content.val();
             var modname = select_content.children("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-            add_fieldset(ACTIVE_REGION, new_fieldset, {where:'insertAfter', relative_to:fieldset, animate:true});
-            update_move_control(new_fieldset, ACTIVE_REGION);
+            add_fieldset(target_region_id, new_fieldset, {where:'insertAfter', relative_to:item, animate:true});
+            update_item_controls(new_fieldset, target_region_id);
         });
         var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('Before')).click(function(){
             var modvar = select_content.val();
             var modname = select_content.children("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-            add_fieldset(ACTIVE_REGION, new_fieldset, {where:'insertBefore', relative_to:fieldset, animate:true});
-            update_move_control(new_fieldset, ACTIVE_REGION);
+            add_fieldset(target_region_id, new_fieldset, {where:'insertBefore', relative_to:item, animate:true});
+            update_item_controls(new_fieldset, target_region_id);
         });
         insert_control.append("<span>" + feincms_gettext('Insert new:') + "</span>").append(" ").append(select_content).append(" ").append(insert_before).append(insert_after);
         control_units.append(insert_control);
 
-        // Controls animations
-        item_controls.find("*").hide();
-        var mouseenter_timeout;
-        var mouseleave_timeout;
-        function hide_controls() {
-            item_controls.find("*").fadeOut(800);
-        }
-        function show_controls() {
-            item_controls.find("*").fadeIn(800);
-        }
-        item_controls.mouseleave(function(){
-            mouseleave_timeout = setTimeout(hide_controls, 1000);
-            clearTimeout(mouseenter_timeout);
-        });
-        item_controls.mouseenter(function(){
-            mouseenter_timeout = setTimeout(show_controls, 200); // To prevent the control bar to appear when mouse accidentally enters the zone.
-            clearTimeout(mouseleave_timeout);
-        });
-
-        return fieldset;
-    }
-
-    
-    function update_move_control(item, target_region_id){
-        if (REGION_MAP.length > 0) {
+        // Move control unit
+        if (REGION_MAP.length > 1) {
             var wrp = [];
             wrp.push('<div class="item-control-unit move-control"><span>'+feincms_gettext('Move to')+': </span><select name="item-move-select">');
             
@@ -94,9 +81,32 @@ if(!Array.indexOf) {
                 var move_to = $(this).prev().val();
                 move_item(REGION_MAP.indexOf(move_to), item);
             });
-            item.find(".move-control").remove(); // Remove old one (if any)
-            item.find(".item-control-units").append(move_control); // Add new one
+            control_units.append(move_control); // Add new one
         }
+        
+        // Controls animations
+        item_controls.find("*").hide();
+        var is_hidden = true;
+        var mouseenter_timeout;
+        var mouseleave_timeout;
+        function hide_controls() {
+            item_controls.find("*").fadeOut(800);
+            is_hidden = true;
+        }
+        function show_controls() {
+            item_controls.find("*").fadeIn(800);
+            is_hidden = false;
+        }
+        item_controls.unbind('mouseleave'); // Unbind in case it's already been bound.
+        item_controls.mouseleave(function() {
+            clearTimeout(mouseenter_timeout);
+            mouseleave_timeout = setTimeout(hide_controls, 1000);
+        });
+        item_controls.unbind('mouseenter'); // Unbind in case it's already been bound.
+        item_controls.mouseenter(function() {
+            clearTimeout(mouseleave_timeout);
+            if (is_hidden) mouseenter_timeout = setTimeout(show_controls, 200); // To prevent the control bar to appear when mouse accidentally enters the zone. 
+        });
     }
     
     
@@ -196,8 +206,7 @@ if(!Array.indexOf) {
         item.fadeOut(800, function() {
             add_fieldset(region_id, item, {where:'append'});
             richify_poor(item);
-            update_move_control(item, region_id);
-            item.find(".item-controls").find("*").hide();
+            update_item_controls(item, region_id);
             item.show();
         });
     }
@@ -318,6 +327,7 @@ if(!Array.indexOf) {
             var modname = select_content.children("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'append', animate:true});
+            update_item_controls(new_fieldset, ACTIVE_REGION);
         });
 
         $("h2 img.item-delete").live('click', function(){
@@ -427,7 +437,7 @@ if(!Array.indexOf) {
                     var item = create_new_item_from_form(
                         elem, CONTENT_NAMES[content_type]);
                     add_fieldset(region_id, item, {where:'append'});
-                    update_move_control(item, region_id);
+                    update_item_controls(item, region_id);
                 }
             }
         });
