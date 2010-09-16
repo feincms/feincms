@@ -648,6 +648,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     # the fieldsets config here is used for the add_view, it has no effect
     # for the change_view which is completely customized anyway
+    unknown_fields = ['override_url', 'redirect_to']
     fieldsets = [
         (None, {
             'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
@@ -656,7 +657,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
-            'fields': ['override_url', 'redirect_to'],
+            'fields': unknown_fields,
         }),
         ]
     readonly_fields = []
@@ -687,7 +688,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         for f in self.model._meta.fields:
             if not f.name.startswith('_') and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level') and \
                     not f.auto_created and not f.name in present_fields and f.editable:
-                self.fieldsets[-1][1]['fields'].append(f.name)
+                self.unknown_fields.append(f.name)
                 if not f.editable:
                     self.readonly_fields.append(f.name)
 
