@@ -32,6 +32,7 @@ if(!Array.indexOf) {
         fieldset.children(".item-content").append(form); //relocates, not clone
 
         var item_controls = $("<div>").addClass("item-controls").appendTo(fieldset);
+        var control_units = $("<div>").addClass("item-control-units").appendTo(item_controls);
 
         // Insert control unit
         var insert_control = $("<div>").addClass("item-control-unit");
@@ -41,26 +42,20 @@ if(!Array.indexOf) {
             var modname = select_content.children("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'insertAfter', relative_to:fieldset, animate:true});
+            update_move_control(new_fieldset, ACTIVE_REGION);
         });
         var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('Before')).click(function(){
             var modvar = select_content.val();
             var modname = select_content.children("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'insertBefore', relative_to:fieldset, animate:true});
+            update_move_control(new_fieldset, ACTIVE_REGION);
         });
         insert_control.append("<span>" + feincms_gettext('Insert new:') + "</span>").append(" ").append(select_content).append(" ").append(insert_before).append(insert_after);
-        item_controls.append(insert_control);
+        control_units.append(insert_control);
 
-        // Move control unit
-        var move_control = $("#move-control-unit-template").clone().removeAttr("id");
-        move_control.find(".button").click(function(){
-            var move_to = $(this).prev().val();
-            move_item(REGION_MAP.indexOf(move_to), fieldset);
-        });
-        item_controls.append(move_control);
-
+        // Controls animations
         item_controls.find("*").hide();
-
         var mouseenter_timeout;
         var mouseleave_timeout;
         function hide_controls() {
@@ -81,6 +76,30 @@ if(!Array.indexOf) {
         return fieldset;
     }
 
+    
+    function update_move_control(item, target_region_id){
+        if (REGION_MAP.length > 0) {
+            var wrp = [];
+            wrp.push('<div class="item-control-unit move-control"><span>'+feincms_gettext('Move to')+': </span><select name="item-move-select">');
+            
+            for (var i=0; i < REGION_MAP.length; i++) {
+                if (i != target_region_id) { // Do not put the target region in the list
+                    wrp.push('<option value="'+REGION_MAP[i]+'">'+REGION_NAMES[i]+'</option>');
+                }
+            }
+            wrp.push('</select><input type="button" class="button" value="'+feincms_gettext('Move')+'" /></div>');
+        
+            var move_control = $(wrp.join(""));      
+            move_control.find(".button").click(function(){
+                var move_to = $(this).prev().val();
+                move_item(REGION_MAP.indexOf(move_to), item);
+            });
+            item.find(".move-control").remove(); // Remove old one (if any)
+            item.find(".item-control-units").append(move_control); // Add new one
+        }
+    }
+    
+    
     function create_new_fieldset_from_module(modvar, modname) {
         var new_form = create_new_spare_form(modvar);
         return create_new_item_from_form(new_form, modname);
@@ -177,6 +196,8 @@ if(!Array.indexOf) {
         item.fadeOut(800, function() {
             add_fieldset(region_id, item, {where:'append'});
             richify_poor(item);
+            update_move_control(item, region_id);
+            item.find(".item-controls").find("*").hide();
             item.show();
         });
     }
@@ -406,6 +427,7 @@ if(!Array.indexOf) {
                     var item = create_new_item_from_form(
                         elem, CONTENT_NAMES[content_type]);
                     add_fieldset(region_id, item, {where:'append'});
+                    update_move_control(item, region_id);
                 }
             }
         });

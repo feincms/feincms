@@ -140,10 +140,6 @@ textarea {
     border-left: none;
 }
 
-#move-control-unit-template {
-    display: none;
-}
-
 .machine-control {
     height:50px;
     padding: 5px 10px 5px 10px;
