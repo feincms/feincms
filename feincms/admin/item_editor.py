@@ -1,9 +1,7 @@
 import re
 import copy
-import warnings
 
 from django import forms, template
-from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.admin.util import unquote
@@ -44,7 +42,7 @@ class FeinCMSInline(InlineModelAdmin):
         super(FeinCMSInline, self).__init__(*args, **kwargs)
         self.verbose_name_plural = \
             u'Feincms_Inline: %s' % (self.verbose_name_plural,) # earmark
-
+              
 
 def get_feincms_inlines(model):
     """ Generate genuine django inlines for registered content types. """
@@ -71,36 +69,6 @@ class ItemEditor(admin.ModelAdmin):
         for inline_class in get_feincms_inlines(model):
             inline_instance = inline_class(self.model, self.admin_site)
             self.inline_instances.append(inline_instance)
-
-        self._inspect_configuration()
-
-    def _inspect_configuration(self):
-        # Check a few conditions and emit warnings if they aren't (or do
-        # not seem to be) satisfied
-
-        # FeinCMS ships with templates which have to override the ones
-        # django.contrib.admin ships (f.e. admin/includes/fieldset.html)
-        django_admin_templates_overridden = False
-
-        try:
-            django_admin_templates_overridden =\
-                django_settings.INSTALLED_APPS.index('feincms') <\
-                django_settings.INSTALLED_APPS.index('django.contrib.admin')
-        except ValueError:
-            pass
-
-        if not django_admin_templates_overridden:
-            # 'feincms' isn't contained in INSTALLED_APPS or comes after
-            # django.contrib.admin. But maybe the FeinCMS template folder
-            # is included in TEMPLATE_DIRS
-            django_admin_templates_overridden = len(
-                ['feincms/templates' in template_dir for template_dir in\
-                    django_settings.TEMPLATE_DIRS]) > 0
-
-        if not django_admin_templates_overridden:
-            warnings.warn('Please ensure your INSTALLED_APPS contains \
-\'feincms\' and that it is included before \
-\'django.contrib.admin\'.')
 
     def _formfield_callback(self, request):
         if settings.DJANGO10_COMPAT:
@@ -198,12 +166,12 @@ class ItemEditor(admin.ModelAdmin):
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
             }
-
+        
         for processor in self.model.feincms_item_editor_context_processors:
             extra_context.update(processor(request))
 
         return extra_context
-
+    
     def add_view(self, request, form_url='', extra_context=None):
         context = {}
 
@@ -217,11 +185,11 @@ class ItemEditor(admin.ModelAdmin):
         if request.method == 'POST' and \
                 hasattr(self.model, '_feincms_templates'):
             context['original'].template_key = request.POST['template_key']
-
+        
         context.update(self.get_extra_context(request))
         context.update(extra_context or {})
         return super(ItemEditor, self).add_view(request, form_url, context)
-
+    
     def change_view(self, request, object_id, extra_context=None):
         self.model._needs_content_types()
 
@@ -232,16 +200,16 @@ class ItemEditor(admin.ModelAdmin):
         if res:
             return self._frontend_editing_view(
                 request, res.group(1), res.group(2), res.group(3))
-
+        
         context = {}
         context.update(self.get_extra_context(request))
-        context.update(extra_context or {})
+        context.update(extra_context or {})        
         return super(ItemEditor, self).change_view(request, object_id, context)
 
     @property
     def change_form_template(self):
         return self.get_template_list()
-
+    
     def get_template_list(self):
         # retained for backwards-compatibility, change_form_template wraps it
         opts = self.model._meta
@@ -266,6 +234,7 @@ class ItemEditor(admin.ModelAdmin):
             fieldsets.append(FEINCMS_CONTENT_FIELDSET)
 
         if getattr(self, 'show_on_top', ()):
+            import warnings
             warnings.warn("The show_on_top will soon be removed; please "
                           "update your " "code to use fieldsets instead. ",
                           PendingDeprecationWarning)
