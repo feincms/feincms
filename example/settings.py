@@ -53,6 +53,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'example.urls'
 
 TEMPLATE_DIRS = (
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms', 'templates'),
 )
 
 INSTALLED_APPS = (
