@@ -50,6 +50,7 @@ def get_feincms_inlines(model):
     for content_type in model._feincms_content_types:
         name = '%sFeinCMSInline' % content_type.__name__
         attrs = {
+            '__module__': model.__module__,
             'model': content_type,
             'form': getattr(content_type, 'feincms_item_editor_form',
                             ItemEditorForm),
