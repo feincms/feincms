@@ -246,7 +246,7 @@ RSS feeds
 A feed reader widget. This also serves as an example how to build a content
 type that needs additional processing, in this case from a cron job. If an
 RSS feed has been added to the CMS, ``manage.py update_rsscontent`` should
-be run periodically (either through a cronjob or through other means) to
+be run periodically (either through a cron job or through other means) to
 keep the shown content up to date.  The `feedparser` module is required.
 
 
@@ -255,8 +255,8 @@ Video inclusion code for youtube, vimeo etc.
 .. module:: feincms.content.video.models
 .. class:: VideoContent
 
-A easy-to-use content that automatically generates flash video inclusion code
-from a website link. Currently only youtube and vimeo links are supported.
+A easy-to-use content type that automatically generates Flash video inclusion code
+from a website link. Currently only YouTube and Vimeo links are supported.
 
 
 
@@ -275,7 +275,7 @@ tuple of region keys to the create_content_type method:
 
 Note that the restriction only influences the content types shown in the
 "Add new item"-dropdown in the item editor. The user may still choose to add
-f.e. the SomeSidebarContent to the sidebar, and then proceed to move the
+the SomeSidebarContent to the sidebar, for example, and then proceed to move the
 content item into the main region.
 
 
@@ -292,7 +292,7 @@ FileContent and ImageContent models can be viewed as bad style in this respect,
 because if you want to use a image or file more than once you need to upload it
 for every single use instead of being able to reuse the uploaded file. The
 media library module and MediaFileContent resolve at least this issue nicely by
-allowing the website administrator to attach meta informations to a file and
+allowing the website administrator to attach metadata to a file and
 include it in a page by simply selecting the previously uploaded media file.
 
 
@@ -311,7 +311,7 @@ If you want to see an example of these two uses, have a look at the
 
 It is generally recommended to use this hook to configure content types
 compared to putting the configuration into the site-wide settings file. This
-is, because you might want to configure the content type differently
+is because you might want to configure the content type differently
 depending on the CMS base model that it is used with.
 
 

@@ -15,7 +15,7 @@ The tree editor
 .. module:: feincms.admin.tree_editor
 .. class:: TreeEditor
 
-The tree editor replaces the standard change list interface with a collapsible,
+The tree editor replaces the standard change list interface with a collapsible
 item tree. The model must be registered with `django-mptt <http://github.com/matthiask/django-mptt/>`_
 for this to work.
 
@@ -56,8 +56,8 @@ AJAX checkboxes
 
 The tree editor allows you to define boolean columns which let the website
 administrator change the value of the boolean using a simple click on the icon.
-These boolean columns can be aware of the tree structure. If f.e. an objects'
-``active``-flag influences the state of its descendants, the tree editor interface
+These boolean columns can be aware of the tree structure. For example, if an object's
+``active`` flag influences the state of its descendants, the tree editor interface
 is able to show not only the state of the modified element, but also the state of
 all its descendants without having to reload the page.
 
@@ -102,7 +102,7 @@ and all content blocks can be reordered using drag and drop:
 .. image:: images/item_editor_content.png
 
 .. [#f1] Templates are required for the page module; blog entries managed through
-         the item editor probably wont have a use for them.
+         the item editor probably won't have a use for them.
 
 
 Customizing the item editor
@@ -157,11 +157,11 @@ settings on the content type model itself:
 
 * ``feincms_item_editor_includes``:
 
-  If you need additional javascript or CSS files or need to perform additional
+  If you need additional Javascript or CSS files or need to perform additional
   initialization on your content type forms, you can specify template fragments
   which are included in predefined places into the item editor.
 
-  If you need to execute additional javascript, f.e. add a TinyMCE instance,
+  If you need to execute additional Javascript, for example to add a TinyMCE instance,
   it is recommended to add the initialization functions to the
   ``contentblock_init_handlers`` array, because the initialization needs to be
   performed not only on page load, but also after drag-dropping a content block
