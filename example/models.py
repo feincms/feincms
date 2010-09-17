@@ -1,4 +1,6 @@
+from django import forms
 from django.db import models
+from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.module.blog.models import Entry, EntryAdmin
@@ -27,8 +29,19 @@ MediaFileContent.default_create_content_type(Page)
 Page.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),
     ))
+    
+def get_admin_fields(form, *args, **kwargs):
+    return {
+        'exclusive_subpages': forms.BooleanField(
+            label=capfirst(_('exclusive subpages')),
+            required=False,
+            initial=form.instance.parameters.get('exclusive_subpages', False),
+            help_text=_('Exclude everything other than the application\'s content when rendering subpages.'),
+            ),
+    }
+    
 Page.create_content_type(ApplicationContent, APPLICATIONS=(
-    ('blog_urls', 'Blog'),
+    ('blog_urls', 'Blog', {'admin_fields': get_admin_fields}),
     ))    
 
 
