@@ -134,7 +134,11 @@ if(!Array.indexOf) {
         }
         var new_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
         if(new_form_count > old_form_count){
-            return $('#'+modvar+'_set-'+(new_form_count-1));
+            var new_form = $('#'+modvar+'_set-'+(new_form_count-1));
+            new_form.addClass("dynamic-form");
+            // earmark as dynamically created form, also allows
+            // django's inline deletion javascript function to operate
+            return new_form;
         }
         // TODO: add fallback for older versions by manually cloning
         // empty fieldset (provided using extra=1)
@@ -290,12 +294,25 @@ if(!Array.indexOf) {
         });
 
         $("h2 img.item-delete").live('click', function(){
-            popup_bg = '<div class="popup_bg"></div>';
+            var popup_bg = '<div class="popup_bg"></div>';
             $("body").append(popup_bg);
             var item = $(this).parents(".order-item");
             jConfirm(DELETE_MESSAGES[0], DELETE_MESSAGES[1], function(r) {
                 if (r==true) {
-                    set_item_field_value(item,"delete-field","checked");
+                    var dynamic_form = item.find(".dynamic-form");
+                    if(dynamic_form.length==1){ // not saved on server
+                        // could trigger django's deletion handler, which would
+                        // handle reindexing other inlines, etc, but seems to
+                        // cause errors, and is apparently unnecessary...
+                        //dynamic_form.attr('id', 'form_to_delete');
+                        //django.jQuery('#form_to_delete').find('a.inline-deletelink').triggerHandler('click');
+
+                        // just remove it
+                        dynamic_form.remove();
+                    }
+                    else{ // saved on server, don't remove form
+                        set_item_field_value(item,"delete-field","checked");
+                    }
                     item.fadeOut(200);
                 }
                 $(".popup_bg").remove();
