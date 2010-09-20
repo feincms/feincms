@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-15 14:29+0200\n"
-"PO-Revision-Date: 2010-09-20 20:13+0100\n"
+"PO-Revision-Date: 2010-09-20 20:39+0100\n"
 "Last-Translator: antoni aloy <aaloy@apsl.net>\n"
 "Language-Team: ca <antoni.aloy@trespams.com>\n"
 "MIME-Version: 1.0\n"
@@ -552,184 +552,184 @@ msgstr "és activa"
 
 #: module/page/models.py:609
 msgid "This URL is already taken by an active page."
-msgstr "Esta URL ya está en uso en una página activa"
+msgstr "Aquesta URL ja està en ús en una plana activa."
 
 #: module/page/models.py:627
 msgid "This URL is already taken by another active page."
-msgstr "Esta URL ya está en uno por otra página activa"
+msgstr "Aquesta URL ja età en ús per una altra plana activa."
 
 #: module/page/models.py:651
 msgid "Other options"
-msgstr "otras opciones"
+msgstr "Altres opcions"
 
 #: module/page/models.py:693
 #: templates/admin/feincms/item_editor.html:57
 msgid "Add child page"
-msgstr "Añade una página hija"
+msgstr "Afegeix una plana filla."
 
 #: module/page/models.py:695
 msgid "View on site"
-msgstr "Ver en sitio"
+msgstr "Veure a Lloc"
 
 #: module/page/models.py:730
 msgid "You may edit the copied page below."
-msgstr "Puedes editar la página copiada aquí abajo."
+msgstr "Pots editar la plana copiada just aquí abaix."
 
 #: module/page/models.py:736
 #, python-format
 msgid "You have replaced %s. You may continue editing the now-active page below."
-msgstr "Acabas de reemplazar %s. Puedes continuar editando la que ahora es la página activa aquí abajo."
+msgstr "Has reemplaçat %s. Pots continuar editant la ara plana activa aquí sota."
 
 #: module/page/models.py:786
 msgid "inherited"
-msgstr "heredado"
+msgstr "heretat"
 
 #: module/page/models.py:790
 msgid "extensions"
-msgstr "extensiones"
+msgstr "extensions"
 
 #: module/page/extensions/ct_tracker.py:123
 msgid "content types"
-msgstr "tipos de contenido"
+msgstr "tipus de contingut"
 
 #: module/page/extensions/datepublisher.py:48
 msgid "publication date"
-msgstr "fecha de publicación"
+msgstr "data de publicació"
 
 #: module/page/extensions/datepublisher.py:50
 msgid "publication end date"
-msgstr "publicar hasta"
+msgstr "publicar fins a"
 
 #: module/page/extensions/datepublisher.py:52
 msgid "Leave empty if the entry should stay active forever."
-msgstr "Si se deja en blanco la entrada permanecerá activa para siempre."
+msgstr "Si la deixen en blanc l'entrada estarà activa per sempre"
 
 #: module/page/extensions/datepublisher.py:78
 msgid "visible from - to"
-msgstr "visible de - hasta"
+msgstr "visible de-fins a"
 
 #: module/page/extensions/datepublisher.py:88
 msgid "Date-based publishing"
-msgstr "Publicación según la fecha"
+msgstr "Publicació segons la data"
 
 #: module/page/extensions/excerpt.py:9
 msgid "excerpt"
-msgstr "extracto"
+msgstr "extracte"
 
 #: module/page/extensions/excerpt.py:10
 msgid "Add a brief excerpt summarizing the content of this page."
-msgstr "Añade una breve descripción resumiendo el contenido de la página."
+msgstr "Afegeix una breu descripció resumint el contingut de la plana"
 
 #: module/page/extensions/excerpt.py:12
 msgid "Excerpt"
-msgstr "Extracto"
+msgstr "Extracte"
 
 #: module/page/extensions/navigation.py:40
 #: module/page/extensions/navigation.py:52
 msgid "navigation extension"
-msgstr "extensión de navegación"
+msgstr "extensió de navegació"
 
 #: module/page/extensions/navigation.py:54
 msgid "Select the module providing subpages for this page if you need to customize the navigation."
-msgstr "Selecciona el módulo que provee sub-páginas."
+msgstr "Selecciona el mòdul que proveeix les subplanes si necessites personalitzar la navegació."
 
 #: module/page/extensions/navigation.py:67
 msgid "Navigation extension"
-msgstr "Extensión de navegación"
+msgstr "Extensió de navegació"
 
 #: module/page/extensions/relatedpages.py:13
 msgid "Select pages that should be listed as related content."
-msgstr "Selecciona las páginas que se mostrarán como contenido relacionado."
+msgstr "Selecciones les planes que es mostraran com a contingut relacionat."
 
 #: module/page/extensions/relatedpages.py:20
 msgid "Related pages"
-msgstr "Páginas relacionadas"
+msgstr "Planes relacionades"
 
 #: module/page/extensions/symlinks.py:15
 msgid "symlinked page"
-msgstr "página direccionada"
+msgstr "Plana enllaçada"
 
 #: module/page/extensions/symlinks.py:16
 msgid "All content is inherited from this page if given."
-msgstr "Todo el contenido es heredado de esta página."
+msgstr "Tot el contingut es heretat d'aquesta plana."
 
 #: module/page/extensions/symlinks.py:30
 msgid "Symlinked page"
-msgstr "Página enlazada"
+msgstr "Plana enllaçada"
 
 #: module/page/extensions/titles.py:13
 msgid "content title"
-msgstr "título del contenido"
+msgstr "títol del contingut"
 
 #: module/page/extensions/titles.py:14
 msgid "The first line is the main title, the following lines are subtitles."
-msgstr "La primera línea es el título principal. Otras líneas serán subtítulos."
+msgstr "La primera línia és el títol principal, les altres són subtítols."
 
 #: module/page/extensions/titles.py:15
 msgid "page title"
-msgstr "título de la página"
+msgstr "títol de la plana"
 
 #: module/page/extensions/titles.py:16
 msgid "Page title for browser window. Same as title by default."
-msgstr "Título de la página para la ventana del navegador. Si omitido toma el mismo título."
+msgstr "Títol de la plana pel navegador. Per defecte el mateix que el títol."
 
 #: module/page/extensions/titles.py:43
 msgid "Titles"
-msgstr "Títulos"
+msgstr "Títols"
 
 #: module/page/extensions/translations.py:171
 msgid "Edit translation"
-msgstr "Editar traducción"
+msgstr "Editar la traducció"
 
 #: module/page/extensions/translations.py:174
 msgid "Create translation"
-msgstr "Crear traducción"
+msgstr "Crear traducció"
 
 #: module/page/extensions/translations.py:179
 msgid "translations"
-msgstr "traducciones"
+msgstr "traduccions"
 
 #: templates/admin/filter.html:3
 #, python-format
 msgid " By %(filter_title)s "
-msgstr "Por %(filter_title)s"
+msgstr "Per %(filter_title)s"
 
 #: templates/admin/content/mediafile/init.html:9
 msgid "Search"
-msgstr "Buscar"
+msgstr "Cercar"
 
 #: templates/admin/feincms/_messages_js.html:4
 msgid "Really delete item?"
-msgstr "Confirma la eliminación del elemento?"
+msgstr "Segur que vols esborrar l'element?"
 
 #: templates/admin/feincms/_messages_js.html:4
 msgid "Confirm to delete item"
-msgstr "Confirmar eliminación del elemento"
+msgstr "Confirma per esborrar"
 
 #: templates/admin/feincms/_messages_js.html:5
 msgid "Item deleted successfully."
-msgstr "Elemento eliminado con éxito."
+msgstr "L'element s'esborrà amb èxit."
 
 #: templates/admin/feincms/_messages_js.html:5
 msgid "Cannot delete item"
-msgstr "Imposible de eliminar el elemento"
+msgstr "Impossible esborrar l'element"
 
 #: templates/admin/feincms/_messages_js.html:6
 msgid "Cannot delete item, because it is parent of at least one other item."
-msgstr "Imposible de eliminar el elemento, porque es padrón de al menos un elemento dependiente."
+msgstr "No puc esborrar l'element ja que és el pare d'almanco un altre element."
 
 #: templates/admin/feincms/_messages_js.html:7
 msgid "Change template"
-msgstr "Alterar el modelo"
+msgstr "Canviar la plantilla"
 
 #: templates/admin/feincms/_messages_js.html:8
 msgid "Really change template? <br />All changes are saved."
-msgstr "¿Deas cambiar la plantilla?<br /> Todos los cambios se guardarán."
+msgstr "Vols canviar la plantilla?<br /> Tots els canvis es guardaran."
 
 #: templates/admin/feincms/_messages_js.html:9
 #, python-format
 msgid "Really change template? <br />All changes are saved and content from <strong>%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
-msgstr "¿Deseas cambiar la plantilla? <br/>Todos los cambios se guardarán y el contenido desde <strong>%(source_regions)s</strong> se moverá a <strong>%(target_region)s</strong>"
+msgstr "Vols canviar la plantilla? <br/>Tots els canvis es guardaran i el contingut des de <strong>%(source_regions)s</strong> se mourà a <strong>%(target_region)s</strong>"
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
@@ -741,35 +741,35 @@ msgstr "Mostrar"
 
 #: templates/admin/feincms/_messages_js.html:14
 msgid "After"
-msgstr "Después"
+msgstr "Després"
 
 #: templates/admin/feincms/_messages_js.html:15
 msgid "Before"
-msgstr "Antes"
+msgstr "Abans"
 
 #: templates/admin/feincms/_messages_js.html:16
 msgid "Insert new:"
-msgstr "Insertar nuevo:"
+msgstr "Inserir nou:"
 
 #: templates/admin/feincms/content_editor.html:10
 msgid "Region empty"
-msgstr "Región vacía"
+msgstr "Regió buida"
 
 #: templates/admin/feincms/content_editor.html:14
 msgid "Content from the parent site is automatically inherited. To override this behaviour, add some content."
-msgstr "O conteúdo é herdado da página ascendente, excepto se o indicar aqui."
+msgstr "El contingut de la plana pare s'inserirà automàticament. Per sobreescriure aquest comportament afegeix algun contingut."
 
 #: templates/admin/feincms/content_editor.html:22
 msgid "Add new item"
-msgstr "Añadir nuevo elemento"
+msgstr "Afegir un nou element"
 
 #: templates/admin/feincms/content_editor.html:36
 msgid "Move to"
-msgstr "Mover a"
+msgstr "Moure a"
 
 #: templates/admin/feincms/content_editor.html:40
 msgid "Move"
-msgstr "Mover"
+msgstr "Moure"
 
 #: templates/admin/feincms/fe_editor.html:48
 msgid "Save"
@@ -777,7 +777,7 @@ msgstr "Guardar"
 
 #: templates/admin/feincms/fe_tools.html:26
 msgid "Stop Editing"
-msgstr "Terminar edición"
+msgstr "Acabar l'edició"
 
 #: templates/admin/feincms/fe_tools.html:31
 msgid "edit"
@@ -785,31 +785,31 @@ msgstr "editar"
 
 #: templates/admin/feincms/fe_tools.html:33
 msgid "new"
-msgstr "nuevo"
+msgstr "nou"
 
 #: templates/admin/feincms/fe_tools.html:34
 msgid "up"
-msgstr "para cima"
+msgstr "amunt"
 
 #: templates/admin/feincms/fe_tools.html:35
 msgid "down"
-msgstr "para bajo"
+msgstr "avall"
 
 #: templates/admin/feincms/fe_tools.html:36
 msgid "remove"
-msgstr "borrar"
+msgstr "esborrar"
 
 #: templates/admin/feincms/tree_editor.html:35
 msgid "Shortcuts"
-msgstr "Atajos"
+msgstr "Dreceres"
 
 #: templates/admin/feincms/tree_editor.html:37
 msgid "Collapse tree"
-msgstr "Colapsar el árbol"
+msgstr "Tancar l'arbre"
 
 #: templates/admin/feincms/tree_editor.html:38
 msgid "Expand tree"
-msgstr "Expandir el árbol"
+msgstr "Expandir l'arbre"
 
 #: templates/admin/feincms/tree_editor.html:41
 msgid "Filter"
@@ -818,24 +818,24 @@ msgstr "Filtrar"
 #: templates/admin/feincms/page/page/item_editor.html:9
 #, python-format
 msgid "Replace page %(to_replace)s"
-msgstr "Reemplazar la página %(to_replace)s"
+msgstr "Reemplaçar la plana %(to_replace)s"
 
 #: templates/admin/feincms/page/page/item_editor.html:12
 msgid "Create hidden copy of this page"
-msgstr "Crea una copia oculta de esta página"
+msgstr "Crea una còpia oculta d'aquesta plana"
 
 #: templates/admin/feincms/page/page/item_editor.html:13
 msgid "Edit on site"
-msgstr "Editar en el sitio"
+msgstr "Editar al Lloc"
 
 #: templates/admin/feincms/page/page/item_editor.html:20
 #: templates/admin/feincms/page/page/tree_editor.html:7
 msgid "Home"
-msgstr "Página inicial"
+msgstr "Inici"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:12
 msgid "Bulk upload a ZIP file:"
-msgstr "Sube un archivo ZIP:"
+msgstr "Puja un arxiu ZIP:"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:15
 msgid "Send"
@@ -844,7 +844,7 @@ msgstr "Enviar"
 #: templates/content/comments/default.html:10
 #, python-format
 msgid "%(comment_count)s comments."
-msgstr "%(comment_count)s comentarios."
+msgstr "%(comment_count)s comentaris."
 
 #: templates/content/comments/default.html:18
 #, python-format
@@ -854,16 +854,16 @@ msgid ""
 "                "
 msgstr ""
 "\n"
-"   %(comment_username)s dijo el %(comment_submit_date)s<br />\n"
+"   %(comment_username)s digué el %(comment_submit_date)s<br />\n"
 "                "
 
 #: templates/content/comments/default.html:28
 msgid "No comments."
-msgstr "Sin comentarios"
+msgstr "Sense comentaris."
 
 #: templates/content/comments/default.html:36
 msgid "Post Comment"
-msgstr "Envía un comentario"
+msgstr "Envia un comentari"
 
 #: templates/content/contactform/form.html:9
 msgid "Submit"
