@@ -264,13 +264,18 @@ def is_parent_of(page1, page2):
     {% if page|is_parent_of:feincms_page %} ... {% endif %}
     """
 
-    if page1 is None:   return False
-    return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
+    try:
+        return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
+    except AttributeError:
+        return False
 
 # ------------------------------------------------------------------------
 @register.filter
 def is_equal_or_parent_of(page1, page2):
-    return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
+    try:
+        return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
+    except AttributeError:
+        return False
 
 # ------------------------------------------------------------------------
 @register.filter
@@ -281,7 +286,9 @@ def is_sibling_of(page1, page2):
     {% if page|is_sibling_of:feincms_page %} ... {% endif %}
     """
 
-    if page1 is None or page2 is None:  return False
-    return page1.parent_id == page2.parent_id
+    try:
+        return page1.parent_id == page2.parent_id
+    except AttributeError:
+        return False
 
 # ------------------------------------------------------------------------
