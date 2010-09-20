@@ -15,7 +15,7 @@ from feincms.utils import get_object
 class LogBase(object):
     """
     Base logging class. This just defines the infrastructure but does
-    not log anything. To implement something more usefule, subclass it
+    not log anything. To implement something more useful, subclass it
     and implement the do_log() method.
     """
     # Log categories

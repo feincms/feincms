@@ -37,7 +37,7 @@ most of these, but not for all.
 
 * ``FEINCMS_MEDIALIBRARY_ROOT``:
 
-  Where thhe media library should store its media files.
+  Where the media library should store its media files.
 
   Defaults to ``settings.MEDIA_ROOT``
 

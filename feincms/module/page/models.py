@@ -116,8 +116,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         Return the best match for a path. If the path as given is unavailable,
         continues to search by chopping path components off the end.
 
-        Tries hard to avoid unnecessary database lookups by generating all poss
-        matching url prefixes and choosing the longtest match.
+        Tries hard to avoid unnecessary database lookups by generating all
+        possible matching URL prefixes and choosing the longtest match.
 
         Page.best_match_for_path('/photos/album/2008/09') might return the
         page with url '/photos/album'.
