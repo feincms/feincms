@@ -28,6 +28,7 @@ import os
 import logging
 from PIL import Image
 
+# ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
     """
     Simple manager which exists only to supply ``.select_related("parent")``
@@ -327,6 +328,12 @@ class MediaFileAdmin(admin.ModelAdmin):
 
         return my_urls + urls
 
+    def changelist_view(self, request, extra_context=None):
+        if extra_context is None:
+            extra_context = {}
+        extra_context['categories'] = Category.objects.all()
+        return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
+
     @staticmethod
     # 1.2 @csrf_protect
     @permission_required('medialibrary.add_mediafile')
@@ -334,9 +341,13 @@ class MediaFileAdmin(admin.ModelAdmin):
         from django.core.urlresolvers import reverse
         from django.utils.functional import lazy
 
-        def import_zipfile(request, data):
+        def import_zipfile(request, category_id, data):
             import zipfile
             from os import path
+
+            category = None
+            if category_id:
+                category = Category.objects.get(pk=int(category_id))
 
             try:
                 z = zipfile.ZipFile(data)
@@ -360,6 +371,8 @@ class MediaFileAdmin(admin.ModelAdmin):
                             mf = MediaFile()
                             mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
                             mf.save()
+                            if category:
+                                mf.categories.add(category)
                             count += 1
 
                 request.user.message_set.create(message="%d files imported" % count)
@@ -370,7 +383,7 @@ class MediaFileAdmin(admin.ModelAdmin):
             pass
 
         if request.method == 'POST' and 'data' in request.FILES:
-            import_zipfile(request, request.FILES['data'])
+            import_zipfile(request, request.POST.get('category'), request.FILES['data'])
         else:
             request.user.message_set.create(message="No input file given")
 
