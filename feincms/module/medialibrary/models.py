@@ -135,6 +135,11 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         cls.filetypes_dict = dict(choices)
         cls._meta.get_field('type').choices[:] = choices
 
+    def __init__(self, *args, **kwargs):
+        super(MediaFileBase, self).__init__(*args, **kwargs)
+        if self.file and self.file.path:
+            self._original_file_path = self.file.path
+
     def __unicode__(self):
         trans = None
 
@@ -245,6 +250,13 @@ class MediaFileBase(Base, TranslatedObjectMixin):
             except (OSError, IOError), e:
                 self.type = self.determine_file_type('***') # It's binary something
 
+        if getattr(self, '_original_file_path', None):
+            if self.file.path != self._original_file_path:
+                try:
+                    os.unlink(self._original_file_path)
+                except:
+                    pass
+
         super(MediaFileBase, self).save(*args, **kwargs)
         self.purge_translation_cache()
 
@@ -309,6 +321,7 @@ def admin_thumbnail(obj):
 admin_thumbnail.short_description = _('Preview')
 admin_thumbnail.allow_tags = True
 
+#-------------------------------------------------------------------------
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
