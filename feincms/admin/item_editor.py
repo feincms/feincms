@@ -3,21 +3,14 @@ import copy
 
 from django import forms, template
 from django.contrib import admin
-from django.contrib.admin import helpers
-from django.contrib.admin.util import unquote
-from django.core.exceptions import PermissionDenied, ImproperlyConfigured
-from django.db import transaction
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import loading
-from django.forms.formsets import all_valid
-from django.forms.models import modelform_factory, inlineformset_factory
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.utils.html import escape
+from django.forms.models import modelform_factory
+from django.http import Http404
 from django.shortcuts import render_to_response
-from django.utils.decorators import method_decorator
 from django.utils.encoding import force_unicode
 from django.utils.functional import curry
 from django.utils.translation import ugettext as _
-from django.views.decorators.csrf import csrf_protect
 from django.contrib.admin.options import InlineModelAdmin
 
 from feincms import settings, ensure_completely_loaded
@@ -26,7 +19,6 @@ FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
 FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
-csrf_protect_m = method_decorator(csrf_protect)
 
 class ItemEditorForm(forms.ModelForm):
     region = forms.CharField(widget=forms.HiddenInput())
@@ -42,7 +34,7 @@ class FeinCMSInline(InlineModelAdmin):
         super(FeinCMSInline, self).__init__(*args, **kwargs)
         self.verbose_name_plural = \
             u'Feincms_Inline: %s' % (self.verbose_name_plural,) # earmark
-              
+
 
 def get_feincms_inlines(model):
     """ Generate genuine django inlines for registered content types. """
@@ -166,12 +158,12 @@ class ItemEditor(admin.ModelAdmin):
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
             }
-        
+
         for processor in self.model.feincms_item_editor_context_processors:
             extra_context.update(processor(request))
 
         return extra_context
-    
+
     def add_view(self, request, form_url='', extra_context=None):
         context = {}
 
@@ -185,11 +177,11 @@ class ItemEditor(admin.ModelAdmin):
         if request.method == 'POST' and \
                 hasattr(self.model, '_feincms_templates'):
             context['original'].template_key = request.POST['template_key']
-        
+
         context.update(self.get_extra_context(request))
         context.update(extra_context or {})
         return super(ItemEditor, self).add_view(request, form_url, context)
-    
+
     def change_view(self, request, object_id, extra_context=None):
         self.model._needs_content_types()
 
@@ -200,16 +192,16 @@ class ItemEditor(admin.ModelAdmin):
         if res:
             return self._frontend_editing_view(
                 request, res.group(1), res.group(2), res.group(3))
-        
+
         context = {}
         context.update(self.get_extra_context(request))
-        context.update(extra_context or {})        
+        context.update(extra_context or {})
         return super(ItemEditor, self).change_view(request, object_id, context)
 
     @property
     def change_form_template(self):
         return self.get_template_list()
-    
+
     def get_template_list(self):
         # retained for backwards-compatibility, change_form_template wraps it
         opts = self.model._meta
