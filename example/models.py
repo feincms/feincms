@@ -29,7 +29,7 @@ MediaFileContent.default_create_content_type(Page)
 Page.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),
     ))
-    
+
 def get_admin_fields(form, *args, **kwargs):
     return {
         'exclusive_subpages': forms.BooleanField(
@@ -39,10 +39,10 @@ def get_admin_fields(form, *args, **kwargs):
             help_text=_('Exclude everything other than the application\'s content when rendering subpages.'),
             ),
     }
-    
+
 Page.create_content_type(ApplicationContent, APPLICATIONS=(
     ('blog_urls', 'Blog', {'admin_fields': get_admin_fields}),
-    ))    
+    ))
 
 
 Entry.register_regions(
@@ -52,12 +52,12 @@ Entry.create_content_type(RawContent)
 Entry.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),
     ))
-    
-    
+
+
 class BlogEntriesNavigationExtension(NavigationExtension):
     """
     Extended navigation for blog entries.
-    
+
     It would be added to 'Blog' page properties in admin.
     """
     name = _('all blog entries')

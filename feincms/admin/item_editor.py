@@ -42,7 +42,7 @@ class FeinCMSInline(InlineModelAdmin):
         super(FeinCMSInline, self).__init__(*args, **kwargs)
         self.verbose_name_plural = \
             u'Feincms_Inline: %s' % (self.verbose_name_plural,) # earmark
-              
+
 
 def get_feincms_inlines(model):
     """ Generate genuine django inlines for registered content types. """
@@ -166,12 +166,12 @@ class ItemEditor(admin.ModelAdmin):
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
             }
-        
+
         for processor in self.model.feincms_item_editor_context_processors:
             extra_context.update(processor(request))
 
         return extra_context
-    
+
     def add_view(self, request, form_url='', extra_context=None):
         context = {}
 
@@ -185,11 +185,11 @@ class ItemEditor(admin.ModelAdmin):
         if request.method == 'POST' and \
                 hasattr(self.model, '_feincms_templates'):
             context['original'].template_key = request.POST['template_key']
-        
+
         context.update(self.get_extra_context(request))
         context.update(extra_context or {})
         return super(ItemEditor, self).add_view(request, form_url, context)
-    
+
     def change_view(self, request, object_id, extra_context=None):
         self.model._needs_content_types()
 
@@ -200,16 +200,16 @@ class ItemEditor(admin.ModelAdmin):
         if res:
             return self._frontend_editing_view(
                 request, res.group(1), res.group(2), res.group(3))
-        
+
         context = {}
         context.update(self.get_extra_context(request))
-        context.update(extra_context or {})        
+        context.update(extra_context or {})
         return super(ItemEditor, self).change_view(request, object_id, context)
 
     @property
     def change_form_template(self):
         return self.get_template_list()
-    
+
     def get_template_list(self):
         # retained for backwards-compatibility, change_form_template wraps it
         opts = self.model._meta

@@ -7,7 +7,7 @@ info_dict = {
 }
 
 urlpatterns = patterns('',
-    url(r'^(?P<object_id>\d+)/', 
+    url(r'^(?P<object_id>\d+)/',
         'feincms.views.generic.list_detail.object_detail',
         info_dict,
         name = 'blog_entry_details'),

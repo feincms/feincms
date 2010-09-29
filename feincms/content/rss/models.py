@@ -30,7 +30,7 @@ class RSSContent(models.Model):
         entries = feed['entries'][:self.max_items]
         if date_format:
             for entry in entries:
-                entry.updated = time.strftime(date_format, 
+                entry.updated = time.strftime(date_format,
                     entry.updated_parsed)
 
         self.rendered_content = render_to_string('content/rss/content.html', {

@@ -52,7 +52,7 @@ class LogBase(object):
     def set_levels(self, **kwargs):
         """
         Set log levels.
-        
+
         logger.set_levels(CACHE=logger.ERR, AUTH=logger.INFO)
         """
 
@@ -64,13 +64,13 @@ class LogBase(object):
 
     def debug(self, *args, **kwargs):
         self.log(level=self.DEBUG, *args, **kwargs)
-    
+
     def info(self, *args, **kwargs):
         self.log(level=self.INFO, *args, **kwargs)
-    
+
     def warn(self, *args, **kwargs):
         self.log(level=self.WARN, *args, **kwargs)
-        
+
     def err(self, *args, **kwargs):
         self.log(level=self.ERR, *args, **kwargs)
 

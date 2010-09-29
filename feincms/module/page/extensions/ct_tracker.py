@@ -101,7 +101,7 @@ def page_get_content_types_for_region(self, region):
 
     for django_ct in region_ct_inventory:
         retval[tr_map[django_ct]] = 1
-    
+
     return retval
 
 # ------------------------------------------------------------------------

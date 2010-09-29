@@ -17,13 +17,13 @@
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
 <script type="text/javascript">
-    var feincms = { 
+    var feincms = {
         {% if FEINCMS_JQUERY_NO_CONFLICT %}
-        "jQuery": jQuery.noConflict(true) 
+        "jQuery": jQuery.noConflict(true)
         {% else %}
         "jQuery": jQuery
         {% endif %}
-    }; 
+    };
 </script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}item_editor.js"></script>
 
@@ -35,7 +35,7 @@
 <script type="text/javascript">
     feincms.jQuery(document).ready(function($){
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
-        
+
         /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
         $(document.documentElement).keydown(function(event) {
             if(event.which == 83 && event.metaKey) {
@@ -44,7 +44,7 @@
                 $(sel).click();
                 return false;
             }
-        }); 
+        });
     });
 </script>
 {% endblock %}

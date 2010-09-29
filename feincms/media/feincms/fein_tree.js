@@ -5,7 +5,7 @@ feincms.jQuery(function($){
 		$('tr:visible:even', this).addClass('row1');
 		$('tr:visible:odd', this).addClass('row2');
 	});
-	
+
 	// extract id
     function extractId(s) {
         return s.match(/-(\d+)$/)[1];
@@ -107,10 +107,10 @@ feincms.jQuery(function($){
 							setTimeout(function() {
 								doToggle(id, true);
 								$('#result_list tbody').recolorRows();
-								$('span.page_marker', element).removeClass('closed'); 
+								$('span.page_marker', element).removeClass('closed');
 							}, 750);
 						}
-						
+
 						var targetRow = null;
 						var targetLoc;
 						if(event.pageY >= top && event.pageY <= top + rowHeight / 2 && element.prev()) {
@@ -257,7 +257,7 @@ feincms.jQuery(function($){
 		$('#result_list span.page_marker').feinTreeToggleItem();
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
-		
+
         feincms.collapsed_nodes = [];
         var storedNodes = $.cookie('feincms_collapsed_nodes');
         if (storedNodes) {
