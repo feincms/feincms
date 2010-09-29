@@ -24,7 +24,7 @@ from feincms import settings, ensure_completely_loaded
 from feincms.admin import editor
 from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
-from feincms.models import Base
+from feincms.models import Base, create_base_model
 from feincms.utils import get_object, copy_model_instance
 import feincms.admin.filterspecs
 
@@ -212,6 +212,17 @@ PageManager.add_to_active_filters( Q(active=True) )
 
 # MARK: -
 # ------------------------------------------------------------------------
+
+try:
+    # MPTT 0.4
+    from mptt.models import MPTTModel
+    mptt_register = False
+    Base = create_base_model(MPTTModel)
+except ImportError:
+    # MPTT 0.3
+    mptt_register = True
+
+
 class Page(Base):
 
     active = models.BooleanField(_('active'), default=False)
@@ -506,7 +517,8 @@ class Page(Base):
 
 
 # ------------------------------------------------------------------------
-mptt.register(Page)
+if mptt_register: # MPTT 0.3 legacy support
+    mptt.register(Page)
 
 # Our default request processors
 Page.register_request_processors(Page.require_path_active_request_processor,
