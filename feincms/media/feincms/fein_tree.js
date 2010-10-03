@@ -5,32 +5,30 @@ feincms.jQuery(function($){
 		$('tr:visible:even', this).addClass('row1');
 		$('tr:visible:odd', this).addClass('row2');
 	});
-	
+
 	// extract id
-    function extractId(s) {
-        return s.match(/-(\d+)$/)[1];
-    }
+	function extractId(s) {
+		return s.match(/-(\d+)$/)[1];
+	}
 
 	// toggle children
-    function doToggle(id, show) {
-        var children = feincms.tree_structure[id];
-        for (var i=0; i<children.length; ++i) {
-            var childId = children[i];
-
-            if(show) {
-                $('#item-' + childId).show();
-
-                // only reveal children if current node is not collapsed
-                if(feincms.collapsed_nodes.indexOf(childId) == -1) {
-                    doToggle(childId, show);
+	function doToggle(id, show) {
+		var children = feincms.tree_structure[id];
+		for (var i=0; i<children.length; ++i) {
+			var childId = children[i];
+			if(show) {
+				$('#item-' + childId).show();
+				// only reveal children if current node is not collapsed
+				if(feincms.collapsed_nodes.indexOf(childId) == -1) {
+					doToggle(childId, show);
 				}
-            } else {
-                $('#item-' + childId).hide();
-                // always recursively hide children
-                doToggle(childId, show);
-            }
-        }
-    }
+			} else {
+				$('#item-' + childId).hide();
+				// always recursively hide children
+				doToggle(childId, show);
+			}
+		}
+	}
 
 	/*
 	 * FeinCMS Drag-n-drop tree reordering.
@@ -43,9 +41,9 @@ feincms.jQuery(function($){
 	$.extend($.fn.feinTree = function() {
 		$('tr', this).each(function(i, el) {
 			// adds 'children' class to all parents
-		    var pageId = extractId($('.page_marker', el).attr('id'));
-		    $(el).attr('id', 'item-' + pageId);
-		    if (feincms.tree_structure[pageId].length) {
+			var pageId = extractId($('.page_marker', el).attr('id'));
+			$(el).attr('id', 'item-' + pageId);
+			if (feincms.tree_structure[pageId].length) {
 			    $('.page_marker', el).addClass('children');
 			}
 
@@ -107,10 +105,10 @@ feincms.jQuery(function($){
 							setTimeout(function() {
 								doToggle(id, true);
 								$('#result_list tbody').recolorRows();
-								$('span.page_marker', element).removeClass('closed'); 
+								$('span.page_marker', element).removeClass('closed');
 							}, 750);
 						}
-						
+
 						var targetRow = null;
 						var targetLoc;
 						if(event.pageY >= top && event.pageY <= top + rowHeight / 2 && element.prev()) {
@@ -190,47 +188,49 @@ feincms.jQuery(function($){
 	});
 
 	$.extend($.fn.feinTreeToggleItem = function() {
-        $(this).click(function(event){
-            var show = true;
-            var item = $(this);
-            var itemId = extractId(this.id);
+		$(this).click(function(event){
+			var show = true;
+			var item = $(this);
+			var itemId = extractId(this.id);
 
-            if (item.hasClass('closed')) {
-                item.removeClass('closed');
+			if(item.hasClass('closed')) {
+				item.removeClass('closed');
 
-                // remove itemId from array of collapsed nodes
-                for (var i=0; i<feincms.collapsed_nodes.length; ++i) {
-                    if (feincms.collapsed_nodes[i] == itemId)
-                        feincms.collapsed_nodes.splice(i, 1);
-                }
-            } else {
-                item.addClass('closed');
-                show = false;
-                feincms.collapsed_nodes.push(itemId);
-            }
+				// remove itemId from array of collapsed nodes
+				for(var i=0; i<feincms.collapsed_nodes.length; ++i) {
+					if (feincms.collapsed_nodes[i] == itemId)
+					feincms.collapsed_nodes.splice(i, 1);
+				}
+			} else {
+				item.addClass('closed');
+				show = false;
+				feincms.collapsed_nodes.push(itemId);
+			}
 
-            $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
+			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
 
-            doToggle(itemId, show);
+			doToggle(itemId, show);
 
-            if (event.stopPropagation) {
-                event.stopPropagation();
-            } else {
-                event.cancelBubble = true;
-            }
+			if(event.stopPropagation) {
+				event.stopPropagation();
+			} else {
+				event.cancelBubble = true;
+			}
 
-            $('#result_list tbody').recolorRows();
-            return false;
-        });
-        return this;
+			$('#result_list tbody').recolorRows();
+			return false;
+		});
+		return this;
 	});
 
 	// bind the collapse all children event
 	$.extend($.fn.bindCollapseTreeEvent = function() {
 		$(this).click(function() {
 			$('#result_list tbody tr').each(function(i, el) {
-				if($(el).attr('rel') > 1) {
-					$(el).hide();
+				var marker = $('.page_marker', el);
+				if(marker.hasClass('children')) {
+					doToggle(extractId(marker.attr('id')), false);
+					marker.addClass('closed');
 				}
 			});
 			$('#result_list tbody').recolorRows();
@@ -242,8 +242,10 @@ feincms.jQuery(function($){
 	$.extend($.fn.bindOpenTreeEvent = function() {
 		$(this).click(function() {
 			$('#result_list tbody tr').each(function(i, el) {
-				if($(el).attr('rel') > 1) {
-					$(el).show();
+				var marker = $('span.page_marker', el);
+				if(marker.hasClass('children')) {
+					doToggle(extractId($('span.page_marker', el).attr('id')), true);
+					marker.removeClass('closed');
 				}
 			});
 			$('#result_list tbody').recolorRows();
@@ -257,13 +259,14 @@ feincms.jQuery(function($){
 		$('#result_list span.page_marker').feinTreeToggleItem();
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
-		
-        feincms.collapsed_nodes = [];
-        var storedNodes = $.cookie('feincms_collapsed_nodes');
-        if (storedNodes) {
-            storedNodes = eval('[' + storedNodes + ']');
-            for (var i=0; i<storedNodes.length; i++)
-                $('#page_marker-' + storedNodes[i]).click();
-        }
+
+		feincms.collapsed_nodes = [];
+		var storedNodes = $.cookie('feincms_collapsed_nodes');
+		if(storedNodes) {
+			storedNodes = eval('[' + storedNodes + ']');
+			for(var i=0; i<storedNodes.length; i++) {
+				$('#page_marker-' + storedNodes[i]).click();
+			}
+		}
 	}
 });
