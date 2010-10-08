@@ -44,10 +44,10 @@ def thumbnail(filename, size='200x200'):
     if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
         try:
             image = Image.open(orig_filename)
+            image.thumbnail([x, y], Image.ANTIALIAS)
+            image.save(miniature_filename, image.format, quality=100)
         except IOError:
             return os.path.join(settings.MEDIA_URL, filename)
-        image.thumbnail([x, y], Image.ANTIALIAS)
-        image.save(miniature_filename, image.format, quality=100)
     return force_unicode(miniature_url)
 
 
@@ -90,7 +90,10 @@ def cropscale(filename, size='200x200'):
             x_offset = 0
             y_offset = float(src_height - crop_height) / 2
 
-        image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
-        image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
-        image.save(miniature_filename, image.format, quality=100)
+        try:
+            image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
+            image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
+            image.save(miniature_filename, image.format, quality=100)
+        except IOError:
+            return os.path.join(settings.MEDIA_URL, filename)
     return force_unicode(miniature_url)
