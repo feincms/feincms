@@ -3,21 +3,14 @@ import copy
 
 from django import forms, template
 from django.contrib import admin
-from django.contrib.admin import helpers
-from django.contrib.admin.util import unquote
-from django.core.exceptions import PermissionDenied, ImproperlyConfigured
-from django.db import transaction
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import loading
-from django.forms.formsets import all_valid
-from django.forms.models import modelform_factory, inlineformset_factory
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.utils.html import escape
+from django.forms.models import modelform_factory
+from django.http import Http404
 from django.shortcuts import render_to_response
-from django.utils.decorators import method_decorator
 from django.utils.encoding import force_unicode
 from django.utils.functional import curry
 from django.utils.translation import ugettext as _
-from django.views.decorators.csrf import csrf_protect
 from django.contrib.admin.options import InlineModelAdmin
 
 from feincms import settings, ensure_completely_loaded
@@ -26,7 +19,6 @@ FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
 FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
-csrf_protect_m = method_decorator(csrf_protect)
 
 class ItemEditorForm(forms.ModelForm):
     region = forms.CharField(widget=forms.HiddenInput())
