@@ -47,20 +47,4 @@ var inplace_toggle_boolean = function(item_id, attr) {
     return false;
 }
 
-/* ChangeList keydown handler for navigating in CL */
-var changelist_itemid = function(elem) {
-    return extract_item_id($('span', elem).attr('id'));
-}
-
-var changelist_tab = function(elem, event, direction) {
-    event.preventDefault();
-    var ne = ((direction > 0) ? elem.nextAll() : elem.prevAll()).filter(':visible')[0];
-    if(ne) {
-        elem.attr('tabindex', -1);
-        $(ne).attr('tabindex', '0');
-        $(ne).focus();
-    }
-};
-
-
 
