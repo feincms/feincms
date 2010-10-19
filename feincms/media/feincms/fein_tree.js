@@ -297,8 +297,8 @@ feincms.jQuery(function($){
                 expandOrCollapseNode($(this).find('.page_marker'));
                 break;
             case 13: // return
-                item_id = changelist_itemid(this);
-                document.location = document.location.pathname + item_id + '/'
+                where_to = extract_item_id($('span', this).attr('id'));
+                document.location = document.location.pathname + where_to + '/'
                 break;
             default:
                 break;
