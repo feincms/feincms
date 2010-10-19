@@ -6,11 +6,6 @@ feincms.jQuery(function($){
 		$('tr:visible:odd', this).addClass('row2');
 	});
 
-	// extract id
-	function extractId(s) {
-		return s.match(/-(\d+)$/)[1];
-	}
-
 	// toggle children
 	function doToggle(id, show) {
 		var children = feincms.tree_structure[id];
@@ -41,7 +36,7 @@ feincms.jQuery(function($){
 	$.extend($.fn.feinTree = function() {
 		$('tr', this).each(function(i, el) {
 			// adds 'children' class to all parents
-			var pageId = extractId($('.page_marker', el).attr('id'));
+			var pageId = extract_item_id($('.page_marker', el).attr('id'));
 			$(el).attr('id', 'item-' + pageId);
 			if (feincms.tree_structure[pageId].length) {
 			    $('.page_marker', el).addClass('children');
@@ -101,7 +96,7 @@ feincms.jQuery(function($){
 							$('span.page_marker', element).hasClass('children') &&
 							$('span.page_marker', element).hasClass('closed')
 						) {
-							var id = extractId($('span.page_marker', element).attr('id'));
+							var id = extract_item_id($('span.page_marker', element).attr('id'));
 							setTimeout(function() {
 								doToggle(id, true);
 								$('#result_list tbody').recolorRows();
@@ -153,8 +148,8 @@ feincms.jQuery(function($){
 			});
 
 			$("body").bind('mouseup', function(event) {
-				var cutItem = extractId(originalRow.find('.page_marker').attr('id'));
-				var pastedOn = extractId(moveTo.relativeTo.find('.page_marker').attr('id'));
+				var cutItem = extract_item_id(originalRow.find('.page_marker').attr('id'));
+				var pastedOn = extract_item_id(moveTo.relativeTo.find('.page_marker').attr('id'));
 
 				// get out early if items are the same
 				if(cutItem != pastedOn) {
@@ -191,7 +186,7 @@ feincms.jQuery(function($){
 		$(this).click(function(event){
 			var show = true;
 			var item = $(this);
-			var itemId = extractId(this.id);
+			var itemId = extract_item_id(this.id);
 
 			if(item.hasClass('closed')) {
 				item.removeClass('closed');
@@ -229,7 +224,7 @@ feincms.jQuery(function($){
 			$('#result_list tbody tr').each(function(i, el) {
 				var marker = $('.page_marker', el);
 				if(marker.hasClass('children')) {
-					doToggle(extractId(marker.attr('id')), false);
+					doToggle(extract_item_id(marker.attr('id')), false);
 					marker.addClass('closed');
 				}
 			});
@@ -244,7 +239,7 @@ feincms.jQuery(function($){
 			$('#result_list tbody tr').each(function(i, el) {
 				var marker = $('span.page_marker', el);
 				if(marker.hasClass('children')) {
-					doToggle(extractId($('span.page_marker', el).attr('id')), true);
+					doToggle(extract_item_id($('span.page_marker', el).attr('id')), true);
 					marker.removeClass('closed');
 				}
 			});
