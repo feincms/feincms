@@ -198,32 +198,39 @@ feincms.jQuery(function($){
 		return this;
 	});
 
+    function expandOrCollapseNode(item) {
+        var show = true;
+
+        if(!item.hasClass('children'))
+            return;
+
+        var itemId = extract_item_id(item.attr('id'));
+
+        if(!isExpandedNode(itemId)) {
+            item.removeClass('closed');
+            markNodeAsExpanded(itemId);
+        } else {
+            item.addClass('closed');
+            show = false;
+            markNodeAsCollapsed(itemId);
+        }
+
+        $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
+
+        doToggle(itemId, show);
+
+        $('#result_list tbody').recolorRows();
+    }
+
 	$.extend($.fn.feinTreeToggleItem = function() {
 		$(this).click(function(event){
-			var show = true;
-			var item = $(this);
-			var itemId = extract_item_id(this.id);
+            expandOrCollapseNode($(this));
+            if(event.stopPropagation) {
+                event.stopPropagation();
+            } else {
+                event.cancelBubble = true;
+            }
 
-			if(item.hasClass('closed')) {
-				item.removeClass('closed');
-                markNodeAsExpanded(itemId);
-			} else {
-				item.addClass('closed');
-				show = false;
-                markNodeAsCollapsed(itemId);
-			}
-
-			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
-
-			doToggle(itemId, show);
-
-			if(event.stopPropagation) {
-				event.stopPropagation();
-			} else {
-				event.cancelBubble = true;
-			}
-
-			$('#result_list tbody').recolorRows();
 			return false;
 		});
 		return this;
@@ -265,12 +272,50 @@ feincms.jQuery(function($){
 		return this;
 	});
 
+    var changelist_tab = function(elem, event, direction) {
+        event.preventDefault();
+        elem = $(elem);
+        var ne = (direction > 0) ? elem.nextAll(':visible:first') : elem.prevAll(':visible:first');
+        if(ne) {
+            elem.attr('tabindex', -1);
+            ne.attr('tabindex', '0');
+            ne.focus();
+        }
+    };
+
+    function keyboardNavigationHandler(event) {
+        // console.log('keydown', this, event.keyCode);
+        switch(event.keyCode) {
+            case 40: // down
+                changelist_tab(this, event, 1);
+                break;
+            case 38: // up
+                changelist_tab(this, event, -1);
+                break;
+            case 37: // left
+            case 39: // right
+                expandOrCollapseNode($(this).find('.page_marker'));
+                break;
+            case 13: // return
+                item_id = changelist_itemid(this);
+                document.location = document.location.pathname + item_id + '/'
+                break;
+            default:
+                break;
+            };
+    }
+
 	// fire!
 	if($('#result_list tbody tr').length > 1) {
 		$('#result_list tbody').feinTree();
 		$('#result_list span.page_marker').feinTreeToggleItem();
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
+
+        /* Enable focussing, put focus on first result, add handler for keyboard navigation */
+        $('#result_list tr').attr('tabindex', -1);
+        $('#result_list tbody tr:first').attr('tabindex', 0).focus();
+        $('#result_list tr').keydown(keyboardNavigationHandler);
 
 		feincms.collapsed_nodes = [];
 		var storedNodes = $.cookie('feincms_collapsed_nodes');
