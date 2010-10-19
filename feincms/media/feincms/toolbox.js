@@ -62,13 +62,5 @@ var changelist_tab = function(elem, event, direction) {
     }
 };
 
-var changelist_openclose = function(elem, openclose) {
-    var item_id = changelist_itemid(elem);
-    var p = page(item_id);
-    if(p && ((openclose && !p.open) || (!openclose && p.open))) {
-        page_tree_handler(item_id);
-    }
-};
-
 
 
