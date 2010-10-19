@@ -6,6 +6,22 @@ feincms.jQuery(function($){
 		$('tr:visible:odd', this).addClass('row2');
 	});
 
+    function isExpandedNode(id) {
+        return feincms.collapsed_nodes.indexOf(id) == -1;
+    }
+
+    function markNodeAsExpanded(id) {
+        // remove itemId from array of collapsed nodes
+        var idx = feincms.collapsed_nodes.indexOf(id);
+        if(idx >= 0)
+            feincms.collapsed_nodes.splice(idx, 1);
+    }
+
+    function markNodeAsCollapsed(id) {
+        if(isExpandedNode(id))
+            feincms.collapsed_nodes.push(id);
+    }
+
 	// toggle children
 	function doToggle(id, show) {
 		var children = feincms.tree_structure[id];
@@ -14,7 +30,7 @@ feincms.jQuery(function($){
 			if(show) {
 				$('#item-' + childId).show();
 				// only reveal children if current node is not collapsed
-				if(feincms.collapsed_nodes.indexOf(childId) == -1) {
+				if(isExpandedNode(childId)) {
 					doToggle(childId, show);
 				}
 			} else {
@@ -190,16 +206,11 @@ feincms.jQuery(function($){
 
 			if(item.hasClass('closed')) {
 				item.removeClass('closed');
-
-				// remove itemId from array of collapsed nodes
-				for(var i=0; i<feincms.collapsed_nodes.length; ++i) {
-					if (feincms.collapsed_nodes[i] == itemId)
-					feincms.collapsed_nodes.splice(i, 1);
-				}
+                markNodeAsExpanded(itemId);
 			} else {
 				item.addClass('closed');
 				show = false;
-				feincms.collapsed_nodes.push(itemId);
+                markNodeAsCollapsed(itemId);
 			}
 
 			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
@@ -224,10 +235,13 @@ feincms.jQuery(function($){
 			$('#result_list tbody tr').each(function(i, el) {
 				var marker = $('.page_marker', el);
 				if(marker.hasClass('children')) {
-					doToggle(extract_item_id(marker.attr('id')), false);
+                    var itemId = extract_item_id(marker.attr('id'));
+					doToggle(itemId, false);
 					marker.addClass('closed');
+                    markNodeAsCollapsed(itemId);
 				}
 			});
+            $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
 			$('#result_list tbody').recolorRows();
 		});
 		return this;
@@ -239,10 +253,13 @@ feincms.jQuery(function($){
 			$('#result_list tbody tr').each(function(i, el) {
 				var marker = $('span.page_marker', el);
 				if(marker.hasClass('children')) {
-					doToggle(extract_item_id($('span.page_marker', el).attr('id')), true);
+                    var itemId = extract_item_id($('span.page_marker', el).attr('id'));
+					doToggle(itemId, true);
 					marker.removeClass('closed');
+                    markNodeAsExpanded(itemId);
 				}
 			});
+			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
 			$('#result_list tbody').recolorRows();
 		});
 		return this;
