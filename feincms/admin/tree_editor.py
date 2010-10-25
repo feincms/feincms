@@ -51,6 +51,8 @@ def _build_tree_structure(cls):
 
         if parent_id:
             if not all_nodes.has_key(parent_id):
+                # This happens very rarely, but protect against parents that
+                # we have yet to iteratove over.
                 all_nodes[parent_id] = []
             all_nodes[parent_id].append(p_id)
 
