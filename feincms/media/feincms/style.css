@@ -67,10 +67,6 @@
     float:right;
     margin: 2px 0px 0px 0;
 }
-.active-item {
-    background-color:#f8f8f8;
-    border-color: #888888;
-}
 
 .highlight {
     height: 25px;
@@ -86,7 +82,6 @@
     background-image:url('img/nav-bg.gif');
     cursor:pointer;
     border: 1px solid #678;
-    width:30px;
 }
 
 th { vertical-align: middle; }
@@ -122,6 +117,26 @@ textarea {
     height:15px;
     float: left;
     margin-left:-17px;
+}
+
+.item-controls {
+    background:  url('img/wrench.png') no-repeat 12px center;
+    padding-left:27px;
+    height: 35px;
+}
+
+.item-control-unit {
+    float:left;
+    padding: 3px 10px 0 7px;
+    border-left: 1px solid #eee;
+}
+
+.item-control-unit:first-child {
+    border-left: none;
+}
+
+#move-control-unit-template {
+    display: none;
 }
 
 .machine-control {
@@ -312,7 +327,7 @@ ul.errorlist li li {
 tr.cut { border: 2px dashed black; opacity: 0.5; }
 .title-column { width: 400px; }
 
-:focus { background-color: #ccddff !important; outline: 0px; }
+table#result_list :focus { background-color: #ccddff !important; outline: 0px; }
 
 #page_form {
     clear: both;

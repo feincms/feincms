@@ -1,15 +1,17 @@
 import re
+import copy
 
 from django import forms, template
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.admin.util import unquote
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.db import transaction
 from django.db.models import loading
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.utils.html import escape
 from django.shortcuts import render_to_response
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_unicode
@@ -20,7 +22,8 @@ from django.views.decorators.csrf import csrf_protect
 from feincms import settings
 
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
-
+FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
+FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 csrf_protect_m = method_decorator(csrf_protect)
 
@@ -31,14 +34,6 @@ class ItemEditorForm(forms.ModelForm):
 
 
 class ItemEditor(admin.ModelAdmin):
-    """
-    This ModelAdmin class needs an attribute:
-
-    show_on_top:
-        A list of fields which should be displayed at the top of the form.
-        This does not need to (and should not) include ``template``
-    """
-
     def __init__(self, *args, **kwargs):
         # Make sure all models are completely loaded before attempting to
         # proceed. The dynamic nature of FeinCMS models makes this necessary.
@@ -101,7 +96,10 @@ class ItemEditor(admin.ModelAdmin):
                     'content': obj.render(request=request),
                     'identifier': obj.fe_identifier(),
                     'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': \
+                        settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+                    'FEINCMS_JQUERY_NO_CONFLICT': \
+                        settings.FEINCMS_JQUERY_NO_CONFLICT,
                     })
         else:
             form = ModelForm(instance=obj, prefix=content_type)
@@ -114,7 +112,9 @@ class ItemEditor(admin.ModelAdmin):
             'is_popup': True,
             'media': self.media,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': \
+                settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             }, context_instance=template.RequestContext(request,
                 processors=self.model.feincms_item_editor_context_processors))
 
@@ -136,7 +136,6 @@ class ItemEditor(admin.ModelAdmin):
             raise PermissionDenied
 
         ModelForm = self.get_form(request,
-            fields=None,
             formfield_callback=self._formfield_callback(request=request),
             form=self.form
         )
@@ -181,8 +180,18 @@ class ItemEditor(admin.ModelAdmin):
 
                 msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(new_object)}
                 if request.POST.has_key("_continue"):
+                    post_url_continue = '../%s/'
                     self.message_user(request, msg + ' ' + _("You may edit it again below."))
-                    return HttpResponseRedirect('../%s/' % new_object.pk)
+                    if request.POST.has_key("_popup"):
+                        post_url_continue += "?_popup=1"
+                    return HttpResponseRedirect(post_url_continue % new_object.pk)
+
+
+                if request.POST.has_key("_popup"):
+                    return HttpResponse(
+                        '<script type="text/javascript">opener.dismissAddAnotherPopup(window, "%s", "%s");</script>' % \
+                        # escape() calls force_unicode.
+                        (escape(new_object.pk), escape(new_object)))
                 elif request.POST.has_key('_addanother'):
                     self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_unicode(opts.verbose_name)))
                     return HttpResponseRedirect("../add/")
@@ -228,15 +237,24 @@ class ItemEditor(admin.ModelAdmin):
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
+        # add media for feincms "inlines" also:
+        for formset in inline_formsets:
+            media = media + formset.media
+            
+        new_object = self.model()
         if hasattr(self.model, '_feincms_templates'):
-            if 'template_key' not in self.show_on_top:
-                self.show_on_top = ['template_key'] + list(self.show_on_top)
-
             context['available_templates'] = self.model._feincms_templates
+            if request.method == 'POST':
+                # If there are errors in the form, we need to preserve the object's template as it was set when the user
+                # attempted to save it, so that the same regions appear on screen.
+                new_object.template_key = request.POST['template_key']
 
         if hasattr(self.model, 'parent'):
             context['has_parent_attribute'] = True
 
+        # Collect all the errors for: the main form, the content types, and the other inlines.
+        errors = helpers.AdminErrorList(model_form, inline_formsets + [admin_formset.formset for admin_formset in inline_admin_formsets])
+            
         context.update({
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request),
@@ -244,19 +262,23 @@ class ItemEditor(admin.ModelAdmin):
             'add': True,
             'change': False,
             'title': _('Add %s') % force_unicode(opts.verbose_name),
+            'is_popup': request.REQUEST.has_key('_popup'),
+            'show_delete': False,
+            'save_as': self.save_as,
+            'save_on_top': self.save_on_top,
             'opts': opts,
-            'object': self.model(),
+            'object': new_object,
             'object_form': model_form,
             'adminform': adminForm,
             'inline_formsets': inline_formsets,
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
-            'top_fields': [model_form[field] for field in self.show_on_top],
-            'settings_fields': [field for field in model_form if field.name not in self.show_on_top],
             'media': media,
-            'errors': helpers.AdminErrorList(model_form, inline_formsets),
+            'errors': errors,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
+            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
         return self.render_item_editor(request, None, context)
@@ -299,11 +321,6 @@ class ItemEditor(admin.ModelAdmin):
         ModelForm = self.get_form(
             request,
             obj,
-            # NOTE: Fields *MUST* be set to None to avoid breaking
-            # django.contrib.admin.option.ModelAdmin's default get_form()
-            # will generate a very abbreviated field list which will cause
-            # KeyErrors during clean() / save()
-            fields=None,
             formfield_callback=self._formfield_callback(request=request),
             form=self.form
         )
@@ -443,16 +460,22 @@ class ItemEditor(admin.ModelAdmin):
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
+            
+            
+            
+        # add media for feincms "inlines" also:
+        for formset in inline_formsets:
+            media = media + formset.media
 
         if hasattr(self.model, '_feincms_templates'):
-            if 'template_key' not in self.show_on_top:
-                self.show_on_top = ['template_key'] + list(self.show_on_top)
-
             context['available_templates'] = self.model._feincms_templates
 
         if hasattr(self.model, 'parent'):
             context['has_parent_attribute'] = True
 
+        # Collect all the errors for: the main form, the content types, and the other inlines.
+        errors = helpers.AdminErrorList(model_form, inline_formsets + [admin_formset.formset for admin_formset in inline_admin_formsets])
+            
         context.update({
             'has_add_permission': self.has_add_permission(request),
             'has_change_permission': self.has_change_permission(request, obj=obj),
@@ -460,6 +483,9 @@ class ItemEditor(admin.ModelAdmin):
             'add': False,
             'change': obj.pk is not None,
             'title': _('Change %s') % force_unicode(opts.verbose_name),
+            'is_popup': request.REQUEST.has_key('_popup'),
+            'save_as': self.save_as,
+            'save_on_top': self.save_on_top,
             'opts': opts,
             'object': obj,
             'object_form': model_form,
@@ -467,22 +493,66 @@ class ItemEditor(admin.ModelAdmin):
             'inline_formsets': inline_formsets,
             'inline_admin_formsets': inline_admin_formsets,
             'content_types': content_types,
-            'top_fields': [model_form[field] for field in self.show_on_top],
-            'settings_fields': [field for field in model_form if field.name not in self.show_on_top],
             'media': media,
-            'errors': helpers.AdminErrorList(model_form, inline_formsets),
+            'errors': errors,
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
             'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
+            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
         return self.render_item_editor(request, obj, context)
 
-    def render_item_editor(self, request, object, context):
+    def get_template_list(self):
         opts = self.model._meta
-        return render_to_response([
-            'admin/feincms/%s/%s/item_editor.html' % (opts.app_label, opts.object_name.lower()),
+        return [
+            'admin/feincms/%s/%s/item_editor.html' % (
+                opts.app_label, opts.object_name.lower()),
             'admin/feincms/%s/item_editor.html' % opts.app_label,
             'admin/feincms/item_editor.html',
-            ], context, context_instance=template.RequestContext(request,
+            ]
+
+    def render_item_editor(self, request, object, context):
+        return render_to_response(
+            self.get_template_list(), context,
+            context_instance=template.RequestContext(
+                request,
                 processors=self.model.feincms_item_editor_context_processors))
 
+    def get_fieldsets(self, request, obj=None):
+        """ Convert show_on_top to fieldset for backwards compatibility.
+
+        Also insert FEINCMS_CONTENT_FIELDSET it not present.
+        Is it reasonable to assume this should always be included?
+        """
+
+        fieldsets = copy.deepcopy(
+            super(ItemEditor, self).get_fieldsets(request, obj))
+
+        if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
+            fieldsets.append(FEINCMS_CONTENT_FIELDSET)
+
+        if getattr(self, 'show_on_top', ()):
+            if hasattr(self.model, '_feincms_templates'):
+                if 'template_key' not in self.show_on_top:
+                    self.show_on_top = ['template_key'] + \
+                        list(self.show_on_top)
+            if self.declared_fieldsets:
+                # check to ensure no duplicated fields
+                all_fields = []
+                for fieldset_data in dict(self.declared_fieldsets).values():
+                    all_fields += list(fieldset_data.get('fields', ()))
+                for field_name in self.show_on_top:
+                    if field_name in all_fields:
+                        raise ImproperlyConfigured(
+                            'Field "%s" is present in both show_on_top and '
+                            'fieldsets' % field_name)
+            else: # no _declared_ fieldsets,
+                # remove show_on_top fields from implicit fieldset
+                for fieldset in fieldsets:
+                    for field_name in self.show_on_top:
+                        if field_name in fieldset[1]['fields']:
+                            fieldset[1]['fields'].remove(field_name)
+            fieldsets.insert(0, (None, {'fields': self.show_on_top}))
+
+        return fieldsets

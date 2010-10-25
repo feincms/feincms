@@ -23,6 +23,17 @@
 
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}jquery.simple.tree.css" />
+<script type="text/javascript">
+    var feincms = { 
+        {% if FEINCMS_JQUERY_NO_CONFLICT %}
+        "jQuery": jQuery.noConflict(true) 
+        {% else %}
+        "jQuery": jQuery
+        {% endif %}
+    }; 
+</script>
+
+
 <style type="text/css">
 #container { min-width: 0px; }
 #content.colM { width: auto; }
@@ -43,7 +54,7 @@ function close_tree() {
 }
 
 var simpleTreeCollection;
-$(document).ready(function(){
+feincms.jQuery(document).ready(function($){
     simpleTreeCollection = $('.simpleTree').simpleTree({
         drag: {{ FEINCMS_ADMIN_TREE_DRAG_AND_DROP|yesno:"true,false" }},
         autoclose: false,

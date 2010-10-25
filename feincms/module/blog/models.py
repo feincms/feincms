@@ -56,7 +56,7 @@ class Entry(Base):
 signals.post_syncdb.connect(check_database_schema(Entry, __name__), weak=False)
 
 
-class EntryAdmin(editor.ItemEditor, admin.ModelAdmin):
+class EntryAdmin(editor.ItemEditor):
     date_hierarchy = 'published_on'
     list_display = ('__unicode__', 'published', 'published_on')
     list_filter = ('published',)
@@ -65,5 +65,4 @@ class EntryAdmin(editor.ItemEditor, admin.ModelAdmin):
         'slug': ('title',),
         }
 
-    show_on_top = ('title', 'published')
     raw_id_fields = []

@@ -1,6 +1,7 @@
 from django import forms
 from django.core.mail import send_mail
 from django.db import models
+from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.template.context import RequestContext
@@ -60,3 +61,4 @@ class ContactFormContent(models.Model):
             'content': self,
             'form': form,
             }, RequestContext(request))
+

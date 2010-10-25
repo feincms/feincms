@@ -5,6 +5,7 @@
 {% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
 
 {% block extrahead %}{{ block.super }}
+{% block feincms_jquery_ui %}
 {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
@@ -14,9 +15,19 @@
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}ui/jqueryui-custom-1.7.2.css" />
 {% endif %}
+{% endblock %}
 
 <link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
+<script type="text/javascript">
+    var feincms = { 
+        {% if FEINCMS_JQUERY_NO_CONFLICT %}
+        "jQuery": jQuery.noConflict(true) 
+        {% else %}
+        "jQuery": jQuery
+        {% endif %}
+    }; 
+</script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}item_editor.js"></script>
 
 {% include "admin/feincms/_messages_js.html" %}
@@ -26,20 +37,19 @@
 {% for inc in object.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    feincms.jQuery(document).ready(function($){
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
-
-  /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
-  $(document.documentElement).keydown(function(event) {
-      if(event.which == 83 && event.metaKey) {
-          sel = event.shiftKey ? 'form:first .save-button' :
-                                 'form:first .save-continue-button';
-          $(sel).click();
-          return false;
-          }
-      });
-
-  });
+        
+        /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
+        $(document.documentElement).keydown(function(event) {
+            if(event.which == 83 && event.metaKey) {
+                sel = event.shiftKey ? 'form:first .save-button' :
+                    'form:first .save-continue-button';
+                $(sel).click();
+                return false;
+            }
+        }); 
+    });
 </script>
 {% endblock %}
 
@@ -64,7 +74,7 @@
     {% if object.get_preview_url %}
         <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
     {% endif %}
-    {% if has_add_permission and has_parent_attribute %}
+    {% if not add and has_add_permission and has_parent_attribute %}
         <li><a href="../add/?parent={{ object.pk }}" class="addchild">{% trans "Add child page" %}</a></li>
     {% endif %}
 </ul>
@@ -74,32 +84,13 @@
 {% csrf_token %}
 {% block form_top %}{% endblock %}
 <div>
+{% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+{% if save_on_top %}{% submit_row %}{% endif %}
 
-<div class="submit-row" >
-<input type="submit" value="{% trans "Save" %}" class="default save-button" name="_save" />
-{% if not add %}
-<p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
-{% endif  %}
 
-<input type="submit" value="{% trans "Save and add another" %}" class="save-add-button" name="_addanother"  />
-<input type="submit" value="{% trans "Save and continue editing" %}" class="save-continue-button" name="_continue" />
-</div>
-
-{% if errors %}
-    <p class="errornote">
-    {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
-    </p>
-    <ul class="errorlist">{% for error in object_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
-{% endif %}
-
-<fieldset class="module aligned">
-    {% for field in top_fields %}
-    <div class="form-row{% if field.errors %} errors{% endif %}">
-        {% ifequal field.name "language" %}
-            {# Maybe this should be moved somewhere else, since this is specific for translated objects... #}
             {% with object.available_translations as translations %}
             {% if translations %}
-                <div style="float:right;padding:5px 0 0 0">
+                <div style="padding:5px 0 0 0">
                 {% trans "available translations" %}:
                 {% for translation in translations %}
                     <a href="../{{ translation.id }}/" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
@@ -107,66 +98,22 @@
                 </div>
             {% endif %}
             {% endwith %}
-        {% endifequal %}
 
-        {{ field.errors }}
-        <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
-        {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
-    </div>
-    {% endfor %}
-</fieldset>
 
-<div id="main_wrapper">
-    {% for region in object.template.regions %}
-        <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
-    {% endfor %}
-    <div class="navi_tab" id="settings_tab">{% trans "Properties" %}</div>
-    <div id="main">
-        <fieldset class="module aligned" id="settings_body">
-            {% for field in settings_fields %}
-            <div class="form-row{% if field.errors %} errors{% endif %}">
-                {{ field.errors }}
-                <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
-                {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}
-            </div>
-            {% endfor %}
-        </fieldset>
+{% if errors %}
+    <p class="errornote">
+    {% blocktrans count errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    </p>
+    {{ adminform.form.non_field_errors }}
+{% endif %}
 
-        {% for region in object.template.regions %}
-        <div id="{{ region.key }}_body" class="panel">
-            <div class="empty-machine-msg">
-                {% trans "Region empty" %}
-            </div>
-            <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
-                {% if region.inherited %}
-                    {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
-                {% endif %}
-            </div>
-
-            <div class="order-machine"></div>
-
-            <div class="machine-control">
-                <div class="control-unit">
-                    <span>{% trans "Add new item" %}:</span> <br/>
-                    <select name="order-machine-add-select">
-                    {% for v,n in region.content_types %}<option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
-                    </select>
-                    <input type="button" class="order-machine-add-button button" value="OK" />
-                </div>
-                {% ifnotequal object.template.regions|length 1 %}
-                <div class="control-unit">
-                    <span>{% trans "Move selected item to" %}:</span>  <br/>
-                    <select name="order-machine-move-select">
-                    {% for r in object.template.regions %}{% ifnotequal region r %}<option value="{{ r.key }}">{{ r.title|capfirst }}</option> {% endifnotequal %}{% endfor %}
-                    </select>
-                    <input type="button" class="order-machine-move-button button" value="{% trans "OK" %}" />
-                </div>
-                {% endifnotequal %}
-            </div>
-         </div>
-        {% endfor %}
-    </div>
-</div>
+{% for fieldset in adminform %}
+  {% if fieldset.name == FEINCMS_CONTENT_FIELDSET_NAME %}
+    {% include "admin/feincms/content_editor.html" %}
+  {% else %}
+    {% include "admin/includes/fieldset.html" %}
+  {% endif %}
+{% endfor %}
 
 {% block after_field_sets %}{% endblock %}
 
@@ -177,15 +124,7 @@
 {% block after_related_objects %}{% endblock %}
 
 
-<div class="submit-row" >
-<input type="submit" value="{% trans "Save" %}" class="default" name="_save" />
-{% if not add %}
-<p class="deletelink-box"><a href="delete/" class="deletelink">{% trans "Delete" %}</a></p>
-{% endif %}
-
-<input type="submit" value="{% trans "Save and add another" %}" name="_addanother"  />
-<input type="submit" value="{% trans "Save and continue editing" %}" name="_continue" />
-</div>
+{% submit_row %}
 
 <div id="inlines">
 {% for formset in inline_formsets %}
@@ -199,7 +138,7 @@
                     {% if field.is_hidden %}
                         {{ field }}
                     {% else %}
-                        <div class="form-row{% if field.errors %} errors{% endif %}">
+                        <div class="form-row{% if field.errors %} errors{% endif %} {{ field.name }}">
                             {{ field.errors }}
                             <label for="{{ field.auto_id }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}</label>{{ field }}
                             {% if field.field.help_text %}<p class="help">{{ field.field.help_text|safe }}</p>{% endif %}

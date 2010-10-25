@@ -1,0 +1,42 @@
+{% load i18n %}
+<div id="main_wrapper">
+    {% for region in object.template.regions %}
+        <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
+    {% endfor %}
+    <div id="main">
+        {% for region in object.template.regions %}
+        <div id="{{ region.key }}_body" class="panel">
+            <div class="empty-machine-msg">
+                {% trans "Region empty" %}
+            </div>
+            <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
+                {% if region.inherited %}
+                    {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
+                {% endif %}
+            </div>
+
+            <div class="order-machine"></div>
+
+            <div class="machine-control">
+                <div class="control-unit">
+                    <span>{% trans "Add new item" %}:</span> <br/>
+                    <select name="order-machine-add-select">
+                    {% for v,n in region.content_types %}<option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
+                    </select>
+                    <input type="button" class="order-machine-add-button button" value="Go" />
+                </div>
+            </div>
+         </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% ifnotequal object.template.regions|length 1 %}
+    <div id="move-control-unit-template" class="item-control-unit">
+        <span>{% trans "Move to" %}:</span>
+        <select name="item-move-select">
+        {% for r in object.template.regions %}{% ifnotequal region r %}<option value="{{ r.key }}">{{ r.title|capfirst }}</option> {% endifnotequal %}{% endfor %}
+        </select>
+        <input type="button" class="button" value="{% trans "Go" %}" />
+    </div>
+{% endifnotequal %}

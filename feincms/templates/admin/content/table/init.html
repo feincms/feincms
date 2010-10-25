@@ -30,182 +30,183 @@
  *   editDone : invoked on completion
  *     arguments: td cell's new text, original text, event, and jquery element for the td cell
 */
-jQuery.uiTableEdit = function(jq, options){
-  function unbind(){
-    return jq.find( options.find ).unbind('mousedown.uiTableEdit')
-  }
-  options = options || {}
-  options.find = options.find || 'tbody > tr > td'
-  if( options.off ){
-    unbind().find('form').each( function(){ var f = $(this);
-      f.parents("td:first").text( f.find(':text').attr('value') );
-      f.remove();
-    });
-    return jq;
-  }
-
-  function bind_mouse_down( mouseDn ){
-    unbind().bind('mousedown.uiTableEdit', mouseDn )
-  }
-  function td_edit(){
-    var td = jQuery(this);
-
-    function restore(e){
-      var val = td.find('textarea').val();
-      if( options.dataVerify ){
-        var value = options.dataVerify.call(this, val, orig_text, e, td);
-        if( value === false ){ return false; }
-        if( value !== null && value !== undefined ) val = value;
+(function($){
+    $.uiTableEdit = function(jq, options){
+      function unbind(){
+        return jq.find( options.find ).unbind('mousedown.uiTableEdit')
       }
-      td.html( "" );
-      td.text( val );
-      if( options.editDone ) options.editDone(val,orig_text,e,td)
-      bind_mouse_down( td_edit_wrapper );
-    }
-
-    function checkEscape(e){
-      if (e.keyCode === 27) {
-        td.html( "" );
-        td.text( orig_text );
-        bind_mouse_down( td_edit_wrapper );
-      } else if (e.keyCode === 13 && !e.shiftKey) {
-        restore(e);
-      }
-    }
-
-    var orig_text = td.text();
-    var w = td.width();
-    var h = td.height();
-    td.html( '<form name="td-editor" action="javascript:void(0);">' +
-      '<textarea type="text" name="td_edit">' + td.text() + '</textarea></form>' )
-      .find('form').submit( restore ).mousedown( restore ).blur( restore ).keypress( checkEscape );
-
-    var textarea = td.find('textarea');
-    textarea.css('min-width', '150px').css('min-height', Math.max(150, textarea[0].scrollHeight)+'px');
-
-    function focus_text(){ td.find('textarea').get(0).focus() }
-
-    // focus bug (seen in FireFox) fixed by small delay
-    setTimeout(focus_text, 50);
-
-    /* TODO: investigate removing bind_mouse_down
-     I also got rid of bind_mouse_down(restore),
-     because now that you can refocus on fields that have been blurred,
-     you can have multiple edits going simultaneously
-    */
-    bind_mouse_down( restore );
-  }
-
-  var td_edit_wrapper = !options.mouseDown ? td_edit : function(){
-    if( options.mouseDown.apply(this,arguments) == false ) return false;
-    td_edit.apply(this,arguments);
-  };
-  bind_mouse_down( td_edit_wrapper );
-  return jq;
-}
-
-function td_edit_editDone(value, original, event, td) {
-    var table = $(td).parents('table');
-    var data = [];
-    table.find('tr').each(function(){
-        var row = [];
-        $('td', this).each(function(){
-            row.push($(this).html());
+      options = options || {}
+      options.find = options.find || 'tbody > tr > td'
+      if( options.off ){
+        unbind().find('form').each( function(){ var f = $(this);
+          f.parents("td:first").text( f.find(':text').attr('value') );
+          f.remove();
         });
-        if(row.length)
-            data.push(row);
-    });
+        return jq;
+      }
 
-    table.siblings('textarea').val($.toJSON(data));
-}
+      function bind_mouse_down( mouseDn ){
+        unbind().bind('mousedown.uiTableEdit', mouseDn )
+      }
+      function td_edit(){
+        var td = $(this);
 
-contentblock_init_handlers.push(function(){
-    $('.order-machine textarea[name*=tablecontent]:visible').each(function(){
-        var textarea = $(this);
-        var data = $.secureEvalJSON(textarea.val() || '[[""]]');
-
-        var html = '<table class="tablecontent" border="1">';
-
-        html += '<tr><th></th>';
-        for(var i=0; i<data[0].length; i++) {
-            html += '<th><span class="remove-col">-</span> column <span class="insert-col">+</span></th>';
+        function restore(e){
+          var val = td.find('textarea').val();
+          if( options.dataVerify ){
+            var value = options.dataVerify.call(this, val, orig_text, e, td);
+            if( value === false ){ return false; }
+            if( value !== null && value !== undefined ) val = value;
+          }
+          td.html( "" );
+          td.text( val );
+          if( options.editDone ) options.editDone(val,orig_text,e,td)
+          bind_mouse_down( td_edit_wrapper );
         }
-        html += '</tr>';
 
-        for(var i=0; i<data.length; i++) {
-            html += '<tr>';
-            html += '<th><span class="remove-row">-</span> row <span class="insert-row">+</span></th>';
-            for(var j=0; j<data[i].length; j++) {
-                html += '<td>'+data[i][j]+'</td>';
+        function checkEscape(e){
+          if (e.keyCode === 27) {
+            td.html( "" );
+            td.text( orig_text );
+            bind_mouse_down( td_edit_wrapper );
+          } else if (e.keyCode === 13 && !e.shiftKey) {
+            restore(e);
+          }
+        }
+
+        var orig_text = td.text();
+        var w = td.width();
+        var h = td.height();
+        td.html( '<form name="td-editor" action="javascript:void(0);">' +
+          '<textarea type="text" name="td_edit">' + td.text() + '</textarea></form>' )
+          .find('form').submit( restore ).mousedown( restore ).blur( restore ).keypress( checkEscape );
+
+        var textarea = td.find('textarea');
+        textarea.css('min-width', '150px').css('min-height', Math.max(150, textarea[0].scrollHeight)+'px');
+
+        function focus_text(){ td.find('textarea').get(0).focus() }
+
+        // focus bug (seen in FireFox) fixed by small delay
+        setTimeout(focus_text, 50);
+
+        /* TODO: investigate removing bind_mouse_down
+         I also got rid of bind_mouse_down(restore),
+         because now that you can refocus on fields that have been blurred,
+         you can have multiple edits going simultaneously
+        */
+        bind_mouse_down( restore );
+      }
+
+      var td_edit_wrapper = !options.mouseDown ? td_edit : function(){
+        if( options.mouseDown.apply(this,arguments) == false ) return false;
+        td_edit.apply(this,arguments);
+      };
+      bind_mouse_down( td_edit_wrapper );
+      return jq;
+    }
+
+    function td_edit_editDone(value, original, event, td) {
+        var table = $(td).parents('table');
+        var data = [];
+        table.find('tr').each(function(){
+            var row = [];
+            $('td', this).each(function(){
+                row.push($(this).html());
+            });
+            if(row.length)
+                data.push(row);
+        });
+
+        table.siblings('textarea').val($.toJSON(data));
+    }
+
+    contentblock_init_handlers.push(function(){
+        $('.order-machine textarea[name*=tablecontent]:visible').each(function(){
+            var textarea = $(this);
+            var data = $.secureEvalJSON(textarea.val() || '[[""]]');
+
+            var html = '<table class="tablecontent" border="1">';
+
+            html += '<tr><th></th>';
+            for(var i=0; i<data[0].length; i++) {
+                html += '<th><span class="remove-col">-</span> column <span class="insert-col">+</span></th>';
             }
             html += '</tr>';
-        }
 
-        html += '</table>';
+            for(var i=0; i<data.length; i++) {
+                html += '<tr>';
+                html += '<th><span class="remove-row">-</span> row <span class="insert-row">+</span></th>';
+                for(var j=0; j<data[i].length; j++) {
+                    html += '<td>'+data[i][j]+'</td>';
+                }
+                html += '</tr>';
+            }
 
-        var table = textarea.hide().after(html).siblings('table');
+            html += '</table>';
+
+            var table = textarea.hide().after(html).siblings('table');
+
+            $.uiTableEdit(table, {editDone: td_edit_editDone});
+        });
+    });
+
+    $('table.tablecontent th span.insert-col').live('click', function(){
+        var row = $(this.parentNode.parentNode);
+        var index = row.find('th').index(this.parentNode)-1; // first row has empty TH at the beginning
+        var cell = $(this.parentNode);
+        var table = row.parents('table');
+
+        cell.after(cell.clone());
+        table.find('tbody tr').each(function(){
+            $('td:eq('+index+')', this).after('<td></td>');
+        });
 
         $.uiTableEdit(table, {editDone: td_edit_editDone});
-    });
-});
-
-$('table.tablecontent th span.insert-col').live('click', function(){
-    var row = $(this.parentNode.parentNode);
-    var index = row.find('th').index(this.parentNode)-1; // first row has empty TH at the beginning
-    var cell = $(this.parentNode);
-    var table = row.parents('table');
-
-    cell.after(cell.clone());
-    table.find('tbody tr').each(function(){
-        $('td:eq('+index+')', this).after('<td></td>');
-    });
-
-    $.uiTableEdit(table, {editDone: td_edit_editDone});
-    return false;
-});
-
-$('table.tablecontent th span.remove-col').live('click', function(){
-    var row = $(this.parentNode.parentNode);
-    var index = row.find('th').index(this.parentNode)-1; // first row has empty TH at the beginning
-    var cell = $(this.parentNode);
-    var table = row.parents('table');
-
-    // prevent removal of last column
-    if(table.find('tr:eq(0) th').length<=2)
         return false;
-
-    cell.remove();
-    table.find('tbody tr').each(function(){
-        $('td:eq('+index+')', this).remove();
     });
 
-    $.uiTableEdit(table, {editDone: td_edit_editDone});
-    return false;
-});
+    $('table.tablecontent th span.remove-col').live('click', function(){
+        var row = $(this.parentNode.parentNode);
+        var index = row.find('th').index(this.parentNode)-1; // first row has empty TH at the beginning
+        var cell = $(this.parentNode);
+        var table = row.parents('table');
 
-$('table.tablecontent th span.insert-row').live('click', function(){
-    var row = $(this.parentNode.parentNode);
-    var table = row.parents('table');
+        // prevent removal of last column
+        if(table.find('tr:eq(0) th').length<=2)
+            return false;
 
-    row.after(row.clone()).next().find('td').empty();
+        cell.remove();
+        table.find('tbody tr').each(function(){
+            $('td:eq('+index+')', this).remove();
+        });
 
-    $.uiTableEdit(table, {editDone: td_edit_editDone});
-    return false;
-});
-
-$('table.tablecontent th span.remove-row').live('click', function(){
-    var table = $(this).parents('table');
-
-    if(table.find('tr').length<=2)
+        $.uiTableEdit(table, {editDone: td_edit_editDone});
         return false;
+    });
 
-    $(this.parentNode.parentNode).remove();
+    $('table.tablecontent th span.insert-row').live('click', function(){
+        var row = $(this.parentNode.parentNode);
+        var table = row.parents('table');
 
-    // TODO regenerate JSON
+        row.after(row.clone()).next().find('td').empty();
 
-    return false;
-});
+        $.uiTableEdit(table, {editDone: td_edit_editDone});
+        return false;
+    });
 
+    $('table.tablecontent th span.remove-row').live('click', function(){
+        var table = $(this).parents('table');
+
+        if(table.find('tr').length<=2)
+            return false;
+
+        $(this.parentNode.parentNode).remove();
+
+        // TODO regenerate JSON
+
+        return false;
+    });
+})(feincms.jQuery);
 //]]>
 
 </script>

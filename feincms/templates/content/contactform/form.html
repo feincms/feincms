@@ -1,6 +1,7 @@
 {% load i18n %}
 <div class="contactform">
 <form method="post" action=".">
+    {% csrf_token %}
     <table>
         {{ form }}
         <tr class="submit">

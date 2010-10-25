@@ -153,4 +153,4 @@
         else
             throw new SyntaxError("Error parsing JSON, source is not valid.");
     };
-})(jQuery);
+})(feincms.jQuery);

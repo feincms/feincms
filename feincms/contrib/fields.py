@@ -1,5 +1,5 @@
 import logging
-
+from decimal import Decimal
 from django import forms
 from django.db import models
 from django.core.serializers.json import DjangoJSONEncoder
