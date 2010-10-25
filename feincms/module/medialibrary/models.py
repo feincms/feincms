@@ -15,6 +15,8 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.http import HttpResponseRedirect
+from django.contrib.contenttypes.models import ContentType
+from django.template.context import RequestContext
 # 1.2 from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
@@ -28,6 +30,8 @@ import re
 import os
 import logging
 from PIL import Image
+from django import forms
+from django.shortcuts import render_to_response
 
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
@@ -330,6 +334,7 @@ admin_thumbnail.short_description = _('Preview')
 admin_thumbnail.allow_tags = True
 
 #-------------------------------------------------------------------------
+
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
@@ -338,6 +343,37 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
+    
+
+    class AddCategoryForm(forms.Form):
+        _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
+        category = forms.ModelChoiceField(Category.objects)
+
+
+    def assign_category(self, request, queryset):
+        form = None
+        if 'apply' in request.POST:
+            form = self.AddCategoryForm(request.POST)
+            if form.is_valid():
+                category = form.cleaned_data['category']
+                print 'category: ', category
+                count = 0
+                for mediafile in queryset:
+                    mediafile.categories.add(category)
+                    count += 1
+                plural = ''
+                if count != 1:
+                    plural = 's'
+                self.message_user(request, "Successfully added Category %s to %d mediafile%s." % (category, count, plural))
+                return HttpResponseRedirect(request.get_full_path())
+
+        if not form:
+            form = self.AddCategoryForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
+        return render_to_response('admin/medialibrary/add_category.html', {'mediafiles': queryset,
+                                                         'category_form': form,
+                                                        }, context_instance=RequestContext(request))
+    assign_category.short_description = _('Assign Categories to selected images.')
+    actions = [assign_category]
 
     def get_urls(self):
         from django.conf.urls.defaults import url, patterns

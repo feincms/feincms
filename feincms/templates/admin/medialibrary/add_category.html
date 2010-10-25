@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+<p>Select category to apply:</p>
+
+<form action="" method="post">
+
+    {{ category_form }}{% csrf_token %}
+
+    <p>The tag will be applied to:</p>
+
+    <ul>{{ mediafiles|unordered_list }}</ul>
+
+    <input type="hidden" name="action" value="assign_category" />
+    <input type="submit" name="apply" value="Assign Category" />
+</form>
+
+{% endblock %}
