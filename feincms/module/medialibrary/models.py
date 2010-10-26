@@ -332,11 +332,7 @@ class MediaFileAdmin(admin.ModelAdmin):
 
     def assign_category(self, request, queryset):
         form = None
-        print '-------\n'
-        print request.POST
-        print '-----------'
         if 'apply' in request.POST:
-            print 'updating...'
             form = self.AddCategoryForm(request.POST)
             if form.is_valid():
                 category = form.cleaned_data['category']
@@ -345,12 +341,9 @@ class MediaFileAdmin(admin.ModelAdmin):
                 for mediafile in queryset:
                     mediafile.categories.add(category)
                     count += 1
-                    print 'file affected: ', mediafile
-
                 plural = ''
                 if count != 1:
                     plural = 's'
-
                 self.message_user(request, "Successfully added Category %s to %d mediafile%s." % (category, count, plural))
                 return HttpResponseRedirect(request.get_full_path())
 
