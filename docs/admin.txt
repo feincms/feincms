@@ -4,9 +4,8 @@
 CMS administration interfaces
 =============================
 
-FeinCMS provides three ModelAdmin classes, :class:`~feincms.admin.item_editor.ItemEditor`,
-:class:`~feincms.admin.tree_editor.TreeEditor` and
-:class:`~feincms.admin.splitpane_editor.SplitPaneEditor`. Their purpose and
+FeinCMS provides two ModelAdmin classes, :class:`~feincms.admin.item_editor.ItemEditor`,
+and :class:`~feincms.admin.tree_editor.TreeEditor`. Their purpose and
 their customization hooks are briefly discussed here.
 
 
@@ -16,7 +15,7 @@ The tree editor
 .. module:: feincms.admin.tree_editor
 .. class:: TreeEditor
 
-The tree editor replaces the standard change list interface with a collapsible,
+The tree editor replaces the standard change list interface with a collapsible
 item tree. The model must be registered with `django-mptt <http://github.com/matthiask/django-mptt/>`_
 for this to work.
 
@@ -57,8 +56,8 @@ AJAX checkboxes
 
 The tree editor allows you to define boolean columns which let the website
 administrator change the value of the boolean using a simple click on the icon.
-These boolean columns can be aware of the tree structure. If f.e. an objects'
-``active``-flag influences the state of its descendants, the tree editor interface
+These boolean columns can be aware of the tree structure. For example, if an object's
+``active`` flag influences the state of its descendants, the tree editor interface
 is able to show not only the state of the modified element, but also the state of
 all its descendants without having to reload the page.
 
@@ -92,8 +91,8 @@ The item editor
 .. module:: feincms.admin.item_editor
 .. class:: ItemEditor
 
-The tabbed interface below is used to edit content and other properties of the 
-edited object. A tab is shown for every region of the template or element, 
+The tabbed interface below is used to edit content and other properties of the
+edited object. A tab is shown for every region of the template or element,
 depending on whether templates are activated for the object in question [#f1]_.
 
 Here's an screenshot of a content editing pane. The media file content is
@@ -103,18 +102,18 @@ and all content blocks can be reordered using drag and drop:
 .. image:: images/item_editor_content.png
 
 .. [#f1] Templates are required for the page module; blog entries managed through
-         the item editor probably wont have a use for them.
+         the item editor probably won't have a use for them.
 
 
 Customizing the item editor
 ---------------------------
 
 .. versionadded:: 1.1.5
-* The :class:`~feincms.admin.item_editor.ItemEditor` now plays nicely with 
-  standard Django ``fieldsets``; the content-editor is rendered as a 
+* The :class:`~feincms.admin.item_editor.ItemEditor` now plays nicely with
+  standard Django ``fieldsets``; the content-editor is rendered as a
   replacement for a fieldset with the placeholder name matching
   :const:`~feincms.admin.item_editor.FEINCMS_CONTENT_FIELDSET_NAME`. If no
-  such fieldset is present, one is inserted at the top automatically. If you 
+  such fieldset is present, one is inserted at the top automatically. If you
   wish to customise the location of the content-editor, simple include this
   fieldset at the desired location::
 
@@ -124,7 +123,7 @@ Customizing the item editor
         fieldsets = (
             ('Important things', {'fields': ('title', 'slug', 'etc')}),
             FEINCMS_CONTENT_FIELDSET,
-            ('Less important things', 
+            ('Less important things',
                 {
                     'fields': ('copyright', 'soforth'),
                     'classes': ('collapse',)
@@ -136,7 +135,7 @@ Customizing the item editor
 * ``show_on_top`` (**deprecated**; use standard ``fieldsets`` instead)
 
   A tuple which describes, which fields should be shown above the tabbed item
-  editor interface. For backwards compatibility this tuple is converted to 
+  editor interface. For backwards compatibility this tuple is converted to
   a fieldset which is prepended to ``fieldsets`` to appear at the top.
 
 
@@ -158,37 +157,17 @@ settings on the content type model itself:
 
 * ``feincms_item_editor_includes``:
 
-  If you need additional javascript or CSS files or need to perform additional
+  If you need additional Javascript or CSS files or need to perform additional
   initialization on your content type forms, you can specify template fragments
   which are included in predefined places into the item editor.
 
-  If you need to execute additional javascript, f.e. add a TinyMCE instance,
+  If you need to execute additional Javascript, for example to add a TinyMCE instance,
   it is recommended to add the initialization functions to the
   ``contentblock_init_handlers`` array, because the initialization needs to be
   performed not only on page load, but also after drag-dropping a content block
   and after adding new content blocks. Take a look at the ``mediafile`` and
   ``richtext`` item editor include files to understand how this should be done.
 
-
-
-The split pane editor
-=====================
-
-.. module:: feincms.admin.splitpane_editor
-.. class:: SplitPaneEditor
-
-The split pane editor replaces the change list with two frames, a draggable
-and collapsible tree on the left and arbitrary information on the right.
-The interface is somewhat inspired by other popular tools such as Typo3 or
-PHPMyAdmin, which offer a framed interface for editing content too.
-
-The split pane editor does not modify the content on the right hand side in
-any way -- it does not care whether you have standard django administration
-forms, an item editor or even preview functionality in the right hand side.
-
-Currently the split pane editor does not offer any customization hooks.
-
-.. image:: images/split_pane_editor.png
 
 
 Putting it all together

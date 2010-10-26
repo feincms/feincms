@@ -6,7 +6,9 @@ from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
+
+from mptt.exceptions import InvalidMove
 
 from feincms import settings
 
@@ -36,28 +38,19 @@ def _build_tree_structure(cls):
     database accesses down to a minimum. The returned dictionary looks like
     this (as json dump):
 
-        {"6": {"id": 6, "children": [7, 8, 10], "parent": null, "descendants": [7, 12, 13, 8, 10]},
-         "7": {"id": 7, "children": [12], "parent": 6, "descendants": [12, 13]},
-         "8": {"id": 8, "children": [], "parent": 6, "descendants": []},
+        {"6": [7, 8, 10]
+         "7": [12],
+         "8": [],
          ...
-
+         }
     """
     all_nodes = { }
-    def add_as_descendant(n, p):
-        all_nodes[n]['descendants'].append(p)
-
-        n_parent_id = all_nodes[n]['parent']
-
-        if n_parent_id:
-            add_as_descendant(n_parent_id, p)
 
     for p_id, parent_id in cls.objects.order_by(cls._meta.tree_id_attr, cls._meta.left_attr).values_list("pk", "%s_id" % cls._meta.parent_attr):
-
-        all_nodes[p_id] = { 'id': p_id, 'children' : [ ], 'descendants' : [ ], 'parent' : parent_id }
+        all_nodes[p_id] = []
 
         if parent_id:
-            all_nodes[parent_id]['children'].append(p_id)
-            add_as_descendant(parent_id, p_id)
+            all_nodes[parent_id].append(p_id)
 
     return all_nodes
 
@@ -175,15 +168,14 @@ class TreeEditor(admin.ModelAdmin):
         the page's depth in the hierarchy.
         """
         if hasattr(item, 'get_absolute_url'):
-            r = '''<input type="hidden" class="medialibrary_file_path" value="%s"><span onclick="return page_tree_handler('%d')" id="page_marker-%d"
+            r = '''<input type="hidden" class="medialibrary_file_path" value="%s" /><span id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
-                item.get_absolute_url(),
-                item.id, item.id, 14+item.level*18)
+                item.get_absolute_url(), item.id, 14+item.level*18)
         else:
-            r = '''<span onclick="return page_tree_handler('%d')" id="page_marker-%d"
+            r = '''<span id="page_marker-%d"
             class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
-                item.id, item.id, 14+item.level*18)
-                
+                item.id, 14+item.level*18)
+
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):
             r += item.short_title()
@@ -327,26 +319,25 @@ class TreeEditor(admin.ModelAdmin):
         position = request.POST.get('position')
 
         if position in ('last-child', 'left'):
-            self.model._tree_manager.move_node(cut_item, pasted_on, position)
+            try:
+                self.model._tree_manager.move_node(cut_item, pasted_on, position)
+            except InvalidMove, e:
+                self.message_user(request, unicode(e))
+                return HttpResponse('FAIL')
 
             # Ensure that model save has been run
-            source = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
-            source.save()
+            cut_item = self.model._tree_manager.get(pk=cut_item.pk)
+            cut_item.save()
 
+            self.message_user(request, ugettext('%s has been moved to a new position.') %
+                cut_item)
             return HttpResponse('OK')
+
+        self.message_user(request, ugettext('Did not understand moving instruction.'))
         return HttpResponse('FAIL')
 
     def _actions_column(self, page):
-        actions = []
-        media_url = settings.FEINCMS_ADMIN_MEDIA + 'img'
-        actions.append(u'<a href="#" onclick="return cut_item(\'%s\', this)" title="%s"><img src="%s/edit-cut.png" alt="%s" /></a>' % (
-            page.pk, _('Cut'), media_url, _('Cut')))
-
-        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'last-child\')" title="%s"><img src="%s/insert-child.png" alt="%s" /></a>' % (
-            page.pk, _('Insert as child'), media_url, _('Insert as child')))
-        actions.append(u'<a class="paste_target" href="#" onclick="return paste_item(\'%s\', \'left\')" title="%s"><img src="%s/insert-before.png" alt="%s" /></a>' % (
-            page.pk, _('Insert before'), media_url, _('Insert before')))
-        return actions
+        return []
 
     def actions_column(self, page):
         return u' '.join(self._actions_column(page))

@@ -40,3 +40,7 @@ def register(cls, admin_cls):
     def content_subtitle(self):
         return u'\n'.join(self._content_title.splitlines()[1:])
 
+    admin_cls.fieldsets.append((_('Titles'), {
+        'fields': ('_content_title', '_page_title'),
+        'classes': ('collapse',),
+        }))

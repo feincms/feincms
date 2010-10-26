@@ -32,7 +32,7 @@ create a content type for a media file as follows:
 
 The set of positions given here is just an example, you can define the methods
 like you want. You should think about positions that make sense for different
-media file types however, because the choice cannot be customized per file
+media file types, however, because the choice cannot be customized per file
 type.
 
 
@@ -86,11 +86,11 @@ If we've got an example file ``2009/06/foobar.jpg`` and a selected position of
 * ``content/mediafile/default.html``
 
 You are of course free to do with the file what you want inside the template,
-f.e. a thumbnail and a lightbox version of the image file, and put everything
+for example a thumbnail and a lightbox version of the image file, and put everything
 into an element that's floated to the left.
 
 
-Media file meta-informations
+Media file metadata
 ============================
 
 Sometimes, just storing media files is not enough. You've got captions and

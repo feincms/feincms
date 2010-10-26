@@ -4,10 +4,15 @@
     DELETE_MESSAGES = ["{% trans "Really delete item?" %}", "{% trans "Confirm to delete item" %}",
         "{% trans "Item deleted successfully." %}", "{% trans "Cannot delete item" %}",
         "{% trans "Cannot delete item, because it is parent of at least one other item." %}"];
-    TREE_SAVED_MESSAGE = "{% trans "Tree saved successfully." %}";
     CHANGE_TEMPLATE_MESSAGES = ["{% trans "Change template" %}",
         "{% trans "Really change template? <br />All changes are saved." %}",
         "{% trans "Really change template? <br />All changes are saved and content from <strong>%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>." %}"];
-    DROP_FAILURE_MESSAGE = "{% trans "Cannot make a node a child of itself." %}";
-    NO_ITEM_SELECTED_MESSAGE = "{% trans "No item has been selected." %}";
+
+    FEINCMS_ITEM_EDITOR_GETTEXT = {
+        'Hide': "{% trans "Hide" %}"
+        , 'Show': "{% trans "Show" %}"
+        , 'After': "{% trans "After" %}"
+        , 'Before': "{% trans "Before" %}"
+        , 'Insert new:': "{% trans "Insert new:" %}"
+        };
 </script>

@@ -68,12 +68,17 @@
     margin: 2px 0px 0px 0;
 }
 
-.highlight {
+.highlight, .helper {
     height: 25px;
     margin: 0 0 10px 0;
     border: none;
     opacity: 0.3;
-    background: url(img/item_editor_form_title.png) no-repeat left bottom;
+    background: url('img/item_editor_form_title.png') no-repeat left bottom;
+}
+
+.helper{
+    height: 25px !important;
+    opacity: 1;
 }
 
 .button {
@@ -133,10 +138,6 @@ textarea {
 
 .item-control-unit:first-child {
     border-left: none;
-}
-
-#move-control-unit-template {
-    display: none;
 }
 
 .machine-control {
@@ -298,7 +299,7 @@ tr td.nohighlight {background-color: #fff;}
 
 
 /* override Django admin styles */
-.order-machine fieldset.module > h2 {
+.order-machine fieldset.module > h2{
     padding: 4px 5px 6px 17px;
     background: url(img/item_editor_form_title.png) no-repeat left bottom;
 }
@@ -331,4 +332,12 @@ table#result_list :focus { background-color: #ccddff !important; outline: 0px; }
 
 #page_form {
     clear: both;
+}
+
+div.order-machine div.inline-related > h3{
+    display: none;
+}
+
+.hidden-form-row{
+    display: none;
 }

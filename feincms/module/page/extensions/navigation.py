@@ -34,6 +34,15 @@ class PagePretender(object):
     def get_absolute_url(self):
         return self.url
 
+    def get_navigation_url(self):
+        return self.get_absolute_url()
+
+    def get_level(self):
+        return self.level
+
+    def get_children(self):
+        return []
+
 
 class NavigationExtension(object):
     __metaclass__ = TypeRegistryMetaClass
@@ -63,3 +72,8 @@ def register(cls, admin_cls):
             return self.children.in_navigation()
 
         return cls().children(self, **kwargs)
+
+    admin_cls.fieldsets.append((_('Navigation extension'), {
+        'fields': ('navigation_extension',),
+        'classes': ('collapse',),
+        }))
