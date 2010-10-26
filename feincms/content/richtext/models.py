@@ -14,14 +14,9 @@ from feincms.utils import get_object
 class RichTextContentAdminForm(ItemEditorForm):
     text = forms.CharField(widget=forms.Textarea, required=False, label=_('text'))
 
-    feincms_item_editor_classes = {
-        'text': 'tinymce',
-    }
-
     def __init__(self, *args, **kwargs):
         super(RichTextContentAdminForm, self).__init__(*args, **kwargs)
-        for field in self.feincms_item_editor_classes.keys():
-            self.fields[field].widget.attrs.update({'class': 'item-richtext-%s' % self.feincms_item_editor_classes[field]})
+        self.fields['text'].widget.attrs.update({'class': 'item-richtext'})
 
     #: If FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE allows, we'll convert this into
     # a checkbox so the user can choose whether to ignore HTML validation
@@ -72,13 +67,11 @@ class RichTextContent(models.Model):
     feincms_item_editor_form = RichTextContentAdminForm
 
     feincms_item_editor_context_processors = (
-        lambda x: dict(TINYMCE_JS_URL = settings.TINYMCE_JS_URL),
-        lambda x: dict(TINYMCE_CONTENT_CSS_URL = settings.TINYMCE_CONTENT_CSS_URL),
-        lambda x: dict(TINYMCE_LINK_LIST_URL = settings.TINYMCE_LINK_LIST_URL),
+        lambda x: settings.FEINCMS_RICHTEXT_INIT_CONTEXT,
     )
     feincms_item_editor_includes = {
-        'head': [ settings.TINYMCE_CONFIG_URL ],
-        }
+        'head': [ settings.FEINCMS_RICHTEXT_INIT_TEMPLATE ],
+    }
 
     text = models.TextField(_('text'), blank=True)
 
@@ -111,25 +104,3 @@ class RichTextContent(models.Model):
             except ImportError, e:
                 raise ImproperlyConfigured("FEINCMS_TIDY_HTML is enabled but the HTML tidy function %s could not be imported: %s" % (settings.FEINCMS_TIDY_FUNCTION, e))
 
-
-class CkEditorRichTextContentAdminForm(RichTextContentAdminForm):
-    feincms_item_editor_classes = {
-        'text': 'ckeditor',
-    }
-
-class CkEditorRichTextContent(RichTextContent):
-    form = CkEditorRichTextContentAdminForm
-    feincms_item_editor_form = CkEditorRichTextContentAdminForm
-
-    feincms_item_editor_context_processors = (
-        lambda x: dict(CKEDITOR_JS_URL = settings.CKEDITOR_JS_URL),
-    )
-
-    feincms_item_editor_includes = {
-        'head': [ settings.CKEDITOR_CONFIG_URL, ],
-    }
-
-    class Meta(RichTextContent.Meta):
-        abstract = True
-        verbose_name = _('rich text (ckeditor)')
-        verbose_name_plural = _('rich texts (ckeditor)')
