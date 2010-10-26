@@ -23,7 +23,7 @@ FEINCMS_MEDIALIBRARY_URL = getattr(settings, 'FEINCMS_MEDIALIBRARY_URL', setting
 
 # ------------------------------------------------------------------------
 # Settings for RichText
-FEINCMS_TINYMCE_INIT_TEMPLATE = 'admin/content/richtext/init.html'
+FEINCMS_TINYMCE_INIT_TEMPLATE = 'admin/content/richtext/init_tinymce.html'
 FEINCMS_TINYMCE_INIT_CONTEXT  = {
     'TINYMCE_JS_URL': join(settings.MEDIA_URL, 'js/tiny_mce/tiny_mce.js'),
     'TINYMCE_CONTENT_CSS_URL': None,
