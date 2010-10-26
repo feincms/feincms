@@ -6,11 +6,13 @@
 </style>
 
 <script type="text/javascript">
+		{% block config %}
     CKEDITOR.config.width = '787';
     CKEDITOR.config.height= '300';
     CKEDITOR.config.toolbar_Full = [
 			{% block toolbar %}['Maximize','-','Format','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','NumberedList','BulletedList','-','Anchor', 'Link','Unlink','-','Source',],{% endblock %}
     ];
+		{% endblock %}
 
     (function($){
         contentblock_init_handlers.push(function(){
