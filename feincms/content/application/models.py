@@ -188,6 +188,7 @@ class ApplicationContent(models.Model):
 
                 if instance:
                     self.app_config = cls.ALL_APPS_CONFIG[instance.urlconf_path]['config']
+                    self.custom_fields = {}
                     admin_fields    = self.app_config.get('admin_fields', {})
 
                     if isinstance(admin_fields, dict):

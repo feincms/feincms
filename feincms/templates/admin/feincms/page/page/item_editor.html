@@ -3,34 +3,26 @@
 {% load i18n %}
 
 {% block object-tools %}
-<ul class="object-tools">
-	{% if object.get_preview_url %}
-	    <li><a target="_blank" href="{{ object.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
-	{% endif %}
-	{% if has_add_permission and has_parent_attribute %}
-	    <li><a href="../add/?parent={{ object.pk }}" class="addchild">{% trans "Add child page" %}</a></li>
-	{% endif %}
+{{ block.super }}
+<ul class="extra-object-tools">
 	{% if to_replace %}
 	    <li><a href="?replace={{ to_replace.id }}">{% blocktrans %}Replace page {{ to_replace }}{% endblocktrans %}</a></li>
 	{% endif %}
-	{% if object.is_active %}
+	{% if original.is_active %}
 	    <li><a href="?create_copy=1">{% trans "Create hidden copy of this page" %}</a></li>
-	    <li><a target="_blank" href="{{ object.get_absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
-	    <li><a target="_blank" href="{{ object.get_absolute_url }}?frontend_editing=1" class="frontend_editing_link">{% trans "Edit on site" %}</a></li>
+	    <li><a target="_blank" href="{{ original.get_absolute_url }}?frontend_editing=1" class="frontend_editing_link">{% trans "Edit on site" %}</a></li>
 	{% endif %}
 </ul>
 {% endblock %}
-
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
      <a href="../../../">{% trans "Home" %}</a> &rsaquo;
      <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
 
-     {% for p in object.get_ancestors %}
-       <a href="../?parent__id__exact={{ p.id }}">{{ p.short_title }}</a> :
+     {% for p in original.get_ancestors %}
+       <a href="../{{ p.id }}/">{{ p.short_title }}</a> :
      {% endfor %}
-     {{ object.short_title }}
-
+     {{ original.short_title }}
 </div>
 {% endblock %}

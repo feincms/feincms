@@ -31,11 +31,21 @@
         });
     })(feincms.jQuery);
 
+    var tinymce_added = {};
+
     function feincms_richtext_remove_tinymce(field) {
-        tinyMCE.execCommand('mceRemoveControl', false, field.attr("id"));
+        var id = field.attr("id");
+        if(tinymce_added[id]) {
+            tinyMCE.execCommand('mceRemoveControl', false, id);
+            tinymce_added[id] = false;
+        }
     }
 
     function feincms_richtext_add_tinymce(field) {
-        tinyMCE.execCommand('mceAddControl', false, field.attr("id"));
+        var id = field.attr("id");
+        if(!tinymce_added[id]) {
+            tinyMCE.execCommand('mceAddControl', false, id);
+            tinymce_added[id] = true;
+            }
     }
 </script>

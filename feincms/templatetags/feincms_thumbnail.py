@@ -44,10 +44,10 @@ def thumbnail(filename, size='200x200'):
     if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
         try:
             image = Image.open(orig_filename)
+            image.thumbnail([x, y], Image.ANTIALIAS)
+            image.save(miniature_filename, image.format, quality=100)
         except IOError:
             return os.path.join(settings.MEDIA_URL, filename)
-        image.thumbnail([x, y], Image.ANTIALIAS)
-        image.save(miniature_filename, image.format, quality=100)
     return force_unicode(miniature_url)
 
 
@@ -64,9 +64,9 @@ def cropscale(filename, size='200x200'):
     except ValueError:
         basename, format = filename, 'jpg'
     miniature = basename + '_cropscale_' + size + '.' +  format
-    miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature)
-    miniature_url = os.path.join(settings.MEDIA_URL, miniature)
-    orig_filename = os.path.join(settings.MEDIA_ROOT, filename)
+    miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature).encode('utf-8')
+    miniature_url = os.path.join(settings.MEDIA_URL, miniature).encode('utf-8')
+    orig_filename = os.path.join(settings.MEDIA_ROOT, filename).encode('utf-8')
     # if the image wasn't already resized, resize it
     if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
         try:
@@ -90,7 +90,10 @@ def cropscale(filename, size='200x200'):
             x_offset = 0
             y_offset = float(src_height - crop_height) / 2
 
-        image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
-        image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
-        image.save(miniature_filename, image.format, quality=100)
+        try:
+            image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
+            image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
+            image.save(miniature_filename, image.format, quality=100)
+        except IOError:
+            return os.path.join(settings.MEDIA_URL, filename)
     return force_unicode(miniature_url)

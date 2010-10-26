@@ -66,6 +66,10 @@ first, because it's the most used content type for many applications. The
 content type dropdown will contain content types in the same order as they
 were registered.
 
+Please note that you should put these statements into a ``models.py`` file
+which is executed at Django startup time, i.e. into a ``models.py`` file
+contained in ``INSTALLED_APPS``.
+
 
 Setting up the admin interface
 ==============================

@@ -85,4 +85,9 @@ def register(cls, admin_cls):
 
     admin_cls.list_display.insert(pos + 1, 'datepublisher_admin')
 
+    admin_cls.fieldsets.append((_('Date-based publishing'), {
+        'fields': ('publication_date', 'publication_end_date'),
+        'classes': ('collapse',),
+        }))
+
 # ------------------------------------------------------------------------

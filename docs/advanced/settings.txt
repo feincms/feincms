@@ -15,7 +15,7 @@ most of these, but not for all.
 
   Path to the FeinCMS admin Javascript, CSS and image files. Comparable to
   ``ADMIN_MEDIA_PREFIX`` from Django proper.
-  
+
   Defaults to ``/media/sys/feincms/``
 
 * ``FEINCMS_ADMIN_MEDIA_HOTLINKING``:
@@ -32,33 +32,24 @@ most of these, but not for all.
 
   The complete path to the main TinyMCE Javascript file. Only required if you
   use the :class:`~feincms.content.richtext.models.RichTextContent`.
-  
+
   Defaults to ``settings.MEDIA_URL + 'js/tiny_mce/tiny_mce.js'``
 
 * ``FEINCMS_MEDIALIBRARY_ROOT``:
 
-  Where thhe media library should store its media files.
-  
+  Where the media library should store its media files.
+
   Defaults to ``settings.MEDIA_ROOT``
-  
+
 * ``FEINCMS_MEDIALIBRARY_UPLOAD_TO``:
 
   ``upload_to`` argument for the media file :class:`FileField`.
-  
+
   Defaults to ``medialibrary/%Y/%m/``
-  
+
 * ``FEINCMS_MEDIALIBRARY_URL``:
 
   URL where media files can be accessed.
-  
+
   Defaults to ``settings.MEDIA_URL``
-  
-* ``FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR``:
-
-  The page admin interface defaults to the :class:`~feincms.admin.tree_editor.TreeEditor`
-  to provide the interface for selecting pages to edit and changing the site
-  structure. You can change the default to the
-  :class:`~feincms.admin.splitpane_editor.SplitPaneEditor` with this setting.
-
-  Defaults to ``False``
 
