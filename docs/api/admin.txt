@@ -17,10 +17,3 @@ TreeEditor
    :undoc-members:
    :noindex:
 
-SplitPaneEditor
----------------
-
-.. autoclass:: feincms.admin.splitpane_editor.SplitPaneEditor
-   :members:
-   :undoc-members:
-   :noindex:

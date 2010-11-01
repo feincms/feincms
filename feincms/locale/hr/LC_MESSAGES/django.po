@@ -2,31 +2,29 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Bojan Mihelac <bmihelac@mihelac.org>, 2010.
-#
-#, fuzzy
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-21 17:43+0100\n"
+"POT-Creation-Date: 2010-09-15 14:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Bojan Mihelac <bmihelac@mihelac.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms:  nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);\n"
 
-#: models.py:144
+#: models.py:208 content/template/models.py:37 content/template/models.py:47
 msgid "template"
 msgstr "predložak"
 
-#: models.py:346
+#: models.py:431
 msgid "ordering"
 msgstr "poredak"
 
-#: translations.py:141 module/blog/extensions/translations.py:9
+#: translations.py:153 module/blog/extensions/translations.py:9
 #: module/page/extensions/translations.py:102
 msgid "language"
 msgstr "jezik"
@@ -35,7 +33,7 @@ msgstr "jezik"
 msgid "All"
 msgstr "Svi"
 
-#: admin/filterspecs.py:46
+#: admin/filterspecs.py:46 module/page/models.py:223
 msgid "Parent"
 msgstr "Nadređeni"
 
@@ -43,98 +41,89 @@ msgstr "Nadređeni"
 msgid "Category"
 msgstr "Kategorija"
 
-#: admin/item_editor.py:94 admin/item_editor.py:248
+#: admin/item_editor.py:133
 #, python-format
 msgid "Change %s"
 msgstr "Promjeni %s"
 
-#: admin/item_editor.py:135
-msgid "Click save to replace the current content with this version"
-msgstr "Kliknite spremi da zamjenite trenutni sadržaj sa ovom verzijom"
-
-#: admin/item_editor.py:175
-#, python-format
-msgid "The %(name)s \"%(obj)s\" was changed successfully."
-msgstr "%(name)s \"%(obj)s\" je uspješno promijenjen."
-
-#: admin/item_editor.py:177
-msgid "You may edit it again below."
-msgstr "Možete urediti ponovno."
-
-#: admin/item_editor.py:180
-#, python-format
-msgid "You may add another %s below."
-msgstr "Možete dodati još jedan %s."
-
-#: admin/tree_editor.py:231 content/rss/models.py:12
-#: content/section/models.py:25 module/blog/models.py:24
-#: module/medialibrary/models.py:36 module/page/models.py:190
-#: module/page/models.py:244
+#: admin/tree_editor.py:186 content/rss/models.py:13
+#: content/section/models.py:29 module/blog/models.py:24
+#: module/medialibrary/models.py:43 module/page/models.py:220
+#: module/page/models.py:279
 msgid "title"
 msgstr "naziv"
 
-#: admin/tree_editor.py:388
-msgid "Cut"
-msgstr "Izreži"
+#: admin/tree_editor.py:332
+#, python-format
+msgid "%s has been moved to a new position."
+msgstr "%s je premještena na novu poziciju."
 
-#: admin/tree_editor.py:391
-msgid "Insert as child"
-msgstr "Umetni kao podređen"
+#: admin/tree_editor.py:336
+msgid "Did not understand moving instruction."
+msgstr "Uputa za premještanje nije uspješno interpretirana. "
 
-#: admin/tree_editor.py:393
-msgid "Insert before"
-msgstr "Umetni ispred"
-
-#: admin/tree_editor.py:399
+#: admin/tree_editor.py:345
 msgid "actions"
 msgstr "akcije"
 
-#: content/application/models.py:127
+#: content/application/models.py:145
 msgid "application content"
 msgstr "sadržaj aplikacije"
 
-#: content/application/models.py:128
+#: content/application/models.py:146
 msgid "application contents"
 msgstr "sadržaji aplikacije"
 
-#: content/application/models.py:159
+#: content/application/models.py:177
 msgid "application"
 msgstr "aplikacija"
 
-#: content/comments/models.py:18
+#: content/comments/models.py:23
 msgid "enabled"
 msgstr "omogućeno"
 
-#: content/comments/models.py:22 content/comments/models.py:23
+#: content/comments/models.py:23
+msgid "New comments may be added"
+msgstr "Novi komentari mogu biti dodani"
+
+#: content/comments/models.py:27 content/comments/models.py:28
 msgid "comments"
 msgstr "komentari"
 
-#: content/contactform/models.py:9
+#: content/comments/models.py:43
+msgid "public"
+msgstr "objavljeno"
+
+#: content/comments/models.py:43
+msgid "not public"
+msgstr "neobjavljeno"
+
+#: content/contactform/models.py:10
 msgid "name"
 msgstr "ime"
 
-#: content/contactform/models.py:10
+#: content/contactform/models.py:11
 msgid "email"
 msgstr "email"
 
-#: content/contactform/models.py:11
+#: content/contactform/models.py:12
 msgid "subject"
 msgstr "naslov"
 
-#: content/contactform/models.py:14 content/raw/models.py:7
+#: content/contactform/models.py:15 content/raw/models.py:7
 msgid "content"
 msgstr "sadržaj"
 
-#: content/contactform/models.py:25
+#: content/contactform/models.py:26
 msgid "contact form"
 msgstr "kontaktni obrazac"
 
-#: content/contactform/models.py:26
+#: content/contactform/models.py:27
 msgid "contact forms"
-msgstr "kontaktni obrasci"
+msgstr "kontaktni obrazci"
 
 #: content/file/models.py:11 content/file/models.py:15
-#: module/medialibrary/models.py:60
+#: module/medialibrary/models.py:84
 msgid "file"
 msgstr "datoteka"
 
@@ -150,21 +139,22 @@ msgstr "slika"
 msgid "images"
 msgstr "slike"
 
-#: content/image/models.py:37 content/medialibrary/models.py:76
-#: content/medialibrary/models.py:84
+#: content/image/models.py:37 content/medialibrary/models.py:75
+#: content/medialibrary/models.py:83
 msgid "position"
 msgstr "pozicija"
 
-#: content/medialibrary/models.py:28
+#: content/medialibrary/models.py:31
 msgid "(no caption)"
 msgstr "(bez naslova)"
 
-#: content/medialibrary/models.py:61 content/medialibrary/models.py:72
-#: content/section/models.py:41 module/medialibrary/models.py:72
+#: content/medialibrary/models.py:60 content/medialibrary/models.py:71
+#: content/medialibrary/models.py:81 content/section/models.py:45
+#: module/medialibrary/models.py:96
 msgid "media file"
 msgstr "medijska datoteka"
 
-#: content/medialibrary/models.py:62 module/medialibrary/models.py:73
+#: content/medialibrary/models.py:61 module/medialibrary/models.py:97
 msgid "media files"
 msgstr "medijske datoteke"
 
@@ -188,66 +178,84 @@ msgstr "neformatirani sadržaj"
 msgid "raw contents"
 msgstr "neformatirani sadržaji"
 
-#: content/richtext/models.py:14 content/section/models.py:26
+#: content/richtext/models.py:15 content/richtext/models.py:83
+#: content/section/models.py:30
 msgid "text"
 msgstr "tekst"
 
-#: content/richtext/models.py:18
+#: content/richtext/models.py:31
+msgid "HTML Tidy"
+msgstr "HTML Tidy"
+
+#: content/richtext/models.py:32
+msgid "Ignore the HTML validation warnings"
+msgstr "Zanemariti upozorenja HTML provjere"
+
+#: content/richtext/models.py:56
+#, python-format
+msgid "HTML validation produced %(count)d warnings. Please review the updated content below before continuing: %(messages)s"
+msgstr "HTML provjera je pokazala %(count)d upozorenja. Molimo pregledajte ažurirani sadržaj ispod prije nastavka: %(messages)s"
+
+#: content/richtext/models.py:87
 msgid "rich text"
 msgstr "formatirani tekst"
 
-#: content/richtext/models.py:19
+#: content/richtext/models.py:88
 msgid "rich texts"
 msgstr "formatirani tekstovi"
 
-#: content/rss/models.py:13
-msgid ""
-"The rss field is updated several times a day. A change in the title will "
-"only be visible on the home page after the next feed update."
-msgstr ""
-"Rss polje se ažurira nekoliko puta dnevno. Promjena u naslovu će "
-"biti vidljiva na početnoj stranici nakon sljedećeg ažuriranja."
+#: content/richtext/models.py:134
+msgid "rich text (ckeditor)"
+msgstr "formatirani tekst (ckeditor)"
+
+#: content/richtext/models.py:135
+msgid "rich texts (ckeditor)"
+msgstr "formatirani tekstovi (ckeditor)"
 
 #: content/rss/models.py:14
+msgid "The rss field is updated several times a day. A change in the title will only be visible on the home page after the next feed update."
+msgstr "RSS polje se ažurira nekoliko puta dnevno. Promjena u naslovu će biti vidljiva na naslovnici nakon sljedećeg ažuriranja kanala."
+
+#: content/rss/models.py:15
 msgid "link"
 msgstr "link"
 
-#: content/rss/models.py:15
+#: content/rss/models.py:16
 msgid "pre-rendered content"
 msgstr "pred pripremljen sadržaj"
 
-#: content/rss/models.py:16
+#: content/rss/models.py:17
 msgid "last updated"
 msgstr "zadnji put osvježeno"
 
-#: content/rss/models.py:17
+#: content/rss/models.py:18
 msgid "max. items"
 msgstr "najviše zapisa"
 
-#: content/rss/models.py:21
-msgid "RSS feed"
-msgstr "RSS feed"
-
 #: content/rss/models.py:22
-msgid "RSS feeds"
-msgstr "RSS feedovi"
+msgid "RSS feed"
+msgstr "RSS kanal"
 
-#: content/section/models.py:30
+#: content/rss/models.py:23
+msgid "RSS feeds"
+msgstr "RSS kanali"
+
+#: content/section/models.py:34
 msgid "section"
 msgstr "sekcija"
 
-#: content/section/models.py:31
+#: content/section/models.py:35
 msgid "sections"
 msgstr "sekcije"
 
-#: content/section/models.py:46 content/section/models.py:54
+#: content/section/models.py:50 content/section/models.py:58
 #: content/table/models.py:67
 msgid "type"
 msgstr "tip"
 
 #: content/table/models.py:48
 msgid "plain"
-msgstr "jednostavan"
+msgstr "jednostavno"
 
 #: content/table/models.py:49
 msgid "title row"
@@ -269,17 +277,21 @@ msgstr "tablice"
 msgid "data"
 msgstr "podaci"
 
+#: content/template/models.py:52
+msgid "template content"
+msgstr "sadržaj predloška"
+
+#: content/template/models.py:53
+msgid "template contents"
+msgstr "sadržaji predloška"
+
 #: content/video/models.py:15
 msgid "video link"
 msgstr "link na video"
 
 #: content/video/models.py:16
-msgid ""
-"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
-"com/watch?v=zmj1rpzDRZ0"
-msgstr ""
-"Polje treba sadržavati link na youtube ili vimeo video, i.e.: http://www.youtube."
-"com/watch?v=zmj1rpzDRZ0"
+msgid "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
+msgstr "Polje treba sadržavati link na youtube ili vimeo video, i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
 
 #: content/video/models.py:20
 msgid "video"
@@ -293,17 +305,17 @@ msgstr "video zapisi"
 msgid "published"
 msgstr "objavljeno"
 
-#: module/blog/models.py:25 module/page/models.py:191
+#: module/blog/models.py:25 module/page/models.py:221
 msgid "This is used for the generated navigation too."
-msgstr "Ovo se koristi i za generiranu navigaciju također."
+msgstr "Ovo se koristi i za generiranu navigaciju."
 
 #: module/blog/models.py:28
 msgid "published on"
-msgstr "objevljeno"
+msgstr "objavljeno na"
 
 #: module/blog/models.py:29
 msgid "Will be set automatically once you tick the `published` checkbox above."
-msgstr "Biti će automatski postavljeno kada potvrdite `objavljeno` polje iznad."
+msgstr "Biti će automatski postavljeno kada označite `objavljeno` polje iznad."
 
 #: module/blog/models.py:34
 msgid "entry"
@@ -324,14 +336,13 @@ msgstr "prijevod od"
 
 #: module/blog/extensions/translations.py:15
 #: module/page/extensions/translations.py:108
-#, python-format
-msgid "Leave this empty for entries in the primary language (%s)."
-msgstr "Ostavite ovo prazno za članke u primarnom jeziku (%s)."
+msgid "Leave this empty for entries in the primary language."
+msgstr "Ostavite ovo prazno za zapise u primarnom jeziku."
 
 #: module/blog/extensions/translations.py:36
-#: templates/admin/feincms/item_editor.html:88
+#: templates/admin/feincms/item_editor.html:72
 msgid "available translations"
-msgstr "dotupni prijevodi"
+msgstr "dostupni prijevodi"
 
 #: module/extensions/changedate.py:22
 msgid "creation date"
@@ -341,243 +352,281 @@ msgstr "datum kreiranja"
 msgid "modification date"
 msgstr "datum izmjene"
 
-#: module/extensions/seo.py:11
+#: module/extensions/featured.py:9
+msgid "featured"
+msgstr "istaknuti"
+
+#: module/extensions/featured.py:14
+msgid "Featured"
+msgstr "Istaknuti"
+
+#: module/extensions/seo.py:9
 msgid "meta keywords"
 msgstr "meta ključne riječi"
 
-#: module/extensions/seo.py:12
+#: module/extensions/seo.py:10
 msgid "This will be prepended to the default keyword list."
-msgstr "Ovo će biti dodano podrazumijevanoj listi ključnih riječi."
+msgstr "Ovo će biti dodano predefiniranoj listi ključnih riječi."
 
-#: module/extensions/seo.py:13
+#: module/extensions/seo.py:11
 msgid "meta description"
 msgstr "meta opis"
 
-#: module/extensions/seo.py:14
+#: module/extensions/seo.py:12
 msgid "This will be prepended to the default description."
-msgstr "Ovo će biti dodano podrazumijevanom opisu."
+msgstr "Ovo će biti dodano predefiniranom opisu."
 
-#: module/medialibrary/models.py:39
+#: module/extensions/seo.py:18
+msgid "Search engine optimization"
+msgstr "Optimizacija za tražilice"
+
+#: module/medialibrary/models.py:46
 msgid "parent"
 msgstr "nadređeni"
 
-#: module/medialibrary/models.py:43
-msgid "category"
-msgstr "kategorija"
-
-#: module/medialibrary/models.py:44 module/medialibrary/models.py:66
-#: module/medialibrary/models.py:83
-msgid "categories"
-msgstr "kategorije"
-
-#: module/medialibrary/models.py:61 module/medialibrary/models.py:133
-msgid "file type"
-msgstr "tip datoteke"
-
-#: module/medialibrary/models.py:62
-msgid "created"
-msgstr "kreiran"
-
-#: module/medialibrary/models.py:63
-msgid "copyright"
-msgstr "autorsko pravo"
-
-#: module/medialibrary/models.py:64 module/medialibrary/models.py:87
-msgid "file size"
-msgstr "veličina datoteke"
-
-#: module/medialibrary/models.py:148
-msgid "file info"
-msgstr "opis datoteke"
-
-#: module/medialibrary/models.py:187
-msgid "Image"
-msgstr "Slika"
-
-#: module/medialibrary/models.py:188
-msgid "Video"
-msgstr "Video"
-
-#: module/medialibrary/models.py:189
-msgid "Audio"
-msgstr "Audio"
-
-#: module/medialibrary/models.py:190
-msgid "PDF document"
-msgstr "PDF dokument"
-
-#: module/medialibrary/models.py:191
-msgid "Flash"
-msgstr "Flash"
-
-#: module/medialibrary/models.py:192
-msgid "Text"
-msgstr "Tekst"
-
-#: module/medialibrary/models.py:193
-msgid "Rich Text"
-msgstr "Formatirani tekst"
-
-#: module/medialibrary/models.py:194
-msgid "Microsoft Word"
-msgstr "Microsoft Word"
-
-#: module/medialibrary/models.py:195
-msgid "Microsoft Excel"
-msgstr "Microsoft Excel"
-
-#: module/medialibrary/models.py:196
-msgid "Microsoft PowerPoint"
-msgstr "Microsoft PowerPoint"
-
-#: module/medialibrary/models.py:197
-msgid "Binary"
-msgstr "Binarni"
-
-#: module/medialibrary/models.py:210
-msgid "caption"
-msgstr "naslov"
-
-#: module/medialibrary/models.py:211
-msgid "description"
-msgstr "opis"
-
-#: module/medialibrary/models.py:214
-msgid "media file translation"
-msgstr "prijevod medijske datoteke"
-
-#: module/medialibrary/models.py:215
-msgid "media file translations"
-msgstr "prijevodi medijske datoteke"
-
-#: module/page/models.py:187
-msgid "active"
-msgstr "aktivan"
-
-#: module/page/models.py:192
+#: module/medialibrary/models.py:48 module/page/models.py:222
 msgid "slug"
 msgstr "slug"
 
-#: module/page/models.py:195 module/page/models.py:643
+#: module/medialibrary/models.py:52
+msgid "category"
+msgstr "kategorija"
+
+#: module/medialibrary/models.py:53 module/medialibrary/models.py:90
+#: module/medialibrary/models.py:107
+msgid "categories"
+msgstr "kategorije"
+
+#: module/medialibrary/models.py:85 module/medialibrary/models.py:167
+msgid "file type"
+msgstr "tip datoteke"
+
+#: module/medialibrary/models.py:86 module/medialibrary/models.py:115
+msgid "created"
+msgstr "kreiran"
+
+#: module/medialibrary/models.py:87
+msgid "copyright"
+msgstr "autorsko pravo"
+
+#: module/medialibrary/models.py:88 module/medialibrary/models.py:111
+msgid "file size"
+msgstr "veličina datoteke"
+
+#: module/medialibrary/models.py:184
+msgid "file info"
+msgstr "informacije o datoteci"
+
+#: module/medialibrary/models.py:253
+msgid "Image"
+msgstr "Slika"
+
+#: module/medialibrary/models.py:254
+msgid "Video"
+msgstr "Video"
+
+#: module/medialibrary/models.py:255
+msgid "Audio"
+msgstr "Audio"
+
+#: module/medialibrary/models.py:256
+msgid "PDF document"
+msgstr "PDF dokument"
+
+#: module/medialibrary/models.py:257
+msgid "Flash"
+msgstr "Flash"
+
+#: module/medialibrary/models.py:258
+msgid "Text"
+msgstr "Tekst"
+
+#: module/medialibrary/models.py:259
+msgid "Rich Text"
+msgstr "Formatirani tekst"
+
+#: module/medialibrary/models.py:260
+msgid "Microsoft Word"
+msgstr "Microsoft Word"
+
+#: module/medialibrary/models.py:261
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+#: module/medialibrary/models.py:262
+msgid "Microsoft PowerPoint"
+msgstr "Microsoft PowerPoint"
+
+#: module/medialibrary/models.py:263
+msgid "Binary"
+msgstr "Binarni"
+
+#: module/medialibrary/models.py:276
+msgid "caption"
+msgstr "naslov"
+
+#: module/medialibrary/models.py:277
+msgid "description"
+msgstr "opis"
+
+#: module/medialibrary/models.py:280
+msgid "media file translation"
+msgstr "prijevod medijske datoteke"
+
+#: module/medialibrary/models.py:281
+msgid "media file translations"
+msgstr "prijevodi medijske datoteke"
+
+#: module/medialibrary/models.py:308
+#: templates/admin/feincms/item_editor.html:56
+msgid "Preview"
+msgstr "Pregled"
+
+#: module/page/models.py:217
+msgid "active"
+msgstr "aktivan"
+
+#: module/page/models.py:225 module/page/models.py:688
 msgid "in navigation"
 msgstr "u navigaciji"
 
-#: module/page/models.py:196
+#: module/page/models.py:226
 msgid "override URL"
 msgstr "nadjačati URL"
 
-#: module/page/models.py:197
-msgid ""
-"Override the target URL. Be sure to include slashes at the beginning and at "
-"the end if it is a local URL. This affects both the navigation and subpages' "
-"URLs."
-msgstr ""
-"Nadjačati ciljni URL. Budite sigurni da uključite kose crte na početku i  "
-"kraju ukoliko se odnosi na lokalni URL. Ovo se odnosi i na navigaciju i na URL-ove podstranica"
+#: module/page/models.py:227
+msgid "Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages' URLs."
+msgstr "Nadjačati ciljnu adresu (URL). Budite sigurni da uključite kose crte na početku i  kraju ukoliko se odnosi na lokalnu adresu. Ovo se odnosi i na navigaciju i na adrese podstranica"
 
-#: module/page/models.py:198
+#: module/page/models.py:228
 msgid "redirect to"
-msgstr "preusmjeri na"
+msgstr "preusmjeriti na"
 
-#: module/page/models.py:199
+#: module/page/models.py:229
 msgid "Target URL for automatic redirects."
-msgstr "Ciljni URL za automatsko preusmjerenje"
+msgstr "Ciljna adresa (URL) za automatsko preusmjeravanje"
 
-#: module/page/models.py:200
+#: module/page/models.py:230
 msgid "Cached URL"
-msgstr "Keširan URL"
+msgstr "Keširana adresa (URL)"
 
-#: module/page/models.py:210
+#: module/page/models.py:241
 msgid "page"
 msgstr "stranica"
 
-#: module/page/models.py:211
+#: module/page/models.py:242
 msgid "pages"
 msgstr "stranice"
 
-#: module/page/models.py:564
+#: module/page/models.py:259 module/page/models.py:794
+msgid "is active"
+msgstr "je aktivna"
+
+#: module/page/models.py:609
 msgid "This URL is already taken by an active page."
-msgstr "Ovaj URL je već zauzet od aktivne stranicom."
+msgstr "Ova adresa (URL) je već zauzeta aktivnom stranicom."
 
-#: module/page/models.py:582
+#: module/page/models.py:627
 msgid "This URL is already taken by another active page."
-msgstr "Ovaj URL je već zauzet od druge aktivne stranice."
+msgstr "Ova adresa (URL) je već zauzeta drugom aktivnom stranicom."
 
-#: module/page/models.py:621
+#: module/page/models.py:651
 msgid "Other options"
 msgstr "Druge mogućnosti"
 
-#: module/page/models.py:653
+#: module/page/models.py:693 templates/admin/feincms/item_editor.html:57
 msgid "Add child page"
 msgstr "Dodaj podređenu stranicu"
 
-#: module/page/models.py:655
-#: templates/admin/feincms/page/page/item_editor.html:13
+#: module/page/models.py:695
 msgid "View on site"
-msgstr "Pogledaj na stranicama"
+msgstr "Pogledaj na internetnim stranicama"
 
-#: module/page/models.py:690
+#: module/page/models.py:730
 msgid "You may edit the copied page below."
-msgstr "Možete urediti kopiranu stranicu"
+msgstr "Možete urediti kopiranu stranicu ispod."
 
-#: module/page/models.py:696
+#: module/page/models.py:736
 #, python-format
-msgid ""
-"You have replaced %s. You may continue editing the now-active page below."
-msgstr ""
-"Zamijenili ste %s. Možete nastaviti uređivati neaktivnu stranicu."
+msgid "You have replaced %s. You may continue editing the now-active page below."
+msgstr "Zamijenili ste %s. Možete nastaviti uređivati neaktivnu stranicu ispod."
 
-#: module/page/models.py:723
+#: module/page/models.py:786
 msgid "inherited"
 msgstr "naslijeđeno"
 
-#: module/page/models.py:727
+#: module/page/models.py:790
 msgid "extensions"
 msgstr "ekstenzije"
-
-#: module/page/models.py:731
-msgid "is active"
-msgstr "je aktivna"
 
 #: module/page/extensions/ct_tracker.py:123
 msgid "content types"
 msgstr "tip sadržaja"
 
-#: module/page/extensions/datepublisher.py:29
+#: module/page/extensions/datepublisher.py:48
 msgid "publication date"
 msgstr "datum objave"
 
-#: module/page/extensions/datepublisher.py:31
+#: module/page/extensions/datepublisher.py:50
 msgid "publication end date"
 msgstr "datum kraja objave"
 
-#: module/page/extensions/datepublisher.py:33
+#: module/page/extensions/datepublisher.py:52
 msgid "Leave empty if the entry should stay active forever."
 msgstr "Ostavite praznim ukoliko članak treba biti aktivan neograničeno vrijeme."
 
-#: module/page/extensions/datepublisher.py:45
+#: module/page/extensions/datepublisher.py:78
 msgid "visible from - to"
 msgstr "vidljiv od - do"
 
+#: module/page/extensions/datepublisher.py:88
+msgid "Date-based publishing"
+msgstr "Objava vezana na datum"
+
+#: module/page/extensions/excerpt.py:9
+msgid "excerpt"
+msgstr "sažetak"
+
+#: module/page/extensions/excerpt.py:10
+msgid "Add a brief excerpt summarizing the content of this page."
+msgstr "Dodajte kratak sažetak sadržaja ove stranice."
+
+#: module/page/extensions/excerpt.py:12
+msgid "Excerpt"
+msgstr "Sažetak"
+
 #: module/page/extensions/navigation.py:40
-#: module/page/extensions/navigation.py:50
+#: module/page/extensions/navigation.py:52
 msgid "navigation extension"
 msgstr "navigacijska ekstenzija"
 
-#: module/page/extensions/navigation.py:52
-msgid ""
-"Select the module providing subpages for this page if you need to customize "
-"the navigation."
-msgstr ""
-"Odaberite modul koji će dostaviti podstranice za ovu stranicu ukoliko je potrebno prilagoditi navigaciju."
+#: module/page/extensions/navigation.py:54
+msgid "Select the module providing subpages for this page if you need to customize the navigation."
+msgstr "Odaberite modul koji će dostaviti podstranice za ovu stranicu ukoliko je potrebno prilagoditi navigaciju."
 
-#: module/page/extensions/symlinks.py:14
+#: module/page/extensions/navigation.py:67
+msgid "Navigation extension"
+msgstr "navigacijska ekstenzija"
+
+#: module/page/extensions/relatedpages.py:13
+msgid "Select pages that should be listed as related content."
+msgstr "Odaberite stranice koje trebaju biti navedene kao povezani sadržaj."
+
+#: module/page/extensions/relatedpages.py:20
+msgid "Related pages"
+msgstr "Povezane stranice"
+
+#: module/page/extensions/symlinks.py:15
 msgid "symlinked page"
 msgstr "simbolički povezana stranica"
 
-#: module/page/extensions/symlinks.py:15
+#: module/page/extensions/symlinks.py:16
 msgid "All content is inherited from this page if given."
 msgstr "Sav sadržaj je nasljeđen od ove stranice ukoliko je postavljena."
+
+#: module/page/extensions/symlinks.py:30
+msgid "Symlinked page"
+msgstr "simbolički povezana stranica"
 
 #: module/page/extensions/titles.py:13
 msgid "content title"
@@ -595,15 +644,19 @@ msgstr "naslov stranice"
 msgid "Page title for browser window. Same as title by default."
 msgstr "Naslov stranice u prozoru browsera. Podrazumijevana vrijednost je jednako kao naslov."
 
-#: module/page/extensions/translations.py:165
+#: module/page/extensions/titles.py:43
+msgid "Titles"
+msgstr "Nazivi"
+
+#: module/page/extensions/translations.py:171
 msgid "Edit translation"
 msgstr "Uredi prijevod"
 
-#: module/page/extensions/translations.py:168
+#: module/page/extensions/translations.py:174
 msgid "Create translation"
 msgstr "Kreiraj prijevod"
 
-#: module/page/extensions/translations.py:173
+#: module/page/extensions/translations.py:179
 msgid "translations"
 msgstr "prijevodi"
 
@@ -612,216 +665,128 @@ msgstr "prijevodi"
 msgid " By %(filter_title)s "
 msgstr " Po %(filter_title)s "
 
-#: templates/admin/content/mediafile/init.html:8
+#: templates/admin/content/mediafile/init.html:9
 msgid "Search"
 msgstr "Pretraživanje"
 
-#: templates/admin/content/video/unknown.html:3
-msgid "Video from unknown portal"
-msgstr "Video sa nepoznatog portala"
-
 #: templates/admin/feincms/_messages_js.html:4
 msgid "Really delete item?"
-msgstr "Stvarno izbrisati objekt?"
+msgstr "Stvarno izbrisati zapis?"
 
 #: templates/admin/feincms/_messages_js.html:4
 msgid "Confirm to delete item"
-msgstr "Potvrdite brisanje objekta"
+msgstr "Potvrdite brisanje zapisa"
 
 #: templates/admin/feincms/_messages_js.html:5
 msgid "Item deleted successfully."
-msgstr "Objekt je uspješno izbrisan"
+msgstr "Zapis je uspješno izbrisan"
 
 #: templates/admin/feincms/_messages_js.html:5
 msgid "Cannot delete item"
-msgstr "Objekt ne može biti obrisan"
+msgstr "Zapis ne može biti obrisan"
 
 #: templates/admin/feincms/_messages_js.html:6
 msgid "Cannot delete item, because it is parent of at least one other item."
-msgstr "Objekt ne može biti obrisan jer je nadređeni od najmanje jednog drugog objekta"
+msgstr "Zapis ne može biti obrisan jer je nadređeni od najmanje jednog drugog zapisa."
 
 #: templates/admin/feincms/_messages_js.html:7
-msgid "Tree saved successfully."
-msgstr "Drvo je uspješno spremljeno."
+msgid "Change template"
+msgstr "Zamjena predložka"
 
 #: templates/admin/feincms/_messages_js.html:8
-msgid "Change template"
-msgstr "Uredi predložak"
+msgid "Really change template? <br />All changes are saved."
+msgstr "Zaista zamijeniti predložak? <br />Sve izmjene će biti  spremljene."
 
 #: templates/admin/feincms/_messages_js.html:9
-msgid "Really change template? <br />All changes are saved."
-msgstr "Zaista izmjeniti predložak? <br />Sve izmjene su spremljene."
-
-#: templates/admin/feincms/_messages_js.html:10
 #, python-format
-msgid ""
-"Really change template? <br />All changes are saved and content from <strong>"
-"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
-msgstr ""
-"Zaista izmjeniti predložak? <br />Sve izmjene su spremljene. i sadržaj iz <strong>"
-"%(source_regions)s</strong> je premješten u <strong>%(target_region)s</strong>."
-
-#: templates/admin/feincms/_messages_js.html:11
-msgid "Cannot make a node a child of itself."
-msgstr "Nije moguće napraviti objekt koji je podređen samom sebi."
+msgid "Really change template? <br />All changes are saved and content from <strong>%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+msgstr "Zaista zamijeniti predložak? <br />Sve izmjene su spremljene. i sadržaj iz <strong>%(source_regions)s</strong> će biti premješten u <strong>%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
-msgid "No item has been selected."
-msgstr "Nijedan objekt nije odabran."
+msgid "Hide"
+msgstr "Sakrij"
 
-#: templates/admin/feincms/fe_editor.html:38
-#: templates/admin/feincms/item_editor.html:66
-#: templates/admin/feincms/item_editor.html:157
-msgid "Save"
-msgstr "Spremi"
+#: templates/admin/feincms/_messages_js.html:13
+msgid "Show"
+msgstr "Psrikaži"
 
-#: templates/admin/feincms/fe_tools.html:13
-msgid "Stop Editing"
-msgstr "Prekini uređivanje"
+#: templates/admin/feincms/_messages_js.html:14
+msgid "After"
+msgstr "Nakon"
 
-#: templates/admin/feincms/fe_tools.html:18
-msgid "edit"
-msgstr "uredi"
+#: templates/admin/feincms/_messages_js.html:15
+msgid "Before"
+msgstr "Prije"
 
-#: templates/admin/feincms/fe_tools.html:20
-msgid "new"
-msgstr "novi"
+#: templates/admin/feincms/_messages_js.html:16
+msgid "Insert new:"
+msgstr "Umetni ispred:"
 
-#: templates/admin/feincms/fe_tools.html:21
-msgid "up"
-msgstr "gore"
-
-#: templates/admin/feincms/fe_tools.html:22
-msgid "down"
-msgstr "dolje"
-
-#: templates/admin/feincms/fe_tools.html:23
-#: templates/admin/feincms/splitpane_editor_tree.html:92
-msgid "remove"
-msgstr "izbriši"
-
-#: templates/admin/feincms/item_editor.html:37
-#: templates/admin/feincms/splitpane_editor_blank.html:7
-#: templates/admin/feincms/page/page/item_editor.html:23
-#: templates/admin/feincms/page/page/tree_editor.html:7
-msgid "Home"
-msgstr "Home"
-
-#: templates/admin/feincms/item_editor.html:52
-msgid "Preview"
-msgstr "Pregled"
-
-#: templates/admin/feincms/item_editor.html:55
-msgid "Add Child Page"
-msgstr "Dodaj podređenu stranicu"
-
-#: templates/admin/feincms/item_editor.html:67
-#: templates/admin/feincms/item_editor.html:158
-#: templates/admin/feincms/splitpane_editor_tree.html:110
-#: templates/admin/feincms/splitpane_editor_tree.html:117
-msgid "Delete"
-msgstr "Izbriši"
-
-#: templates/admin/feincms/item_editor.html:69
-#: templates/admin/feincms/item_editor.html:160
-msgid "Save and add another"
-msgstr "Spremi i dodaj novi unos"
-
-#: templates/admin/feincms/item_editor.html:70
-#: templates/admin/feincms/item_editor.html:161
-msgid "Save and continue editing"
-msgstr "Spremi i nastavi uređivati"
-
-#: templates/admin/feincms/item_editor.html:75
-msgid "Please correct the error below."
-msgid_plural "Please correct the errors below."
-msgstr[0] "Molimo ispravite navedenu grešku."
-msgstr[1] "Molimo ispravite navedene greške."
-msgstr[2] "Molimo ispravite navedene greške."
-
-#: templates/admin/feincms/item_editor.html:108
-msgid "Properties"
-msgstr "Osobine"
-
-#: templates/admin/feincms/item_editor.html:123
+#: templates/admin/feincms/content_editor.html:10
 msgid "Region empty"
 msgstr "Regija je prazna"
 
-#: templates/admin/feincms/item_editor.html:127
-msgid ""
-"Content from the parent site is automatically inherited. To override this "
-"behaviour, add some content."
-msgstr ""
-"Sadržaj nadređene stranice je automatski naslijeđen. Za promjenu ove osobine, "
-"dodajte sadržaj."
+#: templates/admin/feincms/content_editor.html:14
+msgid "Content from the parent site is automatically inherited. To override this behaviour, add some content."
+msgstr "Sadržaj je automatski naslijeđen od nadređene stranice. Ukoliko želite to promjeniti, dodajte neke sadržaje."
 
-#: templates/admin/feincms/item_editor.html:135
+#: templates/admin/feincms/content_editor.html:22
 msgid "Add new item"
 msgstr "Dodaj novi unos"
 
-#: templates/admin/feincms/item_editor.html:143
-msgid "Move selected item to"
-msgstr "Premjesti odabrani objekt na"
+#: templates/admin/feincms/content_editor.html:36
+msgid "Move to"
+msgstr "Premjesti u"
 
-#: templates/admin/feincms/item_editor.html:147
-msgid "OK"
-msgstr "U redu"
+#: templates/admin/feincms/content_editor.html:40
+msgid "Move"
+msgstr "Premjesti"
 
-#: templates/admin/feincms/splitpane_editor_blank.html:23
-#: templates/admin/feincms/splitpane_editor_tree.html:106
-#, python-format
-msgid "Add %(name)s"
-msgstr "Dodaj %(name)s"
+#: templates/admin/feincms/fe_editor.html:48
+msgid "Save"
+msgstr "Spremi"
 
-#: templates/admin/feincms/splitpane_editor_blank.html:28
-msgid "Select an item on the left side if you want to edit it."
-msgstr "Odaberite objekt sa lijeve strane ukoliko ga želite urediti."
+#: templates/admin/feincms/fe_tools.html:26
+msgid "Stop Editing"
+msgstr "Prekini uređivanje"
 
-#: templates/admin/feincms/splitpane_editor_blank.html:29
-msgid ""
-"You can change the structure of the tree by drag-dropping elements. Please "
-"note that changes will be saved immediately. "
-msgstr ""
-"Možete izmjeniti strukturu drveta koristeći drag and drop na elementima. Napomena: promijene "
-"će biti odmah zapamćene. "
+#: templates/admin/feincms/fe_tools.html:31
+msgid "edit"
+msgstr "uredi"
 
-#: templates/admin/feincms/splitpane_editor_blank.html:30
-msgid ""
-"The context menu on the tree root and tree nodes provide you with additional "
-"modes of operation."
-msgstr ""
-"Kontekstni menu na korijenu i čvorovima drveta omogućavaju dodatne načine rada."
+#: templates/admin/feincms/fe_tools.html:33
+msgid "new"
+msgstr "novi"
 
-#: templates/admin/feincms/splitpane_editor_tree.html:38
-msgid "Cannot remove this frame while inside this admin section."
-msgstr "Nije moguće obrisati ovaj frame dok ste u administracijskoj sekciji."
+#: templates/admin/feincms/fe_tools.html:34
+msgid "up"
+msgstr "gore"
 
-#: templates/admin/feincms/splitpane_editor_tree.html:107
-msgid "Reload"
-msgstr "Ponovno učitaj"
+#: templates/admin/feincms/fe_tools.html:35
+msgid "down"
+msgstr "dolje"
 
-#: templates/admin/feincms/splitpane_editor_tree.html:109
-#: templates/admin/feincms/splitpane_editor_tree.html:116
-msgid "Edit"
-msgstr "Uredi"
+#: templates/admin/feincms/fe_tools.html:36
+msgid "remove"
+msgstr "izbriši"
 
-#: templates/admin/feincms/tree_editor.html:140
+#: templates/admin/feincms/tree_editor.html:35
 msgid "Shortcuts"
 msgstr "Kratice"
 
-#: templates/admin/feincms/tree_editor.html:142
+#: templates/admin/feincms/tree_editor.html:37
 msgid "Collapse tree"
 msgstr "Sažmi drvo"
 
-#: templates/admin/feincms/tree_editor.html:143
+#: templates/admin/feincms/tree_editor.html:38
 msgid "Expand tree"
 msgstr "Proširi drvo"
 
-#: templates/admin/feincms/tree_editor.html:145
+#: templates/admin/feincms/tree_editor.html:41
 msgid "Filter"
 msgstr "Filter"
 
-#: templates/admin/feincms/page/page/item_editor.html:8
+#: templates/admin/feincms/page/page/item_editor.html:9
 #, python-format
 msgid "Replace page %(to_replace)s"
 msgstr "Zamjeni stranicu %(to_replace)s"
@@ -830,9 +795,22 @@ msgstr "Zamjeni stranicu %(to_replace)s"
 msgid "Create hidden copy of this page"
 msgstr "Kreiraj skrivenu kopiju ove stranice"
 
-#: templates/admin/feincms/page/page/item_editor.html:14
+#: templates/admin/feincms/page/page/item_editor.html:13
 msgid "Edit on site"
 msgstr "Uredi na stranicama"
+
+#: templates/admin/feincms/page/page/item_editor.html:20
+#: templates/admin/feincms/page/page/tree_editor.html:7
+msgid "Home"
+msgstr "Home"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:12
+msgid "Bulk upload a ZIP file:"
+msgstr "Masovni prijenos ZIP datotekom:"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:15
+msgid "Send"
+msgstr "Pošalji"
 
 #: templates/content/comments/default.html:10
 #, python-format
@@ -843,23 +821,103 @@ msgstr "%(comment_count)s komentara."
 #, python-format
 msgid ""
 "\n"
-"                    %(comment_username)s said on %(comment_submit_date)s<br /"
-">\n"
+"                    %(comment_username)s said on %(comment_submit_date)s<br />\n"
 "                "
 msgstr ""
 "\n"
-"                    %(comment_username)s je objavio %(comment_submit_date)s<br /"
-">\n"
+"                    %(comment_username)s je objavio %(comment_submit_date)s<br />\n"
 "                "
 
 #: templates/content/comments/default.html:28
 msgid "No comments."
 msgstr "Bez komentara."
 
-#: templates/content/contactform/form.html:8
+#: templates/content/comments/default.html:36
+msgid "Post Comment"
+msgstr "Pošalji komentar"
+
+#: templates/content/contactform/form.html:9
 msgid "Submit"
 msgstr "Potvrdi"
 
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
 msgstr "Hvala!"
+
+#~ msgid "Click save to replace the current content with this version"
+#~ msgstr "Kliknite spremi da zamjenite trenutni sadržaj sa ovom verzijom"
+
+#~ msgid "The %(name)s \"%(obj)s\" was changed successfully."
+#~ msgstr "%(name)s \"%(obj)s\" je uspješno promijenjen."
+
+#~ msgid "You may edit it again below."
+#~ msgstr "Možete urediti ponovno."
+
+#~ msgid "You may add another %s below."
+#~ msgstr "Možete dodati još jedan %s."
+
+#~ msgid "Cut"
+#~ msgstr "Izreži"
+
+#~ msgid "Insert as child"
+#~ msgstr "Umetni kao podređen"
+
+#~ msgid "Video from unknown portal"
+#~ msgstr "Video sa nepoznatog portala"
+
+#~ msgid "Tree saved successfully."
+#~ msgstr "Drvo je uspješno spremljeno."
+
+#~ msgid "Cannot make a node a child of itself."
+#~ msgstr "Nije moguće napraviti objekt koji je podređen samom sebi."
+
+#~ msgid "No item has been selected."
+#~ msgstr "Nijedan objekt nije odabran."
+
+#~ msgid "Add Child Page"
+#~ msgstr "Dodaj podređenu stranicu"
+
+#~ msgid "Delete"
+#~ msgstr "Izbriši"
+
+#~ msgid "Save and add another"
+#~ msgstr "Spremi i dodaj novi unos"
+
+#~ msgid "Save and continue editing"
+#~ msgstr "Spremi i nastavi uređivati"
+
+#~ msgid "Please correct the error below."
+#~ msgid_plural "Please correct the errors below."
+#~ msgstr[0] "Molimo ispravite navedenu grešku."
+#~ msgstr[1] "Molimo ispravite navedene greške."
+#~ msgstr[2] "Molimo ispravite navedene greške."
+
+#~ msgid "Properties"
+#~ msgstr "Osobine"
+
+#~ msgid "Move selected item to"
+#~ msgstr "Premjesti odabrani objekt na"
+
+#~ msgid "OK"
+#~ msgstr "U redu"
+
+#~ msgid "Add %(name)s"
+#~ msgstr "Dodaj %(name)s"
+
+#~ msgid "Select an item on the left side if you want to edit it."
+#~ msgstr "Odaberite objekt sa lijeve strane ukoliko ga želite urediti."
+
+#~ msgid "You can change the structure of the tree by drag-dropping elements. Please note that changes will be saved immediately. "
+#~ msgstr "Možete izmjeniti strukturu drveta koristeći drag and drop na elementima. Napomena: promijene će biti odmah zapamćene. "
+
+#~ msgid "The context menu on the tree root and tree nodes provide you with additional modes of operation."
+#~ msgstr "Kontekstni menu na korijenu i čvorovima drveta omogućavaju dodatne načine rada."
+
+#~ msgid "Cannot remove this frame while inside this admin section."
+#~ msgstr "Nije moguće obrisati ovaj frame dok ste u administracijskoj sekciji."
+
+#~ msgid "Reload"
+#~ msgstr "Ponovno učitaj"
+
+#~ msgid "Edit"
+#~ msgstr "Uredi"

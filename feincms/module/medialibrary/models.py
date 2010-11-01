@@ -14,6 +14,8 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.http import HttpResponseRedirect
+from django.contrib.contenttypes.models import ContentType
+from django.template.context import RequestContext
 # 1.2 from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
@@ -27,7 +29,10 @@ import re
 import os
 import logging
 from PIL import Image
+from django import forms
+from django.shortcuts import render_to_response
 
+# ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
     """
     Simple manager which exists only to supply ``.select_related("parent")``
@@ -134,6 +139,11 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         cls.filetypes_dict = dict(choices)
         cls._meta.get_field('type').choices[:] = choices
 
+    def __init__(self, *args, **kwargs):
+        super(MediaFileBase, self).__init__(*args, **kwargs)
+        if self.file and self.file.path:
+            self._original_file_path = self.file.path
+
     def __unicode__(self):
         trans = None
 
@@ -159,9 +169,12 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     def file_type(self):
         t = self.filetypes_dict[self.type]
         if self.type == 'image':
-            from django.core.files.images import get_image_dimensions
-            d = get_image_dimensions(self.file.file)
-            if d: t += "<br/>%d&times;%d" % ( d[0], d[1] )
+            try:
+                from django.core.files.images import get_image_dimensions
+                d = get_image_dimensions(self.file.file)
+                if d: t += "<br/>%d&times;%d" % ( d[0], d[1] )
+            except IOError, e:
+                t += "<br/>(%s)" % e.strerror
         return t
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
@@ -244,6 +257,12 @@ class MediaFileBase(Base, TranslatedObjectMixin):
             except (OSError, IOError), e:
                 self.type = self.determine_file_type('***') # It's binary something
 
+        if getattr(self, '_original_file_path', None):
+            if self.file.path != self._original_file_path:
+                try:
+                    os.unlink(self._original_file_path)
+                except:
+                    pass
 
         super(MediaFileBase, self).save(*args, **kwargs)
         self.purge_translation_cache()
@@ -310,6 +329,8 @@ def admin_thumbnail(obj):
 admin_thumbnail.short_description = _('Preview')
 admin_thumbnail.allow_tags = True
 
+#-------------------------------------------------------------------------
+
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
@@ -318,6 +339,37 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
+    
+
+    class AddCategoryForm(forms.Form):
+        _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
+        category = forms.ModelChoiceField(Category.objects)
+
+
+    def assign_category(self, request, queryset):
+        form = None
+        if 'apply' in request.POST:
+            form = self.AddCategoryForm(request.POST)
+            if form.is_valid():
+                category = form.cleaned_data['category']
+                print 'category: ', category
+                count = 0
+                for mediafile in queryset:
+                    mediafile.categories.add(category)
+                    count += 1
+                plural = ''
+                if count != 1:
+                    plural = 's'
+                self.message_user(request, "Successfully added Category %s to %d mediafile%s." % (category, count, plural))
+                return HttpResponseRedirect(request.get_full_path())
+
+        if not form:
+            form = self.AddCategoryForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
+        return render_to_response('admin/medialibrary/add_category.html', {'mediafiles': queryset,
+                                                         'category_form': form,
+                                                        }, context_instance=RequestContext(request))
+    assign_category.short_description = _('Assign Categories to selected images.')
+    actions = [assign_category]
 
     def get_urls(self):
         from django.conf.urls.defaults import url, patterns
@@ -329,6 +381,12 @@ class MediaFileAdmin(admin.ModelAdmin):
 
         return my_urls + urls
 
+    def changelist_view(self, request, extra_context=None):
+        if extra_context is None:
+            extra_context = {}
+        extra_context['categories'] = Category.objects.all()
+        return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
+
     @staticmethod
     # 1.2 @csrf_protect
     @permission_required('medialibrary.add_mediafile')
@@ -336,9 +394,13 @@ class MediaFileAdmin(admin.ModelAdmin):
         from django.core.urlresolvers import reverse
         from django.utils.functional import lazy
 
-        def import_zipfile(request, data):
+        def import_zipfile(request, category_id, data):
             import zipfile
             from os import path
+
+            category = None
+            if category_id:
+                category = Category.objects.get(pk=int(category_id))
 
             try:
                 z = zipfile.ZipFile(data)
@@ -362,6 +424,8 @@ class MediaFileAdmin(admin.ModelAdmin):
                             mf = MediaFile()
                             mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
                             mf.save()
+                            if category:
+                                mf.categories.add(category)
                             count += 1
 
                 request.user.message_set.create(message="%d files imported" % count)
@@ -372,7 +436,7 @@ class MediaFileAdmin(admin.ModelAdmin):
             pass
 
         if request.method == 'POST' and 'data' in request.FILES:
-            import_zipfile(request, request.FILES['data'])
+            import_zipfile(request, request.POST.get('category'), request.FILES['data'])
         else:
             request.user.message_set.create(message="No input file given")
 

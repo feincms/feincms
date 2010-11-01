@@ -20,11 +20,11 @@ from django.db.transaction import commit_on_success
 
 import mptt
 
-from feincms import settings
+from feincms import settings, ensure_completely_loaded
 from feincms.admin import editor
 from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
-from feincms.models import Base
+from feincms.models import Base, create_base_model
 from feincms.utils import get_object, copy_model_instance
 import feincms.admin.filterspecs
 
@@ -116,8 +116,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         Return the best match for a path. If the path as given is unavailable,
         continues to search by chopping path components off the end.
 
-        Tries hard to avoid unnecessary database lookups by generating all poss
-        matching url prefixes and choosing the longtest match.
+        Tries hard to avoid unnecessary database lookups by generating all
+        possible matching URL prefixes and choosing the longtest match.
 
         Page.best_match_for_path('/photos/album/2008/09') might return the
         page with url '/photos/album'.
@@ -212,6 +212,17 @@ PageManager.add_to_active_filters( Q(active=True) )
 
 # MARK: -
 # ------------------------------------------------------------------------
+
+try:
+    # MPTT 0.4
+    from mptt.models import MPTTModel
+    mptt_register = False
+    Base = create_base_model(MPTTModel)
+except ImportError:
+    # MPTT 0.3
+    mptt_register = True
+
+
 class Page(Base):
 
     active = models.BooleanField(_('active'), default=False)
@@ -459,7 +470,7 @@ class Page(Base):
         """
         etag = self.etag(request)
         if etag is not None:
-            response['ETag'] = etag
+            response['ETag'] = '"' + etag + '"'
 
     @staticmethod
     def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
@@ -506,7 +517,8 @@ class Page(Base):
 
 
 # ------------------------------------------------------------------------
-mptt.register(Page)
+if mptt_register: # MPTT 0.3 legacy support
+    mptt.register(Page)
 
 # Our default request processors
 Page.register_request_processors(Page.require_path_active_request_processor,
@@ -631,15 +643,9 @@ class PageAdminForm(forms.ModelForm):
 
 
 # ------------------------------------------------------------------------
-if settings.FEINCMS_PAGE_USE_SPLIT_PANE_EDITOR:
-    list_modeladmin = editor.SplitPaneEditor
-else:
-    list_modeladmin = editor.TreeEditor
 
-# MARK: -
-# ------------------------------------------------------------------------
 
-class PageAdmin(editor.ItemEditor, list_modeladmin):
+class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     class Media:
         css = {}
         js = []
@@ -648,6 +654,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
     # the fieldsets config here is used for the add_view, it has no effect
     # for the change_view which is completely customized anyway
+    unknown_fields = ['override_url', 'redirect_to']
     fieldsets = [
         (None, {
             'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
@@ -656,7 +663,7 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
-            'fields': [],
+            'fields': unknown_fields,
         }),
         ]
     readonly_fields = []
@@ -669,6 +676,8 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     def __init__(self, *args, **kwargs):
+        ensure_completely_loaded()
+
         if len(Page._feincms_templates) > 4:
             del(self.radio_fields['template_key'])
 
@@ -684,8 +693,8 @@ class PageAdmin(editor.ItemEditor, list_modeladmin):
 
         for f in self.model._meta.fields:
             if not f.name.startswith('_') and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level') and \
-               not f.auto_created and not f.name in present_fields:
-                self.fieldsets[-1][1]['fields'].append(f.name)
+                    not f.auto_created and not f.name in present_fields and f.editable:
+                self.unknown_fields.append(f.name)
                 if not f.editable:
                     self.readonly_fields.append(f.name)
 

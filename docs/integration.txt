@@ -70,7 +70,7 @@ Adapting the 3rd party application for FeinCMS
 
 The integration mechanism is very flexible. It allows the website
 administrator to add the application in multiple places or move the
-integration point around at wish. Obviously, this flexibility puts
+integration point around at will. Obviously, this flexibility puts
 several constraints on the application developer. It is therefore
 probable, that you cannot just drop in a 3rd party application and
 expect it to work. Modifications of ``urls.py`` and the templates
