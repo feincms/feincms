@@ -6,10 +6,21 @@ feincms.jQuery(function($){
 		$('tr:visible:odd', this).addClass('row2');
 	});
 
-	// extract id
-	function extractId(s) {
-		return s.match(/-(\d+)$/)[1];
-	}
+    function isExpandedNode(id) {
+        return feincms.collapsed_nodes.indexOf(id) == -1;
+    }
+
+    function markNodeAsExpanded(id) {
+        // remove itemId from array of collapsed nodes
+        var idx = feincms.collapsed_nodes.indexOf(id);
+        if(idx >= 0)
+            feincms.collapsed_nodes.splice(idx, 1);
+    }
+
+    function markNodeAsCollapsed(id) {
+        if(isExpandedNode(id))
+            feincms.collapsed_nodes.push(id);
+    }
 
 	// toggle children
 	function doToggle(id, show) {
@@ -19,7 +30,7 @@ feincms.jQuery(function($){
 			if(show) {
 				$('#item-' + childId).show();
 				// only reveal children if current node is not collapsed
-				if(feincms.collapsed_nodes.indexOf(childId) == -1) {
+				if(isExpandedNode(childId)) {
 					doToggle(childId, show);
 				}
 			} else {
@@ -41,7 +52,7 @@ feincms.jQuery(function($){
 	$.extend($.fn.feinTree = function() {
 		$('tr', this).each(function(i, el) {
 			// adds 'children' class to all parents
-			var pageId = extractId($('.page_marker', el).attr('id'));
+			var pageId = extract_item_id($('.page_marker', el).attr('id'));
 			$(el).attr('id', 'item-' + pageId);
 			if (feincms.tree_structure[pageId].length) {
 			    $('.page_marker', el).addClass('children');
@@ -101,7 +112,7 @@ feincms.jQuery(function($){
 							$('span.page_marker', element).hasClass('children') &&
 							$('span.page_marker', element).hasClass('closed')
 						) {
-							var id = extractId($('span.page_marker', element).attr('id'));
+							var id = extract_item_id($('span.page_marker', element).attr('id'));
 							setTimeout(function() {
 								doToggle(id, true);
 								$('#result_list tbody').recolorRows();
@@ -153,8 +164,8 @@ feincms.jQuery(function($){
 			});
 
 			$("body").bind('mouseup', function(event) {
-				var cutItem = extractId(originalRow.find('.page_marker').attr('id'));
-				var pastedOn = extractId(moveTo.relativeTo.find('.page_marker').attr('id'));
+				var cutItem = extract_item_id(originalRow.find('.page_marker').attr('id'));
+				var pastedOn = extract_item_id(moveTo.relativeTo.find('.page_marker').attr('id'));
 
 				// get out early if items are the same
 				if(cutItem != pastedOn) {
@@ -187,37 +198,39 @@ feincms.jQuery(function($){
 		return this;
 	});
 
+    function expandOrCollapseNode(item) {
+        var show = true;
+
+        if(!item.hasClass('children'))
+            return;
+
+        var itemId = extract_item_id(item.attr('id'));
+
+        if(!isExpandedNode(itemId)) {
+            item.removeClass('closed');
+            markNodeAsExpanded(itemId);
+        } else {
+            item.addClass('closed');
+            show = false;
+            markNodeAsCollapsed(itemId);
+        }
+
+        $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
+
+        doToggle(itemId, show);
+
+        $('#result_list tbody').recolorRows();
+    }
+
 	$.extend($.fn.feinTreeToggleItem = function() {
 		$(this).click(function(event){
-			var show = true;
-			var item = $(this);
-			var itemId = extractId(this.id);
+            expandOrCollapseNode($(this));
+            if(event.stopPropagation) {
+                event.stopPropagation();
+            } else {
+                event.cancelBubble = true;
+            }
 
-			if(item.hasClass('closed')) {
-				item.removeClass('closed');
-
-				// remove itemId from array of collapsed nodes
-				for(var i=0; i<feincms.collapsed_nodes.length; ++i) {
-					if (feincms.collapsed_nodes[i] == itemId)
-					feincms.collapsed_nodes.splice(i, 1);
-				}
-			} else {
-				item.addClass('closed');
-				show = false;
-				feincms.collapsed_nodes.push(itemId);
-			}
-
-			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
-
-			doToggle(itemId, show);
-
-			if(event.stopPropagation) {
-				event.stopPropagation();
-			} else {
-				event.cancelBubble = true;
-			}
-
-			$('#result_list tbody').recolorRows();
 			return false;
 		});
 		return this;
@@ -229,10 +242,13 @@ feincms.jQuery(function($){
 			$('#result_list tbody tr').each(function(i, el) {
 				var marker = $('.page_marker', el);
 				if(marker.hasClass('children')) {
-					doToggle(extractId(marker.attr('id')), false);
+                    var itemId = extract_item_id(marker.attr('id'));
+					doToggle(itemId, false);
 					marker.addClass('closed');
+                    markNodeAsCollapsed(itemId);
 				}
 			});
+            $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
 			$('#result_list tbody').recolorRows();
 		});
 		return this;
@@ -244,14 +260,50 @@ feincms.jQuery(function($){
 			$('#result_list tbody tr').each(function(i, el) {
 				var marker = $('span.page_marker', el);
 				if(marker.hasClass('children')) {
-					doToggle(extractId($('span.page_marker', el).attr('id')), true);
+                    var itemId = extract_item_id($('span.page_marker', el).attr('id'));
+					doToggle(itemId, true);
 					marker.removeClass('closed');
+                    markNodeAsExpanded(itemId);
 				}
 			});
+			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
 			$('#result_list tbody').recolorRows();
 		});
 		return this;
 	});
+
+    var changelist_tab = function(elem, event, direction) {
+        event.preventDefault();
+        elem = $(elem);
+        var ne = (direction > 0) ? elem.nextAll(':visible:first') : elem.prevAll(':visible:first');
+        if(ne) {
+            elem.attr('tabindex', -1);
+            ne.attr('tabindex', '0');
+            ne.focus();
+        }
+    };
+
+    function keyboardNavigationHandler(event) {
+        // console.log('keydown', this, event.keyCode);
+        switch(event.keyCode) {
+            case 40: // down
+                changelist_tab(this, event, 1);
+                break;
+            case 38: // up
+                changelist_tab(this, event, -1);
+                break;
+            case 37: // left
+            case 39: // right
+                expandOrCollapseNode($(this).find('.page_marker'));
+                break;
+            case 13: // return
+                where_to = extract_item_id($('span', this).attr('id'));
+                document.location = document.location.pathname + where_to + '/'
+                break;
+            default:
+                break;
+            };
+    }
 
 	// fire!
 	if($('#result_list tbody tr').length > 1) {
@@ -259,6 +311,11 @@ feincms.jQuery(function($){
 		$('#result_list span.page_marker').feinTreeToggleItem();
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
+
+        /* Enable focussing, put focus on first result, add handler for keyboard navigation */
+        $('#result_list tr').attr('tabindex', -1);
+        $('#result_list tbody tr:first').attr('tabindex', 0).focus();
+        $('#result_list tr').keydown(keyboardNavigationHandler);
 
 		feincms.collapsed_nodes = [];
 		var storedNodes = $.cookie('feincms_collapsed_nodes');
