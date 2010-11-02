@@ -13,4 +13,10 @@ class PageSitemap(Sitemap):
     # may we should make an extension to give control to the user for priority
     def priority(self, obj):
         depth = Page.objects.filter(active=True, in_navigation=True).order_by('-level')[0].level
-        return 1 - float( float(obj.level + 1) / float(depth + 1)) + 0.01
+
+        # This formula means that each level will have its priority
+        # reduced by one fifth, so that the fifth level and on will all
+        # have a priority of 0.1, with the first level starting at
+        # 0.9333... and so on.
+        return 1.0 - ((obj.level + 1.0) / (depth + 5.0)) + 0.1
+
