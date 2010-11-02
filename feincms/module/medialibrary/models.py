@@ -11,7 +11,7 @@ from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext, ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
@@ -367,10 +367,10 @@ class MediaFileAdmin(admin.ModelAdmin):
                 for mediafile in queryset:
                     mediafile.categories.add(category)
                     count += 1
-                plural = ''
-                if count != 1:
-                    plural = 's'
-                self.message_user(request, "Successfully added Category %s to %d mediafile%s." % (category, count, plural))
+                message = ungettext('Successfully added Category %(category)s to %(count)d mediafile',
+                                    'Successfully added Category %(category)s to %(count)d mediafiles', count) % {
+                                    'count':count, 'category':category }
+                self.message_user(request, message)
                 return HttpResponseRedirect(request.get_full_path())
 
         if not form:
