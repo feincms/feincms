@@ -25,3 +25,4 @@ def appcontent_parameters(request):
         return {}
     else:
         return request._feincms_appcontent_parameters
+

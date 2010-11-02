@@ -4,6 +4,7 @@ from django.db import models
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+from django.template.context import RequestContext
 
 
 class ContactForm(forms.Form):
@@ -59,4 +60,32 @@ class ContactFormContent(models.Model):
         return render_to_string('content/contactform/form.html', {
             'content': self,
             'form': form,
-            }, context_instance=RequestContext(request))
+            }, RequestContext(request))
+
+
+
+class DetailedContactForm(ContactForm):
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.fields.keyOrder = [
+            'company','name','street','zip','city','phone','phone2','email','subject','content']
+    
+    company = forms.CharField(label=_('company / institution'), required=False)
+    street = forms.CharField(label=_('street'), required=False)
+    zip = forms.CharField(label=_('zip'), required=False)
+    city = forms.CharField(label=_('city'), required=False)
+    phone = forms.CharField(label=_('phone'), required=False)
+    phone2 = forms.CharField(label=_('other phone'), required=False)    
+    
+    required_css_class = 'required'
+    error_css_class = 'error'
+
+
+class DetailedContactFormContent(ContactFormContent):
+    form = DetailedContactForm
+    
+    class Meta:
+        abstract = True
+        verbose_name = _('detailed contact form')
+        verbose_name_plural = _('detailed contact forms')
+    
