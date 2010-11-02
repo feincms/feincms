@@ -168,7 +168,7 @@ if(!Array.indexOf) {
             // Use Django's built-in inline spawing mechanism (Django 1.2+)
             // must use django.jQuery since the bound function lives there:
             var returned = django.jQuery('#'+modvar+'_set-group').find(
-                '.add-row a').triggerHandler('click');
+                'div.add-row > a').triggerHandler('click');
             if(returned==false) break; // correct return value
         }
         var new_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
