@@ -13,7 +13,7 @@ class ContactForm(forms.Form):
     subject = forms.CharField(label=_('subject'))
 
     content = forms.CharField(widget=forms.Textarea, required=False,
-        label=_('content'))
+        label=_('message'))
 
 
 class ContactFormContent(models.Model):
@@ -62,3 +62,30 @@ class ContactFormContent(models.Model):
             'form': form,
             }, RequestContext(request))
 
+
+
+class DetailedContactForm(ContactForm):
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.fields.keyOrder = [
+            'company','name','street','zip','city','phone','phone2','email','subject','content']
+    
+    company = forms.CharField(label=_('company / institution'), required=False)
+    street = forms.CharField(label=_('street'), required=False)
+    zip = forms.CharField(label=_('zip'), required=False)
+    city = forms.CharField(label=_('city'), required=False)
+    phone = forms.CharField(label=_('phone'), required=False)
+    phone2 = forms.CharField(label=_('other phone'), required=False)    
+    
+    required_css_class = 'required'
+    error_css_class = 'error'
+
+
+class DetailedContactFormContent(ContactFormContent):
+    form = DetailedContactForm
+    
+    class Meta:
+        abstract = True
+        verbose_name = _('detailed contact form')
+        verbose_name_plural = _('detailed contact forms')
+    
