@@ -277,6 +277,7 @@ MediaFileBase.register_filetypes(
         ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
         ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
         ('rtf', _('Rich Text'), lambda f: f.lower().endswith('.rtf')),
+        ('zip', _('Zip archive'), lambda f: f.lower().endswith('.zip')),
         ('doc', _('Microsoft Word'), lambda f: re.compile(r'\.docx?$', re.IGNORECASE).search(f)),
         ('xls', _('Microsoft Excel'), lambda f: re.compile(r'\.xlsx?$', re.IGNORECASE).search(f)),
         ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(r'\.pptx?$', re.IGNORECASE).search(f)),
