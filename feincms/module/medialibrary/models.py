@@ -331,6 +331,9 @@ admin_thumbnail.allow_tags = True
 
 #-------------------------------------------------------------------------
 class MediaFileAdmin(admin.ModelAdmin):
+    class Media:
+        css = {}
+        js = ['feincms/add_tinymce_action_to_popup.js',]
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
     list_display      = ['__unicode__', admin_thumbnail, 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'formatted_created']

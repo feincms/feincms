@@ -308,9 +308,9 @@ def is_sibling_of(page1, page2):
 # ------------------------------------------------------------------------
 @register.filter
 def render_first(contents, type):
-	''' returns the first contenttype matching type 
-		feincms_page.contents.main|render_first:"richttextcontent"	
-	'''
+    ''' returns the first contenttype matching type 
+        feincms_page.contents.main|render_first:"richttextcontent"	
+    '''
     for c in contents:
         if c.__class__.__name__.lower() == type:
             return c.render()

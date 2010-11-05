@@ -648,7 +648,7 @@ class PageAdminForm(forms.ModelForm):
 class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     class Media:
         css = {}
-        js = []
+        js = ['feincms/add_tinymce_action_to_popup.js',]
 
     form = PageAdminForm
 
