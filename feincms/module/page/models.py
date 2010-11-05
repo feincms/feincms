@@ -158,6 +158,12 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
     def toplevel_navigation(self):
         return self.in_navigation().filter(parent__isnull=True)
 
+    def active_children(self):
+        return self.active().filter(parent=self)
+
+    def active_children_in_navigation(self):
+        return self.active_children().filter(in_navigation=True)
+
     def for_request(self, request, raise404=False):
         page = self.page_for_path(request.path, raise404)
         page.setup_request(request)
