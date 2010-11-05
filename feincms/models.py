@@ -270,7 +270,7 @@ def create_base_model(inherit_from=models.Model):
                     cls._feincms_extensions.add(ext)
                 except Exception, e:
                     raise ImproperlyConfigured("%s.register_extensions('%s') raised an '%s' exception" %
-                                                (cls.__name__, ext, e.message))
+                                                (cls.__name__, ext, str(e)))
 
         @property
         def content(self):

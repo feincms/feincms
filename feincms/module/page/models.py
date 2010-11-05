@@ -704,8 +704,13 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         actions = super(PageAdmin, self)._actions_column(page)
         actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % (
             page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
-        actions.insert(0, u'<a href="%s" title="%s"><img src="%simg/admin/selector-search.gif" alt="%s" /></a>' % (
-            page.get_absolute_url(), _('View on site'), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
+        url = page.get_preview_url()
+        verbose_name = "Preview Page"
+        if page.active:
+            url = page.get_absolute_url()
+            verbose_name = "View on site"
+        actions.insert(0, u'<a href="%s" title="%s" ><img src="%simg/admin/selector-search.gif" alt="%s" /></a>' % (
+            url, _(verbose_name), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
         return actions
 
     def add_view(self, request, form_url='', extra_context=None):

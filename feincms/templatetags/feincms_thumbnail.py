@@ -25,8 +25,10 @@ def tryint(v):
 
 @register.filter
 def thumbnail(filename, size='200x200'):
+    filename=filename.replace(settings.MEDIA_URL, '')
     if not (filename and 'x' in size):
         # Better return empty than crash
+        # @TODO: log this error somewhere
         return u''
 
     # defining the size
@@ -34,19 +36,26 @@ def thumbnail(filename, size='200x200'):
     # defining the filename and the miniature filename
     try:
         basename, format = filename.rsplit('.', 1)
-    except ValueError:
+    except ValueError, e:
         basename, format = filename, 'jpg'
     miniature = basename + '_thumb_' + size + '.' +  format
+
+    if miniature[0]=='/': #need to let work os.path.join correctly
+        miniature = miniature[1:]
     miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature).encode('utf-8')
     miniature_url = os.path.join(settings.MEDIA_URL, miniature).encode('utf-8')
-    orig_filename = os.path.join(settings.MEDIA_ROOT, filename).encode('utf-8')
+
+    if filename[0]=='/': #need to let work os.path.join correctly
+        filename = filename[1:]
+    orig_filename = os.path.join(os.path.abspath(settings.MEDIA_ROOT), filename).encode('utf-8')
     # if the image wasn't already resized, resize it
     if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
         try:
             image = Image.open(orig_filename)
             image.thumbnail([x, y], Image.ANTIALIAS)
             image.save(miniature_filename, image.format, quality=100)
-        except IOError:
+        except IOError, e:
+            # @TODO: log this error somewhere
             return os.path.join(settings.MEDIA_URL, filename)
     return force_unicode(miniature_url)
 

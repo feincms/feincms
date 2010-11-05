@@ -168,5 +168,9 @@ class SimpleAssignmentNodeWithVarAndArgs(template.Node):
 
         context[self.var_name] = self.what(instance, _parse_args(self.args, context))
 
+        self.extra_context(context)
+        return ''
+
+    def extra_context(self, context):
         return ''
 

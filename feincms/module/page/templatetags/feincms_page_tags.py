@@ -28,6 +28,20 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
     {% endfor %}
     """
+    def extra_context(self, context):
+        #self.render_context = context
+        try:
+            instance = self.in_var.resolve(context)
+        except template.VariableDoesNotExist:
+            context[self.var_name] = []
+            return ''
+        else:
+            if getattr(instance,'navigation_extension', None):
+                toimport=instance.navigation_extension.split('.')
+                exec("from %s import %s as Nav"% ('.'.join(toimport[:-1]),toimport[-1]))
+                context["subnavigation_name"] = Nav.name.__unicode__()
+        return ''
+
 
     def what(self, instance, args):
         level = int(args.get('level', 1))
@@ -292,3 +306,17 @@ def is_sibling_of(page1, page2):
         return False
 
 # ------------------------------------------------------------------------
+@register.filter
+def render_first(contents, type):
+	''' returns the first contenttype matching type 
+		feincms_page.contents.main|render_first:"richttextcontent"	
+	'''
+    for c in contents:
+        if c.__class__.__name__.lower() == type:
+            return c.render()
+
+@register.filter
+def get_first_mediafile_url(contents):
+    for c in contents:
+        if c.__class__.__name__.lower() == "mediafilecontent":
+            return c.mediafile.get_absolute_url()
