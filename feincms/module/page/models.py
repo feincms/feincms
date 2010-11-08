@@ -280,6 +280,23 @@ class Page(Base):
         queryset = PageManager.apply_active_filters(self.get_ancestors())
         return queryset.count() >= self.level
 
+    def active_children(self):
+        """
+        Returns a queryset describing all active children of the current page.
+        This is different than page.get_descendants (from mptt) as it will
+        additionally select only child pages that are active.
+        """
+        return Page.objects.active().filter(parent=self)
+
+    def active_children_in_navigation(self):
+        """
+        Returns a queryset describing all active children that also have the
+        in_navigation flag set. This might be used eg. in building navigation
+        menues (only show a disclosure indicator if there actually is something
+        to disclose).
+        """
+        return self.active_children().filter(in_navigation=True)
+
     def short_title(self):
         """
         Title shortened for display.
