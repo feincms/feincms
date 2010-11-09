@@ -224,7 +224,7 @@ if(!Array.indexOf) {
             $.each(classes, function() {
                 if(this.match('^item-richtext-')) {
                     var remove_func = undefined;
-                    try { remove_func = eval('feincms.richtext_remove_' + this.substr(14)); } catch(e) {}
+                    try { remove_func = eval('feincms_richtext_remove_' + this.substr(14)); } catch(e) {}
                     if(typeof(remove_func) == 'function'){
                         remove_func(field);
                     }
@@ -244,7 +244,7 @@ if(!Array.indexOf) {
             $.each(classes, function() {
                 if(this.match('^item-richtext-')) {
                     var add_func = undefined;
-                    try { add_func = eval('feincms.richtext_add_' + this.substr(14)); } catch(e) {}
+                    try { add_func = eval('feincms_richtext_add_' + this.substr(14)); } catch(e) {}
                     if(typeof(add_func) == 'function'){
                         add_func(field);
                     }
