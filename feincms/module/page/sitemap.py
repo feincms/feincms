@@ -12,7 +12,7 @@ class PageSitemap(Sitemap):
         """
         self.max_depth = Page.objects.active().aggregate(Max('level'))['level__max']
         self.per_level = 1.0 / (self.max_depth + 1.0)
-        return Page.objects.active().filter(redirect_to="")
+        return [ p for p in Page.objects.active().filter(redirect_to="") if p.is_active() ]
 
     def lastmod(self, obj):
         return getattr(obj, 'modification_date', None)
