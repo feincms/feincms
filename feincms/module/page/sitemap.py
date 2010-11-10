@@ -1,22 +1,38 @@
+
+
+from django.db.models import Max
 from django.contrib.sitemaps import Sitemap
 
 from models import Page
 
-class PageSitemap(Sitemap): 
+class PageSitemap(Sitemap):
     def items(self):
-        return Page.objects.filter(active=True, in_navigation=True)
-    
+        """
+        Consider all pages that are active and that are not a redirect
+        """
+        self.max_depth = Page.objects.active().aggregate(Max('level'))['level__max']
+        self.per_level = 1.0 / (self.max_depth + 1.0)
+        return Page.objects.active().filter(redirect_to="")
+
     def lastmod(self, obj):
-        return obj.modification_date
-    
+        return getattr(obj, 'modification_date', None)
+
+    def changefreq(self, obj):
+        return 'daily'
+
     # the priority is computed of the depth in the tree of a page
     # may we should make an extension to give control to the user for priority
     def priority(self, obj):
-        depth = Page.objects.filter(active=True, in_navigation=True).order_by('-level')[0].level
+        """
+        The priority is staggered according to the depth of the page in
+        the site. Top level get highest priority, then each level is decreased
+        by per_level.
+        """
+        prio = 1.0 - (obj.level + 1) * self.per_level
 
-        # This formula means that each level will have its priority
-        # reduced by one fifth, so that the fifth level and on will all
-        # have a priority of 0.1, with the first level starting at
-        # 0.9333... and so on.
-        return 1.0 - ((obj.level + 1.0) / (depth + 5.0)) + 0.1
+        # If the page is in_navigation, then it's more important, so boost
+        # its importance
+        if obj.in_navigation:
+            prio += 1.2 * self.per_level
 
+        return "%0.2g" % min(1.0, prio)
