@@ -85,6 +85,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     # The fields which should be excluded when creating a copy. The mptt fields are
     # excluded automatically by other mechanisms
+    # ???: Then why are the mptt fields listed here?
     exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
 
     def page_for_path(self, path, raise404=False):
