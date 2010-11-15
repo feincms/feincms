@@ -39,6 +39,10 @@ class ActiveAwareContentManagerMixin(object):
     A Manager for a content class using the "datepublisher" extension
     should either adopt this mixin or implement a similar interface.
     """
+
+    # A list of filters which are used to determine whether a page is active or not.
+    # Extended for example in the datepublisher extension (date-based publishing and
+    # un-publishing of pages)
     active_filters = ()
 
     @classmethod
@@ -78,10 +82,6 @@ def path_to_cache_key(path):
     return 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, path )
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
-
-    # A list of filters which are used to determine whether a page is active or not.
-    # Extended for example in the datepublisher extension (date-based publishing and
-    # un-publishing of pages)
 
     # The fields which should be excluded when creating a copy. The mptt fields are
     # excluded automatically by other mechanisms
