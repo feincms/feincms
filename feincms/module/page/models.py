@@ -39,6 +39,10 @@ class ActiveAwareContentManagerMixin(object):
     A Manager for a content class using the "datepublisher" extension
     should either adopt this mixin or implement a similar interface.
     """
+
+    # A list of filters which are used to determine whether a page is active or not.
+    # Extended for example in the datepublisher extension (date-based publishing and
+    # un-publishing of pages)
     active_filters = ()
 
     @classmethod
@@ -79,13 +83,10 @@ def path_to_cache_key(path):
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
-    # A list of filters which are used to determine whether a page is active or not.
-    # Extended for example in the datepublisher extension (date-based publishing and
-    # un-publishing of pages)
-
     # The fields which should be excluded when creating a copy. The mptt fields are
     # excluded automatically by other mechanisms
-    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level']
+    # ???: Then why are the mptt fields listed here?
+    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
 
     def page_for_path(self, path, raise404=False):
         """
@@ -233,7 +234,7 @@ class Page(Base):
     slug = models.SlugField(_('slug'), max_length=150)
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
-    in_navigation = models.BooleanField(_('in navigation'), default=True)
+    in_navigation = models.BooleanField(_('in navigation'), default=False)
     override_url = models.CharField(_('override URL'), max_length=300, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
     redirect_to = models.CharField(_('redirect to'), max_length=300, blank=True,

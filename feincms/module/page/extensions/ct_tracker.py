@@ -92,8 +92,24 @@ def get_tr_map(self):
 def page_get_content_types_for_region(self, region):
     """
     Overrides Page.get_content_types_for_region.
+
+    If a page with an empty _ct_inventory is encountered, compute all the
+    content types currently used on that page and save the list in the page
+    object itself. Further requests for that page can then access that
+    information and find out which content types are used without resorting
+    to multiple selects on different ct tables.
+
+    It is therefore important that even an "empty" page does not have an
+    empty _ct_inventory. Luckily, this is ensured with the HAS_APPCONTENT_KEY
+    entry.
     """
     inv = self._ct_inventory
+
+    if self.id and len(inv) == 0:
+        self._ct_inventory = inv = self.count_content_types()
+        self._delayed_save = True # Mark instance so pre_save_handler doesn't null out _ct_inventory
+        self.save()
+
     retval = [0] * len(self._feincms_content_types)
     region_ct_inventory = inv.get(region.key, ())
 
@@ -112,9 +128,14 @@ def has_appcontent(self):
 # ------------------------------------------------------------------------
 def pre_save_handler(sender, instance, **kwargs):
     """
-    Intercept save and store the currently used content types into the page itself.
+    Intercept save and null out the content type list in the page itself.
     """
-    instance._ct_inventory = instance.count_content_types()
+
+    # The _delayed_save attribute is only present if we are currently updating
+    # the _ct_inventory itself (see page_get_content_types_for_region above).
+    # If we are, don't zero out the computed result.
+    if not getattr(instance, '_delayed_save', False):
+        instance._ct_inventory = None
 
 # ------------------------------------------------------------------------
 def register(cls, admin_cls):
