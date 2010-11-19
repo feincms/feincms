@@ -31,7 +31,7 @@ class MediaFileWidget(forms.TextInput):
                 caption = _('(no caption)')
 
             if mf.type == 'image':
-                image = feincms_thumbnail.thumbnail(mf.file.name, '240x120')
+                image = mf.file.thumbnail.url
                 image = u'<img src="%(url)s" alt="" /><br />' % {'url': image}
             else:
                 image = u''

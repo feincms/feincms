@@ -49,7 +49,7 @@ def _build_tree_structure(cls):
     for p_id, parent_id in cls.objects.order_by(cls._meta.tree_id_attr, cls._meta.left_attr).values_list("pk", "%s_id" % cls._meta.parent_attr):
         all_nodes[p_id] = []
 
-        if parent_id:
+        if parent_id and parent_id in all_nodes:
             all_nodes[parent_id].append(p_id)
 
     return all_nodes
