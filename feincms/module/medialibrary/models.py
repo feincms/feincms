@@ -21,7 +21,6 @@ from nailbiter.fields import ImageWithThumbsField
 
 from feincms import settings
 from feincms.models import Base
-from feincms.module.medialibrary.uploadto import UploadTo
 
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import TranslatedObjectMixin, Translation, \
