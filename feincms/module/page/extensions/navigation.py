@@ -27,6 +27,9 @@ class PagePretender(object):
     class _meta:
         level_attr = 'level'
 
+    class _mptt_meta:
+        level_attr = 'level'
+
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
