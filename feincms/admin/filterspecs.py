@@ -19,7 +19,7 @@ class ParentFilterSpec(ChoicesFilterSpec):
     my_model_field.page_parent_filter = True
     """
 
-    def __init__(self, f, request, params, model, model_admin):
+    def __init__(self, f, request, params, model, model_admin, field_path=None):
         from feincms.utils import shorten_string
 
         super(ParentFilterSpec, self).__init__(f, request, params, model, model_admin)
@@ -52,7 +52,7 @@ class CategoryFilterSpec(ChoicesFilterSpec):
     my_model_field.category_filter = True
     """
 
-    def __init__(self, f, request, params, model, model_admin):
+    def __init__(self, f, request, params, model, model_admin, field_path=None):
         super(CategoryFilterSpec, self).__init__(f, request, params, model, model_admin)
 
         # Restrict results to categories which are actually in use:
