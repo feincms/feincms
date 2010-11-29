@@ -173,11 +173,7 @@ if(!Array.indexOf) {
         }
         var new_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
         if(new_form_count > old_form_count){
-            var new_form = $('#'+modvar+'_set-'+(new_form_count-1));
-            new_form.addClass("dynamic-form");
-            // earmark as dynamically created form, also allows
-            // django's inline deletion javascript function to operate
-            return new_form;
+            return $('#'+modvar+'_set-'+(new_form_count-1));
         }
         // TODO: add fallback for older versions by manually cloning
         // empty fieldset (provided using extra=1)
@@ -340,16 +336,21 @@ if(!Array.indexOf) {
             var item = $(this).parents(".order-item");
             jConfirm(DELETE_MESSAGES[0], DELETE_MESSAGES[1], function(r) {
                 if (r==true) {
-                    var dynamic_form = item.find(".dynamic-form");
-                    if(dynamic_form.length==1){ // not saved on server
+                    var in_database = item.find(".delete-field").length;
+                    if(in_database==0){ // remove on client-side only
+                        // decrement TOTAL_FORMS:
+                        var id = item.find(".item-content > div").attr('id');
+                        var modvar = id.replace(/_set-\d+$/, '');
+                        var count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
+                        $('#id_'+modvar+'_set-TOTAL_FORMS').val(count-1);
+                        // remove form:
+                        item.find(".item-content").remove();
+
                         // could trigger django's deletion handler, which would
                         // handle reindexing other inlines, etc, but seems to
                         // cause errors, and is apparently unnecessary...
-                        //dynamic_form.attr('id', 'form_to_delete');
-                        //django.jQuery('#form_to_delete').find('a.inline-deletelink').triggerHandler('click');
-
-                        // just remove it
-                        dynamic_form.remove();
+                        // django.jQuery('#'+id).find('a.inline-deletelink')
+                        //   .triggerHandler('click');
                     }
                     else{ // saved on server, don't remove form
                         set_item_field_value(item,"delete-field","checked");
