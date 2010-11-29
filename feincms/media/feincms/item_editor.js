@@ -21,8 +21,8 @@ if(!Array.indexOf) {
         return s;
     }
 
-    function create_new_item_from_form(form, modname){
-        var fieldset = $("<fieldset>").addClass("module aligned order-item");
+    function create_new_item_from_form(form, modname, modvar){
+        var fieldset = $("<fieldset>").addClass("module aligned order-item item-" + modvar);
 
         var wrp = [];
         wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span> <span class="modname">'+modname+'</span> &nbsp;(<span class="collapse">'+feincms_gettext('Hide')+'</span>)</h2>');
@@ -112,7 +112,7 @@ if(!Array.indexOf) {
 
     function create_new_fieldset_from_module(modvar, modname) {
         var new_form = create_new_spare_form(modvar);
-        return create_new_item_from_form(new_form, modname);
+        return create_new_item_from_form(new_form, modname, modvar);
     }
 
     function add_fieldset(region_id, item, how){
@@ -453,7 +453,7 @@ if(!Array.indexOf) {
                     var content_type = elem.attr("id").substr(
                         0, elem.attr("id").indexOf("_"));
                     var item = create_new_item_from_form(
-                        elem, CONTENT_NAMES[content_type]);
+                        elem, CONTENT_NAMES[content_type], content_type);
                     add_fieldset(region_id, item, {where:'append'});
                     update_item_controls(item, region_id);
                 }
