@@ -391,9 +391,11 @@ def create_base_model(inherit_from=models.Model):
                     request = kwargs['request']
 
                     if request.session and request.session.get('frontend_editing'):
+                        fe_path = r'admin_%s_%s' % (cls._meta.app_label, cls._meta.module_name)
                         return render_to_string('admin/feincms/fe_box.html', {
                             'content': self.render(**kwargs),
                             'identifier': self.fe_identifier(),
+                            'fe_path': fe_path,
                             })
 
                 return self.render(**kwargs)
