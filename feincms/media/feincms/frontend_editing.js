@@ -1,6 +1,5 @@
 (function($){
     $(function(){
-        var admin_base = '/admin/page/page/';
 
         feincms.fe_init_animations();
 
@@ -8,16 +7,10 @@
             var fe_box = $(this).parents('div.fe_box');
 
             if (this.id == 'fe_tools_edit') {
-                res = fe_box.attr('id').match(/([^\-]+)-(\d+)-(\d+)/);
-                var base = admin_base;
-                var fe_box_class = fe_box.attr("class");
-                if (fe_box_class) {
-                	var fe_path = fe_box_class.match(/fe_path_([\w_]+)/);
-                	if (fe_path) {
-                		base = "/"+ fe_path[1].replace(/_/g,"/") + "/";
-                	}
-                }
-                window.open(base+res[2]+'|'+res[1]+'|'+res[3]+'/',
+                res = fe_box.attr('id').match(/([^\-]+)-([^\-]+)-([^\-]+)-(\d+)-(\d+)/);
+                
+                var base = feincms.admin_index + res[1] +"/"+ res[2];
+                window.open(base+"/"+res[4]+'|'+res[3]+'|'+res[5]+'/',
                     'fe_editor',
                     'height=500,width=800,resizable=yes,scrollbars=yes');
             }

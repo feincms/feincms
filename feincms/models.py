@@ -391,11 +391,9 @@ def create_base_model(inherit_from=models.Model):
                     request = kwargs['request']
 
                     if request.session and request.session.get('frontend_editing'):
-                        fe_path = r'admin_%s_%s' % (cls._meta.app_label, cls._meta.module_name)
                         return render_to_string('admin/feincms/fe_box.html', {
                             'content': self.render(**kwargs),
                             'identifier': self.fe_identifier(),
-                            'fe_path': fe_path,
                             })
 
                 return self.render(**kwargs)
@@ -407,7 +405,9 @@ def create_base_model(inherit_from=models.Model):
                 to load the form for every given block of content.)
                 """
 
-                return u'%s-%s-%s' % (
+                return u'%s-%s-%s-%s-%s' % (
+                    cls._meta.app_label,
+                    cls._meta.module_name,
                     self.__class__.__name__.lower(),
                     self.parent_id,
                     self.id,
