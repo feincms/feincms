@@ -23,6 +23,15 @@ class TypeRegistryMetaClass(type):
 
 
 class PagePretender(object):
+    """
+    A PagePretender pretends to be a page, but in reality is just a shim layer
+    that implements enough functionality to inject fake pages eg. into the
+    navigation tree.
+
+    For use as fake navigation page, you should at least define the following
+    parameters on creation: title, url, level. If using the translation extension,
+    also add language.
+    """
     # emulate mptt properties to get the template tags working
     class _meta:
         level_attr = 'level'
@@ -46,6 +55,11 @@ class PagePretender(object):
     def get_children(self):
         return []
 
+    def available_translations(self):
+        return ()
+
+    def get_original_translation(self, page):
+        return page
 
 class NavigationExtension(object):
     __metaclass__ = TypeRegistryMetaClass
