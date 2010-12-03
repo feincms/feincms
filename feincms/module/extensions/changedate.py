@@ -29,6 +29,9 @@ def register(cls, admin_cls):
     if hasattr(cls, 'cache_key_components'):
         cls.cache_key_components.append(lambda page: page.modification_date and page.modification_date.strftime('%s'))
 
+    if hasattr(cls, 'last_modified'):
+        cls.last_modified = lambda p: p.modification_date
+
     pre_save.connect(pre_save_handler, sender=cls)
 
 # ------------------------------------------------------------------------
