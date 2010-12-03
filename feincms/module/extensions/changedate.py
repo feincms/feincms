@@ -39,6 +39,5 @@ def last_modified_response_processor(self, request, response):
     from time import mktime
     from django.utils.http import http_date
 
-    response['Last-Modified'] = http_date(mktime(self.modification_date.timetuple()))
-
+    response['Last-Modified'] = http_date(mktime(self.modification_date.utctimetuple()))
 # ------------------------------------------------------------------------
