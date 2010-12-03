@@ -1,3 +1,6 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
 """
 Track the modification date for pages.
 """
@@ -18,6 +21,7 @@ def pre_save_handler(sender, instance, **kwargs):
         instance.creation_date = now
     instance.modification_date = now
 
+# ------------------------------------------------------------------------
 def register(cls, admin_cls):
     cls.add_to_class('creation_date',     models.DateTimeField(_('creation date'),     null=True, editable=False))
     cls.add_to_class('modification_date', models.DateTimeField(_('modification date'), null=True, editable=False))
@@ -26,3 +30,12 @@ def register(cls, admin_cls):
         cls.cache_key_components.append(lambda page: page.modification_date and page.modification_date.strftime('%s'))
 
     pre_save.connect(pre_save_handler, sender=cls)
+
+# ------------------------------------------------------------------------
+def last_modified_response_processor(self, request, response):
+    from time import mktime
+    from django.utils.http import http_date
+
+    response['Last-Modified'] = http_date(mktime(self.modification_date.timetuple()))
+
+# ------------------------------------------------------------------------
