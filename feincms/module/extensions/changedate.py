@@ -1,3 +1,6 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
 """
 Track the modification date for pages.
 """
@@ -18,6 +21,17 @@ def pre_save_handler(sender, instance, **kwargs):
         instance.creation_date = now
     instance.modification_date = now
 
+# ------------------------------------------------------------------------
+def dt_to_utc_timestamp(dt):
+    from time import mktime, gmtime
+    return mktime(gmtime(mktime(dt.utctimetuple())))
+
+def dt_to_utc_dt(dt):
+    from datetime import datetime
+    utc_ts = dt_to_utc_timestamp(dt)
+    utc_dt = datetime.utcfromtimestamp(utc_ts)
+    return utc_dt
+
 def register(cls, admin_cls):
     cls.add_to_class('creation_date',     models.DateTimeField(_('creation date'),     null=True, editable=False))
     cls.add_to_class('modification_date', models.DateTimeField(_('modification date'), null=True, editable=False))
@@ -25,4 +39,14 @@ def register(cls, admin_cls):
     if hasattr(cls, 'cache_key_components'):
         cls.cache_key_components.append(lambda page: page.modification_date and page.modification_date.strftime('%s'))
 
+    if hasattr(cls, 'last_modified'):
+        cls.last_modified = lambda p: dt_to_utc_dt(p.modification_date)
+
     pre_save.connect(pre_save_handler, sender=cls)
+
+# ------------------------------------------------------------------------
+def last_modified_response_processor(self, request, response):
+    from django.utils.http import http_date
+
+    response['Last-Modified'] = http_date(dt_to_utc_timestamp(self.modification_date))
+# ------------------------------------------------------------------------
