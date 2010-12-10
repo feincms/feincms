@@ -49,14 +49,14 @@ if(!Array.indexOf) {
         var select_content = $("#" + REGION_MAP[target_region_id] + "_body").find("select[name=order-machine-add-select]").clone().removeAttr("name");
         var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('After')).click(function(){
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(target_region_id, new_fieldset, {where:'insertAfter', relative_to:item, animate:true});
             update_item_controls(new_fieldset, target_region_id);
         });
         var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('Before')).click(function(){
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(target_region_id, new_fieldset, {where:'insertBefore', relative_to:item, animate:true});
             update_item_controls(new_fieldset, target_region_id);
@@ -324,7 +324,7 @@ if(!Array.indexOf) {
         $("input.order-machine-add-button").click(function(){
             var select_content = $(this).prev();
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'append', animate:true});
             update_item_controls(new_fieldset, ACTIVE_REGION);
