@@ -387,6 +387,14 @@ class Page(Base):
         """
         return None
 
+    def last_modified(self, request):
+        """
+        Generate a last modified date for this page.
+        Since a standard page has no way of knowing this, we always return
+        "no date" -- this is overridden by the changedate extension.
+        """
+        return None
+
     def setup_request(self, request):
         """
         Before rendering a page, run all registered request processors. A request
@@ -410,6 +418,9 @@ class Page(Base):
         """
         for fn in self.response_processors:
             fn(self, request, response)
+
+        if response.status_code == 200 and not response.has_header('Content-Length'):
+            response['Content-Length'] = len(response.content)
 
     def require_path_active_request_processor(self, request):
         """
@@ -465,6 +476,10 @@ class Page(Base):
             etag = page.etag(request)
             return etag
 
+        def lastmodifier(request, page, *args, **kwargs):
+            lm = page.last_modified()
+            return lm
+
         # Unavailable in Django 1.0 -- the current implementation of ETag support
         # requires Django 1.1 unfortunately.
         from django.views.decorators.http import condition
@@ -473,7 +488,7 @@ class Page(Base):
         # the net effect is that we will be getting a DummyResponse from
         # the handler if processing is to continue and a non-DummyResponse
         # (should be a "304 not modified") if the etag matches.
-        rsp = condition(etag_func=etagger)(dummy_response_handler)(request, self)
+        rsp = condition(etag_func=etagger, last_modified_func=lastmodifier)(dummy_response_handler)(request, self)
 
         # If dummy then don't do anything, if a real response, return and
         # thus shortcut the request processing.

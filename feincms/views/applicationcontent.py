@@ -88,6 +88,10 @@ def build_page_response(page, request):
                 return r
 
     response = _build_page_response(page, request)
+
+    if has_appcontent:
+        response['Cache-Control'] = 'no-cache, must-revalidate'
+
     page.finalize_response(request, response)
 
     return response

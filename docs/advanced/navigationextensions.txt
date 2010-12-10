@@ -34,7 +34,7 @@ You don't need to do anything else as long as you use the built-in
 
 ::
 
-    from feincms.module.page.extensions.navigation import NavigationExtension
+    from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
 
     class BlogCategoriesNavigationExtension(NavigationExtension):
         name = _('blog categories')
