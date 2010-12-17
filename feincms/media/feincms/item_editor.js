@@ -159,7 +159,7 @@ if(!Array.indexOf) {
     }
 
     function create_new_spare_form(modvar) {
-        var old_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
+        var old_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val());
         // **** UGLY CODE WARNING, avert your gaze! ****
         // for some unknown reason, the add-button click handler function
         // fails on the first triggerHandler call in some rare cases;
@@ -171,7 +171,7 @@ if(!Array.indexOf) {
                 'div.add-row > a').triggerHandler('click');
             if(returned==false) break; // correct return value
         }
-        var new_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
+        var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val());
         if(new_form_count > old_form_count){
             return $('#'+modvar+'_set-'+(new_form_count-1));
         }
