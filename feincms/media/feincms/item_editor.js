@@ -21,8 +21,8 @@ if(!Array.indexOf) {
         return s;
     }
 
-    function create_new_item_from_form(form, modname){
-        var fieldset = $("<fieldset>").addClass("module aligned order-item");
+    function create_new_item_from_form(form, modname, modvar){
+        var fieldset = $("<fieldset>").addClass("module aligned order-item item-wrapper-" + modvar);
 
         var wrp = [];
         wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span> <span class="modname">'+modname+'</span> &nbsp;(<span class="collapse">'+feincms_gettext('Hide')+'</span>)</h2>');
@@ -49,14 +49,14 @@ if(!Array.indexOf) {
         var select_content = $("#" + REGION_MAP[target_region_id] + "_body").find("select[name=order-machine-add-select]").clone().removeAttr("name");
         var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('After')).click(function(){
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(target_region_id, new_fieldset, {where:'insertAfter', relative_to:item, animate:true});
             update_item_controls(new_fieldset, target_region_id);
         });
         var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('Before')).click(function(){
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(target_region_id, new_fieldset, {where:'insertBefore', relative_to:item, animate:true});
             update_item_controls(new_fieldset, target_region_id);
@@ -112,7 +112,7 @@ if(!Array.indexOf) {
 
     function create_new_fieldset_from_module(modvar, modname) {
         var new_form = create_new_spare_form(modvar);
-        return create_new_item_from_form(new_form, modname);
+        return create_new_item_from_form(new_form, modname, modvar);
     }
 
     function add_fieldset(region_id, item, how){
@@ -159,7 +159,7 @@ if(!Array.indexOf) {
     }
 
     function create_new_spare_form(modvar) {
-        var old_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
+        var old_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val());
         // **** UGLY CODE WARNING, avert your gaze! ****
         // for some unknown reason, the add-button click handler function
         // fails on the first triggerHandler call in some rare cases;
@@ -171,7 +171,7 @@ if(!Array.indexOf) {
                 'div.add-row > a').triggerHandler('click');
             if(returned==false) break; // correct return value
         }
-        var new_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
+        var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val());
         if(new_form_count > old_form_count){
             return $('#'+modvar+'_set-'+(new_form_count-1));
         }
@@ -324,7 +324,7 @@ if(!Array.indexOf) {
         $("input.order-machine-add-button").click(function(){
             var select_content = $(this).prev();
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'append', animate:true});
             update_item_controls(new_fieldset, ACTIVE_REGION);
@@ -453,7 +453,7 @@ if(!Array.indexOf) {
                     var content_type = elem.attr("id").substr(
                         0, elem.attr("id").indexOf("_"));
                     var item = create_new_item_from_form(
-                        elem, CONTENT_NAMES[content_type]);
+                        elem, CONTENT_NAMES[content_type], content_type);
                     add_fieldset(region_id, item, {where:'append'});
                     update_item_controls(item, region_id);
                 }

@@ -111,3 +111,21 @@ def feincms_frontend_editing(cms_obj, request):
         return render_to_string('admin/feincms/fe_tools.html', context)
 
     return u''
+
+@register.inclusion_tag('admin/feincms/content_type_selection_widget.html', takes_context=True)
+def show_content_type_selection_widget(context, region):
+    """
+    {% show_content_type_selection_widget region %}
+    """
+    grouped = {}
+    ungrouped = []
+    for ct in region._content_types:
+        ct_info = (ct.__name__.lower(), ct._meta.verbose_name)
+        if hasattr(ct, 'optgroup'):
+            if ct.optgroup in grouped:
+                grouped[ct.optgroup].append(ct_info)
+            else:
+                grouped[ct.optgroup] = [ct_info]
+        else:
+            ungrouped.append(ct_info)
+    return {'grouped': grouped, 'ungrouped': ungrouped}

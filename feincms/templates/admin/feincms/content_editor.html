@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load feincms_tags %}
 <div id="main_wrapper">
     {% for region in original.template.regions %}
         <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
@@ -20,9 +21,7 @@
             <div class="machine-control">
                 <div class="control-unit">
                     <span>{% trans "Add new item" %}:</span> <br/>
-                    <select name="order-machine-add-select">
-                    {% for v,n in region.content_types %}<option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
-                    </select>
+                    {% show_content_type_selection_widget region %}
                     <input type="button" class="order-machine-add-button button" value="Go" />
                 </div>
             </div>

@@ -48,5 +48,14 @@ def register(cls, admin_cls):
 def last_modified_response_processor(self, request, response):
     from django.utils.http import http_date
 
+    # Don't modify header if it's already set
+    if response.has_header('Last-Modified'):
+        return
+
+    # Don't include Last-Modified if we don't want to be cached
+    if response.has_header('Cache-Control') and "no-cache" in response['Cache-Control']:
+        return
+
     response['Last-Modified'] = http_date(dt_to_utc_timestamp(self.modification_date))
+
 # ------------------------------------------------------------------------
