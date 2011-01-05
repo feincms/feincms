@@ -20,18 +20,15 @@ FEINCMS_MEDIALIBRARY_URL = getattr(settings, 'FEINCMS_MEDIALIBRARY_URL', setting
 
 # ------------------------------------------------------------------------
 # Settings for RichText
+FEINCMS_TINYMCE_INIT_TEMPLATE = 'admin/content/richtext/init_tinymce.html'
+FEINCMS_TINYMCE_INIT_CONTEXT  = {
+    'TINYMCE_JS_URL': join(settings.MEDIA_URL, 'js/tiny_mce/tiny_mce.js'),
+    'TINYMCE_CONTENT_CSS_URL': None,
+    'TINYMCE_LINK_LIST_URL': None
+}
 
-TINYMCE_JS_URL = getattr(settings, 'TINYMCE_JS_URL', join(settings.MEDIA_URL, 'js/tiny_mce/tiny_mce.js'))
-
-TINYMCE_CONFIG_URL = getattr(settings, 'TINYMCE_CONFIG_URL', 'admin/content/richtext/init.html')
-
-TINYMCE_CONTENT_CSS_URL = getattr(settings, 'TINYMCE_CONTENT_CSS_URL', None)
-
-TINYMCE_LINK_LIST_URL = getattr(settings, 'TINYMCE_LINK_LIST_URL', None)
-
-CKEDITOR_JS_URL = getattr(settings, 'CKEDITOR_JS_URL', join(settings.MEDIA_URL, 'js/ckeditor/ckeditor.js'))
-
-CKEDITOR_CONFIG_URL = getattr(settings, 'CKEDITOR_CONFIG_URL', 'admin/content/richtext/init_ckeditor.html')
+FEINCMS_RICHTEXT_INIT_TEMPLATE = getattr(settings, 'FEINCMS_RICHTEXT_INIT_TEMPLATE', FEINCMS_TINYMCE_INIT_TEMPLATE)
+FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(settings, 'FEINCMS_RICHTEXT_INIT_CONTEXT', FEINCMS_TINYMCE_INIT_CONTEXT)
 
 # ------------------------------------------------------------------------
 # Admin settings
