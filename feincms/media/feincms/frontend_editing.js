@@ -1,16 +1,14 @@
 (function($){
     $(function(){
-        var admin_base = '/admin/page/page/';
-
         feincms.fe_init_animations();
 
         $("#fe_tools > a").live("click", function() {
             var fe_box = $(this).parents('div.fe_box');
 
             if (this.id == 'fe_tools_edit') {
-                res = fe_box.attr('id').match(/([^\-]+)-(\d+)-(\d+)/);
-
-                window.open(admin_base+res[2]+'|'+res[1]+'|'+res[3]+'/',
+                res = fe_box.attr('id').match(/([^\-]+)-([^\-]+)-([^\-]+)-(\d+)-(\d+)/);
+                var base = feincms.admin_index + res[1] +"/"+ res[2];
+                window.open(base+"/"+res[4]+'|'+res[3]+'|'+res[5]+'/',
                     'fe_editor',
                     'height=500,width=800,resizable=yes,scrollbars=yes');
             }

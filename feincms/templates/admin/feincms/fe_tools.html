@@ -11,6 +11,7 @@
 </script>
 <script type="text/javascript">
     var feincms = {
+        "admin_index": "{% url admin:index %}",
         {% if FEINCMS_JQUERY_NO_CONFLICT %}
         "jQuery": jQuery.noConflict(true)
         {% else %}
