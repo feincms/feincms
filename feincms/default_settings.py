@@ -8,9 +8,6 @@ from os.path import join
 import django
 from django.conf import settings
 
-# Whether Django 1.0 compatibilty mode should be active or not
-DJANGO10_COMPAT = django.VERSION[0] < 1 or (django.VERSION[0] == 1 and django.VERSION[1] < 1)
-
 # ------------------------------------------------------------------------
 # Settings for MediaLibrary
 
