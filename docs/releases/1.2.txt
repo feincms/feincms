@@ -1,6 +1,6 @@
-=========================
-FeinCMS 1.2 release notes
-=========================
+====================================
+FeinCMS 1.2 release notes (upcoming)
+====================================
 
 
 Welcome to the first release notes for FeinCMS!
