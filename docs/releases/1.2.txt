@@ -1,0 +1,41 @@
+=========================
+FeinCMS 1.2 release notes
+=========================
+
+
+Welcome to the first release notes for FeinCMS!
+
+
+Overview
+========
+
+FeinCMS 1.2 sports several large changes, including:
+
+* Overhauled item editor. The new item editor uses standard Django administration
+  fieldsets; you can use almost all standard Django configuration mechanisms.
+  ``show_on_top`` has been deprecated, standard ``fieldsets`` should be used
+  instead.
+
+* The split pane editor has been removed. It wasn't much more than a proof of
+  concept and was never bug-free.
+
+* The required Django version is now 1.2. Compatibility with older Django versions
+  has been removed.
+
+* The rich text configuration has slightly changed; ``CkRichTextContent`` has
+  been completely removed in favor of a rich text editor agnostic configuration
+  method. ``TINYMCE_JS_URL`` should be replaced by an appropriate
+  ``FEINCMS_RICHTEXT_INIT_CONTEXT`` settings value.
+
+* A new content type, ``TemplateContent`` has been added which can be used to
+  render templates residing on the hard disk.
+
+* The ``TreeEditor`` javascript code has been rewritten, reintroducing
+  drag-drop for reordering pages, but this time in a well-performing way not
+  sluggish as before.
+
+* ``feincms.models.Base`` is still available, ``feincms.models.create_base_model``
+  is the more flexible way of creating the aforementioned base model. If
+  ``create_base_model`` is used the base model can be freely defined.
+
+* Many small improvements and bugfixes all over the place.
