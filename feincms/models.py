@@ -405,7 +405,9 @@ def create_base_model(inherit_from=models.Model):
                 to load the form for every given block of content.)
                 """
 
-                return u'%s-%s-%s' % (
+                return u'%s-%s-%s-%s-%s' % (
+                    cls._meta.app_label,
+                    cls._meta.module_name,
                     self.__class__.__name__.lower(),
                     self.parent_id,
                     self.id,

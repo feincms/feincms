@@ -31,7 +31,7 @@ def _empty_reverse_cache():
     _local.reverse_cache = {}
 
 
-APPLICATIONCONTENT_RE = re.compile(r'^([\.\w]+)/([\.\w]+)$')
+APPLICATIONCONTENT_RE = re.compile(r'^([^/]+)/([^/]+)$')
 
 
 def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs, **vkwargs):

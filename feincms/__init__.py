@@ -1,4 +1,4 @@
-VERSION = (1, 1, 4)
+VERSION = (1, 2, 0, 'pre')
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -22,7 +22,7 @@ COMPLETELY_LOADED = False
 def ensure_completely_loaded():
     global COMPLETELY_LOADED
     if COMPLETELY_LOADED:
-        return
+        return True
 
     # Make sure all models are completely loaded before attempting to
     # proceed. The dynamic nature of FeinCMS models makes this necessary.
@@ -33,3 +33,4 @@ def ensure_completely_loaded():
     get_validation_errors(StringIO(), None)
 
     COMPLETELY_LOADED = True
+    return True

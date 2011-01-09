@@ -13,15 +13,14 @@ from feincms.module.medialibrary.models import MediaFile
 
 from feincms.content.medialibrary.models import MediaFileWidget
 
+
 class SectionContent(models.Model):
     feincms_item_editor_context_processors = (
-        lambda x: dict(TINYMCE_JS_URL = settings.TINYMCE_JS_URL),
-        lambda x: dict(TINYMCE_CONTENT_CSS_URL = settings.TINYMCE_CONTENT_CSS_URL),
-        lambda x: dict(TINYMCE_LINK_LIST_URL = settings.TINYMCE_LINK_LIST_URL),
+        lambda x: settings.FEINCMS_RICHTEXT_INIT_CONTEXT,
     )
     feincms_item_editor_includes = {
         'head': [
-            settings.TINYMCE_CONFIG_URL,
+            settings.FEINCMS_RICHTEXT_INIT_TEMPLATE,
             'admin/content/mediafile/init.html',
             ],
         }
@@ -57,11 +56,10 @@ class SectionContent(models.Model):
             type = forms.ChoiceField(choices=TYPE_CHOICES,
                 initial=TYPE_CHOICES[0][0], label=_('type'),
                 widget=AdminRadioSelect(attrs={'class': 'radiolist'}))
-            feincms_item_editor_classes = {'richtext': 'tinymce',}
+
             def __init__(self, *args, **kwargs):
                 super(MediaFileContentAdminForm, self).__init__(*args, **kwargs)
-                for field in self.feincms_item_editor_classes.keys():
-                    self.fields[field].widget.attrs.update({'class': 'item-richtext-%s' % self.feincms_item_editor_classes[field]})
+                self.fields['richtext'].widget.attrs.update({'class': 'item-richtext'})
 
         cls.feincms_item_editor_form = MediaFileContentAdminForm
         cls.form = MediaFileContentAdminForm

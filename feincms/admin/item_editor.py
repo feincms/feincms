@@ -62,14 +62,6 @@ class ItemEditor(admin.ModelAdmin):
             inline_instance = inline_class(self.model, self.admin_site)
             self.inline_instances.append(inline_instance)
 
-    def _formfield_callback(self, request):
-        if settings.DJANGO10_COMPAT:
-            # This should compare for Django SVN before [9761] (From 2009-01-16),
-            # but I don't care that much. Doesn't work with git checkouts anyway, so...
-            return self.formfield_for_dbfield
-        else:
-            return curry(self.formfield_for_dbfield, request=request)
-
     def _frontend_editing_view(self, request, cms_id, content_type, content_id):
         """
         This view is used strictly for frontend editing -- it is not used inside the
@@ -90,7 +82,7 @@ class ItemEditor(admin.ModelAdmin):
         ModelForm = modelform_factory(model_cls,
             exclude=('parent', 'region', 'ordering'),
             form=form_class_base,
-            formfield_callback=self._formfield_callback(request=request))
+            formfield_callback=curry(self.formfield_for_dbfield, request=request))
 
         # we do not want to edit these two fields in the frontend editing mode; we are
         # strictly editing single content blocks there.

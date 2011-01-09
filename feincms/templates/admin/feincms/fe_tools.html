@@ -4,13 +4,14 @@
 (function () {
     // load jQuery if not yet present
     if (typeof(feincms) == "undefined") {
-        var jquery_url = {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}"http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"{% else %}"{{ FEINCMS_ADMIN_MEDIA }}jquery-1.3.2.min.js"{% endif %};
+        var jquery_url = {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}"http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"{% else %}"{{ FEINCMS_ADMIN_MEDIA }}jquery-1.4.4.min.js"{% endif %};
         document.write(unescape('%3Cscript src="' + jquery_url + '" type="text/javascript"%3E%3C/script%3E'));
     }
 })();
 </script>
 <script type="text/javascript">
     var feincms = {
+        "admin_index": "{% url admin:index %}",
         {% if FEINCMS_JQUERY_NO_CONFLICT %}
         "jQuery": jQuery.noConflict(true)
         {% else %}

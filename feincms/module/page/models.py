@@ -567,6 +567,8 @@ class PageAdminForm(forms.ModelForm):
         'translation_of')
 
     def __init__(self, *args, **kwargs):
+        ensure_completely_loaded()
+
         if 'initial' in kwargs:
             if 'parent' in kwargs['initial']:
                 # Prefill a few form values from the parent page

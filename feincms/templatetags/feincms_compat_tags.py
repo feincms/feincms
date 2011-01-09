@@ -6,6 +6,8 @@ register = template.Library()
 
 def csrf_token():
     """Dummy implementation for older versions of Django"""
+    # Should be deprecated, Django versions prior to 1.2 aren't supported
+    # anymore.
     return u''
 
 
