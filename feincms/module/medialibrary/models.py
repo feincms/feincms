@@ -83,10 +83,10 @@ class CategoryAdmin(admin.ModelAdmin):
 class MediaFileBase(Base, TranslatedObjectMixin):
 
     from django.core.files.storage import FileSystemStorage
-    default_storage_class = getattr(django_settings, 'DEFAULT_FILE_STORAGE', 
+    default_storage_class = getattr(django_settings, 'DEFAULT_FILE_STORAGE',
                                     'django.core.files.storage.FileSystemStorage')
     default_storage = get_callable(default_storage_class)
-        
+
     fs = default_storage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
                            base_url=settings.FEINCMS_MEDIALIBRARY_URL)
 
@@ -343,7 +343,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
-    
+
 
     class AddCategoryForm(forms.Form):
         _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
@@ -356,7 +356,6 @@ class MediaFileAdmin(admin.ModelAdmin):
             form = self.AddCategoryForm(request.POST)
             if form.is_valid():
                 category = form.cleaned_data['category']
-                print 'category: ', category
                 count = 0
                 for mediafile in queryset:
                     mediafile.categories.add(category)
