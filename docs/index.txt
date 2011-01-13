@@ -12,7 +12,6 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
 
    overview
    installation
@@ -25,6 +24,7 @@ Contents
    advanced/index
    api/index
    faq
+   releases/index
 
 
 Indices and tables

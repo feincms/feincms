@@ -405,7 +405,9 @@ def create_base_model(inherit_from=models.Model):
                 to load the form for every given block of content.)
                 """
 
-                return u'%s-%s-%s' % (
+                return u'%s-%s-%s-%s-%s' % (
+                    cls._meta.app_label,
+                    cls._meta.module_name,
                     self.__class__.__name__.lower(),
                     self.parent_id,
                     self.id,
@@ -537,6 +539,11 @@ def create_base_model(inherit_from=models.Model):
 
             # Add a backlink from content-type to content holder class
             new_type._feincms_content_class = cls
+
+            # Handle optgroup argument for grouping content types in the item editor
+            optgroup = kwargs.pop('optgroup', None)
+            if optgroup:
+                new_type.optgroup = optgroup
 
             # customization hook.
             if hasattr(new_type, 'initialize_type'):

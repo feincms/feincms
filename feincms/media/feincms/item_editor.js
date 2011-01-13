@@ -21,8 +21,8 @@ if(!Array.indexOf) {
         return s;
     }
 
-    function create_new_item_from_form(form, modname){
-        var fieldset = $("<fieldset>").addClass("module aligned order-item");
+    function create_new_item_from_form(form, modname, modvar){
+        var fieldset = $("<fieldset>").addClass("module aligned order-item item-wrapper-" + modvar);
 
         var wrp = [];
         wrp.push('<h2><img class="item-delete" src="'+IMG_DELETELINK_PATH+'" /><span class="handle"></span> <span class="modname">'+modname+'</span> &nbsp;(<span class="collapse">'+feincms_gettext('Hide')+'</span>)</h2>');
@@ -32,15 +32,15 @@ if(!Array.indexOf) {
         fieldset.children(".item-content").append(form); //relocates, not clone
 
         $("<div>").addClass("item-controls").appendTo(fieldset);
-        
+
         return fieldset;
     }
 
-    
+
     function update_item_controls(item, target_region_id){
         var item_controls = item.find(".item-controls");
         item_controls.find(".item-control-units").remove(); // Remove all controls, if any.
-        
+
         // (Re)build controls
         var control_units = $("<div>").addClass("item-control-units").appendTo(item_controls);
 
@@ -49,14 +49,14 @@ if(!Array.indexOf) {
         var select_content = $("#" + REGION_MAP[target_region_id] + "_body").find("select[name=order-machine-add-select]").clone().removeAttr("name");
         var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('After')).click(function(){
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(target_region_id, new_fieldset, {where:'insertAfter', relative_to:item, animate:true});
             update_item_controls(new_fieldset, target_region_id);
         });
         var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('Before')).click(function(){
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(target_region_id, new_fieldset, {where:'insertBefore', relative_to:item, animate:true});
             update_item_controls(new_fieldset, target_region_id);
@@ -68,22 +68,22 @@ if(!Array.indexOf) {
         if (REGION_MAP.length > 1) {
             var wrp = [];
             wrp.push('<div class="item-control-unit move-control"><span>'+feincms_gettext('Move to')+': </span><select name="item-move-select">');
-            
+
             for (var i=0; i < REGION_MAP.length; i++) {
                 if (i != target_region_id) { // Do not put the target region in the list
                     wrp.push('<option value="'+REGION_MAP[i]+'">'+REGION_NAMES[i]+'</option>');
                 }
             }
             wrp.push('</select><input type="button" class="button" value="'+feincms_gettext('Move')+'" /></div>');
-        
-            var move_control = $(wrp.join(""));      
+
+            var move_control = $(wrp.join(""));
             move_control.find(".button").click(function(){
                 var move_to = $(this).prev().val();
                 move_item(REGION_MAP.indexOf(move_to), item);
             });
             control_units.append(move_control); // Add new one
         }
-        
+
         // Controls animations
         item_controls.find("*").hide();
         var is_hidden = true;
@@ -105,14 +105,14 @@ if(!Array.indexOf) {
         item_controls.unbind('mouseenter'); // Unbind in case it's already been bound.
         item_controls.mouseenter(function() {
             clearTimeout(mouseleave_timeout);
-            if (is_hidden) mouseenter_timeout = setTimeout(show_controls, 200); // To prevent the control bar to appear when mouse accidentally enters the zone. 
+            if (is_hidden) mouseenter_timeout = setTimeout(show_controls, 200); // To prevent the control bar to appear when mouse accidentally enters the zone.
         });
     }
-    
-    
+
+
     function create_new_fieldset_from_module(modvar, modname) {
         var new_form = create_new_spare_form(modvar);
-        return create_new_item_from_form(new_form, modname);
+        return create_new_item_from_form(new_form, modname, modvar);
     }
 
     function add_fieldset(region_id, item, how){
@@ -159,7 +159,7 @@ if(!Array.indexOf) {
     }
 
     function create_new_spare_form(modvar) {
-        var old_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
+        var old_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val());
         // **** UGLY CODE WARNING, avert your gaze! ****
         // for some unknown reason, the add-button click handler function
         // fails on the first triggerHandler call in some rare cases;
@@ -171,13 +171,9 @@ if(!Array.indexOf) {
                 'div.add-row > a').triggerHandler('click');
             if(returned==false) break; // correct return value
         }
-        var new_form_count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
+        var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val());
         if(new_form_count > old_form_count){
-            var new_form = $('#'+modvar+'_set-'+(new_form_count-1));
-            new_form.addClass("dynamic-form");
-            // earmark as dynamically created form, also allows
-            // django's inline deletion javascript function to operate
-            return new_form;
+            return $('#'+modvar+'_set-'+(new_form_count-1));
         }
         // TODO: add fallback for older versions by manually cloning
         // empty fieldset (provided using extra=1)
@@ -224,7 +220,7 @@ if(!Array.indexOf) {
             $.each(classes, function() {
                 if(this.match('^item-richtext-')) {
                     var remove_func = undefined;
-                    try { remove_func = eval('feincms.richtext_remove_' + this.substr(14)); } catch(e) {}
+                    try { remove_func = eval('feincms_richtext_remove_' + this.substr(14)); } catch(e) {}
                     if(typeof(remove_func) == 'function'){
                         remove_func(field);
                     }
@@ -244,7 +240,7 @@ if(!Array.indexOf) {
             $.each(classes, function() {
                 if(this.match('^item-richtext-')) {
                     var add_func = undefined;
-                    try { add_func = eval('feincms.richtext_add_' + this.substr(14)); } catch(e) {}
+                    try { add_func = eval('feincms_richtext_add_' + this.substr(14)); } catch(e) {}
                     if(typeof(add_func) == 'function'){
                         add_func(field);
                     }
@@ -328,7 +324,7 @@ if(!Array.indexOf) {
         $("input.order-machine-add-button").click(function(){
             var select_content = $(this).prev();
             var modvar = select_content.val();
-            var modname = select_content.children("option:selected").html();
+            var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'append', animate:true});
             update_item_controls(new_fieldset, ACTIVE_REGION);
@@ -340,16 +336,21 @@ if(!Array.indexOf) {
             var item = $(this).parents(".order-item");
             jConfirm(DELETE_MESSAGES[0], DELETE_MESSAGES[1], function(r) {
                 if (r==true) {
-                    var dynamic_form = item.find(".dynamic-form");
-                    if(dynamic_form.length==1){ // not saved on server
+                    var in_database = item.find(".delete-field").length;
+                    if(in_database==0){ // remove on client-side only
+                        // decrement TOTAL_FORMS:
+                        var id = item.find(".item-content > div").attr('id');
+                        var modvar = id.replace(/_set-\d+$/, '');
+                        var count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
+                        $('#id_'+modvar+'_set-TOTAL_FORMS').val(count-1);
+                        // remove form:
+                        item.find(".item-content").remove();
+
                         // could trigger django's deletion handler, which would
                         // handle reindexing other inlines, etc, but seems to
                         // cause errors, and is apparently unnecessary...
-                        //dynamic_form.attr('id', 'form_to_delete');
-                        //django.jQuery('#form_to_delete').find('a.inline-deletelink').triggerHandler('click');
-
-                        // just remove it
-                        dynamic_form.remove();
+                        // django.jQuery('#'+id).find('a.inline-deletelink')
+                        //   .triggerHandler('click');
                     }
                     else{ // saved on server, don't remove form
                         set_item_field_value(item,"delete-field","checked");
@@ -452,7 +453,7 @@ if(!Array.indexOf) {
                     var content_type = elem.attr("id").substr(
                         0, elem.attr("id").indexOf("_"));
                     var item = create_new_item_from_form(
-                        elem, CONTENT_NAMES[content_type]);
+                        elem, CONTENT_NAMES[content_type], content_type);
                     add_fieldset(region_id, item, {where:'append'});
                     update_item_controls(item, region_id);
                 }

@@ -965,9 +965,6 @@ class PagesTestCase(TestCase):
         # This should not raise
         self.assertEquals(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
 
-        # This should raise (the view raises an error)
-        self.assertRaises(NotImplementedError, lambda: self.client.get(page.get_absolute_url() + 'raises/'))
-
         self.assertContains(self.client.get(page.get_absolute_url() + 'fragment/'),
                             '<span id="something">some things</span>')
 

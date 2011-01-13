@@ -39,6 +39,10 @@ class ActiveAwareContentManagerMixin(object):
     A Manager for a content class using the "datepublisher" extension
     should either adopt this mixin or implement a similar interface.
     """
+
+    # A list of filters which are used to determine whether a page is active or not.
+    # Extended for example in the datepublisher extension (date-based publishing and
+    # un-publishing of pages)
     active_filters = ()
 
     @classmethod
@@ -79,13 +83,10 @@ def path_to_cache_key(path):
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
-    # A list of filters which are used to determine whether a page is active or not.
-    # Extended for example in the datepublisher extension (date-based publishing and
-    # un-publishing of pages)
-
     # The fields which should be excluded when creating a copy. The mptt fields are
     # excluded automatically by other mechanisms
-    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level']
+    # ???: Then why are the mptt fields listed here?
+    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
 
     def page_for_path(self, path, raise404=False):
         """
@@ -233,7 +234,7 @@ class Page(Base):
     slug = models.SlugField(_('slug'), max_length=150)
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
-    in_navigation = models.BooleanField(_('in navigation'), default=True)
+    in_navigation = models.BooleanField(_('in navigation'), default=False)
     override_url = models.CharField(_('override URL'), max_length=300, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
     redirect_to = models.CharField(_('redirect to'), max_length=300, blank=True,
@@ -279,6 +280,23 @@ class Page(Base):
 
         queryset = PageManager.apply_active_filters(self.get_ancestors())
         return queryset.count() >= self.level
+
+    def active_children(self):
+        """
+        Returns a queryset describing all active children of the current page.
+        This is different than page.get_descendants (from mptt) as it will
+        additionally select only child pages that are active.
+        """
+        return Page.objects.active().filter(parent=self)
+
+    def active_children_in_navigation(self):
+        """
+        Returns a queryset describing all active children that also have the
+        in_navigation flag set. This might be used eg. in building navigation
+        menues (only show a disclosure indicator if there actually is something
+        to disclose).
+        """
+        return self.active_children().filter(in_navigation=True)
 
     def short_title(self):
         """
@@ -369,6 +387,14 @@ class Page(Base):
         """
         return None
 
+    def last_modified(self, request):
+        """
+        Generate a last modified date for this page.
+        Since a standard page has no way of knowing this, we always return
+        "no date" -- this is overridden by the changedate extension.
+        """
+        return None
+
     def setup_request(self, request):
         """
         Before rendering a page, run all registered request processors. A request
@@ -392,6 +418,9 @@ class Page(Base):
         """
         for fn in self.response_processors:
             fn(self, request, response)
+
+        if response.status_code == 200 and not response.has_header('Content-Length'):
+            response['Content-Length'] = len(response.content)
 
     def require_path_active_request_processor(self, request):
         """
@@ -447,6 +476,10 @@ class Page(Base):
             etag = page.etag(request)
             return etag
 
+        def lastmodifier(request, page, *args, **kwargs):
+            lm = page.last_modified()
+            return lm
+
         # Unavailable in Django 1.0 -- the current implementation of ETag support
         # requires Django 1.1 unfortunately.
         from django.views.decorators.http import condition
@@ -455,7 +488,7 @@ class Page(Base):
         # the net effect is that we will be getting a DummyResponse from
         # the handler if processing is to continue and a non-DummyResponse
         # (should be a "304 not modified") if the etag matches.
-        rsp = condition(etag_func=etagger)(dummy_response_handler)(request, self)
+        rsp = condition(etag_func=etagger, last_modified_func=lastmodifier)(dummy_response_handler)(request, self)
 
         # If dummy then don't do anything, if a real response, return and
         # thus shortcut the request processing.
@@ -534,6 +567,8 @@ class PageAdminForm(forms.ModelForm):
         'translation_of')
 
     def __init__(self, *args, **kwargs):
+        ensure_completely_loaded()
+
         if 'initial' in kwargs:
             if 'parent' in kwargs['initial']:
                 # Prefill a few form values from the parent page

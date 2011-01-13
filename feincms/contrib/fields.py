@@ -48,7 +48,7 @@ class JSONField(models.TextField):
             assert value is None
             return {}
 
-    def get_db_prep_value(self, value):
+    def get_prep_value(self, value):
         """Convert our JSON object to a string before we save"""
         return self._flatten_value(value)
 

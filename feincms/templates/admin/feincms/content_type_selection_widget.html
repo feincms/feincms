@@ -1,0 +1,8 @@
+<select name="order-machine-add-select">
+    {% for v,n in ungrouped %}<option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
+    {% for label,cts in grouped.items %}
+        <optgroup label="{{ label }}">
+        {% for v,n in cts %}<option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
+        </optgroup>
+    {% endfor %}
+</select>
