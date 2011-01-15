@@ -65,7 +65,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         # Update this when more items are used for the proximity analysis below
         proximity_info = getattr(_local, 'proximity_info', None)
         if proximity_info:
-            urlconf_cache_key = '%s_%s' % (other_urlconf, proximity_info[0])
+            urlconf_cache_key = '%s_%s_%s_%s_%s' % ((other_urlconf,) + proximity_info)
         else:
             urlconf_cache_key = '%s_noprox' % other_urlconf
 
@@ -76,14 +76,31 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
                 urlconf_path=other_urlconf).select_related('parent')
 
             if proximity_info:
-                # Poor man's proximity analysis. Filter by tree_id :-)
-                try:
-                    content = contents.get(parent__tree_id=proximity_info[0])
-                except (model_class.DoesNotExist, model_class.MultipleObjectsReturned):
+                # find the closest match within the same subtree
+                tree_contents = contents.filter(parent__tree_id=proximity_info[0])
+                if not len(tree_contents):
+                    # no application contents within the same tree
                     try:
                         content = contents[0]
                     except IndexError:
                         content = None
+                elif len(tree_contents) == 1:
+                    # just one match within the tree, use it
+                    content = tree_contents[0]
+                else: # len(tree_contents) > 1
+                    try:
+                        # select all ancestors and descendants and get the one with
+                        # the smallest difference in levels
+                        content = (tree_contents.filter(
+                            parent__rght__gt=proximity_info[2],
+                            parent__lft__lt=proximity_info[1]
+                        ) | tree_contents.filter(
+                            parent__lft__lte=proximity_info[2],
+                            parent__lft__gte=proximity_info[1],
+                        )).extra({'level_diff':"abs(level-%d)" %proximity_info[3]}
+                            ).order_by('level_diff')[0]
+                    except IndexError:
+                        content = tree_contents[0]
             else:
                 try:
                     content = contents[0]
