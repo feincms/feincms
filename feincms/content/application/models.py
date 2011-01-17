@@ -64,12 +64,18 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
 
         # Update this when more items are used for the proximity analysis below
         proximity_info = getattr(_local, 'proximity_info', None)
-        if proximity_info:
-            urlconf_cache_key = '%s_%s_%s_%s_%s' % ((other_urlconf,) + proximity_info)
+        
+        # try different cache keys of descending specificity
+        urlconf_cache_keys = {
+            'all': '%s_%s_%s_%s_%s' % ((other_urlconf,) + proximity_info),
+            'tree': '%s_%s' % (other_urlconf, proximity_info[0]),
+            'none': '%s_noprox' % other_urlconf,
+        }
+        for key in urlconf_cache_keys.values():
+            if key in _local.reverse_cache:
+                content = _local.reverse_cache[key]
+                break
         else:
-            urlconf_cache_key = '%s_noprox' % other_urlconf
-
-        if urlconf_cache_key not in _local.reverse_cache:
             # TODO do not use internal feincms data structures as much
             model_class = ApplicationContent._feincms_content_models[0]
             contents = model_class.objects.filter(
@@ -80,14 +86,17 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
                 tree_contents = contents.filter(parent__tree_id=proximity_info[0])
                 if not len(tree_contents):
                     # no application contents within the same tree
+                    cache_key = 'tree'
                     try:
                         content = contents[0]
                     except IndexError:
                         content = None
                 elif len(tree_contents) == 1:
+                    cache_key = 'tree'
                     # just one match within the tree, use it
                     content = tree_contents[0]
                 else: # len(tree_contents) > 1
+                    cache_key = 'all'
                     try:
                         # select all ancestors and descendants and get the one with
                         # the smallest difference in levels
@@ -102,13 +111,12 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
                     except IndexError:
                         content = tree_contents[0]
             else:
+                cache_key = 'none'
                 try:
                     content = contents[0]
                 except IndexError:
                     content = None
-            _local.reverse_cache[urlconf_cache_key] = content
-        else:
-            content = _local.reverse_cache[urlconf_cache_key]
+            _local.reverse_cache[urlconf_cache_keys[cache_key]] = content
 
         if content:
             # Save information from _urlconfs in case we are inside another
