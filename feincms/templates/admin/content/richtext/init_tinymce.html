@@ -1,9 +1,13 @@
+{% if TINYMCE_JS_URL %}
 <script type="text/javascript" src="{{ TINYMCE_JS_URL }}"></script>
+{% endif %}
 
 <script type="text/javascript">
+{% block functions %}{% endblock %}
+
     tinyMCE.init({
         mode: "none",
-				{% block settings %}
+{% block settings %}
         theme: "advanced",
         language: "en",
         theme_advanced_toolbar_location: "top",
@@ -22,32 +26,37 @@
         plugins: "{% block plugins %}fullscreen,paste{% endblock %}",
         paste_auto_cleanup_on_paste: true,
         relative_urls: false
-				{% endblock %}
+{% endblock %}
     });
 
     (function($){
-        contentblock_init_handlers.push(function(){
-            $('.order-machine textarea[class=item-richtext], #frontend_editor textarea[class=item-richtext]').each(function(){
+        var tinymce_added = {};
+
+        function feincms_richtext_remove_tinymce(field) {
+            var id = field.attr("id");
+            if(tinymce_added[id]) {
+                tinyMCE.execCommand('mceRemoveControl', false, id);
+                tinymce_added[id] = false;
+            }
+        }
+
+        function feincms_richtext_add_tinymce(field) {
+            var id = field.attr("id");
+            if(!tinymce_added[id]) {
+                tinyMCE.execCommand('mceAddControl', false, id);
+                tinymce_added[id] = true;
+                }
+        }
+
+        var richtext_init_fn = function(){
+            $('{% block selectors %}.order-machine textarea[class=item-richtext], #frontend_editor textarea[class=item-richtext]{% endblock %}').each(function(){
                 feincms_richtext_add_tinymce($(this));
             });
-        });
+        }
+{% block enable %}
+        contentblock_init_handlers.push(richtext_init_fn);
+{% endblock %}
+
     })(feincms.jQuery);
 
-    var tinymce_added = {};
-
-    function feincms_richtext_remove_tinymce(field) {
-        var id = field.attr("id");
-        if(tinymce_added[id]) {
-            tinyMCE.execCommand('mceRemoveControl', false, id);
-            tinymce_added[id] = false;
-        }
-    }
-
-    function feincms_richtext_add_tinymce(field) {
-        var id = field.attr("id");
-        if(!tinymce_added[id]) {
-            tinyMCE.execCommand('mceAddControl', false, id);
-            tinymce_added[id] = true;
-            }
-    }
 </script>
