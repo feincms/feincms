@@ -275,11 +275,14 @@ class ApplicationContent(models.Model):
         else:
             path = re.sub('^' + re.escape(page_url[:-1]), '', request.path)
 
+        # Resolve the module holding the application urls.
+        urlconf_path = self.config.get('urls', self.urlconf_path)
+        
         # Change the prefix and urlconf for the monkey-patched reverse function ...
-        _local.urlconf = (self.urlconf_path, page_url)
+        _local.urlconf = (urlconf_path, page_url)
 
         try:
-            fn, args, kwargs = resolve(path, self.urlconf_path)
+            fn, args, kwargs = resolve(path, urlconf_path)
         except (ValueError, Resolver404):
             del _local.urlconf
             raise Resolver404
