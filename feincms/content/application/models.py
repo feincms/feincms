@@ -276,7 +276,7 @@ class ApplicationContent(models.Model):
             path = re.sub('^' + re.escape(page_url[:-1]), '', request.path)
 
         # Resolve the module holding the application urls.
-        urlconf_path = self.config.get('urls', self.urlconf_path)
+        urlconf_path = self.app_config.get('urls', self.urlconf_path)
         
         # Change the prefix and urlconf for the monkey-patched reverse function ...
         _local.urlconf = (urlconf_path, page_url)
