@@ -253,24 +253,20 @@ def create_base_model(inherit_from=models.Model):
                 if ext in cls._feincms_extensions:
                     continue
 
-                try:
-                    if isinstance(ext, basestring):
+                if isinstance(ext, basestring):
+                    try:
+                        fn = get_object(ext + '.register')
+                    except ImportError:
                         try:
-                            fn = get_object(ext + '.register')
+                            fn = get_object('%s.%s.register' % ( here_path, ext ) )
                         except ImportError:
-                            try:
-                                fn = get_object('%s.%s.register' % ( here_path, ext ) )
-                            except ImportError:
-                                fn = get_object('%s.%s.register' % ( common_path, ext ) )
-                    # Not a string, so take our chances and just try to access "register"
-                    else:
-                        fn = ext.register
+                            fn = get_object('%s.%s.register' % ( common_path, ext ) )
+                # Not a string, so take our chances and just try to access "register"
+                else:
+                    fn = ext.register
 
-                    cls.register_extension(fn)
-                    cls._feincms_extensions.add(ext)
-                except Exception, e:
-                    raise ImproperlyConfigured("%s.register_extensions('%s') raised an '%s' exception" %
-                                                (cls.__name__, ext, e.message))
+                cls.register_extension(fn)
+                cls._feincms_extensions.add(ext)
 
         @property
         def content(self):
