@@ -311,6 +311,13 @@ class ApplicationContent(models.Model):
         # ... and restore it after processing the view
         del _local.urlconf
 
+        # Now let's check if there is a custom template for this view
+        view = '.'.join((fn.__module__, fn.__name__))
+        template = self.app_config.get('templates',{}).get(view,None)
+
+        if template:
+            request._feincms_template = template
+
         if isinstance(output, HttpResponse):
             if output.status_code == 200:
                 if not getattr(output, 'standalone', False):
