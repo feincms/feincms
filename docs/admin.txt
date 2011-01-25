@@ -16,7 +16,7 @@ The tree editor
 .. class:: TreeEditor
 
 The tree editor replaces the standard change list interface with a collapsible
-item tree. The model must be registered with `django-mptt <http://github.com/matthiask/django-mptt/>`_
+item tree. The model must be registered with `django-mptt <http://github.com/django-mptt/django-mptt/>`_
 for this to work.
 
 .. image:: images/tree_editor.png

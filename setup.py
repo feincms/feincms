@@ -52,7 +52,7 @@ setup(name='FeinCMS',
     requires=[
         #'lxml', # only needed for rich text cleansing
         'tagging (>0.2.1)', # please use SVN trunk
-        'django_mptt (>0.2.1)', # please use the version from http://github.com/matthiask/django-mptt/
+        'django_mptt (>0.2.1)', # please use the version from http://github.com/django-mptt/django-mptt/
     ],
     packages=['feincms',
         'feincms.admin',

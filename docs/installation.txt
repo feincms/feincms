@@ -39,7 +39,7 @@ lxml_, django-tagging_, feedparser_ and the python imaging library PIL_
 .. _Django: http://www.djangoproject.com/
 .. _Git: http://git-scm.com/
 .. _Subversion: http://subversion.tigris.org/
-.. _django-mptt: http://github.com/matthiask/django-mptt/
+.. _django-mptt: http://github.com/django-mptt/django-mptt/
 .. _django-tagging: http://code.google.com/p/django-tagging/
 .. _lxml: http://codespeak.net/lxml/
 .. _feedparser: http://www.feedparser.org/
