@@ -7,7 +7,7 @@ register = template.Library()
 
 register.tag(fragment)
 register.tag(get_fragment)
-register.tag(has_fragment)
+register.filter(has_fragment)
 
 
 @register.simple_tag
