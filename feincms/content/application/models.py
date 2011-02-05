@@ -78,7 +78,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
 
         for key in ('all', 'tree', 'none'):
             if key in urlconf_cache_key and urlconf_cache_key[key] in _local.reverse_cache:
-                content = _local.reverse_cache[key]
+                content = _local.reverse_cache[urlconf_cache_key[key]]
                 break
         else:
             # TODO do not use internal feincms data structures as much
