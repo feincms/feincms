@@ -66,13 +66,13 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         proximity_info = getattr(_local, 'proximity_info', None)
         
         # try different cache keys of descending specificity
-        urlconf_cache_keys = {
+        urlconf_cache_key = {
             'all': '%s_%s_%s_%s_%s' % ((other_urlconf,) + proximity_info),
             'tree': '%s_%s' % (other_urlconf, proximity_info[0]),
             'none': '%s_noprox' % other_urlconf,
         }
-        for key in urlconf_cache_keys.values():
-            if key in _local.reverse_cache:
+        for key in ('all', 'tree', 'none'):
+            if urlconf_cache_key[key] in _local.reverse_cache:
                 content = _local.reverse_cache[key]
                 break
         else:
@@ -116,7 +116,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
                     content = contents[0]
                 except IndexError:
                     content = None
-            _local.reverse_cache[urlconf_cache_keys[cache_key]] = content
+            _local.reverse_cache[urlconf_cache_key[cache_key]] = content
 
         if content:
             # Save information from _urlconfs in case we are inside another
