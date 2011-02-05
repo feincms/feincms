@@ -77,7 +77,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
             })
 
         for key in ('all', 'tree', 'none'):
-            if urlconf_cache_key[key] in _local.reverse_cache:
+            if key in urlconf_cache_key and urlconf_cache_key[key] in _local.reverse_cache:
                 content = _local.reverse_cache[key]
                 break
         else:
