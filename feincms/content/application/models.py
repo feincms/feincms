@@ -62,15 +62,20 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         if not hasattr(_local, 'reverse_cache'):
             _local.reverse_cache = {}
 
-        # Update this when more items are used for the proximity analysis below
-        proximity_info = getattr(_local, 'proximity_info', None)
         
-        # try different cache keys of descending specificity
+        # try different cache keys of descending specificity, this one always works
         urlconf_cache_key = {
-            'all': '%s_%s_%s_%s_%s' % ((other_urlconf,) + proximity_info),
-            'tree': '%s_%s' % (other_urlconf, proximity_info[0]),
             'none': '%s_noprox' % other_urlconf,
         }
+
+        # when we have more proximity info, we can use more specific cache keys
+        proximity_info = getattr(_local, 'proximity_info', None)
+        if proximity_info:
+            urlconf_cache_key.update({
+                'all': '%s_%s_%s_%s_%s' % ((other_urlconf,) + proximity_info),
+                'tree': '%s_%s' % (other_urlconf, proximity_info[0]),
+            })
+
         for key in ('all', 'tree', 'none'):
             if urlconf_cache_key[key] in _local.reverse_cache:
                 content = _local.reverse_cache[key]
