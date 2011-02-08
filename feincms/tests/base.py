@@ -83,6 +83,14 @@ class ExampleCMSBase(Base):
 
 ExampleCMSBase.register_regions(('region', 'region title'), ('region2', 'region2 title'))
 
+
+class ExampleCMSBase2(Base):
+        pass
+
+ExampleCMSBase2.register_regions(('region', 'region title'),
+        ('region2', 'region2 title'))
+
+
 class CMSBaseTest(TestCase):
     def test_01_simple_content_type_creation(self):
         self.assertEqual(ExampleCMSBase.content_type_for(FileContent), None)
@@ -170,6 +178,15 @@ class CMSBaseTest(TestCase):
 
         obj.region = 'region'
         self.assertEqual(obj.render(), 'hello')
+
+    def test_08_creating_two_content_types_in_same_application(self):
+        ExampleCMSBase.create_content_type(RawContent)
+        ct = ExampleCMSBase.content_type_for(RawContent)
+        self.assertEqual(ct._meta.db_table, 'tests_examplecmsbase_rawcontent')
+
+        ExampleCMSBase2.create_content_type(RawContent)
+        ct2 = ExampleCMSBase2.content_type_for(RawContent)
+        self.assertEqual(ct2._meta.db_table, 'tests_examplecmsbase2_rawcontent')
 
 
 
