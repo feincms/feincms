@@ -75,6 +75,7 @@ class ActiveAwareContentManagerMixin(object):
         """
         return self.apply_active_filters(self)
 
+
 # ------------------------------------------------------------------------
 def path_to_cache_key(path):
     from django.utils.encoding import iri_to_uri
@@ -207,7 +208,21 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         with_page = Page.objects.get(pk=with_page.pk)
         with_page.move_to(page, 'right')
 
-        return Page.objects.get(pk=with_page.pk)
+        return Page.objects.get(pk=with_page.pk)   
+
+    def tree_active(self):
+        """ Only returns pages that have active ancestors. """
+        pages = self.active() #returns active pages without checking the tree.
+        inactive_branches=[]
+        inactive_pages=[]
+        active_pages = [p.id for p in pages]
+        for page in pages:
+            if page.lft in inactive_branches:
+                inactive_pages.append(page.id)
+            elif page.level and page.parent_id not in active_pages: #Parent page is not active-> Page is not active.
+                inactive_branches.extend(range(page.lft, page.rght))
+                inactive_pages.append(page.id)
+        return pages.exclude(id__in=inactive_pages)
 
 PageManager.add_to_active_filters( Q(active=True) )
 
