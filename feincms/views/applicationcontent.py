@@ -43,7 +43,7 @@ def _page_has_appcontent(page):
     # Very dumb implementation, will be overridden with a more efficient
     # version if ct_tracker is enabled.
     try:
-        applicationcontents = page.pageapplicationcontent_set.all()
+        applicationcontents = page.applicationcontent_set.all()
     except AttributeError:
         return False
 
@@ -82,7 +82,7 @@ def build_page_response(page, request):
         return response
 
     if has_appcontent:
-        for content in page.pageapplicationcontent_set.all():
+        for content in page.applicationcontent_set.all():
             r = content.process(request)
             if r and (r.status_code != 200 or request.is_ajax() or getattr(r, 'standalone', False)):
                 return r

@@ -511,7 +511,7 @@ def create_base_model(inherit_from=models.Model):
                 }
 
             new_type = type(
-                '%s%s' % (cls.__name__, model.__name__),
+                model.__name__,
                 (model, feincms_content_base,),
                 attrs)
             cls._feincms_content_types.append(new_type)

@@ -111,8 +111,8 @@ class CMSBaseTest(TestCase):
         # content_type_for should return None if it does not have a subclass registered
         self.assertEqual(ExampleCMSBase.content_type_for(Empty), None)
 
-        self.assertTrue('examplecmsbasefilecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).keys())
-        self.assertTrue('examplecmsbasefilecontent' in dict(ExampleCMSBase.template.regions[1].content_types).keys())
+        self.assertTrue('filecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).keys())
+        self.assertTrue('filecontent' in dict(ExampleCMSBase.template.regions[1].content_types).keys())
 
     def test_02_rsscontent_creation(self):
         # this test resides in its own method because the required feedparser
@@ -235,29 +235,29 @@ class PagesTestCase(TestCase):
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
 
-            'pagerawcontent_set-TOTAL_FORMS': 0,
-            'pagerawcontent_set-INITIAL_FORMS': 0,
-            'pagerawcontent_set-MAX_NUM_FORMS': 10,
+            'rawcontent_set-TOTAL_FORMS': 0,
+            'rawcontent_set-INITIAL_FORMS': 0,
+            'rawcontent_set-MAX_NUM_FORMS': 10,
 
-            'pagemediafilecontent_set-TOTAL_FORMS': 0,
-            'pagemediafilecontent_set-INITIAL_FORMS': 0,
-            'pagemediafilecontent_set-MAX_NUM_FORMS': 10,
+            'mediafilecontent_set-TOTAL_FORMS': 0,
+            'mediafilecontent_set-INITIAL_FORMS': 0,
+            'mediafilecontent_set-MAX_NUM_FORMS': 10,
 
-            'pageimagecontent_set-TOTAL_FORMS': 0,
-            'pageimagecontent_set-INITIAL_FORMS': 0,
-            'pageimagecontent_set-MAX_NUM_FORMS': 10,
+            'imagecontent_set-TOTAL_FORMS': 0,
+            'imagecontent_set-INITIAL_FORMS': 0,
+            'imagecontent_set-MAX_NUM_FORMS': 10,
 
-            'pagecontactformcontent_set-TOTAL_FORMS': 0,
-            'pagecontactformcontent_set-INITIAL_FORMS': 0,
-            'pagecontactformcontent_set-MAX_NUM_FORMS': 10,
+            'contactformcontent_set-TOTAL_FORMS': 0,
+            'contactformcontent_set-INITIAL_FORMS': 0,
+            'contactformcontent_set-MAX_NUM_FORMS': 10,
 
-            'pagefilecontent_set-TOTAL_FORMS': 0,
-            'pagefilecontent_set-INITIAL_FORMS': 0,
-            'pagefilecontent_set-MAX_NUM_FORMS': 10,
+            'filecontent_set-TOTAL_FORMS': 0,
+            'filecontent_set-INITIAL_FORMS': 0,
+            'filecontent_set-MAX_NUM_FORMS': 10,
 
-            'pageapplicationcontent_set-TOTAL_FORMS': 0,
-            'pageapplicationcontent_set-INITIAL_FORMS': 0,
-            'pageapplicationcontent_set-MAX_NUM_FORMS': 10,
+            'applicationcontent_set-TOTAL_FORMS': 0,
+            'applicationcontent_set-INITIAL_FORMS': 0,
+            'applicationcontent_set-MAX_NUM_FORMS': 10,
             }
         dic.update(kwargs)
         return self.client.post('/admin/page/page/add/', dic)
@@ -457,40 +457,40 @@ class PagesTestCase(TestCase):
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
 
-            'pagerawcontent_set-TOTAL_FORMS': 1,
-            'pagerawcontent_set-INITIAL_FORMS': 0,
-            'pagerawcontent_set-MAX_NUM_FORMS': 10,
+            'rawcontent_set-TOTAL_FORMS': 1,
+            'rawcontent_set-INITIAL_FORMS': 0,
+            'rawcontent_set-MAX_NUM_FORMS': 10,
 
-            'pagerawcontent_set-0-parent': 1,
-            'pagerawcontent_set-0-region': 'main',
-            'pagerawcontent_set-0-ordering': 0,
-            'pagerawcontent_set-0-text': 'This is some example content',
+            'rawcontent_set-0-parent': 1,
+            'rawcontent_set-0-region': 'main',
+            'rawcontent_set-0-ordering': 0,
+            'rawcontent_set-0-text': 'This is some example content',
 
-            'pagemediafilecontent_set-TOTAL_FORMS': 1,
-            'pagemediafilecontent_set-INITIAL_FORMS': 0,
-            'pagemediafilecontent_set-MAX_NUM_FORMS': 10,
+            'mediafilecontent_set-TOTAL_FORMS': 1,
+            'mediafilecontent_set-INITIAL_FORMS': 0,
+            'mediafilecontent_set-MAX_NUM_FORMS': 10,
 
-            'pagemediafilecontent_set-0-parent': 1,
-            'pagemediafilecontent_set-0-position': 'block',
+            'mediafilecontent_set-0-parent': 1,
+            'mediafilecontent_set-0-position': 'block',
 
-            'pageimagecontent_set-TOTAL_FORMS': 1,
-            'pageimagecontent_set-INITIAL_FORMS': 0,
-            'pageimagecontent_set-MAX_NUM_FORMS': 10,
+            'imagecontent_set-TOTAL_FORMS': 1,
+            'imagecontent_set-INITIAL_FORMS': 0,
+            'imagecontent_set-MAX_NUM_FORMS': 10,
 
-            'pageimagecontent_set-0-parent': 1,
-            'pageimagecontent_set-0-position': 'default',
+            'imagecontent_set-0-parent': 1,
+            'imagecontent_set-0-position': 'default',
 
-            'pagecontactformcontent_set-TOTAL_FORMS': 1,
-            'pagecontactformcontent_set-INITIAL_FORMS': 0,
-            'pagecontactformcontent_set-MAX_NUM_FORMS': 10,
+            'contactformcontent_set-TOTAL_FORMS': 1,
+            'contactformcontent_set-INITIAL_FORMS': 0,
+            'contactformcontent_set-MAX_NUM_FORMS': 10,
 
-            'pagefilecontent_set-TOTAL_FORMS': 1,
-            'pagefilecontent_set-INITIAL_FORMS': 0,
-            'pagefilecontent_set-MAX_NUM_FORMS': 10,
+            'filecontent_set-TOTAL_FORMS': 1,
+            'filecontent_set-INITIAL_FORMS': 0,
+            'filecontent_set-MAX_NUM_FORMS': 10,
 
-            'pageapplicationcontent_set-TOTAL_FORMS': 1,
-            'pageapplicationcontent_set-INITIAL_FORMS': 0,
-            'pageapplicationcontent_set-MAX_NUM_FORMS': 10,
+            'applicationcontent_set-TOTAL_FORMS': 1,
+            'applicationcontent_set-INITIAL_FORMS': 0,
+            'applicationcontent_set-MAX_NUM_FORMS': 10,
             }
         data.update(kwargs)
 
@@ -502,13 +502,11 @@ class PagesTestCase(TestCase):
         page = Page.objects.get(pk=1)
         response = self.create_pagecontent(page)
         self.assertRedirects(response, '/admin/page/page/')
-        self.assertEqual(page.content.main[0].__class__.__name__, 
-                'PageRawContent')
+        self.assertEqual(page.content.main[0].__class__.__name__, 'RawContent')
 
         page2 = Page.objects.get(pk=2)
         page2.symlinked_page = page
-        self.assertEqual(page2.content.main[0].__class__.__name__, 
-                'PageRawContent')
+        self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
         self.assertEqual(unicode(page2.content.main[0]),
                          'main on Test page, ordering 0')
 
@@ -535,7 +533,7 @@ class PagesTestCase(TestCase):
 
         mediafile = MediaFile.objects.create(file='somefile.jpg')
         mediafile.categories = [category]
-        page.pagemediafilecontent_set.create(
+        page.mediafilecontent_set.create(
             mediafile=mediafile,
             region='main',
             position='block',
@@ -570,13 +568,13 @@ class PagesTestCase(TestCase):
 
         #self.assertTrue('alt="something"' in page.content.main[1].render()) Since it isn't an image
 
-        page.pageimagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
-        page.pagefilecontent_set.create(file='somefile.jpg', title='thetitle', region='main', ordering=3)
+        page.imagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
+        page.filecontent_set.create(file='somefile.jpg', title='thetitle', region='main', ordering=3)
 
         self.assertTrue('somefile.jpg' in page.content.main[2].render())
         self.assertTrue('<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render())
 
-        page.pagemediafilecontent_set.update(mediafile=3)
+        page.mediafilecontent_set.update(mediafile=3)
         # this should not raise
         self.client.get('/admin/page/page/1/')
 
@@ -643,8 +641,7 @@ class PagesTestCase(TestCase):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
-
-        page.pagerawcontent_set.create(
+        page.rawcontent_set.create(
             region='sidebar',
             ordering=0,
             text='Something')
@@ -671,12 +668,12 @@ class PagesTestCase(TestCase):
         self.create_pagecontent(page)
 
         # this should return a 404
-        self.is_published('/admin/page/page/10|pagerawcontent|1/', should_be=False)
-        self.is_published('/admin/page/page/1|pagerawcontent|10/', should_be=False)
+        self.is_published('/admin/page/page/10|rawcontent|1/', should_be=False)
+        self.is_published('/admin/page/page/1|rawcontent|10/', should_be=False)
 
-        self.assertEqual(self.client.get('/admin/page/page/1|pagerawcontent|1/').status_code, 200)
-        self.assertEqual(self.client.post('/admin/page/page/1|pagerawcontent|1/', {
-            'pagerawcontent-text': 'blablabla',
+        self.assertEqual(self.client.get('/admin/page/page/1|rawcontent|1/').status_code, 200)
+        self.assertEqual(self.client.post('/admin/page/page/1|rawcontent|1/', {
+            'rawcontent-text': 'blablabla',
             }).status_code, 200)
 
         self.assertEqual(page.content.main[0].render(), 'blablabla')
@@ -892,7 +889,7 @@ class PagesTestCase(TestCase):
         page.template_key = 'theother'
         page.save()
 
-        page.pagecontactformcontent_set.create(email='mail@example.com', subject='bla',
+        page.contactformcontent_set.create(email='mail@example.com', subject='bla',
                                            region='main', ordering=0)
 
         request = Empty()
@@ -966,7 +963,7 @@ class PagesTestCase(TestCase):
         # therefore not catch anything below it.
         self.is_published(page1.get_absolute_url() + 'anything/', False)
 
-        page.pageapplicationcontent_set.create(
+        page.applicationcontent_set.create(
             region='main', ordering=0,
             urlconf_path='feincms.tests.applicationcontent_urls')
 
@@ -1027,7 +1024,7 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(page.active, False)
 
-        c = now_live.pagerawcontent_set.all()[0]
+        c = now_live.rawcontent_set.all()[0]
         c.text = 'somethinggg'
         c.save()
 
@@ -1058,7 +1055,7 @@ class PagesTestCase(TestCase):
         page.active = True
         page.template_key = 'theother'
         page.save()
-        page.pageapplicationcontent_set.create(
+        page.applicationcontent_set.create(
             region='main', ordering=0,
             urlconf_path='feincms.tests.applicationcontent_urls')
 
@@ -1075,7 +1072,7 @@ class PagesTestCase(TestCase):
         page_de = Page.objects.get(title='Home DE')
         self.create_page(title='Child 1 DE', language='de', parent=page_de.id, active=True)
         page_de_1 = Page.objects.get(title='Child 1 DE')
-        page_de_1.pageapplicationcontent_set.create(
+        page_de_1.applicationcontent_set.create(
             region='main', ordering=0,
             urlconf_path='feincms.tests.applicationcontent_urls')
         _empty_reverse_cache()
@@ -1099,7 +1096,7 @@ class BlogTestCase(TestCase):
 
         Entry.register_regions(('main', 'Main region'), ('another', 'Another region'))
         Entry.prefilled_categories = prefilled_attribute('categories')
-        Entry.prefilled_entryrawcontent_set = prefilled_attribute('entryrawcontent_set')
+        Entry.prefilled_rawcontent_set = prefilled_attribute('rawcontent_set')
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
@@ -1111,7 +1108,7 @@ class BlogTestCase(TestCase):
             slug='something',
             language='en')
 
-        entry.entryrawcontent_set.create(
+        entry.rawcontent_set.create(
             region='main',
             ordering=0,
             text='Something awful')
@@ -1138,23 +1135,23 @@ class BlogTestCase(TestCase):
         self.create_entry()
 
         # This should return silently
-        objects = prefill_entry_list(Entry.objects.none(), 'entryrawcontent_set', 'categories')
+        objects = prefill_entry_list(Entry.objects.none(), 'rawcontent_set', 'categories')
 
-        objects = prefill_entry_list(Entry.objects.published(), 'entryrawcontent_set', 'categories')
+        objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set', 'categories')
 
         self.assertEqual(len(objects[0]._prefill_categories), 0)
-        self.assertEqual(len(objects[0]._prefill_entryrawcontent_set), 1)
+        self.assertEqual(len(objects[0]._prefill_rawcontent_set), 1)
         self.assertEqual(unicode(objects[0]), 'Something')
 
         objects = Entry.objects.published()
 
         self.assertEqual(len(objects[0].prefilled_categories), 0)
-        self.assertEqual(len(objects[0].prefilled_entryrawcontent_set), 1)
+        self.assertEqual(len(objects[0].prefilled_rawcontent_set), 1)
 
-        objects = prefill_entry_list(Entry.objects.published(), 'entryrawcontent_set', 'categories', region='another')
+        objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set', 'categories', region='another')
 
         self.assertEqual(len(objects[0]._prefill_categories), 0)
-        self.assertEqual(len(objects[0]._prefill_entryrawcontent_set), 0)
+        self.assertEqual(len(objects[0]._prefill_rawcontent_set), 0)
 
         self.login()
         self.assertEqual(self.client.get('/admin/blog/entry/').status_code, 200)
