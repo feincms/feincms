@@ -52,11 +52,6 @@ FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_TREE_EDITOR_I
 FEINCMS_USE_CACHE = getattr(settings, 'FEINCMS_USE_CACHE', False)
 
 # ------------------------------------------------------------------------
-# Logging class. Defaults to a "do nothing" variant.
-
-FEINCMS_LOGGING_CLASS = getattr(settings, 'FEINCMS_LOGGING_CLASS', 'feincms.logging.LogBase')
-
-# ------------------------------------------------------------------------
 # Allow random gunk after a valid (non appcontent) page?
 
 FEINCMS_ALLOW_EXTRA_PATH = getattr(settings, 'FEINCMS_ALLOW_EXTRA_PATH', False)
