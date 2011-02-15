@@ -5,11 +5,14 @@ All models defined here are abstract, which means no tables are created in
 the feincms_ namespace.
 """
 
+import warnings
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
+from django.db.models.loading import get_model, cache
 from django.template.loader import render_to_string
 from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
@@ -451,7 +454,7 @@ def create_base_model(inherit_from=models.Model):
                 cls.feincms_item_editor_includes = {}
 
         @classmethod
-        def create_content_type(cls, model, regions=None, **kwargs):
+        def create_content_type(cls, model, regions=None, class_name=None, **kwargs):
             """
             This is the method you'll use to create concrete content types.
 
@@ -470,21 +473,34 @@ def create_base_model(inherit_from=models.Model):
             right, centered) through to the content type.
             """
 
+            if not class_name:
+                class_name = model.__name__
+
             # prevent double registration and registration of two different content types
             # with the same class name because of related_name clashes
             try:
-                getattr(cls, '%s_set' % model.__name__.lower())
-                import warnings
+                getattr(cls, '%s_set' % class_name.lower())
                 warnings.warn(
                     'Cannot create content type using %s.%s for %s.%s, because %s_set is already taken.' % (
-                        model.__module__, model.__name__,
+                        model.__module__, class_name,
                         cls.__module__, cls.__name__,
-                        model.__name__.lower()),
+                        class_name.lower()),
                     RuntimeWarning)
                 return
             except AttributeError:
                 # everything ok
                 pass
+
+            # Next name clash test. Happens when the same content type is created
+            # for two Base subclasses living in the same Django application
+            # (github issues #73 and #150)
+            other_model = get_model(cls._meta.app_label, class_name)
+            if other_model:
+                warnings.warn(
+                    'It seems that the content type %s exists twice in %s. Use the class_name argument to create_content_type to avoid this error.' % (
+                        model.__name__,
+                        cls._meta.app_label),
+                    RuntimeWarning)
 
             if not model._meta.abstract:
                 raise ImproperlyConfigured, 'Cannot create content type from non-abstract model (yet).'
@@ -495,7 +511,7 @@ def create_base_model(inherit_from=models.Model):
             feincms_content_base = cls._feincms_content_model
 
             class Meta(feincms_content_base.Meta):
-                db_table = '%s_%s' % (cls._meta.db_table, model.__name__.lower())
+                db_table = '%s_%s' % (cls._meta.db_table, class_name.lower())
                 verbose_name = model._meta.verbose_name
                 verbose_name_plural = model._meta.verbose_name_plural
 
@@ -511,7 +527,7 @@ def create_base_model(inherit_from=models.Model):
                 }
 
             new_type = type(
-                model.__name__,
+                class_name,
                 (model, feincms_content_base,),
                 attrs)
             cls._feincms_content_types.append(new_type)

@@ -184,9 +184,9 @@ class CMSBaseTest(TestCase):
         ct = ExampleCMSBase.content_type_for(RawContent)
         self.assertEqual(ct._meta.db_table, 'tests_examplecmsbase_rawcontent')
 
-        ExampleCMSBase2.create_content_type(RawContent)
+        ExampleCMSBase2.create_content_type(RawContent, class_name='RawContent2')
         ct2 = ExampleCMSBase2.content_type_for(RawContent)
-        self.assertEqual(ct2._meta.db_table, 'tests_examplecmsbase2_rawcontent')
+        self.assertEqual(ct2._meta.db_table, 'tests_examplecmsbase2_rawcontent2')
 
 
 
