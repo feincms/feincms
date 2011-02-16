@@ -239,7 +239,9 @@ feincms.jQuery(function($){
 	// bind the collapse all children event
 	$.extend($.fn.bindCollapseTreeEvent = function() {
 		$(this).click(function() {
-			$('#result_list tbody tr').each(function(i, el) {
+			rlist = $("#result_list");
+			rlist.hide();
+			$('tbody tr', rlist).each(function(i, el) {
 				var marker = $('.page_marker', el);
 				if(marker.hasClass('children')) {
                     var itemId = extract_item_id(marker.attr('id'));
@@ -249,7 +251,8 @@ feincms.jQuery(function($){
 				}
 			});
             $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
-			$('#result_list tbody').recolorRows();
+			rlist.show();
+			$('tbody', rlist).recolorRows();
 		});
 		return this;
 	});
@@ -257,7 +260,9 @@ feincms.jQuery(function($){
 	// bind the open all children event
 	$.extend($.fn.bindOpenTreeEvent = function() {
 		$(this).click(function() {
-			$('#result_list tbody tr').each(function(i, el) {
+			rlist = $("#result_list");
+			rlist.hide();
+			$('tbody tr', rlist).each(function(i, el) {
 				var marker = $('span.page_marker', el);
 				if(marker.hasClass('children')) {
                     var itemId = extract_item_id($('span.page_marker', el).attr('id'));
@@ -267,7 +272,8 @@ feincms.jQuery(function($){
 				}
 			});
 			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
-			$('#result_list tbody').recolorRows();
+			rlist.show();
+			$('tbody', rlist).recolorRows();
 		});
 		return this;
 	});
