@@ -62,18 +62,23 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         if not hasattr(_local, 'reverse_cache'):
             _local.reverse_cache = {}
 
-        # Update this when more items are used for the proximity analysis below
-        proximity_info = getattr(_local, 'proximity_info', None)
-        
-        # try different cache keys of descending specificity
+
+        # try different cache keys of descending specificity, this one always works
         urlconf_cache_keys = {
-            'all': '%s_%s_%s_%s_%s' % ((other_urlconf,) + proximity_info),
-            'tree': '%s_%s' % (other_urlconf, proximity_info[0]),
             'none': '%s_noprox' % other_urlconf,
         }
-        for key in urlconf_cache_keys.values():
-            if key in _local.reverse_cache:
-                content = _local.reverse_cache[key]
+
+        # when we have more proximity info, we can use more specific cache keys
+        proximity_info = getattr(_local, 'proximity_info', None)
+        if proximity_info:
+            urlconf_cache_keys.update({
+                'all': '%s_%s_%s_%s_%s' % ((other_urlconf,) + proximity_info),
+                'tree': '%s_%s' % (other_urlconf, proximity_info[0]),
+            })
+
+        for key in ('all', 'tree', 'none'):
+            if key in urlconf_cache_keys and urlconf_cache_keys[key] in _local.reverse_cache:
+                content = _local.reverse_cache[urlconf_cache_keys[key]]
                 break
         else:
             # TODO do not use internal feincms data structures as much
@@ -106,7 +111,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
                         ) | tree_contents.filter(
                             parent__lft__lte=proximity_info[2],
                             parent__lft__gte=proximity_info[1],
-                        )).extra({'level_diff':"abs(level-%d)" %proximity_info[3]}
+                        )).extra({'level_diff':"abs(level-%d)" % proximity_info[3]}
                             ).order_by('level_diff')[0]
                     except IndexError:
                         content = tree_contents[0]
@@ -277,7 +282,7 @@ class ApplicationContent(models.Model):
 
         # Resolve the module holding the application urls.
         urlconf_path = self.app_config.get('urls', self.urlconf_path)
-        
+
         # Change the prefix and urlconf for the monkey-patched reverse function ...
         _local.urlconf = (urlconf_path, page_url)
 

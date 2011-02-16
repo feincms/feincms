@@ -114,6 +114,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     def formatted_file_size(self):
         return filesizeformat(self.file_size)
     formatted_file_size.short_description = _("file size")
+    formatted_file_size.admin_order_field = 'file_size'
 
     def formatted_created(self):
         return self.created.strftime("%Y-%m-%d %H:%M")
