@@ -331,7 +331,7 @@ feincms.jQuery(function($){
             $('#collapse_entire_tree').click();
         } else {
             if(storedNodes) {
-                storedNodes = eval('[' + storedNodes + ']');
+                storedNodes = storedNodes.split(",").map(function(i) { return parseInt(i); })
                 for(var i=0; i<storedNodes.length; i++) {
                     $('#page_marker-' + storedNodes[i]).click();
                 }
