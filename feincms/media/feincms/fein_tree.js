@@ -198,6 +198,21 @@ feincms.jQuery(function($){
 		return this;
 	});
 
+    /* Every time the user expands or collapses a part of the tree, we remember
+       the current state of the tree so we can restore it on a reload.
+       Note: We might use html5's session storage? */
+    function storeCollapsedNodes(nodes) {
+        $.cookie('feincms_collapsed_nodes', "[" + nodes.join(",") + "]", { expires: 7 });
+    }
+
+    function retrieveCollapsedNodes() {
+        var n = $.cookie('feincms_collapsed_nodes');
+        if(n != null) {
+            n = $.parseJSON(n);
+            }
+        return n;
+    }
+
     function expandOrCollapseNode(item) {
         var show = true;
 
@@ -215,7 +230,7 @@ feincms.jQuery(function($){
             markNodeAsCollapsed(itemId);
         }
 
-        $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
+        storeCollapsedNodes(feincms.collapsed_nodes);
 
         doToggle(itemId, show);
 
@@ -250,7 +265,7 @@ feincms.jQuery(function($){
                     markNodeAsCollapsed(itemId);
 				}
 			});
-            $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
+            storeCollapsedNodes(feincms.collapsed_nodes);
 			rlist.show();
 			$('tbody', rlist).recolorRows();
 		});
@@ -271,7 +286,7 @@ feincms.jQuery(function($){
                     markNodeAsExpanded(itemId);
 				}
 			});
-			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
+			storeCollapsedNodes([]);
 			rlist.show();
 			$('tbody', rlist).recolorRows();
 		});
@@ -326,15 +341,12 @@ feincms.jQuery(function($){
         $('tr', rlist).keydown(keyboardNavigationHandler);
 
 		feincms.collapsed_nodes = [];
-		var storedNodes = $.cookie('feincms_collapsed_nodes');
+		var storedNodes = retrieveCollapsedNodes();
         if(storedNodes == null) {
             $('#collapse_entire_tree').click();
         } else {
-            if(storedNodes) {
-                storedNodes = storedNodes.split(",").map(function(i) { return parseInt(i); })
-                for(var i=0; i<storedNodes.length; i++) {
-                    $('#page_marker-' + storedNodes[i]).click();
-                }
+            for(var i=0; i<storedNodes.length; i++) {
+                $('#page_marker-' + storedNodes[i]).click();
             }
 		}
         rlist.show();
