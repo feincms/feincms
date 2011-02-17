@@ -1,9 +1,13 @@
+
+/* Suppress initial rendering of result list, but only if we can show it with JS later on */
+document.write('<style type="text/css">#result_list { display: none }</style>');
+
+
 feincms.jQuery(function($){
 	// recolor tree after expand/collapse
 	$.extend($.fn.recolorRows = function() {
-		$('tr', this).removeClass('row1').removeClass('row2');
-		$('tr:visible:even', this).addClass('row1');
-		$('tr:visible:odd', this).addClass('row2');
+		$('tr:visible:even', this).removeClass('row2').addClass('row1');
+		$('tr:visible:odd', this).removeClass('row1').addClass('row2');
 	});
 
     function isExpandedNode(id) {
