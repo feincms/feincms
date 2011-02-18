@@ -48,14 +48,17 @@ def register(cls, admin_cls):
 def last_modified_response_processor(self, request, response):
     from django.utils.http import http_date
 
-    # Don't modify header if it's already set
-    if response.has_header('Last-Modified'):
-        return
-
     # Don't include Last-Modified if we don't want to be cached
-    if response.has_header('Cache-Control') and "no-cache" in response['Cache-Control']:
+    if "no-cache" in response.get('Cache-Control', ''):
         return
 
-    response['Last-Modified'] = http_date(dt_to_utc_timestamp(self.modification_date))
+    # If we already have a Last-Modified, take the later one
+    from email.utils import parsedate_tz, mktime_tz
+
+    last_modified = [ dt_to_utc_timestamp(self.modification_date) ]
+    if response.has_header('Last-Modified'):
+        last_modified.append(mktime_tz(parsedate_tz(response['Last-Modified'])))
+
+    response['Last-Modified'] = http_date(max(last_modified))
 
 # ------------------------------------------------------------------------
