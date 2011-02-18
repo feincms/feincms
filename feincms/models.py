@@ -12,7 +12,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
-from django.db.models.loading import get_model, cache
+from django.db.models.loading import get_model
 from django.template.loader import render_to_string
 from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
@@ -157,7 +157,6 @@ def create_base_model(inherit_from=models.Model):
             """
 
             if hasattr(cls, 'template'):
-                import warnings
                 warnings.warn(
                     'Ignoring second call to register_regions.',
                     RuntimeWarning)
