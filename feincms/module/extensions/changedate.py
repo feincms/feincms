@@ -26,12 +26,6 @@ def dt_to_utc_timestamp(dt):
     from time import mktime, gmtime
     return mktime(gmtime(mktime(dt.utctimetuple())))
 
-def dt_to_utc_dt(dt):
-    from datetime import datetime
-    utc_ts = dt_to_utc_timestamp(dt)
-    utc_dt = datetime.utcfromtimestamp(utc_ts)
-    return utc_dt
-
 def register(cls, admin_cls):
     cls.add_to_class('creation_date',     models.DateTimeField(_('creation date'),     null=True, editable=False))
     cls.add_to_class('modification_date', models.DateTimeField(_('modification date'), null=True, editable=False))
