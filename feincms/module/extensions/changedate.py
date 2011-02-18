@@ -5,10 +5,24 @@
 Track the modification date for pages.
 """
 
+import os
+
+from email.utils import parsedate_tz, mktime_tz
+
 from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _
 
+try:
+    import pytz
+    local_tz = pytz.timezone(os.environ['TZ'])
+except ImportError:
+    class NoTimezone(object):
+        def localize(_, dt):
+            return dt
+    local_tz = NoTimezone()
+
+# ------------------------------------------------------------------------
 def pre_save_handler(sender, instance, **kwargs):
     """
     Intercept attempts to save and insert the current date and time into
@@ -23,23 +37,22 @@ def pre_save_handler(sender, instance, **kwargs):
 
 # ------------------------------------------------------------------------
 def dt_to_utc_timestamp(dt):
-    from time import mktime, gmtime
-    return mktime(gmtime(mktime(dt.utctimetuple())))
+    from time import mktime
+    return int(mktime(dt.timetuple()))
 
 def register(cls, admin_cls):
     cls.add_to_class('creation_date',     models.DateTimeField(_('creation date'),     null=True, editable=False))
     cls.add_to_class('modification_date', models.DateTimeField(_('modification date'), null=True, editable=False))
 
     if hasattr(cls, 'cache_key_components'):
-        cls.cache_key_components.append(lambda page: page.modification_date and page.modification_date.strftime('%s'))
+        cls.cache_key_components.append(lambda page: page.modification_date and str(dt_to_utc_timestamp(page.modification_date)))
 
-    if hasattr(cls, 'last_modified'):
-        cls.last_modified = lambda p: dt_to_utc_dt(p.modification_date)
+    cls.last_modified = lambda p: p.modification_date
 
     pre_save.connect(pre_save_handler, sender=cls)
 
 # ------------------------------------------------------------------------
-def last_modified_response_processor(self, request, response):
+def last_modified_response_processor(page, request, response):
     from django.utils.http import http_date
 
     # Don't include Last-Modified if we don't want to be cached
@@ -47,12 +60,10 @@ def last_modified_response_processor(self, request, response):
         return
 
     # If we already have a Last-Modified, take the later one
-    from email.utils import parsedate_tz, mktime_tz
-
-    last_modified = [ dt_to_utc_timestamp(self.modification_date) ]
+    last_modified = dt_to_utc_timestamp(page.last_modified())
     if response.has_header('Last-Modified'):
-        last_modified.append(mktime_tz(parsedate_tz(response['Last-Modified'])))
+        last_modified = max(last_modified, mktime_tz(parsedate_tz(response['Last-Modified'])))
 
-    response['Last-Modified'] = http_date(max(last_modified))
+    response['Last-Modified'] = http_date(last_modified)
 
 # ------------------------------------------------------------------------
