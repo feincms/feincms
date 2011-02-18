@@ -13,15 +13,6 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _
 
-try:
-    import pytz
-    local_tz = pytz.timezone(os.environ['TZ'])
-except ImportError:
-    class NoTimezone(object):
-        def localize(_, dt):
-            return dt
-    local_tz = NoTimezone()
-
 # ------------------------------------------------------------------------
 def pre_save_handler(sender, instance, **kwargs):
     """
