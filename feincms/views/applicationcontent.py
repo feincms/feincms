@@ -104,9 +104,11 @@ def _update_response_headers(request, has_appcontent, response):
     Combine all headers that were set by the different content types
     We are interested in Cache-Control, Last-Modified, Expires
     """
+    from django.utils.http import http_date
 
     # Ideally, for the Cache-Control header, we'd want to do some intelligent
-    # combining, but that's hard. Let's just collect and unique them.
+    # combining, but that's hard. Let's just collect and unique them and let
+    # the client worry about that.
     cc_headers = set()
     for x in (cc.split(",") for cc in request._feincms_applicationcontents_headers['Cache-Control']):
         cc_headers |= set((s.strip() for s in x))
@@ -116,5 +118,13 @@ def _update_response_headers(request, has_appcontent, response):
     else:   # Default value
         if has_appcontent:
             response['Cache-Control'] = 'no-cache, must-revalidate'
+
+    # Check all Last-Modified headers, chose the newest one
+    from email.utils import parsedate
+    from time import mktime
+
+    lm_list = [parsedate(x) for x in request._feincms_applicationcontents_headers['Last-Modified']]
+    if len(lm_list) > 0:
+        response['Last-Modified'] = http_date(mktime(min(lm_list)))
 
 # ------------------------------------------------------------------------
