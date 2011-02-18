@@ -320,6 +320,7 @@ class ApplicationContent(models.Model):
             if output.status_code == 200:
                 if not getattr(output, 'standalone', False):
                     request._feincms_applicationcontents[self.id] = mark_safe(output.content.decode('utf-8'))
+                    request._feincms_applicationcontents_headers['Cache-Control'].append(output['Cache-Control'])
 
             return output
         else:

@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from collections import defaultdict
+
 from django.http import Http404
 from django.utils.cache import add_never_cache_headers
 
@@ -26,6 +28,7 @@ def handler(request, path=None):
     # prepare storage for rendered application contents
     if not hasattr(request, '_feincms_applicationcontents'):
         request._feincms_applicationcontents = {}
+        request._feincms_applicationcontents_headers = defaultdict(list)
 
     # Used to provide additional app-specific context variables:
     if not hasattr(request, '_feincms_appcontent_parameters'):
@@ -89,11 +92,29 @@ def build_page_response(page, request):
 
     response = _build_page_response(page, request)
 
-    if has_appcontent:
-        response['Cache-Control'] = 'no-cache, must-revalidate'
+    _update_response_headers(request, has_appcontent, response)
 
     page.finalize_response(request, response)
 
     return response
+
+# ------------------------------------------------------------------------
+def _update_response_headers(request, has_appcontent, response):
+    """
+    Combine all headers that were set by the different content types
+    We are interested in Cache-Control, Last-Modified, Expires
+    """
+
+    # Ideally, for the Cache-Control header, we'd want to do some intelligent
+    # combining, but that's hard. Let's just collect and unique them.
+    cc_headers = set()
+    for x in (cc.split(",") for cc in request._feincms_applicationcontents_headers['Cache-Control']):
+        cc_headers |= set((s.strip() for s in x))
+
+    if len(cc_headers):
+        response['Cache-Control'] = ", ".join(cc_headers)
+    else:   # Default value
+        if has_appcontent:
+            response['Cache-Control'] = 'no-cache, must-revalidate'
 
 # ------------------------------------------------------------------------
