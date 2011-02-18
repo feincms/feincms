@@ -157,7 +157,6 @@ def create_base_model(inherit_from=models.Model):
             """
 
             if hasattr(cls, 'template'):
-                import warnings
                 warnings.warn(
                     'Ignoring second call to register_regions.',
                     RuntimeWarning)
