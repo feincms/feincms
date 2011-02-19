@@ -88,13 +88,16 @@ class RichTextContent(models.Model):
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?
         if getattr(self, 'cleanse', False):
-            from feincms.utils.html.cleanse import cleanse_html
-            self.text = cleanse_html(self.text)
+            self.text = self.cleanse_module.cleanse_html(self.text)
         super(RichTextContent, self).save(*args, **kwargs)
 
     @classmethod
-    def initialize_type(cls, cleanse=False):
+    def initialize_type(cls, cleanse=False, cleanse_module='feincms.utils.html.cleanse'):
         cls.cleanse = cleanse
+        try:
+            cls.cleanse_module = __import__(cleanse_module, fromlist=True)
+        except (ValueError, ImportError):
+            raise ImproperlyConfigured, 'There was an error importing your %s cleanse_module!' % cls.__name__
 
         # TODO: Move this into somewhere more generic:
         if settings.FEINCMS_TIDY_HTML:
