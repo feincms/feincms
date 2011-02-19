@@ -1,9 +1,13 @@
+
+/* Suppress initial rendering of result list, but only if we can show it with JS later on */
+document.write('<style type="text/css">#result_list { display: none }</style>');
+
+
 feincms.jQuery(function($){
 	// recolor tree after expand/collapse
 	$.extend($.fn.recolorRows = function() {
-		$('tr', this).removeClass('row1').removeClass('row2');
-		$('tr:visible:even', this).addClass('row1');
-		$('tr:visible:odd', this).addClass('row2');
+		$('tr:visible:even', this).removeClass('row2').addClass('row1');
+		$('tr:visible:odd', this).removeClass('row1').addClass('row2');
 	});
 
     function isExpandedNode(id) {
@@ -198,6 +202,21 @@ feincms.jQuery(function($){
 		return this;
 	});
 
+    /* Every time the user expands or collapses a part of the tree, we remember
+       the current state of the tree so we can restore it on a reload.
+       Note: We might use html5's session storage? */
+    function storeCollapsedNodes(nodes) {
+        $.cookie('feincms_collapsed_nodes', "[" + nodes.join(",") + "]", { expires: 7 });
+    }
+
+    function retrieveCollapsedNodes() {
+        var n = $.cookie('feincms_collapsed_nodes');
+        if(n != null) {
+            n = $.parseJSON(n);
+            }
+        return n;
+    }
+
     function expandOrCollapseNode(item) {
         var show = true;
 
@@ -215,7 +234,7 @@ feincms.jQuery(function($){
             markNodeAsCollapsed(itemId);
         }
 
-        $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
+        storeCollapsedNodes(feincms.collapsed_nodes);
 
         doToggle(itemId, show);
 
@@ -239,7 +258,9 @@ feincms.jQuery(function($){
 	// bind the collapse all children event
 	$.extend($.fn.bindCollapseTreeEvent = function() {
 		$(this).click(function() {
-			$('#result_list tbody tr').each(function(i, el) {
+			rlist = $("#result_list");
+			rlist.hide();
+			$('tbody tr', rlist).each(function(i, el) {
 				var marker = $('.page_marker', el);
 				if(marker.hasClass('children')) {
                     var itemId = extract_item_id(marker.attr('id'));
@@ -248,8 +269,9 @@ feincms.jQuery(function($){
                     markNodeAsCollapsed(itemId);
 				}
 			});
-            $.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
-			$('#result_list tbody').recolorRows();
+            storeCollapsedNodes(feincms.collapsed_nodes);
+			rlist.show();
+			$('tbody', rlist).recolorRows();
 		});
 		return this;
 	});
@@ -257,7 +279,9 @@ feincms.jQuery(function($){
 	// bind the open all children event
 	$.extend($.fn.bindOpenTreeEvent = function() {
 		$(this).click(function() {
-			$('#result_list tbody tr').each(function(i, el) {
+			rlist = $("#result_list");
+			rlist.hide();
+			$('tbody tr', rlist).each(function(i, el) {
 				var marker = $('span.page_marker', el);
 				if(marker.hasClass('children')) {
                     var itemId = extract_item_id($('span.page_marker', el).attr('id'));
@@ -266,8 +290,9 @@ feincms.jQuery(function($){
                     markNodeAsExpanded(itemId);
 				}
 			});
-			$.cookie('feincms_collapsed_nodes', feincms.collapsed_nodes);
-			$('#result_list tbody').recolorRows();
+			storeCollapsedNodes([]);
+			rlist.show();
+			$('tbody', rlist).recolorRows();
 		});
 		return this;
 	});
@@ -306,24 +331,29 @@ feincms.jQuery(function($){
     }
 
 	// fire!
-	if($('#result_list tbody tr').length > 1) {
-	    $('#result_list tbody').feinTree();
-	    $('#result_list span.page_marker').feinTreeToggleItem();
-	    $('#collapse_entire_tree').bindCollapseTreeEvent();
-	    $('#open_entire_tree').bindOpenTreeEvent();
+        rlist = $("#result_list");
+	if($('tbody tr', rlist).length > 1) {
+        rlist.hide();
+		$('tbody', rlist).feinTree();
+		$('span.page_marker', rlist).feinTreeToggleItem();
+		$('#collapse_entire_tree').bindCollapseTreeEvent();
+		$('#open_entire_tree').bindOpenTreeEvent();
 
-            /* Enable focussing, put focus on first result, add handler for keyboard navigation */
-            $('#result_list tr').attr('tabindex', -1);
-            $('#result_list tbody tr:first').attr('tabindex', 0).focus();
-            $('#result_list tr').keydown(keyboardNavigationHandler);
+        /* Enable focussing, put focus on first result, add handler for keyboard navigation */
+        $('tr', rlist).attr('tabindex', -1);
+        $('tbody tr:first', rlist).attr('tabindex', 0).focus();
+        $('tr', rlist).keydown(keyboardNavigationHandler);
 
-	    feincms.collapsed_nodes = [];
-	    var storedNodes = $.cookie('feincms_collapsed_nodes');
-	    if(storedNodes) {
-		storedNodes = eval('[' + storedNodes + ']');
-		for(var i=0; i<storedNodes.length; i++) {
-		    $('#page_marker-' + storedNodes[i]).click();
+		feincms.collapsed_nodes = [];
+		var storedNodes = retrieveCollapsedNodes();
+        if(storedNodes == null) {
+            $('#collapse_entire_tree').click();
+        } else {
+            for(var i=0; i<storedNodes.length; i++) {
+                $('#page_marker-' + storedNodes[i]).click();
+            }
 		}
-	    }
+        rlist.show();
+        $('tbody', rlist).recolorRows();
 	}
 });
