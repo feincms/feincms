@@ -307,14 +307,10 @@ class ApplicationContent(models.Model):
 
         try:
             output = fn(request, *args, **kwargs)
-        except:
+        finally:
             # We want exceptions to propagate, but we cannot allow the
             # modifications to reverse() to stay here.
             del _local.urlconf
-            raise
-
-        # ... and restore it after processing the view
-        del _local.urlconf
 
         if isinstance(output, HttpResponse):
             if output.status_code == 200:
