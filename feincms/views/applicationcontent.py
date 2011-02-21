@@ -75,14 +75,14 @@ def build_page_response(page, request):
     else:
         request.extra_path = ""
 
+    response = page.setup_request(request)
+    if response:
+        return response
+
     # The monkey-patched reverse() method needs some information
     # for proximity analysis when determining the nearest
     # application integration point
     retrieve_page_information(page)
-
-    response = page.setup_request(request)
-    if response:
-        return response
 
     if has_appcontent:
         for content in page.applicationcontent_set.all():
