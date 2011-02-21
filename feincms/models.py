@@ -37,7 +37,7 @@ class Region(object):
     def __init__(self, key, title, *args):
         self.key = key
         self.title = title
-        self.inherited = args and args[0] == 'inherited'
+        self.inherited = args and args[0] == 'inherited' or False
         self._content_types = []
 
     def __unicode__(self):
