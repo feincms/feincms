@@ -119,7 +119,7 @@ def _update_response_headers(request, has_appcontent, response):
         if has_appcontent:
             response['Cache-Control'] = 'no-cache, must-revalidate'
 
-    # Check all Last-Modified headers, chose the latest one
+    # Check all Last-Modified headers, choose the latest one
     from email.utils import parsedate
     from time import mktime
 
@@ -127,7 +127,7 @@ def _update_response_headers(request, has_appcontent, response):
     if len(lm_list) > 0:
         response['Last-Modified'] = http_date(mktime(max(lm_list)))
 
-    # Check all Expires headers, chose the earliest one
+    # Check all Expires headers, choose the earliest one
     lm_list = [parsedate(x) for x in request._feincms_applicationcontents_headers['Expires']]
     if len(lm_list) > 0:
         response['Expires'] = http_date(mktime(min(lm_list)))
