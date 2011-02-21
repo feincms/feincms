@@ -8,7 +8,6 @@ from django.http import Http404
 from django.utils.cache import add_never_cache_headers
 
 from feincms import settings
-from feincms.content.application.models import retrieve_page_information
 from feincms.module.page.models import Page
 from feincms.views.base import _build_page_response
 
@@ -78,11 +77,6 @@ def build_page_response(page, request):
     response = page.setup_request(request)
     if response:
         return response
-
-    # The monkey-patched reverse() method needs some information
-    # for proximity analysis when determining the nearest
-    # application integration point
-    retrieve_page_information(page)
 
     if has_appcontent:
         for content in page.applicationcontent_set.all():

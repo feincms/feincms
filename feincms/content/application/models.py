@@ -23,7 +23,7 @@ except ImportError:
 _local = local()
 
 
-def retrieve_page_information(page):
+def retrieve_page_information(page, request=None):
     _local.proximity_info = (page.tree_id, page.lft, page.rght, page.level)
 
 
@@ -255,6 +255,9 @@ class ApplicationContent(models.Model):
 
         #: This provides hooks for us to customize the admin interface for embedded instances:
         cls.feincms_item_editor_form = ApplicationContentItemEditorForm
+
+        # Make sure the patched reverse() method has all information it needs
+        cls.parent.field.rel.to.register_request_processors(retrieve_page_information)
 
     def __init__(self, *args, **kwargs):
         super(ApplicationContent, self).__init__(*args, **kwargs)
