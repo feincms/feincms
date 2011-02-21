@@ -9,7 +9,7 @@ import warnings
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-from django.db import models
+from django.db import connection, models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
 from django.db.models.loading import get_model
@@ -132,13 +132,112 @@ class ContentProxy(object):
         return contents
 
 
+class ContentProxy2(object):
+    def __init__(self, item):
+        item._needs_content_types()
+
+        self.item = item
+        self.content_type_instances = self._fetch_content_type_instances(item)
+
+    def _fetch_content_type_counts(self, item, regions=None):
+        tmpl = 'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s'
+        args = []
+
+        if regions:
+            tmpl += ' AND region IN (' + ','.join(['%%s'] * len(regions)) + ')'
+            args.extend(regions * len(item._feincms_content_types))
+
+        sql = ' UNION '.join([tmpl % (idx, cls._meta.db_table, item.pk)\
+            for idx, cls in enumerate(item._feincms_content_types)])
+        sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
+
+        cursor = connection.cursor()
+        cursor.execute(sql, args)
+
+        return [row for row in cursor.fetchall() if row[1]]
+
+    def _fetch_content_type_instances(self, item, counts=None):
+        def _materialize(item, counts, regions=None):
+            contents = {}
+            query = Q(parent=item)
+
+            if regions:
+                query &= Q(region__in=regions)
+
+            for idx, cnt in counts:
+                for instance in item._feincms_content_types[idx].get_queryset(query):
+                    contents.setdefault(instance.region, []).append(instance)
+            return contents
+
+        if counts is None:
+            counts = self._fetch_content_type_counts(item)
+
+        contents = _materialize(item, counts)
+
+        # TODO this only applies to hierarchically organized Base subclasses...
+        empty_inherited_regions = set()
+        for region in item.template.regions:
+            if region.inherited and not contents.get(region.key):
+                empty_inherited_regions.add(region.key)
+
+        # TODO performance test this a bit...
+        if empty_inherited_regions:
+            ancestors = item.get_ancestors(ascending=True)
+
+            for ancestor in ancestors:
+                inherited_counts = self._fetch_content_type_counts(ancestor,
+                    regions=tuple(empty_inherited_regions))
+
+                if inherited_counts:
+                    inherited_contents = _materialize(ancestor, inherited_counts)
+
+                    for region in tuple(empty_inherited_regions):
+                        if inherited_contents.get(region):
+                            empty_inherited_regions.discard(region)
+                            contents[region] = inherited_contents.get(region)
+
+                if not empty_inherited_regions:
+                    break
+
+        return dict((region, sorted(instances, key=lambda c: c.ordering))\
+            for region, instances in contents.iteritems())
+
+    def __getattr__(self, attr):
+        """
+        Get all item content instances for the specified item and region
+
+        If no item contents could be found for the current item and the region
+        has the inherited flag set, this method will go up the ancestor chain
+        until either some item contents have found or no ancestors are left.
+        """
+        if (attr.startswith('__')):
+            raise AttributeError
+
+        instances = self.__dict__['content_type_instances']
+        return instances.get(attr, [])
+
+
+    def _get_media(self):
+        from django.forms.widgets import Media
+        media = Media()
+
+        instances = self.__dict__['content_type_instances']
+        for contents in instances.values():
+            for content in contents:
+                if hasattr(content, 'media'):
+                    media = media + content.media
+
+        return media
+    media = property(_get_media)
+
+
 def create_base_model(inherit_from=models.Model):
     class Base(inherit_from):
         """
         This is the base class for your CMS models.
         """
 
-        content_proxy_class = ContentProxy
+        content_proxy_class = ContentProxy2
 
         class Meta:
             abstract = True
