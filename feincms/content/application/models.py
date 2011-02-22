@@ -263,9 +263,6 @@ class ApplicationContent(models.Model):
         super(ApplicationContent, self).__init__(*args, **kwargs)
         self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get('config', {})
 
-    def render(self, request, **kwargs):
-        return getattr(request, "_feincms_applicationcontents", {}).get(self.id, u'')
-
     def process(self, request):
         page_url = self.parent.get_absolute_url()
 
@@ -318,7 +315,7 @@ class ApplicationContent(models.Model):
         if isinstance(output, HttpResponse):
             if output.status_code == 200:
                 if not getattr(output, 'standalone', False):
-                    request._feincms_applicationcontents[self.id] = mark_safe(output.content.decode('utf-8'))
+                    self.rendered_result = mark_safe(output.content.decode('utf-8'))
                     # Copy relevant headers for later perusal
                     for h in ( 'Cache-Control', 'Last-Modified', 'Expires'):
                         if h in output:
@@ -326,7 +323,10 @@ class ApplicationContent(models.Model):
 
             return output
         else:
-            request._feincms_applicationcontents[self.id] = mark_safe(output)
+            self.rendered_result = mark_safe(output)
+
+    def render(self, request, **kwargs):
+        return self.rendered_result
 
     def save(self, *args, **kwargs):
         super(ApplicationContent, self).save(*args, **kwargs)

@@ -26,8 +26,7 @@ class ApplicationContentHandler(Handler):
 
     def prepare(self, request, page):
         # prepare storage for rendered application contents
-        if not hasattr(request, '_feincms_applicationcontents'):
-            request._feincms_applicationcontents = {}
+        if not hasattr(request, '_feincms_applicationcontents_headers'):
             request._feincms_applicationcontents_headers = defaultdict(list)
 
         # Used to provide additional app-specific context variables:
