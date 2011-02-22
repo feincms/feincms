@@ -108,7 +108,8 @@ and all content blocks can be reordered using drag and drop:
 Customizing the item editor
 ---------------------------
 
-.. versionadded:: 1.1.5
+.. versionadded:: 1.2.0
+
 * The :class:`~feincms.admin.item_editor.ItemEditor` now plays nicely with
   standard Django ``fieldsets``; the content-editor is rendered as a
   replacement for a fieldset with the placeholder name matching
@@ -131,7 +132,8 @@ Customizing the item editor
             )
         )
 
-.. versionchanged:: 1.1.5
+.. versionchanged:: 1.2.0
+
 * ``show_on_top`` (**deprecated**; use standard ``fieldsets`` instead)
 
   A tuple which describes, which fields should be shown above the tabbed item

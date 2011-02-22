@@ -90,7 +90,7 @@ Just add the following lines to your ``urls.py`` to get a catch-all URL pattern:
 
 ::
 
-    urlpatterns += patterns(``,
+    urlpatterns += patterns('',
         url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
     )
 
@@ -284,25 +284,28 @@ Feincms site, add the following to your top-level urls.py:
 ::
 
     from feincms.module.page.sitemap import PageSitemap
-    sitemaps = { 'pages' : PageSitemap }
+    sitemaps = {'pages' : PageSitemap}
 
-    urlpatterns += (r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps})
+    urlpatterns += patterns('',
+        url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap',
+            {'sitemaps': sitemaps}),
+        )
 
 This will produce a default sitemap at the /sitemap.xml url. A sitemap can be
 further customised by passing it appropriate parameters, like so:
 
 ::
 
-    sitemaps = { 'pages' : PageSitemap(max_depth=2), }
+    sitemaps = {'pages': PageSitemap(max_depth=2)}
 
 
 The following parameters can be used to modify the behaviour of the sitemap:
 
-* navigation_only -- if set to True, only pages that are in_navigation will appear
+* ``navigation_only`` -- if set to True, only pages that are in_navigation will appear
   in the site map.
-* max_depth -- if set to a non-negative integer, will limit the sitemap generated
+* ``max_depth`` -- if set to a non-negative integer, will limit the sitemap generated
   to this page hierarchy depth.
-* changefreq -- should be a string or callable specifiying the page update frequency,
+* ``changefreq`` -- should be a string or callable specifiying the page update frequency,
   according to the sitemap protocol.
 
 

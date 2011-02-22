@@ -1,6 +1,6 @@
-====================================
-FeinCMS 1.2 release notes (upcoming)
-====================================
+=========================
+FeinCMS 1.2 release notes
+=========================
 
 
 Welcome to the first release notes for FeinCMS!
@@ -25,7 +25,8 @@ FeinCMS 1.2 sports several large changes, including:
 * The rich text configuration has slightly changed; ``CkRichTextContent`` has
   been completely removed in favor of a rich text editor agnostic configuration
   method. ``TINYMCE_JS_URL`` should be replaced by an appropriate
-  ``FEINCMS_RICHTEXT_INIT_CONTEXT`` settings value.
+  ``FEINCMS_RICHTEXT_INIT_CONTEXT`` settings value. See the
+  :ref:`contenttypes` documentation for more details.
 
 * A new content type, ``TemplateContent`` has been added which can be used to
   render templates residing on the hard disk.
