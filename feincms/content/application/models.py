@@ -1,3 +1,4 @@
+from collections import defaultdict
 import re
 
 from django.core import urlresolvers
@@ -316,10 +317,11 @@ class ApplicationContent(models.Model):
             if output.status_code == 200:
                 if not getattr(output, 'standalone', False):
                     self.rendered_result = mark_safe(output.content.decode('utf-8'))
+                    self.rendered_headers = defaultdict(list)
                     # Copy relevant headers for later perusal
-                    for h in ( 'Cache-Control', 'Last-Modified', 'Expires'):
+                    for h in ('Cache-Control', 'Last-Modified', 'Expires'):
                         if h in output:
-                            request._feincms_applicationcontents_headers[h].append(output[h])
+                            self.rendered_headers[h].append(output[h])
 
             return output
         else:
@@ -327,6 +329,11 @@ class ApplicationContent(models.Model):
 
     def render(self, request, **kwargs):
         return self.rendered_result
+
+    def finalize(self, request, response):
+        headers = getattr(self, 'rendered_headers', None)
+        if headers:
+            _update_response_headers(request, response, headers)
 
     def save(self, *args, **kwargs):
         super(ApplicationContent, self).save(*args, **kwargs)
@@ -337,3 +344,40 @@ class ApplicationContent(models.Model):
         super(ApplicationContent, self).delete(*args, **kwargs)
         # Clear reverse() cache
         _empty_reverse_cache()
+
+
+# ------------------------------------------------------------------------
+def _update_response_headers(request, response, headers):
+    """
+    Combine all headers that were set by the different content types
+    We are interested in Cache-Control, Last-Modified, Expires
+    """
+    from django.utils.http import http_date
+
+    # Ideally, for the Cache-Control header, we'd want to do some intelligent
+    # combining, but that's hard. Let's just collect and unique them and let
+    # the client worry about that.
+    cc_headers = set()
+    for x in (cc.split(",") for cc in headers['Cache-Control']):
+        cc_headers |= set((s.strip() for s in x))
+
+    if len(cc_headers):
+        response['Cache-Control'] = ", ".join(cc_headers)
+    else:   # Default value
+        response['Cache-Control'] = 'no-cache, must-revalidate'
+
+    # Check all Last-Modified headers, choose the latest one
+    from email.utils import parsedate
+    from time import mktime
+
+    lm_list = [parsedate(x) for x in headers['Last-Modified']]
+    if len(lm_list) > 0:
+        response['Last-Modified'] = http_date(mktime(max(lm_list)))
+
+    # Check all Expires headers, choose the earliest one
+    lm_list = [parsedate(x) for x in headers['Expires']]
+    if len(lm_list) > 0:
+        response['Expires'] = http_date(mktime(min(lm_list)))
+
+
+# ------------------------------------------------------------------------

@@ -44,12 +44,12 @@ class Handler(object):
             }, context_instance=RequestContext(request, extra_context))
 
     def finalize(self, request, response, page):
-        page.finalize_response(request, response)
-
         for content in page.content.all_of_type(tuple(page._feincms_content_types_with_finalize)):
-            response = content.finalize(request, response)
-            if response:
-                return response
+            r = content.finalize(request, response)
+            if r:
+                return r
+
+        page.finalize_response(request, response)
 
         # Add never cache headers in case frontend editing is active
         if hasattr(request, "session") and request.session.get('frontend_editing', False):

@@ -3,10 +3,9 @@ This is an assorted list of stuff.
 
 Internal variables FeinCMS uses:
 
-request._feincms_applicationcontent_headers:
-    Additional headers which can be set by an application content
-
-
+_feincms_content_types
+_feincms_content_types_with_process
+_feincms_content_types_with_finalize
 
 
 ApplicationContent parameters

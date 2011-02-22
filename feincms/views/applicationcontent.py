@@ -25,10 +25,6 @@ class ApplicationContentHandler(Handler):
             Page.objects.best_match_for_path(path or request.path))
 
     def prepare(self, request, page):
-        # prepare storage for rendered application contents
-        if not hasattr(request, '_feincms_applicationcontents_headers'):
-            request._feincms_applicationcontents_headers = defaultdict(list)
-
         # Used to provide additional app-specific context variables:
         if not hasattr(request, '_feincms_appcontent_parameters'):
             request._feincms_appcontent_parameters = dict(in_appcontent_subpage=False)
@@ -65,46 +61,19 @@ class ApplicationContentHandler(Handler):
         _update_response_headers(request, page_has_appcontent(page), response)
         return super(ApplicationContentHandler, self).finalize(request, response, page)
 
-handler = ApplicationContentHandler()
+#handler = ApplicationContentHandler()
+
+
+class NewApplicationContentHandler(Handler):
+    def __call__(self, request, path=None):
+        request._feincms_appcontent_parameters = {}
+
+        return self.build_response(request,
+            Page.objects.best_match_for_path(path or request.path, raise404=True))
+
+handler = NewApplicationContentHandler()
+
 
 
 def page_has_appcontent(page):
     return any(page.content.all_of_type(ApplicationContent))
-
-
-# ------------------------------------------------------------------------
-def _update_response_headers(request, has_appcontent, response):
-    """
-    Combine all headers that were set by the different content types
-    We are interested in Cache-Control, Last-Modified, Expires
-    """
-    from django.utils.http import http_date
-
-    # Ideally, for the Cache-Control header, we'd want to do some intelligent
-    # combining, but that's hard. Let's just collect and unique them and let
-    # the client worry about that.
-    cc_headers = set()
-    for x in (cc.split(",") for cc in request._feincms_applicationcontents_headers['Cache-Control']):
-        cc_headers |= set((s.strip() for s in x))
-
-    if len(cc_headers):
-        response['Cache-Control'] = ", ".join(cc_headers)
-    else:   # Default value
-        if has_appcontent:
-            response['Cache-Control'] = 'no-cache, must-revalidate'
-
-    # Check all Last-Modified headers, choose the latest one
-    from email.utils import parsedate
-    from time import mktime
-
-    lm_list = [parsedate(x) for x in request._feincms_applicationcontents_headers['Last-Modified']]
-    if len(lm_list) > 0:
-        response['Last-Modified'] = http_date(mktime(max(lm_list)))
-
-    # Check all Expires headers, choose the earliest one
-    lm_list = [parsedate(x) for x in request._feincms_applicationcontents_headers['Expires']]
-    if len(lm_list) > 0:
-        response['Expires'] = http_date(mktime(min(lm_list)))
-
-
-# ------------------------------------------------------------------------
