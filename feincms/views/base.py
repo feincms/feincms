@@ -1,55 +1,76 @@
 from django.contrib.auth.decorators import permission_required
+from django.contrib.sites.models import RequestSite
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
-from django.contrib.sites.models import RequestSite
 
 from feincms.module.page.models import Page
 
 
-def _build_page_response(page, request):
-    extra_context = request._feincms_extra_context
-    return render_to_response(page.template.path, {
-        'feincms_page' : page,
-        'feincms_site' : RequestSite(request),
-        }, context_instance=RequestContext(request, extra_context))
-
-def build_page_response(page, request):
-    response = page.setup_request(request)
-    if response:
-        return response
-
-    response = _build_page_response(page, request)
-    page.finalize_response(request, response)
-    return response
-
-def handler(request, path=None):
+class Handler(object):
     """
     This is the default handler for feincms page content.
     """
-    if path is None:
-        path = request.path
 
-    page = Page.objects.page_for_path_or_404(path)
+    def __call__(self, request, path=None):
+        return self.build_response(request,
+            Page.objects.page_for_path_or_404(path or request.path))
 
-    response = build_page_response(page, request)
+    def build_response(self, request, page):
+        response = self.prepare(request, page)
+        if response:
+            return response
 
-    if hasattr(request, "session") and request.session.get('frontend_editing', False):
-        add_never_cache_headers(response)
+        response = self.render(request, page)
+        return self.finalize(request, response, page)
 
-    return response
+    def prepare(self, request, page):
+        """
+        Prepare / pre-process content types
+        """
+
+        response = page.setup_request(request)
+        if response:
+            return response
+
+    def render(self, request, page):
+        extra_context = getattr(request, '_feincms_extra_context', {})
+        return render_to_response(page.template.path, {
+            'feincms_page' : page,
+            'feincms_site' : RequestSite(request),
+            }, context_instance=RequestContext(request, extra_context))
+
+    def finalize(self, request, response, page):
+        page.finalize_response(request, response)
+
+        # Add never cache headers in case frontend editing is active
+        if hasattr(request, "session") and request.session.get('frontend_editing', False):
+            add_never_cache_headers(response)
+
+        return response
+
+# Backards compatibility. Instantiate default handler
+handler = Handler()
 
 
-@permission_required('page.change_page')
-def preview_handler(request, page_id):
+class PreviewHandler(Handler):
     """
     This handler is for previewing site content; it takes a page_id so
     the page is uniquely identified and does not care whether the page
     is active or expired. To balance that, it requires a logged in user.
     """
-    page = get_object_or_404(Page, pk=page_id)
-    # Note: Does not call finalize_response so that response processors
-    # will not kick in, as they might cache the page or do something
-    # equally inappropriate. We are just previewing the page, move along.
-    page.setup_request(request)
-    return _build_page_response(page, request)
+
+    def __call__(self, request, page_id):
+        page = get_object_or_404(Page, pk=page_id)
+        return self.build_response(request, page)
+
+    def finalize(self, request, response, page):
+        """
+        Do (nearly) nothing
+        """
+
+        add_never_cache_headers(response)
+        return response
+
+
+preview_handler = permission_required('page.change_page')(PreviewHandler())

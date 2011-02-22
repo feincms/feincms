@@ -4,12 +4,15 @@
 
 from collections import defaultdict
 
+from django.contrib.sites.models import RequestSite
 from django.http import Http404
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
 
 from feincms import settings
 from feincms.module.page.models import Page
-from feincms.views.base import _build_page_response
+from feincms.views.base import Handler
 
 try:
     any
@@ -17,80 +20,63 @@ except NameError:
     # For Python 2.4
     from feincms.compat import c_any as any
 
-# ------------------------------------------------------------------------
-# TODO: This routine is very similar to the one in base.py, perhaps we should look into unifying them?
 
-def handler(request, path=None):
-    if path is None:
-        path = request.path
 
-    # prepare storage for rendered application contents
-    if not hasattr(request, '_feincms_applicationcontents'):
-        request._feincms_applicationcontents = {}
-        request._feincms_applicationcontents_headers = defaultdict(list)
+class ApplicationContentHandler(Handler):
+    def __call__(self, request, path=None):
+        return self.build_response(request,
+            Page.objects.best_match_for_path(path or request.path))
 
-    # Used to provide additional app-specific context variables:
-    if not hasattr(request, '_feincms_appcontent_parameters'):
-        request._feincms_appcontent_parameters = dict(in_appcontent_subpage = False)
+    def prepare(self, request, page):
+        # prepare storage for rendered application contents
+        if not hasattr(request, '_feincms_applicationcontents'):
+            request._feincms_applicationcontents = {}
+            request._feincms_applicationcontents_headers = defaultdict(list)
 
-    page = Page.objects.best_match_for_path(path, raise404=True)
-    response = build_page_response(page, request)
+        # Used to provide additional app-specific context variables:
+        if not hasattr(request, '_feincms_appcontent_parameters'):
+            request._feincms_appcontent_parameters = dict(in_appcontent_subpage = False)
 
-    if hasattr(request, "session") and request.session.get('frontend_editing', False):
-        add_never_cache_headers(response)
+        has_appcontent = page_has_appcontent(page)
 
-    return response
+        if request.path != page.get_absolute_url():
+            # The best_match logic kicked in. See if we have at least one
+            # application content for this page, and raise a 404 otherwise.
+            if not has_appcontent:
+                if not settings.FEINCMS_ALLOW_EXTRA_PATH:
+                    raise Http404
+            else:
+                request._feincms_appcontent_parameters['in_appcontent_subpage'] = True
 
-def _page_has_appcontent(page):
-    # Very dumb implementation, will be overridden with a more efficient
-    # version if ct_tracker is enabled.
-    try:
-        applicationcontents = page.applicationcontent_set.all()
-    except AttributeError:
-        return False
-
-    has_appcontent = any(applicationcontents)
-
-    return has_appcontent
-
-page_has_appcontent = _page_has_appcontent
-
-def build_page_response(page, request):
-    has_appcontent = page_has_appcontent(page)
-
-    if request.path != page.get_absolute_url():
-        # The best_match logic kicked in. See if we have at least one
-        # application content for this page, and raise a 404 otherwise.
-        if not has_appcontent:
-            if not settings.FEINCMS_ALLOW_EXTRA_PATH:
-                raise Http404
+            extra_path = request.path[len(page.get_absolute_url()):]
+            extra = extra_path.strip('/').split('/')
+            request._feincms_appcontent_parameters['page_extra_path'] = extra
+            request.extra_path = extra_path
         else:
-            request._feincms_appcontent_parameters['in_appcontent_subpage'] = True
+            request.extra_path = ""
 
-        extra_path = request.path[len(page.get_absolute_url()):]
-        extra = extra_path.strip('/').split('/')
-        request._feincms_appcontent_parameters['page_extra_path'] = extra
-        request.extra_path = extra_path
-    else:
-        request.extra_path = ""
+        response = page.setup_request(request)
+        if response:
+            return response
 
-    response = page.setup_request(request)
-    if response:
-        return response
+        if has_appcontent:
+            for content in page.applicationcontent_set.all():
+                r = content.process(request)
+                if r and (r.status_code != 200 or request.is_ajax() or getattr(r, 'standalone', False)):
+                    return r
 
-    if has_appcontent:
-        for content in page.applicationcontent_set.all():
-            r = content.process(request)
-            if r and (r.status_code != 200 or request.is_ajax() or getattr(r, 'standalone', False)):
-                return r
+    def finalize(self, request, response, page):
+        # This should go into finalize()
+        _update_response_headers(request, page_has_appcontent(page), response)
+        return super(ApplicationContentHandler, self).finalize(request, response, page)
 
-    response = _build_page_response(page, request)
+handler = ApplicationContentHandler()
 
-    _update_response_headers(request, has_appcontent, response)
 
-    page.finalize_response(request, response)
+def page_has_appcontent(page):
+    from feincms.content.application.models import ApplicationContent
+    return any(page.content.all_of_type(ApplicationContent))
 
-    return response
 
 # ------------------------------------------------------------------------
 def _update_response_headers(request, has_appcontent, response):
