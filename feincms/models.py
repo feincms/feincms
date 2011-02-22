@@ -5,6 +5,7 @@ All models defined here are abstract, which means no tables are created in
 the feincms_ namespace.
 """
 
+import itertools
 import warnings
 
 from django.contrib.contenttypes.models import ContentType
@@ -201,6 +202,9 @@ class ContentProxy2(object):
 
         return dict((region, sorted(instances, key=lambda c: c.ordering))\
             for region, instances in contents.iteritems())
+
+    def all_of_type(self, type):
+        return [ct for ct in itertools.chain(*self.content_type_instances.values()) if isinstance(ct, type)]
 
     def __getattr__(self, attr):
         """
