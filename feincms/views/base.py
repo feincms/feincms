@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import permission_required
-from django.contrib.sites.models import RequestSite
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
@@ -37,7 +36,6 @@ class Handler(object):
         extra_context = getattr(request, '_feincms_extra_context', {})
         return render_to_response(page.template.path, {
             'feincms_page' : page,
-            'feincms_site' : RequestSite(request),
             }, context_instance=RequestContext(request, extra_context))
 
     def finalize(self, request, response, page):
