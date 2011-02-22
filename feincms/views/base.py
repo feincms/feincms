@@ -34,7 +34,7 @@ class Handler(object):
 
         for content in page.content.all_of_type(tuple(page._feincms_content_types_with_process)):
             r = content.process(request)
-            if r and (r.status_code != 200 or request.is_ajax() or getattr(r, 'standalone', False)):
+            if r:
                 return r
 
     def render(self, request, page):

@@ -314,18 +314,20 @@ class ApplicationContent(models.Model):
             del _local.urlconf
 
         if isinstance(output, HttpResponse):
-            if output.status_code == 200:
-                if not getattr(output, 'standalone', False):
-                    self.rendered_result = mark_safe(output.content.decode('utf-8'))
-                    self.rendered_headers = defaultdict(list)
-                    # Copy relevant headers for later perusal
-                    for h in ('Cache-Control', 'Last-Modified', 'Expires'):
-                        if h in output:
-                            self.rendered_headers[h].append(output[h])
-
-            return output
+            if self.send_directly(request, output):
+                return output
+            elif output.status_code == 200:
+                self.rendered_result = mark_safe(output.content.decode('utf-8'))
+                self.rendered_headers = defaultdict(list)
+                # Copy relevant headers for later perusal
+                for h in ('Cache-Control', 'Last-Modified', 'Expires'):
+                    if h in output:
+                        self.rendered_headers[h].append(output[h])
         else:
             self.rendered_result = mark_safe(output)
+
+    def send_directly(self, request, response):
+        return response.status_code != 200 or request.is_ajax() or getattr(response, 'standalone', False)
 
     def render(self, request, **kwargs):
         return getattr(self, 'rendered_result', u'')
