@@ -12,10 +12,11 @@ FeinCMS 1.3 is mainly a cleanup release and does not sport many new features.
 Backwards-incompatible changes
 ==============================
 
-* The default ``ContentProxy`` has been refactored to load all content type
+* The default ``ContentProxy`` has been rewritten to load all content type
   instances on initialization. The instances stay around for the full
   request-response cycle which allows us to remove many quasi-global variables
-  (variables attached to the ``request`` object).
+  (variables attached to the ``request`` object). If you need the old proxy,
+  it's still around at ``feincms.legacy.ContentProxy``.
 
 * Application contents do not use global state (state stored on the ``request``
   object) as much as before anymore. The ``ContentProxy`` refactoring allows us
