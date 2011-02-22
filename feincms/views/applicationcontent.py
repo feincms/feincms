@@ -31,7 +31,7 @@ class ApplicationContentHandler(Handler):
 
         # Used to provide additional app-specific context variables:
         if not hasattr(request, '_feincms_appcontent_parameters'):
-            request._feincms_appcontent_parameters = dict(in_appcontent_subpage = False)
+            request._feincms_appcontent_parameters = dict(in_appcontent_subpage=False)
 
         has_appcontent = page_has_appcontent(page)
 
