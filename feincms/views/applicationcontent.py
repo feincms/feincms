@@ -4,11 +4,7 @@
 
 from collections import defaultdict
 
-from django.contrib.sites.models import RequestSite
 from django.http import Http404
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.utils.cache import add_never_cache_headers
 
 from feincms import settings
 from feincms.module.page.models import Page
