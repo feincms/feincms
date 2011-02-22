@@ -15,6 +15,7 @@ from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
 
+from feincms import settings as feincms_settings
 from feincms.content.application.models import ApplicationContent, _empty_reverse_cache
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
@@ -571,6 +572,9 @@ class PagesTestCase(TestCase):
         page.imagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
         page.filecontent_set.create(file='somefile.jpg', title='thetitle', region='main', ordering=3)
 
+        # Reload page
+        page = Page.objects.get(pk=page.pk)
+
         self.assertTrue('somefile.jpg' in page.content.main[2].render())
         self.assertTrue('<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render())
 
@@ -841,8 +845,16 @@ class PagesTestCase(TestCase):
         page.parent.save()
         self.assertEqual(page, Page.objects.for_request_or_404(request))
 
+        old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
         request.path += 'hello/'
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = False
+        self.assertRaises(Http404, lambda: Page.objects.best_match_for_request(request))
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
         self.assertEqual(page, Page.objects.best_match_for_request(request))
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
 
         page_id = id(request._feincms_page)
         p = Page.objects.from_request(request)
