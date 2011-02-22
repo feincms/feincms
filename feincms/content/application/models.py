@@ -328,7 +328,7 @@ class ApplicationContent(models.Model):
             self.rendered_result = mark_safe(output)
 
     def render(self, request, **kwargs):
-        return self.rendered_result
+        return getattr(self, 'rendered_result', u'')
 
     def finalize(self, request, response):
         headers = getattr(self, 'rendered_headers', None)
