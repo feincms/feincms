@@ -62,7 +62,6 @@ class ApplicationContentHandler(Handler):
                     return r
 
     def finalize(self, request, response, page):
-        # This should go into finalize()
         _update_response_headers(request, page_has_appcontent(page), response)
         return super(ApplicationContentHandler, self).finalize(request, response, page)
 
