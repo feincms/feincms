@@ -17,6 +17,10 @@ Backwards-incompatible changes
   request-response cycle which allows us to remove many quasi-global variables
   (variables attached to the ``request`` object).
 
+* Application contents do not use global state (state stored on the ``request``
+  object) as much as before anymore. The ``ContentProxy`` refactoring allows us
+  to store the needed data directly on the application content instance itself.
+
 * ``feincms_site`` is not available in the context anymore. It was undocumented,
   mostly unused and badly named anyway. If you still need this functionality you
   should use ``django.contrib.sites`` directly yourself.

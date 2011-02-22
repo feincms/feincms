@@ -3,10 +3,6 @@ This is an assorted list of stuff.
 
 Internal variables FeinCMS uses:
 
-
-request._feincms_applicationcontents
-    Return value of an application content during a request/response cycle
-
 request._feincms_applicationcontent_headers:
     Additional headers which can be set by an application content
 
