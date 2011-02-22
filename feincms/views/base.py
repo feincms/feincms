@@ -28,7 +28,14 @@ class Handler(object):
         Prepare / pre-process content types
         """
 
-        return page.setup_request(request)
+        response = page.setup_request(request)
+        if response:
+            return response
+
+        for content in page.content.all_of_type(tuple(page._feincms_content_types_with_process)):
+            r = content.process(request)
+            if r and (r.status_code != 200 or request.is_ajax() or getattr(r, 'standalone', False)):
+                return r
 
     def render(self, request, page):
         extra_context = getattr(request, '_feincms_extra_context', {})
@@ -38,6 +45,11 @@ class Handler(object):
 
     def finalize(self, request, response, page):
         page.finalize_response(request, response)
+
+        for content in page.content.all_of_type(tuple(page._feincms_content_types_with_finalize)):
+            response = content.finalize(request, response)
+            if response:
+                return response
 
         # Add never cache headers in case frontend editing is active
         if hasattr(request, "session") and request.session.get('frontend_editing', False):

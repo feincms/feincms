@@ -542,6 +542,18 @@ def create_base_model(inherit_from=models.Model):
             # list of concrete content types
             cls._feincms_content_types = []
 
+            # list of concrete content types having methods which may be called
+            # before or after rendering the content:
+            #
+            # def process(self, request):
+            #     May return a response early to short-circuit the request-response cycle
+            #
+            # def finalize(self, request, response)
+            #     May modify the response or replace it entirely by returning a new one
+            #
+            cls._feincms_content_types_with_process = []
+            cls._feincms_content_types_with_finalize = []
+
             # list of item editor context processors, will be extended by content types
             if hasattr(cls, 'feincms_item_editor_context_processors'):
                 cls.feincms_item_editor_context_processors = list(cls.feincms_item_editor_context_processors)
@@ -633,6 +645,11 @@ def create_base_model(inherit_from=models.Model):
                 (model, feincms_content_base,),
                 attrs)
             cls._feincms_content_types.append(new_type)
+
+            if hasattr(getattr(new_type, 'process', None), '__call__'):
+                cls._feincms_content_types_with_process.append(new_type)
+            if hasattr(getattr(new_type, 'finalize', None), '__call__'):
+                cls._feincms_content_types_with_finalize.append(new_type)
 
             # content types can be limited to a subset of regions
             if not regions:
