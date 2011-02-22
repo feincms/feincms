@@ -28,9 +28,7 @@ class Handler(object):
         Prepare / pre-process content types
         """
 
-        response = page.setup_request(request)
-        if response:
-            return response
+        return page.setup_request(request)
 
     def render(self, request, page):
         extra_context = getattr(request, '_feincms_extra_context', {})
