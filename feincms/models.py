@@ -83,7 +83,7 @@ class Template(object):
         return force_unicode(self.title)
 
 
-class ContentProxy(object):
+class LegacyContentProxy(object):
     """
     This proxy offers attribute-style access to the page contents of regions::
 
@@ -133,7 +133,7 @@ class ContentProxy(object):
         return contents
 
 
-class ContentProxy2(object):
+class ContentProxy(object):
     def __init__(self, item):
         item._needs_content_types()
 
@@ -241,7 +241,7 @@ def create_base_model(inherit_from=models.Model):
         This is the base class for your CMS models.
         """
 
-        content_proxy_class = ContentProxy2
+        content_proxy_class = ContentProxy
 
         class Meta:
             abstract = True
@@ -421,7 +421,7 @@ def create_base_model(inherit_from=models.Model):
 
         def _content_for_region(self, region):
             """
-            This method is used primarily by the ContentProxy
+            This method is used primarily by the LegacyContentProxy
             """
             self._needs_content_types()
 
