@@ -1,0 +1,22 @@
+====================================
+FeinCMS 1.3 release notes (upcoming)
+====================================
+
+
+Overview
+========
+
+FeinCMS 1.3 is mainly a cleanup release and does not sport many new features.
+
+
+Backwards-incompatible changes
+==============================
+
+* The default ``ContentProxy`` has been refactored to load all content type
+  instances on initialization. The instances stay around for the full
+  request-response cycle which allows us to remove many quasi-global variables
+  (variables attached to the ``request`` object).
+
+* ``feincms_site`` is not available in the context anymore. It was undocumented,
+  mostly unused and badly named anyway. If you still need this functionality you
+  should use ``django.contrib.sites`` directly yourself.
