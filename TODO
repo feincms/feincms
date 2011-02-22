@@ -13,6 +13,13 @@ request._feincms_applicationcontent_headers:
 
 
 
+ApplicationContent parameters
+
+    * urls
+    * admin_fields
+    * path_mapper
+    * view_wrapper
+
 
 
 The stages when processing a request
