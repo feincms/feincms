@@ -7,6 +7,7 @@ from collections import defaultdict
 from django.http import Http404
 
 from feincms import settings
+from feincms.content.application.models import ApplicationContent
 from feincms.module.page.models import Page
 from feincms.views.base import Handler
 
@@ -56,7 +57,7 @@ class ApplicationContentHandler(Handler):
             return response
 
         if has_appcontent:
-            for content in page.applicationcontent_set.all():
+            for content in page.content.all_of_type(ApplicationContent):
                 r = content.process(request)
                 if r and (r.status_code != 200 or request.is_ajax() or getattr(r, 'standalone', False)):
                     return r
@@ -70,7 +71,6 @@ handler = ApplicationContentHandler()
 
 
 def page_has_appcontent(page):
-    from feincms.content.application.models import ApplicationContent
     return any(page.content.all_of_type(ApplicationContent))
 
 
