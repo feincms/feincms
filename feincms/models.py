@@ -14,6 +14,7 @@ from django.db import connection, models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
 from django.db.models.loading import get_model
+from django.forms.widgets import Media
 from django.template.loader import render_to_string
 from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
@@ -139,6 +140,7 @@ class ContentProxy(object):
 
         self.item = item
         self.content_type_instances = self._fetch_content_type_instances(item)
+        self.media_cache = None
 
     def _fetch_content_type_counts(self, item, regions=None):
         tmpl = 'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s'
@@ -220,18 +222,18 @@ class ContentProxy(object):
         instances = self.__dict__['content_type_instances']
         return instances.get(attr, [])
 
-
     def _get_media(self):
-        from django.forms.widgets import Media
-        media = Media()
+        if self.media_cache is None:
+            media = Media()
 
-        instances = self.__dict__['content_type_instances']
-        for contents in instances.values():
-            for content in contents:
-                if hasattr(content, 'media'):
-                    media = media + content.media
+            instances = self.__dict__['content_type_instances']
+            for contents in instances.values():
+                for content in contents:
+                    if hasattr(content, 'media'):
+                        media = media + content.media
 
-        return media
+            self.media_cache = media
+        return self.media_cache
     media = property(_get_media)
 
 
