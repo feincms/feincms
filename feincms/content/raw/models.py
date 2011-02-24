@@ -12,13 +12,6 @@ class RawContent(models.Model):
         verbose_name = _('raw content')
         verbose_name_plural = _('raw contents')
 
-    @property
-    def media(self):
-        return forms.Media(
-            css={'all': ('whatever.css',)},
-            js=('something.js',),
-            )
-
     def render(self, **kwargs):
         return mark_safe(self.text)
 
