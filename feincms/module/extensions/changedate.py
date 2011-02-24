@@ -7,7 +7,10 @@ Track the modification date for pages.
 
 import os
 
-from email.utils import parsedate_tz, mktime_tz
+try:
+    from email.utils import parsedate_tz, mktime_tz
+except ImportError: # py 2.4 compat
+    from email.Utils import parsedate_tz, mktime_tz
 
 from django.db import models
 from django.db.models.signals import pre_save
