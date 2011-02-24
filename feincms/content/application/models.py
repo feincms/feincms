@@ -307,19 +307,19 @@ class ApplicationContent(models.Model):
 
         try:
             output = fn(request, *args, **kwargs)
-        except:
+        finally:
             # We want exceptions to propagate, but we cannot allow the
             # modifications to reverse() to stay here.
             del _local.urlconf
-            raise
-
-        # ... and restore it after processing the view
-        del _local.urlconf
 
         if isinstance(output, HttpResponse):
             if output.status_code == 200:
                 if not getattr(output, 'standalone', False):
                     request._feincms_applicationcontents[self.id] = mark_safe(output.content.decode('utf-8'))
+                    # Copy relevant headers for later perusal
+                    for h in ( 'Cache-Control', 'Last-Modified', 'Expires'):
+                        if h in output:
+                            request._feincms_applicationcontents_headers[h].append(output[h])
 
             return output
         else:

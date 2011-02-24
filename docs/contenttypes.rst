@@ -219,12 +219,21 @@ Rich text
 .. module:: feincms.content.richtext.models
 .. class:: RichTextContent()
 
-TinyMCE widget, stripped down to the essentials; no media support, only
-a few styles activated. The TinyMCE javascript files are not included,
+Rich text editor widget, stripped down to the essentials; no media support, only
+a few styles activated. The necessary javascript files are not included,
 you need to put them in the right place on your own.
 
-Please note that you should set the TINYMCE_JS_URL inside your settings,
-otherwise settings.MEDIA_URL + 'js/tiny_mce/tiny_mce.js' will be used.
+By default, ``RichTextContent`` expects a TinyMCE activation script at
+``<MEDIA_URL>js/tiny_mce/tiny_mce.js``. This can be customized by overriding
+``FEINCMS_RICHTEXT_INIT_TEMPLATE`` and ``FEINCMS_RICHTEXT_INIT_CONTEXT`` in
+your ``settings.py`` file.
+
+If you only want to provide a different path to the TinyMCE javascript file,
+you can do this as follows::
+
+    FEINCMS_RICHTEXT_INIT_CONTEXT = {
+        'TINYMCE_JS_URL': '/your_custom_path/tiny_mce.js',
+        }
 
 If you pass cleanse=True to the create_content_type invocation for your
 RichTextContent types, the HTML code will be cleansed right before saving

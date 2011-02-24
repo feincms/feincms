@@ -5,14 +5,14 @@
 from django.db.models import Max
 from django.contrib.sitemaps import Sitemap
 
-from models import Page
+from feincms.module.page.models import Page
 
 class PageSitemap(Sitemap):
     """
     The PageSitemap can be used to automatically generate sitemap.xml files
     for submission to index engines. See http://www.sitemaps.org/ for details.
     """
-    def __init__(self, navigation_only=False, max_depth=0, changefreq=None, *args, **kwargs):
+    def __init__(self, navigation_only=False, max_depth=0, changefreq=None, queryset=None, filter=None, *args, **kwargs):
         """
         The PageSitemap accepts the following parameters for customisation
         of the resulting sitemap.xml output:
@@ -23,23 +23,39 @@ class PageSitemap(Sitemap):
         generated to this page hierarchy depth.
         * changefreq -- should be a string or callable specifiying the page
         update frequency, according to the sitemap protocol.
+        * queryset -- pass in a query set to restrict the Pages to include
+        in the site map.
+        * filter -- pass in a callable that transforms a queryset to filter
+        out the pages you want to include in the site map.
         """
         super(PageSitemap, self).__init__(*args, **kwargs)
         self.depth_cutoff    = max_depth
         self.navigation_only = navigation_only
         self.changefreq      = changefreq
+        self.filter          = filter
+        if queryset is not None:
+            self.queryset    = queryset
+        else:
+            self.queryset    = Page.objects.active()
 
     def items(self):
         """
         Consider all pages that are active and that are not a redirect
         """
-        self.max_depth = Page.objects.active().aggregate(Max('level'))['level__max']
+
+        base_qs = self.queryset
+        if callable(base_qs):
+            base_qs = base_qs()
+
+        self.max_depth = base_qs.aggregate(Max('level'))['level__max']
         if self.depth_cutoff > 0:
             self.max_depth = min(self.depth_cutoff, self.max_depth)
 
         self.per_level = 1.0 / (self.max_depth + 1.0)
 
-        qs = Page.objects.active().filter(redirect_to="")
+        qs = base_qs.filter(redirect_to="")
+        if self.filter:
+            qs = self.filter(qs)
         if self.navigation_only:
             qs = qs.filter(in_navigation=True)
         if self.depth_cutoff > 0:

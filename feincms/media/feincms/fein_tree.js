@@ -353,7 +353,8 @@ feincms.jQuery(function($){
                 $('#page_marker-' + storedNodes[i]).click();
             }
 		}
-        rlist.show();
-        $('tbody', rlist).recolorRows();
 	}
+
+    rlist.show();
+    $('tbody', rlist).recolorRows();
 });

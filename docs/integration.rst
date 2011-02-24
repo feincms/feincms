@@ -29,7 +29,7 @@ implement a default page by adding another entry to your ``urls.py``:
 
 ::
 
-        url(r'^$', 'feincms.views.base.handler', { 'path': '/rootpage' })
+        url(r'^$', 'feincms.views.base.handler', {'path': '/rootpage'})
 
 
 Generic views
@@ -259,21 +259,12 @@ returns a HttpResponse with the ``standalone`` attribute set to True.
 For example, an application can return an non-html export file -- in that case
 you don't really want the CMS to decorate the data file with the web html templates:
 
-    def my_view(request):
-        ...
-        xls_data = ... whatever ...
-        r = HttpResponse(xls_data, content_type="application/msexcel")
-        setattr(r, 'standalone', True)
-        return r
-
-Actually, there's even a decorator for that:
-
 ::
 
     from feincms.views.decorators import standalone
+
     @standalone
     def my_view(request):
         ...
-
-
-
+        xls_data = ... whatever ...
+        return HttpResponse(xls_data, content_type="application/msexcel")
