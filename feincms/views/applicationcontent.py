@@ -2,7 +2,10 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from collections import defaultdict
+try:
+    from email.utils import parsedate
+except ImportError: # py 2.4 compat
+    from email.Utils import parsedate
 
 from django.http import Http404
 from django.utils.cache import add_never_cache_headers
@@ -28,7 +31,7 @@ def handler(request, path=None):
     # prepare storage for rendered application contents
     if not hasattr(request, '_feincms_applicationcontents'):
         request._feincms_applicationcontents = {}
-        request._feincms_applicationcontents_headers = defaultdict(list)
+        request._feincms_applicationcontents_headers = {}
 
     # Used to provide additional app-specific context variables:
     if not hasattr(request, '_feincms_appcontent_parameters'):
@@ -110,7 +113,7 @@ def _update_response_headers(request, has_appcontent, response):
     # combining, but that's hard. Let's just collect and unique them and let
     # the client worry about that.
     cc_headers = set()
-    for x in (cc.split(",") for cc in request._feincms_applicationcontents_headers['Cache-Control']):
+    for x in (cc.split(",") for cc in request._feincms_applicationcontents_headers.get('Cache-Control', ())):
         cc_headers |= set((s.strip() for s in x))
 
     if len(cc_headers):
@@ -120,15 +123,14 @@ def _update_response_headers(request, has_appcontent, response):
             response['Cache-Control'] = 'no-cache, must-revalidate'
 
     # Check all Last-Modified headers, choose the latest one
-    from email.utils import parsedate
     from time import mktime
 
-    lm_list = [parsedate(x) for x in request._feincms_applicationcontents_headers['Last-Modified']]
+    lm_list = [parsedate(x) for x in request._feincms_applicationcontents_headers.get('Last-Modified', ())]
     if len(lm_list) > 0:
         response['Last-Modified'] = http_date(mktime(max(lm_list)))
 
     # Check all Expires headers, choose the earliest one
-    lm_list = [parsedate(x) for x in request._feincms_applicationcontents_headers['Expires']]
+    lm_list = [parsedate(x) for x in request._feincms_applicationcontents_headers.get('Expires', ())]
     if len(lm_list) > 0:
         response['Expires'] = http_date(mktime(min(lm_list)))
 

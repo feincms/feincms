@@ -319,6 +319,8 @@ class ApplicationContent(models.Model):
                     # Copy relevant headers for later perusal
                     for h in ( 'Cache-Control', 'Last-Modified', 'Expires'):
                         if h in output:
+                            if not h in request._feincms_applicationcontents_headers:
+                                request._feincms_applicationcontents_headers[h] = []
                             request._feincms_applicationcontents_headers[h].append(output[h])
 
             return output
