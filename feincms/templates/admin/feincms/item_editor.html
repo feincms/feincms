@@ -89,6 +89,29 @@
   <script type="text/javascript">
     feincms.jQuery(function($){
       $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
+
+      $('#main > .panel').each(function() {
+          var $c = $('.machine-control', this);
+          var $select = $('select[name=order-machine-add-select]', this);
+          var $add = $('input.order-machine-add-button', this);
+
+          function prepend_action(option) {
+              return $('<a href="#" />').text('Add ' + option.text).bind('click', function(){
+                  $select.val(option.value);
+                  $add.trigger('click');
+                  return false;
+                  });
+          }
+
+          for (var i=5; i>=0; --i) {
+              var option = $select[0].options[i];
+              if (typeof(option) == 'undefined')
+                  continue;
+
+              $select.before(prepend_action(option));
+              $select.before(' ');
+          }
+      });
     });
   </script>
 {% endblock %}

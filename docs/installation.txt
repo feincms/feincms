@@ -10,9 +10,7 @@ Installation
 This document describes the steps needed to get FeinCMS up and running.
 
 FeinCMS is based on Django, so you need a working Django_ installation
-first. I'm developing FeinCMS using a Subversion_ checkout of Django_,
-but any version which is at least 1.0 should work currently. If it does
-not, this is considered a bug and I'd be happy to hear about it.
+first. The minimum support version of Django_ is the 1.2 line of releases.
 
 You can download a stable release of FeinCMS using ``easy_install``::
 
@@ -25,11 +23,7 @@ which you can download using the Git_ version control system::
 
     $ git clone git://github.com/matthiask/feincms.git
 
-In addition, you will need a django-mptt_ installation (The released
-version 0.2.1 is incompatible with Django SVN trunk. The django-mptt_
-version from SVN is fixed to work with current versions of Django_,
-but seems to be unmaintained and has several small bugs. Consider
-getting the version from the github repository linked to above.)
+In addition, you will need a django-mptt_ installation.
 
 Finally, some content types or extensions require recent versions of
 lxml_, django-tagging_, feedparser_ and the python imaging library PIL_
@@ -39,7 +33,7 @@ lxml_, django-tagging_, feedparser_ and the python imaging library PIL_
 .. _Django: http://www.djangoproject.com/
 .. _Git: http://git-scm.com/
 .. _Subversion: http://subversion.tigris.org/
-.. _django-mptt: http://github.com/matthiask/django-mptt/
+.. _django-mptt: http://github.com/django-mptt/django-mptt/
 .. _django-tagging: http://code.google.com/p/django-tagging/
 .. _lxml: http://codespeak.net/lxml/
 .. _feedparser: http://www.feedparser.org/

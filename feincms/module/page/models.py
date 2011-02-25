@@ -2,6 +2,11 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+try:
+    from hashlib import md5
+except ImportError:
+    import md5
+
 import sys
 
 from django import forms
@@ -80,7 +85,17 @@ class ActiveAwareContentManagerMixin(object):
 def path_to_cache_key(path):
     from django.utils.encoding import iri_to_uri
     path = iri_to_uri(path)
-    return 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, path )
+
+    # logic below borrowed from http://richwklein.com/2009/08/04/improving-django-cache-part-ii/
+    # via acdha's django-sugar
+    if len(path) > 250:
+        m = md5()
+        m.update(path)
+        path = m.hexdigest() + '-' + path[:200]
+
+    cache_key = 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, path )
+
+    return cache_key
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 

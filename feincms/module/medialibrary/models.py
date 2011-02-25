@@ -4,7 +4,7 @@
 
 from datetime import datetime
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings as django_settings
 from django.core.urlresolvers import get_callable
@@ -118,6 +118,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     def formatted_file_size(self):
         return filesizeformat(self.file_size)
     formatted_file_size.short_description = _("file size")
+    formatted_file_size.admin_order_field = 'file_size'
 
     def formatted_created(self):
         return self.created.strftime("%Y-%m-%d %H:%M")
@@ -410,7 +411,7 @@ class MediaFileAdmin(admin.ModelAdmin):
 
                 storage = MediaFile.fs
                 if not storage:
-                    request.user.message_set.create(message="Could not access storage")
+                    messages.error(request, _("Could not access storage"))
                     return
 
                 count = 0
@@ -431,9 +432,9 @@ class MediaFileAdmin(admin.ModelAdmin):
                                 mf.categories.add(category)
                             count += 1
 
-                request.user.message_set.create(message="%d files imported" % count)
+                messages.info(request, _("%d files imported") % count)
             except Exception, e:
-                request.user.message_set.create(message="ZIP file invalid: %s" % str(e))
+                messages.error(request, _("ZIP file invalid: %s") % str(e))
                 return
 
             pass
@@ -441,7 +442,7 @@ class MediaFileAdmin(admin.ModelAdmin):
         if request.method == 'POST' and 'data' in request.FILES:
             import_zipfile(request, request.POST.get('category'), request.FILES['data'])
         else:
-            request.user.message_set.create(message="No input file given")
+            messages.error(request, _("No input file given"))
 
         return HttpResponseRedirect(reverse('admin:medialibrary_mediafile_changelist'))
 

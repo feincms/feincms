@@ -98,17 +98,14 @@
 
         <div id="sidebar">
             <h2>Sidebar content</h2>
-
-            {% feincms_navigation of feincms_page as sublevel level=2 %}
-            {% if sublevel %} {# stupid django 1.0 compatibility ... :-) #}
+                {% feincms_navigation of feincms_page as sublevel level=2 %}
                 {% for p in sublevel %}
                     {% if forloop.first %}<ul>{% endif %}
                     <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></li>
                     {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    No subpages
                 {% endfor %}
-            {% else %}
-                No subpages
-            {% endif %}
 
                 {% feincms_render_region feincms_page "sidebar" request %}
             </div>
