@@ -209,6 +209,7 @@ Here's an example form-handling content which uses all of these facilities::
 
             self.rendered_output = render_to_string('content/form.html', {
                 'form': form,
+                'thanks': request.GET.get('thanks'),
                 })
 
         def render(self, **kwargs):
