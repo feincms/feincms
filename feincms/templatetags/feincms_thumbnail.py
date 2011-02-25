@@ -89,6 +89,7 @@ def cropscale(filename, size='200x200'):
             crop_height = crop_width / dst_ratio
             x_offset = 0
             y_offset = float(src_height - crop_height) / 2
+        x_offset, y_offset = int(x_offset), int(y_offset)
 
         try:
             image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
