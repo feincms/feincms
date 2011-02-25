@@ -1,4 +1,4 @@
-from collections import defaultdict
+from time import mktime
 import re
 
 from django.core import urlresolvers
@@ -15,6 +15,11 @@ except ImportError:
 
 from feincms.admin.editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
+
+try:
+    from email.utils import parsedate
+except ImportError: # py 2.4 compat
+    from email.Utils import parsedate
 
 try:
     from threading import local
@@ -318,11 +323,11 @@ class ApplicationContent(models.Model):
                 return output
             elif output.status_code == 200:
                 self.rendered_result = mark_safe(output.content.decode('utf-8'))
-                self.rendered_headers = defaultdict(list)
+                self.rendered_headers = {}
                 # Copy relevant headers for later perusal
                 for h in ('Cache-Control', 'Last-Modified', 'Expires'):
                     if h in output:
-                        self.rendered_headers[h].append(output[h])
+                        self.rendered_headers.setdefault(h, []).append(output[h])
         else:
             self.rendered_result = mark_safe(output)
 
@@ -360,7 +365,7 @@ def _update_response_headers(request, response, headers):
     # combining, but that's hard. Let's just collect and unique them and let
     # the client worry about that.
     cc_headers = set()
-    for x in (cc.split(",") for cc in headers['Cache-Control']):
+    for x in (cc.split(",") for cc in headers.get('Cache-Control', ())):
         cc_headers |= set((s.strip() for s in x))
 
     if len(cc_headers):
@@ -369,15 +374,12 @@ def _update_response_headers(request, response, headers):
         response['Cache-Control'] = 'no-cache, must-revalidate'
 
     # Check all Last-Modified headers, choose the latest one
-    from email.utils import parsedate
-    from time import mktime
-
-    lm_list = [parsedate(x) for x in headers['Last-Modified']]
+    lm_list = [parsedate(x) for x in headers.get('Last-Modified', ())]
     if len(lm_list) > 0:
         response['Last-Modified'] = http_date(mktime(max(lm_list)))
 
     # Check all Expires headers, choose the earliest one
-    lm_list = [parsedate(x) for x in headers['Expires']]
+    lm_list = [parsedate(x) for x in headers.get('Expires', ())]
     if len(lm_list) > 0:
         response['Expires'] = http_date(mktime(min(lm_list)))
 

@@ -2,7 +2,10 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from collections import defaultdict
+try:
+    from email.utils import parsedate
+except ImportError: # py 2.4 compat
+    from email.Utils import parsedate
 
 from django.http import Http404
 
