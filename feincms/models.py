@@ -166,6 +166,12 @@ class ContentProxy(object):
             for region, instances in contents.iteritems())
 
     def all_of_type(self, type):
+        """
+        Return all content type instances belonging to the type or types passed.
+        If you want to filter for several types at the same time, type must be
+        a tuple.
+        """
+
         return [ct for ct in itertools.chain(*self.content_type_instances.values()) if isinstance(ct, type)]
 
     def _get_media(self):
