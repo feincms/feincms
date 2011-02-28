@@ -125,32 +125,6 @@ class ContentProxy(object):
 
     def _fetch_content_type_instances(self, item, counts):
         contents = self._materialize(item, counts)
-
-        # TODO this only applies to hierarchically organized Base subclasses...
-        empty_inherited_regions = set()
-        for region in item.template.regions:
-            if region.inherited and not contents.get(region.key):
-                empty_inherited_regions.add(region.key)
-
-        # TODO performance test this a bit...
-        if empty_inherited_regions:
-            ancestors = item.get_ancestors(ascending=True)
-
-            for ancestor in ancestors:
-                inherited_counts = self._fetch_content_type_counts(ancestor,
-                    regions=tuple(empty_inherited_regions))
-
-                if inherited_counts:
-                    inherited_contents = self._materialize(ancestor, inherited_counts)
-
-                    for region in tuple(empty_inherited_regions):
-                        if inherited_contents.get(region):
-                            empty_inherited_regions.discard(region)
-                            contents[region] = inherited_contents.get(region)
-
-                if not empty_inherited_regions:
-                    break
-
         return dict((region, sorted(instances, key=lambda c: c.ordering))\
             for region, instances in contents.iteritems())
 
@@ -184,6 +158,39 @@ class ContentProxy(object):
             self.media_cache = media
         return self.media_cache
     media = property(_get_media)
+
+
+class InheritingContentProxy(ContentProxy):
+    def _fetch_content_type_instances(self, item, counts):
+        contents = self._materialize(item, counts)
+
+        # TODO this only applies to hierarchically organized Base subclasses...
+        empty_inherited_regions = set()
+        for region in item.template.regions:
+            if region.inherited and not contents.get(region.key):
+                empty_inherited_regions.add(region.key)
+
+        # TODO performance test this a bit...
+        if empty_inherited_regions:
+            ancestors = item.get_ancestors(ascending=True)
+
+            for ancestor in ancestors:
+                inherited_counts = self._fetch_content_type_counts(ancestor,
+                    regions=tuple(empty_inherited_regions))
+
+                if inherited_counts:
+                    inherited_contents = self._materialize(ancestor, inherited_counts)
+
+                    for region in tuple(empty_inherited_regions):
+                        if inherited_contents.get(region):
+                            empty_inherited_regions.discard(region)
+                            contents[region] = inherited_contents.get(region)
+
+                if not empty_inherited_regions:
+                    break
+
+        return dict((region, sorted(instances, key=lambda c: c.ordering))\
+            for region, instances in contents.iteritems())
 
 
 def create_base_model(inherit_from=models.Model):
