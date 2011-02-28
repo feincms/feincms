@@ -87,20 +87,24 @@ class Template(object):
 class ContentProxy(object):
     def __init__(self, item):
         item._needs_content_types()
-
         self.item = item
         self.media_cache = None
 
-        self.content_type_counts = counts = self._fetch_content_type_counts(item.pk)
+        self.content_type_counts = self._fetch_content_type_counts(item.pk)
+        self.content_type_instances = self._fetch_content_type_instances(
+            self.content_type_counts)
+
+    def _fetch_content_type_counts(self, pk):
+        counts = self._fetch_content_type_count_helper(self.item.pk)
 
         empty_inherited_regions = set()
-        for region in item.template.regions:
+        for region in self.item.template.regions:
             if region.inherited and not counts.get(region.key):
                 empty_inherited_regions.add(region.key)
 
         if empty_inherited_regions:
-            for parent in item.get_ancestors(ascending=True).values_list('pk', flat=True):
-                parent_counts = self._fetch_content_type_counts(
+            for parent in self.item.get_ancestors(ascending=True).values_list('pk', flat=True):
+                parent_counts = self._fetch_content_type_count_helper(
                     parent, regions=tuple(empty_inherited_regions))
 
                 counts.update(parent_counts)
@@ -110,9 +114,9 @@ class ContentProxy(object):
                 if not empty_inherited_regions:
                     break
 
-        self.content_type_instances = self._fetch_content_type_instances(counts)
+        return counts
 
-    def _fetch_content_type_counts(self, pk, regions=None):
+    def _fetch_content_type_count_helper(self, pk, regions=None):
         """
         Returns a structure describing which content types exist for the object
         with the given primary key.
