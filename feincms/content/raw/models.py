@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
+from django import forms
 
 class RawContent(models.Model):
     text = models.TextField(_('content'), blank=True)

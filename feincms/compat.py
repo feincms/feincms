@@ -1,4 +1,3 @@
-
 def c_any(iterable):
     """
     Implements python 2.5's any()

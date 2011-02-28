@@ -15,13 +15,12 @@ def add_page_if_missing(request):
     except Page.DoesNotExist:
         return {}
 
+
 def appcontent_parameters(request):
     """Add ApplicationContent parameters from the request
 
     ApplicationContent adds the parameters to the request object before
     processing the view so we can expose them to templates here
     """
-    if not hasattr(request, '_feincms_appcontent_parameters'):
-        return {}
-    else:
-        return request._feincms_appcontent_parameters
+
+    return getattr(request, '_feincms_appcontent_parameters', {})

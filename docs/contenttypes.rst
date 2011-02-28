@@ -46,6 +46,23 @@ Simple:
 Implementing your own content types
 ===================================
 
+The minimal content type is an abstract Django model with a :func:`render`
+method, nothing else::
+
+    class TextileContent(models.Model):
+        content = models.TextField(_('content'))
+
+        class Meta:
+            abstract = True
+
+        def render(self, **kwargs):
+            return textile(self.content)
+
+
+All content types' :func:`render` methods must accept ``**kwargs``. This
+allows easily extending the interface with additional parameters. But more
+on this later.
+
 FeinCMS offers a method on :class:`feincms.models.Base` called
 :func:`create_content_type` which will create concrete content types from
 your abstract content types. Since content types can be used for different
@@ -64,12 +81,8 @@ in the rendered result.
    outlined apply for all other CMS base types.
 
 
-Implementing a textile content block
-------------------------------------
-
-Without further ado, here's the first example:
-
-::
+The complete code required to implement and include a custom textile content
+type is shown here::
 
     from feincms.module.page.models import Page
     from django.contrib.markup.templatetags.markup import textile
@@ -91,7 +104,6 @@ There are three field names you should not use because they are added
 by ``create_content_type``: These are ``parent``, ``region`` and ``ordering``.
 These fields are used to specify the place where the content will be
 placed in the output.
-
 
 
 Customizing the render method for different regions
@@ -156,6 +168,56 @@ Or even like this:
 This does exactly the same, but you do not have to loop over the page content
 blocks yourself. You need to add the request context processor to your list
 of context processors for this example to work.
+
+
+
+Influencing request processing through a content type
+=====================================================
+
+Since FeinCMS 1.3, content types are not only able to render themselves, they
+can offer two more entry points which are called before and after the response
+is rendered. These two entry points are called :func:`process` and :func:`finalize`.
+
+:func:`process` is called before rendering the template starts. The only argument
+to the method is the current ``request`` instance. This method can short-circuit
+the request-response-cycle simply by returning any response object. If the return
+value evaluates to ``True`` in a boolean context, the standard FeinCMS view
+function does not do any further processing and returns the object verbatim.
+
+:func:`finalize` is called after the response has been rendered. It receives
+the current request and response objects. This function is normally used to
+set response headers inside a content type or do some other post-processing.
+If this function has any return value, the FeinCMS view will return this value
+instead of the rendered response.
+
+Here's an example form-handling content which uses all of these facilities::
+
+    class FormContent(models.Model):
+        class Meta:
+            abstract = True
+
+        def process(self, request):
+            if request.method == 'POST':
+                form = FormClass(request.POST)
+                if form.is_valid():
+                    # Do something with form.cleaned_data ...
+
+                    return HttpResponseRedirect('?thanks=1')
+
+            else:
+                form = FormClass()
+
+            self.rendered_output = render_to_string('content/form.html', {
+                'form': form,
+                'thanks': request.GET.get('thanks'),
+                })
+
+        def render(self, **kwargs):
+            return self.rendered_output
+
+        def finalize(self, request, response):
+            # Always disable caches if this content type is used somewhere
+            response['Cache-Control'] = 'no-cache, must-revalidate'
 
 
 

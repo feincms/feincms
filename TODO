@@ -1,11 +1,37 @@
-This is in no way supposed to be a complete list of all open issues,
-it's nothing more than a brain dump.
+This is an assorted list of stuff.
 
-- Make shiny looking website -- maybe
-- Document how to write extensions
-- Encourage people to translate the administration interface
-- Finish frontend editing -- not much more than a proof of concept now
-- Document template tags
-- ajax_editable_boolean functionality is very non-obvious to the admin
-  interface user
-- the tree editor drag/drop icons seem to be unclear
+
+Internal variables FeinCMS uses:
+
+_feincms_content_types
+_feincms_content_types_with_process
+_feincms_content_types_with_finalize
+
+
+ApplicationContent parameters
+
+    * urls
+    * admin_fields
+    * path_mapper
+    * view_wrapper
+
+
+
+The stages when processing a request
+
+Now:
+
+- Determination of Page instance
+(- Collect application contents and process them)
+- Render template
+    - Collect and render content types
+- Return response
+
+
+Reworked:
+
+- Determine Page instance
+- Collect content type objects and render them
+    - Collect media files etc. in the process
+    - If any returns a special object (f.e. a HttpResponse) do something else
+- Render template using pre-rendered content types

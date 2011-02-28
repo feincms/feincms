@@ -5,14 +5,16 @@ All models defined here are abstract, which means no tables are created in
 the feincms_ namespace.
 """
 
+import itertools
 import warnings
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-from django.db import models
+from django.db import connection, models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
 from django.db.models.loading import get_model
+from django.forms.widgets import Media
 from django.template.loader import render_to_string
 from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
@@ -83,16 +85,78 @@ class Template(object):
 
 
 class ContentProxy(object):
-    """
-    This proxy offers attribute-style access to the page contents of regions::
-
-        >> page = Page.objects.all()[0]
-        >> page.content.main
-        [A list of all page contents which are assigned to the region with key 'main']
-    """
-
     def __init__(self, item):
+        item._needs_content_types()
+
         self.item = item
+        self.content_type_instances = self._fetch_content_type_instances(item)
+        self.media_cache = None
+
+    def _fetch_content_type_counts(self, item, regions=None):
+        tmpl = 'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s'
+        args = []
+
+        if regions:
+            tmpl += ' AND region IN (' + ','.join(['%%s'] * len(regions)) + ')'
+            args.extend(regions * len(item._feincms_content_types))
+
+        sql = ' UNION '.join([tmpl % (idx, cls._meta.db_table, item.pk)\
+            for idx, cls in enumerate(item._feincms_content_types)])
+        sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
+
+        cursor = connection.cursor()
+        cursor.execute(sql, args)
+
+        return [row for row in cursor.fetchall() if row[1]]
+
+    def _fetch_content_type_instances(self, item, counts=None):
+        def _materialize(item, counts, regions=None):
+            contents = {}
+            query = Q(parent=item)
+
+            if regions:
+                query &= Q(region__in=regions)
+
+            for idx, cnt in counts:
+                for instance in item._feincms_content_types[idx].get_queryset(query):
+                    contents.setdefault(instance.region, []).append(instance)
+            return contents
+
+        if counts is None:
+            counts = self._fetch_content_type_counts(item)
+
+        contents = _materialize(item, counts)
+
+        # TODO this only applies to hierarchically organized Base subclasses...
+        empty_inherited_regions = set()
+        for region in item.template.regions:
+            if region.inherited and not contents.get(region.key):
+                empty_inherited_regions.add(region.key)
+
+        # TODO performance test this a bit...
+        if empty_inherited_regions:
+            ancestors = item.get_ancestors(ascending=True)
+
+            for ancestor in ancestors:
+                inherited_counts = self._fetch_content_type_counts(ancestor,
+                    regions=tuple(empty_inherited_regions))
+
+                if inherited_counts:
+                    inherited_contents = _materialize(ancestor, inherited_counts)
+
+                    for region in tuple(empty_inherited_regions):
+                        if inherited_contents.get(region):
+                            empty_inherited_regions.discard(region)
+                            contents[region] = inherited_contents.get(region)
+
+                if not empty_inherited_regions:
+                    break
+
+        return dict((region, sorted(instances, key=lambda c: c.ordering))\
+            for region, instances in contents.iteritems())
+
+    def all_of_type(self, type):
+        return [ct for ct in itertools.chain(*self.content_type_instances.values()) if isinstance(ct, type)]
 
     def __getattr__(self, attr):
         """
@@ -105,31 +169,22 @@ class ContentProxy(object):
         if (attr.startswith('__')):
             raise AttributeError
 
-        item = self.__dict__['item']
+        instances = self.__dict__['content_type_instances']
+        return instances.get(attr, [])
 
-        return self.get_content(item, attr)
+    def _get_media(self):
+        if self.media_cache is None:
+            media = Media()
 
-    def get_content(self, item, attr):
-        template = item.template
-        try:
-            region = template.regions_dict[attr]
-        except KeyError:
-            return []
+            instances = self.__dict__['content_type_instances']
+            for contents in instances.values():
+                for content in contents:
+                    if hasattr(content, 'media'):
+                        media = media + content.media
 
-        def collect_items(obj):
-            contents = obj._content_for_region(region)
-
-            # go to parent if this model has a parent attribute
-            # TODO: this should be abstracted into a property/method or something
-            # The link which should be followed is not always '.parent'
-            if region.inherited and not contents and hasattr(obj, 'parent_id') and obj.parent_id:
-                return collect_items(obj.parent)
-
-            return contents
-
-        contents = collect_items(item)
-        contents.sort(key=lambda c: c.ordering)
-        return contents
+            self.media_cache = media
+        return self.media_cache
+    media = property(_get_media)
 
 
 def create_base_model(inherit_from=models.Model):
@@ -318,7 +373,7 @@ def create_base_model(inherit_from=models.Model):
 
         def _content_for_region(self, region):
             """
-            This method is used primarily by the ContentProxy
+            This method is used primarily by the LegacyContentProxy
             """
             self._needs_content_types()
 
@@ -439,6 +494,18 @@ def create_base_model(inherit_from=models.Model):
             # list of concrete content types
             cls._feincms_content_types = []
 
+            # list of concrete content types having methods which may be called
+            # before or after rendering the content:
+            #
+            # def process(self, request):
+            #     May return a response early to short-circuit the request-response cycle
+            #
+            # def finalize(self, request, response)
+            #     May modify the response or replace it entirely by returning a new one
+            #
+            cls._feincms_content_types_with_process = []
+            cls._feincms_content_types_with_finalize = []
+
             # list of item editor context processors, will be extended by content types
             if hasattr(cls, 'feincms_item_editor_context_processors'):
                 cls.feincms_item_editor_context_processors = list(cls.feincms_item_editor_context_processors)
@@ -530,6 +597,11 @@ def create_base_model(inherit_from=models.Model):
                 (model, feincms_content_base,),
                 attrs)
             cls._feincms_content_types.append(new_type)
+
+            if hasattr(getattr(new_type, 'process', None), '__call__'):
+                cls._feincms_content_types_with_process.append(new_type)
+            if hasattr(getattr(new_type, 'finalize', None), '__call__'):
+                cls._feincms_content_types_with_finalize.append(new_type)
 
             # content types can be limited to a subset of regions
             if not regions:

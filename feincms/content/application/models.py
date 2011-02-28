@@ -1,3 +1,4 @@
+from time import mktime
 import re
 
 from django.core import urlresolvers
@@ -16,6 +17,11 @@ from feincms.admin.editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
 
 try:
+    from email.utils import parsedate
+except ImportError: # py 2.4 compat
+    from email.Utils import parsedate
+
+try:
     from threading import local
 except ImportError:
     from django.utils._threading_local import local
@@ -23,7 +29,7 @@ except ImportError:
 _local = local()
 
 
-def retrieve_page_information(page):
+def retrieve_page_information(page, request=None):
     _local.proximity_info = (page.tree_id, page.lft, page.rght, page.level)
 
 
@@ -256,12 +262,12 @@ class ApplicationContent(models.Model):
         #: This provides hooks for us to customize the admin interface for embedded instances:
         cls.feincms_item_editor_form = ApplicationContentItemEditorForm
 
+        # Make sure the patched reverse() method has all information it needs
+        cls.parent.field.rel.to.register_request_processors(retrieve_page_information)
+
     def __init__(self, *args, **kwargs):
         super(ApplicationContent, self).__init__(*args, **kwargs)
         self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get('config', {})
-
-    def render(self, request, **kwargs):
-        return getattr(request, "_feincms_applicationcontents", {}).get(self.id, u'')
 
     def process(self, request):
         page_url = self.parent.get_absolute_url()
@@ -313,17 +319,28 @@ class ApplicationContent(models.Model):
             del _local.urlconf
 
         if isinstance(output, HttpResponse):
-            if output.status_code == 200:
-                if not getattr(output, 'standalone', False):
-                    request._feincms_applicationcontents[self.id] = mark_safe(output.content.decode('utf-8'))
-                    # Copy relevant headers for later perusal
-                    for h in ( 'Cache-Control', 'Last-Modified', 'Expires'):
-                        if h in output:
-                            request._feincms_applicationcontents_headers[h].append(output[h])
-
-            return output
+            if self.send_directly(request, output):
+                return output
+            elif output.status_code == 200:
+                self.rendered_result = mark_safe(output.content.decode('utf-8'))
+                self.rendered_headers = {}
+                # Copy relevant headers for later perusal
+                for h in ('Cache-Control', 'Last-Modified', 'Expires'):
+                    if h in output:
+                        self.rendered_headers.setdefault(h, []).append(output[h])
         else:
-            request._feincms_applicationcontents[self.id] = mark_safe(output)
+            self.rendered_result = mark_safe(output)
+
+    def send_directly(self, request, response):
+        return response.status_code != 200 or request.is_ajax() or getattr(response, 'standalone', False)
+
+    def render(self, request, **kwargs):
+        return getattr(self, 'rendered_result', u'')
+
+    def finalize(self, request, response):
+        headers = getattr(self, 'rendered_headers', None)
+        if headers:
+            _update_response_headers(request, response, headers)
 
     def save(self, *args, **kwargs):
         super(ApplicationContent, self).save(*args, **kwargs)
@@ -334,3 +351,37 @@ class ApplicationContent(models.Model):
         super(ApplicationContent, self).delete(*args, **kwargs)
         # Clear reverse() cache
         _empty_reverse_cache()
+
+
+# ------------------------------------------------------------------------
+def _update_response_headers(request, response, headers):
+    """
+    Combine all headers that were set by the different content types
+    We are interested in Cache-Control, Last-Modified, Expires
+    """
+    from django.utils.http import http_date
+
+    # Ideally, for the Cache-Control header, we'd want to do some intelligent
+    # combining, but that's hard. Let's just collect and unique them and let
+    # the client worry about that.
+    cc_headers = set()
+    for x in (cc.split(",") for cc in headers.get('Cache-Control', ())):
+        cc_headers |= set((s.strip() for s in x))
+
+    if len(cc_headers):
+        response['Cache-Control'] = ", ".join(cc_headers)
+    else:   # Default value
+        response['Cache-Control'] = 'no-cache, must-revalidate'
+
+    # Check all Last-Modified headers, choose the latest one
+    lm_list = [parsedate(x) for x in headers.get('Last-Modified', ())]
+    if len(lm_list) > 0:
+        response['Last-Modified'] = http_date(mktime(max(lm_list)))
+
+    # Check all Expires headers, choose the earliest one
+    lm_list = [parsedate(x) for x in headers.get('Expires', ())]
+    if len(lm_list) > 0:
+        response['Expires'] = http_date(mktime(min(lm_list)))
+
+
+# ------------------------------------------------------------------------

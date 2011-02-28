@@ -22,4 +22,16 @@
     </p>
     </form>
 </div>
+<script type="text/javascript">
+if (window.location.href.indexOf('pop=1') != -1) {
+    (function($){
+        $(function() {
+            $('#result_list img').bind('click', function() {
+                $(this).parents('tr').find('th:first-child a').trigger('click');
+                return false;
+            });
+        });
+    })(django.jQuery);
+}
+</script>
 {% endblock %}
