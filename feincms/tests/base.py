@@ -660,12 +660,13 @@ class PagesTestCase(TestCase):
             ordering=1,
             text='Whatever')
 
+        if hasattr(self, 'assertNumQueries'):
         # 4 queries: Two to get the content types of page and page2, one to
-        # fetch all ancestor PKs of page2 and one to materialize the RawContent
-        # instances belonging to page's sidebar and page2's main.
-        self.assertNumQueries(4, lambda: [page2.content.main, page2.content.sidebar])
+            # fetch all ancestor PKs of page2 and one to materialize the RawContent
+            # instances belonging to page's sidebar and page2's main.
+            self.assertNumQueries(4, lambda: [page2.content.main, page2.content.sidebar])
+            self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
 
-        self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
         self.assertEqual(page2.content.sidebar[0].render(), 'Something')
 
     def test_14_richtext(self):
