@@ -342,41 +342,6 @@ def create_base_model(inherit_from=models.Model):
 
             return self._content_proxy
 
-        def _get_content_types_for_region(self, region):
-            # find all concrete content type tables which have at least one entry for
-            # the current CMS object and region
-            # This method is overridden by a more efficient implementation if
-            # the ct_tracker extension is active.
-
-            from django.core.cache import cache as django_cache
-
-            counts = None
-            ck = None
-            # ???: Should we move the cache_key() method to Base, so we can avoid
-            # the if-it-supports-it dance?
-            if settings.FEINCMS_USE_CACHE and getattr(self, 'cache_key', None):
-                ck = 'CNT-FOR-REGION-' + region.key + '-' + self.cache_key()
-                counts = django_cache.get(ck)
-
-            if counts is None:
-                sql = ' UNION '.join([
-                    'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s AND region=%%s' % (
-                        idx,
-                        cls._meta.db_table,
-                        self.pk) for idx, cls in enumerate(self._feincms_content_types)])
-                sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
-
-                from django.db import connection
-                cursor = connection.cursor()
-                cursor.execute(sql, [region.key] * len(self._feincms_content_types))
-
-                counts = [row[1] for row in cursor.fetchall()]
-
-                if ck:
-                    django_cache.set(ck, counts)
-
-            return counts
-
         @classmethod
         def _create_content_base(cls):
             """
