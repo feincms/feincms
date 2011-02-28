@@ -91,7 +91,7 @@ class ContentProxy(object):
         self.item = item
         self.media_cache = None
 
-        counts = self._fetch_content_type_counts(item.pk)
+        self.content_type_counts = counts = self._fetch_content_type_counts(item.pk)
 
         empty_inherited_regions = set()
         for region in item.template.regions:
@@ -110,7 +110,7 @@ class ContentProxy(object):
                 if not empty_inherited_regions:
                     break
 
-        self._fetch_content_type_instances(counts)
+        self.content_type_instances = self._fetch_content_type_instances(counts)
 
     def _fetch_content_type_counts(self, pk, regions=None):
         """
@@ -162,7 +162,7 @@ class ContentProxy(object):
                     lambda p, q: p|q, clauses, Q())):
                 contents.setdefault(instance.region, []).append(instance)
 
-        self.content_type_instances = dict((region, sorted(instances, key=lambda c: c.ordering))\
+        return dict((region, sorted(instances, key=lambda c: c.ordering))\
             for region, instances in contents.iteritems())
 
     def all_of_type(self, type):
