@@ -39,5 +39,8 @@ Reworked:
 
 
 
-Look at interaction between updated ContentProxy (caching more information
-from the go) and FEINCMS_USE_CACHE which stores whole page instances somewhere.
+TODOs:
+
+- Look at interaction between updated ContentProxy (caching more information
+  from the go) and FEINCMS_USE_CACHE which stores whole page instances somewhere.
+- ct_tracker extension rework / fix for new ContentProxy
