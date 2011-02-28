@@ -22,7 +22,6 @@ from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _
 
 # ------------------------------------------------------------------------
-HAS_APPCONTENT_KEY = '_has_appcontent'
 
 def page_count_content_types(self):
     """
@@ -49,7 +48,6 @@ def page_count_content_types(self):
 
         # Now convert the content types to django ContentType.id, so the result
         # set is stable wrt. registered feincms content types.
-        has_appcontent = False
         for ct_idx, region, count in row:
             from django.contrib.contenttypes.models import ContentType
             from feincms.content.application.models import ApplicationContent
@@ -62,11 +60,6 @@ def page_count_content_types(self):
                 django_ct = ContentType.objects.get_for_model(feincms_ct)
 
                 ct_inventory[region].append(django_ct.id)
-
-                if issubclass(feincms_ct, ApplicationContent):
-                    has_appcontent = True
-
-        ct_inventory[HAS_APPCONTENT_KEY] = has_appcontent
 
     return ct_inventory
 
@@ -121,11 +114,6 @@ def page_get_content_types_for_region(self, region):
     return retval
 
 # ------------------------------------------------------------------------
-def has_appcontent(self):
-    inv = self._ct_inventory
-    return inv.get(HAS_APPCONTENT_KEY, False)
-
-# ------------------------------------------------------------------------
 def pre_save_handler(sender, instance, **kwargs):
     """
     Intercept save and null out the content type list in the page itself.
@@ -147,9 +135,4 @@ def register(cls, admin_cls):
     cls._get_content_types_for_region = page_get_content_types_for_region
 
     pre_save.connect(pre_save_handler, sender=cls)
-
-    # Optimize views.applicationcontent since we know what ct are in this page
-    import feincms.views.applicationcontent
-    feincms.views.applicationcontent.page_has_appcontent = has_appcontent
-
 # ------------------------------------------------------------------------
