@@ -89,61 +89,84 @@ class ContentProxy(object):
         item._needs_content_types()
 
         self.item = item
-        self.content_type_counts = self._fetch_content_type_counts(item)
-        self.content_type_instances = self._fetch_content_type_instances(item,
-            self.content_type_counts)
         self.media_cache = None
 
-    def _fetch_content_type_counts(self, item, regions=None):
-        tmpl = 'SELECT %d AS ct_idx, COUNT(id) FROM %s WHERE parent_id=%s'
+        counts = self._fetch_content_type_counts(item.pk)
+
+        empty_inherited_regions = set()
+        for region in item.template.regions:
+            if region.inherited and not counts.get(region.key):
+                empty_inherited_regions.add(region.key)
+
+        if empty_inherited_regions:
+            for parent in item.get_ancestors(ascending=True).values_list('pk', flat=True):
+                parent_counts = self._fetch_content_type_counts(
+                    parent, regions=tuple(empty_inherited_regions))
+
+                counts.update(parent_counts)
+                for key in parent_counts.keys():
+                    empty_inherited_regions.discard(key)
+
+                if not empty_inherited_regions:
+                    break
+
+        self._fetch_content_type_instances(counts)
+
+    def _fetch_content_type_counts(self, pk, regions=None):
+        """
+        Returns a structure describing which content types exist for the object
+        with the given primary key.
+
+        The structure is as follows, where pk is the passed primary key and
+        ct_idx are indices into the item._feincms_content_types list:
+
+            {
+                'region.key': [
+                    (pk, ct_idx1),
+                    (pk, ct_idx2),
+                    ],
+                ...
+            }
+        """
+
+        tmpl = 'SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s GROUP BY region'
         args = []
 
         if regions:
             tmpl += ' AND region IN (' + ','.join(['%%s'] * len(regions)) + ')'
-            args.extend(regions * len(item._feincms_content_types))
+            args.extend(regions * len(self.item._feincms_content_types))
 
-        sql = ' UNION '.join([tmpl % (idx, cls._meta.db_table, item.pk)\
-            for idx, cls in enumerate(item._feincms_content_types)])
+        sql = ' UNION '.join([tmpl % (idx, cls._meta.db_table, pk)\
+            for idx, cls in enumerate(self.item._feincms_content_types)])
         sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
 
         cursor = connection.cursor()
         cursor.execute(sql, args)
 
-        return [row for row in cursor.fetchall() if row[1]]
+        _c = {}
+        for ct_idx, region, count in cursor.fetchall():
+            if count:
+                _c.setdefault(region, []).append((pk, ct_idx))
 
-    def _materialize(self, item, counts, regions=None):
+        return _c
+
+    def _fetch_content_type_instances(self, counts):
+        cts = {}
+        for region, _c in counts.items():
+            for pk, ct_idx in _c:
+                cts.setdefault(ct_idx, []).append(Q(parent=pk) & Q(region=region))
+
         contents = {}
-        query = Q(parent=item)
-
-        if regions:
-            query &= Q(region__in=regions)
-
-        for idx, cnt in counts:
-            for instance in item._feincms_content_types[idx].get_queryset(query):
+        for ct_idx, clauses in cts.items():
+            for instance in self.item._feincms_content_types[ct_idx].get_queryset(reduce(
+                    lambda p, q: p|q, clauses, Q())):
                 contents.setdefault(instance.region, []).append(instance)
-        return contents
 
-    def _fetch_content_type_instances(self, item, counts):
-        contents = self._materialize(item, counts)
-        return dict((region, sorted(instances, key=lambda c: c.ordering))\
+        self.content_type_instances = dict((region, sorted(instances, key=lambda c: c.ordering))\
             for region, instances in contents.iteritems())
 
     def all_of_type(self, type):
         return [ct for ct in itertools.chain(*self.content_type_instances.values()) if isinstance(ct, type)]
-
-    def __getattr__(self, attr):
-        """
-        Get all item content instances for the specified item and region
-
-        If no item contents could be found for the current item and the region
-        has the inherited flag set, this method will go up the ancestor chain
-        until either some item contents have found or no ancestors are left.
-        """
-        if (attr.startswith('__')):
-            raise AttributeError
-
-        instances = self.__dict__['content_type_instances']
-        return instances.get(attr, [])
 
     def _get_media(self):
         if self.media_cache is None:
@@ -159,38 +182,19 @@ class ContentProxy(object):
         return self.media_cache
     media = property(_get_media)
 
+    def __getattr__(self, attr):
+        """
+        Get all item content instances for the specified item and region
 
-class InheritingContentProxy(ContentProxy):
-    def _fetch_content_type_instances(self, item, counts):
-        contents = self._materialize(item, counts)
+        If no item contents could be found for the current item and the region
+        has the inherited flag set, this method will go up the ancestor chain
+        until either some item contents have found or no ancestors are left.
+        """
+        if (attr.startswith('__')):
+            raise AttributeError
 
-        # TODO this only applies to hierarchically organized Base subclasses...
-        empty_inherited_regions = set()
-        for region in item.template.regions:
-            if region.inherited and not contents.get(region.key):
-                empty_inherited_regions.add(region.key)
-
-        # TODO performance test this a bit...
-        if empty_inherited_regions:
-            ancestors = item.get_ancestors(ascending=True)
-
-            for ancestor in ancestors:
-                inherited_counts = self._fetch_content_type_counts(ancestor,
-                    regions=tuple(empty_inherited_regions))
-
-                if inherited_counts:
-                    inherited_contents = self._materialize(ancestor, inherited_counts)
-
-                    for region in tuple(empty_inherited_regions):
-                        if inherited_contents.get(region):
-                            empty_inherited_regions.discard(region)
-                            contents[region] = inherited_contents.get(region)
-
-                if not empty_inherited_regions:
-                    break
-
-        return dict((region, sorted(instances, key=lambda c: c.ordering))\
-            for region, instances in contents.iteritems())
+        instances = self.__dict__['content_type_instances']
+        return instances.get(attr, [])
 
 
 def create_base_model(inherit_from=models.Model):
