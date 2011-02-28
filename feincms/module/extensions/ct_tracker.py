@@ -62,15 +62,15 @@ class TrackerContentProxy(ContentProxy):
             # done late as opposed to at class definition time as not all information
             # is ready, especially when we are doing a "syncdb" the ContentType table
             # does not yet exist
-            cache = {}
-            for fct in self.item._feincms_content_types:
-                dct = ContentType.objects.get_for_model(ct)
+            map = {}
+            for idx, fct in enumerate(self.item._feincms_content_types):
+                dct = ContentType.objects.get_for_model(fct)
 
                 # Rely on non-negative primary keys
-                cache[fct.id] = dct
-                cache[-dct.id] = fct
+                map[-dct.id] = idx # From-inventory map
+                map[idx] = dct.id  # To-inventory map
 
-            self.__class__._translation_map_cache = cache
+            self.__class__._translation_map_cache = map
         return self._translation_map_cache
 
     def _from_inventory(self, inventory):
@@ -82,15 +82,15 @@ class TrackerContentProxy(ContentProxy):
         map = self._translation_map()
 
         return dict((region, [
-            (pk, map[-ct]) for pk, map in items
+            (pk, map[-ct]) for pk, ct in items
             ]) for region, items in inventory.items())
 
     def _to_inventory(self, counts):
         map = self._translation_map()
 
         return dict((region, [
-            (pk, map[ct]) for pk, map in items
-            ]) for region, items in inventory.items())
+            (pk, map[ct]) for pk, ct in items
+            ]) for region, items in counts.items())
 
 # ------------------------------------------------------------------------
 def post_save_handler(sender, instance, **kwargs):
