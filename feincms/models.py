@@ -370,29 +370,6 @@ def create_base_model(inherit_from=models.Model):
 
             return counts
 
-        def _content_for_region(self, region):
-            """
-            This method is used primarily by the LegacyContentProxy
-            """
-            self._needs_content_types()
-
-            counts = self._get_content_types_for_region(region)
-
-            if not any(counts):
-                return []
-
-            contents = []
-            for idx, cnt in enumerate(counts):
-                if cnt:
-                    # the queryset is evaluated right here, because the content objects
-                    # of different type will have to be sorted into a list according
-                    # to their 'ordering' attribute later
-                    contents += list(
-                        self._feincms_content_types[idx].get_queryset(
-                            Q(parent=self) & Q(region=region.key)))
-
-            return contents
-
         @classmethod
         def _create_content_base(cls):
             """
