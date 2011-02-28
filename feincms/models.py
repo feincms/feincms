@@ -109,23 +109,23 @@ class ContentProxy(object):
 
         return [row for row in cursor.fetchall() if row[1]]
 
+    def _materialize(self, item, counts, regions=None):
+        contents = {}
+        query = Q(parent=item)
+
+        if regions:
+            query &= Q(region__in=regions)
+
+        for idx, cnt in counts:
+            for instance in item._feincms_content_types[idx].get_queryset(query):
+                contents.setdefault(instance.region, []).append(instance)
+        return contents
+
     def _fetch_content_type_instances(self, item, counts=None):
-        def _materialize(item, counts, regions=None):
-            contents = {}
-            query = Q(parent=item)
-
-            if regions:
-                query &= Q(region__in=regions)
-
-            for idx, cnt in counts:
-                for instance in item._feincms_content_types[idx].get_queryset(query):
-                    contents.setdefault(instance.region, []).append(instance)
-            return contents
-
         if counts is None:
             counts = self._fetch_content_type_counts(item)
 
-        contents = _materialize(item, counts)
+        contents = self._materialize(item, counts)
 
         # TODO this only applies to hierarchically organized Base subclasses...
         empty_inherited_regions = set()
@@ -142,7 +142,7 @@ class ContentProxy(object):
                     regions=tuple(empty_inherited_regions))
 
                 if inherited_counts:
-                    inherited_contents = _materialize(ancestor, inherited_counts)
+                    inherited_contents = self._materialize(ancestor, inherited_counts)
 
                     for region in tuple(empty_inherited_regions):
                         if inherited_contents.get(region):
