@@ -191,7 +191,7 @@ class CMSBaseTest(TestCase):
 
 
 
-Page.register_extensions('datepublisher', 'navigation', 'seo', # FIXME 'symlinks',
+Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'titles', 'translations', 'seo', 'changedate')
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
@@ -505,7 +505,6 @@ class PagesTestCase(TestCase):
         self.assertRedirects(response, '/admin/page/page/')
         self.assertEqual(page.content.main[0].__class__.__name__, 'RawContent')
 
-        """ TODO Re-enable symlinks extension tests
         page2 = Page.objects.get(pk=2)
         page2.symlinked_page = page
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
@@ -515,7 +514,6 @@ class PagesTestCase(TestCase):
         self.assertEqual(len(page2.content.main), 1)
         self.assertEqual(len(page2.content.sidebar), 0)
         self.assertEqual(len(page2.content.nonexistant_region), 0)
-        """
 
     def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
