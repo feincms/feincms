@@ -667,6 +667,8 @@ class PagesTestCase(TestCase):
             self.assertNumQueries(4, lambda: [page2.content.main, page2.content.sidebar])
             self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
 
+        self.assertEqual(u''.join(c.render() for c in page2.content.main),
+            'Something elseWhatever')
         self.assertEqual(page2.content.sidebar[0].render(), 'Something')
 
     def test_14_richtext(self):
