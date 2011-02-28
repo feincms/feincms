@@ -24,7 +24,7 @@ from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
-from feincms.models import Region, Template, Base
+from feincms.models import Region, Template, Base, ContentProxy
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page.models import Page
@@ -192,7 +192,8 @@ class CMSBaseTest(TestCase):
 
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
-                         'titles', 'translations', 'seo', 'changedate')
+                         'titles', 'translations', 'seo', 'changedate',
+                         'ct_tracker')
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
 
@@ -572,8 +573,9 @@ class PagesTestCase(TestCase):
         page.imagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
         page.filecontent_set.create(file='somefile.jpg', title='thetitle', region='main', ordering=3)
 
-        # Reload page
+        # Reload page, reset _ct_inventory
         page = Page.objects.get(pk=page.pk)
+        page._ct_inventory = None
 
         self.assertTrue('somefile.jpg' in page.content.main[2].render())
         self.assertTrue('<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render())
@@ -641,7 +643,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(page.content_title, page.title)
         self.assertEqual(page.content_subtitle, '')
 
-    def test_13_inheritance(self):
+    def test_13_inheritance_and_ct_tracker(self):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
@@ -660,6 +662,9 @@ class PagesTestCase(TestCase):
             ordering=1,
             text='Whatever')
 
+        # Set default, non-caching content proxy
+        page2.content_proxy_class = ContentProxy
+
         if hasattr(self, 'assertNumQueries'):
         # 4 queries: Two to get the content types of page and page2, one to
             # fetch all ancestor PKs of page2 and one to materialize the RawContent
@@ -670,6 +675,32 @@ class PagesTestCase(TestCase):
         self.assertEqual(u''.join(c.render() for c in page2.content.main),
             'Something elseWhatever')
         self.assertEqual(page2.content.sidebar[0].render(), 'Something')
+
+        page2 = Page.objects.get(pk=2)
+        self.assertEqual(page2._ct_inventory, {})
+
+        if hasattr(self, 'assertNumQueries'):
+            # 7 queries: Two to get the content types of page and page2, one to
+            # fetch all ancestor PKs of page2 and one to materialize the RawContent
+            # instances belonging to page's sidebar and page2's main and a few
+            # queries to update the pages _ct_inventory attributes:
+            # - one select to determine whether page2 exists (and update/insert should
+            #   be performed)
+            # - one update to update page2
+            # - one update to clobber the _ct_inventory attribute of all descendants
+            #   of page2
+            self.assertNumQueries(7, lambda: [page2.content.main, page2.content.sidebar])
+            self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
+
+        self.assertEqual(page2.content.sidebar[0].render(), 'Something')
+
+        # Reload, again, to test ct_tracker extension
+        page2 = Page.objects.get(pk=2)
+
+        if hasattr(self, 'assertNumQueries'):
+            self.assertNumQueries(1, lambda: [page2.content.main, page2.content.sidebar])
+
+        self.assertNotEqual(page2._ct_inventory, {})
 
     def test_14_richtext(self):
         # only create the content type to test the item editor
