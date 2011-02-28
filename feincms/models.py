@@ -89,7 +89,9 @@ class ContentProxy(object):
         item._needs_content_types()
 
         self.item = item
-        self.content_type_instances = self._fetch_content_type_instances(item)
+        self.content_type_counts = self._fetch_content_type_counts(item)
+        self.content_type_instances = self._fetch_content_type_instances(item,
+            self.content_type_counts)
         self.media_cache = None
 
     def _fetch_content_type_counts(self, item, regions=None):
@@ -121,10 +123,7 @@ class ContentProxy(object):
                 contents.setdefault(instance.region, []).append(instance)
         return contents
 
-    def _fetch_content_type_instances(self, item, counts=None):
-        if counts is None:
-            counts = self._fetch_content_type_counts(item)
-
+    def _fetch_content_type_instances(self, item, counts):
         contents = self._materialize(item, counts)
 
         # TODO this only applies to hierarchically organized Base subclasses...
