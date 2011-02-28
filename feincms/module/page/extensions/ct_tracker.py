@@ -117,7 +117,7 @@ def page_get_content_types_for_region(self, region):
 
     for django_ct in region_ct_inventory:
         retval[tr_map[django_ct]] = 1
-    
+
     return retval
 
 # ------------------------------------------------------------------------
@@ -144,7 +144,6 @@ def register(cls, admin_cls):
     cls.add_to_class('_ct_inventory', JSONField(_('content types'), editable=False, blank=True, null=True))
     cls.add_to_class('count_content_types', page_count_content_types)
 
-    cls.orig_get_content_types_for_region = cls._get_content_types_for_region
     cls._get_content_types_for_region = page_get_content_types_for_region
 
     pre_save.connect(pre_save_handler, sender=cls)
