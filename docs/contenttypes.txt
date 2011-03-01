@@ -170,6 +170,7 @@ blocks yourself. You need to add the request context processor to your list
 of context processors for this example to work.
 
 
+.. _contenttypes-extramedia:
 
 Extra media for content types
 =============================
@@ -220,6 +221,8 @@ either ``STATIC_URL`` or ``MEDIA_URL`` (in this order) will be prepended to
 the media file path if it is not an absolute path already.
 
 
+
+.. _contenttypes-processfinalize:
 
 Influencing request processing through a content type
 =====================================================
