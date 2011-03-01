@@ -961,10 +961,13 @@ class PagesTestCase(TestCase):
 
         request = Empty()
         request.method = 'GET'
+        request.GET = {}
         request.META = {}
         request.user = Empty()
         request.user.is_authenticated = lambda: False
         request.user.get_and_delete_messages = lambda: ()
+
+        page.content.main[0].process(request)
         self.assertTrue('form' in page.content.main[0].render(request=request))
 
         self.client.post(page.get_absolute_url(), {
