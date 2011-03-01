@@ -667,6 +667,8 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def _needs_content_types(cls):
+            ensure_completely_loaded()
+
             # Check whether any content types have been created for this base class
             if not hasattr(cls, '_feincms_content_types') or not cls._feincms_content_types:
                 raise ImproperlyConfigured, 'You need to create at least one content type for the %s model.' % (cls.__name__)
