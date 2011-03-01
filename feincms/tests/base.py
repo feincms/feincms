@@ -6,6 +6,7 @@ import os
 from django import template
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
@@ -651,6 +652,10 @@ class PagesTestCase(TestCase):
             region='sidebar',
             ordering=0,
             text='Something')
+        page.rawcontent_set.create(
+            region='main',
+            ordering=0,
+            text='Anything')
 
         page2 = Page.objects.get(pk=2)
         page2.rawcontent_set.create(
@@ -679,17 +684,19 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
         self.assertEqual(page2._ct_inventory, {})
 
+        # Prime Django content type cache
+        for ct in Page._feincms_content_types:
+            ContentType.objects.get_for_model(ct)
+
         if hasattr(self, 'assertNumQueries'):
-            # 7 queries: Two to get the content types of page and page2, one to
+            # 5 queries: Two to get the content types of page and page2, one to
             # fetch all ancestor PKs of page2 and one to materialize the RawContent
             # instances belonging to page's sidebar and page2's main and a few
             # queries to update the pages _ct_inventory attributes:
-            # - one select to determine whether page2 exists (and update/insert should
-            #   be performed)
             # - one update to update page2
             # - one update to clobber the _ct_inventory attribute of all descendants
             #   of page2
-            self.assertNumQueries(7, lambda: [page2.content.main, page2.content.sidebar])
+            self.assertNumQueries(5, lambda: [page2.content.main, page2.content.sidebar])
             self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
 
         self.assertEqual(page2.content.sidebar[0].render(), 'Something')
