@@ -133,12 +133,15 @@ class ContentProxy(object):
             }
         """
 
-        tmpl = 'SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s GROUP BY region'
+        tmpl = ['SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s']
         args = []
 
         if regions:
-            tmpl += ' AND region IN (' + ','.join(['%%s'] * len(regions)) + ')'
+            tmpl.append('AND region IN (' + ','.join(['%%s'] * len(regions)) + ')')
             args.extend(regions * len(self.item._feincms_content_types))
+
+        tmpl.append('GROUP BY region')
+        tmpl = u' '.join(tmpl)
 
         sql = ' UNION '.join([tmpl % (idx, cls._meta.db_table, pk)\
             for idx, cls in enumerate(self.item._feincms_content_types)])
