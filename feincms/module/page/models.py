@@ -240,7 +240,6 @@ except ImportError:
 
 
 class Page(Base):
-
     active = models.BooleanField(_('active'), default=False)
 
     # structure and navigation

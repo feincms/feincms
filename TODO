@@ -35,3 +35,12 @@ Reworked:
     - Collect media files etc. in the process
     - If any returns a special object (f.e. a HttpResponse) do something else
 - Render template using pre-rendered content types
+
+
+
+
+TODOs:
+
+- Look at interaction between updated ContentProxy (caching more information
+  from the go) and FEINCMS_USE_CACHE which stores whole page instances somewhere.
+- ct_tracker extension rework / fix for new ContentProxy
