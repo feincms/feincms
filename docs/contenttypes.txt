@@ -176,7 +176,7 @@ Extra media for content types
 
 Some content types require extra CSS or javascript to work correctly. The
 content types have a way of individually specifying which CSS and JS files
-it needs. The mechanism used is almost the same as used in for
+they need. The mechanism in use is almost the same as the one used in
 `form and form widget media`_.
 
 .. _`form and form widget media`: http://docs.djangoproject.com/en/dev/topics/forms/media/
