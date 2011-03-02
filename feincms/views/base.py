@@ -2,6 +2,10 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
+try:
+    from django.template.response import TemplateResponse
+except ImportError:
+    TemplateResponse = None
 
 from feincms.module.page.models import Page
 
@@ -40,10 +44,14 @@ class Handler(object):
     def render(self, request, page):
         # This facility can be used by request processors to add values
         # to the context.
-        extra_context = getattr(request, '_feincms_extra_context', {})
-        return render_to_response(page.template.path, {
-            'feincms_page' : page,
-            }, context_instance=RequestContext(request, extra_context))
+        context = getattr(request, '_feincms_extra_context', {})
+        context['feincms_page'] = page
+
+        if TemplateResponse:
+            return TemplateResponse(request, page.template.path, context)
+        else:
+            return render_to_response(page.template.path,
+                context_instance=RequestContext(request, context))
 
     def finalize(self, request, response, page):
         for content in page.content.all_of_type(tuple(page._feincms_content_types_with_finalize)):
