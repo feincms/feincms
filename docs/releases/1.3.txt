@@ -29,6 +29,15 @@ Changes and highlights
   request-response cycle in more ways. See :ref:`contenttypes-processfinalize`
   for more information.
 
+* The ``ct_tracker`` extension has been rewritten to take advantage of the
+  new ``ContentProxy`` features. This means that the format of ``_ct_inventory``
+  could not be kept backwards compatible. Because of this you have to empty
+  the ``_ct_inventory`` fields yourself on upgrading::
+
+      $ ./manage.py shell
+      >>> from feincms.module.page.models import Page
+      >>> Page.objects.all().update(_ct_inventory=None)
+
 * Application contents do not use global state (state stored on the ``request``
   object) as much as before anymore. The ``ContentProxy`` refactoring allows us
   to store the needed data directly on the application content instance itself.
