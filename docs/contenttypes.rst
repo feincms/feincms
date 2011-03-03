@@ -170,6 +170,59 @@ blocks yourself. You need to add the request context processor to your list
 of context processors for this example to work.
 
 
+.. _contenttypes-extramedia:
+
+Extra media for content types
+=============================
+
+Some content types require extra CSS or javascript to work correctly. The
+content types have a way of individually specifying which CSS and JS files
+they need. The mechanism in use is almost the same as the one used in
+`form and form widget media`_.
+
+.. _`form and form widget media`: http://docs.djangoproject.com/en/dev/topics/forms/media/
+
+Include the following code in the `<head>` section of your template to include
+all JS and CSS media file definitions::
+
+    {% feincms_page.content.media %}
+
+
+The individual content types should use a ``media`` property do define the
+media files they need::
+
+    from django import forms
+    from django.db import models
+    from django.template.loader import render_to_string
+
+
+    class MediaUsingContentType(models.Model):
+        album = models.ForeignKey('gallery.Album')
+
+        class Meta:
+            abstract = True
+
+        @property
+        def media(self):
+            return forms.Media(
+                css={'all': ('gallery/gallery.css',),},
+                js=('gallery/gallery.js'),
+                )
+
+        def render(self, **kwargs):
+            return render_to_string('content/gallery/album.html', {
+                'content': self,
+                })
+
+
+Please note that you can't define a ``Media`` inner class (yet). You have to
+provide the ``media`` property yourself. As with form and widget media definitions,
+either ``STATIC_URL`` or ``MEDIA_URL`` (in this order) will be prepended to
+the media file path if it is not an absolute path already.
+
+
+
+.. _contenttypes-processfinalize:
 
 Influencing request processing through a content type
 =====================================================

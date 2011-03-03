@@ -49,9 +49,12 @@ class TrackerContentProxy(ContentProxy):
         else:
             self.content_type_counts = self._fetch_content_type_counts(item.pk)
 
-            self.item._ct_inventory_clobber = False
             self.item._ct_inventory = self._to_inventory(self.content_type_counts)
-            self.item.save()
+            self.item.__class__.objects.filter(id=self.item.id).update(
+                _ct_inventory=self.item._ct_inventory)
+
+            # Run post save handler by hand
+            self.item.get_descendants(include_self=False).update(_ct_inventory=None)
 
         self.content_type_instances = self._fetch_content_type_instances(
             self.content_type_counts)
@@ -95,12 +98,11 @@ class TrackerContentProxy(ContentProxy):
 # ------------------------------------------------------------------------
 def post_save_handler(sender, instance, **kwargs):
     """
-    Intercept save and null out the content type list in the page itself.
+    Clobber the _ct_inventory attribute of this object and all sub-objects
+    on save.
     """
 
-    # Clobber _ct_inventory unless we are saving an updated version right now
-    clobber = getattr(instance, '_ct_inventory_clobber', True)
-    instance.get_descendants(include_self=clobber).update(_ct_inventory=None)
+    instance.get_descendants(include_self=True).update(_ct_inventory=None)
 
 # ------------------------------------------------------------------------
 def register(cls, admin_cls):

@@ -433,9 +433,6 @@ class Page(Base):
         for fn in self.response_processors:
             fn(self, request, response)
 
-        if response.status_code == 200 and not response.has_header('Content-Length'):
-            response['Content-Length'] = len(response.content)
-
     def require_path_active_request_processor(self, request):
         """
         Checks whether any ancestors are actually inaccessible (ie. not

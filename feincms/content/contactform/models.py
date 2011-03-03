@@ -1,6 +1,7 @@
 from django import forms
 from django.core.mail import send_mail
 from django.db import models
+from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -31,8 +32,10 @@ class ContactFormContent(models.Model):
         if form:
             cls.form = form
 
-    def render(self, **kwargs):
-        request = kwargs.get('request')
+    def process(self, request):
+        if request.GET.get('_cf_thanks'):
+            self.rendered_output = render_to_string('content/contactform/thanks.html')
+            return
 
         if request.method == 'POST':
             form = self.form(request.POST)
@@ -47,7 +50,7 @@ class ContactFormContent(models.Model):
                     [self.email],
                     fail_silently=True)
 
-                return render_to_string('content/contactform/thanks.html')
+                return HttpResponseRedirect('?_cf_thanks=1')
         else:
             initial = {'subject': self.subject}
             if request.user.is_authenticated():
@@ -56,7 +59,10 @@ class ContactFormContent(models.Model):
 
             form = self.form(initial=initial)
 
-        return render_to_string('content/contactform/form.html', {
+        self.rendered_output = render_to_string('content/contactform/form.html', {
             'content': self,
             'form': form,
             }, context_instance=RequestContext(request))
+
+    def render(self, **kwargs):
+        return getattr(self, 'rendered_output', u'')

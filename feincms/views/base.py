@@ -38,6 +38,8 @@ class Handler(object):
                 return r
 
     def render(self, request, page):
+        # This facility can be used by request processors to add values
+        # to the context.
         extra_context = getattr(request, '_feincms_extra_context', {})
         return render_to_response(page.template.path, {
             'feincms_page' : page,
