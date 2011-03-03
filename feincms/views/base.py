@@ -44,7 +44,7 @@ class Handler(object):
     def render(self, request, page):
         # This facility can be used by request processors to add values
         # to the context.
-        context = getattr(request, '_feincms_extra_context', {})
+        context = request._feincms_extra_context
         context['feincms_page'] = page
 
         if TemplateResponse:
