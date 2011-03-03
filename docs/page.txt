@@ -1,8 +1,8 @@
 .. _page:
 
-==============================
-Using the built-in page module
-==============================
+========================
+The built-in page module
+========================
 
 .. module:: feincms.module.page
 

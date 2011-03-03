@@ -1,8 +1,8 @@
 .. _admin:
 
-=============================
-CMS administration interfaces
-=============================
+=========================
+Administration interfaces
+=========================
 
 FeinCMS provides two ModelAdmin classes, :class:`~feincms.admin.item_editor.ItemEditor`,
 and :class:`~feincms.admin.tree_editor.TreeEditor`. Their purpose and

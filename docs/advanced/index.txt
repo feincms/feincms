@@ -16,7 +16,6 @@ design considerations and how to optimize your code, this section is for you.
    base
    utils
    prefilledattributes
-   navigationextensions
    designdecisions
    settings
    caching

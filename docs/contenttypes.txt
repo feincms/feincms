@@ -1,8 +1,8 @@
 .. _contenttypes:
 
-==========================
-Working with content types
-==========================
+==================================================
+Content types - what your page content is built of
+==================================================
 
 You will learn how to add your own content types and how you can
 render them in a template.
