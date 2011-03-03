@@ -242,6 +242,10 @@ class MediaFileBase(Base, TranslatedObjectMixin):
                         exif = image._getexif()
                     except (AttributeError, IOError):
                         exif = False
+                    # PIL < 1.1.7 chokes on JPEGs with minimal EXIF data and
+                    # throws a KeyError deep in its guts.
+                    except KeyError:
+                        exif = False
 
                     if exif:
                         orientation = exif.get(274)
