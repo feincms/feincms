@@ -22,8 +22,16 @@ Contents
    medialibrary
    templatetags
    advanced/index
-   api/index
    faq
+
+
+API Documentation
+=================
+
+.. toctree::
+   :maxdepth: 4
+
+   api/index
 
 
 Releases
