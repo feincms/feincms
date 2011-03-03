@@ -143,13 +143,14 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
         only_existing = args.get('existing', False)
         exclude_current = args.get('excludecurrent', False)
 
-        # Preserve the trailing path when switching languages if
-        # we are inside an ApplicationContent
+        # Preserve the trailing path when switching languages if extra_path
+        # exists (this is mostly the case when we are working inside an
+        # ApplicationContent-managed page subtree)
         trailing_path = u''
         request = args.get('request', None)
-        if hasattr(request, '_feincms_appcontent_parameters'):
-            if request._feincms_appcontent_parameters.get('in_appcontent_subpage'):
-                trailing_path = request.path[len(page.get_absolute_url()):]
+        if request:
+            # Trailing path without first slash
+            trailing_path = request._feincms_extra_context.get('extra_path', '')[1:]
 
         translations = dict((t.language, t) for t in page.available_translations())
         translations[page.language] = page

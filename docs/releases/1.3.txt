@@ -45,3 +45,14 @@ Changes and highlights
 * ``feincms_site`` is not available in the context anymore. It was undocumented,
   mostly unused and badly named anyway. If you still need this functionality you
   should use ``django.contrib.sites`` directly yourself.
+
+* The ``_feincms_appcontent_parameters`` has been folded into the
+  ``_feincms_extra_context`` attribute on the current request. The
+  ``appcontent_parameters`` template tag is not necessary anymore
+  (the content of ``_feincms_extra_context`` is guaranteed to be available in
+  the template context) and has been removed.
+
+* As part of the effort to reduce variables attached to the request object
+  (acting as a replacement for global variables), ``request.extra_path``
+  has been removed. The same information can be accessed via
+  ``request._feincms_extra_context['extra_path']``.

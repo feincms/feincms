@@ -60,7 +60,7 @@ class CommentsContent(models.Model):
             # just the comments for right now, but if we just post to the current path
             # and handle it this way .. at least it works for now.
 
-            #extra = request._feincms_appcontent_parameters.get('page_extra_path', ())
+            #extra = request._feincms_extra_context.get('page_extra_path', ())
             #if len(extra) > 0 and extra[0] == u"post-comment":
 
             from django.contrib.comments.views.comments import post_comment

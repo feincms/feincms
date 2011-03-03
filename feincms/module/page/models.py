@@ -418,7 +418,6 @@ class Page(Base):
         """
         request._feincms_page = self
         request._feincms_extra_context = {}
-        request.extra_path = ""
 
         for fn in self.request_processors:
             r = fn(self, request)

@@ -284,7 +284,7 @@ class ApplicationContent(models.Model):
                 appcontent_parameters=self.parameters
             )
         else:
-            path = re.sub('^' + re.escape(page_url[:-1]), '', request.path)
+            path = request._feincms_extra_context['extra_path']
 
         # Resolve the module holding the application urls.
         urlconf_path = self.app_config.get('urls', self.urlconf_path)
@@ -301,7 +301,7 @@ class ApplicationContent(models.Model):
         #: Variables from the ApplicationContent parameters are added to request
         #  so we can expose them to our templates via the appcontent_parameters
         #  context_processor
-        request._feincms_appcontent_parameters.update(self.parameters)
+        request._feincms_extra_context.update(self.parameters)
 
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
