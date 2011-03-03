@@ -29,9 +29,15 @@ API Documentation
 =================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
-   api/index
+
+   api/base
+   api/page
+   api/medialibrary
+   api/admin
+   api/contenttypes
+   api/translations
 
 
 Releases
