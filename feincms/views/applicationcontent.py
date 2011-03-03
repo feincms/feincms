@@ -13,7 +13,10 @@ from feincms.views.base import Handler
 
 
 def applicationcontent_request_processor(page, request):
-    request._feincms_extra_context['in_appcontent_subpage'] = False
+    request._feincms_extra_context.update({
+        'in_appcontent_subpage': False,
+        'extra_path': '/',
+        })
 
     if request.path != page.get_absolute_url():
         # The best_match logic kicked in. See if we have at least one
