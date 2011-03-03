@@ -54,6 +54,11 @@ class Handler(object):
                 context_instance=RequestContext(request, context))
 
     def finalize(self, request, response, page):
+        """
+        Run finalize() on content types having such a method, add headers and
+        return final response.
+        """
+
         for content in page.content.all_of_type(tuple(page._feincms_content_types_with_finalize)):
             r = content.finalize(request, response)
             if r:

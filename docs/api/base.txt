@@ -1,34 +1,12 @@
 Base models
 ===========
 
-Base
-----
-
-.. autoclass:: feincms.models.Base
+.. automodule:: feincms
    :members:
    :undoc-members:
    :noindex:
 
-Template
---------
-
-.. autoclass:: feincms.models.Template
-   :members:
-   :undoc-members:
-   :noindex:
-
-Region
-------
-
-.. autoclass:: feincms.models.Region
-   :members:
-   :undoc-members:
-   :noindex:
-
-ContentProxy
-------------
-
-.. autoclass:: feincms.models.ContentProxy
+.. automodule:: feincms.models
    :members:
    :undoc-members:
    :noindex:

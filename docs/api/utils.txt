@@ -1,0 +1,43 @@
+Utilities
+=========
+
+General utilities
+-----------------
+
+.. automodule:: feincms.utils
+   :members:
+   :undoc-members:
+   :noindex:
+
+
+HTML utilities
+--------------
+
+.. automodule:: feincms.utils.html
+   :members:
+   :undoc-members:
+   :noindex:
+
+
+HTML cleaners
+-------------
+
+.. automodule:: feincms.utils.html.cleanse
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.utils.html.tidy
+   :members:
+   :undoc-members:
+   :noindex:
+
+
+Template tag helpers
+--------------------
+
+.. automodule:: feincms.utils.templatetags
+   :members:
+   :undoc-members:
+   :noindex:
+

@@ -1,18 +1,7 @@
 Media library
 =============
 
-MediaFile
----------
-
-.. autoclass:: feincms.module.medialibrary.models.MediaFile
-   :members:
-   :undoc-members:
-   :noindex:
-
-Category
---------
-
-.. autoclass:: feincms.module.medialibrary.models.Category
+.. automodule:: feincms.module.medialibrary.models
    :members:
    :undoc-members:
    :noindex:

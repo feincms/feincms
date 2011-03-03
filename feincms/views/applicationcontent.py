@@ -13,6 +13,12 @@ from feincms.views.base import Handler
 
 
 def applicationcontent_request_processor(page, request):
+    """
+    Add a few application-specific items to _feincms_extra_context, among
+    them whether we are in a subpage of an application content and the
+    extra_path which should be processed.
+    """
+
     request._feincms_extra_context.update({
         'in_appcontent_subpage': False,
         'extra_path': '/',

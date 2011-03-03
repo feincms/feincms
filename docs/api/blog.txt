@@ -1,0 +1,22 @@
+Page module
+===========
+
+
+.. automodule:: feincms.module.blog.models
+   :members:
+   :undoc-members:
+   :noindex:
+
+
+Extensions
+----------
+
+.. automodule:: feincms.module.blog.extensions.tags
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.blog.extensions.translations
+   :members:
+   :undoc-members:
+   :noindex:

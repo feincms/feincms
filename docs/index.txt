@@ -66,9 +66,17 @@ API Documentation
    api/base
    api/page
    api/medialibrary
+   api/blog
    api/admin
    api/contenttypes
+   api/contextprocessors
+   api/settings
+   api/shortcuts
+   api/templatetags
    api/translations
+   api/utils
+   api/views
+   api/commands
 
 
 Releases

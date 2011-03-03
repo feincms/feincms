@@ -1,34 +1,81 @@
 Page module
 ===========
 
-Page
-----
 
-.. autoclass:: feincms.module.page.models.Page
+.. automodule:: feincms.module.page.models
    :members:
    :undoc-members:
    :noindex:
 
-PageManager
------------
-
-.. autoclass:: feincms.module.page.models.PageManager
+.. automodule:: feincms.module.page.sitemap
    :members:
    :undoc-members:
    :noindex:
 
-PageAdmin
----------
 
-.. autoclass:: feincms.module.page.models.PageAdmin
+Extensions
+----------
+
+.. automodule:: feincms.module.page.extensions
    :members:
    :undoc-members:
    :noindex:
 
-PageAdminForm
--------------
+.. automodule:: feincms.module.page.extensions.datepublisher
+   :members:
+   :undoc-members:
+   :noindex:
 
-.. autoclass:: feincms.module.page.models.PageAdminForm
+.. automodule:: feincms.module.page.extensions.excerpt
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.page.extensions.navigation
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.page.extensions.relatedpages
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.page.extensions.symlinks
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.page.extensions.titles
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.page.extensions.translations
+   :members:
+   :undoc-members:
+   :noindex:
+
+
+Extensions not specific to the page module
+------------------------------------------
+
+.. automodule:: feincms.module.page.extensions.changedate
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.page.extensions.ct_tracker
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.page.extensions.featured
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.module.page.extensions.seo
    :members:
    :undoc-members:
    :noindex:

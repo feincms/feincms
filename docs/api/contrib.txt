@@ -1,0 +1,12 @@
+Contrib
+=======
+
+.. automodule:: feincms.contrib.fields
+   :members:
+   :undoc-members:
+   :noindex:
+
+.. automodule:: feincms.contrib.tagging
+   :members:
+   :undoc-members:
+   :noindex:
