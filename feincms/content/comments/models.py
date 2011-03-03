@@ -45,9 +45,8 @@ class CommentsContent(models.Model):
 
         cls.feincms_item_editor_form = CommentContentAdminForm
 
-    def render(self, **kwargs):
+    def process(self, request):
         parent_type = self.parent.__class__.__name__.lower()
-        request = kwargs.get('request')
 
         comment_page = self.parent
         if hasattr(comment_page, 'original_translation') and comment_page.original_translation:
@@ -71,11 +70,16 @@ class CommentsContent(models.Model):
         if f is None:
             f = comments.get_form()(comment_page)
 
-        return render_to_string([
+        self.rendered_output = render_to_string([
             'content/comments/%s.html' % parent_type,
             'content/comments/default-site.html',
             'content/comments/default.html',
-            ], RequestContext(request, { 'content': self, 'feincms_page' : self.parent, 'parent': comment_page, 'form' : f }))
+            ], RequestContext(request, {
+                'content': self,
+                'feincms_page': self.parent,
+                'parent': comment_page,
+                'form': f,
+                }))
 
-# ------------------------------------------------------------------------
-
+    def render(self, **kwargs):
+        return getattr(self, 'rendered_output', u'')
