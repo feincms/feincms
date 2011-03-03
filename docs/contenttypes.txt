@@ -121,7 +121,7 @@ differentiation, or if you want to do it differently.
 
 All ``render`` methods should accept ``**kwargs``. Some render methods might
 need the request, for example to determine the correct Google Maps API
-key depending on the current domain without resorting to ugly hacks.
+key depending on the current domain.
 
 The example above could be rewritten like this:
 
