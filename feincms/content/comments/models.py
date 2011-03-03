@@ -63,9 +63,12 @@ class CommentsContent(models.Model):
             #if len(extra) > 0 and extra[0] == u"post-comment":
 
             from django.contrib.comments.views.comments import post_comment
-            r = post_comment(request)
-            if not isinstance(r, HttpResponseRedirect):
-                f = comments.get_form()(comment_page, data=request.POST)
+            r = post_comment(request, next=comment_page.get_absolute_url())
+
+            if isinstance(r, HttpResponseRedirect):
+                return r
+
+            f = comments.get_form()(comment_page, data=request.POST)
 
         if f is None:
             f = comments.get_form()(comment_page)
