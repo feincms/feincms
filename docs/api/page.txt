@@ -60,22 +60,22 @@ Extensions
 Extensions not specific to the page module
 ------------------------------------------
 
-.. automodule:: feincms.module.page.extensions.changedate
+.. automodule:: feincms.module.extensions.changedate
    :members:
    :undoc-members:
    :noindex:
 
-.. automodule:: feincms.module.page.extensions.ct_tracker
+.. automodule:: feincms.module.extensions.ct_tracker
    :members:
    :undoc-members:
    :noindex:
 
-.. automodule:: feincms.module.page.extensions.featured
+.. automodule:: feincms.module.extensions.featured
    :members:
    :undoc-members:
    :noindex:
 
-.. automodule:: feincms.module.page.extensions.seo
+.. automodule:: feincms.module.extensions.seo
    :members:
    :undoc-members:
    :noindex:
