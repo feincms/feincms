@@ -14,3 +14,8 @@ def add_page_if_missing(request):
             }
     except Page.DoesNotExist:
         return {}
+
+
+def appcontent_parameters(request):
+    # Remove in FeinCMS 1.4.
+    return {}
