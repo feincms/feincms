@@ -1,7 +1,7 @@
 # encoding: utf-8
 """
 ``rebuild_mptt_direct``
----------------------
+-----------------------
 
 ``rebuild_mptt_direct`` rebuilds your mptt pointers, bypassing the ORM.
 Only use in emergencies.
