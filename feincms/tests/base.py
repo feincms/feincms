@@ -197,6 +197,9 @@ Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'ct_tracker')
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
+Page.register_request_processors(Page.etag_request_processor)
+Page.register_response_processors(Page.etag_response_processor)
+Page.register_response_processors(Page.debug_sql_queries_response_processor())
 
 
 class PagesTestCase(TestCase):
@@ -222,6 +225,7 @@ class PagesTestCase(TestCase):
                     ('sidebar', 'Sidebar', 'inherited'),
                     ),
                 })
+        feincms_settings.FEINCMS_USE_CACHE = True
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
@@ -744,6 +748,8 @@ class PagesTestCase(TestCase):
         self.assertTrue('class="fe_box"' in\
             page.content.main[0].fe_render(request=request))
 
+        self.assertFalse('class="fe_box"' in self.client.get(page.get_absolute_url() + '?frontend_editing=1').content)
+
     def test_16_template_tags(self):
         # Directly testing template tags doesn't make any sense since
         # feincms_render_* do not use simple_tag anymore
@@ -873,13 +879,16 @@ class PagesTestCase(TestCase):
         self.assertEqual(page, Page.objects.best_match_for_path(page.get_absolute_url() + 'something/hello/'))
 
         self.assertRaises(Http404, lambda: Page.objects.best_match_for_path('/blabla/blabla/', raise404=True))
+        self.assertRaises(Http404, lambda: Page.objects.page_for_path('/asdf/', raise404=True))
         self.assertRaises(Page.DoesNotExist, lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
+        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.page_for_path('/asdf/'))
 
         request = Empty()
         request.path = page.get_absolute_url()
         request.method = 'GET'
         request.get_full_path = lambda: '/xyz/'
-        request.GET = []
+        request.GET = {}
+        request.META = {}
         request.user = AnonymousUser()
 
         # tadaa
