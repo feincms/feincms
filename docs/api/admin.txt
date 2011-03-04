@@ -6,7 +6,6 @@ ItemEditor
 
 .. automodule:: feincms.admin.item_editor
    :members:
-   :undoc-members:
    :noindex:
 
 
@@ -15,10 +14,12 @@ TreeEditor
 
 .. automodule:: feincms.admin.tree_editor
    :members:
-   :undoc-members:
    :noindex:
+
+
+FilterSpec classes for ``list_filter`` customization
+----------------------------------------------------
 
 .. automodule:: feincms.admin.filterspecs
    :members:
-   :undoc-members:
    :noindex:

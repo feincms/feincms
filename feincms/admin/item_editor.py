@@ -21,19 +21,31 @@ FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 
 class ItemEditorForm(forms.ModelForm):
+    """
+    The item editor form contains hidden region and ordering fields and should
+    be used for all content type inlines.
+    """
+
     region = forms.CharField(widget=forms.HiddenInput())
     ordering = forms.IntegerField(widget=forms.HiddenInput())
 
 
 class FeinCMSInline(InlineModelAdmin):
+    """
+    Custom ``InlineModelAdmin`` subclass used for content types.
+    """
+
     extra = 0
     fk_name = 'parent'
     template = 'admin/feincms/content_inline.html'
 
     def __init__(self, *args, **kwargs):
         super(FeinCMSInline, self).__init__(*args, **kwargs)
+
+        # Earmark. The Feincms_Inline string should not be changed, it is used
+        # by item_editor.js to find all FeinCMS content type inlines.
         self.verbose_name_plural = \
-            u'Feincms_Inline: %s' % (self.verbose_name_plural,) # earmark
+            u'Feincms_Inline: %s' % (self.verbose_name_plural,)
 
 
 def get_feincms_inlines(model):
@@ -52,6 +64,15 @@ def get_feincms_inlines(model):
 
 
 class ItemEditor(admin.ModelAdmin):
+    """
+    The ``ItemEditor`` is a drop-in replacement for ``ModelAdmin`` with the
+    speciality of knowing how to work with :class:`feincms.models.Base`
+    subclasses and associated content types.
+
+    It does not have any public API except from everything inherited from'
+    the standard ``ModelAdmin`` class.
+    """
+
     def __init__(self, model, admin_site):
         ensure_completely_loaded()
 
