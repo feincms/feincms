@@ -1,22 +1,26 @@
-Page module
+Blog module
 ===========
 
 
 .. automodule:: feincms.module.blog.models
    :members:
-   :undoc-members:
    :noindex:
 
 
 Extensions
 ----------
 
+Tagging
+*******
+
 .. automodule:: feincms.module.blog.extensions.tags
    :members:
-   :undoc-members:
    :noindex:
+
+
+Blog entry translations
+***********************
 
 .. automodule:: feincms.module.blog.extensions.translations
    :members:
-   :undoc-members:
    :noindex:

@@ -40,7 +40,10 @@ class CategoryManager(models.Manager):
 
 # ------------------------------------------------------------------------
 class Category(models.Model):
-    objects = CategoryManager()
+    """
+    These categories are meant primarily for organizing media files in the
+    library.
+    """
 
     title = models.CharField(_('title'), max_length=200)
     parent = models.ForeignKey('self', blank=True, null=True,
@@ -53,6 +56,8 @@ class Category(models.Model):
         ordering = ['parent__title', 'title']
         verbose_name = _('category')
         verbose_name_plural = _('categories')
+
+    objects = CategoryManager()
 
     def __unicode__(self):
         if self.parent_id:
@@ -77,6 +82,10 @@ class CategoryAdmin(admin.ModelAdmin):
 
 # ------------------------------------------------------------------------
 class MediaFileBase(Base, TranslatedObjectMixin):
+    """
+    Abstract media file class. Inherits from :class:`feincms.module.Base`
+    because of the (handy) extension mechanism.
+    """
 
     from django.core.files.storage import FileSystemStorage
     default_storage_class = getattr(django_settings, 'DEFAULT_FILE_STORAGE',
@@ -299,6 +308,10 @@ class MediaFile(MediaFileBase):
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
 class MediaFileTranslation(Translation(MediaFile)):
+    """
+    Translated media file caption and description.
+    """
+
     caption = models.CharField(_('caption'), max_length=200)
     description = models.TextField(_('description'), blank=True)
 

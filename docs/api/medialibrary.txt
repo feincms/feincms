@@ -3,5 +3,4 @@ Media library
 
 .. automodule:: feincms.module.medialibrary.models
    :members:
-   :undoc-members:
    :noindex:

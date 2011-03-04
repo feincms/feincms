@@ -1,3 +1,10 @@
+"""
+This is more a proof-of-concept for your own :class:`feincms.module.Base`
+subclasses than a polished or even sufficient blog module implementation.
+
+It does work, though.
+"""
+
 from datetime import datetime
 
 from django.contrib import admin
