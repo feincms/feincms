@@ -40,6 +40,13 @@ Page.register_request_processors(applicationcontent_request_processor)
 
 
 class ApplicationContentHandler(Handler):
+    """
+    This handler is almost the same as the default handler. The only difference
+    is that it uses ``best_match_for_path``, not ``page_for_path``. Because of
+    this fact it handles URLs which do not exactly match up with any page in
+    the database.
+    """
+
     def __call__(self, request, path=None):
         return self.build_response(request,
             Page.objects.best_match_for_path(path or request.path, raise404=True))
