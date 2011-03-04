@@ -340,7 +340,7 @@ class ApplicationContent(models.Model):
     def finalize(self, request, response):
         headers = getattr(self, 'rendered_headers', None)
         if headers:
-            _update_response_headers(request, response, headers)
+            self._update_response_headers(request, response, headers)
 
     def save(self, *args, **kwargs):
         super(ApplicationContent, self).save(*args, **kwargs)
@@ -352,36 +352,31 @@ class ApplicationContent(models.Model):
         # Clear reverse() cache
         _empty_reverse_cache()
 
+    def _update_response_headers(self, request, response, headers):
+        """
+        Combine all headers that were set by the different content types
+        We are interested in Cache-Control, Last-Modified, Expires
+        """
+        from django.utils.http import http_date
 
-# ------------------------------------------------------------------------
-def _update_response_headers(request, response, headers):
-    """
-    Combine all headers that were set by the different content types
-    We are interested in Cache-Control, Last-Modified, Expires
-    """
-    from django.utils.http import http_date
+        # Ideally, for the Cache-Control header, we'd want to do some intelligent
+        # combining, but that's hard. Let's just collect and unique them and let
+        # the client worry about that.
+        cc_headers = set()
+        for x in (cc.split(",") for cc in headers.get('Cache-Control', ())):
+            cc_headers |= set((s.strip() for s in x))
 
-    # Ideally, for the Cache-Control header, we'd want to do some intelligent
-    # combining, but that's hard. Let's just collect and unique them and let
-    # the client worry about that.
-    cc_headers = set()
-    for x in (cc.split(",") for cc in headers.get('Cache-Control', ())):
-        cc_headers |= set((s.strip() for s in x))
+        if len(cc_headers):
+            response['Cache-Control'] = ", ".join(cc_headers)
+        else:   # Default value
+            response['Cache-Control'] = 'no-cache, must-revalidate'
 
-    if len(cc_headers):
-        response['Cache-Control'] = ", ".join(cc_headers)
-    else:   # Default value
-        response['Cache-Control'] = 'no-cache, must-revalidate'
+        # Check all Last-Modified headers, choose the latest one
+        lm_list = [parsedate(x) for x in headers.get('Last-Modified', ())]
+        if len(lm_list) > 0:
+            response['Last-Modified'] = http_date(mktime(max(lm_list)))
 
-    # Check all Last-Modified headers, choose the latest one
-    lm_list = [parsedate(x) for x in headers.get('Last-Modified', ())]
-    if len(lm_list) > 0:
-        response['Last-Modified'] = http_date(mktime(max(lm_list)))
-
-    # Check all Expires headers, choose the earliest one
-    lm_list = [parsedate(x) for x in headers.get('Expires', ())]
-    if len(lm_list) > 0:
-        response['Expires'] = http_date(mktime(min(lm_list)))
-
-
-# ------------------------------------------------------------------------
+        # Check all Expires headers, choose the earliest one
+        lm_list = [parsedate(x) for x in headers.get('Expires', ())]
+        if len(lm_list) > 0:
+            response['Expires'] = http_date(mktime(min(lm_list)))
