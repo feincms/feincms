@@ -6,6 +6,11 @@ register = template.Library()
 
 @register.filter
 def post_process_fieldsets(fieldset):
+    """
+    Removes a few fields from FeinCMS admin inlines, those being
+    ``id``, ``DELETE`` and ``ORDER`` currently.
+    """
+
     formset = getattr(fieldset, 'formset', None)
 
     if formset: # Only apply special handling in formsets

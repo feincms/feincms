@@ -33,11 +33,16 @@ class FragmentNode(template.Node):
 @register.tag
 def fragment(parser, token):
     """
-    {% fragment request "title" %} content ... {% endfragment %}
+    Appends the given content to the fragment. Different modes (replace,
+    append) are available if specified.
 
-    or
+    Either::
 
-    {% fragment request "title" (prepend|replace|append) %} content ... {% endfragment %}
+        {% fragment request "title" %} content ... {% endfragment %}
+
+    or::
+
+        {% fragment request "title" (prepend|replace|append) %} content ... {% endfragment %}
     """
 
     nodelist = parser.parse(('endfragment'),)
@@ -70,9 +75,15 @@ class GetFragmentNode(template.Node):
 @register.tag
 def get_fragment(parser, token):
     """
-    {% get_fragment request "title" %}
-    or
-    {% get_fragment request "title" as title %}
+    Fetches the content of a fragment.
+
+    Either::
+
+        {% get_fragment request "title" %}
+
+    or::
+
+        {% get_fragment request "title" as title %}
     """
 
     fragments = token.contents.split()
@@ -87,6 +98,8 @@ def get_fragment(parser, token):
 @register.filter
 def has_fragment(request, identifier):
     """
-    {% if request|has_fragment:"title" %}
+    Returns the content of the fragment, despite its name::
+
+        {% if request|has_fragment:"title" %} ... {% endif %}
     """
     return getattr(request, '_feincms_fragments', {}).get(identifier)

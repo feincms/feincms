@@ -1,9 +1,6 @@
 Utilities
 =========
 
-General utilities
------------------
-
 .. automodule:: feincms.utils
    :members:
    :noindex:
@@ -11,14 +8,6 @@ General utilities
 
 HTML utilities
 --------------
-
-.. automodule:: feincms.utils.html
-   :members:
-   :noindex:
-
-
-HTML cleaners
--------------
 
 .. automodule:: feincms.utils.html.cleanse
    :members:
@@ -35,4 +24,3 @@ Template tag helpers
 .. automodule:: feincms.utils.templatetags
    :members:
    :noindex:
-

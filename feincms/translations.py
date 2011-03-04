@@ -1,8 +1,8 @@
 """
-Usage Example
-=============
+This module offers functions and abstract base classes that can be used to
+store translated models. There isn't much magic going on here.
 
-::
+Usage example::
 
     class News(models.Model, TranslatedObjectMixin):
         active = models.BooleanField(default=False)
@@ -42,7 +42,7 @@ def short_language_code(code=None):
     """
     Extract the short language code from its argument (or return the default language code).
 
-    from django.conf import settings
+    >>> from django.conf import settings
     >>> short_language_code('de')
     'de'
     >>> short_language_code('de-at')
@@ -72,11 +72,25 @@ def is_primary_language(language=None):
 
 
 class TranslatedObjectManager(models.Manager):
+    """
+    This manager offers convenience methods.
+    """
+
     def only_language(self, language=short_language_code):
+        """
+        Only return objects which have a translation into the given language.
+
+        Uses the currently active language by default.
+        """
+
         return self.filter(translations__language_code=language)
 
 
 class TranslatedObjectMixin(object):
+    """
+    Mixin with helper methods.
+    """
+
     def _get_translation_object(self, queryset, language_code):
         try:
             return queryset.filter(
@@ -173,6 +187,19 @@ def Translation(model):
 
 
 def admin_translationinline(model, inline_class=admin.StackedInline, **kwargs):
+    """
+    Returns a new inline type suitable for the Django administration::
+
+        from django.contrib import admin
+        from myapp.models import News, NewsTranslation
+
+        admin.site.register(News,
+            inlines=[
+                admin_translationinline(NewsTranslation),
+                ],
+            )
+    """
+
     kwargs['max_num'] = len(settings.LANGUAGES)
     kwargs['model'] = model
     return type(model.__class__.__name__ + 'Inline', (inline_class,), kwargs)

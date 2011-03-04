@@ -29,8 +29,9 @@ def cleanse_html(html):
     """
     Clean HTML code from ugly copy-pasted CSS and empty elements
 
-    Removes everything not explicitly allowed in `cleanse_html_allowed`
-    above.
+    Removes everything not explicitly allowed in ``cleanse_html_allowed``.
+
+    Requires ``lxml`` and ``beautifulsoup``.
     """
 
     doc = lxml.html.fromstring('<anything>%s</anything>' % html)
