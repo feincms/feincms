@@ -1,12 +1,18 @@
-Base models
-===========
+FeinCMS core
+============
+
+
+General functions
+-----------------
 
 .. automodule:: feincms
    :members:
-   :undoc-members:
    :noindex:
+
+
+Base models
+-----------
 
 .. automodule:: feincms.models
    :members:
-   :undoc-members:
    :noindex:

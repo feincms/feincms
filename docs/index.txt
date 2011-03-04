@@ -63,11 +63,11 @@ API Documentation
    :maxdepth: 3
 
 
-   api/base
+   api/core
+   api/admin
    api/page
    api/medialibrary
    api/blog
-   api/admin
    api/contenttypes
    api/contextprocessors
    api/settings
