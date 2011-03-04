@@ -2,26 +2,30 @@
 Usage Example
 =============
 
-class News(models.Model, TranslatedObjectMixin):
-    active = models.BooleanField(default=False)
-    created = models.DateTimeField(default=datetime.now)
+::
+
+    class News(models.Model, TranslatedObjectMixin):
+        active = models.BooleanField(default=False)
+        created = models.DateTimeField(default=datetime.now)
 
 
-class NewsTranslation(Translation(News)):
-    title = models.CharField(max_length=200)
-    body = models.TextField()
+    class NewsTranslation(Translation(News)):
+        title = models.CharField(max_length=200)
+        body = models.TextField()
 
 
-# Print the titles of all news entries either in the current language (if available)
-# or in any other language:
-for news in News.objects.all():
-    print news.translation.title
+Print the titles of all news entries either in the current language (if available)
+or in any other language::
 
-# Print all the titles of all news entries which have an english translation:
-from django.utils import translation
-translation.activate('en')
-for news in News.objects.filter(translations__language_code='en'):
-    print news.translation.title
+    for news in News.objects.all():
+        print news.translation.title
+
+Print all the titles of all news entries which have an english translation::
+
+    from django.utils import translation
+    translation.activate('en')
+    for news in News.objects.filter(translations__language_code='en'):
+        print news.translation.title
 """
 
 from django.conf import settings

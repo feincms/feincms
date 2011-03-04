@@ -2,7 +2,7 @@
 This is the core of FeinCMS
 
 All models defined here are abstract, which means no tables are created in
-the feincms_ namespace.
+the feincms\_ namespace.
 """
 
 import itertools
