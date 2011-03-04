@@ -1207,6 +1207,10 @@ class PagesTestCase(TestCase):
         self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),
             '100x60.png" alt="" />')
 
+        stats = list(MediaFile.objects.values_list('type', flat=True))
+        self.assertEqual(stats.count('image'), 1)
+        self.assertEqual(stats.count('other'), 11)
+
 
 Entry.register_extensions('seo', 'translations', 'seo')
 class BlogTestCase(TestCase):
