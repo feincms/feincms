@@ -53,7 +53,7 @@ class ActiveAwareContentManagerMixin(object):
     @classmethod
     def apply_active_filters(cls, queryset):
         """
-        Return a queryset reflecting the filters defined.
+        Apply all filters defined to the queryset passed and return the result.
         """
         for filt in cls.active_filters:
             if callable(filt):
@@ -97,18 +97,21 @@ def path_to_cache_key(path):
     return cache_key
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
+    """
+    The page manager. Only adds new methods, does not modify standard Django
+    manager behavior in any way.
+    """
 
-    # The fields which should be excluded when creating a copy. The mptt fields are
-    # excluded automatically by other mechanisms
-    # ???: Then why are the mptt fields listed here?
+    # The fields which should be excluded when creating a copy.
     exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
 
     def page_for_path(self, path, raise404=False):
         """
-        Return a page for a path.
+        Return a page for a path. Optionally raises a 404 error if requested.
 
-        Example:
-        Page.objects.page_for_path(request.path)
+        Example::
+
+            Page.objects.page_for_path(request.path)
         """
 
         stripped = path.strip('/')
@@ -133,10 +136,10 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         continues to search by chopping path components off the end.
 
         Tries hard to avoid unnecessary database lookups by generating all
-        possible matching URL prefixes and choosing the longtest match.
+        possible matching URL prefixes and choosing the longest match.
 
         Page.best_match_for_path('/photos/album/2008/09') might return the
-        page with url '/photos/album'.
+        page with url '/photos/album/'.
         """
 
         paths = ['/']
@@ -169,25 +172,54 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         raise self.model.DoesNotExist
 
     def in_navigation(self):
+        """
+        Returns active pages which have the ``in_navigation`` flag set.
+        """
+
         return self.active().filter(in_navigation=True)
 
     def toplevel_navigation(self):
+        """
+        Returns top-level navigation entries.
+        """
+
         return self.in_navigation().filter(parent__isnull=True)
 
     def for_request(self, request, raise404=False):
+        """
+        Convenience wrapper for ``page_for_path`` which calls ``setup_request``
+        if a page has been found right away (required by FeinCMS anyway).
+        """
+
         page = self.page_for_path(request.path, raise404)
         page.setup_request(request)
         return page
 
     def for_request_or_404(self, request):
+        """
+        Convenience wrapper for ``for_request`` which always raises a 404 if
+        a page could not be found.
+        """
+
         return self.for_request(request, raise404=True)
 
     def best_match_for_request(self, request, raise404=False):
+        """
+        Convenience wrapper for ``best_match_for_path``. Calls ``setup_request``
+        if a page has been found.
+        """
+
         page = self.best_match_for_path(request.path, raise404)
         page.setup_request(request)
         return page
 
     def from_request(self, request):
+        """
+        ``setup_request`` stores the current page object as an attribute on the
+        request itself. This method uses the cached copy if available instead of
+        running another determination run.
+        """
+
         if hasattr(request, '_feincms_page'):
             return request._feincms_page
 
@@ -207,6 +239,11 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         return new
 
     def replace(self, page, with_page):
+        """
+        Replaces an active page with another. Reassigns all children from the
+        old to the new page.
+        """
+
         page.active = False
         page.save()
         with_page.active = True
@@ -329,6 +366,12 @@ class Page(Base):
 
     @commit_on_success
     def save(self, *args, **kwargs):
+        """
+        Overridden save method which updates the ``_cached_url`` attribute of
+        this page and all subpages. Quite expensive when called with a page
+        high up in the tree.
+        """
+
         cached_page_urls = {}
 
         # determine own URL
@@ -369,6 +412,10 @@ class Page(Base):
             super(Page, page).save() # do not recurse
 
     def get_absolute_url(self):
+        """
+        Return the absolute URL of this page.
+        """
+
         return self._cached_url
 
     def get_preview_url(self):
@@ -378,9 +425,17 @@ class Page(Base):
             return None
 
     def get_navigation_url(self):
+        """
+        Return either ``redirect_to`` if it is set, or the URL of this page.
+        """
+
         return self.redirect_to or self._cached_url
 
     def get_siblings_and_self(page):
+        """
+        As the name says.
+        """
+
         return page.get_siblings(include_self=True)
 
     def cache_key(self):
@@ -548,10 +603,21 @@ class Page(Base):
 
     @classmethod
     def register_request_processors(cls, *processors):
+        """
+        Registers all passed callables as request processors. A request processor
+        always receives two arguments, the current page object and the request.
+        """
+
         cls.request_processors[0:0] = processors
 
     @classmethod
     def register_response_processors(cls, *processors):
+        """
+        Registers all passed callables as response processors. A response processor
+        always receives three arguments, the current page object, the request
+        and the response.
+        """
+
         cls.response_processors.extend(processors)
 
     @classmethod

@@ -4,12 +4,14 @@ Page module
 
 .. automodule:: feincms.module.page.models
    :members:
-   :undoc-members:
    :noindex:
+
+
+Sitemap module
+--------------
 
 .. automodule:: feincms.module.page.sitemap
    :members:
-   :undoc-members:
    :noindex:
 
 
