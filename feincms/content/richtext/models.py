@@ -65,7 +65,7 @@ class RichTextContentAdminForm(ItemEditorForm):
 class RichTextContent(models.Model):
     """
     Rich text content. Uses TinyMCE by default, but can be configured to do
-    anything you want using ``FEINCMS_RICHTEXT_INIT_CONTEXT`` and
+    anything you want using ``FEINCMS_RICHTEXT_INIT_CONTEXT`` and
     ``FEINCMS_RICHTEXT_INIT_TEMPLATE``.
 
     Optionally runs the HTML code through HTML cleaners if you specify

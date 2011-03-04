@@ -173,7 +173,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     def in_navigation(self):
         """
-        Returns active pages which have the ``in_navigation`` flag set.
+        Returns active pages which have the ``in_navigation`` flag set.
         """
 
         return self.active().filter(in_navigation=True)
@@ -187,7 +187,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     def for_request(self, request, raise404=False):
         """
-        Convenience wrapper for ``page_for_path`` which calls ``setup_request``
+        Convenience wrapper for ``page_for_path`` which calls ``setup_request``
         if a page has been found right away (required by FeinCMS anyway).
         """
 
@@ -205,7 +205,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     def best_match_for_request(self, request, raise404=False):
         """
-        Convenience wrapper for ``best_match_for_path``. Calls ``setup_request``
+        Convenience wrapper for ``best_match_for_path``. Calls ``setup_request``
         if a page has been found.
         """
 
