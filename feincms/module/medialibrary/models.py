@@ -115,11 +115,6 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     filetypes = [ ]
     filetypes_dict = { }
 
-    def get_categories_as_string(self):
-        categories_tmp = self.categories.values_list('title', flat=True)
-        return ', '.join(categories_tmp)
-    get_categories_as_string.short_description = _('categories')
-
     def formatted_file_size(self):
         return filesizeformat(self.file_size)
     formatted_file_size.short_description = _("file size")
