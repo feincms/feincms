@@ -592,14 +592,16 @@ class PagesTestCase(TestCase):
         self.client.get('/admin/page/page/1/')
 
         field = MediaFile._meta.get_field('file')
-        old = (field.upload_to, field.storage)
+        old = (field.upload_to, field.storage, field.generate_filename)
         from django.core.files.storage import FileSystemStorage
         MediaFile.reconfigure(upload_to=lambda: 'anywhere',
                               storage=FileSystemStorage(location='/wha/', base_url='/whe/'))
         mediafile = MediaFile.objects.get(pk=1)
         self.assertEqual(mediafile.file.url, '/whe/somefile.jpg')
 
-        MediaFile.reconfigure(upload_to=old[0], storage=old[1])
+        # restore settings
+        (field.upload_to, field.storage, field.generate_filename) = old
+
         mediafile = MediaFile.objects.get(pk=1)
         self.assertEqual(mediafile.file.url, '/media/somefile.jpg')
 
