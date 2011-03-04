@@ -298,7 +298,6 @@ class MediaFile(MediaFileBase):
     @classmethod
     def register_extension(cls, register_fn):
         register_fn(cls, MediaFileAdmin)
-        pass
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------

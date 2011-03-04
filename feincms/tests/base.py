@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta
 import os
 
-from django import template
+from django import forms, template
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
@@ -520,6 +520,8 @@ class PagesTestCase(TestCase):
         self.assertEqual(len(page2.content.main), 1)
         self.assertEqual(len(page2.content.sidebar), 0)
         self.assertEqual(len(page2.content.nonexistant_region), 0)
+
+        self.assertTrue(isinstance(page2.content.media, forms.Media))
 
     def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
