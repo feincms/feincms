@@ -221,7 +221,7 @@ class ItemEditor(admin.ModelAdmin):
             import warnings
             warnings.warn("The show_on_top will soon be removed; please "
                           "update your " "code to use fieldsets instead. ",
-                          PendingDeprecationWarning)
+                          DeprecationWarning)
             if hasattr(self.model, '_feincms_templates'):
                 if 'template_key' not in self.show_on_top:
                     self.show_on_top = ['template_key'] + \
