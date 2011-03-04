@@ -374,6 +374,7 @@ def create_base_model(inherit_from=models.Model):
                 cls._feincms_extensions.add(ext)
 
 
+        #: ``ContentProxy`` class this object uses to collect content blocks
         content_proxy_class = ContentProxy
 
         @property
