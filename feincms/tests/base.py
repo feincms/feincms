@@ -1196,6 +1196,17 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(MediaFile.objects.count(), 11)
 
+        self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
+            'file': open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                'docs', 'images', 'tree_editor.png')),
+            'translations-TOTAL_FORMS': 0,
+            'translations-INITIAL_FORMS': 0,
+            'translations-MAX_NUM_FORMS': 10,
+            }), '/admin/medialibrary/mediafile/')
+
+        self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),
+            '100x60.png" alt="" />')
+
 
 Entry.register_extensions('seo', 'translations', 'seo')
 class BlogTestCase(TestCase):

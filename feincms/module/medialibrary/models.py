@@ -414,8 +414,6 @@ class MediaFileAdmin(admin.ModelAdmin):
                 messages.error(request, _("ZIP file invalid: %s") % str(e))
                 return
 
-            pass
-
         if request.method == 'POST' and 'data' in request.FILES:
             import_zipfile(request, request.POST.get('category'), request.FILES['data'])
         else:
