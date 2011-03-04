@@ -1165,6 +1165,37 @@ class PagesTestCase(TestCase):
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
                       page.get_absolute_url())
 
+    def test_30_medialibrary_admin(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+
+        path = os.path.join(settings.MEDIA_ROOT, 'somefile.jpg')
+        f = open(path, 'wb')
+        f.write('blabla')
+        f.close()
+
+        mediafile = MediaFile.objects.create(file='somefile.jpg')
+        page.mediafilecontent_set.create(
+            mediafile=mediafile,
+            region='main',
+            position='block',
+            ordering=1)
+
+        self.assertContains(self.client.get('/admin/medialibrary/mediafile/'), 'somefile.jpg')
+
+        import zipfile
+        zf = zipfile.ZipFile('test.zip', 'w')
+        for i in range(10):
+            zf.writestr('test%d.jpg' % i, 'test%d' % i)
+        zf.close()
+
+        self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
+            'data': open('test.zip'),
+            }), '/admin/medialibrary/mediafile/')
+
+        self.assertEqual(MediaFile.objects.count(), 11)
+
 
 Entry.register_extensions('seo', 'translations', 'seo')
 class BlogTestCase(TestCase):
