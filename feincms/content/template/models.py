@@ -44,6 +44,14 @@ class TemplateContentAdminForm(ItemEditorForm):
 
 
 class TemplateContent(models.Model):
+    """
+    This content type scans all template folders for files in the
+    ``content/template/`` folder and lets the website administrator select
+    any template from a set of provided choices.
+
+    The templates aren't restricted in any way.
+    """
+
     feincms_item_editor_form = TemplateContentAdminForm
 
     filename = models.CharField(_('template'), max_length=100,

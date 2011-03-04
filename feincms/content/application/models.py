@@ -1,3 +1,7 @@
+"""
+Third-party application inclusion support.
+"""
+
 from time import mktime
 import re
 

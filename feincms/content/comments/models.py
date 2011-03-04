@@ -7,6 +7,11 @@
 #
 # ------------------------------------------------------------------------
 
+"""
+Embed a comment list and comment form anywhere. Uses the standard
+``django.contrib.comments`` application.
+"""
+
 from django import forms
 from django.contrib import comments
 from django.contrib.comments.models import Comment

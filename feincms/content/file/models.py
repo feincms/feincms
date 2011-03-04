@@ -1,3 +1,8 @@
+"""
+Simple file inclusion content: You should probably use the media library
+instead.
+"""
+
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _

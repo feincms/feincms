@@ -15,6 +15,10 @@ from feincms.content.medialibrary.models import MediaFileWidget
 
 
 class SectionContent(models.Model):
+    """
+    Title, media file and rich text fields in one content block.
+    """
+
     feincms_item_editor_context_processors = (
         lambda x: settings.FEINCMS_RICHTEXT_INIT_CONTEXT,
     )

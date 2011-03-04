@@ -5,6 +5,11 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class TableFormatter(object):
+    """
+    Table formatter which should convert a structure of nested lists into
+    a suitable HTML table representation.
+    """
+
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -38,6 +43,15 @@ class TitleTableFormatter(TableFormatter):
 
 
 class TableContent(models.Model):
+    """
+    Content to edit and display HTML tables in the CMS.
+
+    The standard rich text editor configuration in FeinCMS does not activate
+    the table plugin. This content type can be used to edit and display
+    nicely formatted HTML tables. It is easy to specify your own table
+    renderers.
+    """
+
     feincms_item_editor_includes = {
         'head': ['admin/content/table/init.html'],
         }
