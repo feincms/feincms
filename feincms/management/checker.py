@@ -11,10 +11,9 @@ def check_database_schema(cls, module_name):
     first time.
 
     Please note that you have to connect the return value using strong
-    references. Here's an example how to do this:
+    references. Here's an example how to do this::
 
-    signals.post_syncdb.connect(check_database_schema(Page, __name__),
-                                weak=False)
+        signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
     """
 
     def _fn(sender, **kwargs):

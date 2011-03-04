@@ -5,14 +5,26 @@ Management commands
    :members:
    :noindex:
 
+
+Content-type specific management commands
+-----------------------------------------
+
+.. automodule:: feincms.management.commands.update_rsscontent
+   :members:
+   :noindex:
+
+
+Page tree rebuilders
+--------------------
+
+Those should not normally be used. Older versions of MPTT sometimes
+got confused with repeated saves and tree-structure changes. These
+management commands helped cleaning up the mess.
+
 .. automodule:: feincms.management.commands.rebuild_mptt
    :members:
    :noindex:
 
 .. automodule:: feincms.management.commands.rebuild_mptt_direct
-   :members:
-   :noindex:
-
-.. automodule:: feincms.management.commands.update_rsscontent
    :members:
    :noindex:
