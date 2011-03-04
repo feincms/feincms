@@ -3,35 +3,28 @@ Template tags
 
 .. automodule:: feincms.templatetags.feincms_tags
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.templatetags.feincms_thumbnail
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.templatetags.applicationcontent_tags
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.templatetags.fragment_tags
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.templatetags.feincms_compat_tags
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.templatetags.feincms_admin_tags
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.module.page.templatetags.feincms_page_tags
    :members:
-   :undoc-members:
    :noindex:

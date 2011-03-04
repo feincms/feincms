@@ -3,15 +3,12 @@ Views and decorators
 
 .. automodule:: feincms.views.base
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.views.applicationcontent
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.views.decorators
    :members:
-   :undoc-members:
    :noindex:

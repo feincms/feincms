@@ -3,20 +3,16 @@ Management commands
 
 .. automodule:: feincms.management.checker
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.management.commands.rebuild_mptt
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.management.commands.rebuild_mptt_direct
    :members:
-   :undoc-members:
    :noindex:
 
 .. automodule:: feincms.management.commands.update_rsscontent
    :members:
-   :undoc-members:
    :noindex:

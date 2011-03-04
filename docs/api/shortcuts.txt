@@ -3,5 +3,4 @@ Shortcuts
 
 .. automodule:: feincms.shortcuts
    :members:
-   :undoc-members:
    :noindex:

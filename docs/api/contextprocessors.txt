@@ -3,5 +3,4 @@ Context processors
 
 .. automodule:: feincms.context_processors
    :members:
-   :undoc-members:
    :noindex:

@@ -3,5 +3,4 @@ Translations
 
 .. automodule:: feincms.translations
    :members:
-   :undoc-members:
    :noindex:

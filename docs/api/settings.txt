@@ -4,5 +4,4 @@ Settings
 
 .. automodule:: feincms.default_settings
    :members:
-   :undoc-members:
    :noindex:
