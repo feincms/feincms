@@ -14,6 +14,9 @@ def check_database_schema(cls, module_name):
     references. Here's an example how to do this::
 
         signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
+
+    (Yes, this is a weak attempt at a substitute for South until we find
+    a way to make South work with FeinCMS' dynamic model creation.)
     """
 
     def _fn(sender, **kwargs):

@@ -1,6 +1,9 @@
 Management commands
 ===================
 
+Database schema checker
+-----------------------
+
 .. automodule:: feincms.management.checker
    :members:
    :noindex:
