@@ -70,6 +70,7 @@ API Documentation
    api/blog
    api/contenttypes
    api/contextprocessors
+   api/contrib
    api/settings
    api/shortcuts
    api/templatetags

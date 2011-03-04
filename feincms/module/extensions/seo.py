@@ -1,5 +1,5 @@
 """
-Adds several fields which are helpful for SEO optimization
+Add a keyword and a description field which are helpful for SEO optimization.
 """
 
 from django.db import models

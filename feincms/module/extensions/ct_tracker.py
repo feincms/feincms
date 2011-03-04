@@ -14,7 +14,7 @@
 """
 Track the content types for pages. Instead of gathering the content
 types present in each page at run time, save the current state at
-saving time, thus saving a db query on page delivery.
+saving time, thus saving at least one DB query on page delivery.
 """
 
 from django.contrib.contenttypes.models import ContentType
