@@ -134,19 +134,18 @@ class ItemEditor(admin.ModelAdmin):
         else:
             form = ModelForm(instance=obj, prefix=content_type)
 
-        return render_to_response('admin/feincms/fe_editor.html', {
+        context = self.get_extra_context(request)
+        context.update({
             'frontend_editing': True,
             'title': _('Change %s') % force_unicode(model_cls._meta.verbose_name),
             'object': obj,
             'form': form,
             'is_popup': True,
             'media': self.media,
-            'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING': \
-                settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
-            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
-            }, context_instance=template.RequestContext(request,
-                processors=self.model.feincms_item_editor_context_processors))
+            })
+
+        return render_to_response('admin/feincms/fe_editor.html', context,
+            context_instance=template.RequestContext(request))
 
     def get_content_type_map(self):
         """ Prepare mapping of content types to their prettified names. """
