@@ -42,6 +42,17 @@ the ``feincms_tags`` template tag library::
            </div>
        {% endfor %}
 
+   Both template tags add the current rendering context to the ``render`` method
+   call too. This means that you can access both the request and the current
+   context inside your content type as follows::
+
+       class MyContentType(models.Model):
+           # class Meta etc...
+
+           def render(self, **kwargs):
+               request = kwargs.get('request')
+               context = kwargs.get('context')
+
 
 .. function:: feincms_prefill_entry_list:
 
