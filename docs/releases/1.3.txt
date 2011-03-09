@@ -52,6 +52,15 @@ Changes and highlights
   (the content of ``_feincms_extra_context`` is guaranteed to be available in
   the template context) and has been removed.
 
+  In your appcontent code, change all references of ``_feincms_appcontent_parameters``
+  to ``_feincms_extra_context``, e.g.
+
+      params = getattr(request, '_feincms_appcontent_parameters', {})
+
+  becomes
+
+      params = getattr(request, '_feincms_extra_context', {})
+
 * As part of the effort to reduce variables attached to the request object
   (acting as a replacement for global variables), ``request.extra_path``
   has been removed. The same information can be accessed via
