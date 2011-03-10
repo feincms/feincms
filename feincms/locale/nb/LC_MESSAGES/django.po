@@ -43,7 +43,7 @@ msgstr "Kategori"
 #: admin/item_editor.py:140
 #, python-format
 msgid "Change %s"
-msgstr "Endre"
+msgstr "Endre %s"
 
 #: admin/tree_editor.py:198 content/rss/models.py:20
 #: content/section/models.py:32 module/blog/models.py:31
@@ -740,7 +740,7 @@ msgid ""
 "%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
 msgstr ""
 "Endre mal? <br/> Alle endringer blir lagret og innhold fra <strong>"
-"%(source_region)s</strong> blir flyttet til <strong>%(target_region)s</strong>."
+"%(source_regions)s</strong> blir flyttet til <strong>%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
