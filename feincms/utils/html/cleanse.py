@@ -144,15 +144,12 @@ def cleanse_html(html):
                 break
             html = new
 
-    # remove p-in-li tags
-    p_in_li_start_re = re.compile(r'<li>(\&nbsp;|\&#160;|\s)*<p>')
-    p_in_li_end_re = re.compile('</p>(\&nbsp;|\&#160;|\s)*</li>')
-
-    html = p_in_li_start_re.sub('<li>', html)
-    html = p_in_li_end_re.sub('</li>', html)
-
     # remove list markers with <li> tags before them
     html = re.sub(r'<li>(\&nbsp;|\&#160;|\s)*(-|\*|&#183;)(\&nbsp;|\&#160;|\s)*', '<li>', html)
+
+    # remove p-in-li tags
+    html = re.sub(r'<li>(\&nbsp;|\&#160;|\s)*<p>', '<li>', html)
+    html = re.sub(r'</p>(\&nbsp;|\&#160;|\s)*</li>', '</li>', html)
 
     # add a space before the closing slash in empty tags
     html = re.sub(r'<([^/>]+)/>', r'<\1 />', html)
