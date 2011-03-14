@@ -1,3 +1,10 @@
+"""
+Simple contact form for FeinCMS. The default form class has name, email, subject
+and content fields, content being the only one which is not required. You can
+provide your own comment form by passing an additional ``form=YourClass``
+argument to the ``create_content_type`` call.
+"""
+
 from django import forms
 from django.core.mail import send_mail
 from django.db import models

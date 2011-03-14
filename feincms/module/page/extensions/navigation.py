@@ -1,6 +1,10 @@
 """
-Proof-of-concept for extending the navigation with non-page-objects (f.e. if
-you'd like to show all albums of a gallery in a submenu or something...)
+Extend or modify the navigation with custom entries.
+
+This extension allows the website administrator to select an extension
+which processes, modifies or adds subnavigation entries. The bundled
+``feincms_navigation`` template tag knows how to collect navigation entries,
+be they real Page instances or extended navigation entries.
 """
 
 from django.db import models
@@ -61,11 +65,26 @@ class PagePretender(object):
     def get_original_translation(self, page):
         return page
 
+
 class NavigationExtension(object):
+    """
+    Base class for all navigation extensions.
+
+    The name attribute is shown to the website administrator.
+    """
+
     __metaclass__ = TypeRegistryMetaClass
     name = _('navigation extension')
 
     def children(self, page, **kwargs):
+        """
+        This is the method which must be overridden in every navigation extension.
+
+        It receives the page the extension is attached to, the depth up to which
+        the navigation should be resolved, and the current request object if it
+        is available.
+        """
+
         raise NotImplementedError
 
 

@@ -1,4 +1,11 @@
 # encoding: utf-8
+"""
+``rebuild_mptt_direct``
+-----------------------
+
+``rebuild_mptt_direct`` rebuilds your mptt pointers, bypassing the ORM.
+Only use in emergencies.
+"""
 
 import logging
 
@@ -27,9 +34,6 @@ class Command(NoArgsCommand):
 qn = connection.ops.quote_name
 
 def rebuild():
-    """
-    Rebuilds whole tree in database using `parent` link.
-    """
     opts = Page._meta
     tree = Page.tree
 

@@ -29,6 +29,15 @@ Changes and highlights
   request-response cycle in more ways. See :ref:`contenttypes-processfinalize`
   for more information.
 
+* The ``ct_tracker`` extension has been rewritten to take advantage of the
+  new ``ContentProxy`` features. This means that the format of ``_ct_inventory``
+  could not be kept backwards compatible. Because of this you have to empty
+  the ``_ct_inventory`` fields yourself on upgrading::
+
+      $ ./manage.py shell
+      >>> from feincms.module.page.models import Page
+      >>> Page.objects.all().update(_ct_inventory=None)
+
 * Application contents do not use global state (state stored on the ``request``
   object) as much as before anymore. The ``ContentProxy`` refactoring allows us
   to store the needed data directly on the application content instance itself.
@@ -36,3 +45,23 @@ Changes and highlights
 * ``feincms_site`` is not available in the context anymore. It was undocumented,
   mostly unused and badly named anyway. If you still need this functionality you
   should use ``django.contrib.sites`` directly yourself.
+
+* The ``_feincms_appcontent_parameters`` has been folded into the
+  ``_feincms_extra_context`` attribute on the current request. The
+  ``appcontent_parameters`` template tag is not necessary anymore
+  (the content of ``_feincms_extra_context`` is guaranteed to be available in
+  the template context) and has been removed.
+
+  In your appcontent code, change all references of ``_feincms_appcontent_parameters``
+  to ``_feincms_extra_context``, e.g.
+
+      params = getattr(request, '_feincms_appcontent_parameters', {})
+
+  becomes
+
+      params = getattr(request, '_feincms_extra_context', {})
+
+* As part of the effort to reduce variables attached to the request object
+  (acting as a replacement for global variables), ``request.extra_path``
+  has been removed. The same information can be accessed via
+  ``request._feincms_extra_context['extra_path']``.

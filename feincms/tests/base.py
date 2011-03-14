@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta
 import os
 
-from django import template
+from django import forms, template
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
@@ -197,6 +197,9 @@ Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'ct_tracker')
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
+Page.register_request_processors(Page.etag_request_processor)
+Page.register_response_processors(Page.etag_response_processor)
+Page.register_response_processors(Page.debug_sql_queries_response_processor())
 
 
 class PagesTestCase(TestCase):
@@ -222,6 +225,7 @@ class PagesTestCase(TestCase):
                     ('sidebar', 'Sidebar', 'inherited'),
                     ),
                 })
+        feincms_settings.FEINCMS_USE_CACHE = True
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
@@ -517,6 +521,8 @@ class PagesTestCase(TestCase):
         self.assertEqual(len(page2.content.sidebar), 0)
         self.assertEqual(len(page2.content.nonexistant_region), 0)
 
+        self.assertTrue(isinstance(page2.content.media, forms.Media))
+
     def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
 
@@ -586,14 +592,16 @@ class PagesTestCase(TestCase):
         self.client.get('/admin/page/page/1/')
 
         field = MediaFile._meta.get_field('file')
-        old = (field.upload_to, field.storage)
+        old = (field.upload_to, field.storage, field.generate_filename)
         from django.core.files.storage import FileSystemStorage
         MediaFile.reconfigure(upload_to=lambda: 'anywhere',
                               storage=FileSystemStorage(location='/wha/', base_url='/whe/'))
         mediafile = MediaFile.objects.get(pk=1)
         self.assertEqual(mediafile.file.url, '/whe/somefile.jpg')
 
-        MediaFile.reconfigure(upload_to=old[0], storage=old[1])
+        # restore settings
+        (field.upload_to, field.storage, field.generate_filename) = old
+
         mediafile = MediaFile.objects.get(pk=1)
         self.assertEqual(mediafile.file.url, '/media/somefile.jpg')
 
@@ -744,6 +752,8 @@ class PagesTestCase(TestCase):
         self.assertTrue('class="fe_box"' in\
             page.content.main[0].fe_render(request=request))
 
+        self.assertFalse('class="fe_box"' in self.client.get(page.get_absolute_url() + '?frontend_editing=1').content)
+
     def test_16_template_tags(self):
         # Directly testing template tags doesn't make any sense since
         # feincms_render_* do not use simple_tag anymore
@@ -873,13 +883,16 @@ class PagesTestCase(TestCase):
         self.assertEqual(page, Page.objects.best_match_for_path(page.get_absolute_url() + 'something/hello/'))
 
         self.assertRaises(Http404, lambda: Page.objects.best_match_for_path('/blabla/blabla/', raise404=True))
+        self.assertRaises(Http404, lambda: Page.objects.page_for_path('/asdf/', raise404=True))
         self.assertRaises(Page.DoesNotExist, lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
+        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.page_for_path('/asdf/'))
 
         request = Empty()
         request.path = page.get_absolute_url()
         request.method = 'GET'
         request.get_full_path = lambda: '/xyz/'
-        request.GET = []
+        request.GET = {}
+        request.META = {}
         request.user = AnonymousUser()
 
         # tadaa
@@ -1155,6 +1168,52 @@ class PagesTestCase(TestCase):
         self.client.get(page1.get_absolute_url())
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
                       page.get_absolute_url())
+
+    def test_30_medialibrary_admin(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+
+        path = os.path.join(settings.MEDIA_ROOT, 'somefile.jpg')
+        f = open(path, 'wb')
+        f.write('blabla')
+        f.close()
+
+        mediafile = MediaFile.objects.create(file='somefile.jpg')
+        page.mediafilecontent_set.create(
+            mediafile=mediafile,
+            region='main',
+            position='block',
+            ordering=1)
+
+        self.assertContains(self.client.get('/admin/medialibrary/mediafile/'), 'somefile.jpg')
+
+        import zipfile
+        zf = zipfile.ZipFile('test.zip', 'w')
+        for i in range(10):
+            zf.writestr('test%d.jpg' % i, 'test%d' % i)
+        zf.close()
+
+        self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
+            'data': open('test.zip'),
+            }), '/admin/medialibrary/mediafile/')
+
+        self.assertEqual(MediaFile.objects.count(), 11)
+
+        self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
+            'file': open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                'docs', 'images', 'tree_editor.png')),
+            'translations-TOTAL_FORMS': 0,
+            'translations-INITIAL_FORMS': 0,
+            'translations-MAX_NUM_FORMS': 10,
+            }), '/admin/medialibrary/mediafile/')
+
+        self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),
+            '100x60.png" alt="" />')
+
+        stats = list(MediaFile.objects.values_list('type', flat=True))
+        self.assertEqual(stats.count('image'), 1)
+        self.assertEqual(stats.count('other'), 11)
 
 
 Entry.register_extensions('seo', 'translations', 'seo')

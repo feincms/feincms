@@ -4,72 +4,91 @@ Content types
 ApplicationContent
 ------------------
 
-.. autoclass:: feincms.content.application.models.ApplicationContent
+.. automodule:: feincms.content.application.models
    :members:
-   :undoc-members:
    :noindex:
 
-ContactForm
------------
+CommentsContent
+---------------
 
-.. autoclass:: feincms.content.contactform.models.ContactForm
+.. automodule:: feincms.content.comments.models
    :members:
-   :undoc-members:
+   :noindex:
+
+ContactFormContent
+------------------
+
+.. automodule:: feincms.content.contactform.models
+   :members:
    :noindex:
 
 FileContent
 -----------
 
-.. autoclass:: feincms.content.file.models.FileContent
+.. automodule:: feincms.content.file.models
    :members:
-   :undoc-members:
    :noindex:
 
 ImageContent
 ------------
 
-.. autoclass:: feincms.content.image.models.ImageContent
+.. automodule:: feincms.content.image.models
    :members:
-   :undoc-members:
    :noindex:
 
 MediaFileContent
 ----------------
 
-.. autoclass:: feincms.content.medialibrary.models.MediaFileContent
+.. automodule:: feincms.content.medialibrary.models
    :members:
-   :undoc-members:
    :noindex:
 
 RawContent
 ----------
 
-.. autoclass:: feincms.content.raw.models.RawContent
+.. automodule:: feincms.content.raw.models
    :members:
-   :undoc-members:
    :noindex:
 
 RichTextContent
 ---------------
 
-.. autoclass:: feincms.content.richtext.models.RichTextContent
+.. automodule:: feincms.content.richtext.models
    :members:
-   :undoc-members:
    :noindex:
 
 RSSContent
 ----------
 
-.. autoclass:: feincms.content.rss.models.RSSContent
+.. automodule:: feincms.content.rss.models
    :members:
-   :undoc-members:
+   :noindex:
+
+SectionContent
+--------------
+
+.. automodule:: feincms.content.section.models
+   :members:
+   :noindex:
+
+TableContent
+------------
+
+.. automodule:: feincms.content.table.models
+   :members:
+   :noindex:
+
+TemplateContent
+---------------
+
+.. automodule:: feincms.content.template.models
+   :members:
    :noindex:
 
 VideoContent
 ------------
 
-.. autoclass:: feincms.content.video.models.VideoContent
+.. automodule:: feincms.content.video.models
    :members:
-   :undoc-members:
    :noindex:
 

@@ -10,6 +10,13 @@ import feedparser
 
 
 class RSSContent(models.Model):
+    """
+    RSS feed inclusion content.
+
+    This content requires a cronjob on the server, which runs
+    ``./manage.py update_rsscontent`` every couple of hours.
+    """
+
     title = models.CharField(_('title'), max_length=50,
         help_text=_('The rss field is updated several times a day. A change in the title will only be visible on the home page after the next feed update.'))
     link = models.URLField(_('link'))

@@ -2,7 +2,7 @@
 This is the core of FeinCMS
 
 All models defined here are abstract, which means no tables are created in
-the feincms_ namespace.
+the feincms\_ namespace.
 """
 
 import itertools
@@ -85,6 +85,16 @@ class Template(object):
 
 
 class ContentProxy(object):
+    """
+    The ``ContentProxy`` is responsible for loading the content blocks for all
+    regions (including content blocks in inherited regions) and assembling media
+    definitions.
+
+    The content inside a region can be fetched using attribute access with
+    the region key. This is achieved through a custom ``__getattr__``
+    implementation.
+    """
+
     def __init__(self, item):
         item._needs_content_types()
         self.item = item
@@ -211,12 +221,17 @@ class ContentProxy(object):
 
 
 def create_base_model(inherit_from=models.Model):
+    """
+    This method can  be used to create a FeinCMS base model inheriting from your
+    own custom subclass (f.e. extend ``MPTTModel``). The default is to extend
+    :class:`django.db.models.Model`.
+    """
+
     class Base(inherit_from):
         """
-        This is the base class for your CMS models.
+        This is the base class for your CMS models. It knows how to create and
+        manage content types.
         """
-
-        content_proxy_class = ContentProxy
 
         class Meta:
             abstract = True
@@ -322,6 +337,16 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def register_extensions(cls, *extensions):
+            """
+            Register all extensions passed as arguments.
+
+            Extensions should be specified as a string to the python module
+            containing the extension. If it is a bundled extension of FeinCMS,
+            you do not need to specify the full python module path -- only
+            specifying the last part (f.e. ``'seo'`` or ``'translations'``) is
+            sufficient.
+            """
+
             if not hasattr(cls, '_feincms_extensions'):
                 cls._feincms_extensions = set()
 
@@ -348,10 +373,16 @@ def create_base_model(inherit_from=models.Model):
                 cls.register_extension(fn)
                 cls._feincms_extensions.add(ext)
 
+
+        #: ``ContentProxy`` class this object uses to collect content blocks
+        content_proxy_class = ContentProxy
+
         @property
         def content(self):
             """
-            Provide a simple interface for getting all content blocks for a region.
+            Instantiate and return a ``ContentProxy``. You can use your own custom
+            ``ContentProxy`` by assigning a different class to the
+            ``content_proxy_class`` member variable.
             """
 
             if not hasattr(self, '_content_proxy'):
@@ -496,6 +527,15 @@ def create_base_model(inherit_from=models.Model):
             If you want a content type only available in a subset of regions, you can
             pass a list/tuple of region keys as ``regions``. The content type will only
             appear in the corresponding tabs in the item editor.
+
+            If you use two content types with the same name in the same module,
+            name clashes will happen and the content type created first will
+            shadow all subsequent content types. You can work around it by
+            specifying the content type class name using the ``class_name``
+            argument. Please note that this will have an effect on the entries in
+            ``django_content_type``, on ``related_name`` and on the table name
+            used and should therefore not be changed after running ``syncdb`` for
+            the first time.
 
             You can pass additional keyword arguments to this factory function. These
             keyword arguments will be passed on to the concrete content type, provided
@@ -687,6 +727,12 @@ def create_base_model(inherit_from=models.Model):
                     new.save()
 
         def replace_content_with(self, obj):
+            """
+            Replace the content of the current object with content of another.
+
+            Deletes all content blocks and calls ``copy_content_from`` afterwards.
+            """
+
             for cls in self._feincms_content_types:
                 cls.objects.filter(parent=self).delete()
             self.copy_content_from(obj)

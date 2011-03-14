@@ -1,3 +1,8 @@
+"""
+Simple image inclusion content: You should probably use the media library
+instead.
+"""
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string

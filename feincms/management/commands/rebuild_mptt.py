@@ -2,6 +2,12 @@
 # coding=utf-8
 # $Id$
 # ------------------------------------------------------------------------
+"""
+``rebuild_mptt``
+---------------------
+
+``rebuild_mptt`` rebuilds your mptt pointers. Only use in emergencies.
+"""
 
 from django.core.management.base import NoArgsCommand
 from django.db import transaction

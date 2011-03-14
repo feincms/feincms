@@ -1,5 +1,5 @@
 """
-Add a "featured" field to pages so admins can better direct top content
+Add a "featured" field to objects so admins can better direct top content.
 """
 
 from django.db import models

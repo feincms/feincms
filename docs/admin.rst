@@ -1,8 +1,8 @@
 .. _admin:
 
-=============================
-CMS administration interfaces
-=============================
+=========================
+Administration interfaces
+=========================
 
 FeinCMS provides two ModelAdmin classes, :class:`~feincms.admin.item_editor.ItemEditor`,
 and :class:`~feincms.admin.tree_editor.TreeEditor`. Their purpose and
@@ -144,7 +144,7 @@ Customizing the item editor
 Customizing the individual content type forms
 ---------------------------------------------
 
-Customizing the individual content type editors is easily possible through two
+Customizing the individual content type editors is easily possible through three
 settings on the content type model itself:
 
 * ``feincms_item_editor_context_processors``:
@@ -170,9 +170,61 @@ settings on the content type model itself:
   and after adding new content blocks. Take a look at the ``mediafile`` and
   ``richtext`` item editor include files to understand how this should be done.
 
+  Currently, the only include region available is ``head``::
+
+      class ContentType(models.Model):
+          feincms_item_editor_includes = {
+              'head': ['content/init.html'],
+              }
+
+          # ...
+
 
 
 Putting it all together
 =======================
 
-Best advice here is taking a look at the files inside :mod:`feincms/module/page/`.
+It is possible to build a limited, but fully functional page CMS using not
+more than the following code:
+
+``models.py``::
+
+    from django.db import models
+    from mptt.models import MPTTModel
+    from feincms.models import create_base_model
+
+    class Page(create_base_model(MPTTModel)):
+        active = models.BooleanField(default=True)
+        title = models.CharField(max_length=100)
+        slug = models.SlugField()
+
+        parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
+
+        def get_absolute_url(self):
+            if self.parent_id:
+                return u'%s%s/' % (self.parent.get_absolute_url(), self.slug)
+            return u'/%s/' % self.slug
+
+``admin.py``::
+
+    from django.contrib import admin
+    from feincms.admin import editor
+    from myapp.models import Page
+
+    class PageAdmin(editor.ItemEditor, editor.TreeEditor):
+        fieldsets = [
+            (None, {
+                'fields': ['active', 'title', 'slug'],
+                }),
+            editor.FEINCMS_CONTENT_FIELDSET,
+            ]
+        list_display = ['active', 'title']
+        prepopulated_fields = {'slug': ('title',)}
+        raw_id_fields = ['parent']
+        search_fields = ['title', 'slug']
+
+    admin.site.register(Page, PageAdmin)
+
+
+For a more complete (but also more verbose) implementation, have a look
+at the files inside :mod:`feincms/module/page/`.

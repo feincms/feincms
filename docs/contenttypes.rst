@@ -1,8 +1,8 @@
 .. _contenttypes:
 
-==========================
-Working with content types
-==========================
+==================================================
+Content types - what your page content is built of
+==================================================
 
 You will learn how to add your own content types and how you can
 render them in a template.
@@ -121,7 +121,9 @@ differentiation, or if you want to do it differently.
 
 All ``render`` methods should accept ``**kwargs``. Some render methods might
 need the request, for example to determine the correct Google Maps API
-key depending on the current domain without resorting to ugly hacks.
+key depending on the current domain. The two template tags ``feincms_render_region``
+and ``feincms_render_content`` pass the current rendering context as a
+keyword argument too.
 
 The example above could be rewritten like this:
 
@@ -286,6 +288,14 @@ Used to let the administrator freely integrate 3rd party applications into
 the CMS. Described in :ref:`integration-applicationcontent`.
 
 
+Comments content
+----------------
+.. module:: feincms.content.comments.models
+.. class:: CommentsContent()
+
+Comment list and form using ``django.contrib.comments``.
+
+
 Contact form
 ------------
 .. module:: feincms.content.contactform.models
@@ -372,6 +382,38 @@ type that needs additional processing, in this case from a cron job. If an
 RSS feed has been added to the CMS, ``manage.py update_rsscontent`` should
 be run periodically (either through a cron job or through other means) to
 keep the shown content up to date.  The `feedparser` module is required.
+
+
+Section content
+---------------
+.. module:: feincms.content.section.models
+.. class:: SectionContent()
+
+Combined rich text editor, title and media file.
+
+
+Table content
+-------------
+.. module:: feincms.content.table.models
+.. class:: TableContent()
+
+The default configuration of the rich text editor does not include table
+controls. Because of this, you can use this content type to provide HTML
+table editing support. The data is stored in JSON format, additional
+formatters can be easily written which produce the definitive HTML
+representation of the table.
+
+
+Template content
+----------------
+.. module:: feincms.content.table.template
+.. class:: TemplateContent()
+
+This content scans all template directories for templates below
+``content/template/`` and allows the user to select one of these templates
+which are rendered using the Django template language.
+
+Template usage isn't restricted in any way.
 
 
 Video inclusion code for youtube, vimeo etc.

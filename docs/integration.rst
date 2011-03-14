@@ -1,8 +1,8 @@
 .. _integration:
 
-=====================================================
-Integrating FeinCMS and 3rd party apps with your site
-=====================================================
+=========================================
+Integrating 3rd party apps into your site
+=========================================
 
 With FeinCMS come a set of standard views which you might want to check
 out before starting to write your own. Included is a standard view for
@@ -184,8 +184,8 @@ First, you need to create the content type::
 
 Your base template does not have to be structured differently just because
 you are using application contents now. You must use the bundled FeinCMS
-template tags (XXX ref & doc) though, because the application content needs
-the request object::
+template tags though, because the application content needs the request
+object::
 
     {% extends "base.html" %}
 
@@ -226,8 +226,8 @@ at the code until the documentation here is more complete.
 
 .. _integration-applicationcontent-morecontrol:
 
-Giving more control to the 3rd party application
-------------------------------------------------
+Letting the application content control more than one region in the parent template
+-----------------------------------------------------------------------------------
 
 The output of the third party app is not strictly constrained to the region;
 you can pass additional fragments around, for example to extend the page title
@@ -250,9 +250,12 @@ And read the fragment inside your base template::
     {% endblock %}
 
 
+Returning responses from the embedded application without wrapping them inside the CMS template
+-----------------------------------------------------------------------------------------------
+
 If the 3rd party application returns a response with status code different from
-200, the applicationcontent-aware view :func:`feincms.views.applicationcontent.handler`
-returns the response verbatim. The same is true if the 3rd party application returns
+200, the standard views view :func:`feincms.views.applicationcontent.handler` return
+the response verbatim. The same is true if the 3rd party application returns
 a response and ``request.is_ajax()`` is ``True`` or if the application content
 returns a HttpResponse with the ``standalone`` attribute set to True.
 
@@ -268,3 +271,136 @@ you don't really want the CMS to decorate the data file with the web html templa
         ...
         xls_data = ... whatever ...
         return HttpResponse(xls_data, content_type="application/msexcel")
+
+
+Additional customization possibilities
+--------------------------------------
+
+The ``ApplicationContent`` offers additional customization possibilites for those who
+need them. All of these must be specified in the ``APPLICATIONS`` argument to
+``create_content_type``.
+
+* ``urls``: Making it easier to swap the URLconf file:
+
+  You might want to use logical names instead of URLconf paths when you create
+  your content types, so that the ``ApplicationContent`` apps aren't tied to
+  a particular ``urls.py`` file. This is useful if you want to override a few
+  URLs from a 3rd party application, f.e. replace ``registration.urls`` with
+  ``yourapp.registration_urls``::
+
+      Page.create_content_type(ApplicationContent, APPLICATIONS=(
+        ('registration', 'Account creation and management', {
+            'urls': 'yourapp.registration_urls',
+            }),
+        )
+
+* ``admin_fields``: Adding more fields to the application content interface:
+
+  Some application contents might require additional configuration parameters
+  which should be modifyable by the website administrator. ``admin_fields`` to
+  the rescue!
+
+  ::
+
+      def registration_admin_fields(form, *args, **kwargs):
+        return {
+            'exclusive_subpages': forms.BooleanField(
+                label=_('Exclusive subpages'),
+                required=False,
+                initial=form.instance.parameters.get('exclusive_subpages', True),
+                help_text=_('Exclude everything other than the application\'s content when rendering subpages.'),
+                ),
+            }
+
+      Page.create_content_type(ApplicationContent, APPLICATIONS=(
+        ('registration', 'Account creation and management', {
+            'urls': 'yourapp.registration_urls',
+            'admin_fields': registration_admin_fields,
+            }),
+        )
+
+  The form fields will only be visible after saving the ``ApplicationContent``
+  for the first time. They are stored inside a JSON-encoded field. The values
+  are added to the template context indirectly when rendering the main template
+  by adding them to ``request._feincms_extra_context``.
+
+* ``path_mapper``: Customize URL processing by altering the perceived path of the page:
+
+  The applicaton content uses the remainder of the URL to resolve the view inside
+  the 3rd party application by default. This works fine most of the time, sometimes
+  you want to alter the perceived path without modifying the URLconf file itself.
+
+  If provided, the ``path_mapper`` receives the three arguments, ``request.path``,
+  the URL of the current page and all application parameters, and must return
+  a tuple consisting of the path to resolve inside the application content and
+  the path the current page is supposed to have.
+
+  This ``path_mapper`` function can be used to do things like rewrite the path so
+  you can pretend that an app is anchored deeper than it actually is (e.g.
+  /path/to/page is treated as "/<slug>/" using a parameter value rather
+  than "/" by the embedded app)
+
+* ``view_wrapper``: Decorate every view inside the application content:
+
+  If the customization possibilites above aren't sufficient, ``view_wrapper``
+  can be used to decorate each and every view inside the application content
+  with your own function. The function specified with ``view_wrapper`` receives
+  an additional parameters besides the view itself and any arguments or
+  keyword arguments the URLconf contains, ``appcontent_parameters`` containing
+  the application content configuration.
+
+
+.. _page-ext-navigation:
+
+Letting 3rd party apps define navigation entries
+------------------------------------------------
+
+Short answer: You need the ``navigation`` extension module. Activate it like
+this::
+
+    Page.register_extensions('navigation')
+
+
+Please note however, that this call needs to come after all
+``NavigationExtension`` subclasses have been processed, because otherwise they
+will not be available for selection in the page administration! (Yes, this is
+lame and yes, this is going to change as soon as I find the time to whip up a
+better solution.)
+
+Because the use cases for extended navigations are so different, FeinCMS
+does not go to great lengths trying to cover them all. What it does though
+is to let you execute code to filter, replace or add navigation entries when
+generating a list of navigation entries.
+
+If you have a blog and you want to display the blog categories as subnavigation
+entries, you could do it as follows:
+
+#. Create a navigation extension for the blog categories
+
+#. Assign this navigation extension to the CMS page where you want these navigation entries to appear
+
+You don't need to do anything else as long as you use the built-in
+``feincms_navigation`` template tag -- it knows how to handle extended navigations.
+
+::
+
+    from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
+
+    class BlogCategoriesNavigationExtension(NavigationExtension):
+        name = _('blog categories')
+
+        def children(self, page, **kwargs):
+            for category in Category.objects.all():
+                yield PagePretender(
+                    title=category.name,
+                    url=category.get_absolute_url(),
+                    )
+
+    class PassthroughExtension(NavigationExtension):
+        name = 'passthrough extension'
+
+        def children(self, page, **kwargs):
+            for p in page.children.in_navigation():
+                yield p
+
+    Page.register_extensions('navigation')

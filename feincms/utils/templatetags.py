@@ -2,11 +2,11 @@
 I really hate repeating myself. These are helpers that avoid typing the
 whole thing over and over when implementing additional template tags
 
-They help implementing tags of the form
+They help implementing tags of the following forms::
 
-{% tag as var_name %} (SimpleAssignmentNode)
-and
-{% tag of template_var as var_name %} (SimpleAssignmentNodeWithVar)
+    {% tag as var_name %}
+    {% tag of template_var as var_name %}
+    {% tag of template_var as var_name arg1,arg2,kwarg3=4 %}
 '''
 
 from django import template

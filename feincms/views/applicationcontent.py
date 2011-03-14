@@ -2,10 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-try:
-    from email.utils import parsedate
-except ImportError: # py 2.4 compat
-    from email.Utils import parsedate
+import re
 
 from django.http import Http404
 
@@ -16,8 +13,16 @@ from feincms.views.base import Handler
 
 
 def applicationcontent_request_processor(page, request):
-    if not hasattr(request, '_feincms_appcontent_parameters'):
-        request._feincms_appcontent_parameters = dict(in_appcontent_subpage=False)
+    """
+    Add a few application-specific items to _feincms_extra_context, among
+    them whether we are in a subpage of an application content and the
+    extra_path which should be processed.
+    """
+
+    request._feincms_extra_context.update({
+        'in_appcontent_subpage': False,
+        'extra_path': '/',
+        })
 
     if request.path != page.get_absolute_url():
         # The best_match logic kicked in. See if we have at least one
@@ -26,22 +31,23 @@ def applicationcontent_request_processor(page, request):
             if not settings.FEINCMS_ALLOW_EXTRA_PATH:
                 raise Http404
         else:
-            request._feincms_appcontent_parameters['in_appcontent_subpage'] = True
+            request._feincms_extra_context['in_appcontent_subpage'] = True
 
-        extra_path = request.path[len(page.get_absolute_url()):]
-        extra = extra_path.strip('/').split('/')
-        request._feincms_appcontent_parameters['page_extra_path'] = extra
-        request.extra_path = extra_path
-    else:
-        request.extra_path = ""
+        request._feincms_extra_context['extra_path'] = re.sub(
+            '^' + re.escape(page.get_absolute_url()[:-1]), '', request.path)
 
 Page.register_request_processors(applicationcontent_request_processor)
 
 
 class ApplicationContentHandler(Handler):
-    def __call__(self, request, path=None):
-        request._feincms_appcontent_parameters = {}
+    """
+    This handler is almost the same as the default handler. The only difference
+    is that it uses ``best_match_for_path``, not ``page_for_path``. Because of
+    this fact it handles URLs which do not exactly match up with any page in
+    the database.
+    """
 
+    def __call__(self, request, path=None):
         return self.build_response(request,
             Page.objects.best_match_for_path(path or request.path, raise404=True))
 

@@ -100,7 +100,8 @@ def ajax_editable_boolean(attr, short_description):
     Convenience function: Assign the return value of this method to a variable
     of your ModelAdmin class and put the variable name into list_display.
 
-    Example:
+    Example::
+
         class MyTreeEditor(TreeEditor):
             list_display = ('__unicode__', 'active_toggle')
 
@@ -115,6 +116,11 @@ def ajax_editable_boolean(attr, short_description):
 
 
 class ChangeList(main.ChangeList):
+    """
+    Custom ``ChangeList`` class which ensures that the tree entries are always
+    ordered in depth-first order (order by ``tree_id``, ``lft``).
+    """
+
     def get_query_set(self):
         return super(ChangeList, self).get_query_set().order_by('tree_id', 'lft')
 
@@ -137,6 +143,13 @@ class ChangeList(main.ChangeList):
 # ------------------------------------------------------------------------
 
 class TreeEditor(admin.ModelAdmin):
+    """
+    The ``TreeEditor`` modifies the standard Django administration change list
+    to a drag-drop enabled interface for django-mptt_-managed Django models.
+
+    .. _django-mptt: http://github.com/mptt/django-mptt/
+    """
+
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
         # Make sure that no pagination is displayed. Slicing is disabled anyway,
         # therefore this value does not have an influence on the queryset

@@ -1,4 +1,3 @@
-from random import random
 import os
 try:
     from PIL import Image
@@ -25,6 +24,25 @@ def tryint(v):
 
 @register.filter
 def thumbnail(filename, size='200x200'):
+    """
+    Creates a thumbnail from the image passed, returning its path::
+
+        {{ object.image.name|thumbnail:"400x300" }}
+
+    You have to pass the ``name``, not the ``url`` attribute of an ``ImageField``
+    or ``FileField``. The thumbnail filter only works for images inside
+    ``MEDIA_ROOT``.
+
+    The dimensions passed are treated as a bounding box. The aspect ratio of
+    the initial image is preserved. Images aren't blown up in size if they
+    are already smaller.
+
+    Both width and height must be specified. If you do not care about one
+    of them, just set it to an arbitrarily large number::
+
+        {{ object.image.name|thumbnail:"300x999999" }}
+    """
+
     if not (filename and 'x' in size):
         # Better return empty than crash
         return u''
@@ -53,6 +71,11 @@ def thumbnail(filename, size='200x200'):
 
 @register.filter
 def cropscale(filename, size='200x200'):
+    """
+    Scales the image down and crops it so that its size equals exactly the size
+    passed (as long as the initial image is bigger than the specification).
+    """
+
     if not (filename and 'x' in size):
         # Better return empty than crash
         return u''

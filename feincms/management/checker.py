@@ -11,10 +11,12 @@ def check_database_schema(cls, module_name):
     first time.
 
     Please note that you have to connect the return value using strong
-    references. Here's an example how to do this:
+    references. Here's an example how to do this::
 
-    signals.post_syncdb.connect(check_database_schema(Page, __name__),
-                                weak=False)
+        signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
+
+    (Yes, this is a weak attempt at a substitute for South until we find
+    a way to make South work with FeinCMS' dynamic model creation.)
     """
 
     def _fn(sender, **kwargs):

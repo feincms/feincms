@@ -4,16 +4,22 @@ Admin classes
 ItemEditor
 ----------
 
-.. autoclass:: feincms.admin.item_editor.ItemEditor
+.. automodule:: feincms.admin.item_editor
    :members:
-   :undoc-members:
    :noindex:
+
 
 TreeEditor
 ----------
 
-.. autoclass:: feincms.admin.tree_editor.TreeEditor
+.. automodule:: feincms.admin.tree_editor
    :members:
-   :undoc-members:
    :noindex:
 
+
+FilterSpec classes for ``list_filter`` customization
+----------------------------------------------------
+
+.. automodule:: feincms.admin.filterspecs
+   :members:
+   :noindex:

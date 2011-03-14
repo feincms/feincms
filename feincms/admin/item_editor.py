@@ -21,19 +21,31 @@ FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 
 class ItemEditorForm(forms.ModelForm):
+    """
+    The item editor form contains hidden region and ordering fields and should
+    be used for all content type inlines.
+    """
+
     region = forms.CharField(widget=forms.HiddenInput())
     ordering = forms.IntegerField(widget=forms.HiddenInput())
 
 
 class FeinCMSInline(InlineModelAdmin):
+    """
+    Custom ``InlineModelAdmin`` subclass used for content types.
+    """
+
     extra = 0
     fk_name = 'parent'
     template = 'admin/feincms/content_inline.html'
 
     def __init__(self, *args, **kwargs):
         super(FeinCMSInline, self).__init__(*args, **kwargs)
+
+        # Earmark. The Feincms_Inline string should not be changed, it is used
+        # by item_editor.js to find all FeinCMS content type inlines.
         self.verbose_name_plural = \
-            u'Feincms_Inline: %s' % (self.verbose_name_plural,) # earmark
+            u'Feincms_Inline: %s' % (self.verbose_name_plural,)
 
 
 def get_feincms_inlines(model):
@@ -52,6 +64,15 @@ def get_feincms_inlines(model):
 
 
 class ItemEditor(admin.ModelAdmin):
+    """
+    The ``ItemEditor`` is a drop-in replacement for ``ModelAdmin`` with the
+    speciality of knowing how to work with :class:`feincms.models.Base`
+    subclasses and associated content types.
+
+    It does not have any public API except from everything inherited from'
+    the standard ``ModelAdmin`` class.
+    """
+
     def __init__(self, model, admin_site):
         ensure_completely_loaded()
 
@@ -113,19 +134,18 @@ class ItemEditor(admin.ModelAdmin):
         else:
             form = ModelForm(instance=obj, prefix=content_type)
 
-        return render_to_response('admin/feincms/fe_editor.html', {
+        context = self.get_extra_context(request)
+        context.update({
             'frontend_editing': True,
             'title': _('Change %s') % force_unicode(model_cls._meta.verbose_name),
             'object': obj,
             'form': form,
             'is_popup': True,
             'media': self.media,
-            'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING': \
-                settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
-            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
-            }, context_instance=template.RequestContext(request,
-                processors=self.model.feincms_item_editor_context_processors))
+            })
+
+        return render_to_response('admin/feincms/fe_editor.html', context,
+            context_instance=template.RequestContext(request))
 
     def get_content_type_map(self):
         """ Prepare mapping of content types to their prettified names. """
@@ -221,7 +241,7 @@ class ItemEditor(admin.ModelAdmin):
             import warnings
             warnings.warn("The show_on_top will soon be removed; please "
                           "update your " "code to use fieldsets instead. ",
-                          PendingDeprecationWarning)
+                          DeprecationWarning)
             if hasattr(self.model, '_feincms_templates'):
                 if 'template_key' not in self.show_on_top:
                     self.show_on_top = ['template_key'] + \
