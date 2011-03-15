@@ -22,6 +22,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db.transaction import commit_on_success
+from django.contrib.sites.models import Site
 
 import mptt
 
@@ -262,6 +263,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         return Page.objects.get(pk=with_page.pk)
 
 PageManager.add_to_active_filters( Q(active=True) )
+PageManager.add_to_active_filters( Q(site=django_settings.SITE_ID) )
 
 # MARK: -
 # ------------------------------------------------------------------------
@@ -292,6 +294,7 @@ class Page(Base):
         help_text=_('Target URL for automatic redirects.'))
     _cached_url = models.CharField(_('Cached URL'), max_length=300, blank=True,
         editable=False, default='', db_index=True)
+    site = models.ForeignKey(Site)
 
     request_processors = []
     response_processors = []
@@ -769,7 +772,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     fieldsets = [
         (None, {
             'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
-                'parent'],
+                       'parent', 'site'],
         }),
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
@@ -778,8 +781,8 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         }),
         ]
     readonly_fields = []
-    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
-    list_filter = ['active', 'in_navigation', 'template_key', 'parent']
+    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'site', 'template']
+    list_filter = ['active', 'in_navigation', 'template_key', 'site', 'parent']
     search_fields = ['title', 'slug']
     prepopulated_fields = { 'slug': ('title',), }
 
@@ -809,7 +812,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                 if not f.editable:
                     self.readonly_fields.append(f.name)
 
-    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
+    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in nav'))
 
     def _actions_column(self, page):
         actions = super(PageAdmin, self)._actions_column(page)
