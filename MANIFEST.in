@@ -1,5 +1,6 @@
 include AUTHORS
 include LICENSE
+include README
 recursive-include feincms/media *.png
 recursive-include feincms/media *.jpg
 recursive-include feincms/media *.gif

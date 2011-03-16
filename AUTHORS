@@ -1,20 +1,42 @@
-The primary authors are:
+The authors of FeinCMS are:
 
-    * Matthias Kestenholz <mk@spinlock.ch>
-    * Daniel Renz <dr@feinheit.ch>
-    * Martin J. Laubach <mjl@laubach.at>
-    * Chris Adams <chris@improbable.org>
-
-Additional contributors include:
-
-    * Maarten van Gompel (Template tag improvements, dutch translation)
-    * Maciek Szczesniak (IE bugfixes)
-    * Martin Mahner (Typo fixes in the documentation)
-    * Denis Martinez (Django 1.0 compatibility and bug reports)
-    * Simon Schürpf
-    * Vítor Figueiró (Translations)
-    * Bojan Mihelac
-    * Mikhail Korobov
-    * Sebastian Hillig
-    * Simon Schmid
-    * Paul Garner
+* Matthias Kestenholz
+* Martin J. Laubach
+* Chris Adams
+* Simon Meers
+* Bojan Mihelac
+* Bjorn Post
+* Stephan Jaekel
+* Julien Phalip
+* Daniel Renz
+* Matt Dawson
+* Simon Schürpf
+* Skylar Saveland
+* Bjarni Thorisson
+* Greg Taylor
+* Maarten van Gompel (proycon)
+* Antoni Aloy
+* Simon Schmid
+* Stefan Reinhard
+* Martin Mahner
+* Nico Echaniz
+* Vítor Figueiró
+* Andrew D. Ball
+* Brian Macdonald
+* Gabriel Kovacs
+* Jonas
+* Håvard Grimelid
+* Maciek Szczesniak
+* Mikhail Korobov
+* Simon Bächler
+* Wil Tan
+* Alen Mujezinovic
+* Darryl Woods
+* Denis Martinez
+* George Karpenkov
+* Max Peterson
+* Mikkel Hoegh
+* Paul Garner
+* Rico Moorman
+* Sebastian Hillig
+* Wouter van der Graaf
