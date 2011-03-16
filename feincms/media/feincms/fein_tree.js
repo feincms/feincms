@@ -340,9 +340,9 @@ feincms.jQuery(function($){
 		$('#open_entire_tree').bindOpenTreeEvent();
 
         // Disable things user cannot do anyway (object level permissions)
-        non_editable_fields = $('.tree-item-not-editable', rlist).parents('tr:first');
+        non_editable_fields = $('.tree-item-not-editable', rlist).parents('tr');
         non_editable_fields.addClass('non-editable');
-        $('input', non_editable_fields).attr('disabled', 'disabled');
+        $('input:checkbox', non_editable_fields).attr('disabled', 'disabled');
         $('a:first', non_editable_fields).click(function(e){e.preventDefault()});
         $('.drag_handle', non_editable_fields).removeClass('drag_handle');
 
