@@ -883,7 +883,12 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                 except ValueError:
                     request.POST[k] = None
 
-        return super(PageAdmin, self).change_view(request, object_id, extra_context)
+        try:
+            return super(PageAdmin, self).change_view(request, object_id, extra_context)
+        except PermissionDenied:
+            from django.contrib import messages
+            messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
+        return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 
     def render_item_editor(self, request, object, context):
         if object:
