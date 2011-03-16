@@ -145,7 +145,10 @@ class ChangeList(main.ChangeList):
         opts = self.model_admin.opts
         label = opts.app_label + '.' + opts.get_change_permission()
         for item in self.result_list:
-            item.feincms_editable = self.user.has_perm(label, item)
+            if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
+                item.feincms_editable = self.model_admin.has_change_permission(request, item)
+            else:
+                item.feincms_editable = True
 
 # ------------------------------------------------------------------------
 # MARK: -
@@ -345,18 +348,26 @@ class TreeEditor(admin.ModelAdmin):
         Implement a lookup for object level permissions. Basically the same as
         ModelAdmin.has_change_permission, but also passes the obj parameter in.
         """
-        opts = self.opts
-        return request.user.has_perm(opts.app_label + '.' + opts.get_change_permission(), obj) and \
-               super(TreeEditor, self).has_change_permission(request, obj)
+        if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
+            opts = self.opts
+            r = request.user.has_perm(opts.app_label + '.' + opts.get_change_permission(), obj)
+        else:
+            r = True
+
+        return r and super(TreeEditor, self).has_change_permission(request, obj)
 
     def has_delete_permission(self, request, obj=None):
         """
         Implement a lookup for object level permissions. Basically the same as
         ModelAdmin.has_delete_permission, but also passes the obj parameter in.
         """
-        opts = self.opts
-        return request.user.has_perm(opts.app_label + '.' + opts.get_delete_permission(), obj) and \
-               super(TreeEditor, self).has_delete_permission(request, obj)
+        if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
+            opts = self.opts
+            r = request.user.has_perm(opts.app_label + '.' + opts.get_delete_permission(), obj)
+        else:
+            r = True
+
+        return r and super(TreeEditor, self).has_delete_permission(request, obj)
 
     def _move_node(self, request):
         cut_item = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
