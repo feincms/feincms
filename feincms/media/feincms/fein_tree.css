@@ -48,3 +48,7 @@ div#drag_line div {
 .page_marker.closed {
     background: url(img/disclosure-right.png) no-repeat right top;
 }
+
+tr.non-editable a:link, tr.non-editable a:visited, tr.non-editable td {
+    color: #AAA;
+}

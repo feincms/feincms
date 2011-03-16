@@ -115,11 +115,16 @@ def ajax_editable_boolean(attr, short_description):
     return _fn
 
 
+# ------------------------------------------------------------------------
 class ChangeList(main.ChangeList):
     """
     Custom ``ChangeList`` class which ensures that the tree entries are always
     ordered in depth-first order (order by ``tree_id``, ``lft``).
     """
+
+    def __init__(self, request, *args, **kwargs):
+        self.user = request.user
+        super(ChangeList, self).__init__(request, *args, **kwargs)
 
     def get_query_set(self):
         return super(ChangeList, self).get_query_set().order_by('tree_id', 'lft')
@@ -135,8 +140,12 @@ class ChangeList(main.ChangeList):
             if clauses:
                 self.query_set = self.model._default_manager.filter(reduce(lambda p, q: p|q, clauses))
 
-        return super(ChangeList, self).get_results(request)
+        super(ChangeList, self).get_results(request)
 
+        opts = self.model_admin.opts
+        label = opts.app_label + '.' + opts.get_change_permission()
+        for item in self.result_list:
+            item.feincms_editable = self.user.has_perm(label, item)
 
 # ------------------------------------------------------------------------
 # MARK: -
@@ -174,20 +183,23 @@ class TreeEditor(admin.ModelAdmin):
             'admin/feincms/tree_editor.html',
             ]
 
+    def editable(self, item):
+        return getattr(item, 'feincms_editable', True)
+
     def indented_short_title(self, item):
         """
         Generate a short title for a page, indent it depending on
         the page's depth in the hierarchy.
         """
         if hasattr(item, 'get_absolute_url'):
-            r = '''<input type="hidden" class="medialibrary_file_path" value="%s" /><span id="page_marker-%d"
-            class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
-                item.get_absolute_url(), item.id, 14+item.level*18)
-        else:
-            r = '''<span id="page_marker-%d"
-            class="page_marker" style="width: %dpx;">&nbsp;</span>&nbsp;''' % (
-                item.id, 14+item.level*18)
+            r = '<input type="hidden" class="medialibrary_file_path" value="%s" />' % item.get_absolute_url()
 
+        editable_class = ''
+        if not getattr(item, 'feincms_editable', True):
+            editable_class = ' tree-item-not-editable'
+
+        r += '<span id="page_marker-%d" class="page_marker%s" style="width: %dpx;">&nbsp;</span>&nbsp;' % (
+                item.id, editable_class, 14+item.level*18)
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):
             r += item.short_title()

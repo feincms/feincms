@@ -339,6 +339,13 @@ feincms.jQuery(function($){
 		$('#collapse_entire_tree').bindCollapseTreeEvent();
 		$('#open_entire_tree').bindOpenTreeEvent();
 
+        // Disable things user cannot do anyway (object level permissions)
+        non_editable_fields = $('.tree-item-not-editable', rlist).parents('tr:first');
+        non_editable_fields.addClass('non-editable');
+        $('input', non_editable_fields).attr('disabled', 'disabled');
+        $('a:first', non_editable_fields).click(function(e){e.preventDefault()});
+        $('.drag_handle', non_editable_fields).removeClass('drag_handle');
+
         /* Enable focussing, put focus on first result, add handler for keyboard navigation */
         $('tr', rlist).attr('tabindex', -1);
         $('tbody tr:first', rlist).attr('tabindex', 0).focus();
