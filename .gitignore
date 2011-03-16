@@ -7,3 +7,5 @@
 ._*
 /FeinCMS.egg-info
 _build
+build/
+dist/
