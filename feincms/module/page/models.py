@@ -643,7 +643,7 @@ signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 # ------------------------------------------------------------------------
 class PageAdminForm(forms.ModelForm):
     never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
-        'translation_of')
+        'translation_of', '_content_title', '_page_title')
 
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
