@@ -236,8 +236,13 @@ is rendered. These two entry points are called :func:`process` and :func:`finali
 :func:`process` is called before rendering the template starts. The only argument
 to the method is the current ``request`` instance. This method can short-circuit
 the request-response-cycle simply by returning any response object. If the return
-value evaluates to ``True`` in a boolean context, the standard FeinCMS view
-function does not do any further processing and returns the object verbatim.
+value is a ``HttpResponse``, the standard FeinCMS view function does not do any
+further processing and returns the response right away.
+
+As a special case, if a :func:`process` method returns ``True`` (for successful
+processing), ``Http404`` exceptions raised by any other content type on the
+current page are ignored. This is especially helpful if you have several
+``ApplicationContent`` content types on a single page.
 
 :func:`finalize` is called after the response has been rendered. It receives
 the current request and response objects. This function is normally used to

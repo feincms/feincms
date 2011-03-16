@@ -917,9 +917,10 @@ class PagesTestCase(TestCase):
         request.path += 'hello/'
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = False
-        self.assertRaises(Http404, lambda: Page.objects.best_match_for_request(request))
+        self.assertEqual(self.client.get(request.path).status_code, 404)
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
+        self.assertEqual(self.client.get(request.path).status_code, 200)
         self.assertEqual(page, Page.objects.best_match_for_request(request))
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old

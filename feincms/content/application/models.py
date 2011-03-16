@@ -335,6 +335,8 @@ class ApplicationContent(models.Model):
         else:
             self.rendered_result = mark_safe(output)
 
+        return True # successful
+
     def send_directly(self, request, response):
         return response.status_code != 200 or request.is_ajax() or getattr(response, 'standalone', False)
 

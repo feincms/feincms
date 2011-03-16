@@ -7,6 +7,7 @@ try:
 except ImportError:
     import md5
 
+import re
 import sys
 
 from django import forms
@@ -472,7 +473,19 @@ class Page(Base):
         immediately to the client.
         """
         request._feincms_page = self
-        request._feincms_extra_context = {}
+        request._feincms_extra_context = {
+            'in_appcontent_subpage': False, # XXX This variable name isn't accurate anymore.
+                                            # We _are_ in a subpage, but it isn't necessarily
+                                            # an appcontent subpage.
+            'extra_path': '/',
+            }
+
+        if request.path != self.get_absolute_url():
+            request._feincms_extra_context.update({
+                'in_appcontent_subpage': True,
+                'extra_path': re.sub('^' + re.escape(self.get_absolute_url()[:-1]), '',
+                    request.path),
+                })
 
         for fn in self.request_processors:
             r = fn(self, request)
