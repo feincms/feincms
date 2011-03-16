@@ -263,7 +263,7 @@ class TreeEditor(admin.ModelAdmin):
         if hasattr(obj, "user_can") and obj.user_can(request.user, change_page=True):
             can_change = True
         else:
-            can_change = request.user.has_perm("page.change_page")
+            can_change = request.user.has_perm("page.change_page", obj)
 
         if not can_change:
             logging.warning("Denied AJAX request by %s to toggle boolean %s for page %s", request.user, attr, item_id)
@@ -327,6 +327,24 @@ class TreeEditor(admin.ModelAdmin):
                                                     _build_tree_structure(self.model)))
 
         return super(TreeEditor, self).changelist_view(request, extra_context, *args, **kwargs)
+
+    def has_change_permission(self, request, obj=None):
+        """
+        Implement a lookup for object level permissions. Basically the same as
+        ModelAdmin.has_change_permission, but also passes the obj parameter in.
+        """
+        opts = self.opts
+        return request.user.has_perm(opts.app_label + '.' + opts.get_change_permission(), obj) and \
+               super(TreeEditor, self).has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        Implement a lookup for object level permissions. Basically the same as
+        ModelAdmin.has_delete_permission, but also passes the obj parameter in.
+        """
+        opts = self.opts
+        return request.user.has_perm(opts.app_label + '.' + opts.get_delete_permission(), obj) and \
+               super(TreeEditor, self).has_delete_permission(request, obj)
 
     def _move_node(self, request):
         cut_item = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
