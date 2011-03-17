@@ -11,10 +11,12 @@ if(!Array.indexOf) {
 
 (function($){
     // Patch up urlify maps to generate nicer slugs in german
-    Downcoder.Initialize() ;
-    Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
-    Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
-    Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
+    if(typeof(Downcoder) != "undefined"){
+        Downcoder.Initialize() ;
+        Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
+        Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
+        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";        
+    }
 
     function feincms_gettext(s) {
         // Unfortunately, we cannot use Django's jsi18n view for this
