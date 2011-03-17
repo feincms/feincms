@@ -412,12 +412,16 @@ class Page(Base):
             cached_page_urls[page.id] = page._cached_url
             super(Page, page).save() # do not recurse
 
+    @models.permalink
     def get_absolute_url(self):
         """
         Return the absolute URL of this page.
         """
 
-        return self._cached_url
+        url = self._cached_url[1:-1]
+        if url:
+            return ('feincms_handler', (url,), {})
+        return ('feincms_home', (), {})
 
     def get_preview_url(self):
         try:

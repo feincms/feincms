@@ -69,3 +69,22 @@ Changes and highlights
 * The ``feincms.views.applicationcontent`` module has been removed. The
   special casing it provided for application content-using pages aren't
   necessary anymore.
+
+* The page's ``get_absolute_url`` method uses URL reversion for determining the
+  URL of pages instead of returning ``_cached_url``. This means that you need
+  to modify your URLconf entries if you added them to your own ``urls.py``
+  instead of including ``feincms.urls``::
+
+      urlpatterns = patterns('',
+          # ... your patterns ...
+
+          url(r'^$', base.handler, name='feincms_home'),
+          url(r'^(.*)/$', base.handler, name='feincms_handler'),
+      )
+
+  If you want the old behavior back, all you need to do is add the following
+  code to your ``settings.py``::
+
+      ABSOLUTE_URL_OVERRIDES = {
+          'page.page': lambda page: page._cached_url,
+          }
