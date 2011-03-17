@@ -65,3 +65,7 @@ Changes and highlights
   (acting as a replacement for global variables), ``request.extra_path``
   has been removed. The same information can be accessed via
   ``request._feincms_extra_context['extra_path']``.
+
+* The ``feincms.views.applicationcontent`` module has been removed. The
+  special casing it provided for application content-using pages aren't
+  necessary anymore.
