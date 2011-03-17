@@ -107,29 +107,3 @@ class Handler(object):
 
 #: Default handler
 handler = Handler()
-
-
-class PreviewHandler(Handler):
-    """
-    This handler is for previewing site content; it takes a page_id so
-    the page is uniquely identified and does not care whether the page
-    is active or expired. To balance that, it requires a logged in user.
-    """
-
-    def __call__(self, request, page_id):
-        page = get_object_or_404(Page, pk=page_id)
-        return self.build_response(request, page)
-
-    def finalize(self, request, response, page):
-        """
-        Do (nearly) nothing. Do not call any ``finalize`` methods,
-        because those might add stuff to the cache, set ETags etc.
-        all of which we cannot use in a preview handler.
-        """
-
-        add_never_cache_headers(response)
-        return response
-
-
-#: Preview handler
-preview_handler = permission_required('page.change_page')(PreviewHandler())

@@ -5,11 +5,7 @@
 {% block object-tools %}
 {{ block.super }}
 <ul class="extra-object-tools">
-	{% if to_replace %}
-	    <li><a href="?replace={{ to_replace.id }}">{% blocktrans %}Replace page {{ to_replace }}{% endblocktrans %}</a></li>
-	{% endif %}
 	{% if original.is_active %}
-	    <li><a href="?create_copy=1">{% trans "Create hidden copy of this page" %}</a></li>
 	    <li><a target="_blank" href="{{ original.get_absolute_url }}?frontend_editing=1" class="frontend_editing_link">{% trans "Edit on site" %}</a></li>
 	{% endif %}
 </ul>

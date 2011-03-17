@@ -352,8 +352,6 @@ class PagesTestCase(TestCase):
         page.save()
         self.is_published('/', True)
 
-        self.is_published('/preview/%d/' % page.id, True)
-
     def test_06_tree_editor_save(self):
         self.create_default_page_set()
 
@@ -1082,41 +1080,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(self.client.get('/admin/page/page/add/?parent=1').status_code, 200)
         self.assertEqual(self.client.get('/admin/page/page/add/?parent=2').status_code, 200)
 
-    def test_27_copy_replace_append_page(self):
-        self.create_default_page_set()
-
-        page = Page.objects.get(pk=1)
-        page.active = True
-        page.save()
-
-        self.create_pagecontent(page)
-
-        new = Page.objects.create_copy(page)
-
-        self.assertEqual(u''.join(c.render() for c in page.content.main),
-                         u''.join(c.render() for c in new.content.main))
-
-        self.assertEqual(new.active, False)
-
-        now_live = Page.objects.replace(page, new)
-
-        self.assertEqual(new.id, now_live.id)
-        self.assertEqual(now_live.active, True)
-
-        # reload
-        page = Page.objects.get(pk=1)
-
-        self.assertEqual(page.active, False)
-
-        c = now_live.rawcontent_set.all()[0]
-        c.text = 'somethinggg'
-        c.save()
-
-        page.replace_content_with(now_live)
-
-        self.assertEqual(u''.join(c.render() for c in page.content.main), 'somethinggg')
-
-    def test_28_cached_url_clash(self):
+    def test_27_cached_url_clash(self):
         self.create_default_page_set()
 
         page1 = Page.objects.get(pk=1)
@@ -1129,7 +1093,7 @@ class PagesTestCase(TestCase):
         self.assertContains(self.create_pagecontent(page2, active=True, override_url='/'),
             'already taken by')
 
-    def test_29_applicationcontent_reverse(self):
+    def test_28_applicationcontent_reverse(self):
         self.create_default_page_set()
         page1 = Page.objects.get(pk=1)
         page1.active = True
@@ -1170,7 +1134,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
                       page.get_absolute_url())
 
-    def test_30_medialibrary_admin(self):
+    def test_29_medialibrary_admin(self):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)

@@ -51,7 +51,6 @@
 {{ block.super }}
 {% if change and not is_popup %}
 <ul class="extra-object-tools">
-  {% if original.get_preview_url %}<li><a href="{{ original.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li> {% endif %}
   {% if has_add_permission and has_parent_attribute %}<li><a href="../add/?parent={{ object_id }}" class="addchild">{% trans "Add child page" %}</a></li> {% endif %}
 </ul>
 <script type="text/javascript">{# DRY object-tools addition #}

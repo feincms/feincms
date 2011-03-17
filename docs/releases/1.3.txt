@@ -88,3 +88,7 @@ Changes and highlights
       ABSOLUTE_URL_OVERRIDES = {
           'page.page': lambda page: page._cached_url,
           }
+
+* The copy/replace and preview mechanisms never worked quite right. They were
+  completely dropped from this release. If you still need the ability to create
+  copies of obejcts, use the standard Django ``ModelAdmin.save_as`` feature.
