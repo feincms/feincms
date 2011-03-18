@@ -273,12 +273,17 @@ Here's an example form-handling content which uses all of these facilities::
                 })
 
         def render(self, **kwargs):
-            return self.rendered_output
+            return getattr(self, 'rendered_output', u'')
 
         def finalize(self, request, response):
             # Always disable caches if this content type is used somewhere
             response['Cache-Control'] = 'no-cache, must-revalidate'
 
+
+Please note that the ``render`` method should not raise an exception if
+``process`` has not been called beforehand. The FeinCMS page module views
+guarantee that ``process`` is called beforehand, other modules may not do
+so. ``feincms.module.blog`` for instance does not.
 
 
 Bundled content types
