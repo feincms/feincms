@@ -20,7 +20,8 @@ for any pages which were not matched before:
 ::
 
     urlpatterns += patterns('',
-        url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
+        url(r'^$', base.handler, name='feincms_home'),
+        url(r'^(.*)/$', base.handler, name='feincms_handler'),
     )
 
 Note that this default handler can also take a keyword parameter ``path``
@@ -29,7 +30,18 @@ implement a default page by adding another entry to your ``urls.py``:
 
 ::
 
-        url(r'^$', 'feincms.views.base.handler', {'path': '/rootpage'})
+        url(r'^$', 'feincms.views.base.handler', {'path': '/rootpage'},
+            name='feincms_home')
+
+
+Please note that it's easier to include ``feincms.urls`` at the bottom
+of your own URL patterns like this::
+
+    # ...
+
+    urlpatterns += patterns('',
+        url(r'', include('feincms.urls')),
+    )
 
 
 Generic views
@@ -208,20 +220,8 @@ Please note that this necessitates the use of
 
 
 The 3rd party application might know how to handle more than one URL (the example
-news application does). These subpages won't necessarily exist, and because of this
-the standard CMS view (:func:`feincms.views.base.handler`) will return a 404. You
-must use the application-content aware view :func:`feincms.views.applicationcontent.handler`
-or use the code there inside your own custom view::
-
-    urlpatterns = patterns('',
-        url(r'^$|^(.*)/$', 'feincms.views.applicationcontent.handler'),
-    )
-
-The regular expression covers empty strings (for the root page) as well as any subpage.
-Mainly, the view does not use
-:meth:`Page.page_for_path_or_404` but :meth:`Page.best_match_for_path` to find
-a page, and handles pages with application contents slightly differently. Take a look
-at the code until the documentation here is more complete.
+news application does). These subpages won't necessarily exist as page instances
+in the tree, the standard view knows how to handle this case.
 
 
 .. _integration-applicationcontent-morecontrol:
@@ -254,7 +254,7 @@ Returning responses from the embedded application without wrapping them inside t
 -----------------------------------------------------------------------------------------------
 
 If the 3rd party application returns a response with status code different from
-200, the standard views view :func:`feincms.views.applicationcontent.handler` return
+200, the standard view :func:`feincms.views.base.handler` returns
 the response verbatim. The same is true if the 3rd party application returns
 a response and ``request.is_ajax()`` is ``True`` or if the application content
 returns a HttpResponse with the ``standalone`` attribute set to True.
