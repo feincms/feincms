@@ -1,8 +1,8 @@
 from django.conf.urls.defaults import *
 
-from feincms.views import base
+from feincms.views.base import handler
 
 urlpatterns = patterns('',
-    url(r'^$', base.handler, name='feincms_home'),
-    url(r'^(.*)/$', base.handler, name='feincms_handler'),
+    url(r'^$', handler, name='feincms_home'),
+    url(r'^(.*)/$', handler, name='feincms_handler'),
 )
