@@ -5,7 +5,7 @@
 {% block object-tools %}
 {{ block.super }}
 <ul class="extra-object-tools">
-	{% if original.is_active %}
+	{% if original.is_active and FEINCMS_FRONTEND_EDITING %}
 	    <li><a target="_blank" href="{{ original.get_absolute_url }}?frontend_editing=1" class="frontend_editing_link">{% trans "Edit on site" %}</a></li>
 	{% endif %}
 </ul>

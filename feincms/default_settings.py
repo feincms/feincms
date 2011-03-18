@@ -53,6 +53,8 @@ FEINCMS_JQUERY_NO_CONFLICT = \
 #: Include ancestors in filtered tree editor lists
 FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS', False)
 
+#: Show frontend-editing button?
+FEINCMS_FRONTEND_EDITING = getattr(settings, 'FEINCMS_FRONTEND_EDITING', True)
 
 # ------------------------------------------------------------------------
 # Various settings
