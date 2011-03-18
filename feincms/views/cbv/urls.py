@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-from feincms.views.cbv import Handler
+from feincms.views.cbv.views import Handler
 handler = Handler.as_view()
 
 urlpatterns = patterns('',
