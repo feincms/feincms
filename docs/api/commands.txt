@@ -31,3 +31,11 @@ management commands helped cleaning up the mess.
 .. automodule:: feincms.management.commands.rebuild_mptt_direct
    :members:
    :noindex:
+
+
+Miscellaneous commands
+----------------------
+
+.. automodule:: feincms.management.commands.feincms_validate
+   :members:
+   :noindex:

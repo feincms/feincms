@@ -3,14 +3,34 @@ FeinCMS 1.3 release notes (upcoming)
 ====================================
 
 
-Overview
-========
+FeinCMS 1.3 includes many bugfixes and cleanups and a number of new features.
+The cleanups and features caused a few backwards incompatible changes. The
+upgrade path is outlined below.
 
-FeinCMS 1.3 is mainly a cleanup release and does not sport many new features.
+Highlights
+==========
+
+* Content types can specify the media files (Javascript and CSS files) they
+  need to work correctly. See :ref:`contenttypes-extramedia` for information
+  on how to use this in your own content types.
+
+* The content type loading process has been streamlined and requires much
+  less database queries than before. The performance hit on sites with deep
+  page hierarchies, inheritance and many regions is several times smaller
+  than before.
+
+* The content type interface has been extended with two new methods, available
+  for all content types who need it: ``process`` is called before rendering
+  pages and is guaranteed to receive the current request instance. Each and
+  every content type (not only application contents as before) has the
+  ability to return full HTTP responses which are returned directly to the
+  user. ``finalize`` is called after rendering and can be used to set
+  HTTP headers and do other post-processing tasks. See
+  :ref:`contenttypes-processfinalize` for more information.
 
 
-Changes and highlights
-======================
+(Backwards incompatible and other) Changes
+==========================================
 
 * The default ``ContentProxy`` has been rewritten to load all content type
   instances on initialization. The instances stay around for the full
@@ -20,14 +40,9 @@ Changes and highlights
   contained inside the ``ContentProxy`` class and not distributed all over
   the place.
 
-* Content types can specify the media files (Javascript and CSS files) they
-  need to work correctly. See :ref:`contenttypes-extramedia` for information
-  on how to use this in your own content types.
-
 * The ``ContactFormContent`` has been updated to take advantage of the
   new content type interface where content types can influence the
-  request-response cycle in more ways. See :ref:`contenttypes-processfinalize`
-  for more information.
+  request-response cycle in more ways.
 
 * The ``ct_tracker`` extension has been rewritten to take advantage of the
   new ``ContentProxy`` features. This means that the format of ``_ct_inventory``
@@ -37,10 +52,6 @@ Changes and highlights
       $ ./manage.py shell
       >>> from feincms.module.page.models import Page
       >>> Page.objects.all().update(_ct_inventory=None)
-
-* Application contents do not use global state (state stored on the ``request``
-  object) as much as before anymore. The ``ContentProxy`` refactoring allows us
-  to store the needed data directly on the application content instance itself.
 
 * ``feincms_site`` is not available in the context anymore. It was undocumented,
   mostly unused and badly named anyway. If you still need this functionality you
@@ -65,3 +76,33 @@ Changes and highlights
   (acting as a replacement for global variables), ``request.extra_path``
   has been removed. The same information can be accessed via
   ``request._feincms_extra_context['extra_path']``.
+
+* The ``feincms.views.applicationcontent`` module has been removed. The
+  special casing it provided for application content-using pages aren't
+  necessary anymore.
+
+* The page's ``get_absolute_url`` method uses URL reversion for determining the
+  URL of pages instead of returning ``_cached_url``. This means that you need
+  to modify your URLconf entries if you added them to your own ``urls.py``
+  instead of including ``feincms.urls``. Please make sure that you have two
+  named URL patterns, ``feincms_home`` and ``feincms_handler``::
+
+      from feincms.views.base import handler
+
+      urlpatterns = patterns('',
+          # ... your patterns ...
+
+          url(r'^$', handler, name='feincms_home'),
+          url(r'^(.*)/$', handler, name='feincms_handler'),
+      )
+
+  If you want the old behavior back, all you need to do is add the following
+  code to your ``settings.py``::
+
+      ABSOLUTE_URL_OVERRIDES = {
+          'page.page': lambda page: page._cached_url,
+          }
+
+* The copy/replace and preview mechanisms never worked quite right. They were
+  completely dropped from this release. If you still need the ability to create
+  copies of objects, use the standard Django ``ModelAdmin.save_as`` feature.
