@@ -1,6 +1,5 @@
-from django.contrib.auth.decorators import permission_required
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
 try:
