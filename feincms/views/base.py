@@ -2,10 +2,6 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
-try:
-    from django.template.response import TemplateResponse
-except ImportError:
-    TemplateResponse = None
 
 from feincms import settings
 from feincms.module.page.models import Page
@@ -79,11 +75,8 @@ class Handler(object):
         context = request._feincms_extra_context
         context['feincms_page'] = page
 
-        if TemplateResponse:
-            return TemplateResponse(request, page.template.path, context)
-        else:
-            return render_to_response(page.template.path,
-                context_instance=RequestContext(request, context))
+        return render_to_response(page.template.path,
+            context_instance=RequestContext(request, context))
 
     def finalize(self, request, response, page):
         """
