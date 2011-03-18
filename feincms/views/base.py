@@ -53,7 +53,7 @@ class Handler(object):
 
         for content in page.content.all_of_type(tuple(page._feincms_content_types_with_process)):
             try:
-                r = content.process(request)
+                r = content.process(request, view=self)
                 if r in (True, False):
                     successful = r
                 elif r:

@@ -50,7 +50,7 @@ class CommentsContent(models.Model):
 
         cls.feincms_item_editor_form = CommentContentAdminForm
 
-    def process(self, request):
+    def process(self, request, **kwargs):
         parent_type = self.parent.__class__.__name__.lower()
 
         comment_page = self.parent

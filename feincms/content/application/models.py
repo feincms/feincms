@@ -273,7 +273,7 @@ class ApplicationContent(models.Model):
         super(ApplicationContent, self).__init__(*args, **kwargs)
         self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get('config', {})
 
-    def process(self, request):
+    def process(self, request, **kwargs):
         page_url = self.parent.get_absolute_url()
 
         # Get the rest of the URL
