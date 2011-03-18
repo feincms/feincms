@@ -19,18 +19,27 @@
             $('.order-machine textarea[class=item-richtext], #frontend_editor textarea[class=item-richtext]').each(function(){
                 feincms_richtext_add_ckeditor($(this));
             });
+
+            contentblock_move_handlers.poorify.push(function(item) {
+                item.find('textarea[class=item-richtext]').each(feincms_richtext_remove_ckeditor);
+            });
+            contentblock_move_handlers.richify.push(function(item) {
+                item.find('textarea[class=item-richtext]').each(feincms_richtext_add_ckeditor);
+            });
         });
     })(feincms.jQuery);
 
     function feincms_richtext_remove_ckeditor(field) {
-        if (field.attr("id") in CKEDITOR.instances) {
-            CKEDITOR.instances[field.attr("id")].destroy();
+        var id = field ? field.id : this.id;
+        if (id in CKEDITOR.instances) {
+            CKEDITOR.instances[id].destroy();
         }
     }
 
     function feincms_richtext_add_ckeditor(field) {
-        if (!(field.attr("id") in CKEDITOR.instances)) {
-            CKEDITOR.replace(field.attr("id"));
+        var id = field ? field.id : this.id;
+        if (!(id in CKEDITOR.instances)) {
+            CKEDITOR.replace(id);
         }
     }
 </script>
