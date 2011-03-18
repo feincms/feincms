@@ -16,7 +16,7 @@ def args_test(request, kwarg1, kwarg2):
 
 
 def reverse_test(request):
-    t = template.Template('home:{% url ac_module_root %} args:{% url ac_args_test "xy" "zzy" %} base:{% url feincms.views.base.handler "test" %}')
+    t = template.Template('home:{% url ac_module_root %} args:{% url ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
     return t.render(template.Context())
 
 
