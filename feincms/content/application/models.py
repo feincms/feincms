@@ -273,7 +273,7 @@ class ApplicationContent(models.Model):
         super(ApplicationContent, self).__init__(*args, **kwargs)
         self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get('config', {})
 
-    def process(self, request):
+    def process(self, request, **kwargs):
         page_url = self.parent.get_absolute_url()
 
         # Get the rest of the URL
@@ -335,10 +335,12 @@ class ApplicationContent(models.Model):
         else:
             self.rendered_result = mark_safe(output)
 
+        return True # successful
+
     def send_directly(self, request, response):
         return response.status_code != 200 or request.is_ajax() or getattr(response, 'standalone', False)
 
-    def render(self, request, **kwargs):
+    def render(self, **kwargs):
         return getattr(self, 'rendered_result', u'')
 
     def finalize(self, request, response):

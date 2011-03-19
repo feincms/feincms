@@ -11,10 +11,12 @@ if(!Array.indexOf) {
 
 (function($){
     // Patch up urlify maps to generate nicer slugs in german
-    Downcoder.Initialize() ;
-    Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
-    Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
-    Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
+    if(typeof(Downcoder) != "undefined"){
+        Downcoder.Initialize() ;
+        Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
+        Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
+        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
+    }
 
     function feincms_gettext(s) {
         // Unfortunately, we cannot use Django's jsi18n view for this
@@ -220,41 +222,15 @@ if(!Array.indexOf) {
     function poorify_rich(item){
         item.children(".item-content").hide();
 
-        item.find('div.item-content textarea[class^=item-richtext-]').each(function(){
-            var field = $(this);
-            var classes = field.attr('class').split(' ');
-            $.each(classes, function() {
-                if(this.match('^item-richtext-')) {
-                    var remove_func = undefined;
-                    try { remove_func = eval('feincms_richtext_remove_' + this.substr(14)); } catch(e) {}
-                    if(typeof(remove_func) == 'function'){
-                        remove_func(field);
-                    }
-                }
-            });
-        });
-
-        $('input[type=radio][checked]', item).addClass('radiochecked');
+        for (var i=0; i<contentblock_move_handlers.poorify.length; i++)
+            contentblock_move_handlers.poorify[i](item);
     }
 
     function richify_poor(item){
         item.children(".item-content").show();
 
-        item.find('div.item-content textarea[class^=item-richtext-]').each(function(){
-            var field = $(this);
-            var classes = field.attr('class').split(' ');
-            $.each(classes, function() {
-                if(this.match('^item-richtext-')) {
-                    var add_func = undefined;
-                    try { add_func = eval('feincms_richtext_add_' + this.substr(14)); } catch(e) {}
-                    if(typeof(add_func) == 'function'){
-                        add_func(field);
-                    }
-                }
-            });
-        });
-
-        $('input.radiochecked', item).removeClass('radiochecked').trigger('click');
+        for (var i=0; i<contentblock_move_handlers.richify.length; i++)
+            contentblock_move_handlers.richify[i](item);
     }
 
     function sort_by_ordering(e1, e2) {

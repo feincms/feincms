@@ -7,6 +7,7 @@ try:
 except ImportError:
     import md5
 
+import re
 import sys
 
 from django import forms
@@ -226,42 +227,6 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return self.for_request(request)
 
-    def create_copy(self, page):
-        """
-        Creates an identical copy of a page except that the new one is
-        inactive.
-        """
-
-        new = copy_model_instance(page, exclude=self.exclude_from_copy)
-        new.active = False
-        new.save()
-        new.copy_content_from(page)
-
-        return new
-
-    def replace(self, page, with_page):
-        """
-        Replaces an active page with another. Reassigns all children from the
-        old to the new page.
-        """
-
-        page.active = False
-        page.save()
-        with_page.active = True
-        with_page.save()
-
-        for child in page.children.all():
-            child.parent = Page.objects.get(pk=with_page.pk)
-            child.save()
-
-        # reload to ensure that the mptt attributes in the DB
-        # and in our objects are equal
-        page = Page.objects.get(pk=page.pk)
-        with_page = Page.objects.get(pk=with_page.pk)
-        with_page.move_to(page, 'right')
-
-        return Page.objects.get(pk=with_page.pk)
-
 PageManager.add_to_active_filters( Q(active=True) )
 PageManager.add_to_active_filters( Q(site=django_settings.SITE_ID) )
 
@@ -414,18 +379,16 @@ class Page(Base):
             cached_page_urls[page.id] = page._cached_url
             super(Page, page).save() # do not recurse
 
+    @models.permalink
     def get_absolute_url(self):
         """
         Return the absolute URL of this page.
         """
 
-        return self._cached_url
-
-    def get_preview_url(self):
-        try:
-            return reverse('feincms_preview', kwargs={ 'page_id': self.id })
-        except:
-            return None
+        url = self._cached_url[1:-1]
+        if url:
+            return ('feincms_handler', (url,), {})
+        return ('feincms_home', (), {})
 
     def get_navigation_url(self):
         """
@@ -475,7 +438,19 @@ class Page(Base):
         immediately to the client.
         """
         request._feincms_page = self
-        request._feincms_extra_context = {}
+        request._feincms_extra_context = {
+            'in_appcontent_subpage': False, # XXX This variable name isn't accurate anymore.
+                                            # We _are_ in a subpage, but it isn't necessarily
+                                            # an appcontent subpage.
+            'extra_path': '/',
+            }
+
+        if request.path != self.get_absolute_url():
+            request._feincms_extra_context.update({
+                'in_appcontent_subpage': True,
+                'extra_path': re.sub('^' + re.escape(self.get_absolute_url()[:-1]), '',
+                    request.path),
+                })
 
         for fn in self.request_processors:
             r = fn(self, request)
@@ -850,19 +825,6 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
 
     def change_view(self, request, object_id, extra_context=None):
-        from django.shortcuts import get_object_or_404
-        if 'create_copy' in request.GET:
-            page = get_object_or_404(Page, pk=object_id)
-            new = Page.objects.create_copy(page)
-            self.message_user(request, ugettext("You may edit the copied page below."))
-            return HttpResponseRedirect('../%s/' % new.pk)
-        elif 'replace' in request.GET:
-            page = get_object_or_404(Page, pk=request.GET.get('replace'))
-            with_page = get_object_or_404(Page, pk=object_id)
-            Page.objects.replace(page, with_page)
-            self.message_user(request, ugettext("You have replaced %s. You may continue editing the now-active page below.") % page)
-            return HttpResponseRedirect('.')
-
         # Hack around a Django bug: raw_id_fields aren't validated correctly for
         # ForeignKeys in 1.1: http://code.djangoproject.com/ticket/8746 details
         # the problem - it was fixed for MultipleChoiceFields but not ModelChoiceField
@@ -887,16 +849,6 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                     request.POST[k] = None
 
         return super(PageAdmin, self).change_view(request, object_id, extra_context)
-
-    def render_item_editor(self, request, object, context):
-        if object:
-            try:
-                active = Page.objects.active().exclude(pk=object.pk).get(_cached_url=object._cached_url)
-                context['to_replace'] = active
-            except Page.DoesNotExist:
-                pass
-
-        return super(PageAdmin, self).render_item_editor(request, object, context)
 
     def is_visible_admin(self, page):
         """

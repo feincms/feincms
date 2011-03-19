@@ -233,11 +233,17 @@ Since FeinCMS 1.3, content types are not only able to render themselves, they
 can offer two more entry points which are called before and after the response
 is rendered. These two entry points are called :func:`process` and :func:`finalize`.
 
-:func:`process` is called before rendering the template starts. The only argument
-to the method is the current ``request`` instance. This method can short-circuit
+:func:`process` is called before rendering the template starts. The method always
+gets the current request as first argument, but should accept ``**kwargs`` for
+later extensions of the interface. This method can short-circuit
 the request-response-cycle simply by returning any response object. If the return
-value evaluates to ``True`` in a boolean context, the standard FeinCMS view
-function does not do any further processing and returns the object verbatim.
+value is a ``HttpResponse``, the standard FeinCMS view function does not do any
+further processing and returns the response right away.
+
+As a special case, if a :func:`process` method returns ``True`` (for successful
+processing), ``Http404`` exceptions raised by any other content type on the
+current page are ignored. This is especially helpful if you have several
+``ApplicationContent`` content types on a single page.
 
 :func:`finalize` is called after the response has been rendered. It receives
 the current request and response objects. This function is normally used to
@@ -251,7 +257,7 @@ Here's an example form-handling content which uses all of these facilities::
         class Meta:
             abstract = True
 
-        def process(self, request):
+        def process(self, request, **kwargs):
             if request.method == 'POST':
                 form = FormClass(request.POST)
                 if form.is_valid():
@@ -268,12 +274,17 @@ Here's an example form-handling content which uses all of these facilities::
                 })
 
         def render(self, **kwargs):
-            return self.rendered_output
+            return getattr(self, 'rendered_output', u'')
 
         def finalize(self, request, response):
             # Always disable caches if this content type is used somewhere
             response['Cache-Control'] = 'no-cache, must-revalidate'
 
+
+Please note that the ``render`` method should not raise an exception if
+``process`` has not been called beforehand. The FeinCMS page module views
+guarantee that ``process`` is called beforehand, other modules may not do
+so. ``feincms.module.blog`` for instance does not.
 
 
 Bundled content types

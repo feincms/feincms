@@ -6,6 +6,7 @@
 .DS_Store
 ._*
 /FeinCMS.egg-info
+/MANIFEST
 _build
 build/
 dist/

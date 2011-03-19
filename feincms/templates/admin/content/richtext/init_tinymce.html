@@ -33,7 +33,7 @@
         var tinymce_added = {};
 
         function feincms_richtext_remove_tinymce(field) {
-            var id = field.attr("id");
+            var id = field ? field.id : this.id;
             if(tinymce_added[id]) {
                 tinyMCE.execCommand('mceRemoveControl', false, id);
                 tinymce_added[id] = false;
@@ -41,7 +41,7 @@
         }
 
         function feincms_richtext_add_tinymce(field) {
-            var id = field.attr("id");
+            var id = field ? field.id : this.id;
             if(!tinymce_added[id]) {
                 tinyMCE.execCommand('mceAddControl', false, id);
                 tinymce_added[id] = true;
@@ -50,11 +50,17 @@
 
         var richtext_init_fn = function(){
             $('{% block selectors %}.order-machine textarea[class=item-richtext], #frontend_editor textarea[class=item-richtext]{% endblock %}').each(function(){
-                feincms_richtext_add_tinymce($(this));
+                feincms_richtext_add_tinymce(this);
             });
         }
 {% block enable %}
         contentblock_init_handlers.push(richtext_init_fn);
+        contentblock_move_handlers.poorify.push(function(item) {
+            item.find('textarea[class=item-richtext]').each(feincms_richtext_remove_tinymce);
+        });
+        contentblock_move_handlers.richify.push(function(item) {
+            item.find('textarea[class=item-richtext]').each(feincms_richtext_add_tinymce);
+        });
 {% endblock %}
 
     })(feincms.jQuery);

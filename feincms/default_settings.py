@@ -53,6 +53,8 @@ FEINCMS_JQUERY_NO_CONFLICT = \
 #: Include ancestors in filtered tree editor lists
 FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS', False)
 
+#: Show frontend-editing button?
+FEINCMS_FRONTEND_EDITING = getattr(settings, 'FEINCMS_FRONTEND_EDITING', True)
 
 # ------------------------------------------------------------------------
 # Various settings
@@ -63,7 +65,7 @@ FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_TREE_EDITOR_I
 FEINCMS_USE_CACHE = getattr(settings, 'FEINCMS_USE_CACHE', False)
 
 # ------------------------------------------------------------------------
-#: Allow random gunk after a valid (non appcontent) page?
+#: Allow random gunk after a valid page?
 FEINCMS_ALLOW_EXTRA_PATH = getattr(settings, 'FEINCMS_ALLOW_EXTRA_PATH', False)
 
 # ------------------------------------------------------------------------

@@ -1,12 +1,9 @@
-from django.contrib.auth.decorators import permission_required
-from django.shortcuts import get_object_or_404, render_to_response
+from django.http import Http404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.cache import add_never_cache_headers
-try:
-    from django.template.response import TemplateResponse
-except ImportError:
-    TemplateResponse = None
 
+from feincms import settings
 from feincms.module.page.models import Page
 
 
@@ -21,7 +18,7 @@ class Handler(object):
 
     def __call__(self, request, path=None):
         return self.build_response(request,
-            Page.objects.page_for_path_or_404(path or request.path))
+            Page.objects.best_match_for_path(path or request.path, raise404=True))
 
     def build_response(self, request, page):
         """
@@ -45,10 +42,28 @@ class Handler(object):
         if response:
             return response
 
+        http404 = None     # store eventual Http404 exceptions for re-raising,
+                           # if no content type wants to handle the current request
+        successful = False # did any content type successfully end processing?
+
         for content in page.content.all_of_type(tuple(page._feincms_content_types_with_process)):
-            r = content.process(request)
-            if r:
-                return r
+            try:
+                r = content.process(request)
+                if r in (True, False):
+                    successful = r
+                elif r:
+                    return r
+            except Http404, e:
+                http404 = e
+
+        if not successful:
+            if http404:
+                # re-raise stored Http404 exception
+                raise http404
+
+            if not settings.FEINCMS_ALLOW_EXTRA_PATH and \
+                    request._feincms_extra_context['extra_path'] != '/':
+                raise Http404
 
     def render(self, request, page):
         """
@@ -60,11 +75,8 @@ class Handler(object):
         context = request._feincms_extra_context
         context['feincms_page'] = page
 
-        if TemplateResponse:
-            return TemplateResponse(request, page.template.path, context)
-        else:
-            return render_to_response(page.template.path,
-                context_instance=RequestContext(request, context))
+        return render_to_response(page.template.path,
+            context_instance=RequestContext(request, context))
 
     def finalize(self, request, response, page):
         """
@@ -87,29 +99,3 @@ class Handler(object):
 
 #: Default handler
 handler = Handler()
-
-
-class PreviewHandler(Handler):
-    """
-    This handler is for previewing site content; it takes a page_id so
-    the page is uniquely identified and does not care whether the page
-    is active or expired. To balance that, it requires a logged in user.
-    """
-
-    def __call__(self, request, page_id):
-        page = get_object_or_404(Page, pk=page_id)
-        return self.build_response(request, page)
-
-    def finalize(self, request, response, page):
-        """
-        Do (nearly) nothing. Do not call any ``finalize`` methods,
-        because those might add stuff to the cache, set ETags etc.
-        all of which we cannot use in a preview handler.
-        """
-
-        add_never_cache_headers(response)
-        return response
-
-
-#: Preview handler
-preview_handler = permission_required('page.change_page')(PreviewHandler())

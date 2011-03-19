@@ -11,6 +11,13 @@ CONTENT_NAMES = {
 };
 
 var contentblock_init_handlers = [];
+var contentblock_move_handlers = {poorify: [
+        function(item) {item.find('.item-content').hide();},
+        function(item) {item.find('input[type=radio][checked]').addClass('radiochecked');}
+    ], richify: [
+        function(item) {item.find('.item-content').show();},
+        function(item) {item.find('input.radiochecked').removeClass('radiochecked').trigger('click');}
+    ]};
 
 var template_regions = {
         {% for template in available_templates.values %}'{{ template.key }}': [{% for region in template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}

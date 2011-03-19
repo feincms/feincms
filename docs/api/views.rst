@@ -10,14 +10,6 @@ Standard views
    :noindex:
 
 
-``ApplicationContent``-enabled views
-------------------------------------
-
-.. automodule:: feincms.views.applicationcontent
-   :members:
-   :noindex:
-
-
 Generic-views replacements
 --------------------------
 

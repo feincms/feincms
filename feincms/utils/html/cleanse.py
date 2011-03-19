@@ -147,6 +147,10 @@ def cleanse_html(html):
     # remove list markers with <li> tags before them
     html = re.sub(r'<li>(\&nbsp;|\&#160;|\s)*(-|\*|&#183;)(\&nbsp;|\&#160;|\s)*', '<li>', html)
 
+    # remove p-in-li tags
+    html = re.sub(r'<li>(\&nbsp;|\&#160;|\s)*<p>', '<li>', html)
+    html = re.sub(r'</p>(\&nbsp;|\&#160;|\s)*</li>', '</li>', html)
+
     # add a space before the closing slash in empty tags
     html = re.sub(r'<([^/>]+)/>', r'<\1 />', html)
 

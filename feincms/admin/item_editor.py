@@ -169,6 +169,8 @@ class ItemEditor(admin.ModelAdmin):
                 settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
+
+            'FEINCMS_FRONTEND_EDITING': settings.FEINCMS_FRONTEND_EDITING,
             }
 
         for processor in self.model.feincms_item_editor_context_processors:
