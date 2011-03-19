@@ -278,7 +278,7 @@ class TreeEditor(admin.ModelAdmin):
         if hasattr(obj, "user_can") and obj.user_can(request.user, change_page=True):
             can_change = True
         else:
-            can_change = request.user.has_perm("page.change_page", obj)
+            can_change = self.has_change_permission(request, obj=obj)
 
         if not can_change:
             logging.warning("Denied AJAX request by %s to toggle boolean %s for page %s", request.user, attr, item_id)
