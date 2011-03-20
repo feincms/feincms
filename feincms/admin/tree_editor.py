@@ -309,6 +309,7 @@ class TreeEditor(admin.ModelAdmin):
             if a != b:
                 d.append(b)
 
+        # TODO: Shorter: [ y for x,y in zip(a,b) if x!=y ]
         return HttpResponse(simplejson.dumps(d), mimetype="application/json")
 
     def get_changelist(self, request, **kwargs):
