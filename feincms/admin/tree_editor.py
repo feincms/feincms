@@ -191,8 +191,8 @@ class TreeEditor(admin.ModelAdmin):
 
     def indented_short_title(self, item):
         """
-        Generate a short title for a page, indent it depending on
-        the page's depth in the hierarchy.
+        Generate a short title for an object, indent it depending on
+        the object's depth in the hierarchy.
         """
         if hasattr(item, 'get_absolute_url'):
             r = '<input type="hidden" class="medialibrary_file_path" value="%s" />' % item.get_absolute_url()
@@ -233,8 +233,8 @@ class TreeEditor(admin.ModelAdmin):
 
             attr = getattr(item, 'editable_boolean_field', None)
             if attr:
-                def _fn(self, page):
-                    return [ ajax_editable_boolean_cell(page, _fn.attr) ]
+                def _fn(self, instance):
+                    return [ ajax_editable_boolean_cell(instance, _fn.attr) ]
                 _fn.attr = attr
                 result_func = getattr(item, 'editable_boolean_result', _fn)
                 self._ajax_editable_booleans[attr] = result_func
@@ -260,8 +260,8 @@ class TreeEditor(admin.ModelAdmin):
             return HttpResponseBadRequest("Malformed request")
 
         if not request.user.is_staff:
-            logging.warning("Denied AJAX request by non-staff %s to toggle boolean %s for page #%s", request.user, attr, item_id)
-            return HttpResponseForbidden("You do not have permission to access this page")
+            logging.warning("Denied AJAX request by non-staff %s to toggle boolean %s for object #%s", request.user, attr, item_id)
+            return HttpResponseForbidden("You do not have permission to access this object")
 
         self._collect_editable_booleans()
 
@@ -276,13 +276,14 @@ class TreeEditor(admin.ModelAdmin):
         can_change = False
 
         if hasattr(obj, "user_can") and obj.user_can(request.user, change_page=True):
+            # Was added in c7f04dfb5d, but I've no idea what user_can is about.
             can_change = True
         else:
             can_change = self.has_change_permission(request, obj=obj)
 
         if not can_change:
-            logging.warning("Denied AJAX request by %s to toggle boolean %s for page %s", request.user, attr, item_id)
-            return HttpResponseForbidden("You do not have permission to access this page")
+            logging.warning("Denied AJAX request by %s to toggle boolean %s for object %s", request.user, attr, item_id)
+            return HttpResponseForbidden("You do not have permission to access this object")
 
         logging.info("Processing request by %s to toggle %s on %s", request.user, attr, obj)
 
@@ -393,10 +394,10 @@ class TreeEditor(admin.ModelAdmin):
         self.message_user(request, ugettext('Did not understand moving instruction.'))
         return HttpResponse('FAIL')
 
-    def _actions_column(self, page):
+    def _actions_column(self, instance):
         return []
 
-    def actions_column(self, page):
-        return u' '.join(self._actions_column(page))
+    def actions_column(self, instance):
+        return u' '.join(self._actions_column(instance))
     actions_column.allow_tags = True
     actions_column.short_description = _('actions')
