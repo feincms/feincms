@@ -1073,6 +1073,16 @@ class PagesTestCase(TestCase):
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
             page.get_absolute_url())
 
+        response = self.client.get(page.get_absolute_url() + 'response/')
+        self.assertContains(response, 'Anything')
+        self.assertContains(response, '<h2>Main content</h2>') # Ensure response has been wrapped
+
+        # Test standalone behavior
+        self.assertEqual(
+            self.client.get(page.get_absolute_url() + 'response/',
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest').content,
+            self.client.get(page.get_absolute_url() + 'response_decorated/').content)
+
     def test_26_page_form_initial(self):
         self.create_default_page_set()
 
