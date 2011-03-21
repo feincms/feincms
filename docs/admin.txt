@@ -163,13 +163,6 @@ settings on the content type model itself:
   initialization on your content type forms, you can specify template fragments
   which are included in predefined places into the item editor.
 
-  If you need to execute additional Javascript, for example to add a TinyMCE instance,
-  it is recommended to add the initialization functions to the
-  ``contentblock_init_handlers`` array, because the initialization needs to be
-  performed not only on page load, but also after drag-dropping a content block
-  and after adding new content blocks. Take a look at the ``mediafile`` and
-  ``richtext`` item editor include files to understand how this should be done.
-
   Currently, the only include region available is ``head``::
 
       class ContentType(models.Model):
@@ -179,6 +172,27 @@ settings on the content type model itself:
 
           # ...
 
+  If you need to execute additional Javascript, for example to add a TinyMCE instance,
+  it is recommended to add the initialization functions to the
+  ``contentblock_init_handlers`` array, because the initialization needs to be
+  performed not only on page load, but also when adding new content blocks. Please
+  note that these functions *will* be called several times, also several times
+  on the same content types. It is your responsibility to ensure that the handlers
+  aren't attached several times if this would be harmful.
+
+  Additionally, several content types do not support being dragged. Rich text
+  editors such as TinyMCE react badly to being dragged around - they are still
+  visible, but the content disappears and nothing is clickable anymore. Because
+  of this you might want to run routines before and after moving content types
+  around. This is achieved by adding your javascript functions to
+  the ``contentblock_move_handlers.poorify`` array for handlers to be executed
+  before moving and ``contentblock_move_handlers.richify`` for handlers to be
+  executed after moving. Please note that the item editor executes all handlers
+  on every drag and drop, it is your responsibility to ensure that code is
+  only executed if it has to.
+
+  Take a look at the ``mediafile`` and ``richtext`` item editor include files
+  to understand how this should be done.
 
 
 Putting it all together
