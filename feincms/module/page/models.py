@@ -211,11 +211,9 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         if a page has been found.
         """
 
-        page = self.best_match_for_path(request.path, raise404)
-        page.setup_request(request)
-        return page
+        return self.from_request(request, best_match=True)
 
-    def from_request(self, request):
+    def from_request(self, request, best_match=False):
         """
         ``setup_request`` stores the current page object as an attribute on the
         request itself. This method uses the cached copy if available instead of
@@ -225,6 +223,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         if hasattr(request, '_feincms_page'):
             return request._feincms_page
 
+        if best_match:
+            return self.best_match_for_request(request, raise404=False)
         return self.for_request(request)
 
 PageManager.add_to_active_filters( Q(active=True) )
