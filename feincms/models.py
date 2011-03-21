@@ -221,6 +221,10 @@ class ContentProxy(object):
         return sorted(content_list, key=lambda c: c.ordering)
 
     def _get_media(self):
+        """
+        Collect the media files of all content types of the current object
+        """
+
         if 'media' not in self._cache:
             media = Media()
 
