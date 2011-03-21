@@ -81,14 +81,16 @@ class TrackerContentProxy(ContentProxy):
 
         return dict((region, [
             (pk, map[-ct]) for pk, ct in items
-            ]) for region, items in inventory.items())
+            ]) for region, items in inventory.items() if region!='_tracker_')
 
     def _to_inventory(self, counts):
         map = self._translation_map()
 
-        return dict((region, [
+        inventory = dict((region, [
             (pk, map[ct]) for pk, ct in items
             ]) for region, items in counts.items())
+        inventory['_tracker_'] = 1
+        return inventory
 
 # ------------------------------------------------------------------------
 def post_save_handler(sender, instance, **kwargs):
