@@ -6,6 +6,7 @@ the feincms\_ namespace.
 """
 
 import itertools
+import operator
 import warnings
 
 from django.contrib.contenttypes.models import ContentType
@@ -98,35 +99,11 @@ class ContentProxy(object):
     def __init__(self, item):
         item._needs_content_types()
         self.item = item
-        self.media_cache = None
+        self._cache = {
+            'cts': {},
+            }
 
-        self.content_type_counts = self._fetch_content_type_counts(item.pk)
-        self.content_type_instances = self._fetch_content_type_instances(
-            self.content_type_counts)
-
-    def _fetch_content_type_counts(self, pk):
-        counts = self._fetch_content_type_count_helper(self.item.pk)
-
-        empty_inherited_regions = set()
-        for region in self.item.template.regions:
-            if region.inherited and not counts.get(region.key):
-                empty_inherited_regions.add(region.key)
-
-        if empty_inherited_regions:
-            for parent in self.item.get_ancestors(ascending=True).values_list('pk', flat=True):
-                parent_counts = self._fetch_content_type_count_helper(
-                    parent, regions=tuple(empty_inherited_regions))
-
-                counts.update(parent_counts)
-                for key in parent_counts.keys():
-                    empty_inherited_regions.discard(key)
-
-                if not empty_inherited_regions:
-                    break
-
-        return counts
-
-    def _fetch_content_type_count_helper(self, pk, regions=None):
+    def _fetch_content_type_counts(self):
         """
         Returns a structure describing which content types exist for the object
         with the given primary key.
@@ -135,7 +112,7 @@ class ContentProxy(object):
         ct_idx are indices into the item._feincms_content_types list:
 
             {
-                'region.key': [
+                'region_key': [
                     (pk, ct_idx1),
                     (pk, ct_idx2),
                     ],
@@ -143,6 +120,30 @@ class ContentProxy(object):
             }
         """
 
+        if 'counts' not in self._cache:
+            counts = self._fetch_content_type_count_helper(self.item.pk)
+
+            empty_inherited_regions = set()
+            for region in self.item.template.regions:
+                if region.inherited and not counts.get(region.key):
+                    empty_inherited_regions.add(region.key)
+
+            if empty_inherited_regions:
+                for parent in self.item.get_ancestors(ascending=True).values_list('pk', flat=True):
+                    parent_counts = self._fetch_content_type_count_helper(
+                        parent, regions=tuple(empty_inherited_regions))
+
+                    counts.update(parent_counts)
+                    for key in parent_counts.keys():
+                        empty_inherited_regions.discard(key)
+
+                    if not empty_inherited_regions:
+                        break
+
+            self._cache['counts'] = counts
+        return self._cache['counts']
+
+    def _fetch_content_type_count_helper(self, pk, regions=None):
         tmpl = ['SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s']
         args = []
 
@@ -167,42 +168,69 @@ class ContentProxy(object):
 
         return _c
 
-    def _fetch_content_type_instances(self, counts):
-        cts = {}
-        for region, _c in counts.items():
-            for pk, ct_idx in _c:
-                cts.setdefault(ct_idx, []).append(Q(parent=pk) & Q(region=region))
+    def _popuplate_content_type_caches(self, types):
+        """
+        Populate internal caches for all content types passed
+        """
 
-        contents = {}
-        for ct_idx, clauses in cts.items():
-            for instance in self.item._feincms_content_types[ct_idx].get_queryset(reduce(
-                    lambda p, q: p|q, clauses, Q())):
-                contents.setdefault(instance.region, []).append(instance)
+        counts_by_type = {}
+        for region, counts in self._fetch_content_type_counts().items():
+            for pk, ct_idx in counts:
+                counts_by_type.setdefault(self.item._feincms_content_types[ct_idx], []).append((region, pk))
 
-        return dict((region, sorted(instances, key=lambda c: c.ordering))\
-            for region, instances in contents.iteritems())
+        for type in types:
+            counts = counts_by_type.get(type)
+            if type not in self._cache['cts']:
+                if counts:
+                    self._cache['cts'][type] = list(type.get_queryset(
+                        reduce(operator.or_, (Q(region=r[0], parent=r[1]) for r in counts))))
+                else:
+                    self._cache['cts'][type] = []
 
-    def all_of_type(self, type):
+    def _fetch_regions(self):
+        """
+        """
+
+        if 'regions' not in self._cache:
+            self._popuplate_content_type_caches(self.item._feincms_content_types)
+            contents = {}
+            for type, content_list in self._cache['cts'].items():
+                for instance in content_list:
+                    contents.setdefault(instance.region, []).append(instance)
+
+            self._cache['regions'] = dict((region, sorted(instances, key=lambda c: c.ordering))\
+                for region, instances in contents.iteritems())
+        return self._cache['regions']
+
+    def all_of_type(self, type_or_tuple):
         """
         Return all content type instances belonging to the type or types passed.
         If you want to filter for several types at the same time, type must be
         a tuple.
         """
 
-        return [ct for ct in itertools.chain(*self.content_type_instances.values()) if isinstance(ct, type)]
+        content_list = []
+        if not isinstance(type_or_tuple, tuple):
+            type_or_tuple = tuple(type_or_tuple)
+        self._popuplate_content_type_caches(type_or_tuple)
+
+        for type in type_or_tuple:
+            content_list.extend(self._cache['cts'][type])
+
+        # TODO: Sort content types by region?
+        return sorted(content_list, key=lambda c: c.ordering)
 
     def _get_media(self):
-        if self.media_cache is None:
+        if 'media' not in self._cache:
             media = Media()
 
-            instances = self.__dict__['content_type_instances']
-            for contents in instances.values():
+            for contents in self._fetch_regions().values():
                 for content in contents:
                     if hasattr(content, 'media'):
                         media = media + content.media
 
-            self.media_cache = media
-        return self.media_cache
+            self._cache['media'] = media
+        return self._cache['media']
     media = property(_get_media)
 
     def __getattr__(self, attr):
@@ -216,8 +244,11 @@ class ContentProxy(object):
         if (attr.startswith('__')):
             raise AttributeError
 
-        instances = self.__dict__['content_type_instances']
-        return instances.get(attr, [])
+        # Do not trigger loading of real content type models if not necessary
+        if not self._fetch_content_type_counts().get(attr):
+            return []
+
+        return self._fetch_regions().get(attr, [])
 
 
 def create_base_model(inherit_from=models.Model):

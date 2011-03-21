@@ -29,9 +29,7 @@ from feincms.models import ContentProxy
 # ------------------------------------------------------------------------
 class TrackerContentProxy(ContentProxy):
     def __init__(self, item):
-        item._needs_content_types()
-        self.item = item
-        self.media_cache = None
+        super(TrackerContentProxy, self).__init__(item)
 
         """
         If an object with an empty _ct_inventory is encountered, compute all the
@@ -45,19 +43,16 @@ class TrackerContentProxy(ContentProxy):
         """
 
         if self.item._ct_inventory:
-            self.content_type_counts = self._from_inventory(self.item._ct_inventory)
+            self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
         else:
-            self.content_type_counts = self._fetch_content_type_counts(item.pk)
+            self._cache['counts'] = self._fetch_content_type_counts()
 
-            self.item._ct_inventory = self._to_inventory(self.content_type_counts)
+            self.item._ct_inventory = self._to_inventory(self._cache['counts'])
             self.item.__class__.objects.filter(id=self.item.id).update(
                 _ct_inventory=self.item._ct_inventory)
 
             # Run post save handler by hand
             self.item.get_descendants(include_self=False).update(_ct_inventory=None)
-
-        self.content_type_instances = self._fetch_content_type_instances(
-            self.content_type_counts)
 
     def _translation_map(self):
         if not hasattr(self.__class__, '_translation_map_cache'):
