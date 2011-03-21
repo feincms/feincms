@@ -26,6 +26,9 @@ from feincms.contrib.fields import JSONField
 from feincms.models import ContentProxy
 
 
+INVENTORY_VERSION = 1
+
+
 # ------------------------------------------------------------------------
 class TrackerContentProxy(ContentProxy):
     def _fetch_content_type_counts(self):
@@ -41,7 +44,8 @@ class TrackerContentProxy(ContentProxy):
         """
 
         if 'counts' not in self._cache:
-            if self.item._ct_inventory:
+            if self.item._ct_inventory and \
+                    self.item._ct_inventory.get('_version_', -1) == INVENTORY_VERSION:
                 self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
             else:
                 super(TrackerContentProxy, self)._fetch_content_type_counts()
@@ -81,7 +85,7 @@ class TrackerContentProxy(ContentProxy):
 
         return dict((region, [
             (pk, map[-ct]) for pk, ct in items
-            ]) for region, items in inventory.items() if region!='_tracker_')
+            ]) for region, items in inventory.items() if region!='_version_')
 
     def _to_inventory(self, counts):
         map = self._translation_map()
@@ -89,7 +93,7 @@ class TrackerContentProxy(ContentProxy):
         inventory = dict((region, [
             (pk, map[ct]) for pk, ct in items
             ]) for region, items in counts.items())
-        inventory['_tracker_'] = 1
+        inventory['_version_'] = INVENTORY_VERSION
         return inventory
 
 # ------------------------------------------------------------------------
