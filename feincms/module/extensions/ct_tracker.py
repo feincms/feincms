@@ -28,31 +28,31 @@ from feincms.models import ContentProxy
 
 # ------------------------------------------------------------------------
 class TrackerContentProxy(ContentProxy):
-    def __init__(self, item):
-        super(TrackerContentProxy, self).__init__(item)
-
+    def _fetch_content_type_counts(self):
         """
         If an object with an empty _ct_inventory is encountered, compute all the
-        content types currently used on that page and save the list in the
+        content types currently used on that object and save the list in the
         object itself. Further requests for that object can then access that
         information and find out which content types are used without resorting
         to multiple selects on different ct tables.
 
         It is therefore important that even an "empty" object does not have an
-        empty _ct_inventory. (TODO, this isn't true yet.)
+        empty _ct_inventory.
         """
 
-        if self.item._ct_inventory:
-            self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
-        else:
-            self._cache['counts'] = self._fetch_content_type_counts()
+        if 'counts' not in self._cache:
+            if self.item._ct_inventory:
+                self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
+            else:
+                super(TrackerContentProxy, self)._fetch_content_type_counts()
 
-            self.item._ct_inventory = self._to_inventory(self._cache['counts'])
-            self.item.__class__.objects.filter(id=self.item.id).update(
-                _ct_inventory=self.item._ct_inventory)
+                self.item._ct_inventory = self._to_inventory(self._cache['counts'])
+                self.item.__class__.objects.filter(id=self.item.id).update(
+                    _ct_inventory=self.item._ct_inventory)
 
-            # Run post save handler by hand
-            self.item.get_descendants(include_self=False).update(_ct_inventory=None)
+                # Run post save handler by hand
+                self.item.get_descendants(include_self=False).update(_ct_inventory=None)
+        return self._cache['counts']
 
     def _translation_map(self):
         if not hasattr(self.__class__, '_translation_map_cache'):
