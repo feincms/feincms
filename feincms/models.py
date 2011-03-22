@@ -210,12 +210,13 @@ class ContentProxy(object):
         """
 
         content_list = []
-        if not isinstance(type_or_tuple, tuple):
-            type_or_tuple = tuple(type_or_tuple)
+        if not hasattr(type_or_tuple, '__iter__'):
+            type_or_tuple = (type_or_tuple,)
         self._popuplate_content_type_caches(type_or_tuple)
 
-        for type in type_or_tuple:
-            content_list.extend(self._cache['cts'][type])
+        for type, contents in self._cache['cts'].items():
+            if any(issubclass(type, t) for t in type_or_tuple):
+                content_list.extend(contents)
 
         # TODO: Sort content types by region?
         return sorted(content_list, key=lambda c: c.ordering)

@@ -522,6 +522,10 @@ class PagesTestCase(TestCase):
 
         self.assertTrue(isinstance(page2.content.media, forms.Media))
 
+        self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
+        self.assertEqual(len(page2.content.all_of_type((ImageContent,))), 0)
+        self.assertEqual(len(page2.content.all_of_type([ImageContent])), 0)
+
     def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
 
@@ -1196,6 +1200,7 @@ class PagesTestCase(TestCase):
         Page.objects.update(active=True, in_navigation=True)
 
         request = Empty()
+        request.GET = {}
         request.META = {}
         request.method = 'GET'
         request.path = '/test-page/test-child-page/abcdef/'
