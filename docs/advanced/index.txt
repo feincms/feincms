@@ -17,5 +17,4 @@ design considerations and how to optimize your code, this section is for you.
    utils
    prefilledattributes
    designdecisions
-   settings
    caching
