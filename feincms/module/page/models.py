@@ -211,7 +211,9 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         if a page has been found.
         """
 
-        return self.from_request(request, best_match=True)
+        page = self.best_match_for_path(request.path, raise404=raise404)
+        page.setup_request(request)
+        return page
 
     def from_request(self, request, best_match=False):
         """

@@ -25,6 +25,7 @@ from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
+from feincms.context_processors import add_page_if_missing
 from feincms.models import Region, Template, Base, ContentProxy
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
@@ -1189,6 +1190,19 @@ class PagesTestCase(TestCase):
         stats = list(MediaFile.objects.values_list('type', flat=True))
         self.assertEqual(stats.count('image'), 1)
         self.assertEqual(stats.count('other'), 11)
+
+    def test_30_context_processors(self):
+        self.create_default_page_set()
+        Page.objects.update(active=True, in_navigation=True)
+
+        request = Empty()
+        request.META = {}
+        request.method = 'GET'
+        request.path = '/test-page/test-child-page/abcdef/'
+        request.get_full_path = lambda: '/test-page/test-child-page/abcdef/'
+
+        ctx = add_page_if_missing(request)
+        self.assertEqual(ctx['feincms_page'], request._feincms_page)
 
 
 Entry.register_extensions('seo', 'translations', 'seo')
