@@ -4,7 +4,7 @@
 (function () {
     // load jQuery if not yet present
     if (typeof(feincms) == "undefined") {
-        var jquery_url = {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}"http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"{% else %}"{{ FEINCMS_ADMIN_MEDIA }}jquery-1.4.4.min.js"{% endif %};
+        var jquery_url = {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}"http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"{% else %}"{{ FEINCMS_ADMIN_MEDIA }}jquery-1.5.1.min.js"{% endif %};
         document.write(unescape('%3Cscript src="' + jquery_url + '" type="text/javascript"%3E%3C/script%3E'));
     }
 })();
