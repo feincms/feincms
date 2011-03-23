@@ -1215,7 +1215,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(ctx['feincms_page'], request._feincms_page)
 
 
-Entry.register_extensions('seo', 'translations', 'seo')
+Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
 class BlogTestCase(TestCase):
     def setUp(self):
         u = User(username='test', is_active=True, is_staff=True, is_superuser=True)

@@ -19,7 +19,7 @@ saving time, thus saving at least one DB query on page delivery.
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.contrib.fields import JSONField
@@ -55,7 +55,8 @@ class TrackerContentProxy(ContentProxy):
                     _ct_inventory=self.item._ct_inventory)
 
                 # Run post save handler by hand
-                self.item.get_descendants(include_self=False).update(_ct_inventory=None)
+                if hasattr(self.item, 'get_descendants'):
+                    self.item.get_descendants(include_self=False).update(_ct_inventory=None)
         return self._cache['counts']
 
     def _translation_map(self):
@@ -97,7 +98,7 @@ class TrackerContentProxy(ContentProxy):
         return inventory
 
 # ------------------------------------------------------------------------
-def post_save_handler(sender, instance, **kwargs):
+def tree_post_save_handler(sender, instance, **kwargs):
     """
     Clobber the _ct_inventory attribute of this object and all sub-objects
     on save.
@@ -106,9 +107,18 @@ def post_save_handler(sender, instance, **kwargs):
     instance.get_descendants(include_self=True).update(_ct_inventory=None)
 
 # ------------------------------------------------------------------------
+def single_pre_save_handler(sender, instance, **kwargs):
+    """Clobber the _ct_inventory attribute of this object"""
+
+    instance._ct_inventory = None
+
+# ------------------------------------------------------------------------
 def register(cls, admin_cls):
     cls.add_to_class('_ct_inventory', JSONField(_('content types'), editable=False, blank=True, null=True))
     cls.content_proxy_class = TrackerContentProxy
 
-    post_save.connect(post_save_handler, sender=cls)
+    if hasattr(cls, 'get_descendants'):
+        post_save.connect(tree_post_save_handler, sender=cls)
+    else:
+        pre_save.connect(single_pre_save_handler, sender=cls)
 # ------------------------------------------------------------------------
