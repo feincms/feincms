@@ -178,7 +178,10 @@ class ContentProxy(object):
             for pk, ct_idx in counts:
                 counts_by_type.setdefault(self.item._feincms_content_types[ct_idx], []).append((region, pk))
 
-        for type in types:
+        # Resolve abstract to concrete content types
+        types = tuple(types)
+
+        for type in (type for type in self.item._feincms_content_types if issubclass(type, types)):
             counts = counts_by_type.get(type)
             if type not in self._cache['cts']:
                 if counts:

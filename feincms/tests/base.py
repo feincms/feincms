@@ -512,6 +512,11 @@ class PagesTestCase(TestCase):
 
         page2 = Page.objects.get(pk=2)
         page2.symlinked_page = page
+
+        # Test that all_of_type works correctly even before accessing
+        # other content methods
+        self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
+
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
         self.assertEqual(unicode(page2.content.main[0]),
                          'main on Test page, ordering 0')
