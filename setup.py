@@ -28,7 +28,7 @@ import feincms
 setup(name='FeinCMS',
     version=feincms.__version__,
     description='Django-based Page CMS and CMS building toolkit.',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README')).read(),
+    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
     url='http://github.com/matthiask/feincms/',
