@@ -317,30 +317,31 @@ class ApplicationContent(models.Model):
 
         try:
             output = fn(request, *args, **kwargs)
+
+            if isinstance(output, HttpResponse):
+                if self.send_directly(request, output):
+                    return output
+                elif output.status_code == 200:
+
+                    # If the response supports deferred rendering, render the
+                    # response right now. We do not handle template response
+                    # middleware.
+                    if hasattr(output, 'render') and callable(output.render):
+                        output.render()
+
+                    self.rendered_result = mark_safe(output.content.decode('utf-8'))
+                    self.rendered_headers = {}
+                    # Copy relevant headers for later perusal
+                    for h in ('Cache-Control', 'Last-Modified', 'Expires'):
+                        if h in output:
+                            self.rendered_headers.setdefault(h, []).append(output[h])
+            else:
+                self.rendered_result = mark_safe(output)
+
         finally:
             # We want exceptions to propagate, but we cannot allow the
             # modifications to reverse() to stay here.
             del _local.urlconf
-
-        if isinstance(output, HttpResponse):
-            if self.send_directly(request, output):
-                return output
-            elif output.status_code == 200:
-
-                # If the response supports deferred rendering, render the
-                # response right now. We do not handle template response
-                # middleware.
-                if hasattr(output, 'render') and callable(output.render):
-                    output.render()
-
-                self.rendered_result = mark_safe(output.content.decode('utf-8'))
-                self.rendered_headers = {}
-                # Copy relevant headers for later perusal
-                for h in ('Cache-Control', 'Last-Modified', 'Expires'):
-                    if h in output:
-                        self.rendered_headers.setdefault(h, []).append(output[h])
-        else:
-            self.rendered_result = mark_safe(output)
 
         return True # successful
 
