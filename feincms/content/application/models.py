@@ -331,7 +331,7 @@ class ApplicationContent(models.Model):
                 # response right now. We do not handle template response
                 # middleware.
                 if hasattr(output, 'render') and callable(output.render):
-                    response.render()
+                    output.render()
 
                 self.rendered_result = mark_safe(output.content.decode('utf-8'))
                 self.rendered_headers = {}
