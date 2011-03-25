@@ -327,8 +327,9 @@ class ApplicationContent(models.Model):
                 return output
             elif output.status_code == 200:
 
-                # If the response supports deferred rendering, apply template
-                # response middleware and the render the response
+                # If the response supports deferred rendering, render the
+                # response right now. We do not handle template response
+                # middleware.
                 if hasattr(output, 'render') and callable(output.render):
                     response.render()
 
