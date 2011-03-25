@@ -326,6 +326,12 @@ class ApplicationContent(models.Model):
             if self.send_directly(request, output):
                 return output
             elif output.status_code == 200:
+
+                # If the response supports deferred rendering, apply template
+                # response middleware and the render the response
+                if hasattr(output, 'render') and callable(output.render):
+                    response.render()
+
                 self.rendered_result = mark_safe(output.content.decode('utf-8'))
                 self.rendered_headers = {}
                 # Copy relevant headers for later perusal
