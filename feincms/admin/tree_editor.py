@@ -227,8 +227,9 @@ class TreeEditor(admin.ModelAdmin):
         for field in self.list_display:
             # The ajax_editable_boolean return value has to be assigned
             # to the ModelAdmin class
-            item = getattr(self.__class__, field, None)
-            if not item:
+            try:
+                item = getattr(self.__class__, field)
+            except (AttributeError, TypeError), e:
                 continue
 
             attr = getattr(item, 'editable_boolean_field', None)
