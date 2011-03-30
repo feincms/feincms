@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls) ),
 
     (r'^feincms_media/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms/media/feincms/')}),
+        {'document_root': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms/static/feincms/')}),
 
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),

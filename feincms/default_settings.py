@@ -40,7 +40,7 @@ FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(settings, 'FEINCMS_RICHTEXT_INIT_CONTEXT
 # Admin media settings
 
 #: Path to FeinCMS' admin media
-FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/media/sys/feincms/')
+FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/static/feincms/')
 #: Link to google APIs instead of using local copy of JS libraries
 FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKING', False)
 #: avoid jQuery conflicts -- scripts should use feincms.jQuery instead of $

@@ -25,6 +25,13 @@ Highlights
   Defining the URL patterns directly is still possible. Have a look at
   ``feincms.urls`` to find out how this should be done.
 
+* FeinCMS requires at least Django 1.2 but already has support for Django 1.3
+  features such as staticfiles. The FeinCMS media file folder has been moved
+  from ``feincms/media/feincms`` to ``feincms/static/feincms`` - if you use
+  ``django.contrib.staticfiles`` with Django 1.3 (and you should!), FeinCMS'
+  media files for the administration interface will automatically be made
+  available without any further work on your part.
+
 * Content types can specify the media files (Javascript and CSS files) they
   need to work correctly. See :ref:`contenttypes-extramedia` for information
   on how to use this in your own content types.
