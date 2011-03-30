@@ -227,7 +227,11 @@ class ApplicationContent(models.Model):
                 instance = kwargs.get("instance", None)
 
                 if instance:
-                    self.app_config = cls.ALL_APPS_CONFIG[instance.urlconf_path]['config']
+                    try:
+                        self.app_config = cls.ALL_APPS_CONFIG[instance.urlconf_path]['config']
+                    except KeyError:
+                        self.app_config = {}
+
                     self.custom_fields = {}
                     admin_fields    = self.app_config.get('admin_fields', {})
 
