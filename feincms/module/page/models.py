@@ -850,6 +850,18 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
 
         return super(PageAdmin, self).change_view(request, object_id, extra_context)
 
+    def changelist_view(self, request, extra_context=None):
+        "By default, only show pages from this site"
+
+        if not request.GET.has_key('site__id__exact'):
+
+            q = request.GET.copy()
+            q['site__id__exact'] = django_settings.SITE_ID
+            request.GET = q
+            request.META['QUERY_STRING'] = request.GET.urlencode()
+        return super(PageAdmin, self).changelist_view(request, extra_context=extra_context)
+
+
     def is_visible_admin(self, page):
         """
         Instead of just showing an on/off boolean, also indicate whether this
@@ -857,6 +869,9 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         """
         if not hasattr(self, "_visible_pages"):
             self._visible_pages = list() # Sanity check in case this is not already defined
+
+        if page.site_id != django_settings.SITE_ID:
+            return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('site'))
 
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited
