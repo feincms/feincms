@@ -25,6 +25,7 @@ from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
+from feincms.context_processors import add_page_if_missing
 from feincms.models import Region, Template, Base, ContentProxy
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
@@ -511,6 +512,11 @@ class PagesTestCase(TestCase):
 
         page2 = Page.objects.get(pk=2)
         page2.symlinked_page = page
+
+        # Test that all_of_type works correctly even before accessing
+        # other content methods
+        self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
+
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
         self.assertEqual(unicode(page2.content.main[0]),
                          'main on Test page, ordering 0')
@@ -520,6 +526,10 @@ class PagesTestCase(TestCase):
         self.assertEqual(len(page2.content.nonexistant_region), 0)
 
         self.assertTrue(isinstance(page2.content.media, forms.Media))
+
+        self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
+        self.assertEqual(len(page2.content.all_of_type((ImageContent,))), 0)
+        self.assertEqual(len(page2.content.all_of_type([ImageContent])), 0)
 
     def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
@@ -1073,6 +1083,16 @@ class PagesTestCase(TestCase):
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
             page.get_absolute_url())
 
+        response = self.client.get(page.get_absolute_url() + 'response/')
+        self.assertContains(response, 'Anything')
+        self.assertContains(response, '<h2>Main content</h2>') # Ensure response has been wrapped
+
+        # Test standalone behavior
+        self.assertEqual(
+            self.client.get(page.get_absolute_url() + 'response/',
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest').content,
+            self.client.get(page.get_absolute_url() + 'response_decorated/').content)
+
     def test_26_page_form_initial(self):
         self.create_default_page_set()
 
@@ -1180,8 +1200,22 @@ class PagesTestCase(TestCase):
         self.assertEqual(stats.count('image'), 1)
         self.assertEqual(stats.count('other'), 11)
 
+    def test_30_context_processors(self):
+        self.create_default_page_set()
+        Page.objects.update(active=True, in_navigation=True)
 
-Entry.register_extensions('seo', 'translations', 'seo')
+        request = Empty()
+        request.GET = {}
+        request.META = {}
+        request.method = 'GET'
+        request.path = '/test-page/test-child-page/abcdef/'
+        request.get_full_path = lambda: '/test-page/test-child-page/abcdef/'
+
+        ctx = add_page_if_missing(request)
+        self.assertEqual(ctx['feincms_page'], request._feincms_page)
+
+
+Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
 class BlogTestCase(TestCase):
     def setUp(self):
         u = User(username='test', is_active=True, is_staff=True, is_superuser=True)

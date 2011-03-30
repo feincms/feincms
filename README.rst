@@ -73,10 +73,9 @@ Visit these sites
 -----------------
 
 * FeinCMS Website: http://www.feinheit.ch/labs/feincms-django-cms/
-* Look at screenshots of the administration interface: http://spinlock.ch/pub/feincms/
 * Read the documentation: http://www.feinheit.ch/media/labs/feincms/
 * See the google groups page at http://groups.google.com/group/django-feincms
-* FeinCMS on github: http://github.com/matthiask/feincms/tree
+* FeinCMS on github: https://github.com/matthiask/feincms/
 
 Optional Packages
 -----------------

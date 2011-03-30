@@ -12,6 +12,7 @@ import sys
 
 from django import forms
 from django.core.cache import cache as django_cache
+from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.core.urlresolvers import reverse
@@ -211,11 +212,11 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         if a page has been found.
         """
 
-        page = self.best_match_for_path(request.path, raise404)
+        page = self.best_match_for_path(request.path, raise404=raise404)
         page.setup_request(request)
         return page
 
-    def from_request(self, request):
+    def from_request(self, request, best_match=False):
         """
         ``setup_request`` stores the current page object as an attribute on the
         request itself. This method uses the cached copy if available instead of
@@ -225,6 +226,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         if hasattr(request, '_feincms_page'):
             return request._feincms_page
 
+        if best_match:
+            return self.best_match_for_request(request, raise404=False)
         return self.for_request(request)
 
 PageManager.add_to_active_filters( Q(active=True) )
@@ -790,11 +793,14 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in nav'))
 
     def _actions_column(self, page):
+        editable = getattr(page, 'feincms_editable', True)
+
         actions = super(PageAdmin, self)._actions_column(page)
-        actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % (
-            page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
+        if editable:
+            actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % ( page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
         actions.insert(0, u'<a href="%s" title="%s"><img src="%simg/admin/selector-search.gif" alt="%s" /></a>' % (
             page.get_absolute_url(), _('View on site'), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
+
         return actions
 
     def add_view(self, request, form_url='', extra_context=None):
@@ -848,7 +854,12 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                 except ValueError:
                     request.POST[k] = None
 
-        return super(PageAdmin, self).change_view(request, object_id, extra_context)
+        try:
+            return super(PageAdmin, self).change_view(request, object_id, extra_context)
+        except PermissionDenied:
+            from django.contrib import messages
+            messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
+        return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 
     def changelist_view(self, request, extra_context=None):
         "By default, only show pages from this site"

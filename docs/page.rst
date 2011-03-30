@@ -91,7 +91,7 @@ Just add the following lines to your ``urls.py`` to get a catch-all URL pattern:
 ::
 
     urlpatterns += patterns('',
-        url(r'^$|^(.*)/$', 'feincms.views.base.handler'),
+        url(r'', include('feincms.urls')),
     )
 
 

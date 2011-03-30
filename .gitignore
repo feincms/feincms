@@ -7,6 +7,6 @@
 ._*
 /FeinCMS.egg-info
 /MANIFEST
-_build
+_build/
 build/
 dist/
