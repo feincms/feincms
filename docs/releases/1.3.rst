@@ -68,12 +68,9 @@ Highlights
 
 * The ``ct_tracker`` extension has been rewritten to take advantage of the
   new ``ContentProxy`` features. This means that the format of ``_ct_inventory``
-  could not be kept backwards compatible. Because of this you have to empty
-  the ``_ct_inventory`` fields yourself on upgrading::
-
-      $ ./manage.py shell
-      >>> from feincms.module.page.models import Page
-      >>> Page.objects.all().update(_ct_inventory=None)
+  could not be kept backwards compatible and has been changed. The inventory
+  is versioned now, therefore upgrading should not require any action on
+  your part.
 
 * ``feincms_site`` is not available in the context anymore. It was undocumented,
   mostly unused and badly named anyway. If you still need this functionality you
