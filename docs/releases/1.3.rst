@@ -42,7 +42,7 @@ Highlights
   than before.
 
 * The content type interface has been extended with two new methods, available
-  for all content types who need it: ``process`` is called before rendering
+  for all content types which need it: ``process`` is called before rendering
   pages and is guaranteed to receive the current request instance. Each and
   every content type (not only application contents as before) has the
   ability to return full HTTP responses which are returned directly to the
