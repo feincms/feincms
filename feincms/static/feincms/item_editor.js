@@ -423,6 +423,10 @@ if(!Array.indexOf) {
         // move contents into their corresponding regions and do some simple formatting
         $("div.feincms_inline div.inline-related").each(function(){
             var elem = $(this);
+            if (elem.find("span.delete input").attr("checked")) {
+                // ignore all inlines that are set to be deleted by reversion
+                return;
+            }
 
             elem.find("input[name$=-region]").addClass("region-choice-field");
             elem.find("input[name$=-DELETE]").addClass("delete-field");
