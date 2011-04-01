@@ -15,12 +15,6 @@ from django.contrib.admin.options import InlineModelAdmin
 
 from feincms import settings, ensure_completely_loaded
 
-try:
-    import reversion
-    from reversion.admin import VersionAdmin as ModelAdmin
-except ImportError:
-    ModelAdmin = admin.ModelAdmin
-
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
 FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
@@ -69,7 +63,7 @@ def get_feincms_inlines(model):
     return inlines
 
 
-class ItemEditor(ModelAdmin):
+class ItemEditor(admin.ModelAdmin):
     """
     The ``ItemEditor`` is a drop-in replacement for ``ModelAdmin`` with the
     speciality of knowing how to work with :class:`feincms.models.Base`
@@ -78,10 +72,6 @@ class ItemEditor(ModelAdmin):
     It does not have any public API except from everything inherited from'
     the standard ``ModelAdmin`` class.
     """
-
-    revision_form_template = "admin/feincms/revision_form.html"
-
-    recover_form_template = "admin/feincms/recover_form.html"
 
     def __init__(self, model, admin_site):
         ensure_completely_loaded()
@@ -277,6 +267,12 @@ class ItemEditor(ModelAdmin):
             fieldsets.insert(0, (None, {'fields': self.show_on_top}))
 
         return fieldsets
+
+    # These next are only used if later we use a subclass of this class
+    # which also inherits from VersionAdmin.
+    revision_form_template = "admin/feincms/revision_form.html"
+
+    recover_form_template = "admin/feincms/recover_form.html"
 
     def render_revision_form(self, request, obj, version, context, revert=False, recover=False):
         context.update(self.get_extra_context(request))
