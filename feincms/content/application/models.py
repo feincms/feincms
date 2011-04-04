@@ -380,7 +380,7 @@ class ApplicationContent(models.Model):
         # Ideally, for the Cache-Control header, we'd want to do some intelligent
         # combining, but that's hard. Let's just collect and unique them and let
         # the client worry about that.
-        cc_headers = set()
+        cc_headers = set(('must-revalidate',))
         for x in (cc.split(",") for cc in headers.get('Cache-Control', ())):
             cc_headers |= set((s.strip() for s in x))
 
