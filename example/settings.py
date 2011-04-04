@@ -176,7 +176,7 @@ try:
         'feincms.utils.templatetags',
         'feincms.views',
         'feincms.views.base',
-        #'feincms.views.cbv', # Makes test-suite only runnable with Django 1.3
+        #'feincms.views.cbv', # Makes test-suite only runnable with Django 1.3
         #'feincms.views.cbv.urls',
         #'feincms.views.cbv.views',
         'feincms.views.decorators',
