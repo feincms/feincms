@@ -737,7 +737,7 @@ class PageAdminForm(forms.ModelForm):
 # ------------------------------------------------------------------------
 
 def sort_children(modeladmin, request, queryset):
-    "Admin filter that sorts the children of selected pages according to title"
+    "Admin action that sorts the children of selected pages according to title"
     for parent in queryset.all():
         children = [(child.title, child) for child in parent.get_children()]
         children.sort()
