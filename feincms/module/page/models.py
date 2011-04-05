@@ -736,6 +736,18 @@ class PageAdminForm(forms.ModelForm):
 
 # ------------------------------------------------------------------------
 
+def sort_children(modeladmin, request, queryset):
+    "Admin filter that sorts the children of selected pages according to title"
+    for parent in queryset.all():
+        children = [(child.title, child) for child in parent.get_children()]
+        children.sort()
+        previous_child = None
+        for (title, child) in children:
+            if previous_child != None:
+                child.move_to(previous_child, position='right')
+                child.save()
+            previous_child = child
+sort_children.short_description = "Sort children by title"
 
 class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     class Media:
@@ -766,6 +778,8 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
 
     raw_id_fields = ['parent']
     radio_fields = {'template_key': admin.HORIZONTAL}
+
+    actions = [sort_children]
 
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
