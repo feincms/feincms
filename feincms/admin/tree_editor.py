@@ -194,6 +194,7 @@ class TreeEditor(admin.ModelAdmin):
         Generate a short title for an object, indent it depending on
         the object's depth in the hierarchy.
         """
+        r = ''
         if hasattr(item, 'get_absolute_url'):
             r = '<input type="hidden" class="medialibrary_file_path" value="%s" />' % item.get_absolute_url()
 
