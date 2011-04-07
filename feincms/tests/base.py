@@ -11,6 +11,7 @@ from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.contrib.sites.models import Site
 from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
@@ -209,6 +210,9 @@ class PagesTestCase(TestCase):
         u.set_password('test')
         u.save()
 
+
+        self.site_1 = Site.objects.all()[0]
+
         Page.register_templates({
                 'key': 'base',
                 'title': 'Standard template',
@@ -242,6 +246,7 @@ class PagesTestCase(TestCase):
             'initial-publication_date_0': '2009-01-01',
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
+            'site': self.site_1.id,
 
             'rawcontent_set-TOTAL_FORMS': 0,
             'rawcontent_set-INITIAL_FORMS': 0,
@@ -462,6 +467,7 @@ class PagesTestCase(TestCase):
             'initial-publication_date_0': '2009-01-01',
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
+            'site': self.site_1.id,
 
             'rawcontent_set-TOTAL_FORMS': 1,
             'rawcontent_set-INITIAL_FORMS': 0,
@@ -1213,6 +1219,13 @@ class PagesTestCase(TestCase):
 
         ctx = add_page_if_missing(request)
         self.assertEqual(ctx['feincms_page'], request._feincms_page)
+
+    def test_31_sites_framework_associating_with_single_site(self):
+        self.login()
+        site_2 = Site.objects.create(name='site 2', domain='2.example.com')
+        self.create_page('site 1 homepage', override_url='/')
+        self.create_page('site 2 homepage', override_url='/', site=site_2.id)
+        self.assertEqual(Page.objects.count(), 2)
 
 
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')

@@ -70,6 +70,7 @@ class BlogEntriesNavigationExtension(NavigationExtension):
                 )
 
 Page.register_extensions('navigation')
+Page.register_extensions('sites')
 
 
 try:
@@ -98,3 +99,5 @@ if mptt_register:
 # add m2m field to entry so it shows up in entry admin
 Entry.add_to_class('categories', models.ManyToManyField(Category, blank=True, null=True))
 EntryAdmin.list_filter += ('categories',)
+
+

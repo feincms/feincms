@@ -15,6 +15,7 @@ from django.core.cache import cache as django_cache
 from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -697,6 +698,9 @@ class PageAdminForm(forms.ModelForm):
         if self.instance:
             current_id = self.instance.id
             active_pages = active_pages.exclude(id=current_id)
+
+        if hasattr(Site, 'page_set') and 'site' in cleaned_data:
+            active_pages = active_pages.filter(site=cleaned_data['site'])
 
         if not cleaned_data['active']:
             # If the current item is inactive, we do not need to conduct
