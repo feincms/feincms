@@ -14,6 +14,7 @@ from django import forms
 from django.core.cache import cache as django_cache
 from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
+from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -792,11 +793,14 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     def _actions_column(self, page):
         editable = getattr(page, 'feincms_editable', True)
 
+        preview_url = "../../r/%s/%s/" % (
+                ContentType.objects.get_for_model(self.model).id, 
+                page.id)
         actions = super(PageAdmin, self)._actions_column(page)
         if editable:
             actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % ( page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
         actions.insert(0, u'<a href="%s" title="%s"><img src="%simg/admin/selector-search.gif" alt="%s" /></a>' % (
-            page.get_absolute_url(), _('View on site'), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
+            preview_url, _('View on site'), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
 
         return actions
 
