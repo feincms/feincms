@@ -231,7 +231,6 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         return self.for_request(request)
 
 PageManager.add_to_active_filters( Q(active=True) )
-PageManager.add_to_active_filters( Q(site=django_settings.SITE_ID) )
 
 # MARK: -
 # ------------------------------------------------------------------------
@@ -262,7 +261,6 @@ class Page(Base):
         help_text=_('Target URL for automatic redirects.'))
     _cached_url = models.CharField(_('Cached URL'), max_length=300, blank=True,
         editable=False, default='', db_index=True)
-    site = models.ForeignKey(Site)
 
     request_processors = []
     response_processors = []
@@ -694,7 +692,10 @@ class PageAdminForm(forms.ModelForm):
         current_id = None
         # See the comment below on why we do not use Page.objects.active(),
         # at least for now.
-        active_pages = Page.objects.filter(active=True, site=cleaned_data['site'])
+        active_pages = Page.objects.filter(active=True)
+
+        if hasattr(Site, 'page_set') and 'site' in cleanded_data:
+            active_pages = active_pages.filter(site=cleaned_data['site'])
 
         if self.instance:
             current_id = self.instance.id
@@ -762,7 +763,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     fieldsets = [
         (None, {
             'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
-                       'parent', 'site'],
+                       'parent'],
         }),
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
@@ -771,8 +772,8 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         }),
         ]
     readonly_fields = []
-    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'site', 'template']
-    list_filter = ['active', 'in_navigation', 'template_key', 'site', 'parent']
+    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
+    list_filter = ['active', 'in_navigation', 'template_key', 'parent']
     search_fields = ['title', 'slug']
     prepopulated_fields = { 'slug': ('title',), }
 
@@ -878,12 +879,12 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     def changelist_view(self, request, extra_context=None):
         "By default, only show pages from this site"
 
-        if not request.GET.has_key('site__id__exact'):
-
-            q = request.GET.copy()
-            q['site__id__exact'] = django_settings.SITE_ID
-            request.GET = q
-            request.META['QUERY_STRING'] = request.GET.urlencode()
+        if hasattr(Site, 'page_set'):
+            if not request.GET.has_key('site__id__exact'):
+                q = request.GET.copy()
+                q['site__id__exact'] = django_settings.SITE_ID
+                request.GET = q
+                request.META['QUERY_STRING'] = request.GET.urlencode()
         return super(PageAdmin, self).changelist_view(request, extra_context=extra_context)
 
 
@@ -895,8 +896,9 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         if not hasattr(self, "_visible_pages"):
             self._visible_pages = list() # Sanity check in case this is not already defined
 
-        if page.site_id != django_settings.SITE_ID:
-            return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('site'))
+        if hasattr(Site, 'page_set'):
+            if page.site_id != django_settings.SITE_ID:
+                return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('site'))
 
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited
