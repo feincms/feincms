@@ -1,14 +1,14 @@
 * text
 * eol=lf
 *.bat eol=crlf
-*.gif -crlf -diff
-*.jpg -crlf -diff
-*.swf -crlf -diff
-*.png -crlf -diff
-*.avi -crlf -diff
-*.dcr -crlf -diff
-*.flv -crlf -diff
-*.mov -crlf -diff
-*.ram -crlf -diff
-*.rm -crlf -diff
-*.jar -crlf -diff
+*.gif binary
+*.jpg binary
+*.swf binary
+*.png binary
+*.avi binary
+*.dcr binary
+*.flv binary
+*.mov binary
+*.ram binary
+*.rm binary
+*.jar binary
