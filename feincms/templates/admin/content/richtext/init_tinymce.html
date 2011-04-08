@@ -23,6 +23,7 @@
         height: '300',
         {% if TINYMCE_CONTENT_CSS_URL %}content_css: "{{ TINYMCE_CONTENT_CSS_URL }}",{% endif %}
         {% if TINYMCE_LINK_LIST_URL %}external_link_list_url: "{{ TINYMCE_LINK_LIST_URL }}",{% endif %}
+        {% if TINYMCE_INIT_INSTANCE_CALLBACK %}init_instance_callback: "{{TINYMCE_INIT_INSTANCE_CALLBACK}}",{% endif %}
         plugins: "{% block plugins %}fullscreen,paste{% endblock %}",
         paste_auto_cleanup_on_paste: true,
         relative_urls: false

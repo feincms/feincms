@@ -25,6 +25,13 @@ Highlights
   Defining the URL patterns directly is still possible. Have a look at
   ``feincms.urls`` to find out how this should be done.
 
+* FeinCMS requires at least Django 1.2 but already has support for Django 1.3
+  features such as staticfiles. The FeinCMS media file folder has been moved
+  from ``feincms/media/feincms`` to ``feincms/static/feincms`` - if you use
+  ``django.contrib.staticfiles`` with Django 1.3 (and you should!), FeinCMS'
+  media files for the administration interface will automatically be made
+  available without any further work on your part.
+
 * Content types can specify the media files (Javascript and CSS files) they
   need to work correctly. See :ref:`contenttypes-extramedia` for information
   on how to use this in your own content types.
@@ -35,7 +42,7 @@ Highlights
   than before.
 
 * The content type interface has been extended with two new methods, available
-  for all content types who need it: ``process`` is called before rendering
+  for all content types which need it: ``process`` is called before rendering
   pages and is guaranteed to receive the current request instance. Each and
   every content type (not only application contents as before) has the
   ability to return full HTTP responses which are returned directly to the
@@ -61,12 +68,9 @@ Highlights
 
 * The ``ct_tracker`` extension has been rewritten to take advantage of the
   new ``ContentProxy`` features. This means that the format of ``_ct_inventory``
-  could not be kept backwards compatible. Because of this you have to empty
-  the ``_ct_inventory`` fields yourself on upgrading::
-
-      $ ./manage.py shell
-      >>> from feincms.module.page.models import Page
-      >>> Page.objects.all().update(_ct_inventory=None)
+  could not be kept backwards compatible and has been changed. The inventory
+  is versioned now, therefore upgrading should not require any action on
+  your part.
 
 * ``feincms_site`` is not available in the context anymore. It was undocumented,
   mostly unused and badly named anyway. If you still need this functionality you
