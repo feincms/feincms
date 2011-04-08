@@ -437,13 +437,18 @@ class Page(Base):
         a HttpResponse for shortcutting the page rendering and returning that response
         immediately to the client.
         """
+
         request._feincms_page = self
-        request._feincms_extra_context = {
+
+        if not hasattr(request, '_feincms_extra_context'):
+            request._feincms_extra_context = {}
+
+        request._feincms_extra_context.update({
             'in_appcontent_subpage': False, # XXX This variable name isn't accurate anymore.
                                             # We _are_ in a subpage, but it isn't necessarily
                                             # an appcontent subpage.
             'extra_path': '/',
-            }
+            })
 
         if request.path != self.get_absolute_url():
             request._feincms_extra_context.update({
