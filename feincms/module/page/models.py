@@ -694,7 +694,7 @@ class PageAdminForm(forms.ModelForm):
         # at least for now.
         active_pages = Page.objects.filter(active=True)
 
-        if hasattr(Site, 'page_set') and 'site' in cleanded_data:
+        if hasattr(Site, 'page_set') and 'site' in cleaned_data:
             active_pages = active_pages.filter(site=cleaned_data['site'])
 
         if self.instance:
