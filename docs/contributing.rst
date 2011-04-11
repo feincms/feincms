@@ -11,9 +11,6 @@ Repository branches
 The FeinCMS repository on github has several branches. Their purpose and
 rewinding policies are described below.
 
-Please note: This policy is active starting with the upcoming release of
-FeinCMS 1.3.
-
 * ``maint``: Maintenance branch for the second-newest version of FeinCMS.
 * ``master``: Stable version of FeinCMS.
 
