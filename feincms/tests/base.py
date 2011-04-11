@@ -1223,9 +1223,11 @@ class PagesTestCase(TestCase):
     def test_31_sites_framework_associating_with_single_site(self):
         self.login()
         site_2 = Site.objects.create(name='site 2', domain='2.example.com')
-        self.create_page('site 1 homepage', override_url='/')
-        self.create_page('site 2 homepage', override_url='/', site=site_2.id)
+        self.create_page('site 1 homepage', override_url='/', active=True)
+        self.create_page('site 2 homepage', override_url='/',
+                site=site_2.id, active=True)
         self.assertEqual(Page.objects.count(), 2)
+        self.assertEqual(Page.objects.active().count(), 1)
 
 
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
