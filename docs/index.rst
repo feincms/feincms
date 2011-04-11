@@ -54,6 +54,7 @@ Contents
    templatetags
    advanced/index
    faq
+   contributing
 
 
 API Documentation
