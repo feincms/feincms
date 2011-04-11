@@ -1,0 +1,6 @@
+====================================
+FeinCMS 1.4 release notes (upcoming)
+====================================
+
+* Support for the ``show_on_top`` option for the ``ItemEditor`` has been
+  completely removed. This functionatliy has been deprecated since 1.2.
