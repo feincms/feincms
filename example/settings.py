@@ -152,6 +152,7 @@ try:
         'feincms.module.page.extensions.navigation',
         'feincms.module.page.extensions.relatedpages',
         'feincms.module.page.extensions.symlinks',
+        'feincms.module.page.extensions.sites',
         'feincms.module.page.extensions.titles',
         'feincms.module.page.extensions.translations',
         'feincms.module.page.models',
