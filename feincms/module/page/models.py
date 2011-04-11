@@ -703,11 +703,9 @@ class PageAdminForm(forms.ModelForm):
             current_id = self.instance.id
             active_pages = active_pages.exclude(id=current_id)
 
-        # We only check of path clashes for Pages with the same site
+        # We only check for path clashes with other Pages with the same site
         if hasattr(Site, 'page_set') and 'site' in cleaned_data:
             active_pages = active_pages.filter(site=cleaned_data['site'])
-
-            # Make sure the site matches the parent and children
 
         if not cleaned_data['active']:
             # If the current item is inactive, we do not need to conduct
@@ -890,7 +888,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     # different selection.  This also prevents dragging and dropping between
     # sites, which can be problematic (the site of the dragged page needs to
     # be changed, along with all child pages, and each such page needs to be
-    # reverified for clashes with the new sites URLs.
+    # reverified for clashes with the new sites URLs).
     def changelist_view(self, request, extra_context=None):
         "By default, only show pages from this site"
 
