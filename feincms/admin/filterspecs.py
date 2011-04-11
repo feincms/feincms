@@ -5,7 +5,7 @@
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
 from django.contrib.admin.filterspecs import FilterSpec, ChoicesFilterSpec
-from django.contrib.sites.models import Sites
+from django.contrib.sites.models import Site
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
@@ -27,7 +27,7 @@ class ParentFilterSpec(ChoicesFilterSpec):
         super(ParentFilterSpec, self).__init__(f, request, params, model, model_admin)
 
         # If the sites extension is installed, only show the parents of this site
-        if hasattr(Sites, 'page_set'):
+        if hasattr(Site, 'page_set'):
             # What site is the admin displaying?
             if request.GET.has_key('site__id__exact'):
                 admin_site = request.GET['site__id__exact']
