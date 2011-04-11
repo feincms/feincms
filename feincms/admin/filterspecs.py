@@ -5,7 +5,7 @@
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
 from django.contrib.admin.filterspecs import FilterSpec, ChoicesFilterSpec
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import Sites
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
