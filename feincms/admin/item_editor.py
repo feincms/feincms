@@ -239,3 +239,13 @@ class ItemEditor(admin.ModelAdmin):
             fieldsets.append(FEINCMS_CONTENT_FIELDSET)
 
         return fieldsets
+
+    # These next are only used if later we use a subclass of this class
+    # which also inherits from VersionAdmin.
+    revision_form_template = "admin/feincms/revision_form.html"
+
+    recover_form_template = "admin/feincms/recover_form.html"
+
+    def render_revision_form(self, request, obj, version, context, revert=False, recover=False):
+        context.update(self.get_extra_context(request))
+        return super(ItemEditor, self).render_revision_form(request, obj, version, context, revert, recover)
