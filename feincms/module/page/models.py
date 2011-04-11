@@ -733,14 +733,14 @@ class PageAdminForm(forms.ModelForm):
         if hasattr(Site, 'page_set') and 'site' in cleaned_data:
             if parent and (parent.site_id != cleaned_data['site']):
                 self._errors['site'] = ErrorList([_('This site does not match the site of the parent page.')])
-                del cleaned_date['site']
+                del cleaned_data['site']
 
         # Make sure the site matches the children
         if current_id and hasattr(Site, 'page_set') and 'site' in cleaned_data:
             for child in Page.objects.get(parent_id=current_id):
                 if child.site_id != cleaned_data['site']:
                     self._errors['site'] = ErrorList([_('This site does not match the site of a child page.')])
-                    del cleaned_date['site']
+                    del cleaned_data['site']
 
         if parent:
             new_url = '%s%s/' % (parent._cached_url, cleaned_data['slug'])
