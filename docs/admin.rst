@@ -132,14 +132,6 @@ Customizing the item editor
             )
         )
 
-.. versionchanged:: 1.2.0
-
-* ``show_on_top`` (**deprecated**; use standard ``fieldsets`` instead)
-
-  A tuple which describes, which fields should be shown above the tabbed item
-  editor interface. For backwards compatibility this tuple is converted to
-  a fieldset which is prepended to ``fieldsets`` to appear at the top.
-
 
 Customizing the individual content type forms
 ---------------------------------------------

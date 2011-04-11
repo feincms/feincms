@@ -227,9 +227,8 @@ class ItemEditor(admin.ModelAdmin):
             ]
 
     def get_fieldsets(self, request, obj=None):
-        """ Convert show_on_top to fieldset for backwards compatibility.
-
-        Also insert FEINCMS_CONTENT_FIELDSET it not present.
+        """
+        Insert FEINCMS_CONTENT_FIELDSET it not present.
         Is it reasonable to assume this should always be included?
         """
 
@@ -238,32 +237,5 @@ class ItemEditor(admin.ModelAdmin):
 
         if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
             fieldsets.append(FEINCMS_CONTENT_FIELDSET)
-
-        if getattr(self, 'show_on_top', ()):
-            import warnings
-            warnings.warn("The show_on_top will soon be removed; please "
-                          "update your " "code to use fieldsets instead. ",
-                          DeprecationWarning)
-            if hasattr(self.model, '_feincms_templates'):
-                if 'template_key' not in self.show_on_top:
-                    self.show_on_top = ['template_key'] + \
-                        list(self.show_on_top)
-            if self.declared_fieldsets:
-                # check to ensure no duplicated fields
-                all_fields = []
-                for fieldset_data in dict(self.declared_fieldsets).values():
-                    all_fields += list(fieldset_data.get('fields', ()))
-                for field_name in self.show_on_top:
-                    if field_name in all_fields:
-                        raise ImproperlyConfigured(
-                            'Field "%s" is present in both show_on_top and '
-                            'fieldsets' % field_name)
-            else: # no _declared_ fieldsets,
-                # remove show_on_top fields from implicit fieldset
-                for fieldset in fieldsets:
-                    for field_name in self.show_on_top:
-                        if field_name in fieldset[1]['fields']:
-                            fieldset[1]['fields'].remove(field_name)
-            fieldsets.insert(0, (None, {'fields': self.show_on_top}))
 
         return fieldsets
