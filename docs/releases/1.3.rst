@@ -1,6 +1,6 @@
-====================================
-FeinCMS 1.3 release notes (upcoming)
-====================================
+=========================
+FeinCMS 1.3 release notes
+=========================
 
 
 FeinCMS 1.3 includes many bugfixes and cleanups and a number of new features.
