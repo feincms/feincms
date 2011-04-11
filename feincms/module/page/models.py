@@ -15,6 +15,7 @@ from django.core.cache import cache as django_cache
 from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
 from django.contrib import admin
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, signals
@@ -702,6 +703,12 @@ class PageAdminForm(forms.ModelForm):
             current_id = self.instance.id
             active_pages = active_pages.exclude(id=current_id)
 
+        # We only check of path clashes for Pages with the same site
+        if hasattr(Site, 'page_set') and 'site' in cleaned_data:
+            active_pages = active_pages.filter(site=cleaned_data['site'])
+
+            # Make sure the site matches the parent and children
+
         if not cleaned_data['active']:
             # If the current item is inactive, we do not need to conduct
             # further validation. Note that we only check for the flag, not
@@ -723,6 +730,19 @@ class PageAdminForm(forms.ModelForm):
         else:
             # The user tries to create a new page
             parent = cleaned_data['parent']
+
+        # Make sure the site matches the parent
+        if hasattr(Site, 'page_set') and 'site' in cleaned_data:
+            if parent and (parent.site_id != cleaned_data['site']):
+                self._errors['site'] = ErrorList([_('This site does not match the site of the parent page.')])
+                del cleaned_date['site']
+
+        # Make sure the site matches the children
+        if current_id and hasattr(Site, 'page_set') and 'site' in cleaned_data:
+            for child in Page.objects.get(parent_id=current_id):
+                if child.site_id != cleaned_data['site']:
+                    self._errors['site'] = ErrorList([_('This site does not match the site of a child page.')])
+                    del cleaned_date['site']
 
         if parent:
             new_url = '%s%s/' % (parent._cached_url, cleaned_data['slug'])
@@ -792,7 +812,8 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                 if not f.editable:
                     self.readonly_fields.append(f.name)
 
-    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
+    # The sites extension adds a new column, so we need to shorten some of the column names
+    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in nav'))
 
     def _actions_column(self, page):
         editable = getattr(page, 'feincms_editable', True)
@@ -863,6 +884,24 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
         return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 
+    # With hundreds of pages and many sites, the admin becomes unweildy.
+    # Rather than show all sites simultaneously, we pretend that the user has
+    # selected the current site in the admin filter if they have not made a
+    # different selection.  This also prevents dragging and dropping between
+    # sites, which can be problematic (the site of the dragged page needs to
+    # be changed, along with all child pages, and each such page needs to be
+    # reverified for clashes with the new sites URLs.
+    def changelist_view(self, request, extra_context=None):
+        "By default, only show pages from this site"
+
+        if hasattr(Site, 'page_set'):
+            if not request.GET.has_key('site__id__exact'):
+                q = request.GET.copy()
+                q['site__id__exact'] = django_settings.SITE_ID
+                request.GET = q
+                request.META['QUERY_STRING'] = request.GET.urlencode()
+        return super(PageAdmin, self).changelist_view(request, extra_context=extra_context)
+
     def is_visible_admin(self, page):
         """
         Instead of just showing an on/off boolean, also indicate whether this
@@ -870,6 +909,12 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         """
         if not hasattr(self, "_visible_pages"):
             self._visible_pages = list() # Sanity check in case this is not already defined
+
+        # If a page's site is not the current site, it will not be visible
+        # Indicate why the page is not visible in the admin
+        if hasattr(Site, 'page_set'):
+            if page.site_id != django_settings.SITE_ID:
+                return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('site'))
 
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited
