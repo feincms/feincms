@@ -12,3 +12,4 @@
 *.ram binary
 *.rm binary
 *.jar binary
+*.db binary

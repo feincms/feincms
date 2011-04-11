@@ -331,7 +331,7 @@ feincms.jQuery(function($){
     }
 
 	// fire!
-        rlist = $("#result_list");
+    rlist = $("#result_list");
 	if($('tbody tr', rlist).length > 1) {
         rlist.hide();
 		$('tbody', rlist).feinTree();

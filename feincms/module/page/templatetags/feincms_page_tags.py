@@ -258,7 +258,7 @@ def feincms_breadcrumbs(page, include_self=True):
     bc = [(anc.get_absolute_url(), anc.short_title()) for anc in ancs]
 
     if include_self:
-        bc.append((page.get_absolute_url(), page.short_title()))
+        bc.append((None, page.short_title()))
 
     return {"trail": bc}
 

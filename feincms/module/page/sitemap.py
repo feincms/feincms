@@ -7,6 +7,7 @@ from django.contrib.sitemaps import Sitemap
 
 from feincms.module.page.models import Page
 
+# ------------------------------------------------------------------------
 class PageSitemap(Sitemap):
     """
     The PageSitemap can be used to automatically generate sitemap.xml files
@@ -17,7 +18,7 @@ class PageSitemap(Sitemap):
         The PageSitemap accepts the following parameters for customisation
         of the resulting sitemap.xml output:
 
-        * navigation_only -- if set to True, only pages that are in_navigation
+        * navigation_only -- if set to True, only pages that are in_navigation 
         will appear in the site map.
         * max_depth -- if set to a non-negative integer, will limit the sitemap
         generated to this page hierarchy depth.
@@ -92,3 +93,4 @@ class PageSitemap(Sitemap):
         del(self._paginator)
         return urls
 
+# ------------------------------------------------------------------------

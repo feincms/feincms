@@ -24,7 +24,6 @@ from django.http import Http404, HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db.transaction import commit_on_success
-from django.contrib.sites.models import Site
 
 import mptt
 
@@ -438,13 +437,18 @@ class Page(Base):
         a HttpResponse for shortcutting the page rendering and returning that response
         immediately to the client.
         """
+
         request._feincms_page = self
-        request._feincms_extra_context = {
+
+        if not hasattr(request, '_feincms_extra_context'):
+            request._feincms_extra_context = {}
+
+        request._feincms_extra_context.update({
             'in_appcontent_subpage': False, # XXX This variable name isn't accurate anymore.
                                             # We _are_ in a subpage, but it isn't necessarily
                                             # an appcontent subpage.
             'extra_path': '/',
-            }
+            })
 
         if request.path != self.get_absolute_url():
             request._feincms_extra_context.update({
@@ -694,9 +698,6 @@ class PageAdminForm(forms.ModelForm):
         # at least for now.
         active_pages = Page.objects.filter(active=True)
 
-        if hasattr(Site, 'page_set') and 'site' in cleaned_data:
-            active_pages = active_pages.filter(site=cleaned_data['site'])
-
         if self.instance:
             current_id = self.instance.id
             active_pages = active_pages.exclude(id=current_id)
@@ -737,18 +738,6 @@ class PageAdminForm(forms.ModelForm):
 
 # ------------------------------------------------------------------------
 
-def sort_children(modeladmin, request, queryset):
-    "Admin action that sorts the children of selected pages according to title"
-    for parent in queryset.all():
-        children = [(child.title, child) for child in parent.get_children()]
-        children.sort()
-        previous_child = None
-        for (title, child) in children:
-            if previous_child != None:
-                child.move_to(previous_child, position='right')
-                child.save()
-            previous_child = child
-sort_children.short_description = "Sort children by title"
 
 class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     class Media:
@@ -763,7 +752,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     fieldsets = [
         (None, {
             'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
-                       'parent'],
+                'parent'],
         }),
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
@@ -779,8 +768,6 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
 
     raw_id_fields = ['parent']
     radio_fields = {'template_key': admin.HORIZONTAL}
-
-    actions = [sort_children]
 
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
@@ -805,7 +792,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                 if not f.editable:
                     self.readonly_fields.append(f.name)
 
-    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in nav'))
+    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
     def _actions_column(self, page):
         editable = getattr(page, 'feincms_editable', True)
@@ -876,18 +863,6 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
         return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 
-    def changelist_view(self, request, extra_context=None):
-        "By default, only show pages from this site"
-
-        if hasattr(Site, 'page_set'):
-            if not request.GET.has_key('site__id__exact'):
-                q = request.GET.copy()
-                q['site__id__exact'] = django_settings.SITE_ID
-                request.GET = q
-                request.META['QUERY_STRING'] = request.GET.urlencode()
-        return super(PageAdmin, self).changelist_view(request, extra_context=extra_context)
-
-
     def is_visible_admin(self, page):
         """
         Instead of just showing an on/off boolean, also indicate whether this
@@ -895,10 +870,6 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         """
         if not hasattr(self, "_visible_pages"):
             self._visible_pages = list() # Sanity check in case this is not already defined
-
-        if hasattr(Site, 'page_set'):
-            if page.site_id != django_settings.SITE_ID:
-                return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('site'))
 
         if page.parent_id and not page.parent_id in self._visible_pages:
             # parent page's invisibility is inherited

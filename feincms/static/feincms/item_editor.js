@@ -15,7 +15,7 @@ if(!Array.indexOf) {
         Downcoder.Initialize() ;
         Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
         Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
-        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
+        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";        
     }
 
     function feincms_gettext(s) {

@@ -8,7 +8,6 @@ from django.contrib.admin.filterspecs import FilterSpec, ChoicesFilterSpec
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from django.conf import settings as django_settings
 
 
 class ParentFilterSpec(ChoicesFilterSpec):
@@ -25,13 +24,7 @@ class ParentFilterSpec(ChoicesFilterSpec):
 
         super(ParentFilterSpec, self).__init__(f, request, params, model, model_admin)
 
-        # What site is the admin displaying?
-        if request.GET.has_key('site__id__exact'):
-            admin_site = request.GET['site__id__exact']
-        else:
-            admin_site = django_settings.SITE_ID
-
-        parent_ids = model.objects.filter(site__id__exact=admin_site).exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
+        parent_ids = model.objects.exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
         parents = model.objects.filter(pk__in=parent_ids).values_list("pk", "title", "level")
         self.lookup_choices = [(pk, "%s%s" % ("&nbsp;" * level, shorten_string(title, max_length=25))) for pk, title, level in parents]
 
