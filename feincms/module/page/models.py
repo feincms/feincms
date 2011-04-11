@@ -769,8 +769,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     unknown_fields = ['override_url', 'redirect_to']
     fieldsets = [
         (None, {
-            'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
-                'parent'],
+            'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug', 'parent'],
         }),
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
