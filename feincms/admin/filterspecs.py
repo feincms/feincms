@@ -35,7 +35,7 @@ class ParentFilterSpec(ChoicesFilterSpec):
                 # No site filtered in admin, so show current site
                 admin_site = django_settings.SITE_ID
 
-            parent_ids = model.objects.filter(parent=None, site__id__exact=admin_site).exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
+            parent_ids = model.objects.filter(site__id__exact=admin_site).exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
         else:
             parent_ids = model.objects.exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
 
