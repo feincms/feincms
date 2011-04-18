@@ -20,6 +20,29 @@ FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
 FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 
+class StatefulFilterAdmin(admin.ModelAdmin):
+    """A version of admin.ModelAdmin that remembers the admin filter state.
+    After editing an item, it returns to the Model admin with filter state restored.
+
+    Requires a hidden field in the item template form:
+    <input type='hidden' name='admin_referrer' value='{{ admin_referrer }}' />
+    """
+
+    def change_view(self, request, object_id, extra_context={}):
+        # Remember the admin filter state, and restore after making changes
+        if 'admin_referrer' in request.POST:
+            # Second call: use the saved referrer to restore admin filter state
+            ref = request.POST['admin_referrer']
+            del(request.POST['admin_referrer'])
+            result = super(StatefulFilterAdmin, self).change_view(request, object_id, extra_context )
+            if ref:
+                result['Location'] = ref
+        else:
+            # First call: save the referrer in extra_context to preserve admin filter state
+            extra_context['admin_referrer'] = unicode( request.META.get('HTTP_REFERER', '') )
+            result = super(StatefulFilterAdmin, self).change_view(request, object_id, extra_context )
+        return result
+
 class ItemEditorForm(forms.ModelForm):
     """
     The item editor form contains hidden region and ordering fields and should
@@ -63,7 +86,7 @@ def get_feincms_inlines(model):
     return inlines
 
 
-class ItemEditor(admin.ModelAdmin):
+class ItemEditor(StatefulFilterAdmin):
     """
     The ``ItemEditor`` is a drop-in replacement for ``ModelAdmin`` with the
     speciality of knowing how to work with :class:`feincms.models.Base`
@@ -160,16 +183,13 @@ class ItemEditor(admin.ModelAdmin):
 
         extra_context = {
             'model': self.model,
-            'available_templates':
-                getattr(self.model, '_feincms_templates', ()),
+            'available_templates': getattr(self.model, '_feincms_templates', ()),
             'has_parent_attribute': hasattr(self.model, 'parent'),
             'content_types': self.get_content_type_map(),
             'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING':
-                settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
+            'FEINCMS_ADMIN_MEDIA_HOTLINKING': settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
-
             'FEINCMS_FRONTEND_EDITING': settings.FEINCMS_FRONTEND_EDITING,
             }
 
@@ -178,25 +198,22 @@ class ItemEditor(admin.ModelAdmin):
 
         return extra_context
 
-    def add_view(self, request, form_url='', extra_context=None):
-        context = {}
-
+    def add_view(self, request, form_url='', extra_context={}):
         # insert dummy object as 'original' so template code can grab defaults
         # for template, etc.
-        context['original'] = self.model()
+        extra_context['original'] = self.model()
 
         # If there are errors in the form, we need to preserve the object's
         # template as it was set when the user attempted to save it, so that
         # the same regions appear on screen.
         if request.method == 'POST' and \
-                hasattr(self.model, '_feincms_templates'):
-            context['original'].template_key = request.POST['template_key']
+               hasattr(self.model, '_feincms_templates'):
+            extra_context['original'].template_key = request.POST['template_key']
 
-        context.update(self.get_extra_context(request))
-        context.update(extra_context or {})
-        return super(ItemEditor, self).add_view(request, form_url, context)
+        extra_context.update(self.get_extra_context(request))
+        return super(ItemEditor, self).add_view(request, form_url, extra_context)
 
-    def change_view(self, request, object_id, extra_context=None):
+    def change_view(self, request, object_id, extra_context={}):
         self.model._needs_content_types()
 
         # Recognize frontend editing requests
@@ -207,10 +224,8 @@ class ItemEditor(admin.ModelAdmin):
             return self._frontend_editing_view(
                 request, res.group(1), res.group(2), res.group(3))
 
-        context = {}
-        context.update(self.get_extra_context(request))
-        context.update(extra_context or {})
-        return super(ItemEditor, self).change_view(request, object_id, context)
+        extra_context.update(self.get_extra_context(request))
+        return super(ItemEditor, self).change_view(request, object_id, extra_context)
 
     @property
     def change_form_template(self):
