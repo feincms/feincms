@@ -96,6 +96,14 @@ class Handler(object):
             add_never_cache_headers(response)
 
         return response
+    
+    @property
+    def __name__(self):
+        """
+        Dummy property to make this handler behave like a normal function.
+        This property is used by django-debug-toolbar
+        """
+        return self.__class__.__name__
 
 #: Default handler
 handler = Handler()
