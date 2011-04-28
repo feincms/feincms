@@ -187,7 +187,7 @@ they need. The mechanism in use is almost the same as the one used in
 Include the following code in the `<head>` section of your template to include
 all JS and CSS media file definitions::
 
-    {% feincms_page.content.media %}
+    {{ feincms_page.content.media }}
 
 
 The individual content types should use a ``media`` property do define the
