@@ -46,8 +46,13 @@ class TrackerContentProxy(ContentProxy):
         if 'counts' not in self._cache:
             if self.item._ct_inventory and \
                     self.item._ct_inventory.get('_version_', -1) == INVENTORY_VERSION:
-                self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
-            else:
+
+                try:
+                    self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
+                except KeyError:
+                    pass
+
+            if 'counts' not in self._cache:
                 super(TrackerContentProxy, self)._fetch_content_type_counts()
 
                 self.item._ct_inventory = self._to_inventory(self._cache['counts'])
