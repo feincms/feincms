@@ -126,8 +126,8 @@ class ChangeList(main.ChangeList):
         self.user = request.user
         super(ChangeList, self).__init__(request, *args, **kwargs)
 
-    def get_query_set(self):
-        return super(ChangeList, self).get_query_set().order_by('tree_id', 'lft')
+    def get_query_set(self, *args, **kwargs):
+        return super(ChangeList, self).get_query_set(*args, **kwargs).order_by('tree_id', 'lft')
 
     def get_results(self, request):
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
