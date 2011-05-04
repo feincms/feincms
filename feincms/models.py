@@ -395,21 +395,32 @@ def create_base_model(inherit_from=models.Model):
                 cls._feincms_extensions = set()
 
             here = cls.__module__.split('.')[:-1]
-            here_path = '.'.join(here + ['extensions'])
-            common_path = '.'.join(here[:-1] + ['extensions'])
+
+            paths = [
+                '.'.join(here + ['extensions']),
+                '.'.join(here[:-1] + ['extensions']),
+                'feincms.module.extensions',
+                ]
 
             for ext in extensions:
                 if ext in cls._feincms_extensions:
                     continue
 
+                fn = None
                 if isinstance(ext, basestring):
                     try:
                         fn = get_object(ext + '.register')
                     except ImportError:
-                        try:
-                            fn = get_object('%s.%s.register' % ( here_path, ext ) )
-                        except ImportError:
-                            fn = get_object('%s.%s.register' % ( common_path, ext ) )
+                        for path in paths:
+                            try:
+                                fn = get_object('%s.%s.register' % (path, ext))
+                            except ImportError, e:
+                                pass
+
+                    if not fn:
+                        raise ImproperlyConfigured, '%s is not a valid extension for %s' % (
+                            ext, cls.__name__)
+
                 # Not a string, so take our chances and just try to access "register"
                 else:
                     fn = ext.register
