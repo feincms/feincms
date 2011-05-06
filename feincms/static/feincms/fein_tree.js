@@ -212,8 +212,12 @@ feincms.jQuery(function($){
     function retrieveCollapsedNodes() {
         var n = $.cookie('feincms_collapsed_nodes');
         if(n != null) {
-            n = $.parseJSON(n);
+            try {
+                n = $.parseJSON(n);
+            } catch(e) {
+                n = null;
             }
+        }
         return n;
     }
 
