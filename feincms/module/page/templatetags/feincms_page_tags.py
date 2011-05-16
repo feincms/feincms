@@ -33,6 +33,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
     def what(self, instance, args):
         level = int(args.get('level', 1))
         depth = int(args.get('depth', 1))
+        mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
 
         if isinstance(instance, HttpRequest):
             instance = Page.objects.from_request(instance)
@@ -47,8 +48,9 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 entries.append(entry)
 
                 if getattr(entry, 'navigation_extension', None):
-                    entries.extend(entry.extended_navigation(depth=depth,
-                        request=self.render_context.get('request', None)))
+                    entries.extend(e for e in entry.extended_navigation(depth=depth,
+                        request=self.render_context.get('request', None))
+                        if getattr(e, 'level', 0) < mptt_limit)
 
         return entries
 
