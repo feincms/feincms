@@ -1,0 +1,54 @@
+.drag_handle {
+	width: 16px;
+	height: 16px;
+	background: url(img/arrow-move.png);
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.drag_handle:hover {
+	cursor: move;
+}
+
+.drag_order img {
+	cursor: move;
+}
+
+table tr.dragging {
+	opacity: .3;
+}
+
+table tr.dragging td {
+	color: #333;
+}
+
+table tr.folded {
+	background: red;
+}
+
+div#drag_line {
+	position: relative;
+	height: 3px;
+	font-size: 0px;
+	background-color: #800080;
+}
+
+div#drag_line div {
+	position: absolute;
+	height: 9px;
+	width: 9px;
+	background-image: url(img/drag_order_circle.png);
+	margin: -3px 0 0 -9px;
+}
+
+.page_marker.children {
+    background: url(img/disclosure-down.png) no-repeat right top;
+}
+
+.page_marker.closed {
+    background: url(img/disclosure-right.png) no-repeat right top;
+}
+
+tr.non-editable a:link, tr.non-editable a:visited, tr.non-editable td {
+    color: #AAA;
+}

@@ -1,3 +1,7 @@
+"""
+Third-party application inclusion support.
+"""
+
 from time import mktime
 import re
 
@@ -223,7 +227,11 @@ class ApplicationContent(models.Model):
                 instance = kwargs.get("instance", None)
 
                 if instance:
-                    self.app_config = cls.ALL_APPS_CONFIG[instance.urlconf_path]['config']
+                    try:
+                        self.app_config = cls.ALL_APPS_CONFIG[instance.urlconf_path]['config']
+                    except KeyError:
+                        self.app_config = {}
+
                     self.custom_fields = {}
                     admin_fields    = self.app_config.get('admin_fields', {})
 
@@ -269,7 +277,7 @@ class ApplicationContent(models.Model):
         super(ApplicationContent, self).__init__(*args, **kwargs)
         self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get('config', {})
 
-    def process(self, request):
+    def process(self, request, **kwargs):
         page_url = self.parent.get_absolute_url()
 
         # Get the rest of the URL
@@ -284,7 +292,7 @@ class ApplicationContent(models.Model):
                 appcontent_parameters=self.parameters
             )
         else:
-            path = re.sub('^' + re.escape(page_url[:-1]), '', request.path)
+            path = request._feincms_extra_context['extra_path']
 
         # Resolve the module holding the application urls.
         urlconf_path = self.app_config.get('urls', self.urlconf_path)
@@ -301,7 +309,7 @@ class ApplicationContent(models.Model):
         #: Variables from the ApplicationContent parameters are added to request
         #  so we can expose them to our templates via the appcontent_parameters
         #  context_processor
-        request._feincms_appcontent_parameters.update(self.parameters)
+        request._feincms_extra_context.update(self.parameters)
 
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
@@ -313,34 +321,44 @@ class ApplicationContent(models.Model):
 
         try:
             output = fn(request, *args, **kwargs)
+
+            if isinstance(output, HttpResponse):
+                if self.send_directly(request, output):
+                    return output
+                elif output.status_code == 200:
+
+                    # If the response supports deferred rendering, render the
+                    # response right now. We do not handle template response
+                    # middleware.
+                    if hasattr(output, 'render') and callable(output.render):
+                        output.render()
+
+                    self.rendered_result = mark_safe(output.content.decode('utf-8'))
+                    self.rendered_headers = {}
+                    # Copy relevant headers for later perusal
+                    for h in ('Cache-Control', 'Last-Modified', 'Expires'):
+                        if h in output:
+                            self.rendered_headers.setdefault(h, []).append(output[h])
+            else:
+                self.rendered_result = mark_safe(output)
+
         finally:
             # We want exceptions to propagate, but we cannot allow the
             # modifications to reverse() to stay here.
             del _local.urlconf
 
-        if isinstance(output, HttpResponse):
-            if self.send_directly(request, output):
-                return output
-            elif output.status_code == 200:
-                self.rendered_result = mark_safe(output.content.decode('utf-8'))
-                self.rendered_headers = {}
-                # Copy relevant headers for later perusal
-                for h in ('Cache-Control', 'Last-Modified', 'Expires'):
-                    if h in output:
-                        self.rendered_headers.setdefault(h, []).append(output[h])
-        else:
-            self.rendered_result = mark_safe(output)
+        return True # successful
 
     def send_directly(self, request, response):
         return response.status_code != 200 or request.is_ajax() or getattr(response, 'standalone', False)
 
-    def render(self, request, **kwargs):
+    def render(self, **kwargs):
         return getattr(self, 'rendered_result', u'')
 
     def finalize(self, request, response):
         headers = getattr(self, 'rendered_headers', None)
         if headers:
-            _update_response_headers(request, response, headers)
+            self._update_response_headers(request, response, headers)
 
     def save(self, *args, **kwargs):
         super(ApplicationContent, self).save(*args, **kwargs)
@@ -352,36 +370,31 @@ class ApplicationContent(models.Model):
         # Clear reverse() cache
         _empty_reverse_cache()
 
+    def _update_response_headers(self, request, response, headers):
+        """
+        Combine all headers that were set by the different content types
+        We are interested in Cache-Control, Last-Modified, Expires
+        """
+        from django.utils.http import http_date
 
-# ------------------------------------------------------------------------
-def _update_response_headers(request, response, headers):
-    """
-    Combine all headers that were set by the different content types
-    We are interested in Cache-Control, Last-Modified, Expires
-    """
-    from django.utils.http import http_date
+        # Ideally, for the Cache-Control header, we'd want to do some intelligent
+        # combining, but that's hard. Let's just collect and unique them and let
+        # the client worry about that.
+        cc_headers = set(('must-revalidate',))
+        for x in (cc.split(",") for cc in headers.get('Cache-Control', ())):
+            cc_headers |= set((s.strip() for s in x))
 
-    # Ideally, for the Cache-Control header, we'd want to do some intelligent
-    # combining, but that's hard. Let's just collect and unique them and let
-    # the client worry about that.
-    cc_headers = set()
-    for x in (cc.split(",") for cc in headers.get('Cache-Control', ())):
-        cc_headers |= set((s.strip() for s in x))
+        if len(cc_headers):
+            response['Cache-Control'] = ", ".join(cc_headers)
+        else:   # Default value
+            response['Cache-Control'] = 'no-cache, must-revalidate'
 
-    if len(cc_headers):
-        response['Cache-Control'] = ", ".join(cc_headers)
-    else:   # Default value
-        response['Cache-Control'] = 'no-cache, must-revalidate'
+        # Check all Last-Modified headers, choose the latest one
+        lm_list = [parsedate(x) for x in headers.get('Last-Modified', ())]
+        if len(lm_list) > 0:
+            response['Last-Modified'] = http_date(mktime(max(lm_list)))
 
-    # Check all Last-Modified headers, choose the latest one
-    lm_list = [parsedate(x) for x in headers.get('Last-Modified', ())]
-    if len(lm_list) > 0:
-        response['Last-Modified'] = http_date(mktime(max(lm_list)))
-
-    # Check all Expires headers, choose the earliest one
-    lm_list = [parsedate(x) for x in headers.get('Expires', ())]
-    if len(lm_list) > 0:
-        response['Expires'] = http_date(mktime(min(lm_list)))
-
-
-# ------------------------------------------------------------------------
+        # Check all Expires headers, choose the earliest one
+        lm_list = [parsedate(x) for x in headers.get('Expires', ())]
+        if len(lm_list) > 0:
+            response['Expires'] = http_date(mktime(min(lm_list)))

@@ -1,3 +1,7 @@
+"""
+Simple tagging support using ``django-tagging``.
+"""
+
 from django.utils.translation import ugettext_lazy as _
 
 import tagging

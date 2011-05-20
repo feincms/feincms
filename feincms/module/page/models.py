@@ -7,10 +7,12 @@ try:
 except ImportError:
     import md5
 
+import re
 import sys
 
 from django import forms
 from django.core.cache import cache as django_cache
+from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.core.urlresolvers import reverse
@@ -53,7 +55,7 @@ class ActiveAwareContentManagerMixin(object):
     @classmethod
     def apply_active_filters(cls, queryset):
         """
-        Return a queryset reflecting the filters defined.
+        Apply all filters defined to the queryset passed and return the result.
         """
         for filt in cls.active_filters:
             if callable(filt):
@@ -97,18 +99,21 @@ def path_to_cache_key(path):
     return cache_key
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
+    """
+    The page manager. Only adds new methods, does not modify standard Django
+    manager behavior in any way.
+    """
 
-    # The fields which should be excluded when creating a copy. The mptt fields are
-    # excluded automatically by other mechanisms
-    # ???: Then why are the mptt fields listed here?
+    # The fields which should be excluded when creating a copy.
     exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
 
     def page_for_path(self, path, raise404=False):
         """
-        Return a page for a path.
+        Return a page for a path. Optionally raises a 404 error if requested.
 
-        Example:
-        Page.objects.page_for_path(request.path)
+        Example::
+
+            Page.objects.page_for_path(request.path)
         """
 
         stripped = path.strip('/')
@@ -133,10 +138,10 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         continues to search by chopping path components off the end.
 
         Tries hard to avoid unnecessary database lookups by generating all
-        possible matching URL prefixes and choosing the longtest match.
+        possible matching URL prefixes and choosing the longest match.
 
         Page.best_match_for_path('/photos/album/2008/09') might return the
-        page with url '/photos/album'.
+        page with url '/photos/album/'.
         """
 
         paths = ['/']
@@ -169,60 +174,60 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         raise self.model.DoesNotExist
 
     def in_navigation(self):
+        """
+        Returns active pages which have the ``in_navigation`` flag set.
+        """
+
         return self.active().filter(in_navigation=True)
 
     def toplevel_navigation(self):
+        """
+        Returns top-level navigation entries.
+        """
+
         return self.in_navigation().filter(parent__isnull=True)
 
     def for_request(self, request, raise404=False):
+        """
+        Convenience wrapper for ``page_for_path`` which calls ``setup_request``
+        if a page has been found right away (required by FeinCMS anyway).
+        """
+
         page = self.page_for_path(request.path, raise404)
         page.setup_request(request)
         return page
 
     def for_request_or_404(self, request):
+        """
+        Convenience wrapper for ``for_request`` which always raises a 404 if
+        a page could not be found.
+        """
+
         return self.for_request(request, raise404=True)
 
     def best_match_for_request(self, request, raise404=False):
-        page = self.best_match_for_path(request.path, raise404)
+        """
+        Convenience wrapper for ``best_match_for_path``. Calls ``setup_request``
+        if a page has been found.
+        """
+
+        page = self.best_match_for_path(request.path, raise404=raise404)
         page.setup_request(request)
         return page
 
-    def from_request(self, request):
+    def from_request(self, request, best_match=False):
+        """
+        ``setup_request`` stores the current page object as an attribute on the
+        request itself. This method uses the cached copy if available instead of
+        running another determination run.
+        """
+
         if hasattr(request, '_feincms_page'):
             return request._feincms_page
 
+        if best_match:
+            return self.best_match_for_request(request, raise404=False)
         return self.for_request(request)
-
-    def create_copy(self, page):
-        """
-        Creates an identical copy of a page except that the new one is
-        inactive.
-        """
-
-        new = copy_model_instance(page, exclude=self.exclude_from_copy)
-        new.active = False
-        new.save()
-        new.copy_content_from(page)
-
-        return new
-
-    def replace(self, page, with_page):
-        page.active = False
-        page.save()
-        with_page.active = True
-        with_page.save()
-
-        for child in page.children.all():
-            child.parent = Page.objects.get(pk=with_page.pk)
-            child.save()
-
-        # reload to ensure that the mptt attributes in the DB
-        # and in our objects are equal
-        page = Page.objects.get(pk=page.pk)
-        with_page = Page.objects.get(pk=with_page.pk)
-        with_page.move_to(page, 'right')
-
-        return Page.objects.get(pk=with_page.pk)
 
 PageManager.add_to_active_filters( Q(active=True) )
 
@@ -240,7 +245,6 @@ except ImportError:
 
 
 class Page(Base):
-
     active = models.BooleanField(_('active'), default=False)
 
     # structure and navigation
@@ -330,6 +334,12 @@ class Page(Base):
 
     @commit_on_success
     def save(self, *args, **kwargs):
+        """
+        Overridden save method which updates the ``_cached_url`` attribute of
+        this page and all subpages. Quite expensive when called with a page
+        high up in the tree.
+        """
+
         cached_page_urls = {}
 
         # determine own URL
@@ -369,19 +379,29 @@ class Page(Base):
             cached_page_urls[page.id] = page._cached_url
             super(Page, page).save() # do not recurse
 
+    @models.permalink
     def get_absolute_url(self):
-        return self._cached_url
+        """
+        Return the absolute URL of this page.
+        """
 
-    def get_preview_url(self):
-        try:
-            return reverse('feincms_preview', kwargs={ 'page_id': self.id })
-        except:
-            return None
+        url = self._cached_url[1:-1]
+        if url:
+            return ('feincms_handler', (url,), {})
+        return ('feincms_home', (), {})
 
     def get_navigation_url(self):
+        """
+        Return either ``redirect_to`` if it is set, or the URL of this page.
+        """
+
         return self.redirect_to or self._cached_url
 
     def get_siblings_and_self(page):
+        """
+        As the name says.
+        """
+
         return page.get_siblings(include_self=True)
 
     def cache_key(self):
@@ -417,9 +437,25 @@ class Page(Base):
         a HttpResponse for shortcutting the page rendering and returning that response
         immediately to the client.
         """
+
         request._feincms_page = self
-        request._feincms_extra_context = {}
-        request.extra_path = ""
+
+        if not hasattr(request, '_feincms_extra_context'):
+            request._feincms_extra_context = {}
+
+        request._feincms_extra_context.update({
+            'in_appcontent_subpage': False, # XXX This variable name isn't accurate anymore.
+                                            # We _are_ in a subpage, but it isn't necessarily
+                                            # an appcontent subpage.
+            'extra_path': '/',
+            })
+
+        if request.path != self.get_absolute_url():
+            request._feincms_extra_context.update({
+                'in_appcontent_subpage': True,
+                'extra_path': re.sub('^' + re.escape(self.get_absolute_url()[:-1]), '',
+                    request.path),
+                })
 
         for fn in self.request_processors:
             r = fn(self, request)
@@ -433,9 +469,6 @@ class Page(Base):
         """
         for fn in self.response_processors:
             fn(self, request, response)
-
-        if response.status_code == 200 and not response.has_header('Content-Length'):
-            response['Content-Length'] = len(response.content)
 
     def require_path_active_request_processor(self, request):
         """
@@ -553,10 +586,21 @@ class Page(Base):
 
     @classmethod
     def register_request_processors(cls, *processors):
+        """
+        Registers all passed callables as request processors. A request processor
+        always receives two arguments, the current page object and the request.
+        """
+
         cls.request_processors[0:0] = processors
 
     @classmethod
     def register_response_processors(cls, *processors):
+        """
+        Registers all passed callables as response processors. A response processor
+        always receives three arguments, the current page object, the request
+        and the response.
+        """
+
         cls.response_processors.extend(processors)
 
     @classmethod
@@ -579,7 +623,7 @@ signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 # ------------------------------------------------------------------------
 class PageAdminForm(forms.ModelForm):
     never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
-        'translation_of')
+        'translation_of', '_content_title', '_page_title')
 
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
@@ -751,11 +795,14 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
     def _actions_column(self, page):
+        editable = getattr(page, 'feincms_editable', True)
+
         actions = super(PageAdmin, self)._actions_column(page)
-        actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % (
-            page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
+        if editable:
+            actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % ( page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
         actions.insert(0, u'<a href="%s" title="%s"><img src="%simg/admin/selector-search.gif" alt="%s" /></a>' % (
             page.get_absolute_url(), _('View on site'), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
+
         return actions
 
     def add_view(self, request, form_url='', extra_context=None):
@@ -786,19 +833,6 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
 
     def change_view(self, request, object_id, extra_context=None):
-        from django.shortcuts import get_object_or_404
-        if 'create_copy' in request.GET:
-            page = get_object_or_404(Page, pk=object_id)
-            new = Page.objects.create_copy(page)
-            self.message_user(request, ugettext("You may edit the copied page below."))
-            return HttpResponseRedirect('../%s/' % new.pk)
-        elif 'replace' in request.GET:
-            page = get_object_or_404(Page, pk=request.GET.get('replace'))
-            with_page = get_object_or_404(Page, pk=object_id)
-            Page.objects.replace(page, with_page)
-            self.message_user(request, ugettext("You have replaced %s. You may continue editing the now-active page below.") % page)
-            return HttpResponseRedirect('.')
-
         # Hack around a Django bug: raw_id_fields aren't validated correctly for
         # ForeignKeys in 1.1: http://code.djangoproject.com/ticket/8746 details
         # the problem - it was fixed for MultipleChoiceFields but not ModelChoiceField
@@ -822,17 +856,12 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                 except ValueError:
                     request.POST[k] = None
 
-        return super(PageAdmin, self).change_view(request, object_id, extra_context)
-
-    def render_item_editor(self, request, object, context):
-        if object:
-            try:
-                active = Page.objects.active().exclude(pk=object.pk).get(_cached_url=object._cached_url)
-                context['to_replace'] = active
-            except Page.DoesNotExist:
-                pass
-
-        return super(PageAdmin, self).render_item_editor(request, object, context)
+        try:
+            return super(PageAdmin, self).change_view(request, object_id, extra_context)
+        except PermissionDenied:
+            from django.contrib import messages
+            messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
+        return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 
     def is_visible_admin(self, page):
         """

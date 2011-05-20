@@ -22,16 +22,18 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
     If you set depth to something else than 1, you might want to look into
     the tree_info template tag from the mptt_tags library.
 
-    Example:
-    {% feincms_navigation of feincms_page as sublevel level=2,depth=1 %}
-    {% for p in sublevel %}
-        <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
-    {% endfor %}
+    Example::
+
+        {% feincms_navigation of feincms_page as sublevel level=2,depth=1 %}
+        {% for p in sublevel %}
+            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
+        {% endfor %}
     """
 
     def what(self, instance, args):
         level = int(args.get('level', 1))
         depth = int(args.get('depth', 1))
+        mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
 
         if isinstance(instance, HttpRequest):
             instance = Page.objects.from_request(instance)
@@ -46,8 +48,9 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 entries.append(entry)
 
                 if getattr(entry, 'navigation_extension', None):
-                    entries.extend(entry.extended_navigation(depth=depth,
-                        request=self.render_context.get('request', None)))
+                    entries.extend(e for e in entry.extended_navigation(depth=depth,
+                        request=self.render_context.get('request', None))
+                        if getattr(e, 'level', 0) < mptt_limit)
 
         return entries
 
@@ -120,36 +123,40 @@ register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(Paren
 # ------------------------------------------------------------------------
 class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
     """
-    {% feincms_languagelinks for feincms_page as links [args] %}
+    ::
+
+        {% feincms_languagelinks for feincms_page as links [args] %}
 
     This template tag needs the translations extension.
 
     Arguments can be any combination of:
-        all or existing: Return all languages or only those where a translation exists
-        excludecurrent: Excludes the item in the current language from the list
+
+    * all or existing: Return all languages or only those where a translation exists
+    * excludecurrent: Excludes the item in the current language from the list
 
     The default behavior is to return an entry for all languages including the
     current language.
 
-    Example:
+    Example::
 
-    {% feincms_languagelinks for entry as links all,excludecurrent %}
-    {% for key, name, link in links %}
-        <a href="{% if link %}{{ link }}{% else %}/{{ key }}/{% endif %}">{% trans name %}</a>
-    {% endfor %}
+        {% feincms_languagelinks for entry as links all,excludecurrent %}
+        {% for key, name, link in links %}
+            <a href="{% if link %}{{ link }}{% else %}/{{ key }}/{% endif %}">{% trans name %}</a>
+        {% endfor %}
     """
 
     def what(self, page, args):
         only_existing = args.get('existing', False)
         exclude_current = args.get('excludecurrent', False)
 
-        # Preserve the trailing path when switching languages if
-        # we are inside an ApplicationContent
+        # Preserve the trailing path when switching languages if extra_path
+        # exists (this is mostly the case when we are working inside an
+        # ApplicationContent-managed page subtree)
         trailing_path = u''
         request = args.get('request', None)
-        if hasattr(request, '_feincms_appcontent_parameters'):
-            if request._feincms_appcontent_parameters.get('in_appcontent_subpage'):
-                trailing_path = request.path[len(page.get_absolute_url()):]
+        if request:
+            # Trailing path without first slash
+            trailing_path = request._feincms_extra_context.get('extra_path', '')[1:]
 
         translations = dict((t.language, t) for t in page.available_translations())
         translations[page.language] = page
@@ -191,9 +198,11 @@ def _translate_page_into(page, language, default=None):
 # ------------------------------------------------------------------------
 class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
     """
-    {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
-    {% feincms_translatedpage for feincms_page as originalpage %}
-    {% feincms_translatedpage for some_page as translatedpage language=feincms_page.language %}
+    ::
+
+        {% feincms_translatedpage for feincms_page as feincms_transpage language=en %}
+        {% feincms_translatedpage for feincms_page as originalpage %}
+        {% feincms_translatedpage for some_page as translatedpage language=feincms_page.language %}
 
     This template tag needs the translations extension.
 
@@ -238,7 +247,9 @@ def feincms_breadcrumbs(page, include_self=True):
     By default, generates an unordered list with the id "breadcrumbs" -
     override breadcrumbs.html to change this.
 
-    {% feincms_breadcrumbs feincms_page %}
+    ::
+
+        {% feincms_breadcrumbs feincms_page %}
     """
 
     if not page or not isinstance(page, Page):
@@ -259,9 +270,9 @@ def is_parent_of(page1, page2):
     """
     Determines whether a given page is the parent of another page
 
-    Example:
+    Example::
 
-    {% if page|is_parent_of:feincms_page %} ... {% endif %}
+        {% if page|is_parent_of:feincms_page %} ... {% endif %}
     """
 
     try:
@@ -283,7 +294,9 @@ def is_sibling_of(page1, page2):
     """
     Determines whether a given page is a sibling of another page
 
-    {% if page|is_sibling_of:feincms_page %} ... {% endif %}
+    ::
+
+        {% if page|is_sibling_of:feincms_page %} ... {% endif %}
     """
 
     try:

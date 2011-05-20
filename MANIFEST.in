@@ -1,10 +1,16 @@
 include AUTHORS
 include LICENSE
+include README.rst
 recursive-include feincms/media *.png
 recursive-include feincms/media *.jpg
 recursive-include feincms/media *.gif
 recursive-include feincms/media *.js
 recursive-include feincms/media *.css
+recursive-include feincms/static *.png
+recursive-include feincms/static *.jpg
+recursive-include feincms/static *.gif
+recursive-include feincms/static *.js
+recursive-include feincms/static *.css
 recursive-include feincms/locale *.po
 recursive-include feincms/locale *.mo
 recursive-include feincms/templates *.html

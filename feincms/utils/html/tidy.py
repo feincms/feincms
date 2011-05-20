@@ -1,10 +1,6 @@
 # encoding: utf-8
 
-"""Utilities for dealing with HTML content"""
-
-
 import re
-
 import tidylib
 
 # Based on http://stackoverflow.com/questions/92438/stripping-non-printable-characters-from-a-string-in-python

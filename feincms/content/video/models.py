@@ -6,6 +6,14 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class VideoContent(models.Model):
+    """
+    Copy-paste a URL to youtube or vimeo into the text box, this content type
+    will automatically generate the necessary embed code.
+
+    Other portals aren't supported currently, but would be easy to add if anyone
+    would take up the baton.
+    """
+
     PORTALS = (
         ('youtube', re.compile(r'youtube'), lambda url: {'v': re.search(r'[?&]v=([^#&]+)', url).group(1)}),
         ('vimeo', re.compile(r'vimeo'), lambda url: {'id': re.search(r'/(\d+)', url).group(1)}),

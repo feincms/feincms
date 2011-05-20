@@ -28,7 +28,7 @@ import feincms
 setup(name='FeinCMS',
     version=feincms.__version__,
     description='Django-based Page CMS and CMS building toolkit.',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README')).read(),
+    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
     url='http://github.com/matthiask/feincms/',
@@ -51,13 +51,15 @@ setup(name='FeinCMS',
     ],
     requires=[
         #'lxml', # only needed for rich text cleansing
-        'tagging (>0.2.1)', # please use SVN trunk
-        'django_mptt (>0.2.1)', # please use the version from http://github.com/django-mptt/django-mptt/
+        #'tagging (>0.2.1)', # please use SVN trunk
+        'django_mptt (>0.4.0)',
     ],
-    packages=['feincms',
+    packages=[
+        'feincms',
         'feincms.admin',
         'feincms.content',
         'feincms.content.application',
+        'feincms.content.comments',
         'feincms.content.contactform',
         'feincms.content.file',
         'feincms.content.image',
@@ -67,6 +69,7 @@ setup(name='FeinCMS',
         'feincms.content.rss',
         'feincms.content.section',
         'feincms.content.table',
+        'feincms.content.template',
         'feincms.content.video',
         'feincms.contrib',
         'feincms.management',
@@ -83,9 +86,9 @@ setup(name='FeinCMS',
         'feincms.utils',
         'feincms.utils.html',
         'feincms.views',
+        'feincms.views.cbv',
         'feincms.views.generic',
     ],
     include_package_data=True,
     zip_safe=False,
 )
-

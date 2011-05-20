@@ -7,6 +7,11 @@
 #
 # ------------------------------------------------------------------------
 
+"""
+Embed a comment list and comment form anywhere. Uses the standard
+``django.contrib.comments`` application.
+"""
+
 from django import forms
 from django.contrib import comments
 from django.contrib.comments.models import Comment
@@ -45,9 +50,8 @@ class CommentsContent(models.Model):
 
         cls.feincms_item_editor_form = CommentContentAdminForm
 
-    def render(self, **kwargs):
+    def process(self, request, **kwargs):
         parent_type = self.parent.__class__.__name__.lower()
-        request = kwargs.get('request')
 
         comment_page = self.parent
         if hasattr(comment_page, 'original_translation') and comment_page.original_translation:
@@ -60,22 +64,30 @@ class CommentsContent(models.Model):
             # just the comments for right now, but if we just post to the current path
             # and handle it this way .. at least it works for now.
 
-            #extra = request._feincms_appcontent_parameters.get('page_extra_path', ())
+            #extra = request._feincms_extra_context.get('page_extra_path', ())
             #if len(extra) > 0 and extra[0] == u"post-comment":
 
             from django.contrib.comments.views.comments import post_comment
-            r = post_comment(request)
-            if not isinstance(r, HttpResponseRedirect):
-                f = comments.get_form()(comment_page, data=request.POST)
+            r = post_comment(request, next=comment_page.get_absolute_url())
+
+            if isinstance(r, HttpResponseRedirect):
+                return r
+
+            f = comments.get_form()(comment_page, data=request.POST)
 
         if f is None:
             f = comments.get_form()(comment_page)
 
-        return render_to_string([
+        self.rendered_output = render_to_string([
             'content/comments/%s.html' % parent_type,
             'content/comments/default-site.html',
             'content/comments/default.html',
-            ], RequestContext(request, { 'content': self, 'feincms_page' : self.parent, 'parent': comment_page, 'form' : f }))
+            ], RequestContext(request, {
+                'content': self,
+                'feincms_page': self.parent,
+                'parent': comment_page,
+                'form': f,
+                }))
 
-# ------------------------------------------------------------------------
-
+    def render(self, **kwargs):
+        return getattr(self, 'rendered_output', u'')

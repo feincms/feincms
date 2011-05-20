@@ -1,5 +1,5 @@
 """
-Add a many-to-many relatioship field to relate this page to other pages.
+Add a many-to-many relationship field to relate this page to other pages.
 """
 
 from django.db import models

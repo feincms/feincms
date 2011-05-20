@@ -4,10 +4,10 @@
 {% block extrahead %}{{ block.super }}
 {% block feincms_jquery_ui %}
 {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js"></script>
 {% else %}
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.5.1.min.js"></script>
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-ui-1.8.7.custom.min.js"></script>
 {% endif %}
 {% endblock %}
@@ -51,7 +51,6 @@
 {{ block.super }}
 {% if change and not is_popup %}
 <ul class="extra-object-tools">
-  {% if original.get_preview_url %}<li><a href="{{ original.get_preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li> {% endif %}
   {% if has_add_permission and has_parent_attribute %}<li><a href="../add/?parent={{ object_id }}" class="addchild">{% trans "Add child page" %}</a></li> {% endif %}
 </ul>
 <script type="text/javascript">{# DRY object-tools addition #}
@@ -89,29 +88,6 @@
   <script type="text/javascript">
     feincms.jQuery(function($){
       $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
-
-      $('#main > .panel').each(function() {
-          var $c = $('.machine-control', this);
-          var $select = $('select[name=order-machine-add-select]', this);
-          var $add = $('input.order-machine-add-button', this);
-
-          function prepend_action(option) {
-              return $('<a href="#" />').text('Add ' + option.text).bind('click', function(){
-                  $select.val(option.value);
-                  $add.trigger('click');
-                  return false;
-                  });
-          }
-
-          for (var i=5; i>=0; --i) {
-              var option = $select[0].options[i];
-              if (typeof(option) == 'undefined')
-                  continue;
-
-              $select.before(prepend_action(option));
-              $select.before(' ');
-          }
-      });
     });
   </script>
 {% endblock %}

@@ -3,9 +3,10 @@
 from datetime import datetime, timedelta
 import os
 
-from django import template
+from django import forms, template
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
@@ -24,7 +25,8 @@ from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
-from feincms.models import Region, Template, Base
+from feincms.context_processors import add_page_if_missing
+from feincms.models import Region, Template, Base, ContentProxy
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page.models import Page
@@ -192,9 +194,13 @@ class CMSBaseTest(TestCase):
 
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
-                         'titles', 'translations', 'seo', 'changedate')
+                         'titles', 'translations', 'seo', 'changedate',
+                         'ct_tracker')
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
+Page.register_request_processors(Page.etag_request_processor)
+Page.register_response_processors(Page.etag_response_processor)
+Page.register_response_processors(Page.debug_sql_queries_response_processor())
 
 
 class PagesTestCase(TestCase):
@@ -220,6 +226,7 @@ class PagesTestCase(TestCase):
                     ('sidebar', 'Sidebar', 'inherited'),
                     ),
                 })
+        feincms_settings.FEINCMS_USE_CACHE = True
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
@@ -345,8 +352,6 @@ class PagesTestCase(TestCase):
         page.template_key = 'theother'
         page.save()
         self.is_published('/', True)
-
-        self.is_published('/preview/%d/' % page.id, True)
 
     def test_06_tree_editor_save(self):
         self.create_default_page_set()
@@ -507,6 +512,11 @@ class PagesTestCase(TestCase):
 
         page2 = Page.objects.get(pk=2)
         page2.symlinked_page = page
+
+        # Test that all_of_type works correctly even before accessing
+        # other content methods
+        self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
+
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
         self.assertEqual(unicode(page2.content.main[0]),
                          'main on Test page, ordering 0')
@@ -514,6 +524,12 @@ class PagesTestCase(TestCase):
         self.assertEqual(len(page2.content.main), 1)
         self.assertEqual(len(page2.content.sidebar), 0)
         self.assertEqual(len(page2.content.nonexistant_region), 0)
+
+        self.assertTrue(isinstance(page2.content.media, forms.Media))
+
+        self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
+        self.assertEqual(len(page2.content.all_of_type((ImageContent,))), 0)
+        self.assertEqual(len(page2.content.all_of_type([ImageContent])), 0)
 
     def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
@@ -572,8 +588,9 @@ class PagesTestCase(TestCase):
         page.imagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
         page.filecontent_set.create(file='somefile.jpg', title='thetitle', region='main', ordering=3)
 
-        # Reload page
+        # Reload page, reset _ct_inventory
         page = Page.objects.get(pk=page.pk)
+        page._ct_inventory = None
 
         self.assertTrue('somefile.jpg' in page.content.main[2].render())
         self.assertTrue('<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render())
@@ -583,14 +600,16 @@ class PagesTestCase(TestCase):
         self.client.get('/admin/page/page/1/')
 
         field = MediaFile._meta.get_field('file')
-        old = (field.upload_to, field.storage)
+        old = (field.upload_to, field.storage, field.generate_filename)
         from django.core.files.storage import FileSystemStorage
         MediaFile.reconfigure(upload_to=lambda: 'anywhere',
                               storage=FileSystemStorage(location='/wha/', base_url='/whe/'))
         mediafile = MediaFile.objects.get(pk=1)
         self.assertEqual(mediafile.file.url, '/whe/somefile.jpg')
 
-        MediaFile.reconfigure(upload_to=old[0], storage=old[1])
+        # restore settings
+        (field.upload_to, field.storage, field.generate_filename) = old
+
         mediafile = MediaFile.objects.get(pk=1)
         self.assertEqual(mediafile.file.url, '/media/somefile.jpg')
 
@@ -641,7 +660,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(page.content_title, page.title)
         self.assertEqual(page.content_subtitle, '')
 
-    def test_13_inheritance(self):
+    def test_13_inheritance_and_ct_tracker(self):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
@@ -649,10 +668,62 @@ class PagesTestCase(TestCase):
             region='sidebar',
             ordering=0,
             text='Something')
+        page.rawcontent_set.create(
+            region='main',
+            ordering=0,
+            text='Anything')
 
         page2 = Page.objects.get(pk=2)
+        page2.rawcontent_set.create(
+            region='main',
+            ordering=0,
+            text='Something else')
+        page2.rawcontent_set.create(
+            region='main',
+            ordering=1,
+            text='Whatever')
+
+        # Set default, non-caching content proxy
+        page2.content_proxy_class = ContentProxy
+
+        if hasattr(self, 'assertNumQueries'):
+        # 4 queries: Two to get the content types of page and page2, one to
+            # fetch all ancestor PKs of page2 and one to materialize the RawContent
+            # instances belonging to page's sidebar and page2's main.
+            self.assertNumQueries(4, lambda: [page2.content.main, page2.content.sidebar])
+            self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
+
+        self.assertEqual(u''.join(c.render() for c in page2.content.main),
+            'Something elseWhatever')
+        self.assertEqual(page2.content.sidebar[0].render(), 'Something')
+
+        page2 = Page.objects.get(pk=2)
+        self.assertEqual(page2._ct_inventory, {})
+
+        # Prime Django content type cache
+        for ct in Page._feincms_content_types:
+            ContentType.objects.get_for_model(ct)
+
+        if hasattr(self, 'assertNumQueries'):
+            # 5 queries: Two to get the content types of page and page2, one to
+            # fetch all ancestor PKs of page2 and one to materialize the RawContent
+            # instances belonging to page's sidebar and page2's main and a few
+            # queries to update the pages _ct_inventory attributes:
+            # - one update to update page2
+            # - one update to clobber the _ct_inventory attribute of all descendants
+            #   of page2
+            self.assertNumQueries(5, lambda: [page2.content.main, page2.content.sidebar])
+            self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
 
         self.assertEqual(page2.content.sidebar[0].render(), 'Something')
+
+        # Reload, again, to test ct_tracker extension
+        page2 = Page.objects.get(pk=2)
+
+        if hasattr(self, 'assertNumQueries'):
+            self.assertNumQueries(1, lambda: [page2.content.main, page2.content.sidebar])
+
+        self.assertNotEqual(page2._ct_inventory, {})
 
     def test_14_richtext(self):
         # only create the content type to test the item editor
@@ -688,6 +759,8 @@ class PagesTestCase(TestCase):
 
         self.assertTrue('class="fe_box"' in\
             page.content.main[0].fe_render(request=request))
+
+        self.assertFalse('class="fe_box"' in self.client.get(page.get_absolute_url() + '?frontend_editing=1').content)
 
     def test_16_template_tags(self):
         # Directly testing template tags doesn't make any sense since
@@ -818,13 +891,16 @@ class PagesTestCase(TestCase):
         self.assertEqual(page, Page.objects.best_match_for_path(page.get_absolute_url() + 'something/hello/'))
 
         self.assertRaises(Http404, lambda: Page.objects.best_match_for_path('/blabla/blabla/', raise404=True))
+        self.assertRaises(Http404, lambda: Page.objects.page_for_path('/asdf/', raise404=True))
         self.assertRaises(Page.DoesNotExist, lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
+        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.page_for_path('/asdf/'))
 
         request = Empty()
         request.path = page.get_absolute_url()
         request.method = 'GET'
         request.get_full_path = lambda: '/xyz/'
-        request.GET = []
+        request.GET = {}
+        request.META = {}
         request.user = AnonymousUser()
 
         # tadaa
@@ -849,9 +925,10 @@ class PagesTestCase(TestCase):
         request.path += 'hello/'
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = False
-        self.assertRaises(Http404, lambda: Page.objects.best_match_for_request(request))
+        self.assertEqual(self.client.get(request.path).status_code, 404)
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
+        self.assertEqual(self.client.get(request.path).status_code, 200)
         self.assertEqual(page, Page.objects.best_match_for_request(request))
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
@@ -906,10 +983,13 @@ class PagesTestCase(TestCase):
 
         request = Empty()
         request.method = 'GET'
+        request.GET = {}
         request.META = {}
         request.user = Empty()
         request.user.is_authenticated = lambda: False
         request.user.get_and_delete_messages = lambda: ()
+
+        page.content.main[0].process(request)
         self.assertTrue('form' in page.content.main[0].render(request=request))
 
         self.client.post(page.get_absolute_url(), {
@@ -1003,6 +1083,16 @@ class PagesTestCase(TestCase):
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
             page.get_absolute_url())
 
+        response = self.client.get(page.get_absolute_url() + 'response/')
+        self.assertContains(response, 'Anything')
+        self.assertContains(response, '<h2>Main content</h2>') # Ensure response has been wrapped
+
+        # Test standalone behavior
+        self.assertEqual(
+            self.client.get(page.get_absolute_url() + 'response/',
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest').content,
+            self.client.get(page.get_absolute_url() + 'response_decorated/').content)
+
     def test_26_page_form_initial(self):
         self.create_default_page_set()
 
@@ -1010,41 +1100,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(self.client.get('/admin/page/page/add/?parent=1').status_code, 200)
         self.assertEqual(self.client.get('/admin/page/page/add/?parent=2').status_code, 200)
 
-    def test_27_copy_replace_append_page(self):
-        self.create_default_page_set()
-
-        page = Page.objects.get(pk=1)
-        page.active = True
-        page.save()
-
-        self.create_pagecontent(page)
-
-        new = Page.objects.create_copy(page)
-
-        self.assertEqual(u''.join(c.render() for c in page.content.main),
-                         u''.join(c.render() for c in new.content.main))
-
-        self.assertEqual(new.active, False)
-
-        now_live = Page.objects.replace(page, new)
-
-        self.assertEqual(new.id, now_live.id)
-        self.assertEqual(now_live.active, True)
-
-        # reload
-        page = Page.objects.get(pk=1)
-
-        self.assertEqual(page.active, False)
-
-        c = now_live.rawcontent_set.all()[0]
-        c.text = 'somethinggg'
-        c.save()
-
-        page.replace_content_with(now_live)
-
-        self.assertEqual(u''.join(c.render() for c in page.content.main), 'somethinggg')
-
-    def test_28_cached_url_clash(self):
+    def test_27_cached_url_clash(self):
         self.create_default_page_set()
 
         page1 = Page.objects.get(pk=1)
@@ -1057,7 +1113,7 @@ class PagesTestCase(TestCase):
         self.assertContains(self.create_pagecontent(page2, active=True, override_url='/'),
             'already taken by')
 
-    def test_29_applicationcontent_reverse(self):
+    def test_28_applicationcontent_reverse(self):
         self.create_default_page_set()
         page1 = Page.objects.get(pk=1)
         page1.active = True
@@ -1098,8 +1154,68 @@ class PagesTestCase(TestCase):
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
                       page.get_absolute_url())
 
+    def test_29_medialibrary_admin(self):
+        self.create_default_page_set()
 
-Entry.register_extensions('seo', 'translations', 'seo')
+        page = Page.objects.get(pk=1)
+
+        path = os.path.join(settings.MEDIA_ROOT, 'somefile.jpg')
+        f = open(path, 'wb')
+        f.write('blabla')
+        f.close()
+
+        mediafile = MediaFile.objects.create(file='somefile.jpg')
+        page.mediafilecontent_set.create(
+            mediafile=mediafile,
+            region='main',
+            position='block',
+            ordering=1)
+
+        self.assertContains(self.client.get('/admin/medialibrary/mediafile/'), 'somefile.jpg')
+
+        import zipfile
+        zf = zipfile.ZipFile('test.zip', 'w')
+        for i in range(10):
+            zf.writestr('test%d.jpg' % i, 'test%d' % i)
+        zf.close()
+
+        self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
+            'data': open('test.zip'),
+            }), '/admin/medialibrary/mediafile/')
+
+        self.assertEqual(MediaFile.objects.count(), 11)
+
+        self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
+            'file': open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                'docs', 'images', 'tree_editor.png')),
+            'translations-TOTAL_FORMS': 0,
+            'translations-INITIAL_FORMS': 0,
+            'translations-MAX_NUM_FORMS': 10,
+            }), '/admin/medialibrary/mediafile/')
+
+        self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),
+            '100x60.png" alt="" />')
+
+        stats = list(MediaFile.objects.values_list('type', flat=True))
+        self.assertEqual(stats.count('image'), 1)
+        self.assertEqual(stats.count('other'), 11)
+
+    def test_30_context_processors(self):
+        self.create_default_page_set()
+        Page.objects.update(active=True, in_navigation=True)
+
+        request = Empty()
+        request.GET = {}
+        request.META = {}
+        request.method = 'GET'
+        request.path = '/test-page/test-child-page/abcdef/'
+        request.get_full_path = lambda: '/test-page/test-child-page/abcdef/'
+
+        ctx = add_page_if_missing(request)
+        self.assertEqual(ctx['feincms_page'], request._feincms_page)
+
+
+Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
 class BlogTestCase(TestCase):
     def setUp(self):
         u = User(username='test', is_active=True, is_staff=True, is_superuser=True)

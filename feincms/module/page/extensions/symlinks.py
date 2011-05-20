@@ -6,8 +6,8 @@ all content from the linked page.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.models import ContentProxy
 from feincms._internal import monkeypatch_property
+
 
 def register(cls, admin_cls):
     cls.add_to_class('symlinked_page', models.ForeignKey('self', blank=True, null=True,
@@ -19,9 +19,9 @@ def register(cls, admin_cls):
     def content(self):
         if not hasattr(self, '_content_proxy'):
             if self.symlinked_page:
-                self._content_proxy = ContentProxy(self.symlinked_page)
+                self._content_proxy = self.content_proxy_class(self.symlinked_page)
             else:
-                self._content_proxy = ContentProxy(self)
+                self._content_proxy = self.content_proxy_class(self)
 
         return self._content_proxy
 

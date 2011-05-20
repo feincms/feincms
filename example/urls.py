@@ -21,17 +21,10 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls) ),
 
     (r'^feincms_media/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms/media/feincms/')}),
+        {'document_root': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms/static/feincms/')}),
 
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),
 
-    url(r'^preview/(?P<page_id>\d+)/', 'feincms.views.base.preview_handler', name='feincms:preview'),
-
-    # This entry is here strictly for application content testing
-    # XXX this really needs to go into a URLconf file which is only used by the
-    # application content testcases
-    #url(r'^(.*)/$', 'feincms.views.applicationcontent.handler'),
-
-    url(r'^(.*)/$|^$', 'feincms.views.applicationcontent.handler'),
+    (r'^', include('feincms.urls')),
 )

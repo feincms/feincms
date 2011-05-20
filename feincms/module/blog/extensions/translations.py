@@ -1,3 +1,11 @@
+"""
+This extension adds a language field to every blog entry.
+
+Blog entries in secondary languages can be said to be a translation of a
+blog entry in the primary language (the first language in settings.LANGUAGES),
+thereby enabling deeplinks between translated blog entries.
+"""
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _

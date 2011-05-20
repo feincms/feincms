@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 """
-Track the modification date for pages.
+Track the modification date for objects.
 """
 
 import os
