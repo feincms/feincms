@@ -59,7 +59,7 @@ def get_feincms_inlines(model):
             'form': getattr(content_type, 'feincms_item_editor_form',
                             ItemEditorForm),
             }
-        inlines.append(type(name, (FeinCMSInline,), attrs))
+        inlines.append(type(name, (getattr(content_type, 'feincms_item_editor_admin_model', FeinCMSInline),), attrs))
     return inlines
 
 
