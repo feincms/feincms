@@ -17,7 +17,7 @@ class SiteFilterSpec(ChoicesFilterSpec):
     def __init__(self, f, request, params, model, model_admin, field_path=None):
         super(SiteFilterSpec, self).__init__(f, request, params, model, model_admin)
 
-        self.lookup_kwarg = '%s__id__exact' % self.field_path
+        self.lookup_kwarg = '%s__id__exact' % getattr(self, 'field_path', f.name)
         self.lookup_val = request.GET.get(self.lookup_kwarg, None)
 
         self.lookup_choices = [(i.pk, unicode(i))
