@@ -576,16 +576,6 @@ def create_base_model(inherit_from=models.Model):
             used and should therefore not be changed after running ``syncdb`` for
             the first time.
 
-            Name clash will also happen if content type have defined
-            relationship and you try to register content type to more then one
-            Base model (in different modules).  Django will raise error when it
-            try to create backward relationship. Solution is, as above, to
-            specify content type class name using the class_name argument.
-
-            If you register content type to more than one Base class, it is
-            recommended to always specify class_name when registering second
-            or any other subsequent time.
-
             You can pass additional keyword arguments to this factory function. These
             keyword arguments will be passed on to the concrete content type, provided
             that it has a ``initialize_type`` classmethod. This is used f.e. in
