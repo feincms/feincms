@@ -56,3 +56,10 @@ def register(cls, admin_cls):
 
     # Add the site filter
     admin_cls.list_filter.extend(['site'])
+
+
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules(rules=[], patterns=["^feincms\.module\.page\.extensions\.sites\.SiteForeignKey"])
+except ImportError:
+    pass
