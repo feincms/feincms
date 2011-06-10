@@ -1,6 +1,11 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
 from django import template
 from django.conf import settings
 from django.http import HttpRequest
+from django.template.base import VariableDoesNotExist
 
 from feincms.module.page.models import Page, PageManager
 from feincms.utils.templatetags import *
@@ -86,6 +91,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 return PageManager.apply_active_filters(queryset)
 register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
+# ------------------------------------------------------------------------
 class ExtendedNavigationNode(NavigationNode):
     def render(self, context):
         self.render_context = context
@@ -185,15 +191,14 @@ def _translate_page_into(page, language, default=None):
     if page.language == language:
         return page
 
-    translations = dict((t.language, t) for t in page.available_translations())
-    translations[page.language] = page
+    if language is not None:
+        translations = dict((t.language, t) for t in page.available_translations())
+        if language in translations:
+            return translations[language]
 
-    if language in translations:
-        return translations[language]
-    else:
-        if hasattr(default, '__call__'):
-            return default(page=page)
-        return default
+    if hasattr(default, '__call__'):
+        return default(page=page)
+    return default
 
 # ------------------------------------------------------------------------
 class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
@@ -215,11 +220,16 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
     not do what is intended.
     """
     def what(self, page, args, default=None):
-        language = args.get('language',False)
-        if not language:
+        language = args.get('language', None)
+
+        if language is None:
             language = settings.LANGUAGES[0][0]
-        elif language not in (x[0] for x in settings.LANGUAGES):
-            language = template.Variable(language).resolve(self.render_context)
+        else:
+            if language not in (x[0] for x in settings.LANGUAGES):
+                try:
+                    language = template.Variable(language).resolve(self.render_context)
+                except VariableDoesNotExist:
+                    language = None
 
         return _translate_page_into(page, language, default=default)
 register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
