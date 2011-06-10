@@ -108,6 +108,17 @@ class ContentProxy(object):
             'cts': {},
             }
 
+    def _inherit_from(self):
+        """
+        Returns a list of item primary keys to try inheriting content from if
+        a certain region is empty.
+
+        Returns an ascending list of ancestors (using MPTT) by default. This
+        is good enough (tm) for pages.
+        """
+
+        return self.item.get_ancestors(ascending=True).values_list('pk', flat=True)
+
     def _fetch_content_type_counts(self):
         """
         Returns a structure describing which content types exist for the object
@@ -134,7 +145,7 @@ class ContentProxy(object):
                     empty_inherited_regions.add(region.key)
 
             if empty_inherited_regions:
-                for parent in self.item.get_ancestors(ascending=True).values_list('pk', flat=True):
+                for parent in self._inherit_from():
                     parent_counts = self._fetch_content_type_count_helper(
                         parent, regions=tuple(empty_inherited_regions))
 
