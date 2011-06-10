@@ -229,7 +229,7 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
                 try:
                     language = template.Variable(language).resolve(self.render_context)
                 except VariableDoesNotExist:
-                    language = None
+                    language = settings.LANGUAGES[0][0]
 
         return _translate_page_into(page, language, default=default)
 register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
