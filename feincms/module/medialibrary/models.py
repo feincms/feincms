@@ -92,8 +92,11 @@ class MediaFileBase(Base, TranslatedObjectMixin):
                                     'django.core.files.storage.FileSystemStorage')
     default_storage = get_callable(default_storage_class)
 
-    fs = default_storage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
-                           base_url=settings.FEINCMS_MEDIALIBRARY_URL)
+    try:
+        fs = default_storage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
+                             base_url=settings.FEINCMS_MEDIALIBRARY_URL)
+    except TypeError:
+        fs = default_storage()
 
     file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=fs)
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
@@ -146,8 +149,11 @@ class MediaFileBase(Base, TranslatedObjectMixin):
 
     def __init__(self, *args, **kwargs):
         super(MediaFileBase, self).__init__(*args, **kwargs)
-        if self.file and self.file.path:
-            self._original_file_path = self.file.path
+        try:
+            if self.file and self.file.path:
+                self._original_file_path = self.file.path
+        except NotImplementedError:
+            pass
 
     def __unicode__(self):
         trans = None
