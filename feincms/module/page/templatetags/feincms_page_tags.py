@@ -186,7 +186,6 @@ def _translate_page_into(page, language, default=None):
         return page
 
     translations = dict((t.language, t) for t in page.available_translations())
-    translations[page.language] = page
 
     if language in translations:
         return translations[language]
