@@ -108,6 +108,17 @@ class ContentProxy(object):
             'cts': {},
             }
 
+    def _inherit_from(self):
+        """
+        Returns a list of item primary keys to try inheriting content from if
+        a certain region is empty.
+
+        Returns an ascending list of ancestors (using MPTT) by default. This
+        is good enough (tm) for pages.
+        """
+
+        return self.item.get_ancestors(ascending=True).values_list('pk', flat=True)
+
     def _fetch_content_type_counts(self):
         """
         Returns a structure describing which content types exist for the object
@@ -134,7 +145,7 @@ class ContentProxy(object):
                     empty_inherited_regions.add(region.key)
 
             if empty_inherited_regions:
-                for parent in self.item.get_ancestors(ascending=True).values_list('pk', flat=True):
+                for parent in self._inherit_from():
                     parent_counts = self._fetch_content_type_count_helper(
                         parent, regions=tuple(empty_inherited_regions))
 
@@ -591,6 +602,16 @@ def create_base_model(inherit_from=models.Model):
             ``django_content_type``, on ``related_name`` and on the table name
             used and should therefore not be changed after running ``syncdb`` for
             the first time.
+
+            Name clash will also happen if content type have defined
+            relationship and you try to register content type to more then one
+            Base model (in different modules).  Django will raise error when it
+            try to create backward relationship. Solution is, as above, to
+            specify content type class name using the class_name argument.
+
+            If you register content type to more than one Base class, it is
+            recommended to always specify class_name when registering second
+            or any other subsequent time.
 
             You can pass additional keyword arguments to this factory function. These
             keyword arguments will be passed on to the concrete content type, provided
