@@ -79,8 +79,12 @@ subclass, so you do not need to do anything special here. You only need to set
 :data:`~feincms.settings.FEINCMS_ADMIN_MEDIA` as described in the installation documentation.
 
 If you use the :class:`~feincms.content.richtext.models.RichTextContent`, you
-need to download `TinyMCE <http://tinymce.moxiecode.com/>`_ and set
-:data:`TINYMCE_JS_URL` to the absolute path to the main javascript file.
+need to download `TinyMCE <http://tinymce.moxiecode.com/>`_ and configure FeinCMS'
+richtext support::
+
+    FEINCMS_RICHTEXT_INIT_CONTEXT = {
+        'TINYMCE_JS_URL': '/your_custom_path/tiny_mce.js',
+        }
 
 
 Wiring up the views

@@ -4,3 +4,12 @@ FeinCMS 1.4 release notes (upcoming)
 
 * Support for the ``show_on_top`` option for the ``ItemEditor`` has been
   completely removed. This functionatliy has been deprecated since 1.2.
+
+* FeinCMS 1.2 removed the CKEditor-specific rich text content in favor of a
+  generalized rich text content supporting different rich text editors.
+  Unfortunately the documentation and the available settings only reflected
+  this partially. This has been rectified. Support for ``TINYMCE_JS_URL``,
+  ``FEINCMS_TINYMCE_INIT_TEMPLATE`` and ``FEINCMS_TINYMCE_INIT_CONTEXT`` has
+  been completely removed. The two settings ``FEINCMS_RICHTEXT_INIT_CONTEXT``
+  and ``FEINCMS_RICHTEXT_INIT_TEMPLATE`` should be used instead. See the
+  :ref:`contenttypes` documentation for more details.
