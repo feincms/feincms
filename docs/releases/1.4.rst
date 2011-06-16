@@ -2,6 +2,10 @@
 FeinCMS 1.4 release notes (upcoming)
 ====================================
 
+* FeinCMS supports more than one site from the same database with
+  ``django.contrib.sites`` now. Thanks to Bojan Mihelac and Stephen Tyler
+  for the work and insistence on this issue.
+
 * Support for the ``show_on_top`` option for the ``ItemEditor`` has been
   completely removed. This functionatliy has been deprecated since 1.2.
 
