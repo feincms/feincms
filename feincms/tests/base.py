@@ -18,7 +18,7 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase
 
 from feincms import settings as feincms_settings
-from feincms.content.application.models import ApplicationContent, _empty_reverse_cache
+from feincms.content.application.models import ApplicationContent, _empty_reverse_cache, reverse
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
 from feincms.content.image.models import ImageContent
@@ -1077,6 +1077,41 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
+        response = self.client.get(page.get_absolute_url() + 'full_reverse_test/')
+        self.assertContains(response, 'home:/test-page/test-child-page/')
+        self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
+        self.assertContains(response, 'base:/test/')
+
+        response = self.client.get(page.get_absolute_url() + 'alias_reverse_test/')
+        self.assertContains(response, 'home:/test-page/test-child-page/')
+        self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
+        self.assertContains(response, 'base:/test/')
+
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+            '/test-page/test-child-page/')
+        self.assertEqual(reverse('whatever/ac_module_root'),
+            '/test-page/test-child-page/')
+
+        if hasattr(self, 'assertNumQueries'):
+            self.assertNumQueries(0,
+                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+            self.assertNumQueries(0,
+                lambda: reverse('whatever/ac_module_root'))
+
+            _empty_reverse_cache()
+
+            self.assertNumQueries(1,
+                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+            self.assertNumQueries(0,
+                lambda: reverse('whatever/ac_module_root'))
+
+            _empty_reverse_cache()
+
+            self.assertNumQueries(1,
+                lambda: reverse('whatever/ac_module_root'))
+            self.assertNumQueries(0,
+                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+
         # This should not raise
         self.assertEquals(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
 
@@ -1098,6 +1133,21 @@ class PagesTestCase(TestCase):
             self.client.get(page.get_absolute_url() + 'response/',
                 HTTP_X_REQUESTED_WITH='XMLHttpRequest').content,
             self.client.get(page.get_absolute_url() + 'response_decorated/').content)
+
+        # Test reversing of URLs (with overridden urls too)
+        page.applicationcontent_set.create(
+            region='main',
+            ordering=1,
+            urlconf_path='blog_urls')
+        page1.applicationcontent_set.create(
+            region='main',
+            ordering=0,
+            urlconf_path='whatever')
+
+        self.assertEqual(reverse('blog_urls/blog_entry_list'), '/test-page/test-child-page/')
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+            '/test-page/test-child-page/')
+        self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/test-child-page/')
 
     def test_26_page_form_initial(self):
         self.create_default_page_set()

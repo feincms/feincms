@@ -22,6 +22,16 @@ def reverse_test(request):
     return t.render(template.Context())
 
 
+def full_reverse_test(request):
+    t = template.Template('home:{% url feincms.tests.applicationcontent_urls/ac_module_root %} args:{% url feincms.tests.applicationcontent_urls/ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
+    return t.render(template.Context())
+
+
+def alias_reverse_test(request):
+    t = template.Template('home:{% url whatever/ac_module_root %} args:{% url whatever/ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
+    return t.render(template.Context())
+
+
 def fragment(request):
     t = template.Template('{% load applicationcontent_tags %}{% fragment request "something" %}some things{% endfragment %}')
     return t.render(template.Context({'request': request}))
@@ -40,6 +50,8 @@ urlpatterns = patterns('',
     url(r'^args_test/([^/]+)/([^/]+)/$', args_test, name='ac_args_test'),
     url(r'^kwargs_test/(?P<kwarg2>[^/]+)/(?P<kwarg1>[^/]+)/$', args_test),
     url(r'^reverse_test/$', reverse_test),
+    url(r'^full_reverse_test/$', full_reverse_test),
+    url(r'^alias_reverse_test/$', alias_reverse_test),
     url(r'^fragment/$', fragment),
     url(r'^redirect/$', redirect),
     url(r'^response/$', response),

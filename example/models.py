@@ -42,6 +42,7 @@ def get_admin_fields(form, *args, **kwargs):
 
 Page.create_content_type(ApplicationContent, APPLICATIONS=(
     ('blog_urls', 'Blog', {'admin_fields': get_admin_fields}),
+    ('whatever', 'Test Urls', {'urls': 'feincms.tests.applicationcontent_urls'}),
     ))
 
 

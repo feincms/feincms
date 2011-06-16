@@ -66,6 +66,14 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         # try to reverse an URL inside another applicationcontent
         other_urlconf, other_viewname = viewname.split('/')
 
+        # TODO do not use internal feincms data structures as much
+        model_class = ApplicationContent._feincms_content_models[0]
+
+        if other_urlconf in model_class.ALL_APPS_CONFIG:
+            # We have an overridden URLconf
+            other_urlconf = model_class.ALL_APPS_CONFIG[other_urlconf]['config'].get('urls',
+                other_urlconf)
+
         if hasattr(_local, 'urlconf') and other_urlconf == _local.urlconf[0]:
             # We are reversing an URL from our own ApplicationContent
             return _reverse(other_viewname, other_urlconf, args, kwargs, _local.urlconf[1], *vargs, **vkwargs)
@@ -92,8 +100,6 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
                 content = _local.reverse_cache[urlconf_cache_keys[key]]
                 break
         else:
-            # TODO do not use internal feincms data structures as much
-            model_class = ApplicationContent._feincms_content_models[0]
             contents = model_class.objects.filter(
                 urlconf_path=other_urlconf).select_related('parent')
 
