@@ -382,7 +382,8 @@ class MediaFileAdmin(admin.ModelAdmin):
             try:
                 z = zipfile.ZipFile(data)
 
-                storage = MediaFile.fs
+                field = MediaFile._meta.get_field('file')
+                storage = field.storage
                 if not storage:
                     messages.error(request, _("Could not access storage"))
                     return
