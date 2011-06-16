@@ -1,0 +1,15 @@
+* text
+* eol=lf
+*.bat eol=crlf
+*.gif binary
+*.jpg binary
+*.swf binary
+*.png binary
+*.avi binary
+*.dcr binary
+*.flv binary
+*.mov binary
+*.ram binary
+*.rm binary
+*.jar binary
+*.db binary

@@ -69,7 +69,7 @@ class BlogEntriesNavigationExtension(NavigationExtension):
                 url=reverse('blog_urls/blog_entry_details', kwargs={'object_id': entry.id}),
                 )
 
-Page.register_extensions('navigation')
+Page.register_extensions('navigation', 'sites')
 
 
 try:
