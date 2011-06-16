@@ -137,10 +137,11 @@ attributes added.
 The newly created :class:`GalleryContent` for :class:`~feincms.module.page.models.Page`
 will live in the database table ``page_page_gallerycontent``.
 
-It is generally recommended to make your model base class abstract, because
-FeinCMS will create another class inheriting from your class, and you should
-probably not use model inheritance if you don't know exactly that you'll need
-it.
+.. note::
+
+   FeinCMS requires your content type model to be abstract.
+
+More information about content types is available in :ref:`contenttypes`.
 
 
 .. _page-extensions:
