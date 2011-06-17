@@ -1,8 +1,15 @@
+from django.contrib import admin
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.admin.item_editor import FeinCMSInline
 from feincms.module.medialibrary.fields import ContentWithMediaFile
+
+
+class MediaFileContentInline(FeinCMSInline):
+    raw_id_fields = ('mediafile',)
+    radio_fields = {'type': admin.VERTICAL}
 
 
 class MediaFileContent(ContentWithMediaFile):
@@ -30,13 +37,15 @@ class MediaFileContent(ContentWithMediaFile):
     The context contains ``content`` and ``request`` (if available).
     """
 
+    feincms_item_editor_inline = MediaFileContentInline
+
     class Meta:
         abstract = True
         verbose_name = _('media file')
         verbose_name_plural = _('media files')
 
     @classmethod
-    def initialize_type(cls, TYPES=None, MEDIAFILE_CLASS=MediaFile):
+    def initialize_type(cls, TYPES=None):
         cls.add_to_class('type', models.CharField(_('type'),
             max_length=10, choices=TYPES, default=TYPES[0][0]))
 
