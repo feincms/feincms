@@ -37,9 +37,9 @@ class MediaFileForeignKey(models.ForeignKey):
 
 class ContentWithMediaFile(models.Model):
     class feincms_item_editor_inline(FeinCMSInline):
-        raw_id_fields = ('file',)
+        raw_id_fields = ('mediafile',)
 
-    file = MediaFileForeignKey(MediaFile, verbose_name=_('media file'),
+    mediafile = MediaFileForeignKey(MediaFile, verbose_name=_('media file'),
         related_name='+')
 
     class Meta:
