@@ -7,7 +7,6 @@ from datetime import datetime
 from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings as django_settings
-from django.core.urlresolvers import get_callable
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
@@ -19,6 +18,7 @@ from django.http import HttpResponseRedirect
 
 from feincms import settings
 from feincms.models import Base
+from feincms.utils import get_object
 
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import TranslatedObjectMixin, Translation, \
@@ -90,7 +90,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     from django.core.files.storage import FileSystemStorage
     default_storage_class = getattr(django_settings, 'DEFAULT_FILE_STORAGE',
                                     'django.core.files.storage.FileSystemStorage')
-    default_storage = get_callable(default_storage_class)
+    default_storage = get_object(default_storage_class)
 
     fs = default_storage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
                            base_url=settings.FEINCMS_MEDIALIBRARY_URL)
