@@ -30,7 +30,8 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
 
 class MediaFileForeignKey(models.ForeignKey):
     def formfield(self, **kwargs):
-        kwargs['widget'] = MediaFileForeignKeyRawIdWidget(self.rel, kwargs.get('using'))
+        if 'widget' in kwargs and isinstance(kwargs['widget'], ForeignKeyRawIdWidget):
+            kwargs['widget'] = MediaFileForeignKeyRawIdWidget(self.rel, kwargs.get('using'))
         return super(MediaFileForeignKey, self).formfield(**kwargs)
 
 
