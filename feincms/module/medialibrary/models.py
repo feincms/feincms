@@ -17,7 +17,7 @@ from django.http import HttpResponseRedirect
 # 1.2 from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
-from feincms.models import Base
+from feincms.models import ExtensionsMixin
 
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import TranslatedObjectMixin, Translation, \
@@ -80,9 +80,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # ------------------------------------------------------------------------
-class MediaFileBase(Base, TranslatedObjectMixin):
+class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     """
-    Abstract media file class. Inherits from :class:`feincms.module.Base`
+    Abstract media file class. Includes the :class:`feincms.models.ExtensionsMixin`
     because of the (handy) extension mechanism.
     """
 
