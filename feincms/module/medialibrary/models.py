@@ -112,7 +112,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     formatted_file_size.admin_order_field = 'file_size'
 
     def formatted_created(self):
-        return self.created.strftime("%Y-%m-%d %H:%M")
+        return self.created.strftime("%Y-%m-%d")
     formatted_created.short_description = _("created")
     formatted_created.admin_order_field = 'created'
 
@@ -168,9 +168,9 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             try:
                 from django.core.files.images import get_image_dimensions
                 d = get_image_dimensions(self.file.file)
-                if d: t += "<br/>%d&times;%d" % ( d[0], d[1] )
+                if d: t += " %d&times;%d" % ( d[0], d[1] )
             except IOError, e:
-                t += "<br/>(%s)" % e.strerror
+                t += " (%s)" % e.strerror
         return t
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
@@ -186,10 +186,14 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         """
         from os.path import basename
         from feincms.utils import shorten_string
-        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s' % (
+        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s <br />%s, %s' % (
                 self.id,
                 self.file.name,
-                shorten_string(basename(self.file.name), max_length=28), )
+                shorten_string(basename(self.file.name), max_length=40),
+                self.file_type(),
+                self.formatted_file_size(),
+                )
+    file_info.admin_order_field = 'file'
     file_info.short_description = _('file info')
     file_info.allow_tags = True
 
@@ -317,7 +321,7 @@ def admin_thumbnail(obj):
     if obj.type == 'image':
         image = None
         try:
-            image = feincms_thumbnail.thumbnail(obj.file.name, '100x60')
+            image = feincms_thumbnail.thumbnail(obj.file.name, '100x100')
         except:
             pass
 
@@ -336,7 +340,8 @@ admin_thumbnail.allow_tags = True
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [MediaFileTranslationInline]
-    list_display      = ['__unicode__', admin_thumbnail, 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'formatted_created']
+    list_display      = [admin_thumbnail, '__unicode__', 'file_info', 'formatted_created']
+    list_display_links = ['__unicode__']
     list_filter       = ['type', 'categories']
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
