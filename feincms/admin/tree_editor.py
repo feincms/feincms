@@ -96,7 +96,6 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
 
     a.insert(0, '<div id="wrap_%s_%d">' % ( attr, item.id ))
     a.append('</div>')
-    #print a
     return unicode(''.join(a))
 
 # ------------------------------------------------------------------------
