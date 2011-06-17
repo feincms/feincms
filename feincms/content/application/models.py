@@ -19,6 +19,7 @@ except ImportError:
 
 from feincms.admin.editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
+from feincms.utils import get_object
 
 try:
     from email.utils import parsedate
@@ -238,7 +239,7 @@ class ApplicationContent(models.Model):
                     if isinstance(admin_fields, dict):
                         self.custom_fields.update(admin_fields)
                     else:
-                        get_fields = urlresolvers.get_callable(admin_fields)
+                        get_fields = get_object(admin_fields)
                         self.custom_fields.update(get_fields(self, *args, **kwargs))
 
                     for k, v in self.custom_fields.items():
@@ -285,7 +286,7 @@ class ApplicationContent(models.Model):
         # Provide a way for appcontent items to customize URL processing by
         # altering the perceived path of the page:
         if "path_mapper" in self.app_config:
-            path_mapper = urlresolvers.get_callable(self.app_config["path_mapper"])
+            path_mapper = get_object(self.app_config["path_mapper"])
             path, page_url = path_mapper(
                 request.path,
                 page_url,
@@ -314,7 +315,7 @@ class ApplicationContent(models.Model):
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
             fn = partial(
-                urlresolvers.get_callable(view_wrapper),
+                get_object(view_wrapper),
                 view=fn,
                 appcontent_parameters=self.parameters
             )

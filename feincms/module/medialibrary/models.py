@@ -7,7 +7,6 @@ from datetime import datetime
 from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings as django_settings
-from django.core.urlresolvers import get_callable
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
@@ -86,11 +85,6 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     Abstract media file class. Inherits from :class:`feincms.module.Base`
     because of the (handy) extension mechanism.
     """
-
-    from django.core.files.storage import FileSystemStorage
-    default_storage_class = getattr(django_settings, 'DEFAULT_FILE_STORAGE',
-                                    'django.core.files.storage.FileSystemStorage')
-    default_storage = get_callable(default_storage_class)
 
     file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO)
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
