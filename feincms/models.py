@@ -425,6 +425,8 @@ def create_base_model(inherit_from=models.Model):
                         for path in paths:
                             try:
                                 fn = get_object('%s.%s.register' % (path, ext))
+                                if fn:
+                                    break
                             except ImportError, e:
                                 pass
 
