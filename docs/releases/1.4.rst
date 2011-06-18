@@ -6,6 +6,18 @@ FeinCMS 1.4 release notes (upcoming)
   ``django.contrib.sites`` now. Thanks to Bojan Mihelac and Stephen Tyler
   for the work and insistence on this issue.
 
+* It is possible to customize the administration model inline used for
+  content types. This means that it's possible to customize more aspects
+  of content type editing and to reuse more behaviors from Django itself,
+  such as ``raw_id_fields``.
+
+* Reusing the media library in your own content types has become much
+  easier than before. When using a
+  ``feincms.module.medialibrary.fields.MediaFileForeignKey`` instead of
+  the standard ``django.db.models.ForeignKey`` and adding the media file
+  foreign key to ``raw_id_fields``, you get the standard Django behavior
+  supplemented with a thumbnail if the media file is an image.
+
 * Support for the ``show_on_top`` option for the ``ItemEditor`` has been
   completely removed. This functionatliy has been deprecated since 1.2.
 
@@ -24,3 +36,5 @@ FeinCMS 1.4 release notes (upcoming)
   made it hard to support other storage backends in the media library.
   If you still need to customize the storage class used in the media
   library have a look at ``MediaFile.reconfigure``.
+
+* FeinCMS has gained support for ``django-reversion``.
