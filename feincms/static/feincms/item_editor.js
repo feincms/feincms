@@ -262,11 +262,6 @@ if(!Array.indexOf) {
             contentblock_init_handlers[i]();
     }
 
-    function identify_feincms_inlines(){
-        // add feincms_inline class to divs which contains feincms inlines
-        $('div.inline-group h2:contains("Feincms_Inline:")').parent().addClass("feincms_inline");
-    }
-
     function hide_form_rows_with_hidden_widgets(){
         /* This is not normally done in django -- the fields are shown
            with visible labels and invisible widgets, but FeinCMS used to
@@ -286,7 +281,6 @@ if(!Array.indexOf) {
     var current_template;
 
     $(document).ready(function($){
-        identify_feincms_inlines();
         hide_form_rows_with_hidden_widgets();
 
         $("#main_wrapper > .navi_tab").click(function(){

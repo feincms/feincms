@@ -39,14 +39,6 @@ class FeinCMSInline(InlineModelAdmin):
     fk_name = 'parent'
     template = 'admin/feincms/content_inline.html'
 
-    def __init__(self, *args, **kwargs):
-        super(FeinCMSInline, self).__init__(*args, **kwargs)
-
-        # Earmark. The Feincms_Inline string should not be changed, it is used
-        # by item_editor.js to find all FeinCMS content type inlines.
-        self.verbose_name_plural = \
-            u'Feincms_Inline: %s' % (self.verbose_name_plural,)
-
 
 def get_feincms_inlines(model):
     """ Generate genuine django inlines for registered content types. """
