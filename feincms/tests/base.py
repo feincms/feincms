@@ -1200,7 +1200,7 @@ class PagesTestCase(TestCase):
             }), '/admin/medialibrary/mediafile/')
 
         self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),
-            '100x60.png" alt="" />')
+            '100x100.png" alt="" />')
 
         stats = list(MediaFile.objects.values_list('type', flat=True))
         self.assertEqual(stats.count('image'), 1)
