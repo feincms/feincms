@@ -381,12 +381,6 @@ class MediaFileAdmin(admin.ModelAdmin):
             try:
                 z = zipfile.ZipFile(data)
 
-                field = MediaFile._meta.get_field('file')
-                storage = field.storage
-                if not storage:
-                    messages.error(request, _("Could not access storage"))
-                    return
-
                 count = 0
                 for zi in z.infolist():
                     if not zi.filename.endswith('/'):
@@ -422,6 +416,7 @@ class MediaFileAdmin(admin.ModelAdmin):
 
         # FIXME: This is an ugly hack but it avoids 1-3 queries per *FILE*
         # retrieving the translation information
+        # TODO: This should be adapted to multi-db.
         if django_settings.DATABASE_ENGINE == 'postgresql_psycopg2':
             qs = qs.extra(
                 select = {
