@@ -47,21 +47,6 @@
 </script>
 {% endblock %}
 
-{% block object-tools %}
-{{ block.super }}
-{% if change and not is_popup %}
-<ul class="extra-object-tools">
-  {% if has_add_permission and has_parent_attribute %}<li><a href="../add/?parent={{ object_id }}" class="addchild">{% trans "Add child page" %}</a></li> {% endif %}
-</ul>
-<script type="text/javascript">{# DRY object-tools addition #}
-  feincms.jQuery(function($){
-    $(".extra-object-tools li").appendTo("ul.object-tools");
-    $(".extra-object-tools").remove();
-  });
-</script>
-{% endif %}
-{% endblock %}
-
 {% block form_top %}
   {% with original.available_translations as translations %}
     {% if translations %}

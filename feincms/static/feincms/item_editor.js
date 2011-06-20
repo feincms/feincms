@@ -15,7 +15,7 @@ if(!Array.indexOf) {
         Downcoder.Initialize() ;
         Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
         Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
-        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";        
+        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
     }
 
     function feincms_gettext(s) {
@@ -476,6 +476,10 @@ if(!Array.indexOf) {
 
             $('#main_wrapper>div.navi_tab:first-child').trigger('click');
         }
+
+        // DRY object-tolls addition
+        $(".extra-object-tools li").appendTo("ul.object-tools");
+        $(".extra-object-tools").remove();
     });
 
     $(window).load(function(){init_contentblocks()});
