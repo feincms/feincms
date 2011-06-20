@@ -480,6 +480,16 @@ if(!Array.indexOf) {
         // DRY object-tolls addition
         $(".extra-object-tools li").appendTo("ul.object-tools");
         $(".extra-object-tools").remove();
+
+        /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
+        $(document.documentElement).keydown(function(event) {
+            if(event.which == 83 && event.metaKey) {
+                sel = event.shiftKey ? 'form:first input[name=_continue]' :
+                    'form:first input[name=_save]';
+                $(sel).click();
+                return false;
+            }
+        });
     });
 
     $(window).load(function(){init_contentblocks()});
