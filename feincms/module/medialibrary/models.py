@@ -21,7 +21,7 @@ from feincms.models import ExtensionsMixin
 
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import TranslatedObjectMixin, Translation, \
-    TranslatedObjectManager
+    TranslatedObjectManager, admin_translationinline
 
 import re
 import os
@@ -312,11 +312,6 @@ class MediaFileTranslation(Translation(MediaFile)):
         return self.caption
 
 #-------------------------------------------------------------------------
-class MediaFileTranslationInline(admin.StackedInline):
-    model   = MediaFileTranslation
-    max_num = len(django_settings.LANGUAGES)
-
-
 def admin_thumbnail(obj):
     if obj.type == 'image':
         image = None
@@ -339,7 +334,7 @@ admin_thumbnail.allow_tags = True
 #-------------------------------------------------------------------------
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
-    inlines           = [MediaFileTranslationInline]
+    inlines           = [admin_translationinline(MediaFileTranslation)]
     list_display      = [admin_thumbnail, '__unicode__', 'file_info', 'formatted_created']
     list_display_links = ['__unicode__']
     list_filter       = ['type', 'categories']
