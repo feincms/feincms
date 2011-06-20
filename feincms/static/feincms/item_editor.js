@@ -277,6 +277,49 @@ if(!Array.indexOf) {
         });
     }
 
+    function init_content_type_buttons() {
+        $('#main > .panel').each(function() {
+            var $select = $('select[name=order-machine-add-select]', this),
+                to_remove = [];
+
+            for (var i=0; i<CONTENT_TYPE_BUTTONS.length; i++) {
+                var c = CONTENT_TYPE_BUTTONS[i],
+                    $option = $select.find('option[value=' + c.type + ']');
+
+                if (!$option.length)
+                    continue;
+
+                var $button = $('<a href="#" class="actionbutton" />');
+
+                $button.addClass(c.class ? c.class : c.type).bind('click', (function(c) {
+                    return function() {
+                        var fieldset = ItemEditor.add_content_to_current(c.type);
+                        if (c.raw_id_picker) {
+                            var id = fieldset.find('.related-lookup, span.mediafile').attr('id');
+
+                            if (id) {
+                                window.open(c.raw_id_picker,
+                                    id_to_windowname(id.replace(/^lookup_/, '')),
+                                    'height=500,width=800,resizable=yes,scrollbars=yes').focus();
+                            }
+                        }
+                        if (c.after)
+                            c.after.call(null, fieldset);
+                        return false;
+                    };
+                })(c));
+
+                $select.before($button);
+
+                if (!c.keep)
+                    to_remove.push($option);
+            }
+
+            for (var i=0; i<to_remove.length; i++)
+                to_remove[i].remove();
+        });
+    }
+
     // global variable holding the current template key
     var current_template;
 
@@ -457,7 +500,26 @@ if(!Array.indexOf) {
 
         order_content_types_in_regions();
 
+        // hide now-empty formsets
         $('div.feincms_inline').hide();
+
+        // add quick buttons to order machine control
+        init_content_type_buttons();
+
+        // DRY object-tools addition
+        $(".extra-object-tools li").appendTo("ul.object-tools");
+        $(".extra-object-tools").remove();
+
+        /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
+        $(document.documentElement).keydown(function(event) {
+            if(event.which == 83 && event.metaKey) {
+                sel = event.shiftKey ? 'form:first input[name=_continue]' :
+                    'form:first input[name=_save]';
+                $(sel).click();
+                return false;
+            }
+        });
+
 
         var errors = $('#main div.errors');
 
@@ -476,20 +538,6 @@ if(!Array.indexOf) {
 
             $('#main_wrapper>div.navi_tab:first-child').trigger('click');
         }
-
-        // DRY object-tolls addition
-        $(".extra-object-tools li").appendTo("ul.object-tools");
-        $(".extra-object-tools").remove();
-
-        /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
-        $(document.documentElement).keydown(function(event) {
-            if(event.which == 83 && event.metaKey) {
-                sel = event.shiftKey ? 'form:first input[name=_continue]' :
-                    'form:first input[name=_save]';
-                $(sel).click();
-                return false;
-            }
-        });
     });
 
     $(window).load(function(){init_contentblocks()});
