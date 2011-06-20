@@ -20,7 +20,7 @@ class MediaFileContent(ContentWithMediaFile):
     Create a media file content as follows::
 
         from feincms.content.medialibrary.v2 import MediaFileContent
-        Page.create_content_type(MediaFileContent, TYPES=(
+        Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
             ('default', _('Default')),
             ('lightbox', _('Lightbox')),
             ('whatever', _('Whatever')),
@@ -45,9 +45,9 @@ class MediaFileContent(ContentWithMediaFile):
         verbose_name_plural = _('media files')
 
     @classmethod
-    def initialize_type(cls, TYPES=None):
+    def initialize_type(cls, TYPE_CHOICES=None):
         cls.add_to_class('type', models.CharField(_('type'),
-            max_length=10, choices=TYPES, default=TYPES[0][0]))
+            max_length=10, choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0]))
 
     def render(self, **kwargs):
         ctx = {'content': self}
