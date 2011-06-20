@@ -494,4 +494,18 @@ if(!Array.indexOf) {
 
     $(window).load(function(){init_contentblocks()});
 
+    // externally accessible helpers
+    window.ItemEditor = {
+        add_content: function(type, region) {
+            var new_fieldset = create_new_fieldset_from_module(type, CONTENT_NAMES[type]);
+            add_fieldset(region, new_fieldset, {where: 'append', animate: 'true'});
+            update_item_controls(new_fieldset, region);
+            return new_fieldset;
+        },
+
+        add_content_to_current: function(type) {
+            return ItemEditor.add_content(type, ACTIVE_REGION);
+        }
+    };
+
 })(feincms.jQuery);
