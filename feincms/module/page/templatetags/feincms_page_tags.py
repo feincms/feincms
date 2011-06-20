@@ -293,6 +293,16 @@ def is_parent_of(page1, page2):
 # ------------------------------------------------------------------------
 @register.filter
 def is_equal_or_parent_of(page1, page2):
+    """
+    Determines whether a given page is equal to or the parent of another
+    page. This is especially handy when generating the navigation. The following
+    example adds a CSS class ``current`` to the current main navigation entry::
+
+        {% for page in navigation %}
+            <a {% if page|is_equal_or_parent_of:feincms_page %}class="mark"{% endif %}>
+                {{ page.title }}</a>
+        {% endfor %}
+    """
     try:
         return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
     except AttributeError:
