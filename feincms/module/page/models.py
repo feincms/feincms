@@ -803,7 +803,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         editable = getattr(page, 'feincms_editable', True)
 
         preview_url = "../../r/%s/%s/" % (
-                ContentType.objects.get_for_model(self.model).id, 
+                ContentType.objects.get_for_model(self.model).id,
                 page.id)
         actions = super(PageAdmin, self)._actions_column(page)
         if editable:
@@ -841,29 +841,6 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
 
     def change_view(self, request, object_id, extra_context=None):
-        # Hack around a Django bug: raw_id_fields aren't validated correctly for
-        # ForeignKeys in 1.1: http://code.djangoproject.com/ticket/8746 details
-        # the problem - it was fixed for MultipleChoiceFields but not ModelChoiceField
-        # See http://code.djangoproject.com/ticket/9209
-
-        if hasattr(self, "raw_id_fields"):
-            for k in self.raw_id_fields:
-                if not k in request.POST:
-                    continue
-                if not isinstance(getattr(Page, k).field, models.ForeignKey):
-                    continue
-
-                v = request.POST[k]
-
-                if not v:
-                    del request.POST[k]
-                    continue
-
-                try:
-                    request.POST[k] = int(v)
-                except ValueError:
-                    request.POST[k] = None
-
         try:
             return super(PageAdmin, self).change_view(request, object_id, extra_context)
         except PermissionDenied:
