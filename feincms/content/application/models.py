@@ -151,8 +151,6 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
             try:
                 url = reverse(other_viewname, other_urlconf, args, kwargs, prefix, *vargs, **vkwargs)
             except:
-                # We really must not fail here. We absolutely need to remove/restore
-                # the _urlconfs information
                 url = None
 
             if saved_cfg:
