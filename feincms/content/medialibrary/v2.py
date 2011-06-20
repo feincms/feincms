@@ -47,7 +47,7 @@ class MediaFileContent(ContentWithMediaFile):
     @classmethod
     def initialize_type(cls, TYPE_CHOICES=None):
         cls.add_to_class('type', models.CharField(_('type'),
-            max_length=10, choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0]))
+            max_length=20, choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0]))
 
     def render(self, **kwargs):
         ctx = {'content': self}
