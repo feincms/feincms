@@ -1082,33 +1082,17 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
-        response = self.client.get(page.get_absolute_url() + 'alias_reverse_test/')
-        self.assertContains(response, 'home:/test-page/test-child-page/')
-        self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
-        self.assertContains(response, 'base:/test/')
-
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
-            '/test-page/test-child-page/')
-        self.assertEqual(reverse('whatever/ac_module_root'),
             '/test-page/test-child-page/')
 
         if hasattr(self, 'assertNumQueries'):
             self.assertNumQueries(0,
                 lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
-            self.assertNumQueries(0,
-                lambda: reverse('whatever/ac_module_root'))
 
             _empty_reverse_cache()
 
             self.assertNumQueries(1,
                 lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
-            self.assertNumQueries(0,
-                lambda: reverse('whatever/ac_module_root'))
-
-            _empty_reverse_cache()
-
-            self.assertNumQueries(1,
-                lambda: reverse('whatever/ac_module_root'))
             self.assertNumQueries(0,
                 lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
 
@@ -1144,10 +1128,20 @@ class PagesTestCase(TestCase):
             ordering=0,
             urlconf_path='whatever')
 
+        response = self.client.get(page.get_absolute_url() + 'alias_reverse_test/')
+        self.assertContains(response, 'home:/test-page/')
+        self.assertContains(response, 'args:/test-page/args_test/xy/zzy/')
+        self.assertContains(response, 'base:/test/')
+
         self.assertEqual(reverse('blog_urls/blog_entry_list'), '/test-page/test-child-page/')
         self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
             '/test-page/test-child-page/')
-        self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/test-child-page/')
+        self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
+
+        page.applicationcontent_set.get(urlconf_path='feincms.tests.applicationcontent_urls').delete()
+
+        self.assertEqual(reverse('blog_urls/blog_entry_list'), '/test-page/test-child-page/')
+        self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
 
     def test_26_page_form_initial(self):
         self.create_default_page_set()

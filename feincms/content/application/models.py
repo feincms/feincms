@@ -69,11 +69,6 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         # TODO do not use internal feincms data structures as much
         model_class = ApplicationContent._feincms_content_models[0]
 
-        if other_urlconf in model_class.ALL_APPS_CONFIG:
-            # We have an overridden URLconf
-            other_urlconf = model_class.ALL_APPS_CONFIG[other_urlconf]['config'].get('urls',
-                other_urlconf)
-
         if hasattr(_local, 'urlconf') and other_urlconf == _local.urlconf[0]:
             # We are reversing an URL from our own ApplicationContent
             return _reverse(other_viewname, other_urlconf, args, kwargs, _local.urlconf[1], *vargs, **vkwargs)
@@ -144,6 +139,11 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
             # Save information from _urlconfs in case we are inside another
             # application contents' ``process`` method currently
             saved_cfg = getattr(_local, 'urlconf', None)
+
+            if other_urlconf in model_class.ALL_APPS_CONFIG:
+                # We have an overridden URLconf
+                other_urlconf = model_class.ALL_APPS_CONFIG[other_urlconf]['config'].get(
+                    'urls', other_urlconf)
 
             # Initialize application content reverse hackery for the other application
             _local.urlconf = (other_urlconf, content.parent.get_absolute_url())
