@@ -1273,6 +1273,40 @@ class PagesTestCase(TestCase):
         self.assertEqual(Page.objects.count(), 2)
         self.assertEqual(Page.objects.active().count(), 1)
 
+    def test_32_applicationcontent_inheritance20(self):
+        self.create_default_page_set()
+
+        page1 = Page.objects.get(pk=1)
+        page1.active = True
+        page1.save()
+
+        page = Page.objects.get(pk=2)
+        page.active = True
+        page.template_key = 'theother'
+        page.save()
+
+        # Should not be published because the page has no application contents and should
+        # therefore not catch anything below it.
+        self.is_published(page1.get_absolute_url() + 'anything/', False)
+
+        page.applicationcontent_set.create(
+            region='main', ordering=0,
+            urlconf_path='feincms.tests.applicationcontent_urls')
+        page.rawcontent_set.create(
+            region='main', ordering=1, text='some_main_region_text')
+        page.rawcontent_set.create(
+            region='sidebar', ordering=0, text='some_sidebar_region_text')
+
+        self.assertContains(self.client.get(page.get_absolute_url()),
+                            'module_root')
+
+        response = self.client.get(page.get_absolute_url() + 'inheritance20/')
+        self.assertContains(response, 'a content 42')
+        self.assertContains(response, 'b content')
+        self.assertNotContains(response, 'some_main_region_text')
+        self.assertContains(response, 'some_sidebar_region_text')
+        self.assertNotContains(response, 'some content outside')
+
 
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
 class BlogTestCase(TestCase):

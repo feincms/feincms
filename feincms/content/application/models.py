@@ -282,7 +282,7 @@ class ApplicationContent(models.Model):
         super(ApplicationContent, self).__init__(*args, **kwargs)
         self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get('config', {})
 
-    def process(self, request, **kwargs):
+    def process(self, request, **kw):
         page_url = self.parent.get_absolute_url()
 
         # Get the rest of the URL
@@ -344,6 +344,9 @@ class ApplicationContent(models.Model):
                     for h in ('Cache-Control', 'Last-Modified', 'Expires'):
                         if h in output:
                             self.rendered_headers.setdefault(h, []).append(output[h])
+            elif isinstance(output, tuple) and 'view' in kw:
+                kw['view'].template_name = output[0]
+                kw['view'].request._feincms_extra_context.update(output[1])
             else:
                 self.rendered_result = mark_safe(output)
 

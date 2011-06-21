@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.template import Template
 from django.utils.cache import add_never_cache_headers
 from django.views.generic import TemplateView
 
@@ -26,9 +27,12 @@ class Handler(TemplateView):
         return self.finalize(response)
 
     def get_template_names(self):
-        if self.template_name is None:
-            return [self.page.template.path]
-        return [self.template_name]
+        # According to the documentation this method is supposed to return
+        # a list. However, we can also return a Template instance...
+        if isinstance(self.template_name, (Template, list, tuple)):
+            return self.template_name
+
+        return [self.template_name or self.page.template.path]
 
     def get_context_data(self, **kwargs):
         context = self.request._feincms_extra_context
