@@ -27,7 +27,7 @@ if (window.location.href.indexOf('pop=1') != -1) {
     (function($){
         $(function() {
             $('#result_list img').bind('click', function() {
-                $(this).parents('tr').find('th:first-child a').trigger('click');
+                $(this).parents('tr').find('th:nth(0) a').trigger('click');
                 return false;
             });
         });

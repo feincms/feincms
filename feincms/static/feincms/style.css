@@ -141,13 +141,13 @@ textarea {
 }
 
 .machine-control {
-    height:50px;
+    height:70px;
     padding: 5px 10px 5px 10px;
     border: 1px solid #ccc;
     background-color: #edf3fe;
     position:absolute;
     left:-11px;
-    bottom:-11px;
+    bottom:-30px;
     width: 100%;
 }
 
@@ -164,6 +164,40 @@ textarea {
 
 .control-unit span {
     font-weight:bold;
+}
+
+a.actionbutton {
+    display: block;
+    background-repeat: no-repeat;
+    width:50px;
+    height:50px;
+    float:left;
+    margin: 5px 20px 0 0;
+    text-indent:-7000px;
+}
+
+a.richtextcontent { background: url(img/contenttypes.png) no-repeat 0 0; }
+a.richtextcontent:hover { background-position: 0 -70px; }
+
+a.imagecontent { background: url(img/contenttypes.png) no-repeat -70px 0; }
+a.imagecontent:hover { background-position: -70px -70px; }
+
+a.gallerycontent { background: url(img/contenttypes.png) no-repeat -140px 0; }
+a.gallerycontent:hover { background-position: -140px -70px; }
+
+a.oembedcontent { background: url(img/contenttypes.png) no-repeat -280px 0; }
+a.oembedcontent:hover { background-position: -280px -70px; }
+
+a.pdfcontent { background: url(img/contenttypes.png) no-repeat -210px 0; }
+a.pdfcontent:hover { background-position: -210px -70px; }
+
+a.audiocontent { background: url(img/contenttypes.png) no-repeat -350px 0; }
+a.audiocontent:hover { background-position: -350px -70px; }
+
+.control-unit select,
+.control-unit input {
+    position: relative;
+    top: 15px;
 }
 
 .empty-machine-msg {

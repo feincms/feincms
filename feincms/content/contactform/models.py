@@ -41,7 +41,8 @@ class ContactFormContent(models.Model):
 
     def process(self, request, **kwargs):
         if request.GET.get('_cf_thanks'):
-            self.rendered_output = render_to_string('content/contactform/thanks.html')
+            self.rendered_output = render_to_string('content/contactform/thanks.html',
+                context_instance=RequestContext(request))
             return
 
         if request.method == 'POST':

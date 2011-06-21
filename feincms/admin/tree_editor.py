@@ -46,7 +46,12 @@ def _build_tree_structure(cls):
     """
     all_nodes = { }
 
-    for p_id, parent_id in cls.objects.order_by(cls._meta.tree_id_attr, cls._meta.left_attr).values_list("pk", "%s_id" % cls._meta.parent_attr):
+    if hasattr(cls, '_mptt_meta'): # New-style MPTT
+        mptt_opts = cls._mptt_meta
+    else:
+        mptt_opts = cls._meta
+
+    for p_id, parent_id in cls.objects.order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr).values_list("pk", "%s_id" % mptt_opts.parent_attr):
         all_nodes[p_id] = []
 
         if parent_id:
@@ -91,7 +96,6 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
 
     a.insert(0, '<div id="wrap_%s_%d">' % ( attr, item.id ))
     a.append('</div>')
-    #print a
     return unicode(''.join(a))
 
 # ------------------------------------------------------------------------
@@ -126,8 +130,8 @@ class ChangeList(main.ChangeList):
         self.user = request.user
         super(ChangeList, self).__init__(request, *args, **kwargs)
 
-    def get_query_set(self):
-        return super(ChangeList, self).get_query_set().order_by('tree_id', 'lft')
+    def get_query_set(self, *args, **kwargs):
+        return super(ChangeList, self).get_query_set(*args, **kwargs).order_by('tree_id', 'lft')
 
     def get_results(self, request):
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:

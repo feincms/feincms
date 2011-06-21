@@ -35,32 +35,10 @@ class FeinCMSInline(InlineModelAdmin):
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
 
+    form = ItemEditorForm
     extra = 0
     fk_name = 'parent'
     template = 'admin/feincms/content_inline.html'
-
-    def __init__(self, *args, **kwargs):
-        super(FeinCMSInline, self).__init__(*args, **kwargs)
-
-        # Earmark. The Feincms_Inline string should not be changed, it is used
-        # by item_editor.js to find all FeinCMS content type inlines.
-        self.verbose_name_plural = \
-            u'Feincms_Inline: %s' % (self.verbose_name_plural,)
-
-
-def get_feincms_inlines(model):
-    """ Generate genuine django inlines for registered content types. """
-    inlines = []
-    for content_type in model._feincms_content_types:
-        name = '%sFeinCMSInline' % content_type.__name__
-        attrs = {
-            '__module__': model.__module__,
-            'model': content_type,
-            'form': getattr(content_type, 'feincms_item_editor_form',
-                            ItemEditorForm),
-            }
-        inlines.append(type(name, (FeinCMSInline,), attrs))
-    return inlines
 
 
 class ItemEditor(admin.ModelAdmin):
@@ -79,9 +57,37 @@ class ItemEditor(admin.ModelAdmin):
         super(ItemEditor, self).__init__(model, admin_site)
 
         # Add inline instances for FeinCMS content inlines
-        for inline_class in get_feincms_inlines(model):
+        for inline_class in self.get_feincms_inlines(model):
             inline_instance = inline_class(self.model, self.admin_site)
             self.inline_instances.append(inline_instance)
+
+    def get_feincms_inlines(self, model):
+        """ Generate genuine django inlines for registered content types. """
+        inlines = []
+        for content_type in model._feincms_content_types:
+            attrs = {
+                '__module__': model.__module__,
+                'model': content_type,
+                }
+
+            if hasattr(content_type, 'feincms_item_editor_inline'):
+                inline = content_type.feincms_item_editor_inline
+                attrs['form'] = inline.form
+
+                if hasattr(content_type, 'feincms_item_editor_form'):
+                    import warnings
+                    warnings.warn(
+                        'feincms_item_editor_form on %s is ignored because feincms_item_editor_inline is set too' % content_type,
+                        RuntimeWarning)
+
+            else:
+                inline = FeinCMSInline
+                attrs['form'] = getattr(content_type,
+                    'feincms_item_editor_form', inline.form)
+
+            name = '%sFeinCMSInline' % content_type.__name__
+            inlines.append(type(name, (inline,), attrs))
+        return inlines
 
     def _frontend_editing_view(self, request, cms_id, content_type, content_id):
         """
@@ -227,9 +233,8 @@ class ItemEditor(admin.ModelAdmin):
             ]
 
     def get_fieldsets(self, request, obj=None):
-        """ Convert show_on_top to fieldset for backwards compatibility.
-
-        Also insert FEINCMS_CONTENT_FIELDSET it not present.
+        """
+        Insert FEINCMS_CONTENT_FIELDSET it not present.
         Is it reasonable to assume this should always be included?
         """
 
@@ -239,31 +244,14 @@ class ItemEditor(admin.ModelAdmin):
         if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
             fieldsets.append(FEINCMS_CONTENT_FIELDSET)
 
-        if getattr(self, 'show_on_top', ()):
-            import warnings
-            warnings.warn("The show_on_top will soon be removed; please "
-                          "update your " "code to use fieldsets instead. ",
-                          DeprecationWarning)
-            if hasattr(self.model, '_feincms_templates'):
-                if 'template_key' not in self.show_on_top:
-                    self.show_on_top = ['template_key'] + \
-                        list(self.show_on_top)
-            if self.declared_fieldsets:
-                # check to ensure no duplicated fields
-                all_fields = []
-                for fieldset_data in dict(self.declared_fieldsets).values():
-                    all_fields += list(fieldset_data.get('fields', ()))
-                for field_name in self.show_on_top:
-                    if field_name in all_fields:
-                        raise ImproperlyConfigured(
-                            'Field "%s" is present in both show_on_top and '
-                            'fieldsets' % field_name)
-            else: # no _declared_ fieldsets,
-                # remove show_on_top fields from implicit fieldset
-                for fieldset in fieldsets:
-                    for field_name in self.show_on_top:
-                        if field_name in fieldset[1]['fields']:
-                            fieldset[1]['fields'].remove(field_name)
-            fieldsets.insert(0, (None, {'fields': self.show_on_top}))
-
         return fieldsets
+
+    # These next are only used if later we use a subclass of this class
+    # which also inherits from VersionAdmin.
+    revision_form_template = "admin/feincms/revision_form.html"
+
+    recover_form_template = "admin/feincms/recover_form.html"
+
+    def render_revision_form(self, request, obj, version, context, revert=False, recover=False):
+        context.update(self.get_extra_context(request))
+        return super(ItemEditor, self).render_revision_form(request, obj, version, context, revert, recover)

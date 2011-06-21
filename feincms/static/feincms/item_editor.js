@@ -15,7 +15,7 @@ if(!Array.indexOf) {
         Downcoder.Initialize() ;
         Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
         Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
-        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";        
+        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
     }
 
     function feincms_gettext(s) {
@@ -262,11 +262,6 @@ if(!Array.indexOf) {
             contentblock_init_handlers[i]();
     }
 
-    function identify_feincms_inlines(){
-        // add feincms_inline class to divs which contains feincms inlines
-        $('div.inline-group h2:contains("Feincms_Inline:")').parent().addClass("feincms_inline");
-    }
-
     function hide_form_rows_with_hidden_widgets(){
         /* This is not normally done in django -- the fields are shown
            with visible labels and invisible widgets, but FeinCMS used to
@@ -282,11 +277,53 @@ if(!Array.indexOf) {
         });
     }
 
+    function init_content_type_buttons() {
+        $('#main > .panel').each(function() {
+            var $select = $('select[name=order-machine-add-select]', this),
+                to_remove = [];
+
+            for (var i=0; i<CONTENT_TYPE_BUTTONS.length; i++) {
+                var c = CONTENT_TYPE_BUTTONS[i],
+                    $option = $select.find('option[value=' + c.type + ']');
+
+                if (!$option.length)
+                    continue;
+
+                var $button = $('<a href="#" class="actionbutton" />');
+
+                $button.addClass(c.class ? c.class : c.type).bind('click', (function(c) {
+                    return function() {
+                        var fieldset = ItemEditor.add_content_to_current(c.type);
+                        if (c.raw_id_picker) {
+                            var id = fieldset.find('.related-lookup, span.mediafile').attr('id');
+
+                            if (id) {
+                                window.open(c.raw_id_picker,
+                                    id_to_windowname(id.replace(/^lookup_/, '')),
+                                    'height=500,width=800,resizable=yes,scrollbars=yes').focus();
+                            }
+                        }
+                        if (c.after)
+                            c.after.call(null, fieldset);
+                        return false;
+                    };
+                })(c));
+
+                $select.before($button);
+
+                if (!c.keep)
+                    to_remove.push($option);
+            }
+
+            for (var i=0; i<to_remove.length; i++)
+                to_remove[i].remove();
+        });
+    }
+
     // global variable holding the current template key
     var current_template;
 
     $(document).ready(function($){
-        identify_feincms_inlines();
         hide_form_rows_with_hidden_widgets();
 
         $("#main_wrapper > .navi_tab").click(function(){
@@ -423,6 +460,10 @@ if(!Array.indexOf) {
         // move contents into their corresponding regions and do some simple formatting
         $("div.feincms_inline div.inline-related").each(function(){
             var elem = $(this);
+            if (elem.find("span.delete input").attr("checked")) {
+                // ignore all inlines that are set to be deleted by reversion
+                return;
+            }
 
             elem.find("input[name$=-region]").addClass("region-choice-field");
             elem.find("input[name$=-DELETE]").addClass("delete-field");
@@ -459,7 +500,26 @@ if(!Array.indexOf) {
 
         order_content_types_in_regions();
 
+        // hide now-empty formsets
         $('div.feincms_inline').hide();
+
+        // add quick buttons to order machine control
+        init_content_type_buttons();
+
+        // DRY object-tools addition
+        $(".extra-object-tools li").appendTo("ul.object-tools");
+        $(".extra-object-tools").remove();
+
+        /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
+        $(document.documentElement).keydown(function(event) {
+            if(event.which == 83 && event.metaKey) {
+                sel = event.shiftKey ? 'form:first input[name=_continue]' :
+                    'form:first input[name=_save]';
+                $(sel).click();
+                return false;
+            }
+        });
+
 
         var errors = $('#main div.errors');
 
@@ -481,5 +541,19 @@ if(!Array.indexOf) {
     });
 
     $(window).load(function(){init_contentblocks()});
+
+    // externally accessible helpers
+    window.ItemEditor = {
+        add_content: function(type, region) {
+            var new_fieldset = create_new_fieldset_from_module(type, CONTENT_NAMES[type]);
+            add_fieldset(region, new_fieldset, {where: 'append', animate: 'true'});
+            update_item_controls(new_fieldset, region);
+            return new_fieldset;
+        },
+
+        add_content_to_current: function(type) {
+            return ItemEditor.add_content(type, ACTIVE_REGION);
+        }
+    };
 
 })(feincms.jQuery);

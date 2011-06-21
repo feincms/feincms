@@ -50,14 +50,29 @@ or::
     {% feincms_prefill_entry_list object_list "authors,richtextcontent_set,imagecontent_set" %}
 """
 
-from django.core.urlresolvers import get_callable
 from django.db import connection
 from django.db.models import AutoField
 from django.db.models.fields import related
+from django.utils.importlib import import_module
 
 # ------------------------------------------------------------------------
 def get_object(path, fail_silently=False):
-    return get_callable(path, fail_silently)
+    # Return early if path isn't a string (might already be an callable or
+    # a class or whatever)
+    if not isinstance(path, (str, unicode)):
+        return path
+
+    try:
+        dot = path.rindex('.')
+        mod, fn = path[:dot], path[dot+1:]
+    except ValueError:
+        mod, fn = callback, ''
+
+    try:
+        return getattr(import_module(mod), fn)
+    except (AttributeError, ImportError):
+        if not fail_silently:
+            raise
 
 # ------------------------------------------------------------------------
 def prefilled_attribute(name):

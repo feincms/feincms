@@ -187,7 +187,7 @@ they need. The mechanism in use is almost the same as the one used in
 Include the following code in the `<head>` section of your template to include
 all JS and CSS media file definitions::
 
-    {% feincms_page.content.media %}
+    {{ feincms_page.content.media }}
 
 
 The individual content types should use a ``media`` property do define the
@@ -281,10 +281,16 @@ Here's an example form-handling content which uses all of these facilities::
             response['Cache-Control'] = 'no-cache, must-revalidate'
 
 
-Please note that the ``render`` method should not raise an exception if
-``process`` has not been called beforehand. The FeinCMS page module views
-guarantee that ``process`` is called beforehand, other modules may not do
-so. ``feincms.module.blog`` for instance does not.
+.. note::
+
+   Please note that the ``render`` method should not raise an exception if
+   ``process`` has not been called beforehand.
+
+.. warning::
+
+   The FeinCMS page module views
+   guarantee that ``process`` is called beforehand, other modules may not do
+   so. ``feincms.module.blog`` for instance does not.
 
 
 Bundled content types

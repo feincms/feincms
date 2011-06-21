@@ -79,8 +79,12 @@ subclass, so you do not need to do anything special here. You only need to set
 :data:`~feincms.settings.FEINCMS_ADMIN_MEDIA` as described in the installation documentation.
 
 If you use the :class:`~feincms.content.richtext.models.RichTextContent`, you
-need to download `TinyMCE <http://tinymce.moxiecode.com/>`_ and set
-:data:`TINYMCE_JS_URL` to the absolute path to the main javascript file.
+need to download `TinyMCE <http://tinymce.moxiecode.com/>`_ and configure FeinCMS'
+richtext support::
+
+    FEINCMS_RICHTEXT_INIT_CONTEXT = {
+        'TINYMCE_JS_URL': '/your_custom_path/tiny_mce.js',
+        }
 
 
 Wiring up the views
@@ -133,10 +137,11 @@ attributes added.
 The newly created :class:`GalleryContent` for :class:`~feincms.module.page.models.Page`
 will live in the database table ``page_page_gallerycontent``.
 
-It is generally recommended to make your model base class abstract, because
-FeinCMS will create another class inheriting from your class, and you should
-probably not use model inheritance if you don't know exactly that you'll need
-it.
+.. note::
+
+   FeinCMS requires your content type model to be abstract.
+
+More information about content types is available in :ref:`contenttypes`.
 
 
 .. _page-extensions:

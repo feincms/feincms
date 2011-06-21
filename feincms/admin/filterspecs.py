@@ -4,13 +4,21 @@
 # Authors: Marinho Brandao <marinho at gmail.com>
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
-from django.contrib.admin.filterspecs import FilterSpec, ChoicesFilterSpec
+try:
+    from django.contrib.admin.filters import FieldListFilter, ChoicesFieldListFilter
+    legacy = False
+except ImportError: # Django up to 1.3
+    from django.contrib.admin.filterspecs import (
+        FilterSpec as FieldListFilter,
+        ChoicesFilterSpec as ChoicesFieldListFilter)
+    legacy = True
+
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
 
-class ParentFilterSpec(ChoicesFilterSpec):
+class ParentFieldListFilter(ChoicesFieldListFilter):
     """
     Improved list_filter display for parent Pages by nicely indenting hierarchy
 
@@ -22,7 +30,10 @@ class ParentFilterSpec(ChoicesFilterSpec):
     def __init__(self, f, request, params, model, model_admin, field_path=None):
         from feincms.utils import shorten_string
 
-        super(ParentFilterSpec, self).__init__(f, request, params, model, model_admin)
+        try:
+            super(ParentFieldListFilter, self).__init__(f, request, params, model, model_admin, field_path)
+        except TypeError: # Django 1.2
+            super(ParentFieldListFilter, self).__init__(f, request, params, model, model_admin)
 
         parent_ids = model.objects.exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
         parents = model.objects.filter(pk__in=parent_ids).values_list("pk", "title", "level")
@@ -45,7 +56,7 @@ class ParentFilterSpec(ChoicesFilterSpec):
     def title(self):
         return _('Parent')
 
-class CategoryFilterSpec(ChoicesFilterSpec):
+class CategoryFieldListFilter(ChoicesFieldListFilter):
     """
     Customization of ChoicesFilterSpec which sorts in the user-expected format
 
@@ -53,7 +64,10 @@ class CategoryFilterSpec(ChoicesFilterSpec):
     """
 
     def __init__(self, f, request, params, model, model_admin, field_path=None):
-        super(CategoryFilterSpec, self).__init__(f, request, params, model, model_admin)
+        try:
+            super(CategoryFieldListFilter, self).__init__(f, request, params, model, model_admin, field_path)
+        except TypeError: # Django 1.2
+            super(CategoryFieldListFilter, self).__init__(f, request, params, model, model_admin)
 
         # Restrict results to categories which are actually in use:
         self.lookup_choices = [
@@ -81,11 +95,19 @@ class CategoryFilterSpec(ChoicesFilterSpec):
         return _('Category')
 
 
-# registering the filter
-FilterSpec.filter_specs.insert(0,
-    (lambda f: getattr(f, 'parent_filter', False), ParentFilterSpec)
-)
+if legacy:
+    # registering the filter
+    FieldListFilter.filter_specs.insert(0,
+        (lambda f: getattr(f, 'parent_filter', False), ParentFieldListFilter)
+    )
 
-FilterSpec.filter_specs.insert(1,
-    (lambda f: getattr(f, 'category_filter', False), CategoryFilterSpec)
-)
+    FieldListFilter.filter_specs.insert(1,
+        (lambda f: getattr(f, 'category_filter', False), CategoryFieldListFilter)
+    )
+else:
+    FieldListFilter.register(lambda f: getattr(f, 'parent_filter', False),
+        ParentFieldListFilter,
+        take_priority=True)
+    FieldListFilter.register(lambda f: getattr(f, 'category_filter', False),
+        CategoryFieldListFilter,
+        take_priority=True)

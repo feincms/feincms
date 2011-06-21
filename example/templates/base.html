@@ -93,7 +93,7 @@
     <div id="wrapper">
         <div id="main">
             <h2>Main content</h2>
-            {% feincms_render_region feincms_page "main" request %}
+            {% block content %}{% feincms_render_region feincms_page "main" request %}{% endblock %}
         </div>
 
         <div id="sidebar">
@@ -107,7 +107,7 @@
                     No subpages
                 {% endfor %}
 
-                {% feincms_render_region feincms_page "sidebar" request %}
+                {% block sidebar %}{% feincms_render_region feincms_page "sidebar" request %}{% endblock %}
             </div>
         </div>
 

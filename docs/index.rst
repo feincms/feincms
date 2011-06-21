@@ -54,6 +54,7 @@ Contents
    templatetags
    advanced/index
    faq
+   contributing
 
 
 API Documentation
@@ -86,6 +87,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/1.4
    releases/1.3
    releases/1.2
 

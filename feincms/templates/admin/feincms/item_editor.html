@@ -5,10 +5,10 @@
 {% block feincms_jquery_ui %}
 {% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
 {% else %}
 <script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.5.1.min.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-ui-1.8.7.custom.min.js"></script>
+<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-ui-1.8.13.custom.min.js"></script>
 {% endif %}
 {% endblock %}
 
@@ -27,39 +27,15 @@
 
 {% include "admin/feincms/_messages_js.html" %}
 {% include "admin/feincms/_regions_js.html" %}
+{% include "admin/feincms/_content_type_buttons.html" %}
 
 {% for inc in model.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
 
 <script type="text/javascript">
     feincms.jQuery(document).ready(function($){
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
-
-        /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
-        $(document.documentElement).keydown(function(event) {
-            if(event.which == 83 && event.metaKey) {
-                sel = event.shiftKey ? 'form:first input[name=_continue]' :
-                    'form:first input[name=_save]';
-                $(sel).click();
-                return false;
-            }
-        });
     });
 </script>
-{% endblock %}
-
-{% block object-tools %}
-{{ block.super }}
-{% if change and not is_popup %}
-<ul class="extra-object-tools">
-  {% if has_add_permission and has_parent_attribute %}<li><a href="../add/?parent={{ object_id }}" class="addchild">{% trans "Add child page" %}</a></li> {% endif %}
-</ul>
-<script type="text/javascript">{# DRY object-tools addition #}
-  feincms.jQuery(function($){
-    $(".extra-object-tools li").appendTo("ul.object-tools");
-    $(".extra-object-tools").remove();
-  });
-</script>
-{% endif %}
 {% endblock %}
 
 {% block form_top %}
