@@ -432,6 +432,12 @@ which are rendered using the Django template language.
 
 Template usage isn't restricted in any way.
 
+.. note::
+
+   You cannot use Django's cached template loader with ``TemplateContent``
+   currently. The cached template loader has no way of enumerating
+   available templates in the filesystem.
+
 
 Video inclusion code for youtube, vimeo etc.
 --------------------------------------------
