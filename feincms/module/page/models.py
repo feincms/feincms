@@ -448,6 +448,9 @@ class Page(Base):
         immediately to the client.
         """
 
+        if hasattr(request, '_feincms_page'):
+            return
+
         request._feincms_page = self
 
         if not hasattr(request, '_feincms_extra_context'):
