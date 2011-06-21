@@ -30,6 +30,7 @@ from feincms.context_processors import add_page_if_missing
 from feincms.models import Region, Template, Base, ContentProxy
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
+from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
@@ -199,9 +200,9 @@ Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'ct_tracker')
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
-Page.register_request_processors(Page.etag_request_processor)
-Page.register_response_processors(Page.etag_response_processor)
-Page.register_response_processors(Page.debug_sql_queries_response_processor())
+Page.register_request_processors(processors.etag_request_processor)
+Page.register_response_processors(processors.etag_response_processor)
+Page.register_response_processors(processors.debug_sql_queries_response_processor())
 
 
 class PagesTestCase(TestCase):
