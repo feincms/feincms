@@ -165,6 +165,11 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     def file_type(self):
         t = self.filetypes_dict[self.type]
         if self.type == 'image':
+            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property) 
+            try:
+                self.file.path
+            except NotImplementedError:
+                return t
             try:
                 from django.core.files.images import get_image_dimensions
                 d = get_image_dimensions(self.file.file)
@@ -310,7 +315,13 @@ class MediaFileTranslation(Translation(MediaFile)):
 
 #-------------------------------------------------------------------------
 def admin_thumbnail(obj):
+
     if obj.type == 'image':
+        # feincms_thumbnail.thumbnail only works for local filesystem storage (indicated by availability the path property)
+        try:
+            obj.file.path
+        except NotImplementedError:
+            return ''
         image = None
         try:
             image = feincms_thumbnail.thumbnail(obj.file.name, '100x100')
