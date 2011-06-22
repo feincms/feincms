@@ -137,8 +137,8 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
     def __init__(self, *args, **kwargs):
         super(MediaFileBase, self).__init__(*args, **kwargs)
-        if self.file and self.file.path:
-            self._original_file_path = self.file.path
+        if self.file:
+            self._original_file_name = self.file.name
 
     def __unicode__(self):
         trans = None
@@ -261,12 +261,9 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             except (OSError, IOError), e:
                 self.type = self.determine_file_type('***') # It's binary something
 
-        if getattr(self, '_original_file_path', None):
-            if self.file.path != self._original_file_path:
-                try:
-                    os.unlink(self._original_file_path)
-                except:
-                    pass
+        if getattr(self, '_original_file_name', None):
+            if self.file.name != self._original_file_name:
+                self.file.storage.delete(self._original_file_name)
 
         super(MediaFileBase, self).save(*args, **kwargs)
         self.purge_translation_cache()
