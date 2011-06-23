@@ -317,11 +317,6 @@ class MediaFileTranslation(Translation(MediaFile)):
 def admin_thumbnail(obj):
 
     if obj.type == 'image':
-        # feincms_thumbnail.thumbnail only works for local filesystem storage (indicated by availability the path property)
-        try:
-            obj.file.path
-        except NotImplementedError:
-            return ''
         image = None
         try:
             image = feincms_thumbnail.thumbnail(obj.file.name, '100x100')
