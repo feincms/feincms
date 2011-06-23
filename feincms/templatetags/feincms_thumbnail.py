@@ -1,4 +1,5 @@
 import os
+from cStringIO import StringIO
 try:
     from PIL import Image
 except ImportError:
@@ -10,6 +11,8 @@ except ImportError:
 from django import template
 from django.conf import settings
 from django.utils.encoding import force_unicode
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 
 register = template.Library()
@@ -27,11 +30,12 @@ def thumbnail(filename, size='200x200'):
     """
     Creates a thumbnail from the image passed, returning its path::
 
+        {{ object.image|thumbnail:"400x300" }}
+    OR
         {{ object.image.name|thumbnail:"400x300" }}
 
-    You have to pass the ``name``, not the ``url`` attribute of an ``ImageField``
-    or ``FileField``. The thumbnail filter only works for images inside
-    ``MEDIA_ROOT``.
+    You can pass either an ``ImageField``, ``FileField`` or the ``name`` 
+    but not the ``url`` attribute of an ``ImageField`` or ``FileField``.
 
     The dimensions passed are treated as a bounding box. The aspect ratio of
     the initial image is preserved. Images aren't blown up in size if they
@@ -40,12 +44,24 @@ def thumbnail(filename, size='200x200'):
     Both width and height must be specified. If you do not care about one
     of them, just set it to an arbitrarily large number::
 
-        {{ object.image.name|thumbnail:"300x999999" }}
+        {{ object.image|thumbnail:"300x999999" }}
     """
 
     if not (filename and 'x' in size):
         # Better return empty than crash
         return u''
+
+    # figure out storage
+    if hasattr(filename, 'storage'):
+        storage = filename.storage
+    else:
+        storage = default_storage
+
+    # figure out name
+    if hasattr(filename, 'name'):
+        filename = filename.name
+    else:
+        filename = force_unicode(filename)
 
     # defining the size
     x, y = [tryint(x) for x in size.split('x')]
@@ -55,19 +71,26 @@ def thumbnail(filename, size='200x200'):
     except ValueError:
         basename, format = filename, 'jpg'
     miniature = basename + '_thumb_' + size + '.' +  format
-    miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature).encode('utf-8')
-    miniature_url = os.path.join(settings.MEDIA_URL, miniature).encode('utf-8')
-    orig_filename = os.path.join(settings.MEDIA_ROOT, filename).encode('utf-8')
-    # if the image wasn't already resized, resize it
-    if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
-        try:
-            image = Image.open(orig_filename)
-            image.thumbnail([x, y], Image.ANTIALIAS)
-            image.save(miniature_filename, image.format, quality=100)
-        except IOError:
-            return os.path.join(settings.MEDIA_URL, filename)
-    return force_unicode(miniature_url)
 
+    if not storage.exists(miniature):
+        generate = True
+    else:
+        try:
+            generate = storage.modified_time(miniature)<storage.modified_time(filename)
+        except NotImplementedError:
+            # storage does NOT support modified_time 
+            generate = False
+
+    if generate:
+        image = Image.open(StringIO(storage.open(filename).read()))
+        image.thumbnail([x, y], Image.ANTIALIAS)
+        buf = StringIO()
+        image.save(buf, image.format, quality=100)
+        raw_data = buf.getvalue()
+        buf.close()
+        storage.save(miniature, ContentFile(raw_data))
+
+    return storage.url(miniature)
 
 @register.filter
 def cropscale(filename, size='200x200'):
