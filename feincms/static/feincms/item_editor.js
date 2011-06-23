@@ -45,6 +45,13 @@ if(!Array.indexOf) {
     }
 
 
+    SELECTS = {};
+    function save_content_type_selects() {
+        $('#main>.panel').each(function() {
+            SELECTS[this.id.replace(/_body$/, '')] = $("select[name=order-machine-add-select]", this).clone().removeAttr("name");
+        });
+    }
+
     function update_item_controls(item, target_region_id){
         var item_controls = item.find(".item-controls");
         item_controls.find(".item-control-units").remove(); // Remove all controls, if any.
@@ -54,7 +61,7 @@ if(!Array.indexOf) {
 
         // Insert control unit
         var insert_control = $("<div>").addClass("item-control-unit");
-        var select_content = $("#" + REGION_MAP[target_region_id] + "_body").find("select[name=order-machine-add-select]").clone().removeAttr("name");
+        var select_content = SELECTS[REGION_MAP[target_region_id]].clone();
         var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('After')).click(function(){
             var modvar = select_content.val();
             var modname = select_content.find("option:selected").html();
@@ -339,6 +346,9 @@ if(!Array.indexOf) {
             // make it possible to open current tab on page reload
             window.location.replace('#tab_'+tab_str);
         });
+
+        // save content type selects for later use
+        save_content_type_selects();
 
         $("input.order-machine-add-button").click(function(){
             var select_content = $(this).prev();
