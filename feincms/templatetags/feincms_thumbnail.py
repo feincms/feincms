@@ -34,7 +34,7 @@ def thumbnail(filename, size='200x200'):
     OR
         {{ object.image.name|thumbnail:"400x300" }}
 
-    You can pass either an ``ImageField``, ``FileField`` or the ``name`` 
+    You can pass either an ``ImageField``, ``FileField`` or the ``name``
     but not the ``url`` attribute of an ``ImageField`` or ``FileField``.
 
     The dimensions passed are treated as a bounding box. The aspect ratio of
@@ -78,7 +78,7 @@ def thumbnail(filename, size='200x200'):
         try:
             generate = storage.modified_time(miniature)<storage.modified_time(filename)
         except NotImplementedError:
-            # storage does NOT support modified_time 
+            # storage does NOT support modified_time
             generate = False
 
     if generate:
@@ -103,6 +103,18 @@ def cropscale(filename, size='200x200'):
         # Better return empty than crash
         return u''
 
+    # figure out storage
+    if hasattr(filename, 'storage'):
+        storage = filename.storage
+    else:
+        storage = default_storage
+
+    # figure out name
+    if hasattr(filename, 'name'):
+        filename = filename.name
+    else:
+        filename = force_unicode(filename)
+
     w, h = [tryint(x) for x in size.split('x')]
 
     try:
@@ -110,16 +122,18 @@ def cropscale(filename, size='200x200'):
     except ValueError:
         basename, format = filename, 'jpg'
     miniature = basename + '_cropscale_' + size + '.' +  format
-    miniature_filename = os.path.join(settings.MEDIA_ROOT, miniature).encode('utf-8')
-    miniature_url = os.path.join(settings.MEDIA_URL, miniature).encode('utf-8')
-    orig_filename = os.path.join(settings.MEDIA_ROOT, filename).encode('utf-8')
-    # if the image wasn't already resized, resize it
-    if not os.path.exists(miniature_filename) or (os.path.getmtime(miniature_filename)<os.path.getmtime(orig_filename)):
-        try:
-            image = Image.open(orig_filename)
-        except IOError:
-            return os.path.join(settings.MEDIA_URL, filename)
 
+    if not storage.exists(miniature):
+        generate = True
+    else:
+        try:
+            generate = storage.modified_time(miniature)<storage.modified_time(filename)
+        except NotImplementedError:
+            # storage does NOT support modified_time
+            generate = False
+
+    if generate:
+        image = Image.open(StringIO(storage.open(filename).read()))
         src_width, src_height = image.size
         src_ratio = float(src_width) / float(src_height)
         dst_width, dst_height = w, h
@@ -136,10 +150,10 @@ def cropscale(filename, size='200x200'):
             x_offset = 0
             y_offset = float(src_height - crop_height) / 2
 
-        try:
-            image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
-            image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
-            image.save(miniature_filename, image.format, quality=100)
-        except IOError:
-            return os.path.join(settings.MEDIA_URL, filename)
-    return force_unicode(miniature_url)
+        buf = StringIO()
+        image.save(buf, image.format, quality=100)
+        raw_data = buf.getvalue()
+        buf.close()
+        storage.save(miniature, ContentFile(raw_data))
+
+    return storage.url(miniature)
