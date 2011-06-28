@@ -27,6 +27,9 @@ CMS without being forced to use whatever the developers deemed best:
     from django.db import models
 
     class TextilePageContent(models.Model):
+        class Meta: 
+            abstract = True 
+
         content = models.TextField()
 
         def render(self, **kwargs):
