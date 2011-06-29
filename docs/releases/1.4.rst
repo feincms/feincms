@@ -38,3 +38,9 @@ FeinCMS 1.4 release notes (upcoming)
   library have a look at ``MediaFile.reconfigure``.
 
 * FeinCMS has gained support for ``django-reversion``.
+
+* A few one-line Page manager methods which were too similar to each other
+  have been deprecated. They will be removed in the next release of FeinCMS.
+  This concerns ``page_for_path_or_404``, ``for_request_or_404``,
+  ``best_match_for_request`` and ``from_request``. The improved
+  ``for_request`` method should cover all bases.

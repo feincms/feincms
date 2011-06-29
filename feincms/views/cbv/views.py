@@ -16,7 +16,7 @@ class Handler(TemplateView):
         return self.handler(request, *args, **kwargs)
 
     def handler(self, request, path=None, *args, **kwargs):
-        self.page = Page.objects.best_match_for_path(path or request.path, raise404=True)
+        self.page = Page.objects.for_request(request, raise404=True, best_match=True, setup=False)
         response = self.prepare()
         if response:
             return response

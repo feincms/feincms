@@ -41,7 +41,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
 
         if isinstance(instance, HttpRequest):
-            instance = Page.objects.from_request(instance)
+            instance = Page.objects.for_request(instance)
 
         entries = self._what(instance, level, depth)
 

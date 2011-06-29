@@ -916,16 +916,16 @@ class PagesTestCase(TestCase):
         page.active = False
         page.save()
 
-        self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
+        self.assertRaises(Http404, lambda: Page.objects.for_request(request, raise404=True))
 
         page.active = True
         page.save()
 
-        self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
+        self.assertRaises(Http404, lambda: Page.objects.for_request(request, raise404=True))
 
         page.parent.active = True
         page.parent.save()
-        self.assertEqual(page, Page.objects.for_request_or_404(request))
+        self.assertEqual(page, Page.objects.for_request(request))
 
         old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
         request.path += 'hello/'
@@ -935,12 +935,12 @@ class PagesTestCase(TestCase):
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
         self.assertEqual(self.client.get(request.path).status_code, 200)
-        self.assertEqual(page, Page.objects.best_match_for_request(request))
+        self.assertEqual(page, Page.objects.for_request(request, best_match=True))
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
 
         page_id = id(request._feincms_page)
-        p = Page.objects.from_request(request)
+        p = Page.objects.for_request(request)
         self.assertEqual(id(p), page_id)
 
     def test_20_redirects(self):
