@@ -85,7 +85,7 @@ def thumbnail(filename, size='200x200'):
         image = Image.open(StringIO(storage.open(filename).read()))
         image.thumbnail([x, y], Image.ANTIALIAS)
         buf = StringIO()
-        image.save(buf, image.format, quality=100)
+        image.save(buf, image.format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()
         storage.save(miniature, ContentFile(raw_data))
