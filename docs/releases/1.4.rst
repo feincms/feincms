@@ -18,8 +18,10 @@ FeinCMS 1.4 release notes (upcoming)
   foreign key to ``raw_id_fields``, you get the standard Django behavior
   supplemented with a thumbnail if the media file is an image.
 
-* Support for the ``show_on_top`` option for the ``ItemEditor`` has been
-  completely removed. This functionatliy has been deprecated since 1.2.
+* FeinCMS has gained support for ``django-reversion``.
+
+
+Apart from all these new features a few cleanups have been made:
 
 * FeinCMS 1.2 removed the CKEditor-specific rich text content in favor of a
   generalized rich text content supporting different rich text editors.
@@ -37,10 +39,15 @@ FeinCMS 1.4 release notes (upcoming)
   If you still need to customize the storage class used in the media
   library have a look at ``MediaFile.reconfigure``.
 
-* FeinCMS has gained support for ``django-reversion``.
+* Support for the ``show_on_top`` option for the ``ItemEditor`` has been
+  completely removed. This functionatliy has been deprecated since 1.2.
 
 * A few one-line Page manager methods which were too similar to each other
   have been deprecated. They will be removed in the next release of FeinCMS.
   This concerns ``page_for_path_or_404``, ``for_request_or_404``,
   ``best_match_for_request`` and ``from_request``. The improved
   ``for_request`` method should cover all bases.
+
+* A few page methods have been deprecated. This concerns ``active_children``,
+  ``active_children_in_navigation`` and ``get_siblings_and_self``. The useful
+  bits are already available through Django's own related managers.

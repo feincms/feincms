@@ -314,6 +314,8 @@ class Page(Base):
         This is different than page.get_descendants (from mptt) as it will
         additionally select only child pages that are active.
         """
+        warnings.warn('active_children is deprecated. Use self.children.active() instead.',
+            DeprecationWarning)
         return Page.objects.active().filter(parent=self)
 
     def active_children_in_navigation(self):
@@ -323,6 +325,8 @@ class Page(Base):
         menues (only show a disclosure indicator if there actually is something
         to disclose).
         """
+        warnings.warn('active_children_in_navigation is deprecated. Use self.children.in_navigation() instead.',
+            DeprecationWarning)
         return self.active_children().filter(in_navigation=True)
 
     def short_title(self):
@@ -411,7 +415,8 @@ class Page(Base):
         """
         As the name says.
         """
-
+        warnings.warn('get_siblings_and_self is deprecated. You probably want self.parent.children.active() anyway.',
+            DeprecationWarning)
         return page.get_siblings(include_self=True)
 
     def cache_key(self):
