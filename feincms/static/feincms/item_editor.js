@@ -298,7 +298,7 @@ if(!Array.indexOf) {
 
                 var $button = $('<a href="#" class="actionbutton" />');
 
-                $button.addClass(c.class ? c.class : c.type).bind('click', (function(c) {
+                $button.addClass(c.cssclass ? c.cssclass : c.type).bind('click', (function(c) {
                     return function() {
                         var fieldset = ItemEditor.add_content_to_current(c.type);
                         if (c.raw_id_picker) {
