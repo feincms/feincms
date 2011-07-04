@@ -85,7 +85,7 @@ def thumbnail(filename, size='200x200'):
         image = Image.open(StringIO(storage.open(filename).read()))
         image.thumbnail([x, y], Image.ANTIALIAS)
         buf = StringIO()
-        image.save(buf, image.format, quality=100)
+        image.save(buf, image.format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()
         storage.save(miniature, ContentFile(raw_data))
@@ -150,8 +150,11 @@ def cropscale(filename, size='200x200'):
             x_offset = 0
             y_offset = float(src_height - crop_height) / 2
 
+        image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
+        image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
+
         buf = StringIO()
-        image.save(buf, image.format, quality=100)
+        image.save(buf, image.format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()
         storage.save(miniature, ContentFile(raw_data))

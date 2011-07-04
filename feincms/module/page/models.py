@@ -9,6 +9,7 @@ except ImportError:
 
 import re
 import sys
+import warnings
 
 from django import forms
 from django.core.cache import cache as django_cache
@@ -128,10 +129,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             raise
 
     def page_for_path_or_404(self, path):
-        """
-        Wrapper for page_for_path which raises a Http404 if no page
-        has been found for the passed path.
-        """
+        warnings.warn('page_for_path_or_404 is deprecated. Use page_for_path instead.',
+            DeprecationWarning)
         return self.page_for_path(path, raise404=True)
 
     def best_match_for_path(self, path, raise404=False):
@@ -189,40 +188,47 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return self.in_navigation().filter(parent__isnull=True)
 
-    def for_request(self, request, raise404=False):
+    def for_request(self, request, raise404=False, best_match=False, setup=True):
         """
-        Convenience wrapper for ``page_for_path`` which calls ``setup_request``
-        if a page has been found right away (required by FeinCMS anyway).
+        Return a page for the request
+
+        Does not hit the database more than once for the same request.
+
+        Examples::
+
+            Page.objects.for_request(request, raise404=True, best_match=False)
+
+        Defaults to raising a ``DoesNotExist`` exception if no exact match
+        could be determined.
         """
 
-        page = self.page_for_path(request.path, raise404)
-        page.setup_request(request)
+        if hasattr(request, '_feincms_page'):
+            page = request._feincms_page
+        else:
+            if best_match:
+                page = self.best_match_for_path(request.path, raise404=raise404)
+            else:
+                page = self.page_for_path(request.path, raise404=raise404)
+
+        if setup:
+            page.setup_request(request)
         return page
 
     def for_request_or_404(self, request):
-        """
-        Convenience wrapper for ``for_request`` which always raises a 404 if
-        a page could not be found.
-        """
-
+        warnings.warn('for_request_or_404 is deprecated. Use for_request instead.',
+            DeprecationWarning)
         return self.for_request(request, raise404=True)
 
     def best_match_for_request(self, request, raise404=False):
-        """
-        Convenience wrapper for ``best_match_for_path``. Calls ``setup_request``
-        if a page has been found.
-        """
-
+        warnings.warn('best_match_for_request is deprecated. Use for_request instead.',
+            DeprecationWarning)
         page = self.best_match_for_path(request.path, raise404=raise404)
         page.setup_request(request)
         return page
 
     def from_request(self, request, best_match=False):
-        """
-        ``setup_request`` stores the current page object as an attribute on the
-        request itself. This method uses the cached copy if available instead of
-        running another determination run.
-        """
+        warnings.warn('from_request is deprecated. Use for_request instead.',
+            DeprecationWarning)
 
         if hasattr(request, '_feincms_page'):
             return request._feincms_page
@@ -308,6 +314,8 @@ class Page(Base):
         This is different than page.get_descendants (from mptt) as it will
         additionally select only child pages that are active.
         """
+        warnings.warn('active_children is deprecated. Use self.children.active() instead.',
+            DeprecationWarning)
         return Page.objects.active().filter(parent=self)
 
     def active_children_in_navigation(self):
@@ -317,6 +325,8 @@ class Page(Base):
         menues (only show a disclosure indicator if there actually is something
         to disclose).
         """
+        warnings.warn('active_children_in_navigation is deprecated. Use self.children.in_navigation() instead.',
+            DeprecationWarning)
         return self.active_children().filter(in_navigation=True)
 
     def short_title(self):
@@ -405,7 +415,8 @@ class Page(Base):
         """
         As the name says.
         """
-
+        warnings.warn('get_siblings_and_self is deprecated. You probably want self.parent.children.active() anyway.',
+            DeprecationWarning)
         return page.get_siblings(include_self=True)
 
     def cache_key(self):
@@ -441,6 +452,9 @@ class Page(Base):
         a HttpResponse for shortcutting the page rendering and returning that response
         immediately to the client.
         """
+
+        if hasattr(request, '_feincms_page'):
+            return
 
         request._feincms_page = self
 

@@ -8,12 +8,9 @@ def add_page_if_missing(request):
     wants to pass into the template
     """
 
-    if hasattr(request, '_feincms_page'):
-        return {}
-
     try:
         return {
-            'feincms_page': Page.objects.from_request(request, best_match=True),
+            'feincms_page': Page.objects.for_request(request, best_match=True),
             }
     except Page.DoesNotExist:
         return {}
