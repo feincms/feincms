@@ -139,6 +139,8 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
     * all or existing: Return all languages or only those where a translation exists
     * excludecurrent: Excludes the item in the current language from the list
+    * request=request: The current request object, only needed if you are using
+      AppContents and need to append the "extra path"
 
     The default behavior is to return an entry for all languages including the
     current language.
