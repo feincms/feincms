@@ -85,6 +85,8 @@ def thumbnail(filename, size='200x200'):
         image = Image.open(StringIO(storage.open(filename).read()))
         image.thumbnail([x, y], Image.ANTIALIAS)
         buf = StringIO()
+        if image.mode not in ('RGB', 'L'):
+            image = image.convert('RGB')
         image.save(buf, image.format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()
@@ -154,6 +156,8 @@ def cropscale(filename, size='200x200'):
         image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
 
         buf = StringIO()
+        if image.mode not in ('RGB', 'L'):
+            image = image.convert('RGB')
         image.save(buf, image.format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()
