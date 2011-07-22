@@ -66,9 +66,6 @@ feincms.jQuery(function($){
 			var pixels = $('.page_marker', el).css('width').replace(/[^\d]/ig,"");
 			var rel = Math.round(pixels/18);
 			$(el).attr('rel', rel);
-
-			// add drag handle to actions col
-			$(el).find('td:last').append(' <div class="drag_handle"></div>');
 		});
 
 			$('div.drag_handle').bind('mousedown', function(event) {

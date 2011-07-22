@@ -401,7 +401,7 @@ class TreeEditor(admin.ModelAdmin):
         return HttpResponse('FAIL')
 
     def _actions_column(self, instance):
-        return []
+        return ['<div class="drag_handle"></div>',]
 
     def actions_column(self, instance):
         return u' '.join(self._actions_column(instance))
