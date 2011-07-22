@@ -5,7 +5,6 @@
 from django import template
 from django.conf import settings
 from django.http import HttpRequest
-from django.template.base import VariableDoesNotExist
 
 from feincms.module.page.models import Page, PageManager
 from feincms.utils.templatetags import *
@@ -230,7 +229,7 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
             if language not in (x[0] for x in settings.LANGUAGES):
                 try:
                     language = template.Variable(language).resolve(self.render_context)
-                except VariableDoesNotExist:
+                except template.VariableDoesNotExist:
                     language = settings.LANGUAGES[0][0]
 
         return _translate_page_into(page, language, default=default)

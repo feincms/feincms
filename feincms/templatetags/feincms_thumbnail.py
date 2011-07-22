@@ -77,7 +77,7 @@ def thumbnail(filename, size='200x200'):
     else:
         try:
             generate = storage.modified_time(miniature)<storage.modified_time(filename)
-        except NotImplementedError:
+        except (NotImplementedError, AttributeError):
             # storage does NOT support modified_time
             generate = False
 
@@ -130,7 +130,7 @@ def cropscale(filename, size='200x200'):
     else:
         try:
             generate = storage.modified_time(miniature)<storage.modified_time(filename)
-        except NotImplementedError:
+        except (NotImplementedError, AttributeError):
             # storage does NOT support modified_time
             generate = False
 
