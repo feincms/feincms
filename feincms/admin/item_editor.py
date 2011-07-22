@@ -11,7 +11,6 @@ from django.shortcuts import render_to_response
 from django.utils.encoding import force_unicode
 from django.utils.functional import curry
 from django.utils.translation import ugettext as _
-from django.contrib.admin.options import InlineModelAdmin
 
 from feincms import settings, ensure_completely_loaded
 
@@ -30,7 +29,7 @@ class ItemEditorForm(forms.ModelForm):
     ordering = forms.IntegerField(widget=forms.HiddenInput())
 
 
-class FeinCMSInline(InlineModelAdmin):
+class FeinCMSInline(admin.StackedInline):
     """
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
@@ -38,7 +37,6 @@ class FeinCMSInline(InlineModelAdmin):
     form = ItemEditorForm
     extra = 0
     fk_name = 'parent'
-    template = 'admin/feincms/content_inline.html'
 
 
 class ItemEditor(admin.ModelAdmin):
