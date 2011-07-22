@@ -16,7 +16,12 @@ FeinCMS 1.4 release notes (upcoming)
   ``feincms.module.medialibrary.fields.MediaFileForeignKey`` instead of
   the standard ``django.db.models.ForeignKey`` and adding the media file
   foreign key to ``raw_id_fields``, you get the standard Django behavior
-  supplemented with a thumbnail if the media file is an image.
+  supplemented with a thumbnail if the media file is an image. This requires
+  the next feature too, which is...
+
+* Custom ``InlineModelAdmin`` classes may be used for the content types now
+  by adding a ``feincms_item_editor_inline`` attribute to the content type
+  specifying the inline class to be used.
 
 * FeinCMS has gained support for ``django-reversion``.
 
