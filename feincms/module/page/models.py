@@ -253,15 +253,14 @@ except ImportError:
 
 
 class Page(Base):
-    active = models.BooleanField(_('active'), default=False)
+    active = models.BooleanField(_('active'), default=True)
 
     # structure and navigation
-    title = models.CharField(_('title'), max_length=200,
-        help_text=_('This is used for the generated navigation too.'))
+    title = models.CharField(_('title'), max_length=200)
     slug = models.SlugField(_('slug'), max_length=150)
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
-    in_navigation = models.BooleanField(_('in navigation'), default=False)
+    in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=300, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
     redirect_to = models.CharField(_('redirect to'), max_length=300, blank=True,
@@ -665,8 +664,11 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     unknown_fields = ['override_url', 'redirect_to']
     fieldsets = [
         (None, {
-            'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
-                'parent'],
+            'fields': [
+                ('title', 'slug'),
+                ('parent', 'active', 'in_navigation'),
+                'template_key',
+                ],
         }),
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
