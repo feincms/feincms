@@ -742,7 +742,7 @@ def create_base_model(inherit_from=models.Model):
             # not knowing about related items, which again causes the bug we had in
             # issue #63 on github:
             #
-            # http://github.com/matthiask/feincms/issues/issue/63/
+            # http://github.com/feincms/feincms/issues/issue/63/
             #
             # Currently, all methods filling up the Model.meta cache start with fill_.
             # We call all these methods upon creation of a new content type to make sure

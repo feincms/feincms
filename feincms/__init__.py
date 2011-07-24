@@ -32,7 +32,7 @@ def ensure_completely_loaded():
     types.
 
     For more informations, have a look at issue #23 on github:
-    http://github.com/matthiask/feincms/issues#issue/23
+    http://github.com/feincms/feincms/issues#issue/23
     """
 
     global COMPLETELY_LOADED
