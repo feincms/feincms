@@ -335,7 +335,7 @@ position. You should probably use the MediaFileContent though.
 
 Media library integration
 -------------------------
-.. module:: feincms.content.medialibrary.models
+.. module:: feincms.content.medialibrary.v2
 .. class:: MediaFileContent()
 
 Mini-framework for arbitrary file types with customizable rendering
@@ -343,9 +343,9 @@ methods per-filetype.  Add 'feincms.module.medialibrary' to INSTALLED_APPS.
 
 Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 
-* ``POSITION_CHOICES``: (mandatory)
+* ``TYPE_CHOICES``: (mandatory)
 
-  A list of tuples for the position dropdown.
+  A list of tuples for the type choice radio input fields.
 
 
 Raw content

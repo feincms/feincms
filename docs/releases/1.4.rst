@@ -11,6 +11,8 @@ FeinCMS 1.4 release notes (upcoming)
   of content type editing and to reuse more behaviors from Django itself,
   such as ``raw_id_fields``.
 
+* FeinCMS has gained support for ``django-reversion``.
+
 * Reusing the media library in your own content types has become much
   easier than before. When using a
   ``feincms.module.medialibrary.fields.MediaFileForeignKey`` instead of
@@ -18,7 +20,14 @@ FeinCMS 1.4 release notes (upcoming)
   foreign key to ``raw_id_fields``, you get the standard Django behavior
   supplemented with a thumbnail if the media file is an image.
 
-* FeinCMS has gained support for ``django-reversion``.
+* New projects should use ``feincms.content.medialibrary.v2.MediaFileContent``
+  instead of ``feincms.content.medialibrary.models.MediaFileContent``. The
+  argument ``POSITION_CHOICES`` and the corresponding field have been
+  renamed to ``TYPE_CHOICES`` and ``type`` because that's a more fitting
+  description of the intended use. The old and the new media file content
+  should not be mixed; the hand-woven ``raw_id_fields`` support of the
+  old media file content was not specific enough and interferes with
+  Django's own ``raw_id_fields`` support.
 
 
 Apart from all these new features a few cleanups have been made:
