@@ -1,6 +1,7 @@
 from django import template
 from django.core.urlresolvers import NoReverseMatch
 from django.template.defaulttags import kwarg_re
+from django.utils.encoding import smart_str
 
 # backwards compatibility import
 from feincms.templatetags.fragment_tags import fragment, get_fragment, has_fragment
