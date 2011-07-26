@@ -21,7 +21,8 @@ from feincms.utils import get_object
 class EntryManager(models.Manager):
     def published(self):
         return self.filter(
-            published__isnull=False,
+            published=True,
+            published_on__isnull=False,
             published_on__lte=datetime.now(),
             )
 

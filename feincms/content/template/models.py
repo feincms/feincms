@@ -16,7 +16,7 @@ def get_templates():
 
     for loader in settings.TEMPLATE_LOADERS:
         loader_instance = find_template_loader(loader)
-        if not loader_instance:
+        if not loader_instance or not hasattr(loader_instance, 'get_template_sources'):
             continue
 
         for basepath in loader_instance.get_template_sources('.'):

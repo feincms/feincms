@@ -41,7 +41,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
 
         if isinstance(instance, HttpRequest):
-            instance = Page.objects.from_request(instance)
+            instance = Page.objects.for_request(instance)
 
         entries = self._what(instance, level, depth)
 
@@ -139,6 +139,8 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
     * all or existing: Return all languages or only those where a translation exists
     * excludecurrent: Excludes the item in the current language from the list
+    * request=request: The current request object, only needed if you are using
+      AppContents and need to append the "extra path"
 
     The default behavior is to return an entry for all languages including the
     current language.
@@ -293,6 +295,16 @@ def is_parent_of(page1, page2):
 # ------------------------------------------------------------------------
 @register.filter
 def is_equal_or_parent_of(page1, page2):
+    """
+    Determines whether a given page is equal to or the parent of another
+    page. This is especially handy when generating the navigation. The following
+    example adds a CSS class ``current`` to the current main navigation entry::
+
+        {% for page in navigation %}
+            <a {% if page|is_equal_or_parent_of:feincms_page %}class="mark"{% endif %}>
+                {{ page.title }}</a>
+        {% endfor %}
+    """
     try:
         return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
     except AttributeError:

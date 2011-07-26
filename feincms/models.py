@@ -108,6 +108,17 @@ class ContentProxy(object):
             'cts': {},
             }
 
+    def _inherit_from(self):
+        """
+        Returns a list of item primary keys to try inheriting content from if
+        a certain region is empty.
+
+        Returns an ascending list of ancestors (using MPTT) by default. This
+        is good enough (tm) for pages.
+        """
+
+        return self.item.get_ancestors(ascending=True).values_list('pk', flat=True)
+
     def _fetch_content_type_counts(self):
         """
         Returns a structure describing which content types exist for the object
@@ -134,7 +145,7 @@ class ContentProxy(object):
                     empty_inherited_regions.add(region.key)
 
             if empty_inherited_regions:
-                for parent in self.item.get_ancestors(ascending=True).values_list('pk', flat=True):
+                for parent in self._inherit_from():
                     parent_counts = self._fetch_content_type_count_helper(
                         parent, regions=tuple(empty_inherited_regions))
 
@@ -264,6 +275,68 @@ class ContentProxy(object):
         return self._fetch_regions().get(attr, [])
 
 
+class ExtensionsMixin(object):
+    @classmethod
+    def register_extension(cls, register_fn):
+        """
+        Call the register function of an extension. You must override this
+        if you provide a custom ModelAdmin class and want your extensions to
+        be able to patch stuff in.
+        """
+        register_fn(cls, None)
+
+    @classmethod
+    def register_extensions(cls, *extensions):
+        """
+        Register all extensions passed as arguments.
+
+        Extensions should be specified as a string to the python module
+        containing the extension. If it is a bundled extension of FeinCMS,
+        you do not need to specify the full python module path -- only
+        specifying the last part (f.e. ``'seo'`` or ``'translations'``) is
+        sufficient.
+        """
+
+        if not hasattr(cls, '_feincms_extensions'):
+            cls._feincms_extensions = set()
+
+        here = cls.__module__.split('.')[:-1]
+
+        paths = [
+            '.'.join(here + ['extensions']),
+            '.'.join(here[:-1] + ['extensions']),
+            'feincms.module.extensions',
+            ]
+
+        for ext in extensions:
+            if ext in cls._feincms_extensions:
+                continue
+
+            fn = None
+            if isinstance(ext, basestring):
+                try:
+                    fn = get_object(ext + '.register')
+                except ImportError:
+                    for path in paths:
+                        try:
+                            fn = get_object('%s.%s.register' % (path, ext))
+                            if fn:
+                                break
+                        except ImportError, e:
+                            pass
+
+                if not fn:
+                    raise ImproperlyConfigured, '%s is not a valid extension for %s' % (
+                        ext, cls.__name__)
+
+            # Not a string, so take our chances and just try to access "register"
+            else:
+                fn = ext.register
+
+            cls.register_extension(fn)
+            cls._feincms_extensions.add(ext)
+
+
 def create_base_model(inherit_from=models.Model):
     """
     This method can  be used to create a FeinCMS base model inheriting from your
@@ -271,7 +344,7 @@ def create_base_model(inherit_from=models.Model):
     :class:`django.db.models.Model`.
     """
 
-    class Base(inherit_from):
+    class Base(inherit_from, ExtensionsMixin):
         """
         This is the base class for your CMS models. It knows how to create and
         manage content types.
@@ -369,64 +442,6 @@ def create_base_model(inherit_from=models.Model):
             cls._feincms_all_regions = set()
             for template in cls._feincms_templates.values():
                 cls._feincms_all_regions.update(template.regions)
-
-        @classmethod
-        def register_extension(cls, register_fn):
-            """
-            Call the register function of an extension. You must override this
-            if you provide a custom ModelAdmin class and want your extensions to
-            be able to patch stuff in.
-            """
-            register_fn(cls, None)
-
-        @classmethod
-        def register_extensions(cls, *extensions):
-            """
-            Register all extensions passed as arguments.
-
-            Extensions should be specified as a string to the python module
-            containing the extension. If it is a bundled extension of FeinCMS,
-            you do not need to specify the full python module path -- only
-            specifying the last part (f.e. ``'seo'`` or ``'translations'``) is
-            sufficient.
-            """
-
-            if not hasattr(cls, '_feincms_extensions'):
-                cls._feincms_extensions = set()
-
-            here = cls.__module__.split('.')[:-1]
-
-            paths = [
-                '.'.join(here + ['extensions']),
-                '.'.join(here[:-1] + ['extensions']),
-                'feincms.module.extensions',
-                ]
-
-            for ext in extensions:
-                if ext in cls._feincms_extensions:
-                    continue
-
-                fn = None
-                if isinstance(ext, basestring):
-                    try:
-                        fn = get_object(ext + '.register')
-                    except ImportError:
-                        for path in paths:
-                            try:
-                                fn = get_object('%s.%s.register' % (path, ext))
-                            except ImportError, e:
-                                pass
-
-                    if not fn:
-                        raise ImproperlyConfigured, '%s is not a valid extension for %s' % (
-                            ext, cls.__name__)
-
-                # Not a string, so take our chances and just try to access "register"
-                else:
-                    fn = ext.register
-
-                cls.register_extension(fn)
-                cls._feincms_extensions.add(ext)
 
 
         #: ``ContentProxy`` class this object uses to collect content blocks
@@ -591,6 +606,17 @@ def create_base_model(inherit_from=models.Model):
             ``django_content_type``, on ``related_name`` and on the table name
             used and should therefore not be changed after running ``syncdb`` for
             the first time.
+
+            Name clashes will also happen if a content type has defined a
+            relationship and you try to register that content type to more than one
+            Base model (in different modules).  Django will raise an error when it
+            tries to create the backward relationship. The solution to that problem
+            is, as shown above, to specify the content type class name with the
+            ``class_name`` argument.
+
+            If you register a content type to more than one Base class, it is
+            recommended to always specify a ``class_name`` when registering it
+            a second time.
 
             You can pass additional keyword arguments to this factory function. These
             keyword arguments will be passed on to the concrete content type, provided

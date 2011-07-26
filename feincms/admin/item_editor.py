@@ -35,32 +35,10 @@ class FeinCMSInline(InlineModelAdmin):
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
 
+    form = ItemEditorForm
     extra = 0
     fk_name = 'parent'
     template = 'admin/feincms/content_inline.html'
-
-    def __init__(self, *args, **kwargs):
-        super(FeinCMSInline, self).__init__(*args, **kwargs)
-
-        # Earmark. The Feincms_Inline string should not be changed, it is used
-        # by item_editor.js to find all FeinCMS content type inlines.
-        self.verbose_name_plural = \
-            u'Feincms_Inline: %s' % (self.verbose_name_plural,)
-
-
-def get_feincms_inlines(model):
-    """ Generate genuine django inlines for registered content types. """
-    inlines = []
-    for content_type in model._feincms_content_types:
-        name = '%sFeinCMSInline' % content_type.__name__
-        attrs = {
-            '__module__': model.__module__,
-            'model': content_type,
-            'form': getattr(content_type, 'feincms_item_editor_form',
-                            ItemEditorForm),
-            }
-        inlines.append(type(name, (FeinCMSInline,), attrs))
-    return inlines
 
 
 class ItemEditor(admin.ModelAdmin):
@@ -79,9 +57,37 @@ class ItemEditor(admin.ModelAdmin):
         super(ItemEditor, self).__init__(model, admin_site)
 
         # Add inline instances for FeinCMS content inlines
-        for inline_class in get_feincms_inlines(model):
+        for inline_class in self.get_feincms_inlines(model):
             inline_instance = inline_class(self.model, self.admin_site)
             self.inline_instances.append(inline_instance)
+
+    def get_feincms_inlines(self, model):
+        """ Generate genuine django inlines for registered content types. """
+        inlines = []
+        for content_type in model._feincms_content_types:
+            attrs = {
+                '__module__': model.__module__,
+                'model': content_type,
+                }
+
+            if hasattr(content_type, 'feincms_item_editor_inline'):
+                inline = content_type.feincms_item_editor_inline
+                attrs['form'] = inline.form
+
+                if hasattr(content_type, 'feincms_item_editor_form'):
+                    import warnings
+                    warnings.warn(
+                        'feincms_item_editor_form on %s is ignored because feincms_item_editor_inline is set too' % content_type,
+                        RuntimeWarning)
+
+            else:
+                inline = FeinCMSInline
+                attrs['form'] = getattr(content_type,
+                    'feincms_item_editor_form', inline.form)
+
+            name = '%sFeinCMSInline' % content_type.__name__
+            inlines.append(type(name, (inline,), attrs))
+        return inlines
 
     def _frontend_editing_view(self, request, cms_id, content_type, content_id):
         """

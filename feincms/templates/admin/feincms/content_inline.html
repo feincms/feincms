@@ -1,5 +1,5 @@
 {% load i18n adminmedia feincms_admin_tags %}
-<div class="inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
+<div class="inline-group feincms_inline" id="{{ inline_admin_formset.formset.prefix }}-group">
   <h2>{{ inline_admin_formset.opts.verbose_name_plural|title }}</h2>
 {{ inline_admin_formset.formset.management_form }}
 {{ inline_admin_formset.formset.non_form_errors }}

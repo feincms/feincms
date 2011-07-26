@@ -2,5 +2,52 @@
 FeinCMS 1.4 release notes (upcoming)
 ====================================
 
+* FeinCMS supports more than one site from the same database with
+  ``django.contrib.sites`` now. Thanks to Bojan Mihelac and Stephen Tyler
+  for the work and insistence on this issue.
+
+* It is possible to customize the administration model inline used for
+  content types. This means that it's possible to customize more aspects
+  of content type editing and to reuse more behaviors from Django itself,
+  such as ``raw_id_fields``.
+
+* Reusing the media library in your own content types has become much
+  easier than before. When using a
+  ``feincms.module.medialibrary.fields.MediaFileForeignKey`` instead of
+  the standard ``django.db.models.ForeignKey`` and adding the media file
+  foreign key to ``raw_id_fields``, you get the standard Django behavior
+  supplemented with a thumbnail if the media file is an image.
+
+* FeinCMS has gained support for ``django-reversion``.
+
+
+Apart from all these new features a few cleanups have been made:
+
+* FeinCMS 1.2 removed the CKEditor-specific rich text content in favor of a
+  generalized rich text content supporting different rich text editors.
+  Unfortunately the documentation and the available settings only reflected
+  this partially. This has been rectified. Support for ``TINYMCE_JS_URL``,
+  ``FEINCMS_TINYMCE_INIT_TEMPLATE`` and ``FEINCMS_TINYMCE_INIT_CONTEXT`` has
+  been completely removed. The two settings ``FEINCMS_RICHTEXT_INIT_CONTEXT``
+  and ``FEINCMS_RICHTEXT_INIT_TEMPLATE`` should be used instead. See the
+  :ref:`contenttypes` documentation for more details.
+
+* The two settings ``FEINCMS_MEDIALIBRARY_ROOT`` and
+  ``FEINCMS_MEDIALIBRARY_URL`` have been removed. Their values always
+  defaulted to ``MEDIA_ROOT`` and ``MEDIA_URL``. The way they were used
+  made it hard to support other storage backends in the media library.
+  If you still need to customize the storage class used in the media
+  library have a look at ``MediaFile.reconfigure``.
+
 * Support for the ``show_on_top`` option for the ``ItemEditor`` has been
   completely removed. This functionatliy has been deprecated since 1.2.
+
+* A few one-line Page manager methods which were too similar to each other
+  have been deprecated. They will be removed in the next release of FeinCMS.
+  This concerns ``page_for_path_or_404``, ``for_request_or_404``,
+  ``best_match_for_request`` and ``from_request``. The improved
+  ``for_request`` method should cover all bases.
+
+* A few page methods have been deprecated. This concerns ``active_children``,
+  ``active_children_in_navigation`` and ``get_siblings_and_self``. The useful
+  bits are already available through Django's own related managers.

@@ -7,7 +7,6 @@ from datetime import datetime
 from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings as django_settings
-from django.core.urlresolvers import get_callable
 from django.db import models
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
@@ -18,11 +17,11 @@ from django.http import HttpResponseRedirect
 # 1.2 from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
-from feincms.models import Base
+from feincms.models import ExtensionsMixin
 
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import TranslatedObjectMixin, Translation, \
-    TranslatedObjectManager
+    TranslatedObjectManager, admin_translationinline
 
 import re
 import os
@@ -81,21 +80,13 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # ------------------------------------------------------------------------
-class MediaFileBase(Base, TranslatedObjectMixin):
+class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     """
-    Abstract media file class. Inherits from :class:`feincms.module.Base`
+    Abstract media file class. Includes the :class:`feincms.models.ExtensionsMixin`
     because of the (handy) extension mechanism.
     """
 
-    from django.core.files.storage import FileSystemStorage
-    default_storage_class = getattr(django_settings, 'DEFAULT_FILE_STORAGE',
-                                    'django.core.files.storage.FileSystemStorage')
-    default_storage = get_callable(default_storage_class)
-
-    fs = default_storage(location=settings.FEINCMS_MEDIALIBRARY_ROOT,
-                           base_url=settings.FEINCMS_MEDIALIBRARY_URL)
-
-    file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO, storage=fs)
+    file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO)
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
     created = models.DateTimeField(_('created'), editable=False, default=datetime.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
@@ -121,7 +112,7 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     formatted_file_size.admin_order_field = 'file_size'
 
     def formatted_created(self):
-        return self.created.strftime("%Y-%m-%d %H:%M")
+        return self.created.strftime("%Y-%m-%d")
     formatted_created.short_description = _("created")
     formatted_created.admin_order_field = 'created'
 
@@ -146,8 +137,8 @@ class MediaFileBase(Base, TranslatedObjectMixin):
 
     def __init__(self, *args, **kwargs):
         super(MediaFileBase, self).__init__(*args, **kwargs)
-        if self.file and self.file.path:
-            self._original_file_path = self.file.path
+        if self.file:
+            self._original_file_name = self.file.name
 
     def __unicode__(self):
         trans = None
@@ -174,12 +165,17 @@ class MediaFileBase(Base, TranslatedObjectMixin):
     def file_type(self):
         t = self.filetypes_dict[self.type]
         if self.type == 'image':
+            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property) 
+            try:
+                self.file.path
+            except NotImplementedError:
+                return t
             try:
                 from django.core.files.images import get_image_dimensions
                 d = get_image_dimensions(self.file.file)
-                if d: t += "<br/>%d&times;%d" % ( d[0], d[1] )
+                if d: t += " %d&times;%d" % ( d[0], d[1] )
             except IOError, e:
-                t += "<br/>(%s)" % e.strerror
+                t += " (%s)" % e.strerror
         return t
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
@@ -195,10 +191,14 @@ class MediaFileBase(Base, TranslatedObjectMixin):
         """
         from os.path import basename
         from feincms.utils import shorten_string
-        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s' % (
+        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s <br />%s, %s' % (
                 self.id,
                 self.file.name,
-                shorten_string(basename(self.file.name), max_length=28), )
+                shorten_string(basename(self.file.name), max_length=40),
+                self.file_type(),
+                self.formatted_file_size(),
+                )
+    file_info.admin_order_field = 'file'
     file_info.short_description = _('file info')
     file_info.allow_tags = True
 
@@ -266,12 +266,9 @@ class MediaFileBase(Base, TranslatedObjectMixin):
             except (OSError, IOError), e:
                 self.type = self.determine_file_type('***') # It's binary something
 
-        if getattr(self, '_original_file_path', None):
-            if self.file.path != self._original_file_path:
-                try:
-                    os.unlink(self._original_file_path)
-                except:
-                    pass
+        if getattr(self, '_original_file_name', None):
+            if self.file.name != self._original_file_name:
+                self.file.storage.delete(self._original_file_name)
 
         super(MediaFileBase, self).save(*args, **kwargs)
         self.purge_translation_cache()
@@ -317,16 +314,12 @@ class MediaFileTranslation(Translation(MediaFile)):
         return self.caption
 
 #-------------------------------------------------------------------------
-class MediaFileTranslationInline(admin.StackedInline):
-    model   = MediaFileTranslation
-    max_num = len(django_settings.LANGUAGES)
-
-
 def admin_thumbnail(obj):
+
     if obj.type == 'image':
         image = None
         try:
-            image = feincms_thumbnail.thumbnail(obj.file.name, '100x60')
+            image = feincms_thumbnail.thumbnail(obj.file.name, '100x100')
         except:
             pass
 
@@ -344,8 +337,9 @@ admin_thumbnail.allow_tags = True
 #-------------------------------------------------------------------------
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
-    inlines           = [MediaFileTranslationInline]
-    list_display      = ['__unicode__', admin_thumbnail, 'file_type', 'copyright', 'file_info', 'formatted_file_size', 'formatted_created']
+    inlines           = [admin_translationinline(MediaFileTranslation)]
+    list_display      = [admin_thumbnail, '__unicode__', 'file_info', 'formatted_created']
+    list_display_links = ['__unicode__']
     list_filter       = ['type', 'categories']
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
@@ -385,11 +379,6 @@ class MediaFileAdmin(admin.ModelAdmin):
             try:
                 z = zipfile.ZipFile(data)
 
-                storage = MediaFile.fs
-                if not storage:
-                    messages.error(request, _("Could not access storage"))
-                    return
-
                 count = 0
                 for zi in z.infolist():
                     if not zi.filename.endswith('/'):
@@ -425,6 +414,7 @@ class MediaFileAdmin(admin.ModelAdmin):
 
         # FIXME: This is an ugly hack but it avoids 1-3 queries per *FILE*
         # retrieving the translation information
+        # TODO: This should be adapted to multi-db.
         if django_settings.DATABASE_ENGINE == 'postgresql_psycopg2':
             qs = qs.extra(
                 select = {

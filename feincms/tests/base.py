@@ -11,13 +11,14 @@ from django.core import mail
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.contrib.sites.models import Site
 from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
 
 from feincms import settings as feincms_settings
-from feincms.content.application.models import ApplicationContent, _empty_reverse_cache
+from feincms.content.application.models import ApplicationContent, _empty_reverse_cache, reverse
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
 from feincms.content.image.models import ImageContent
@@ -209,6 +210,9 @@ class PagesTestCase(TestCase):
         u.set_password('test')
         u.save()
 
+
+        self.site_1 = Site.objects.all()[0]
+
         Page.register_templates({
                 'key': 'base',
                 'title': 'Standard template',
@@ -242,6 +246,7 @@ class PagesTestCase(TestCase):
             'initial-publication_date_0': '2009-01-01',
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
+            'site': self.site_1.id,
 
             'rawcontent_set-TOTAL_FORMS': 0,
             'rawcontent_set-INITIAL_FORMS': 0,
@@ -462,6 +467,7 @@ class PagesTestCase(TestCase):
             'initial-publication_date_0': '2009-01-01',
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
+            'site': self.site_1.id,
 
             'rawcontent_set-TOTAL_FORMS': 1,
             'rawcontent_set-INITIAL_FORMS': 0,
@@ -910,16 +916,16 @@ class PagesTestCase(TestCase):
         page.active = False
         page.save()
 
-        self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
+        self.assertRaises(Http404, lambda: Page.objects.for_request(request, raise404=True))
 
         page.active = True
         page.save()
 
-        self.assertRaises(Http404, lambda: Page.objects.for_request_or_404(request))
+        self.assertRaises(Http404, lambda: Page.objects.for_request(request, raise404=True))
 
         page.parent.active = True
         page.parent.save()
-        self.assertEqual(page, Page.objects.for_request_or_404(request))
+        self.assertEqual(page, Page.objects.for_request(request))
 
         old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
         request.path += 'hello/'
@@ -929,12 +935,12 @@ class PagesTestCase(TestCase):
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
         self.assertEqual(self.client.get(request.path).status_code, 200)
-        self.assertEqual(page, Page.objects.best_match_for_request(request))
+        self.assertEqual(page, Page.objects.for_request(request, best_match=True))
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
 
         page_id = id(request._feincms_page)
-        p = Page.objects.from_request(request)
+        p = Page.objects.for_request(request)
         self.assertEqual(id(p), page_id)
 
     def test_20_redirects(self):
@@ -1071,6 +1077,25 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
+        response = self.client.get(page.get_absolute_url() + 'full_reverse_test/')
+        self.assertContains(response, 'home:/test-page/test-child-page/')
+        self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
+        self.assertContains(response, 'base:/test/')
+
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+            '/test-page/test-child-page/')
+
+        if hasattr(self, 'assertNumQueries'):
+            self.assertNumQueries(0,
+                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+
+            _empty_reverse_cache()
+
+            self.assertNumQueries(1,
+                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+            self.assertNumQueries(0,
+                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+
         # This should not raise
         self.assertEquals(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
 
@@ -1092,6 +1117,31 @@ class PagesTestCase(TestCase):
             self.client.get(page.get_absolute_url() + 'response/',
                 HTTP_X_REQUESTED_WITH='XMLHttpRequest').content,
             self.client.get(page.get_absolute_url() + 'response_decorated/').content)
+
+        # Test reversing of URLs (with overridden urls too)
+        page.applicationcontent_set.create(
+            region='main',
+            ordering=1,
+            urlconf_path='blog_urls')
+        page1.applicationcontent_set.create(
+            region='main',
+            ordering=0,
+            urlconf_path='whatever')
+
+        response = self.client.get(page.get_absolute_url() + 'alias_reverse_test/')
+        self.assertContains(response, 'home:/test-page/')
+        self.assertContains(response, 'args:/test-page/args_test/xy/zzy/')
+        self.assertContains(response, 'base:/test/')
+
+        self.assertEqual(reverse('blog_urls/blog_entry_list'), '/test-page/test-child-page/')
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+            '/test-page/test-child-page/')
+        self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
+
+        page.applicationcontent_set.get(urlconf_path='feincms.tests.applicationcontent_urls').delete()
+
+        self.assertEqual(reverse('blog_urls/blog_entry_list'), '/test-page/test-child-page/')
+        self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
 
     def test_26_page_form_initial(self):
         self.create_default_page_set()
@@ -1194,7 +1244,7 @@ class PagesTestCase(TestCase):
             }), '/admin/medialibrary/mediafile/')
 
         self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),
-            '100x60.png" alt="" />')
+            '100x100.png" alt="" />')
 
         stats = list(MediaFile.objects.values_list('type', flat=True))
         self.assertEqual(stats.count('image'), 1)
@@ -1213,6 +1263,15 @@ class PagesTestCase(TestCase):
 
         ctx = add_page_if_missing(request)
         self.assertEqual(ctx['feincms_page'], request._feincms_page)
+
+    def test_31_sites_framework_associating_with_single_site(self):
+        self.login()
+        site_2 = Site.objects.create(name='site 2', domain='2.example.com')
+        self.create_page('site 1 homepage', override_url='/', active=True)
+        self.create_page('site 2 homepage', override_url='/',
+                site=site_2.id, active=True)
+        self.assertEqual(Page.objects.count(), 2)
+        self.assertEqual(Page.objects.active().count(), 1)
 
 
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')

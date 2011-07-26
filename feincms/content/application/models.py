@@ -19,6 +19,7 @@ except ImportError:
 
 from feincms.admin.editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
+from feincms.utils import get_object
 
 try:
     from email.utils import parsedate
@@ -65,6 +66,9 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
         # try to reverse an URL inside another applicationcontent
         other_urlconf, other_viewname = viewname.split('/')
 
+        # TODO do not use internal feincms data structures as much
+        model_class = ApplicationContent._feincms_content_models[0]
+
         if hasattr(_local, 'urlconf') and other_urlconf == _local.urlconf[0]:
             # We are reversing an URL from our own ApplicationContent
             return _reverse(other_viewname, other_urlconf, args, kwargs, _local.urlconf[1], *vargs, **vkwargs)
@@ -91,8 +95,6 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
                 content = _local.reverse_cache[urlconf_cache_keys[key]]
                 break
         else:
-            # TODO do not use internal feincms data structures as much
-            model_class = ApplicationContent._feincms_content_models[0]
             contents = model_class.objects.filter(
                 urlconf_path=other_urlconf).select_related('parent')
 
@@ -138,14 +140,17 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
             # application contents' ``process`` method currently
             saved_cfg = getattr(_local, 'urlconf', None)
 
+            if other_urlconf in model_class.ALL_APPS_CONFIG:
+                # We have an overridden URLconf
+                other_urlconf = model_class.ALL_APPS_CONFIG[other_urlconf]['config'].get(
+                    'urls', other_urlconf)
+
             # Initialize application content reverse hackery for the other application
             _local.urlconf = (other_urlconf, content.parent.get_absolute_url())
 
             try:
                 url = reverse(other_viewname, other_urlconf, args, kwargs, prefix, *vargs, **vkwargs)
             except:
-                # We really must not fail here. We absolutely need to remove/restore
-                # the _urlconfs information
                 url = None
 
             if saved_cfg:
@@ -238,7 +243,7 @@ class ApplicationContent(models.Model):
                     if isinstance(admin_fields, dict):
                         self.custom_fields.update(admin_fields)
                     else:
-                        get_fields = urlresolvers.get_callable(admin_fields)
+                        get_fields = get_object(admin_fields)
                         self.custom_fields.update(get_fields(self, *args, **kwargs))
 
                     for k, v in self.custom_fields.items():
@@ -285,7 +290,7 @@ class ApplicationContent(models.Model):
         # Provide a way for appcontent items to customize URL processing by
         # altering the perceived path of the page:
         if "path_mapper" in self.app_config:
-            path_mapper = urlresolvers.get_callable(self.app_config["path_mapper"])
+            path_mapper = get_object(self.app_config["path_mapper"])
             path, page_url = path_mapper(
                 request.path,
                 page_url,
@@ -314,7 +319,7 @@ class ApplicationContent(models.Model):
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
             fn = partial(
-                urlresolvers.get_callable(view_wrapper),
+                get_object(view_wrapper),
                 view=fn,
                 appcontent_parameters=self.parameters
             )

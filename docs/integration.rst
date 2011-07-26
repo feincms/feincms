@@ -76,6 +76,20 @@ from outside the ApplicationContent renderer. The bigger flexibility
 in choosing the integration point comes with a cost when it comes to
 rendering the content from the 3rd party app.
 
+.. warning::
+
+   The monkey patch for ``django.core.urlresolvers.reverse`` contained
+   in the ``ApplicationContent`` code has to happen "early enough". If
+   ``reverse`` is unable to determine URLs for views integrated through
+   ``ApplicationContent`` you have to move the application content code
+   import to an earlier place (f.e. on the first line of your main
+   ``models.py`` or even in your ``urls.py`` (barring circular import
+   problems).
+
+   This might change if we find a better way to solve this or if
+   Django allows us to poke deeper into the URL resolving/reversing
+   machinery.
+
 
 Adapting the 3rd party application for FeinCMS
 ----------------------------------------------

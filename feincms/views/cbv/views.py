@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.utils.cache import add_never_cache_headers
 from django.views.generic import TemplateView
 
 from feincms import settings
@@ -16,7 +17,7 @@ class Handler(TemplateView):
         return self.handler(request, *args, **kwargs)
 
     def handler(self, request, path=None, *args, **kwargs):
-        self.page = Page.objects.best_match_for_path(path or request.path, raise404=True)
+        self.page = Page.objects.for_request(request, raise404=True, best_match=True, setup=False)
         response = self.prepare()
         if response:
             return response
@@ -85,3 +86,11 @@ class Handler(TemplateView):
             add_never_cache_headers(response)
 
         return response
+
+    @property
+    def __name__(self):
+        """
+        Dummy property to make this handler behave like a normal function.
+        This property is used by django-debug-toolbar
+        """
+        return self.__class__.__name__

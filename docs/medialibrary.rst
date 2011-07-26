@@ -43,14 +43,11 @@ The location and URL of the media library may be configured either by setting
 the appropriate variables in your ``settings.py`` file or in your CMS defining
 module.
 
-The file system path for all media library files is defined using the
-``FEINCMS_MEDIALIBRARY_ROOT`` setting (defaults to ``MEDIA_ROOT``). Below that
-location, ``FEINCMS_MEDIALIBRARY_UPLOAD_TO`` (defaults to ``medialibrary/%Y/%m/``)
-defines the directory to upload individual files to.
-The external URL to the media library can be set with ``FEINCMS_MEDIALIBRARY_URL``
-(defaults to ``MEDIA_URL``).
+The file system path for all media library files is defined using Django's
+``MEDIA_ROOT`` setting and FeinCMS' ``FEINCMS_MEDIALIBRARY_UPLOAD_TO`` setting
+which defaults to ``medialibrary/%Y/%m/``.
 
-These settings can also be defined programmatically using
+These settings can also be changed programmatically using
 ``MediaFile.reconfigure(upload_to=..., storage=...)``
 
 

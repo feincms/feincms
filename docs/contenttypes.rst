@@ -281,10 +281,16 @@ Here's an example form-handling content which uses all of these facilities::
             response['Cache-Control'] = 'no-cache, must-revalidate'
 
 
-Please note that the ``render`` method should not raise an exception if
-``process`` has not been called beforehand. The FeinCMS page module views
-guarantee that ``process`` is called beforehand, other modules may not do
-so. ``feincms.module.blog`` for instance does not.
+.. note::
+
+   Please note that the ``render`` method should not raise an exception if
+   ``process`` has not been called beforehand.
+
+.. warning::
+
+   The FeinCMS page module views
+   guarantee that ``process`` is called beforehand, other modules may not do
+   so. ``feincms.module.blog`` for instance does not.
 
 
 Bundled content types
@@ -425,6 +431,12 @@ This content scans all template directories for templates below
 which are rendered using the Django template language.
 
 Template usage isn't restricted in any way.
+
+.. note::
+
+   You cannot use Django's cached template loader with ``TemplateContent``
+   currently. The cached template loader has no way of enumerating
+   available templates in the filesystem.
 
 
 Video inclusion code for youtube, vimeo etc.

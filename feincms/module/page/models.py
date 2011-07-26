@@ -9,11 +9,14 @@ except ImportError:
 
 import re
 import sys
+import warnings
 
 from django import forms
 from django.core.cache import cache as django_cache
 from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -126,10 +129,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             raise
 
     def page_for_path_or_404(self, path):
-        """
-        Wrapper for page_for_path which raises a Http404 if no page
-        has been found for the passed path.
-        """
+        warnings.warn('page_for_path_or_404 is deprecated. Use page_for_path instead.',
+            DeprecationWarning)
         return self.page_for_path(path, raise404=True)
 
     def best_match_for_path(self, path, raise404=False):
@@ -187,40 +188,47 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return self.in_navigation().filter(parent__isnull=True)
 
-    def for_request(self, request, raise404=False):
+    def for_request(self, request, raise404=False, best_match=False, setup=True):
         """
-        Convenience wrapper for ``page_for_path`` which calls ``setup_request``
-        if a page has been found right away (required by FeinCMS anyway).
+        Return a page for the request
+
+        Does not hit the database more than once for the same request.
+
+        Examples::
+
+            Page.objects.for_request(request, raise404=True, best_match=False)
+
+        Defaults to raising a ``DoesNotExist`` exception if no exact match
+        could be determined.
         """
 
-        page = self.page_for_path(request.path, raise404)
-        page.setup_request(request)
+        if hasattr(request, '_feincms_page'):
+            page = request._feincms_page
+        else:
+            if best_match:
+                page = self.best_match_for_path(request.path, raise404=raise404)
+            else:
+                page = self.page_for_path(request.path, raise404=raise404)
+
+        if setup:
+            page.setup_request(request)
         return page
 
     def for_request_or_404(self, request):
-        """
-        Convenience wrapper for ``for_request`` which always raises a 404 if
-        a page could not be found.
-        """
-
+        warnings.warn('for_request_or_404 is deprecated. Use for_request instead.',
+            DeprecationWarning)
         return self.for_request(request, raise404=True)
 
     def best_match_for_request(self, request, raise404=False):
-        """
-        Convenience wrapper for ``best_match_for_path``. Calls ``setup_request``
-        if a page has been found.
-        """
-
+        warnings.warn('best_match_for_request is deprecated. Use for_request instead.',
+            DeprecationWarning)
         page = self.best_match_for_path(request.path, raise404=raise404)
         page.setup_request(request)
         return page
 
     def from_request(self, request, best_match=False):
-        """
-        ``setup_request`` stores the current page object as an attribute on the
-        request itself. This method uses the cached copy if available instead of
-        running another determination run.
-        """
+        warnings.warn('from_request is deprecated. Use for_request instead.',
+            DeprecationWarning)
 
         if hasattr(request, '_feincms_page'):
             return request._feincms_page
@@ -306,6 +314,8 @@ class Page(Base):
         This is different than page.get_descendants (from mptt) as it will
         additionally select only child pages that are active.
         """
+        warnings.warn('active_children is deprecated. Use self.children.active() instead.',
+            DeprecationWarning)
         return Page.objects.active().filter(parent=self)
 
     def active_children_in_navigation(self):
@@ -315,6 +325,8 @@ class Page(Base):
         menues (only show a disclosure indicator if there actually is something
         to disclose).
         """
+        warnings.warn('active_children_in_navigation is deprecated. Use self.children.in_navigation() instead.',
+            DeprecationWarning)
         return self.active_children().filter(in_navigation=True)
 
     def short_title(self):
@@ -365,6 +377,8 @@ class Page(Base):
         if self._cached_url == self._original_cached_url:
             return
 
+        # TODO: Does not find everything it should when ContentProxy content
+        # inheritance has been customized.
         pages = self.get_descendants().order_by('lft')
 
         for page in pages:
@@ -401,7 +415,8 @@ class Page(Base):
         """
         As the name says.
         """
-
+        warnings.warn('get_siblings_and_self is deprecated. You probably want self.parent.children.active() anyway.',
+            DeprecationWarning)
         return page.get_siblings(include_self=True)
 
     def cache_key(self):
@@ -437,6 +452,9 @@ class Page(Base):
         a HttpResponse for shortcutting the page rendering and returning that response
         immediately to the client.
         """
+
+        if hasattr(request, '_feincms_page'):
+            return
 
         request._feincms_page = self
 
@@ -702,6 +720,9 @@ class PageAdminForm(forms.ModelForm):
             current_id = self.instance.id
             active_pages = active_pages.exclude(id=current_id)
 
+        if hasattr(Site, 'page_set') and 'site' in cleaned_data:
+            active_pages = active_pages.filter(site=cleaned_data['site'])
+
         if not cleaned_data['active']:
             # If the current item is inactive, we do not need to conduct
             # further validation. Note that we only check for the flag, not
@@ -797,11 +818,14 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     def _actions_column(self, page):
         editable = getattr(page, 'feincms_editable', True)
 
+        preview_url = "../../r/%s/%s/" % (
+                ContentType.objects.get_for_model(self.model).id,
+                page.id)
         actions = super(PageAdmin, self)._actions_column(page)
         if editable:
             actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%simg/admin/icon_addlink.gif" alt="%s"></a>' % ( page.pk, _('Add child page'), django_settings.ADMIN_MEDIA_PREFIX ,_('Add child page')))
         actions.insert(0, u'<a href="%s" title="%s"><img src="%simg/admin/selector-search.gif" alt="%s" /></a>' % (
-            page.get_absolute_url(), _('View on site'), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
+            preview_url, _('View on site'), django_settings.ADMIN_MEDIA_PREFIX, _('View on site')))
 
         return actions
 
@@ -833,29 +857,6 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
         self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
 
     def change_view(self, request, object_id, extra_context=None):
-        # Hack around a Django bug: raw_id_fields aren't validated correctly for
-        # ForeignKeys in 1.1: http://code.djangoproject.com/ticket/8746 details
-        # the problem - it was fixed for MultipleChoiceFields but not ModelChoiceField
-        # See http://code.djangoproject.com/ticket/9209
-
-        if hasattr(self, "raw_id_fields"):
-            for k in self.raw_id_fields:
-                if not k in request.POST:
-                    continue
-                if not isinstance(getattr(Page, k).field, models.ForeignKey):
-                    continue
-
-                v = request.POST[k]
-
-                if not v:
-                    del request.POST[k]
-                    continue
-
-                try:
-                    request.POST[k] = int(v)
-                except ValueError:
-                    request.POST[k] = None
-
         try:
             return super(PageAdmin, self).change_view(request, object_id, extra_context)
         except PermissionDenied:
