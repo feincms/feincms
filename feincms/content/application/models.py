@@ -28,8 +28,10 @@ try:
 except ImportError:
     from django.utils._threading_local import local
 
-_local = local()
-_local.reverse_cache = {}
+_local = local() # Used to store MPTT informations about the currently requested
+                 # page. The information will be used to find the best application
+                 # content instance if a particular application has been added
+                 # more than once to the current website.
 
 
 def retrieve_page_information(page, request=None):
@@ -83,6 +85,8 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
             pass
     else:
         model_class = ApplicationContent._feincms_content_models[0]
+
+        # TODO: Only active pages? What about multisite support?
         contents = model_class.objects.filter(urlconf_path=urlconf).select_related('parent')
 
         if proximity_info:
@@ -126,6 +130,9 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
                 # We have an overridden URLconf
                 urlconf = model_class.ALL_APPS_CONFIG[urlconf]['config'].get(
                     'urls', urlconf)
+
+            if not hasattr(_local, 'reverse_cache'):
+                _local.reverse_cache = {}
 
             _local.reverse_cache[app_cache_keys[cache_key]] = url_prefix = (
                 urlconf,
