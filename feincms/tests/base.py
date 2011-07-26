@@ -1241,12 +1241,15 @@ class PagesTestCase(TestCase):
             region='main', ordering=0,
             urlconf_path='feincms.tests.applicationcontent_urls')
 
-        from django.core.urlresolvers import reverse
+        from feincms.content.application.models import app_reverse, reverse
 
-        # test reverse replacement
-        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+        # test app_reverse
+        self.assertEqual(app_reverse('ac_module_root', 'feincms.tests.applicationcontent_urls'),
                          page.get_absolute_url())
 
+        # test reverse replacement - should still work, but is deprecated
+        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+                         page.get_absolute_url())
 
         # when specific applicationcontent exists more then once reverse should return url
         # for the one that has tree_id same as current feincms page
@@ -1260,12 +1263,12 @@ class PagesTestCase(TestCase):
         _empty_reverse_cache()
 
         settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
-        self.client.get(page_de.get_absolute_url())
-        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+        self.client.get(page_de_1.get_absolute_url())
+        self.assertEqual(app_reverse('ac_module_root', 'feincms.tests.applicationcontent_urls'),
                          page_de_1.get_absolute_url())
 
         self.client.get(page1.get_absolute_url())
-        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(app_reverse('ac_module_root', 'feincms.tests.applicationcontent_urls'),
                       page.get_absolute_url())
 
     def test_29_medialibrary_admin(self):
