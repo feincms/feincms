@@ -82,7 +82,12 @@ def thumbnail(filename, size='200x200'):
             generate = False
 
     if generate:
-        image = Image.open(StringIO(storage.open(filename).read()))
+        try:
+            image = Image.open(StringIO(storage.open(filename).read()))
+        except IOError:
+             # Do not crash if file does not exist for some reason
+            return storage.url(filename)
+
         image.thumbnail([x, y], Image.ANTIALIAS)
         buf = StringIO()
         if image.mode not in ('RGB', 'L'):
@@ -135,7 +140,12 @@ def cropscale(filename, size='200x200'):
             generate = False
 
     if generate:
-        image = Image.open(StringIO(storage.open(filename).read()))
+        try:
+            image = Image.open(StringIO(storage.open(filename).read()))
+        except IOError:
+             # Do not crash if file does not exist for some reason
+            return storage.url(filename)
+
         src_width, src_height = image.size
         src_ratio = float(src_width) / float(src_height)
         dst_width, dst_height = w, h
