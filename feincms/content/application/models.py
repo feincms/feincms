@@ -134,10 +134,17 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
             if not hasattr(_local, 'reverse_cache'):
                 _local.reverse_cache = {}
 
+            # Reimplementation of Page.get_absolute_url because we are quite likely
+            # to hit infinite recursion if we call models.permalink because of the
+            # reverse monkey patch
+            url = content.parent._cached_url[1:-1]
+            if url:
+                prefix = _reverse('feincms_handler', args=(url,))
+            else:
+                prefix = _reverse('feincms_home')
+
             _local.reverse_cache[app_cache_keys[cache_key]] = url_prefix = (
-                urlconf,
-                content.parent.get_absolute_url(),
-                )
+                urlconf, prefix)
 
     if url_prefix:
         return _reverse(viewname,
