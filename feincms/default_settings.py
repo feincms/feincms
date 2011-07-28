@@ -98,3 +98,11 @@ FEINCMS_TIDY_SHOW_WARNINGS = getattr(settings, 'FEINCMS_TIDY_SHOW_WARNINGS', Tru
 FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE = getattr(settings, 'FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE', True)
 #: Name of the tidy function - anything which takes (html) and returns (html, errors, warnings) can be used:
 FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION', 'feincms.utils.html.tidy.tidy_html')
+
+
+# ------------------------------------------------------------------------
+#: Monkey-patch django.core.urlresvolers.reverse to be application-content aware?
+#: (The monkey patch is deprecated and should not be used anymore. Use the
+#:  ``app_reverse`` function and the ``{% app_reverse %}`` template tag instead.)
+#: The value of this setting will be changed to False in FeinCMS 1.6.
+FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH', True)

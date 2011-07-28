@@ -13,7 +13,7 @@ from django.utils.functional import curry as partial, wraps
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-
+from feincms import settings
 from feincms.admin.editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
 from feincms.utils import get_object
@@ -223,7 +223,9 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
             pass
 
     return _reverse(viewname, urlconf, args, kwargs, prefix, *vargs, **vkwargs)
-urlresolvers.reverse = reverse
+
+if settings.FEINCMS_REVERSE_MONKEY_PATCH:
+    urlresolvers.reverse = reverse
 
 
 class ApplicationContent(models.Model):
