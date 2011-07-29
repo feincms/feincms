@@ -11,7 +11,7 @@
 	{% if not original.is_active %}
 	    {% url feincms_preview original.get_absolute_url|slice:"1:-1" original.pk as preview_url %}
 	    {% if preview_url %}
-	        <li><a target="_blank" href="{{ preview_url }}">{% trans "Preview" %}</a></li>
+	        <li><a target="_blank" href="{{ preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
 	    {% endif %}
 	{% endif %}
 </ul>
