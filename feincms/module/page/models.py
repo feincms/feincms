@@ -38,7 +38,6 @@ from feincms.models import Base, create_base_model
 from feincms.utils import get_object, copy_model_instance
 import feincms.admin.filterspecs
 
-
 # ------------------------------------------------------------------------
 class ActiveAwareContentManagerMixin(object):
     """
@@ -756,10 +755,7 @@ class PageAdminForm(forms.ModelForm):
 
         return cleaned_data
 
-
 # ------------------------------------------------------------------------
-
-
 class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     class Media:
         css = {}
