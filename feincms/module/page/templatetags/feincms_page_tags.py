@@ -4,6 +4,7 @@
 
 from django import template
 from django.conf import settings
+from django.db.models import Q
 from django.http import HttpRequest
 
 from feincms.module.page.models import Page, PageManager
@@ -58,12 +59,22 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
 
         return entries
 
+    def _in_navigation_depth(self, level, depth):
+        q = Q(in_navigation=True, level=level)
+        for i in range(1, depth):
+            q |= Q(**{
+                'parent__' * i + 'in_navigation': True,
+                'level': level + i,
+                })
+        return q
+
     def _what(self, instance, level, depth):
         if level <= 1:
             if depth == 1:
                 return Page.objects.toplevel_navigation()
             else:
-                return Page.objects.in_navigation().filter(level__lt=depth)
+                return Page.objects.active().filter(
+                    self._in_navigation_depth(0, depth) & Q(level__lt=depth))
 
         # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
         # of the current page, we have to add 2 to the mptt level
@@ -86,7 +97,8 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
             if depth == 1:
                 return instance.children.in_navigation()
             else:
-                queryset = instance.get_descendants().filter(level__lte=instance.level + depth, in_navigation=True)
+                queryset = instance.get_descendants().filter(
+                    self._in_navigation_depth(level - 1, depth) & Q(level__lte=instance.level + depth))
                 return PageManager.apply_active_filters(queryset)
 register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
