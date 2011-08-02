@@ -232,7 +232,7 @@ class ItemEditor(admin.ModelAdmin):
     def response_add(self, request, obj, *args, **kwargs):
         r = super(ItemEditor, self).response_add(request, obj, *args, **kwargs)
         itemeditor_post_save_related.send(sender=obj.__class__, instance=obj, created=True)
-        return response
+        return r
 
     def response_change(self, request, obj, *args, **kwargs):
         r = super(ItemEditor, self).response_change(request, obj, *args, **kwargs)
