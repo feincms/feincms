@@ -60,12 +60,12 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         return entries
 
     def _in_navigation_depth(self, level, depth):
-        q = Q(in_navigation=True, level=level)
-        for i in range(1, depth):
-            q |= Q(**{
+        q = Q(level__lt=level + depth)
+        for i in range(depth):
+            q &= Q(level__lt=level + i) | Q(**{
                 'parent__' * i + 'in_navigation': True,
-                'level': level + i,
-                })
+                'level__gte': level + i,
+            })
         return q
 
     def _what(self, instance, level, depth):
@@ -74,7 +74,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 return Page.objects.toplevel_navigation()
             else:
                 return Page.objects.active().filter(
-                    self._in_navigation_depth(0, depth) & Q(level__lt=depth))
+                    self._in_navigation_depth(0, depth))
 
         # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
         # of the current page, we have to add 2 to the mptt level
@@ -98,7 +98,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 return instance.children.in_navigation()
             else:
                 queryset = instance.get_descendants().filter(
-                    self._in_navigation_depth(level - 1, depth) & Q(level__lte=instance.level + depth))
+                    self._in_navigation_depth(level - 1, depth))
                 return PageManager.apply_active_filters(queryset)
 register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
