@@ -3,34 +3,31 @@
 # ------------------------------------------------------------------------
 
 from datetime import datetime
+import logging
+import os
+import re
+from PIL import Image
 
+from django import forms
 from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
+from django.contrib.contenttypes.models import ContentType
 from django.conf import settings as django_settings
 from django.db import models
-from django.template.defaultfilters import filesizeformat
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
+from django.template.defaultfilters import filesizeformat, slugify
 from django.utils.safestring import mark_safe
 from django.utils import translation
 from django.utils.translation import ungettext, ugettext_lazy as _
-from django.template.defaultfilters import slugify
-from django.http import HttpResponseRedirect
-from django.contrib.contenttypes.models import ContentType
-from django.template.context import RequestContext
-# 1.2 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
 from feincms.models import ExtensionsMixin
-
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import TranslatedObjectMixin, Translation, \
     TranslatedObjectManager, admin_translationinline
-
-import re
-import os
-import logging
-from PIL import Image
-from django import forms
-from django.shortcuts import render_to_response
 
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
@@ -169,7 +166,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     def file_type(self):
         t = self.filetypes_dict[self.type]
         if self.type == 'image':
-            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property) 
+            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property)
             try:
                 self.file.path
             except NotImplementedError:
@@ -349,7 +346,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
-    
+
 
     class AddCategoryForm(forms.Form):
         _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
@@ -398,7 +395,7 @@ class MediaFileAdmin(admin.ModelAdmin):
         return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
 
     @staticmethod
-    # 1.2 @csrf_protect
+    @csrf_protect
     @permission_required('medialibrary.add_mediafile')
     def bulk_upload(request):
         from django.core.urlresolvers import reverse
