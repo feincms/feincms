@@ -27,6 +27,7 @@ from feincms.models import ContentProxy
 
 
 INVENTORY_VERSION = 1
+_translation_map_cache = {}
 
 
 # ------------------------------------------------------------------------
@@ -65,7 +66,8 @@ class TrackerContentProxy(ContentProxy):
         return self._cache['counts']
 
     def _translation_map(self):
-        if not hasattr(self.__class__, '_translation_map_cache'):
+        cls = self.item.__class__
+        if not cls in _translation_map_cache:
             # Prime translation map and cache it in the class. This needs to be
             # done late as opposed to at class definition time as not all information
             # is ready, especially when we are doing a "syncdb" the ContentType table
@@ -78,8 +80,8 @@ class TrackerContentProxy(ContentProxy):
                 map[-dct.id] = idx # From-inventory map
                 map[idx] = dct.id  # To-inventory map
 
-            self.__class__._translation_map_cache = map
-        return self._translation_map_cache
+            _translation_map_cache[cls] = map
+        return _translation_map_cache[cls]
 
     def _from_inventory(self, inventory):
         """
@@ -108,10 +110,7 @@ def class_prepared_handler(sender, **kwargs):
     # are fully loaded and initialized when the translation map is accessed.
     # This leads to (lots of) crashes on the server. Better be safe and
     # kill the translation map when any class_prepared signal is received.
-    try:
-        del TrackerContentProxy._translation_map_cache
-    except AttributeError:
-        pass
+    _translation_map_cache = {}
 class_prepared.connect(class_prepared_handler)
 
 # ------------------------------------------------------------------------
