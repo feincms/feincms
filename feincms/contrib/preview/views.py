@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 from feincms.module.page import processors
@@ -11,12 +11,13 @@ class PreviewHandler(Handler):
     Preview handler
 
     The methods used in this handler should not be considered official API.
-    Everything here is subject to change.
+
+    *** Everything here is subject to change. ***
     """
 
     def __call__(self, request, path, page_id):
         if not request.user.is_staff:
-            return HttpResponseRedirect('/')
+            raise Http404
 
         page = get_object_or_404(Page, pk=page_id)
 
@@ -30,4 +31,6 @@ class PreviewHandler(Handler):
         # a 404 if the extra_path isn't consumed by any content type
         request.path = page.get_absolute_url()
 
-        return self.build_response(request, page)
+        response = self.build_response(request, page)
+        response['Cache-Control'] = 'no-cache, must-revalidate, no-store, private'
+        return response
