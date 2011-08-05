@@ -1,0 +1,871 @@
+# Simplified Chinese Translation For FeinCMS.
+# Copyright (C) 2011 THE FeinCMS'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the FeinCMS package.
+# Mark Renton <indexofire@gmail.com>, 2011.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: FeinCMS\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-05 06:32+0800\n"
+"PO-Revision-Date: 2011-08-05 10:20+0800\n"
+"Last-Translator: Mark Renton <indexofire@gmail.com>\n"
+"Language-Team: zh_CN <indexofire@gmail.com>\n"
+"Language: Simplified Chinese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+
+#: models.py:343 content/template/models.py:39 content/template/models.py:57
+msgid "template"
+msgstr "模板"
+
+#: models.py:522
+msgid "ordering"
+msgstr "排序"
+
+#: translations.py:171 module/blog/extensions/translations.py:17
+#: module/page/extensions/translations.py:102
+msgid "language"
+msgstr "语言"
+
+#: admin/filterspecs.py:35 admin/filterspecs.py:70
+msgid "All"
+msgstr "全部"
+
+#: admin/filterspecs.py:46 module/page/models.py:254
+msgid "Parent"
+msgstr "父级"
+
+#: admin/filterspecs.py:81
+msgid "Category"
+msgstr "分类"
+
+#: admin/item_editor.py:140
+#, python-format
+msgid "Change %s"
+msgstr "修改 %s"
+
+#: admin/tree_editor.py:219 content/rss/models.py:20
+#: content/section/models.py:32 module/blog/models.py:31
+#: module/medialibrary/models.py:48 module/page/models.py:251
+#: module/page/models.py:327
+msgid "title"
+msgstr "标题"
+
+#: admin/tree_editor.py:397
+#, python-format
+msgid "%s has been moved to a new position."
+msgstr "%s 已被移至新的位置"
+
+#: admin/tree_editor.py:401
+msgid "Did not understand moving instruction."
+msgstr "无法接受的移动指令"
+
+#: admin/tree_editor.py:410
+msgid "actions"
+msgstr "动作"
+
+#: content/application/models.py:186
+msgid "application content"
+msgstr "应用程序内容"
+
+#: content/application/models.py:187
+msgid "application contents"
+msgstr "应用程序内容"
+
+#: content/application/models.py:218
+msgid "application"
+msgstr "应用程序"
+
+#: content/comments/models.py:28
+msgid "enabled"
+msgstr "激活"
+
+#: content/comments/models.py:28
+msgid "New comments may be added"
+msgstr "新的评论"
+
+#: content/comments/models.py:32 content/comments/models.py:33
+msgid "comments"
+msgstr "评论"
+
+#: content/comments/models.py:48
+msgid "public"
+msgstr "公开"
+
+#: content/comments/models.py:48
+msgid "not public"
+msgstr "不公开"
+
+#: content/contactform/models.py:18
+msgid "name"
+msgstr "名称"
+
+#: content/contactform/models.py:19
+msgid "email"
+msgstr "电子邮件"
+
+#: content/contactform/models.py:20
+msgid "subject"
+msgstr "主题"
+
+#: content/contactform/models.py:23 content/raw/models.py:14
+msgid "content"
+msgstr "内容"
+
+#: content/contactform/models.py:34
+msgid "contact form"
+msgstr "联系表单"
+
+#: content/contactform/models.py:35
+msgid "contact forms"
+msgstr "联系表单"
+
+#: content/file/models.py:16 content/file/models.py:20
+#: module/medialibrary/models.py:98
+msgid "file"
+msgstr "文件"
+
+#: content/file/models.py:21
+msgid "files"
+msgstr "文件"
+
+#: content/image/models.py:24 content/image/models.py:28
+msgid "image"
+msgstr "图片"
+
+#: content/image/models.py:29
+msgid "images"
+msgstr "图片"
+
+#: content/image/models.py:42 content/medialibrary/models.py:100
+#: content/medialibrary/models.py:108
+msgid "position"
+msgstr "位置"
+
+#: content/medialibrary/models.py:36
+msgid "(no caption)"
+msgstr "(无标题)"
+
+#: content/medialibrary/models.py:85 content/medialibrary/models.py:96
+#: content/medialibrary/models.py:106 content/section/models.py:48
+#: module/medialibrary/models.py:110
+msgid "media file"
+msgstr "多媒体文件"
+
+#: content/medialibrary/models.py:86 module/medialibrary/models.py:111
+msgid "media files"
+msgstr "多媒体文件"
+
+#: content/medialibrary/models.py:126
+msgid "block"
+msgstr "区块"
+
+#: content/medialibrary/models.py:127
+msgid "left"
+msgstr "左"
+
+#: content/medialibrary/models.py:128
+msgid "right"
+msgstr "右"
+
+#: content/raw/models.py:18
+msgid "raw content"
+msgstr "raw content"
+
+#: content/raw/models.py:19
+msgid "raw contents"
+msgstr "raw contents"
+
+#: content/richtext/models.py:15 content/richtext/models.py:85
+#: content/section/models.py:33
+msgid "text"
+msgstr "纯文本"
+
+#: content/richtext/models.py:26
+msgid "HTML Tidy"
+msgstr "HTML"
+
+#: content/richtext/models.py:27
+msgid "Ignore the HTML validation warnings"
+msgstr "忽略HTML验证错误警告"
+
+#: content/richtext/models.py:51
+#, python-format
+msgid ""
+"HTML validation produced %(count)d warnings. Please review the updated "
+"content below before continuing: %(messages)s"
+msgstr "HTML验证产生 %(count)d 个警告。请在继续前查看下面更新的内容："
+" %(messages)s"
+
+#: content/richtext/models.py:89
+msgid "rich text"
+msgstr "富文本"
+
+#: content/richtext/models.py:90
+msgid "rich texts"
+msgstr "富文本"
+
+#: content/rss/models.py:21
+msgid ""
+"The rss field is updated several times a day. A change in the title will "
+"only be visible on the home page after the next feed update."
+msgstr "RSS字段一天内更新多次。标题改动将在feed更新后只在主页显示。"
+
+#: content/rss/models.py:22
+msgid "link"
+msgstr "链接"
+
+#: content/rss/models.py:23
+msgid "pre-rendered content"
+msgstr "预渲染的内容"
+
+#: content/rss/models.py:24
+msgid "last updated"
+msgstr "最后更新"
+
+#: content/rss/models.py:25
+msgid "max. items"
+msgstr "最大条目数"
+
+#: content/rss/models.py:29
+msgid "RSS feed"
+msgstr "RSS 提要"
+
+#: content/rss/models.py:30
+msgid "RSS feeds"
+msgstr "RSS 提要"
+
+#: content/section/models.py:37
+msgid "section"
+msgstr "版块"
+
+#: content/section/models.py:38
+msgid "sections"
+msgstr "版块"
+
+#: content/section/models.py:53 content/section/models.py:61
+#: content/table/models.py:81
+msgid "type"
+msgstr "类型"
+
+#: content/table/models.py:62
+msgid "plain"
+msgstr "无格式"
+
+#: content/table/models.py:63
+msgid "title row"
+msgstr "标题行"
+
+#: content/table/models.py:65
+msgid "title row and column"
+msgstr "标题行和列"
+
+#: content/table/models.py:71
+msgid "table"
+msgstr "表格"
+
+#: content/table/models.py:72
+msgid "tables"
+msgstr "表格"
+
+#: content/table/models.py:86
+msgid "data"
+msgstr "数据"
+
+#: content/template/models.py:62
+msgid "template content"
+msgstr "模板内容"
+
+#: content/template/models.py:63
+msgid "template contents"
+msgstr "模板内容"
+
+#: content/video/models.py:23
+msgid "video link"
+msgstr "视频链接"
+
+#: content/video/models.py:24
+msgid ""
+"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
+"com/watch?v=zmj1rpzDRZ0"
+msgstr "请输入youtube或vimeo视频链接，比如：http://www.youtube.com/watch?"
+"v=zmj1rpzDRZ0"
+
+#: content/video/models.py:28
+msgid "video"
+msgstr "视频"
+
+#: content/video/models.py:29
+msgid "videos"
+msgstr "视频"
+
+#: module/blog/models.py:30
+msgid "published"
+msgstr "已发布"
+
+#: module/blog/models.py:32 module/page/models.py:252
+msgid "This is used for the generated navigation too."
+msgstr "也被用于产生导航条"
+
+#: module/blog/models.py:35
+msgid "published on"
+msgstr "发布于"
+
+#: module/blog/models.py:36
+msgid "Will be set automatically once you tick the `published` checkbox above."
+msgstr "一旦你将`发表`复选框以上打勾选中，日志将设置成自动发布。"
+
+#: module/blog/models.py:41
+msgid "entry"
+msgstr "条目"
+
+#: module/blog/models.py:42
+msgid "entries"
+msgstr "条目"
+
+#: module/blog/extensions/tags.py:12
+msgid "tags"
+msgstr "标签"
+
+#: module/blog/extensions/translations.py:20
+#: module/page/extensions/translations.py:105
+msgid "translation of"
+msgstr "翻译"
+
+#: module/blog/extensions/translations.py:23
+#: module/page/extensions/translations.py:108
+msgid "Leave this empty for entries in the primary language."
+msgstr "在主要语言项中对这些条目留空。"
+
+#: module/blog/extensions/translations.py:44
+#: templates/admin/feincms/item_editor.html:69
+msgid "available translations"
+msgstr "已有翻译"
+
+#: module/extensions/changedate.py:38
+msgid "creation date"
+msgstr "创建日期"
+
+#: module/extensions/changedate.py:39
+msgid "modification date"
+msgstr "修改日期"
+
+#: module/extensions/ct_tracker.py:117
+msgid "content types"
+msgstr "内容类型"
+
+#: module/extensions/featured.py:9
+msgid "featured"
+msgstr "特性"
+
+#: module/extensions/featured.py:14
+msgid "Featured"
+msgstr "特性"
+
+#: module/extensions/seo.py:9
+msgid "meta keywords"
+msgstr "meta 关键词"
+
+#: module/extensions/seo.py:10
+msgid "This will be prepended to the default keyword list."
+msgstr "这将作为默认的关键字列表被添加。"
+
+#: module/extensions/seo.py:11
+msgid "meta description"
+msgstr "meta 描述"
+
+#: module/extensions/seo.py:12
+msgid "This will be prepended to the default description."
+msgstr "这将作为默认的描述被添加"
+
+#: module/extensions/seo.py:18
+msgid "Search engine optimization"
+msgstr "搜索引擎优化"
+
+#: module/medialibrary/models.py:51
+msgid "parent"
+msgstr "父"
+
+#: module/medialibrary/models.py:53 module/page/models.py:253
+msgid "slug"
+msgstr "slug"
+
+#: module/medialibrary/models.py:57
+msgid "category"
+msgstr "类别"
+
+#: module/medialibrary/models.py:58 module/medialibrary/models.py:104
+msgid "categories"
+msgstr "类别"
+
+#: module/medialibrary/models.py:99 module/medialibrary/models.py:185
+msgid "file type"
+msgstr "文件类型"
+
+#: module/medialibrary/models.py:100 module/medialibrary/models.py:125
+msgid "created"
+msgstr "创建"
+
+#: module/medialibrary/models.py:101
+msgid "copyright"
+msgstr "版权"
+
+#: module/medialibrary/models.py:102 module/medialibrary/models.py:120
+msgid "file size"
+msgstr "文件大小"
+
+#: module/medialibrary/models.py:202
+msgid "file info"
+msgstr "文件信息"
+
+#: module/medialibrary/models.py:282
+msgid "Image"
+msgstr "图片"
+
+#: module/medialibrary/models.py:283
+msgid "Video"
+msgstr "视频"
+
+#: module/medialibrary/models.py:284
+msgid "Audio"
+msgstr "音频"
+
+#: module/medialibrary/models.py:285
+msgid "PDF document"
+msgstr "PDF文档"
+
+#: module/medialibrary/models.py:286
+msgid "Flash"
+msgstr "Flash"
+
+#: module/medialibrary/models.py:287
+msgid "Text"
+msgstr "纯文本"
+
+#: module/medialibrary/models.py:288
+msgid "Rich Text"
+msgstr "富文本"
+
+#: module/medialibrary/models.py:289
+msgid "Zip archive"
+msgstr "zip压缩包"
+
+#: module/medialibrary/models.py:290
+msgid "Microsoft Word"
+msgstr "Microsoft Word"
+
+#: module/medialibrary/models.py:291
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+#: module/medialibrary/models.py:292
+msgid "Microsoft PowerPoint"
+msgstr "Microsoft PowerPoint"
+
+#: module/medialibrary/models.py:293
+msgid "Binary"
+msgstr "二进制文件"
+
+#: module/medialibrary/models.py:309
+msgid "caption"
+msgstr "题目"
+
+#: module/medialibrary/models.py:310
+msgid "description"
+msgstr "描述"
+
+#: module/medialibrary/models.py:313
+msgid "media file translation"
+msgstr "媒体文件翻译"
+
+#: module/medialibrary/models.py:314
+msgid "media file translations"
+msgstr "媒体文件翻译"
+
+#: module/medialibrary/models.py:341
+msgid "Preview"
+msgstr "预览"
+
+#: module/medialibrary/models.py:390
+msgid "Could not access storage"
+msgstr "无法访问储存"
+
+#: module/medialibrary/models.py:411
+#, python-format
+msgid "%d files imported"
+msgstr "导入 %d 个文件"
+
+#: module/medialibrary/models.py:413
+#, python-format
+msgid "ZIP file invalid: %s"
+msgstr "zip文件无效: %s"
+
+#: module/medialibrary/models.py:419
+msgid "No input file given"
+msgstr "没有选择文件"
+
+#: module/page/models.py:248
+msgid "active"
+msgstr "激活"
+
+#: module/page/models.py:256 module/page/models.py:795
+msgid "in navigation"
+msgstr "导航中"
+
+#: module/page/models.py:257
+msgid "override URL"
+msgstr "URL覆盖"
+
+#: module/page/models.py:258
+msgid ""
+"Override the target URL. Be sure to include slashes at the beginning and at "
+"the end if it is a local URL. This affects both the navigation and subpages' "
+"URLs."
+msgstr ""
+"覆盖目标URL，如果它是一个本地的URL，一定要包括在开始和结束时的斜线。这会"
+"影响导航和子页面的URL"
+
+#: module/page/models.py:259
+msgid "redirect to"
+msgstr "转向"
+
+#: module/page/models.py:260
+msgid "Target URL for automatic redirects."
+msgstr "转向目标URL"
+
+#: module/page/models.py:261
+msgid "Cached URL"
+msgstr "URL缓存"
+
+#: module/page/models.py:272
+msgid "page"
+msgstr "页面"
+
+#: module/page/models.py:273
+msgid "pages"
+msgstr "页面"
+
+#: module/page/models.py:290 module/page/models.py:886
+msgid "is active"
+msgstr "激活"
+
+#: module/page/models.py:715
+msgid "This URL is already taken by an active page."
+msgstr "此URL已被其他页面使用"
+
+#: module/page/models.py:733
+msgid "This URL is already taken by another active page."
+msgstr "此URL已被另一个页面使用"
+
+#: module/page/models.py:758
+msgid "Other options"
+msgstr "其他选项"
+
+#: module/page/models.py:802 templates/admin/feincms/item_editor.html:54
+msgid "Add child page"
+msgstr "增加子页面"
+
+#: module/page/models.py:804 templates/admin/feincms/content_inline.html:9
+msgid "View on site"
+msgstr "站内查看"
+
+#: module/page/models.py:863
+msgid "You don't have the necessary permissions to edit this object"
+msgstr "你无权编辑该对象"
+
+#: module/page/models.py:878
+msgid "inherited"
+msgstr "继承"
+
+#: module/page/models.py:882
+msgid "extensions"
+msgstr "扩展"
+
+#: module/page/extensions/datepublisher.py:48
+msgid "publication date"
+msgstr "发布起始日期"
+
+#: module/page/extensions/datepublisher.py:50
+msgid "publication end date"
+msgstr "发布结束日期"
+
+#: module/page/extensions/datepublisher.py:52
+msgid "Leave empty if the entry should stay active forever."
+msgstr "如果条目要永久显示，请留空"
+
+#: module/page/extensions/datepublisher.py:78
+msgid "visible from - to"
+msgstr "可查看日期"
+
+#: module/page/extensions/datepublisher.py:88
+msgid "Date-based publishing"
+msgstr "发布基于日期控制"
+
+#: module/page/extensions/excerpt.py:9
+msgid "excerpt"
+msgstr "摘抄"
+
+#: module/page/extensions/excerpt.py:10
+msgid "Add a brief excerpt summarizing the content of this page."
+msgstr "添加一条简要形容页面内容"
+
+#: module/page/extensions/excerpt.py:12
+msgid "Excerpt"
+msgstr "摘抄"
+
+#: module/page/extensions/navigation.py:77
+#: module/page/extensions/navigation.py:97
+msgid "navigation extension"
+msgstr "导航扩展"
+
+#: module/page/extensions/navigation.py:99
+msgid ""
+"Select the module providing subpages for this page if you need to customize "
+"the navigation."
+msgstr ""
+"如果您需要定制的导航，选择提供此页面的子页面模块。"
+
+#: module/page/extensions/navigation.py:112
+msgid "Navigation extension"
+msgstr "导航扩展"
+
+#: module/page/extensions/relatedpages.py:13
+msgid "Select pages that should be listed as related content."
+msgstr "选择页面作为相关页面在列表中显示"
+
+#: module/page/extensions/relatedpages.py:20
+msgid "Related pages"
+msgstr "相关页面"
+
+#: module/page/extensions/symlinks.py:15
+msgid "symlinked page"
+msgstr "链接页面"
+
+#: module/page/extensions/symlinks.py:16
+msgid "All content is inherited from this page if given."
+msgstr "所有内容继承于给出的页面"
+
+#: module/page/extensions/symlinks.py:30
+msgid "Symlinked page"
+msgstr "链接页面"
+
+#: module/page/extensions/titles.py:13
+msgid "content title"
+msgstr "内容标题"
+
+#: module/page/extensions/titles.py:14
+msgid "The first line is the main title, the following lines are subtitles."
+msgstr "正文第一行作为主标题，第二行作为副标题"
+
+#: module/page/extensions/titles.py:15
+msgid "page title"
+msgstr "页面标题"
+
+#: module/page/extensions/titles.py:16
+msgid "Page title for browser window. Same as title by default."
+msgstr "浏览器窗口显示标题默认为页面标题"
+
+#: module/page/extensions/titles.py:43
+msgid "Titles"
+msgstr "标题"
+
+#: module/page/extensions/translations.py:171
+msgid "Edit translation"
+msgstr "编辑翻译"
+
+#: module/page/extensions/translations.py:174
+msgid "Create translation"
+msgstr "创建翻译"
+
+#: module/page/extensions/translations.py:179
+msgid "translations"
+msgstr "翻译"
+
+#: templates/admin/filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr "由 %(filter_title)s"
+
+#: templates/admin/content/mediafile/init.html:9
+msgid "Search"
+msgstr "搜索"
+
+#: templates/admin/feincms/_messages_js.html:4
+msgid "Really delete item?"
+msgstr "真的要删除？"
+
+#: templates/admin/feincms/_messages_js.html:4
+msgid "Confirm to delete item"
+msgstr "确认删除"
+
+#: templates/admin/feincms/_messages_js.html:5
+msgid "Item deleted successfully."
+msgstr "删除成功"
+
+#: templates/admin/feincms/_messages_js.html:5
+msgid "Cannot delete item"
+msgstr "不能删除"
+
+#: templates/admin/feincms/_messages_js.html:6
+msgid "Cannot delete item, because it is parent of at least one other item."
+msgstr "因为该项是其他的父级条目所以不能删除"
+
+#: templates/admin/feincms/_messages_js.html:7
+msgid "Change template"
+msgstr "改变模板"
+
+#: templates/admin/feincms/_messages_js.html:8
+msgid "Really change template? <br />All changes are saved."
+msgstr "真的要修改模板么？ <br />全部修改已被保存。"
+
+#: templates/admin/feincms/_messages_js.html:9
+#, python-format
+msgid ""
+"Really change template? <br />All changes are saved and content from <strong>"
+"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+msgstr ""
+"真的修改模板？ <br />所有修改已保存，<strong>%(source_regions)s</strong>的内容"
+"已被移到<strong>%(target_region)s</strong>"
+
+#: templates/admin/feincms/_messages_js.html:12
+msgid "Hide"
+msgstr "隐藏"
+
+#: templates/admin/feincms/_messages_js.html:13
+msgid "Show"
+msgstr "显示"
+
+#: templates/admin/feincms/_messages_js.html:14
+msgid "After"
+msgstr "之后"
+
+#: templates/admin/feincms/_messages_js.html:15
+msgid "Before"
+msgstr "之前"
+
+#: templates/admin/feincms/_messages_js.html:16
+msgid "Insert new:"
+msgstr "插入新的"
+
+#: templates/admin/feincms/content_editor.html:11
+msgid "Region empty"
+msgstr "空区域"
+
+#: templates/admin/feincms/content_editor.html:15
+msgid ""
+"Content from the parent site is automatically inherited. To override this "
+"behaviour, add some content."
+msgstr ""
+"父站的内容已自动继承。添加新内容会覆盖。"
+
+#: templates/admin/feincms/content_editor.html:23
+msgid "Add new item"
+msgstr "新建"
+
+#: templates/admin/feincms/content_inline.html:91
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr "添加另一个 %(verbose_name)s"
+
+#: templates/admin/feincms/content_inline.html:94
+msgid "Remove"
+msgstr "移除"
+
+#: templates/admin/feincms/fe_editor.html:46
+msgid "Save"
+msgstr "保存"
+
+#: templates/admin/feincms/fe_tools.html:27
+msgid "Stop Editing"
+msgstr "暂停编辑"
+
+#: templates/admin/feincms/fe_tools.html:32
+msgid "edit"
+msgstr "编辑"
+
+#: templates/admin/feincms/fe_tools.html:34
+msgid "new"
+msgstr "新建"
+
+#: templates/admin/feincms/fe_tools.html:35
+msgid "up"
+msgstr "上"
+
+#: templates/admin/feincms/fe_tools.html:36
+msgid "down"
+msgstr "下"
+
+#: templates/admin/feincms/fe_tools.html:37
+msgid "remove"
+msgstr "移除"
+
+#: templates/admin/feincms/tree_editor.html:37
+msgid "Shortcuts"
+msgstr "快捷方式"
+
+#: templates/admin/feincms/tree_editor.html:39
+msgid "Collapse tree"
+msgstr "折叠树型"
+
+#: templates/admin/feincms/tree_editor.html:40
+msgid "Expand tree"
+msgstr "展开树型"
+
+#: templates/admin/feincms/tree_editor.html:43
+msgid "Filter"
+msgstr "过滤器"
+
+#: templates/admin/feincms/page/page/item_editor.html:9
+msgid "Edit on site"
+msgstr "站内编辑"
+
+#: templates/admin/feincms/page/page/item_editor.html:16
+#: templates/admin/feincms/page/page/tree_editor.html:7
+msgid "Home"
+msgstr "首页"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:12
+msgid "Bulk upload a ZIP file:"
+msgstr "批量上传zip文件"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:21
+msgid "Send"
+msgstr "发送"
+
+#: templates/content/comments/default.html:10
+#, python-format
+msgid "%(comment_count)s comments."
+msgstr "%(comment_count)s 条评论"
+
+#: templates/content/comments/default.html:18
+#, python-format
+msgid ""
+"\n"
+"                    %(comment_username)s said on %(comment_submit_date)s<br /"
+">\n"
+"                "
+msgstr ""
+"\n"
+"                    %(comment_username)s 在 %(comment_submit_date)s 说<br /"
+">\n"
+"                "
+
+#: templates/content/comments/default.html:28
+msgid "No comments."
+msgstr "无评论"
+
+#: templates/content/comments/default.html:36
+msgid "Post Comment"
+msgstr "发表评论"
+
+#: templates/content/contactform/form.html:9
+msgid "Submit"
+msgstr "提交"
+
+#: templates/content/contactform/thanks.html:3
+msgid "Thanks!"
+msgstr "感谢"
