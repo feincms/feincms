@@ -155,7 +155,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             except AttributeError, e:
                 pass
 
-        if trans:
+        if trans.strip():
             return trans
         else:
             return os.path.basename(self.file.name)
