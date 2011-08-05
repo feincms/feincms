@@ -19,7 +19,7 @@ saving time, thus saving at least one DB query on page delivery.
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import class_prepared, post_save, pre_save
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.contrib.fields import JSONField
@@ -101,6 +101,18 @@ class TrackerContentProxy(ContentProxy):
             ]) for region, items in counts.items())
         inventory['_version_'] = INVENTORY_VERSION
         return inventory
+
+# ------------------------------------------------------------------------
+def class_prepared_handler(sender, **kwargs):
+    # It might happen under rare circumstances that not all model classes
+    # are fully loaded and initialized when the translation map is accessed.
+    # This leads to (lots of) crashes on the server. Better be safe and
+    # kill the translation map when any class_prepared signal is received.
+    try:
+        del TrackerContentProxy._translation_map_cache
+    except AttributeError:
+        pass
+class_prepared.connect(class_prepared_handler)
 
 # ------------------------------------------------------------------------
 def tree_post_save_handler(sender, instance, **kwargs):
