@@ -28,7 +28,7 @@ urlpatterns = patterns('',
 )
 
 import django
-if django.VERSION > (1, 4):
+if django.VERSION > (1, 3):
     urlpatterns += patterns('', (r'', include('feincms.views.cbv.urls')))
 else:
     urlpatterns += patterns('', (r'', include('feincms.urls')))
