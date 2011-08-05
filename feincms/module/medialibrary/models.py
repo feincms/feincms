@@ -336,6 +336,43 @@ admin_thumbnail.short_description = _('Preview')
 admin_thumbnail.allow_tags = True
 
 #-------------------------------------------------------------------------
+def assign_category(modeladmin, request, queryset):
+    class AddCategoryForm(forms.Form):
+        _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
+        category = forms.ModelChoiceField(Category.objects.all())
+
+    form = None
+    if 'apply' in request.POST:
+        form = AddCategoryForm(request.POST)
+        if form.is_valid():
+            category = form.cleaned_data['category']
+
+            count = 0
+            for mediafile in queryset:
+                category.mediafile_set.add(mediafile)
+                count += 1
+
+            message = ungettext('Successfully added %(count)d media file to %(category)s.',
+                                'Successfully added %(count)d media files to %(category)s.',
+                                count) % {'count':count, 'category':category}
+            modeladmin.message_user(request, message)
+            return HttpResponseRedirect(request.get_full_path())
+    if 'cancel' in request.POST:
+        return HttpResponseRedirect(request.get_full_path())
+
+    if not form:
+        form = AddCategoryForm(initial={
+            '_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME),
+            })
+
+    return render_to_response('admin/medialibrary/add_to_category.html', {
+        'mediafiles': queryset,
+        'category_form': form,
+        }, context_instance=RequestContext(request))
+
+assign_category.short_description = _('Add selected media files to category')
+
+#-------------------------------------------------------------------------
 
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
@@ -346,37 +383,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
-
-
-    class AddCategoryForm(forms.Form):
-        _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
-        category = forms.ModelChoiceField(Category.objects)
-
-
-    def assign_category(self, request, queryset):
-        form = None
-        if 'apply' in request.POST:
-            form = self.AddCategoryForm(request.POST)
-            if form.is_valid():
-                category = form.cleaned_data['category']
-                print 'category: ', category
-                count = 0
-                for mediafile in queryset:
-                    mediafile.categories.add(category)
-                    count += 1
-                message = ungettext('Successfully added Category %(category)s to %(count)d mediafile',
-                                    'Successfully added Category %(category)s to %(count)d mediafiles', count) % {
-                                    'count':count, 'category':category }
-                self.message_user(request, message)
-                return HttpResponseRedirect(request.get_full_path())
-
-        if not form:
-            form = self.AddCategoryForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
-        return render_to_response('admin/medialibrary/add_category.html', {'mediafiles': queryset,
-                                                         'category_form': form,
-                                                        }, context_instance=RequestContext(request))
-    assign_category.short_description = _('Assign Categories to selected images.')
-    actions = [assign_category]
+    actions           = [assign_category]
 
     def get_urls(self):
         from django.conf.urls.defaults import url, patterns

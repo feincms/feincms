@@ -1,0 +1,27 @@
+{% extends "admin/change_form.html" %}
+
+{% load i18n %}
+
+{% block title %}{% trans "Add media files to category" %} {{ block.super }}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+<h1>{% trans "Add media files to category" %}</h1>
+
+<p>{% trans "Select category to apply:" %}</p>
+
+<form action="" method="post">{% csrf_token %}
+<div>
+    {{ category_form.as_p }}
+
+    <p>{% trans "The following media files will be added to the selected category:" %}</p>
+
+    <ul>{{ mediafiles|unordered_list }}</ul>
+
+    <input type="hidden" name="action" value="assign_category">
+    <input type="submit" name="apply" value="{% trans "Add to category" %}">
+    <input type="submit" name="cancel" value="{% trans "Cancel" %}">
+</div>
+</form>
+</div>
+{% endblock %}
