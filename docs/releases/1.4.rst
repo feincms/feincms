@@ -34,6 +34,14 @@ FeinCMS 1.4 release notes (upcoming)
   old media file content was not specific enough and interferes with
   Django's own ``raw_id_fields`` support.
 
+* FeinCMS has gained a preview feature for pages which shouldn't be
+  accessible to the general public yet. Just add the following line
+  above the standard FeinCMS handler::
+
+      url(r'', include('feincms.contrib.preview.urls')),
+
+  Another button will be automatically added in the page item editor.
+
 
 Apart from all these new features a few cleanups have been made:
 
