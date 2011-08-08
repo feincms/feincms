@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from feincms.module.page import processors
 from feincms.module.page.models import Page
-from feincms.views.base import Handler
+from feincms.views.cbv.views import Handler
 
 
 class PreviewHandler(Handler):
@@ -15,7 +15,7 @@ class PreviewHandler(Handler):
     *** Everything here is subject to change. ***
     """
 
-    def __call__(self, request, path, page_id):
+    def handler(self, request, path, page_id):
         if not request.user.is_staff:
             raise Http404
 
@@ -31,6 +31,11 @@ class PreviewHandler(Handler):
         # a 404 if the extra_path isn't consumed by any content type
         request.path = page.get_absolute_url()
 
-        response = self.build_response(request, page)
+        response = self.prepare()
+        if response:
+            return response
+
+        response = self.render_to_response(self.get_context_data())
+        response = self.finalize(response)
         response['Cache-Control'] = 'no-cache, must-revalidate, no-store, private'
         return response
