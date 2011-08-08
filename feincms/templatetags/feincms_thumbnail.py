@@ -1,4 +1,5 @@
 import os
+import re
 from cStringIO import StringIO
 try:
     from PIL import Image
@@ -18,12 +19,7 @@ from django.core.files.base import ContentFile
 register = template.Library()
 
 
-def tryint(v):
-    try:
-        return int(v)
-    except ValueError:
-        return 999999 # Arbitrarily big number
-
+THUMBNAIL_SIZE_RE = re.compile(r'^(?P<w>\d+)x(?P<h>\d+)$')
 
 @register.filter
 def thumbnail(filename, size='200x200'):
@@ -47,7 +43,9 @@ def thumbnail(filename, size='200x200'):
         {{ object.image|thumbnail:"300x999999" }}
     """
 
-    if not (filename and 'x' in size):
+    match = THUMBNAIL_SIZE_RE.match(size)
+
+    if not (filename and match):
         # Better return empty than crash
         return u''
 
@@ -64,7 +62,8 @@ def thumbnail(filename, size='200x200'):
         filename = force_unicode(filename)
 
     # defining the size
-    x, y = [tryint(x) for x in size.split('x')]
+    w, h = int(matches['w']), int(matches['h'])
+
     # defining the filename and the miniature filename
     try:
         basename, format = filename.rsplit('.', 1)
@@ -99,6 +98,9 @@ def thumbnail(filename, size='200x200'):
 
     return storage.url(miniature)
 
+
+CROPSCALE_SIZE_RE = re.compile(r'^(?P<w>\d+)x(?P<h>\d+)(-(?P<x>\d+)x(?P<y>\d+))?$')
+
 @register.filter
 def cropscale(filename, size='200x200'):
     """
@@ -106,9 +108,13 @@ def cropscale(filename, size='200x200'):
     passed (as long as the initial image is bigger than the specification).
     """
 
-    if not (filename and 'x' in size):
+    match = CROPSCALE_SIZE_RE.match(size)
+
+    if not (filename and match):
         # Better return empty than crash
         return u''
+
+    matches = match.groupdict()
 
     # figure out storage
     if hasattr(filename, 'storage'):
@@ -122,7 +128,12 @@ def cropscale(filename, size='200x200'):
     else:
         filename = force_unicode(filename)
 
-    w, h = [tryint(x) for x in size.split('x')]
+    w, h = int(matches['w']), int(matches['h'])
+
+    if matches['x'] and matches['y']:
+        x, y = int(matches['x']), int(matches['y'])
+    else:
+        x, y = 50, 50
 
     try:
         basename, format = filename.rsplit('.', 1)
@@ -154,13 +165,13 @@ def cropscale(filename, size='200x200'):
         if dst_ratio < src_ratio:
             crop_height = src_height
             crop_width = crop_height * dst_ratio
-            x_offset = float(src_width - crop_width) / 2
+            x_offset = float(src_width - crop_width) * x / 100
             y_offset = 0
         else:
             crop_width = src_width
             crop_height = crop_width / dst_ratio
             x_offset = 0
-            y_offset = float(src_height - crop_height) / 2
+            y_offset = float(src_height - crop_height) * y / 100
 
         image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
         image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
