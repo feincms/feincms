@@ -47,13 +47,7 @@ There isn't much left to do apart from adding ``feincms`` to ``INSTALLED_APPS``.
 The customized administration interface needs some media and javascript
 libraries which you have to make available to the browser. If you use Django 1.3's
 ``django.contrib.staticfiles`` application, the media files will be picked up
-automatically by the ``collectstatic`` management command. If you use ``/static/``
-as ``STATIC_URL``, all is fine. Otherwise you have to set ``FEINCMS_ADMIN_MEDIA``
-to the path where the FeinCMS media files can be found.
-
-If you use an older version of Django, publish the files in the folder
-``feincms/static/feincms/`` somewhere on your site and set ``FEINCMS_ADMIN_MEDIA``
-to the location.
+automatically by the ``collectstatic`` management command.
 
 Please note that the ``feincms`` module will not create or need any database
 tables, but you need to put it into ``INSTALLED_APPS`` because otherwise the

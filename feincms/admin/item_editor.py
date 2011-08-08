@@ -135,9 +135,6 @@ class ItemEditor(admin.ModelAdmin):
                 return render_to_response('admin/feincms/fe_editor_done.html', {
                     'content': obj.render(request=request),
                     'identifier': obj.fe_identifier(),
-                    'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': \
-                        settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
                     'FEINCMS_JQUERY_NO_CONFLICT': \
                         settings.FEINCMS_JQUERY_NO_CONFLICT,
                     })
@@ -174,9 +171,6 @@ class ItemEditor(admin.ModelAdmin):
                 getattr(self.model, '_feincms_templates', ()),
             'has_parent_attribute': hasattr(self.model, 'parent'),
             'content_types': self.get_content_type_map(),
-            'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING':
-                settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
 

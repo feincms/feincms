@@ -341,8 +341,6 @@ class TreeEditor(admin.ModelAdmin):
         self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
-        extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
-        extra_context['FEINCMS_ADMIN_MEDIA_HOTLINKING'] = settings.FEINCMS_ADMIN_MEDIA_HOTLINKING
         extra_context['tree_structure'] = mark_safe(simplejson.dumps(
                                                     _build_tree_structure(self.model)))
 
