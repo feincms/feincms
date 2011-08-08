@@ -37,9 +37,6 @@ class PagePretender(object):
     also add language.
     """
     # emulate mptt properties to get the template tags working
-    class _meta:
-        level_attr = 'level'
-
     class _mptt_meta:
         level_attr = 'level'
 
