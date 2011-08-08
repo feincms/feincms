@@ -49,6 +49,8 @@ def thumbnail(filename, size='200x200'):
         # Better return empty than crash
         return u''
 
+    matches = match.groupdict()
+
     # figure out storage
     if hasattr(filename, 'storage'):
         storage = filename.storage
