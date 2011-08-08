@@ -27,8 +27,8 @@ CMS without being forced to use whatever the developers deemed best:
     from django.db import models
 
     class TextilePageContent(models.Model):
-        class Meta: 
-            abstract = True 
+        class Meta:
+            abstract = True
 
         content = models.TextField()
 
@@ -55,6 +55,7 @@ Contents
    integration
    medialibrary
    templatetags
+   migrations
    advanced/index
    faq
    contributing

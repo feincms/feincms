@@ -217,6 +217,13 @@ The following extensions are available currently:
   object.
 
 
+.. note::
+
+   These extension modules add new fields to the ``Page`` class. If you add or
+   remove page extensions after you've run ``syncdb`` for the first time you
+   have to change the database schema yourself, or use :ref:`migrations`.
+
+
 Using page request processors
 =============================
 
