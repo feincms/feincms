@@ -242,6 +242,28 @@ PageManager.add_to_active_filters( Q(active=True) )
 # MARK: -
 # ------------------------------------------------------------------------
 
+class _LegacyProcessorDescriptor(object):
+    """
+    Request and response processors have been moved into their own module;
+    this descriptor allows accessing them the old way (as attributes of the
+    Page class) but emits a warning. This class will only be available during
+    the FeinCMS 1.5 lifecycle.
+    """
+    def __init__(self, name):
+        self.name = name
+
+    def __get__(self, obj, objtype=None):
+        warnings.warn('Page request and response processors have been moved into '
+            'their own module. Accessing them via the Page class will not be possible '
+            'in FeinCMS 1.6 anymore.',
+            DeprecationWarning)
+        return getattr(processors, self.name)
+
+    def __set__(self, obj, val):
+        setattr(processors, self.name, val)
+
+# ------------------------------------------------------------------------
+
 class Page(create_base_model(MPTTModel)):
     active = models.BooleanField(_('active'), default=True)
 
@@ -506,6 +528,19 @@ class Page(create_base_model(MPTTModel)):
     @classmethod
     def register_extension(cls, register_fn):
         register_fn(cls, PageAdmin)
+
+    require_path_active_request_processor = _LegacyProcessorDescriptor(
+        'require_path_active_request_processor')
+    redirect_request_processor = _LegacyProcessorDescriptor(
+        'redirect_request_processor')
+    frontendediting_request_processor = _LegacyProcessorDescriptor(
+        'frontendediting_request_processor')
+    etag_request_processor = _LegacyProcessorDescriptor(
+        'etag_request_processor')
+    etag_response_processor = _LegacyProcessorDescriptor(
+        'etag_response_processor')
+    debug_sql_queries_response_processor = _LegacyProcessorDescriptor(
+        'debug_sql_queries_response_processor')
 
 
 # ------------------------------------------------------------------------
