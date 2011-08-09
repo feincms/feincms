@@ -89,7 +89,7 @@ def thumbnail(filename, size='200x200'):
              # Do not crash if file does not exist for some reason
             return storage.url(filename)
 
-        image.thumbnail([x, y], Image.ANTIALIAS)
+        image.thumbnail([w, h], Image.ANTIALIAS)
         buf = StringIO()
         if image.mode not in ('RGB', 'L'):
             image = image.convert('RGB')
