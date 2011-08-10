@@ -347,6 +347,29 @@ Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 
   A list of tuples for the type choice radio input fields.
 
+  This field allows the website administrator to select a suitable presentation
+  for a particular media file. For example, images could be shown as thumbnail
+  with a lightbox or offered as downloads. The types should be specified as
+  follows for this use case::
+
+     ..., TYPE_CHOICES=(('lightbox', _('lightbox')), ('download', _('as download'))),
+
+  The ``MediaFileContent`` tries loading the following templates in order for
+  a particular image media file with type ``download``:
+
+  * ``content/mediafile/image_download.html``
+  * ``content/mediafile/download.html``
+  * ``content/mediafile/image.html``
+  * ``content/mediafile/default.html``
+
+  The media file type is stored directly on
+  :class:`~feincms.module.medialibrary.models.MediaFile`.
+
+  The file type can also be used to select templates which can be used
+  to further customize the presentation of mediafiles, f.e.
+  ``content/mediafile/swf.html`` to automatically generate the necessary
+  ``<object>`` and ``<embed>`` tags for flash movies.
+
 
 Raw content
 -----------
