@@ -67,6 +67,8 @@ class ItemEditor(admin.ModelAdmin):
 
     def get_feincms_inlines(self, model):
         """ Generate genuine django inlines for registered content types. """
+        model._needs_content_types()
+
         inlines = []
         for content_type in model._feincms_content_types:
             attrs = {
