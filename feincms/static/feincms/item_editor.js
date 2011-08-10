@@ -324,6 +324,12 @@ if(!Array.indexOf) {
 
             for (var i=0; i<to_remove.length; i++)
                 to_remove[i].remove();
+
+            if ($select.find('option').length == 0) {
+                // hide the content type select box and the add button if
+                // the dropdown is empty now
+                $select.hide().next().hide();
+            }
         });
     }
 
@@ -353,6 +359,11 @@ if(!Array.indexOf) {
         $("input.order-machine-add-button").click(function(){
             var select_content = $(this).prev();
             var modvar = select_content.val();
+
+            // bail out early if no content type selected
+            if (!modvar)
+                return;
+
             var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(ACTIVE_REGION, new_fieldset, {where:'append', animate:true});
