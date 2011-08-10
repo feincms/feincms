@@ -779,6 +779,8 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def _needs_templates(cls):
+            ensure_completely_loaded()
+
             # helper which can be used to ensure that either register_regions or
             # register_templates has been executed before proceeding
             if not hasattr(cls, 'template'):
