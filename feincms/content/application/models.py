@@ -367,6 +367,10 @@ class ApplicationContent(models.Model):
         #  context_processor
         request._feincms_extra_context.update(self.parameters)
 
+        # Save the application configuration for reuse elsewhere
+        request._feincms_extra_context.update({'app_config': dict(self.app_config,
+            urlconf_path=self.urlconf_path)})
+
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
             fn = partial(
