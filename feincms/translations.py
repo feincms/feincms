@@ -86,6 +86,13 @@ class TranslatedObjectManager(models.Manager):
         return self.filter(translations__language_code=language)
 
 
+class _NoTranslation(object):
+    """Simple marker for when no translations exist for a certain object
+
+    Only used for caching."""
+    pass
+
+
 class TranslatedObjectMixin(object):
     """
     Mixin with helper methods.
@@ -128,8 +135,14 @@ class TranslatedObjectMixin(object):
         trans = cache.get(key)
 
         if trans is None:
-            trans = self._get_translation_object(self.translations.all(), language_code)
+            try:
+                trans = self._get_translation_object(self.translations.all(), language_code)
+            except ObjectDoesNotExist:
+                trans = _NoTranslation
             cache.set(key, trans)
+
+        if trans is _NoTranslation:
+            return None
 
         # Assign self to prevent additional database queries
         trans.parent = self
@@ -180,7 +193,10 @@ def Translation(model):
 
         def save(self, *args, **kwargs):
             super(Inner, self).save(*args, **kwargs)
+            self.parent.purge_translation_cache()
 
+        def delete(self, *args, **kwargs):
+            super(Inner, self).delete(*args, **kwargs)
             self.parent.purge_translation_cache()
 
     return Inner
