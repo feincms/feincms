@@ -28,3 +28,18 @@ FeinCMS' ``PageAdmin`` and from reversions ``VersionAdmin``::
         pass
 
     admin.site.register(Page, VersionedPageAdmin)
+
+The ``VersionedPageAdmin`` does not look like the ItemEditor -- it's
+just raw Django inlines, without any additional javascript. Patches are
+welcome, but the basic functionality needed for versioning page content
+is there.
+
+Finally, you should ensure that initial revisions are created using
+``django-reversion``'s ``createinitialrevisions`` management command.
+
+
+.. note::
+
+   You should ensure that you're using a reversion release which is
+   compatible with your installed Django version. The reversion documentation
+   contains an up-to-date list of compatible releases.
