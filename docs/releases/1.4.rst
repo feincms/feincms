@@ -1,6 +1,6 @@
-====================================
-FeinCMS 1.4 release notes (upcoming)
-====================================
+=========================
+FeinCMS 1.4 release notes
+=========================
 
 * FeinCMS supports more than one site from the same database with
   ``django.contrib.sites`` now. Thanks to Bojan Mihelac and Stephen Tyler
