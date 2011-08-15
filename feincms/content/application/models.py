@@ -228,7 +228,7 @@ if settings.FEINCMS_REVERSE_MONKEY_PATCH:
     import warnings
     warnings.warn("FeinCMS will stop monkey-patching Django's 'django.core.urlresolvers.reverse'"
         " method in v1.6. You should use the explicit 'feincms.content.application.models.app_reverse'"
-        " function and {% app_reverse %} template tag instead. Set 'FEINCMS_REVERSE_MONKEY_PATCH'
+        " function and {% app_reverse %} template tag instead. Set 'FEINCMS_REVERSE_MONKEY_PATCH'"
         " to False to use the new behavior now.",
         DeprecationWarning)
     urlresolvers.reverse = reverse
