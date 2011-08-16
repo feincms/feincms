@@ -203,8 +203,6 @@ class ItemEditor(admin.ModelAdmin):
         return super(ItemEditor, self).add_view(request, form_url, context)
 
     def change_view(self, request, object_id, extra_context=None):
-        self.model._needs_content_types()
-
         # Recognize frontend editing requests
         # This is done here so that the developer does not need to add
         # additional entries to # urls.py or something...
