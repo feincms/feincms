@@ -1,0 +1,921 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-08-15 13:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: models.py:421 content/template/models.py:39 content/template/models.py:57
+msgid "template"
+msgstr ""
+
+#: models.py:553
+msgid "ordering"
+msgstr ""
+
+#: translations.py:171 module/blog/extensions/translations.py:17
+#: module/page/extensions/translations.py:102
+msgid "language"
+msgstr ""
+
+#: admin/filterspecs.py:46 admin/filterspecs.py:84
+msgid "All"
+msgstr ""
+
+#: admin/filterspecs.py:57 module/page/models.py:261
+msgid "Parent"
+msgstr ""
+
+#: admin/filterspecs.py:95
+msgid "Category"
+msgstr ""
+
+#: admin/item_editor.py:152
+#, python-format
+msgid "Change %s"
+msgstr ""
+
+#: admin/tree_editor.py:218 content/rss/models.py:20
+#: content/section/models.py:32 module/blog/models.py:32
+#: module/medialibrary/models.py:48 module/page/models.py:258
+#: module/page/models.py:338
+msgid "title"
+msgstr ""
+
+#: admin/tree_editor.py:396
+#, python-format
+msgid "%s has been moved to a new position."
+msgstr ""
+
+#: admin/tree_editor.py:400
+msgid "Did not understand moving instruction."
+msgstr ""
+
+#: admin/tree_editor.py:409
+msgid "actions"
+msgstr ""
+
+#: content/application/models.py:190
+msgid "application content"
+msgstr ""
+
+#: content/application/models.py:191
+msgid "application contents"
+msgstr ""
+
+#: content/application/models.py:222
+msgid "application"
+msgstr ""
+
+#: content/comments/models.py:28
+msgid "enabled"
+msgstr ""
+
+#: content/comments/models.py:28
+msgid "New comments may be added"
+msgstr ""
+
+#: content/comments/models.py:32 content/comments/models.py:33
+msgid "comments"
+msgstr ""
+
+#: content/comments/models.py:48
+msgid "public"
+msgstr ""
+
+#: content/comments/models.py:48
+msgid "not public"
+msgstr ""
+
+#: content/contactform/models.py:18
+msgid "name"
+msgstr ""
+
+#: content/contactform/models.py:19
+msgid "email"
+msgstr ""
+
+#: content/contactform/models.py:20
+msgid "subject"
+msgstr ""
+
+#: content/contactform/models.py:23 content/raw/models.py:14
+msgid "content"
+msgstr ""
+
+#: content/contactform/models.py:34
+msgid "contact form"
+msgstr ""
+
+#: content/contactform/models.py:35
+msgid "contact forms"
+msgstr ""
+
+#: content/file/models.py:16 content/file/models.py:20
+#: module/medialibrary/models.py:90
+msgid "file"
+msgstr ""
+
+#: content/file/models.py:21
+msgid "files"
+msgstr ""
+
+#: content/image/models.py:24 content/image/models.py:28
+msgid "image"
+msgstr ""
+
+#: content/image/models.py:29
+msgid "images"
+msgstr ""
+
+#: content/image/models.py:42 content/medialibrary/models.py:105
+#: content/medialibrary/models.py:113
+msgid "position"
+msgstr ""
+
+#: content/medialibrary/models.py:38
+msgid "(no caption)"
+msgstr ""
+
+#: content/medialibrary/models.py:87 content/medialibrary/models.py:101
+#: content/medialibrary/models.py:111 content/medialibrary/v2.py:44
+#: content/section/models.py:48 module/medialibrary/fields.py:45
+#: module/medialibrary/models.py:102
+msgid "media file"
+msgstr ""
+
+#: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
+#: module/medialibrary/models.py:103
+msgid "media files"
+msgstr ""
+
+#: content/medialibrary/models.py:131
+msgid "block"
+msgstr ""
+
+#: content/medialibrary/models.py:132
+msgid "left"
+msgstr ""
+
+#: content/medialibrary/models.py:133
+msgid "right"
+msgstr ""
+
+#: content/medialibrary/v2.py:49 content/section/models.py:53
+#: content/section/models.py:61 content/table/models.py:81
+msgid "type"
+msgstr ""
+
+#: content/raw/models.py:18
+msgid "raw content"
+msgstr ""
+
+#: content/raw/models.py:19
+msgid "raw contents"
+msgstr ""
+
+#: content/richtext/models.py:15 content/richtext/models.py:85
+#: content/section/models.py:33
+msgid "text"
+msgstr ""
+
+#: content/richtext/models.py:26
+msgid "HTML Tidy"
+msgstr ""
+
+#: content/richtext/models.py:27
+msgid "Ignore the HTML validation warnings"
+msgstr ""
+
+#: content/richtext/models.py:51
+#, python-format
+msgid ""
+"HTML validation produced %(count)d warnings. Please review the updated "
+"content below before continuing: %(messages)s"
+msgstr ""
+
+#: content/richtext/models.py:89
+msgid "rich text"
+msgstr ""
+
+#: content/richtext/models.py:90
+msgid "rich texts"
+msgstr ""
+
+#: content/rss/models.py:21
+msgid ""
+"The rss field is updated several times a day. A change in the title will "
+"only be visible on the home page after the next feed update."
+msgstr ""
+
+#: content/rss/models.py:22
+msgid "link"
+msgstr ""
+
+#: content/rss/models.py:23
+msgid "pre-rendered content"
+msgstr ""
+
+#: content/rss/models.py:24
+msgid "last updated"
+msgstr ""
+
+#: content/rss/models.py:25
+msgid "max. items"
+msgstr ""
+
+#: content/rss/models.py:29
+msgid "RSS feed"
+msgstr ""
+
+#: content/rss/models.py:30
+msgid "RSS feeds"
+msgstr ""
+
+#: content/section/models.py:37
+msgid "section"
+msgstr ""
+
+#: content/section/models.py:38
+msgid "sections"
+msgstr ""
+
+#: content/table/models.py:62
+msgid "plain"
+msgstr ""
+
+#: content/table/models.py:63
+msgid "title row"
+msgstr ""
+
+#: content/table/models.py:65
+msgid "title row and column"
+msgstr ""
+
+#: content/table/models.py:71
+msgid "table"
+msgstr ""
+
+#: content/table/models.py:72
+msgid "tables"
+msgstr ""
+
+#: content/table/models.py:86
+msgid "data"
+msgstr ""
+
+#: content/template/models.py:62
+msgid "template content"
+msgstr ""
+
+#: content/template/models.py:63
+msgid "template contents"
+msgstr ""
+
+#: content/video/models.py:23
+msgid "video link"
+msgstr ""
+
+#: content/video/models.py:24
+msgid ""
+"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
+"com/watch?v=zmj1rpzDRZ0"
+msgstr ""
+
+#: content/video/models.py:28
+msgid "video"
+msgstr ""
+
+#: content/video/models.py:29
+msgid "videos"
+msgstr ""
+
+#: module/blog/models.py:31
+msgid "published"
+msgstr ""
+
+#: module/blog/models.py:33 module/page/models.py:259
+msgid "This is used for the generated navigation too."
+msgstr ""
+
+#: module/blog/models.py:36
+msgid "published on"
+msgstr ""
+
+#: module/blog/models.py:37
+msgid "Will be set automatically once you tick the `published` checkbox above."
+msgstr ""
+
+#: module/blog/models.py:42
+msgid "entry"
+msgstr ""
+
+#: module/blog/models.py:43
+msgid "entries"
+msgstr ""
+
+#: module/blog/extensions/tags.py:12
+msgid "tags"
+msgstr ""
+
+#: module/blog/extensions/translations.py:20
+#: module/page/extensions/translations.py:105
+msgid "translation of"
+msgstr ""
+
+#: module/blog/extensions/translations.py:23
+#: module/page/extensions/translations.py:108
+msgid "Leave this empty for entries in the primary language."
+msgstr ""
+
+#: module/blog/extensions/translations.py:44
+#: templates/admin/feincms/item_editor.html:45
+msgid "available translations"
+msgstr ""
+
+#: module/extensions/changedate.py:38
+msgid "creation date"
+msgstr ""
+
+#: module/extensions/changedate.py:39
+msgid "modification date"
+msgstr ""
+
+#: module/extensions/ct_tracker.py:133
+msgid "content types"
+msgstr ""
+
+#: module/extensions/featured.py:9
+msgid "featured"
+msgstr ""
+
+#: module/extensions/featured.py:14
+msgid "Featured"
+msgstr ""
+
+#: module/extensions/seo.py:9
+msgid "meta keywords"
+msgstr ""
+
+#: module/extensions/seo.py:10
+msgid "This will be prepended to the default keyword list."
+msgstr ""
+
+#: module/extensions/seo.py:11
+msgid "meta description"
+msgstr ""
+
+#: module/extensions/seo.py:12
+msgid "This will be prepended to the default description."
+msgstr ""
+
+#: module/extensions/seo.py:18
+msgid "Search engine optimization"
+msgstr ""
+
+#: module/medialibrary/models.py:51
+msgid "parent"
+msgstr ""
+
+#: module/medialibrary/models.py:53 module/page/models.py:260
+msgid "slug"
+msgstr ""
+
+#: module/medialibrary/models.py:57
+msgid "category"
+msgstr ""
+
+#: module/medialibrary/models.py:58 module/medialibrary/models.py:96
+msgid "categories"
+msgstr ""
+
+#: module/medialibrary/models.py:91 module/medialibrary/models.py:182
+msgid "file type"
+msgstr ""
+
+#: module/medialibrary/models.py:92 module/medialibrary/models.py:117
+msgid "created"
+msgstr ""
+
+#: module/medialibrary/models.py:93
+msgid "copyright"
+msgstr ""
+
+#: module/medialibrary/models.py:94 module/medialibrary/models.py:112
+msgid "file size"
+msgstr ""
+
+#: module/medialibrary/models.py:203
+msgid "file info"
+msgstr ""
+
+#: module/medialibrary/models.py:280
+msgid "Image"
+msgstr ""
+
+#: module/medialibrary/models.py:281
+msgid "Video"
+msgstr ""
+
+#: module/medialibrary/models.py:282
+msgid "Audio"
+msgstr ""
+
+#: module/medialibrary/models.py:283
+msgid "PDF document"
+msgstr ""
+
+#: module/medialibrary/models.py:284
+msgid "Flash"
+msgstr ""
+
+#: module/medialibrary/models.py:285
+msgid "Text"
+msgstr ""
+
+#: module/medialibrary/models.py:286
+msgid "Rich Text"
+msgstr ""
+
+#: module/medialibrary/models.py:287
+msgid "Zip archive"
+msgstr ""
+
+#: module/medialibrary/models.py:288
+msgid "Microsoft Word"
+msgstr ""
+
+#: module/medialibrary/models.py:289
+msgid "Microsoft Excel"
+msgstr ""
+
+#: module/medialibrary/models.py:290
+msgid "Microsoft PowerPoint"
+msgstr ""
+
+#: module/medialibrary/models.py:291
+msgid "Binary"
+msgstr ""
+
+#: module/medialibrary/models.py:307
+msgid "caption"
+msgstr ""
+
+#: module/medialibrary/models.py:308
+msgid "description"
+msgstr ""
+
+#: module/medialibrary/models.py:311
+msgid "media file translation"
+msgstr ""
+
+#: module/medialibrary/models.py:312
+msgid "media file translations"
+msgstr ""
+
+#: module/medialibrary/models.py:335
+#: templates/admin/feincms/page/page/item_editor.html:14
+msgid "Preview"
+msgstr ""
+
+#: module/medialibrary/models.py:355
+#, python-format
+msgid "Successfully added %(count)d media file to %(category)s."
+msgid_plural "Successfully added %(count)d media files to %(category)s."
+msgstr[0] ""
+msgstr[1] ""
+
+#: module/medialibrary/models.py:373
+msgid "Add selected media files to category"
+msgstr ""
+
+#: module/medialibrary/models.py:440
+#, python-format
+msgid "%d files imported"
+msgstr ""
+
+#: module/medialibrary/models.py:442
+#, python-format
+msgid "ZIP file invalid: %s"
+msgstr ""
+
+#: module/medialibrary/models.py:448
+msgid "No input file given"
+msgstr ""
+
+#: module/page/models.py:255
+msgid "active"
+msgstr ""
+
+#: module/page/models.py:263 module/page/models.py:812
+msgid "in navigation"
+msgstr ""
+
+#: module/page/models.py:264
+msgid "override URL"
+msgstr ""
+
+#: module/page/models.py:265
+msgid ""
+"Override the target URL. Be sure to include slashes at the beginning and at "
+"the end if it is a local URL. This affects both the navigation and subpages' "
+"URLs."
+msgstr ""
+
+#: module/page/models.py:266
+msgid "redirect to"
+msgstr ""
+
+#: module/page/models.py:267
+msgid "Target URL for automatic redirects."
+msgstr ""
+
+#: module/page/models.py:268
+msgid "Cached URL"
+msgstr ""
+
+#: module/page/models.py:279
+msgid "page"
+msgstr ""
+
+#: module/page/models.py:280
+msgid "pages"
+msgstr ""
+
+#: module/page/models.py:297 module/page/models.py:884
+msgid "is active"
+msgstr ""
+
+#: module/page/models.py:735
+msgid "This URL is already taken by an active page."
+msgstr ""
+
+#: module/page/models.py:753
+msgid "This URL is already taken by another active page."
+msgstr ""
+
+#: module/page/models.py:775
+msgid "Other options"
+msgstr ""
+
+#: module/page/models.py:823
+msgid "Add child page"
+msgstr ""
+
+#: module/page/models.py:825 templates/admin/feincms/content_inline.html:9
+msgid "View on site"
+msgstr ""
+
+#: module/page/models.py:861
+msgid "You don't have the necessary permissions to edit this object"
+msgstr ""
+
+#: module/page/models.py:876
+msgid "inherited"
+msgstr ""
+
+#: module/page/models.py:880
+msgid "extensions"
+msgstr ""
+
+#: module/page/extensions/datepublisher.py:48
+msgid "publication date"
+msgstr ""
+
+#: module/page/extensions/datepublisher.py:50
+msgid "publication end date"
+msgstr ""
+
+#: module/page/extensions/datepublisher.py:52
+msgid "Leave empty if the entry should stay active forever."
+msgstr ""
+
+#: module/page/extensions/datepublisher.py:78
+msgid "visible from - to"
+msgstr ""
+
+#: module/page/extensions/datepublisher.py:88
+msgid "Date-based publishing"
+msgstr ""
+
+#: module/page/extensions/excerpt.py:9
+msgid "excerpt"
+msgstr ""
+
+#: module/page/extensions/excerpt.py:10
+msgid "Add a brief excerpt summarizing the content of this page."
+msgstr ""
+
+#: module/page/extensions/excerpt.py:12
+msgid "Excerpt"
+msgstr ""
+
+#: module/page/extensions/navigation.py:77
+#: module/page/extensions/navigation.py:97
+msgid "navigation extension"
+msgstr ""
+
+#: module/page/extensions/navigation.py:99
+msgid ""
+"Select the module providing subpages for this page if you need to customize "
+"the navigation."
+msgstr ""
+
+#: module/page/extensions/navigation.py:112
+msgid "Navigation extension"
+msgstr ""
+
+#: module/page/extensions/relatedpages.py:13
+msgid "Select pages that should be listed as related content."
+msgstr ""
+
+#: module/page/extensions/relatedpages.py:20
+msgid "Related pages"
+msgstr ""
+
+#: module/page/extensions/sites.py:16
+msgid "Site"
+msgstr ""
+
+#: module/page/extensions/symlinks.py:15
+msgid "symlinked page"
+msgstr ""
+
+#: module/page/extensions/symlinks.py:16
+msgid "All content is inherited from this page if given."
+msgstr ""
+
+#: module/page/extensions/symlinks.py:30
+msgid "Symlinked page"
+msgstr ""
+
+#: module/page/extensions/titles.py:13
+msgid "content title"
+msgstr ""
+
+#: module/page/extensions/titles.py:14
+msgid "The first line is the main title, the following lines are subtitles."
+msgstr ""
+
+#: module/page/extensions/titles.py:15
+msgid "page title"
+msgstr ""
+
+#: module/page/extensions/titles.py:16
+msgid "Page title for browser window. Same as title by default."
+msgstr ""
+
+#: module/page/extensions/titles.py:43
+msgid "Titles"
+msgstr ""
+
+#: module/page/extensions/translations.py:171
+msgid "Edit translation"
+msgstr ""
+
+#: module/page/extensions/translations.py:174
+msgid "Create translation"
+msgstr ""
+
+#: module/page/extensions/translations.py:179
+msgid "translations"
+msgstr ""
+
+#: templates/admin/filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr ""
+
+#: templates/admin/content/mediafile/init.html:9
+msgid "Search"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:4
+msgid "Really delete item?"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:4
+msgid "Confirm to delete item"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:5
+msgid "Item deleted successfully."
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:5
+msgid "Cannot delete item"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:6
+msgid "Cannot delete item, because it is parent of at least one other item."
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:7
+msgid "Change template"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:8
+msgid "Really change template? <br />All changes are saved."
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:9
+#, python-format
+msgid ""
+"Really change template? <br />All changes are saved and content from <strong>"
+"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:12
+msgid "Hide"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:13
+msgid "Show"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:14
+msgid "After"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:15
+msgid "Before"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:16
+msgid "Insert new:"
+msgstr ""
+
+#: templates/admin/feincms/content_editor.html:11
+msgid "Region empty"
+msgstr ""
+
+#: templates/admin/feincms/content_editor.html:15
+msgid ""
+"Content from the parent site is automatically inherited. To override this "
+"behaviour, add some content."
+msgstr ""
+
+#: templates/admin/feincms/content_editor.html:23
+msgid "Add new item"
+msgstr ""
+
+#: templates/admin/feincms/content_inline.html:91
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr ""
+
+#: templates/admin/feincms/content_inline.html:94
+msgid "Remove"
+msgstr ""
+
+#: templates/admin/feincms/fe_editor.html:46
+msgid "Save"
+msgstr ""
+
+#: templates/admin/feincms/fe_tools.html:27
+msgid "Stop Editing"
+msgstr ""
+
+#: templates/admin/feincms/fe_tools.html:32
+msgid "edit"
+msgstr ""
+
+#: templates/admin/feincms/fe_tools.html:34
+msgid "new"
+msgstr ""
+
+#: templates/admin/feincms/fe_tools.html:35
+msgid "up"
+msgstr ""
+
+#: templates/admin/feincms/fe_tools.html:36
+msgid "down"
+msgstr ""
+
+#: templates/admin/feincms/fe_tools.html:37
+msgid "remove"
+msgstr ""
+
+#: templates/admin/feincms/recover_form.html:7
+#: templates/admin/feincms/revision_form.html:10
+#: templates/admin/feincms/page/page/item_editor.html:22
+#: templates/admin/feincms/page/page/tree_editor.html:7
+msgid "Home"
+msgstr ""
+
+#: templates/admin/feincms/recover_form.html:10
+#, python-format
+msgid "Recover deleted %(verbose_name)s"
+msgstr ""
+
+#: templates/admin/feincms/recover_form.html:17
+msgid "Press the save button below to recover this version of the object."
+msgstr ""
+
+#: templates/admin/feincms/revision_form.html:14
+msgid "History"
+msgstr ""
+
+#: templates/admin/feincms/revision_form.html:15
+#, python-format
+msgid "Revert %(verbose_name)s"
+msgstr ""
+
+#: templates/admin/feincms/revision_form.html:28
+msgid "Press the save button below to revert to this version of the object."
+msgstr ""
+
+#: templates/admin/feincms/tree_editor.html:37
+msgid "Shortcuts"
+msgstr ""
+
+#: templates/admin/feincms/tree_editor.html:39
+msgid "Collapse tree"
+msgstr ""
+
+#: templates/admin/feincms/tree_editor.html:40
+msgid "Expand tree"
+msgstr ""
+
+#: templates/admin/feincms/tree_editor.html:43
+msgid "Filter"
+msgstr ""
+
+#: templates/admin/feincms/page/page/item_editor.html:9
+msgid "Edit on site"
+msgstr ""
+
+#: templates/admin/feincms/page/page/item_editor.html:26
+msgid "Add"
+msgstr ""
+
+#: templates/admin/medialibrary/add_to_category.html:5
+#: templates/admin/medialibrary/add_to_category.html:9
+msgid "Add media files to category"
+msgstr ""
+
+#: templates/admin/medialibrary/add_to_category.html:11
+msgid "Select category to apply:"
+msgstr ""
+
+#: templates/admin/medialibrary/add_to_category.html:17
+msgid "The following media files will be added to the selected category:"
+msgstr ""
+
+#: templates/admin/medialibrary/add_to_category.html:22
+msgid "Add to category"
+msgstr ""
+
+#: templates/admin/medialibrary/add_to_category.html:23
+msgid "Cancel"
+msgstr ""
+
+#: templates/admin/medialibrary/mediafile/change_list.html:12
+msgid "Bulk upload a ZIP file:"
+msgstr ""
+
+#: templates/admin/medialibrary/mediafile/change_list.html:21
+msgid "Send"
+msgstr ""
+
+#: templates/content/comments/default.html:10
+#, python-format
+msgid "%(comment_count)s comments."
+msgstr ""
+
+#: templates/content/comments/default.html:18
+#, python-format
+msgid ""
+"\n"
+"                    %(comment_username)s said on %(comment_submit_date)s<br /"
+">\n"
+"                "
+msgstr ""
+
+#: templates/content/comments/default.html:28
+msgid "No comments."
+msgstr ""
+
+#: templates/content/comments/default.html:36
+msgid "Post Comment"
+msgstr ""
+
+#: templates/content/contactform/form.html:9
+msgid "Submit"
+msgstr ""
+
+#: templates/content/contactform/thanks.html:3
+msgid "Thanks!"
+msgstr ""
