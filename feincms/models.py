@@ -329,7 +329,11 @@ class ExtensionsMixin(object):
                     raise ImproperlyConfigured, '%s is not a valid extension for %s' % (
                         ext, cls.__name__)
 
-            # Not a string, so take our chances and just try to access "register"
+            # Not a string, maybe a callable?
+            elif hasattr(ext, '__call__'):
+                fn = ext
+
+            # Take our chances and just try to access "register"
             else:
                 fn = ext.register
 
