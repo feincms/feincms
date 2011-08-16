@@ -276,15 +276,7 @@ class TreeEditor(admin.ModelAdmin):
         except self.model.DoesNotExist:
             return HttpResponseNotFound("Object does not exist")
 
-        can_change = False
-
-        if hasattr(obj, "user_can") and obj.user_can(request.user, change_page=True):
-            # Was added in c7f04dfb5d, but I've no idea what user_can is about.
-            can_change = True
-        else:
-            can_change = self.has_change_permission(request, obj=obj)
-
-        if not can_change:
+        if not self.has_change_permission(request, obj=obj):
             logging.warning("Denied AJAX request by %s to toggle boolean %s for object %s", request.user, attr, item_id)
             return HttpResponseForbidden("You do not have permission to access this object")
 
