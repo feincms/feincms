@@ -81,7 +81,7 @@ class TemplateContent(models.Model):
             else:
                 ctx = Context(dict(content=self, **kwargs))
 
-            result = template.render(Context(dict(content=self, **kwargs)))
+            result = template.render(ctx)
 
             if context:
                 context.pop()
