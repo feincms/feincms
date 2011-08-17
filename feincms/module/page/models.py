@@ -35,7 +35,6 @@ from feincms.admin import item_editor, tree_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base, create_base_model
 from feincms.module.page import processors
-from feincms.utils import get_object, copy_model_instance
 import feincms.admin.filterspecs
 
 # ------------------------------------------------------------------------
