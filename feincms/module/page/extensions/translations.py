@@ -109,10 +109,10 @@ def register(cls, admin_cls):
         ))
 
     if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
-        cls.register_request_processors(translations_request_processor_explicit,
+        cls.register_request_processor(translations_request_processor_explicit,
             key='translations')
     else: # STANDARD
-        cls.register_request_processors(translations_request_processor_standard,
+        cls.register_request_processor(translations_request_processor_standard,
             key='translations')
 
     @monkeypatch_method(cls)
