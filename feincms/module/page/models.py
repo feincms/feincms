@@ -24,6 +24,7 @@ from django.db.models import Q, signals
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
+from django.utils.datastructures import SortedDict
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db.transaction import commit_on_success
@@ -283,8 +284,8 @@ class Page(create_base_model(MPTTModel)):
     _cached_url = models.CharField(_('Cached URL'), max_length=300, blank=True,
         editable=False, default='', db_index=True)
 
-    request_processors = []
-    response_processors = []
+    request_processors = SortedDict()
+    response_processors = SortedDict()
     cache_key_components = [ lambda p: django_settings.SITE_ID,
                              lambda p: p._django_content_type.id,
                              lambda p: p.id ]
@@ -489,7 +490,7 @@ class Page(create_base_model(MPTTModel)):
                     request.path),
                 })
 
-        for fn in self.request_processors:
+        for fn in reversed(self.request_processors.values()):
             r = fn(self, request)
             if r: return r
 
@@ -499,7 +500,7 @@ class Page(create_base_model(MPTTModel)):
         called to modify the response, eg. for setting cache or expiration headers,
         keeping statistics, etc.
         """
-        for fn in self.response_processors:
+        for fn in self.response_processors.values():
             fn(self, request, response)
 
     def get_redirect_to_target(self, request):
@@ -508,6 +509,22 @@ class Page(create_base_model(MPTTModel)):
         """
         return self.redirect_to
 
+    @classmethod
+    def register_request_processor(cls, fn, key=None):
+        """
+        Registers the passed callable as request processor. A request processor
+        always receives two arguments, the current page object and the request.
+        """
+        cls.request_processors[fn if key is None else key] = fn
+
+    @classmethod
+    def register_response_processor(cls, fn, key=None):
+        """
+        Registers the passed callable as response processor. A response processor
+        always receives three arguments, the current page object, the request
+        and the response.
+        """
+        cls.response_processors[fn if key is None else key] = fn
 
     @classmethod
     def register_request_processors(cls, *processors):
@@ -516,7 +533,12 @@ class Page(create_base_model(MPTTModel)):
         always receives two arguments, the current page object and the request.
         """
 
-        cls.request_processors[0:0] = processors
+        warnings.warn("register_request_processors has been deprecated,"
+            " use register_request_processor instead.",
+            DeprecationWarning)
+
+        for processor in processors:
+            cls.register_request_processor(processor)
 
     @classmethod
     def register_response_processors(cls, *processors):
@@ -526,7 +548,12 @@ class Page(create_base_model(MPTTModel)):
         and the response.
         """
 
-        cls.response_processors.extend(processors)
+        warnings.warn("register_response_processors has been deprecated,"
+            " use register_response_processor instead.",
+            DeprecationWarning)
+
+        for processor in processors:
+            cls.register_response_processor(processor)
 
     @classmethod
     def register_extension(cls, register_fn):
@@ -548,12 +575,14 @@ class Page(create_base_model(MPTTModel)):
 
 # ------------------------------------------------------------------------
 # Our default request processors
-Page.register_request_processors(processors.require_path_active_request_processor,
-                                 processors.redirect_request_processor)
+Page.register_request_processor(processors.require_path_active_request_processor,
+    key='path_active')
+Page.register_request_processor(processors.redirect_request_processor,
+    key='redirect')
 
 if settings.FEINCMS_FRONTEND_EDITING:
-    Page.register_request_processors(
-        processors.frontendediting_request_processor)
+    Page.register_request_processor(processors.frontendediting_request_processor,
+        key='frontend_editing')
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 

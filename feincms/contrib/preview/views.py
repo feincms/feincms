@@ -23,8 +23,10 @@ class PreviewHandler(Handler):
 
         # Throw out request processor which will cause the page to-be-previewed
         # to be seen as inactive (which is the case, of course)
-        self.page.request_processors = [rp for rp in Page.request_processors if rp not in (
-            processors.require_path_active_request_processor,)]
+        self.page.request_processors = self.page.request_processors.copy()
+        self.page.register_request_processor(
+            lambda page, response: None, # Do nothing
+            key='path_active')
 
         # Remove _preview/42/ from URL, the rest of the handler code should not
         # know that anything about previewing. Handler.prepare will still raise
