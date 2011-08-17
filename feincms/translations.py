@@ -101,8 +101,8 @@ class TranslatedObjectMixin(object):
     def _get_translation_object(self, queryset, language_code):
         try:
             return queryset.filter(
-                Q(language_code=language_code)
-                | Q(language_code=short_language_code(language_code))
+                Q(language_code__iexact=language_code)
+                | Q(language_code__iexact=short_language_code(language_code))
                 ).order_by('-language_code')[0]
         except IndexError:
             try:
