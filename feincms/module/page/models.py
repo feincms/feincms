@@ -31,8 +31,7 @@ from django.db.transaction import commit_on_success
 from mptt.models import MPTTModel
 
 from feincms import settings, ensure_completely_loaded
-from feincms.admin import editor
-from feincms.admin import item_editor
+from feincms.admin import item_editor, tree_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base, create_base_model
 from feincms.module.page import processors
@@ -674,7 +673,7 @@ class PageAdminForm(forms.ModelForm):
         return cleaned_data
 
 # ------------------------------------------------------------------------
-class PageAdmin(editor.ItemEditor, editor.TreeEditor):
+class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     class Media:
         css = {}
         js = []
@@ -730,7 +729,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                 if not f.editable:
                     self.readonly_fields.append(f.name)
 
-    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
+    in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
     def _actions_column(self, page):
         editable = getattr(page, 'feincms_editable', True)
@@ -794,13 +793,13 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
                 self._visible_pages.remove(page.id)
-            return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
+            return tree_editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
 
         if page.active and not page.id in self._visible_pages:
             # is active but should not be shown, so visibility limited by extension: show a "not active"
-            return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
+            return tree_editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
 
-        return editor.ajax_editable_boolean_cell(page, 'active')
+        return tree_editor.ajax_editable_boolean_cell(page, 'active')
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is active')
     is_visible_admin.editable_boolean_field = 'active'
