@@ -11,12 +11,11 @@ def current_site(queryset):
 
 
 def register(cls, admin_cls):
-    cls.add_to_class('site', 
-                     models.ForeignKey(Site, 
-                     verbose_name=_('Site'), 
+    cls.add_to_class('site',
+                     models.ForeignKey(Site,
+                     verbose_name=_('Site'),
                      default=settings.SITE_ID, ))
 
-    PageManager.add_to_active_filters(current_site)
+    PageManager.add_to_active_filters(current_site, key='current_site')
 
     admin_cls.list_display.extend(['site'])
- 

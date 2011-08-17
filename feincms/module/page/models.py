@@ -48,17 +48,17 @@ class ActiveAwareContentManagerMixin(object):
     should either adopt this mixin or implement a similar interface.
     """
 
-    # A list of filters which are used to determine whether a page is active or not.
+    # A dict of filters which are used to determine whether a page is active or not.
     # Extended for example in the datepublisher extension (date-based publishing and
     # un-publishing of pages)
-    active_filters = ()
+    active_filters = {}
 
     @classmethod
     def apply_active_filters(cls, queryset):
         """
         Apply all filters defined to the queryset passed and return the result.
         """
-        for filt in cls.active_filters:
+        for filt in cls.active_filters.values():
             if callable(filt):
                 queryset = filt(queryset)
             else:
@@ -67,15 +67,20 @@ class ActiveAwareContentManagerMixin(object):
         return queryset
 
     @classmethod
-    def add_to_active_filters(cls, filter):
+    def add_to_active_filters(cls, filter, key=None):
         """
         Add a new clause to the active filters. A filter may be either
         a Q object to be applied to the content class or a callable taking
         a queryset and spitting out a new one.
+
+        If a filter with the given `key` already exists, the new filter
+        replaces the old.
         """
         if not cls.active_filters:
-            cls.active_filters = list()
-        cls.active_filters.append(filter)
+            cls.active_filters = {}
+        if key is None:
+            key = filter
+        cls.active_filters[key] = filter
 
     def active(self):
         """
@@ -235,7 +240,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             return self.best_match_for_request(request, raise404=False)
         return self.for_request(request)
 
-PageManager.add_to_active_filters( Q(active=True) )
+PageManager.add_to_active_filters(Q(active=True))
 
 # MARK: -
 # ------------------------------------------------------------------------

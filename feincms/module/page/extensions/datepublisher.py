@@ -66,8 +66,8 @@ def register(cls, admin_cls):
     if hasattr(cls.objects, 'add_to_active_filters'):
         cls.objects.add_to_active_filters(
             Q(publication_date__lte=granular_now) &
-            (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=granular_now))
-            )
+            (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=granular_now)),
+            key='datepublisher')
 
     def datepublisher_admin(self, page):
         return u'%s &ndash; %s' % (
