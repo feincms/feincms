@@ -207,7 +207,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
             " function or using the 'urlconf/view_name' notation has been deprecated."
             " Use 'feincms.content.application.models.app_reverse' or the 'app_reverse'"
             " template tag from 'applicationcontent_tags' directly.",
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
 
         return app_reverse(other_viewname, other_urlconf,
             args=args, kwargs=kwargs, prefix=prefix, *vargs, **vkwargs)

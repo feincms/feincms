@@ -83,7 +83,7 @@ def prefilled_attribute(name):
         " more widely used solutions such as django-queryset-transform"
         " (bundled as `feincms.utils.queryset_transform`) and"
         " django-batchselect.",
-        DeprecationWarning)
+        DeprecationWarning, stacklevel=2)
 
     key = '_prefill_%s' % name
 
@@ -122,7 +122,7 @@ def prefill_entry_list(queryset, *attrs, **kwargs):
         " more widely used solutions such as django-queryset-transform"
         " (bundled as `feincms.utils.queryset_transform`) and"
         " django-batchselect.",
-        DeprecationWarning)
+        DeprecationWarning, stacklevel=2)
 
     region = kwargs.get('region', None)
 

@@ -85,7 +85,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     def page_for_path_or_404(self, path):
         warnings.warn('page_for_path_or_404 is deprecated. Use page_for_path instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return self.page_for_path(path, raise404=True)
 
     def best_match_for_path(self, path, raise404=False):
@@ -171,19 +171,19 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     def for_request_or_404(self, request):
         warnings.warn('for_request_or_404 is deprecated. Use for_request instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return self.for_request(request, raise404=True)
 
     def best_match_for_request(self, request, raise404=False):
         warnings.warn('best_match_for_request is deprecated. Use for_request instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         page = self.best_match_for_path(request.path, raise404=raise404)
         page.setup_request(request)
         return page
 
     def from_request(self, request, best_match=False):
         warnings.warn('from_request is deprecated. Use for_request instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
 
         if hasattr(request, '_feincms_page'):
             return request._feincms_page
@@ -211,7 +211,7 @@ class _LegacyProcessorDescriptor(object):
         warnings.warn('Page request and response processors have been moved into '
             'their own module. Accessing them via the Page class will not be possible '
             'in FeinCMS 1.6 anymore.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return getattr(processors, self.name)
 
     def __set__(self, obj, val):
@@ -281,7 +281,7 @@ class Page(create_base_model(MPTTModel)):
         additionally select only child pages that are active.
         """
         warnings.warn('active_children is deprecated. Use self.children.active() instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return Page.objects.active().filter(parent=self)
 
     def active_children_in_navigation(self):
@@ -292,7 +292,7 @@ class Page(create_base_model(MPTTModel)):
         to disclose).
         """
         warnings.warn('active_children_in_navigation is deprecated. Use self.children.in_navigation() instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return self.active_children().filter(in_navigation=True)
 
     def short_title(self):
@@ -382,7 +382,7 @@ class Page(create_base_model(MPTTModel)):
         As the name says.
         """
         warnings.warn('get_siblings_and_self is deprecated. You probably want self.parent.children.active() anyway.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return page.get_siblings(include_self=True)
 
     def cache_key(self):
@@ -486,7 +486,7 @@ class Page(create_base_model(MPTTModel)):
 
         warnings.warn("register_request_processors has been deprecated,"
             " use register_request_processor instead.",
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
 
         for processor in processors:
             cls.register_request_processor(processor)
@@ -501,7 +501,7 @@ class Page(create_base_model(MPTTModel)):
 
         warnings.warn("register_response_processors has been deprecated,"
             " use register_response_processor instead.",
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
 
         for processor in processors:
             cls.register_response_processor(processor)
