@@ -40,6 +40,13 @@ from django.utils.translation import ugettext_lazy as _
 from feincms.utils import queryset_transform
 
 
+class _NoTranslation(object):
+    """Simple marker for when no translations exist for a certain object
+
+    Only used for caching."""
+    pass
+
+
 def short_language_code(code=None):
     """
     Extract the short language code from its argument (or return the default language code).
@@ -89,7 +96,10 @@ def lookup_translations(language_code=None):
         for instance in qs:
             trans = cache.get(instance.get_translation_cache_key(lang_))
             if trans:
-                instance._cached_translation = trans
+                if trans is _NoTranslation:
+                    instance._cached_translation = None
+                else:
+                    instance._cached_translation = trans
             else:
                 instance_dict[instance.pk] = instance
 
@@ -146,13 +156,6 @@ class TranslatedObjectManager(queryset_transform.TransformManager):
         """
 
         return self.filter(translations__language_code=language)
-
-
-class _NoTranslation(object):
-    """Simple marker for when no translations exist for a certain object
-
-    Only used for caching."""
-    pass
 
 
 class TranslatedObjectMixin(object):
