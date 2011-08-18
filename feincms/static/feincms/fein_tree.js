@@ -108,19 +108,6 @@ feincms.jQuery(function($){
 
 					// check if mouse is over a row
 					if (event.pageY >= top && event.pageY <= top + rowHeight) {
-						// check if collapsed children, if so, on hover with simple timeout
-						if(
-							$('span.page_marker', element).hasClass('children') &&
-							$('span.page_marker', element).hasClass('closed')
-						) {
-							var id = extract_item_id($('span.page_marker', element).attr('id'));
-							setTimeout(function() {
-								doToggle(id, true);
-								$('#result_list tbody').recolorRows();
-								$('span.page_marker', element).removeClass('closed');
-							}, 750);
-						}
-
 						var targetRow = null;
 						var targetLoc;
 						if(event.pageY >= top && event.pageY <= top + rowHeight / 2 && element.prev()) {
