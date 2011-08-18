@@ -73,6 +73,66 @@ def is_primary_language(language=None):
     return language == settings.LANGUAGES[0][0]
 
 
+def lookup_translations(language_code=None):
+    """
+    Pass the return value of this function to .transform() to automatically
+    resolve translation objects
+
+    The current language is used if ``language_code`` isn't specified.
+    """
+    def _transform(qs):
+        lang_ = language_code if language_code else translation.get_language()
+
+        instance_dict = {}
+
+        # Don't do anything for those who already have a cached translation available
+        for instance in qs:
+            trans = cache.get(instance.get_translation_cache_key(lang_))
+            if trans:
+                instance._cached_translation = trans
+            else:
+                instance_dict[instance.pk] = instance
+
+        # We really, really need something in here to continue
+        if not instance_dict:
+            return
+
+        candidates = instance_dict.values()[0].translations.model._default_manager.all()
+
+        if instance_dict:
+            _process(candidates, instance_dict, lang_, 'iexact')
+        if instance_dict:
+            _process(candidates, instance_dict, settings.LANGUAGE_CODE, 'istartswith')
+        if instance_dict:
+            for candidate in candidates.filter(pk__in=instance_dict.keys()):
+                if candidate.parent_id in instance_dict:
+                    _found(instance_dict, candidate)
+
+        # No translations for the rest
+        for instance in instance_dict.values():
+            instance._cached_translation = None
+
+    def _found(instance_dict, candidate):
+        parent = instance_dict[candidate.parent_id]
+        cache.set(parent.get_translation_cache_key(), candidate)
+        parent._cached_translation = candidate
+        candidate.parent = parent
+        del instance_dict[candidate.parent_id]
+
+    def _process(candidates, instance_dict, lang_, op_):
+        for candidate in candidates.filter(
+                Q(pk__in=instance_dict.keys()),
+                Q(**{'language_code__' + op_: lang_})
+                | Q(**{'language_code__' + op_: short_language_code(lang_)})
+                ).order_by('-language_code'):
+
+            # The candidate's parent might already have a translation by now
+            if candidate.parent_id in instance_dict:
+                _found(instance_dict, candidate)
+
+    return _transform
+
+
 class TranslatedObjectManager(queryset_transform.TransformManager):
     """
     This manager offers convenience methods.
@@ -150,7 +210,11 @@ class TranslatedObjectMixin(object):
         trans.parent = self
         return trans
 
-    translation = property(get_translation)
+    @property
+    def translation(self):
+        if not hasattr(self, '_cached_translation'):
+            self._cached_translation = self.get_translation()
+        return self._cached_translation
 
     @property
     def available_translations(self):

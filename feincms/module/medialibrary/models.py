@@ -26,8 +26,8 @@ from django.views.decorators.csrf import csrf_protect
 from feincms import settings
 from feincms.models import ExtensionsMixin
 from feincms.templatetags import feincms_thumbnail
-from feincms.translations import TranslatedObjectMixin, Translation, \
-    TranslatedObjectManager, admin_translationinline
+from feincms.translations import (TranslatedObjectMixin, Translation,
+    TranslatedObjectManager, admin_translationinline, lookup_translations)
 
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
@@ -144,16 +144,12 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     def __unicode__(self):
         trans = None
 
-        # This might be provided using a .extra() clause to avoid hundreds of extra queries:
-        if hasattr(self, "preferred_translation"):
-            trans = getattr(self, "preferred_translation", u"")
-        else:
-            try:
-                trans = unicode(self.translation)
-            except models.ObjectDoesNotExist:
-                pass
-            except AttributeError, e:
-                pass
+        try:
+            trans = unicode(self.translation)
+        except models.ObjectDoesNotExist:
+            pass
+        except AttributeError, e:
+            pass
 
         if trans and trans.strip():
             return trans
@@ -450,27 +446,7 @@ class MediaFileAdmin(admin.ModelAdmin):
         return HttpResponseRedirect(reverse('admin:medialibrary_mediafile_changelist'))
 
     def queryset(self, request):
-        qs = super(MediaFileAdmin, self).queryset(request)
-
-        # FIXME: This is an ugly hack but it avoids 1-3 queries per *FILE*
-        # retrieving the translation information
-        # TODO: This should be adapted to multi-db.
-        if django_settings.DATABASE_ENGINE == 'postgresql_psycopg2':
-            qs = qs.extra(
-                select = {
-                    'preferred_translation':
-                        """SELECT caption FROM medialibrary_mediafiletranslation
-                        WHERE medialibrary_mediafiletranslation.parent_id = medialibrary_mediafile.id
-                        ORDER BY
-                            language_code = %s DESC,
-                            language_code = %s DESC,
-                            LENGTH(language_code) DESC
-                        LIMIT 1
-                        """
-                },
-                select_params = (translation.get_language(), django_settings.LANGUAGE_CODE)
-            )
-        return qs
+        return super(MediaFileAdmin, self).queryset(request).transform(lookup_translations())
 
     def save_model(self, request, obj, form, change):
         obj.purge_translation_cache()
