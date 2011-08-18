@@ -1,5 +1,6 @@
 from django import template
 from django.core.urlresolvers import NoReverseMatch
+from django.template import TemplateSyntaxError
 from django.template.defaulttags import kwarg_re
 from django.utils.encoding import smart_str
 
