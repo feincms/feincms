@@ -13,7 +13,7 @@ class PageSitemap(Sitemap):
     The PageSitemap can be used to automatically generate sitemap.xml files
     for submission to index engines. See http://www.sitemaps.org/ for details.
     """
-    def __init__(self, navigation_only=False, max_depth=0, changefreq=None, queryset=None, filter=None, *args, **kwargs):
+    def __init__(self, navigation_only=False, max_depth=0, changefreq=None, queryset=None, filter=None, extended_navigation=False, *args, **kwargs):
         """
         The PageSitemap accepts the following parameters for customisation
         of the resulting sitemap.xml output:
@@ -28,16 +28,20 @@ class PageSitemap(Sitemap):
         in the site map.
         * filter -- pass in a callable that transforms a queryset to filter
         out the pages you want to include in the site map.
+        * extended_navigation -- if set to True, adds pages from any navigation
+        extensions. If using PagePretender, make sure to include title, url,
+        level, in_navigation and optionally modification_date.
         """
         super(PageSitemap, self).__init__(*args, **kwargs)
-        self.depth_cutoff    = max_depth
-        self.navigation_only = navigation_only
-        self.changefreq      = changefreq
-        self.filter          = filter
+        self.depth_cutoff        = max_depth
+        self.navigation_only     = navigation_only
+        self.changefreq          = changefreq
+        self.filter              = filter
+        self.extended_navigation = extended_navigation
         if queryset is not None:
-            self.queryset    = queryset
+            self.queryset        = queryset
         else:
-            self.queryset    = Page.objects.active()
+            self.queryset        = Page.objects.active()
 
     def items(self):
         """
@@ -62,7 +66,15 @@ class PageSitemap(Sitemap):
         if self.depth_cutoff > 0:
             qs = qs.filter(level__lte=self.max_depth-1)
 
-        return [ p for p in qs if p.is_active() ]
+        pages = [ p for p in qs if p.is_active() ]
+        
+        if self.extended_navigation:
+            for idx, page in enumerate(pages):
+                if getattr(page, 'navigation_extension', None):
+                    pages[idx + 1:idx + 1] = page.extended_navigation()
+        
+        return pages
+        
 
     def lastmod(self, obj):
         return getattr(obj, 'modification_date', None)
