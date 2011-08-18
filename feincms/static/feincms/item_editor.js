@@ -190,8 +190,6 @@ if(!Array.indexOf) {
         if(new_form_count > old_form_count){
             return $('#'+modvar+'_set-'+(new_form_count-1));
         }
-        // TODO: add fallback for older versions by manually cloning
-        // empty fieldset (provided using extra=1)
     }
 
     function set_item_field_value(item, field, value) {
