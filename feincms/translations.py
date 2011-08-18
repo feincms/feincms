@@ -37,6 +37,8 @@ from django.db.models import Q
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.utils import queryset_transform
+
 
 def short_language_code(code=None):
     """
@@ -71,7 +73,7 @@ def is_primary_language(language=None):
     return language == settings.LANGUAGES[0][0]
 
 
-class TranslatedObjectManager(models.Manager):
+class TranslatedObjectManager(queryset_transform.TransformManager):
     """
     This manager offers convenience methods.
     """
