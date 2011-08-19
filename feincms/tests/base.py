@@ -864,6 +864,69 @@ class PagesTestCase(TestCase):
         t = template.Template('{% load feincms_page_tags %}{% feincms_translatedpage for feincms_page as t1 language=de %}{% feincms_translatedpage for feincms_page as t2 %}{{ t1.id }}|{{ t2.id }}')
         self.assertEqual(t.render(context), '2|1')
 
+    def test_17_feincms_navigation(self):
+        """
+        Test feincms_navigation some more
+        """
+
+        self.login()
+
+        self.create_page('Page 1')
+        self.create_page('Page 1.1', 1)
+        self.create_page('Page 1.2', 1)
+        self.create_page('Page 1.2.1', 3)
+        self.create_page('Page 1.2.2', 3)
+        self.create_page('Page 1.2.3', 3)
+        self.create_page('Page 1.3', 1)
+
+        self.create_page('Page 2')
+        self.create_page('Page 2.1', 8)
+        self.create_page('Page 2.2', 8)
+        self.create_page('Page 2.3', 8)
+
+        self.create_page('Page 3')
+        self.create_page('Page 3.1', 12)
+        self.create_page('Page 3.2', 12)
+        self.create_page('Page 3.3', 12)
+        self.create_page('Page 3.3.1', 15)
+        self.create_page('Page 3.3.1.1', 16)
+        self.create_page('Page 3.3.2', 15)
+
+        self.create_page('Page 4')
+        self.create_page('Page 4.1', 19)
+        self.create_page('Page 4.2', 19)
+
+        Page.objects.all().update(active=True, in_navigation=True)
+        Page.objects.filter(id__in=(5, 9, 19)).update(in_navigation=False)
+
+        tests = [
+            (
+                {'feincms_page': Page.objects.get(pk=1)},
+                '{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-3/page-31/,/page-3/page-32/,/page-3/page-33/',
+            ),
+            (
+                {'feincms_page': Page.objects.get(pk=14)},
+                '{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/page-33/page-331/,/page-3/page-33/page-332/',
+            ),
+            (
+                {'feincms_page': Page.objects.get(pk=14)},
+                '{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=2,depth=3 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/page-33/page-331/,/page-3/page-33/page-331/page-3311/,/page-3/page-33/page-332/',
+            ),
+            (
+                {'feincms_page': Page.objects.get(pk=19)},
+                '{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-3/page-31/,/page-3/page-32/,/page-3/page-33/',
+            ),
+        ]
+
+        for c, t, r in tests:
+            self.assertEqual(
+                template.Template(t).render(template.Context(c)),
+                r)
+
     def test_18_default_render_method(self):
         """
         Test the default render() behavior of selecting render_<region> methods

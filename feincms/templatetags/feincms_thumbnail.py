@@ -77,14 +77,21 @@ def thumbnail(filename, size='200x200'):
     else:
         try:
             generate = storage.modified_time(miniature)<storage.modified_time(filename)
-        except NotImplementedError:
+        except (NotImplementedError, AttributeError):
             # storage does NOT support modified_time
             generate = False
 
     if generate:
-        image = Image.open(StringIO(storage.open(filename).read()))
+        try:
+            image = Image.open(StringIO(storage.open(filename).read()))
+        except IOError:
+             # Do not crash if file does not exist for some reason
+            return storage.url(filename)
+
         image.thumbnail([x, y], Image.ANTIALIAS)
         buf = StringIO()
+        if image.mode not in ('RGB', 'L'):
+            image = image.convert('RGB')
         image.save(buf, image.format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()
@@ -128,12 +135,17 @@ def cropscale(filename, size='200x200'):
     else:
         try:
             generate = storage.modified_time(miniature)<storage.modified_time(filename)
-        except NotImplementedError:
+        except (NotImplementedError, AttributeError):
             # storage does NOT support modified_time
             generate = False
 
     if generate:
-        image = Image.open(StringIO(storage.open(filename).read()))
+        try:
+            image = Image.open(StringIO(storage.open(filename).read()))
+        except IOError:
+             # Do not crash if file does not exist for some reason
+            return storage.url(filename)
+
         src_width, src_height = image.size
         src_ratio = float(src_width) / float(src_height)
         dst_width, dst_height = w, h
@@ -154,6 +166,8 @@ def cropscale(filename, size='200x200'):
         image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
 
         buf = StringIO()
+        if image.mode not in ('RGB', 'L'):
+            image = image.convert('RGB')
         image.save(buf, image.format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()

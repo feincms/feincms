@@ -3,30 +3,31 @@
 # ------------------------------------------------------------------------
 
 from datetime import datetime
+import logging
+import os
+import re
+from PIL import Image
 
+from django import forms
 from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
+from django.contrib.contenttypes.models import ContentType
 from django.conf import settings as django_settings
 from django.db import models
-from django.template.defaultfilters import filesizeformat
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
+from django.template.defaultfilters import filesizeformat, slugify
 from django.utils.safestring import mark_safe
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
-from django.template.defaultfilters import slugify
-from django.http import HttpResponseRedirect
-# 1.2 from django.views.decorators.csrf import csrf_protect
+from django.utils.translation import ungettext, ugettext_lazy as _
+from django.views.decorators.csrf import csrf_protect
 
 from feincms import settings
 from feincms.models import ExtensionsMixin
-
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import TranslatedObjectMixin, Translation, \
     TranslatedObjectManager, admin_translationinline
-
-import re
-import os
-import logging
-from PIL import Image
 
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
@@ -154,7 +155,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             except AttributeError, e:
                 pass
 
-        if trans:
+        if trans and trans.strip():
             return trans
         else:
             return os.path.basename(self.file.name)
@@ -165,7 +166,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     def file_type(self):
         t = self.filetypes_dict[self.type]
         if self.type == 'image':
-            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property) 
+            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property)
             try:
                 self.file.path
             except NotImplementedError:
@@ -335,6 +336,44 @@ admin_thumbnail.short_description = _('Preview')
 admin_thumbnail.allow_tags = True
 
 #-------------------------------------------------------------------------
+def assign_category(modeladmin, request, queryset):
+    class AddCategoryForm(forms.Form):
+        _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
+        category = forms.ModelChoiceField(Category.objects.all())
+
+    form = None
+    if 'apply' in request.POST:
+        form = AddCategoryForm(request.POST)
+        if form.is_valid():
+            category = form.cleaned_data['category']
+
+            count = 0
+            for mediafile in queryset:
+                category.mediafile_set.add(mediafile)
+                count += 1
+
+            message = ungettext('Successfully added %(count)d media file to %(category)s.',
+                                'Successfully added %(count)d media files to %(category)s.',
+                                count) % {'count':count, 'category':category}
+            modeladmin.message_user(request, message)
+            return HttpResponseRedirect(request.get_full_path())
+    if 'cancel' in request.POST:
+        return HttpResponseRedirect(request.get_full_path())
+
+    if not form:
+        form = AddCategoryForm(initial={
+            '_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME),
+            })
+
+    return render_to_response('admin/medialibrary/add_to_category.html', {
+        'mediafiles': queryset,
+        'category_form': form,
+        }, context_instance=RequestContext(request))
+
+assign_category.short_description = _('Add selected media files to category')
+
+#-------------------------------------------------------------------------
+
 class MediaFileAdmin(admin.ModelAdmin):
     date_hierarchy    = 'created'
     inlines           = [admin_translationinline(MediaFileTranslation)]
@@ -344,6 +383,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
+    actions           = [assign_category]
 
     def get_urls(self):
         from django.conf.urls.defaults import url, patterns
@@ -362,7 +402,7 @@ class MediaFileAdmin(admin.ModelAdmin):
         return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
 
     @staticmethod
-    # 1.2 @csrf_protect
+    @csrf_protect
     @permission_required('medialibrary.add_mediafile')
     def bulk_upload(request):
         from django.core.urlresolvers import reverse

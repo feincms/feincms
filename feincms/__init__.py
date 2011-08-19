@@ -1,4 +1,4 @@
-VERSION = (1, 4, 0, 'pre')
+VERSION = (1, 4, 0)
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -8,7 +8,7 @@ class LazySettings(object):
         from django.conf import settings as django_settings
 
         for key in dir(default_settings):
-            if not key.startswith('FEINCMS_'):
+            if not key.startswith(('FEINCMS_', '_HACK_')):
                 continue
 
             setattr(self, key, getattr(django_settings, key,
@@ -32,7 +32,7 @@ def ensure_completely_loaded():
     types.
 
     For more informations, have a look at issue #23 on github:
-    http://github.com/matthiask/feincms/issues#issue/23
+    http://github.com/feincms/feincms/issues#issue/23
     """
 
     global COMPLETELY_LOADED

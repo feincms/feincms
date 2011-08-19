@@ -25,6 +25,16 @@ urlpatterns = patterns('',
 
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),
-
-    (r'^', include('feincms.urls')),
 )
+
+import django
+if django.VERSION > (1, 3):
+    urlpatterns += patterns('', (r'', include('feincms.views.cbv.urls')))
+else:
+    urlpatterns += patterns('', (r'', include('feincms.urls')))
+
+try:
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    urlpatterns += staticfiles_urlpatterns()
+except ImportError:
+    pass

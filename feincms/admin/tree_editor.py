@@ -28,8 +28,8 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
         title = 'title="%s" ' % title
     else:
         title = ''
-    return mark_safe(u'<img src="%simg/admin/icon-%s.gif" alt="%s" %s/>' %
-            (django_settings.ADMIN_MEDIA_PREFIX, BOOLEAN_MAPPING[field_val], alt_text, title))
+    return mark_safe(u'<img src="%sicon-%s.gif" alt="%s" %s/>' %
+            (settings._HACK_ADMIN_MEDIA_IMAGES, BOOLEAN_MAPPING[field_val], alt_text, title))
 
 
 def _build_tree_structure(cls):
@@ -401,7 +401,7 @@ class TreeEditor(admin.ModelAdmin):
         return HttpResponse('FAIL')
 
     def _actions_column(self, instance):
-        return []
+        return ['<div class="drag_handle"></div>',]
 
     def actions_column(self, instance):
         return u' '.join(self._actions_column(instance))

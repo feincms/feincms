@@ -8,17 +8,27 @@
 	{% if original.is_active and FEINCMS_FRONTEND_EDITING %}
 	    <li><a target="_blank" href="{{ original.get_absolute_url }}?frontend_editing=1" class="frontend_editing_link">{% trans "Edit on site" %}</a></li>
 	{% endif %}
+	{% if not original.is_active %}
+	    {% url feincms_preview original.get_absolute_url|slice:"1:-1" original.pk as preview_url %}
+	    {% if preview_url %}
+	        <li><a target="_blank" href="{{ preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
+	    {% endif %}
+	{% endif %}
 </ul>
 {% endblock %}
 
 {% block breadcrumbs %}
 <div class="breadcrumbs">
-     <a href="../../../">{% trans "Home" %}</a> &rsaquo;
-     <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
+    <a href="../../../">{% trans "Home" %}</a> &rsaquo;
+    <a href="../">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
 
-     {% for p in original.get_ancestors %}
-       <a href="../{{ p.id }}/">{{ p.short_title }}</a> :
-     {% endfor %}
-     {{ original.short_title }}
+    {% if add %}
+        {% trans "Add" %} {{ opts.verbose_name }}
+    {% else %}
+        {% for p in original.get_ancestors %}
+            <a href="../{{ p.id }}/">{{ p.short_title }}</a> :
+        {% endfor %}
+        {{ original.short_title }}
+    {% endif %}
 </div>
 {% endblock %}

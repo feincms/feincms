@@ -28,4 +28,4 @@ def feincms_render_region_appcontent(page, region, request):
     from feincms.templatetags.feincms_tags import _render_content
 
     return u''.join(_render_content(content, request=request) for content in\
-        getattr(page.content, region) if isinstance(content, ApplicationContent))
+        page.content.all_of_type(ApplicationContent) if content.region == region)

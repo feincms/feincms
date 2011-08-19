@@ -21,7 +21,7 @@ contains the files needed to run FeinCMS. It does not include documentation,
 tests or the example project which comes with the development version,
 which you can download using the Git_ version control system::
 
-    $ git clone git://github.com/matthiask/feincms.git
+    $ git clone git://github.com/feincms/feincms.git
 
 In addition, you will need a django-mptt_ installation.
 

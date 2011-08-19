@@ -13,6 +13,9 @@ __all__ = ('MediaFileForeignKey', 'ContentWithMediaFile')
 
 
 class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
+    def __init__(self, original):
+        self.__dict__ = original.__dict__
+
     def label_for_value(self, value):
         key = self.rel.get_related_field().name
         try:
@@ -31,7 +34,7 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
 class MediaFileForeignKey(models.ForeignKey):
     def formfield(self, **kwargs):
         if 'widget' in kwargs and isinstance(kwargs['widget'], ForeignKeyRawIdWidget):
-            kwargs['widget'] = MediaFileForeignKeyRawIdWidget(self.rel, kwargs.get('using'))
+            kwargs['widget'] = MediaFileForeignKeyRawIdWidget(kwargs['widget'])
         return super(MediaFileForeignKey, self).formfield(**kwargs)
 
 
@@ -44,3 +47,11 @@ class ContentWithMediaFile(models.Model):
 
     class Meta:
         abstract = True
+
+
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules(rules=[((MediaFileForeignKey,), [], {},)],
+        patterns=["^feincms\.module\.medialibrary\.fields"])
+except ImportError:
+    pass

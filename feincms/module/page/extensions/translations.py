@@ -45,7 +45,7 @@ def translation_set_language(request, select_language):
         # other messages and other applications. It is *highly* recommended to
         # create a new django.po for the language instead of
         # using this behaviour.
-        select_language = settings.LANGUAGES[0][0]
+        select_language = django_settings.LANGUAGES[0][0]
         fallback = True
 
     translation.activate(select_language)

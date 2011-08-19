@@ -31,7 +31,7 @@ setup(name='FeinCMS',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
-    url='http://github.com/matthiask/feincms/',
+    url='http://github.com/feincms/feincms/',
     license='BSD License',
     platforms=['OS Independent'],
     classifiers=[
@@ -47,7 +47,7 @@ setup(name='FeinCMS',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
     install_requires=[
-        #'Django >=1.2.0' # See http://github.com/matthiask/feincms/issues/closed#issue/50
+        #'Django >=1.2.0' # See http://github.com/feincms/feincms/issues/closed#issue/50
     ],
     requires=[
         #'lxml', # only needed for rich text cleansing

@@ -7,19 +7,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-09 13:20+0100\n"
-"POT-Revision-Date: 2011-03-09 13:20+0100\n"
+"POT-Creation-Date: 2011-08-05 06:19-0500\n"
 "Last-Translator: Håvard Grimelid <h@grx.no>\n"
 "Language-Team: nb <h@grx.no>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Revision-Date: 2011-03-09 13:20+0100\n"
 
-#: models.py:304 content/template/models.py:39 content/template/models.py:57
+#: models.py:421 content/template/models.py:39 content/template/models.py:57
 msgid "template"
 msgstr "mal"
 
-#: models.py:483
+#: models.py:553
 msgid "ordering"
 msgstr "sortering"
 
@@ -28,52 +29,52 @@ msgstr "sortering"
 msgid "language"
 msgstr "språk"
 
-#: admin/filterspecs.py:35 admin/filterspecs.py:70
+#: admin/filterspecs.py:46 admin/filterspecs.py:84
 msgid "All"
 msgstr "Alle"
 
-#: admin/filterspecs.py:46 module/page/models.py:286
+#: admin/filterspecs.py:57 module/page/models.py:261
 msgid "Parent"
 msgstr "Forelder"
 
-#: admin/filterspecs.py:81
+#: admin/filterspecs.py:95
 msgid "Category"
 msgstr "Kategori"
 
-#: admin/item_editor.py:140
+#: admin/item_editor.py:150
 #, python-format
 msgid "Change %s"
 msgstr "Endre %s"
 
-#: admin/tree_editor.py:198 content/rss/models.py:20
-#: content/section/models.py:32 module/blog/models.py:31
-#: module/medialibrary/models.py:48 module/page/models.py:283
-#: module/page/models.py:359
+#: admin/tree_editor.py:218 content/rss/models.py:20
+#: content/section/models.py:32 module/blog/models.py:32
+#: module/medialibrary/models.py:48 module/page/models.py:259
+#: module/page/models.py:338
 msgid "title"
 msgstr "tittel"
 
-#: admin/tree_editor.py:347
+#: admin/tree_editor.py:396
 #, python-format
 msgid "%s has been moved to a new position."
 msgstr "%s har blitt flytta til en ny posisjon."
 
-#: admin/tree_editor.py:351
+#: admin/tree_editor.py:400
 msgid "Did not understand moving instruction."
 msgstr "Forstod ikke flytteinstruksjonen."
 
-#: admin/tree_editor.py:360
+#: admin/tree_editor.py:409
 msgid "actions"
 msgstr "aktiviteter"
 
-#: content/application/models.py:185
+#: content/application/models.py:241
 msgid "application content"
 msgstr "applikasjonsinnhold"
 
-#: content/application/models.py:186
+#: content/application/models.py:242
 msgid "application contents"
 msgstr "applikasjonsinnhold"
 
-#: content/application/models.py:217
+#: content/application/models.py:273
 msgid "application"
 msgstr "applikasjon"
 
@@ -122,7 +123,7 @@ msgid "contact forms"
 msgstr "kontaktskjemaer"
 
 #: content/file/models.py:16 content/file/models.py:20
-#: module/medialibrary/models.py:98
+#: module/medialibrary/models.py:90
 msgid "file"
 msgstr "fil"
 
@@ -138,36 +139,43 @@ msgstr "bilde"
 msgid "images"
 msgstr "bilder"
 
-#: content/image/models.py:42 content/medialibrary/models.py:100
-#: content/medialibrary/models.py:108
+#: content/image/models.py:42 content/medialibrary/models.py:105
+#: content/medialibrary/models.py:113
 msgid "position"
 msgstr "posisjon"
 
-#: content/medialibrary/models.py:36
+#: content/medialibrary/models.py:38
 msgid "(no caption)"
 msgstr "(ingen tittel)"
 
-#: content/medialibrary/models.py:85 content/medialibrary/models.py:96
-#: content/medialibrary/models.py:106 content/section/models.py:48
-#: module/medialibrary/models.py:110
+#: content/medialibrary/models.py:87 content/medialibrary/models.py:101
+#: content/medialibrary/models.py:111 content/medialibrary/v2.py:44
+#: content/section/models.py:48 module/medialibrary/fields.py:45
+#: module/medialibrary/models.py:102
 msgid "media file"
 msgstr "mediafil"
 
-#: content/medialibrary/models.py:86 module/medialibrary/models.py:111
+#: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
+#: module/medialibrary/models.py:103
 msgid "media files"
 msgstr "mediafiler"
 
-#: content/medialibrary/models.py:126
+#: content/medialibrary/models.py:131
 msgid "block"
 msgstr "blokk"
 
-#: content/medialibrary/models.py:127
+#: content/medialibrary/models.py:132
 msgid "left"
 msgstr "venstre"
 
-#: content/medialibrary/models.py:128
+#: content/medialibrary/models.py:133
 msgid "right"
 msgstr "høyre"
+
+#: content/medialibrary/v2.py:49 content/section/models.py:53
+#: content/section/models.py:61 content/table/models.py:81
+msgid "type"
+msgstr "type"
 
 #: content/raw/models.py:18
 msgid "raw content"
@@ -247,11 +255,6 @@ msgstr "avsnitt"
 msgid "sections"
 msgstr "avsnitt"
 
-#: content/section/models.py:53 content/section/models.py:61
-#: content/table/models.py:81
-msgid "type"
-msgstr "type"
-
 #: content/table/models.py:62
 msgid "plain"
 msgstr "enkel"
@@ -293,8 +296,8 @@ msgid ""
 "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
 "com/watch?v=zmj1rpzDRZ0"
 msgstr ""
-"Dette må være en link til en YouTube- eller Vimeo-film. F. eks. http://www.youtube."
-"com/watch?v=zmj1rpzDRZ0"
+"Dette må være en link til en YouTube- eller Vimeo-film. F. eks. http://www."
+"youtube.com/watch?v=zmj1rpzDRZ0"
 
 #: content/video/models.py:28
 msgid "video"
@@ -304,27 +307,27 @@ msgstr "video"
 msgid "videos"
 msgstr "videoer"
 
-#: module/blog/models.py:30
+#: module/blog/models.py:31
 msgid "published"
 msgstr "publisert"
 
-#: module/blog/models.py:32 module/page/models.py:284
+#: module/blog/models.py:33
 msgid "This is used for the generated navigation too."
 msgstr "Denne vil også bli brukt for navigasjon."
 
-#: module/blog/models.py:35
+#: module/blog/models.py:36
 msgid "published on"
 msgstr "publisert på"
 
-#: module/blog/models.py:36
+#: module/blog/models.py:37
 msgid "Will be set automatically once you tick the `published` checkbox above."
 msgstr "Blir satt automatisk så snart `publisert`-boksen blir kryssa av."
 
-#: module/blog/models.py:41
+#: module/blog/models.py:42
 msgid "entry"
 msgstr "innlegg"
 
-#: module/blog/models.py:42
+#: module/blog/models.py:43
 msgid "entries"
 msgstr "innlegg"
 
@@ -343,7 +346,7 @@ msgid "Leave this empty for entries in the primary language."
 msgstr "La denne være tom for innlegg på primærspråket."
 
 #: module/blog/extensions/translations.py:44
-#: templates/admin/feincms/item_editor.html:70
+#: templates/admin/feincms/item_editor.html:45
 msgid "available translations"
 msgstr "tilgjengelige oversettelser"
 
@@ -355,7 +358,7 @@ msgstr "opprettet dato"
 msgid "modification date"
 msgstr "endret dato"
 
-#: module/extensions/ct_tracker.py:109
+#: module/extensions/ct_tracker.py:134
 msgid "content types"
 msgstr "innholdstyper"
 
@@ -391,7 +394,7 @@ msgstr "Søkemotoroptimalisering"
 msgid "parent"
 msgstr "forelder"
 
-#: module/medialibrary/models.py:53 module/page/models.py:285
+#: module/medialibrary/models.py:53 module/page/models.py:260
 msgid "slug"
 msgstr "slug"
 
@@ -399,199 +402,197 @@ msgstr "slug"
 msgid "category"
 msgstr "kategori"
 
-#: module/medialibrary/models.py:58 module/medialibrary/models.py:104
+#: module/medialibrary/models.py:58 module/medialibrary/models.py:96
 msgid "categories"
 msgstr "kategorier"
 
-#: module/medialibrary/models.py:99 module/medialibrary/models.py:185
+#: module/medialibrary/models.py:91 module/medialibrary/models.py:182
 msgid "file type"
 msgstr "filtype"
 
-#: module/medialibrary/models.py:100 module/medialibrary/models.py:125
+#: module/medialibrary/models.py:92 module/medialibrary/models.py:117
 msgid "created"
 msgstr "opprettet"
 
-#: module/medialibrary/models.py:101
+#: module/medialibrary/models.py:93
 msgid "copyright"
 msgstr "copyright"
 
-#: module/medialibrary/models.py:102 module/medialibrary/models.py:120
+#: module/medialibrary/models.py:94 module/medialibrary/models.py:112
 msgid "file size"
 msgstr "filstørrelse"
 
-#: module/medialibrary/models.py:202
+#: module/medialibrary/models.py:203
 msgid "file info"
 msgstr "filinfo"
 
-#: module/medialibrary/models.py:282
+#: module/medialibrary/models.py:280
 msgid "Image"
 msgstr "Bilde"
 
-#: module/medialibrary/models.py:283
+#: module/medialibrary/models.py:281
 msgid "Video"
 msgstr "Video"
 
-#: module/medialibrary/models.py:284
+#: module/medialibrary/models.py:282
 msgid "Audio"
 msgstr "Lyd"
 
-#: module/medialibrary/models.py:285
+#: module/medialibrary/models.py:283
 msgid "PDF document"
 msgstr "PDF-dokument"
 
-#: module/medialibrary/models.py:286
+#: module/medialibrary/models.py:284
 msgid "Flash"
 msgstr "Flash"
 
-#: module/medialibrary/models.py:287
+#: module/medialibrary/models.py:285
 msgid "Text"
 msgstr "Tekst"
 
-#: module/medialibrary/models.py:288
+#: module/medialibrary/models.py:286
 msgid "Rich Text"
 msgstr "Rik tekst"
 
-#: module/medialibrary/models.py:289
+#: module/medialibrary/models.py:287
 msgid "Zip archive"
 msgstr "ZIP-arkiv"
 
-#: module/medialibrary/models.py:290
+#: module/medialibrary/models.py:288
 msgid "Microsoft Word"
 msgstr "Microsoft Word"
 
-#: module/medialibrary/models.py:291
+#: module/medialibrary/models.py:289
 msgid "Microsoft Excel"
 msgstr "Microsoft Excel"
 
-#: module/medialibrary/models.py:292
+#: module/medialibrary/models.py:290
 msgid "Microsoft PowerPoint"
 msgstr "Microsoft PowerPoint"
 
-#: module/medialibrary/models.py:293
+#: module/medialibrary/models.py:291
 msgid "Binary"
 msgstr "Binær"
 
-#: module/medialibrary/models.py:309
+#: module/medialibrary/models.py:307
 msgid "caption"
 msgstr "tittel"
 
-#: module/medialibrary/models.py:310
+#: module/medialibrary/models.py:308
 msgid "description"
 msgstr "beskrivelse"
 
-#: module/medialibrary/models.py:313
+#: module/medialibrary/models.py:311
 msgid "media file translation"
 msgstr "mediafil-oversettelse"
 
-#: module/medialibrary/models.py:314
+#: module/medialibrary/models.py:312
 msgid "media file translations"
 msgstr "mediafil-oversettelser"
 
-#: module/medialibrary/models.py:341
-#: templates/admin/feincms/item_editor.html:54
+#: module/medialibrary/models.py:335
 msgid "Preview"
 msgstr "Forhåndsvisning"
 
-#: module/medialibrary/models.py:390
-msgid "Could not access storage"
-msgstr "Fikk ikke tilgang til lagringsenheten"
+#: module/medialibrary/models.py:355
+#, python-format
+msgid "Successfully added %(count)d media file to %(category)s."
+msgid_plural "Successfully added %(count)d media files to %(category)s."
+msgstr[0] ""
+msgstr[1] ""
 
-#: module/medialibrary/models.py:411
+#: module/medialibrary/models.py:373
+msgid "Add selected media files to category"
+msgstr ""
+
+#: module/medialibrary/models.py:440
 #, python-format
 msgid "%d files imported"
 msgstr "%d filer importert"
 
-#: module/medialibrary/models.py:413
+#: module/medialibrary/models.py:442
 #, python-format
 msgid "ZIP file invalid: %s"
 msgstr "Ugyldig ZIP-fil: %s"
 
-#: module/medialibrary/models.py:419
+#: module/medialibrary/models.py:448
 msgid "No input file given"
 msgstr "Ingen inputfil gitt"
 
-#: module/page/models.py:280
+#: module/page/models.py:256
 msgid "active"
 msgstr "aktiv"
 
-#: module/page/models.py:288 module/page/models.py:812
+#: module/page/models.py:263 module/page/models.py:711
 msgid "in navigation"
 msgstr "i navigasjon"
 
-#: module/page/models.py:289
+#: module/page/models.py:264
 msgid "override URL"
 msgstr "overstyr URL"
 
-#: module/page/models.py:290
+#: module/page/models.py:265
 msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL. This affects both the navigation and subpages' "
 "URLs."
 msgstr ""
-"Overstyr mål-URL. Inkluder skråstrek ved starten og ved "
-"slutten dersom det er en lokal URL. Dette gjelder både for navigasjons- og underside-"
-"URL-er."
+"Overstyr mål-URL. Inkluder skråstrek ved starten og ved slutten dersom det "
+"er en lokal URL. Dette gjelder både for navigasjons- og underside-URL-er."
 
-#: module/page/models.py:291
+#: module/page/models.py:266
 msgid "redirect to"
 msgstr "videresend til"
 
-#: module/page/models.py:292
+#: module/page/models.py:267
 msgid "Target URL for automatic redirects."
 msgstr "Mål-URL for automatiske videresendelser."
 
-#: module/page/models.py:293
+#: module/page/models.py:268
 msgid "Cached URL"
 msgstr "Mellomlagret URL"
 
-#: module/page/models.py:304
+#: module/page/models.py:279
 msgid "page"
 msgstr "side"
 
-#: module/page/models.py:305
+#: module/page/models.py:280
 msgid "pages"
 msgstr "sider"
 
-#: module/page/models.py:322 module/page/models.py:918
+#: module/page/models.py:297 module/page/models.py:782
 msgid "is active"
 msgstr "er aktiv"
 
-#: module/page/models.py:732
+#: module/page/models.py:631
 msgid "This URL is already taken by an active page."
 msgstr "Denne URL-en er allerede i bruk av en aktiv side."
 
-#: module/page/models.py:750
+#: module/page/models.py:649
 msgid "This URL is already taken by another active page."
 msgstr "Denne URL-en er allerede i bruk av annen en aktiv side."
 
-#: module/page/models.py:775
+#: module/page/models.py:674
 msgid "Other options"
 msgstr "Andre valg"
 
-#: module/page/models.py:817 templates/admin/feincms/item_editor.html:55
+#: module/page/models.py:721
 msgid "Add child page"
 msgstr "Legg til underside"
 
-#: module/page/models.py:819 templates/admin/feincms/content_inline.html:9
+#: module/page/models.py:723
 msgid "View on site"
 msgstr "Vis på nettsted"
 
-#: module/page/models.py:854
-msgid "You may edit the copied page below."
-msgstr "Du kan redigere den kopierte siden under."
-
-#: module/page/models.py:860
-#, python-format
-msgid ""
-"You have replaced %s. You may continue editing the now-active page below."
+#: module/page/models.py:759
+msgid "You don't have the necessary permissions to edit this object"
 msgstr ""
-"%s er erstattet. Du kan fortsette å redigere den nå aktive siden under."
 
-#: module/page/models.py:910
+#: module/page/models.py:774
 msgid "inherited"
 msgstr "arvet"
 
-#: module/page/models.py:914
+#: module/page/models.py:778
 msgid "extensions"
 msgstr "utvidelser"
 
@@ -637,8 +638,8 @@ msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr ""
-"Velg modulen som skal bidra med undersider til denne siden dersom du trenger å tilpasse "
-"navigasjonen."
+"Velg modulen som skal bidra med undersider til denne siden dersom du trenger "
+"å tilpasse navigasjonen."
 
 #: module/page/extensions/navigation.py:112
 msgid "Navigation extension"
@@ -651,6 +652,10 @@ msgstr "Velg sidene som skal listes som relatert innhold."
 #: module/page/extensions/relatedpages.py:20
 msgid "Related pages"
 msgstr "Relaterte sider"
+
+#: module/page/extensions/sites.py:16
+msgid "Site"
+msgstr ""
 
 #: module/page/extensions/symlinks.py:15
 msgid "symlinked page"
@@ -723,7 +728,8 @@ msgstr "Kan ikke slette objekt"
 
 #: templates/admin/feincms/_messages_js.html:6
 msgid "Cannot delete item, because it is parent of at least one other item."
-msgstr "Kan ikke slette objektet fordi det er foreldre til minst ett annet objekt."
+msgstr ""
+"Kan ikke slette objektet fordi det er foreldre til minst ett annet objekt."
 
 #: templates/admin/feincms/_messages_js.html:7
 msgid "Change template"
@@ -740,7 +746,8 @@ msgid ""
 "%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
 msgstr ""
 "Endre mal? <br/> Alle endringer blir lagret og innhold fra <strong>"
-"%(source_regions)s</strong> blir flyttet til <strong>%(target_region)s</strong>."
+"%(source_regions)s</strong> blir flyttet til <strong>%(target_region)s</"
+"strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
@@ -771,21 +778,12 @@ msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
 msgstr ""
-"Innhold fra forelder-side blir arvet automatisk. Overstyr dette ved "
-"å legge til innhold."
+"Innhold fra forelder-side blir arvet automatisk. Overstyr dette ved å legge "
+"til innhold."
 
 #: templates/admin/feincms/content_editor.html:23
 msgid "Add new item"
 msgstr "Legg til nytt objekt"
-
-#: templates/admin/feincms/content_inline.html:91
-#, python-format
-msgid "Add another %(verbose_name)s"
-msgstr "Legg til enda et %(verbose_name)s"
-
-#: templates/admin/feincms/content_inline.html:94
-msgid "Remove"
-msgstr "Fjern"
 
 #: templates/admin/feincms/fe_editor.html:46
 msgid "Save"
@@ -815,6 +813,35 @@ msgstr "ned"
 msgid "remove"
 msgstr "fjern"
 
+#: templates/admin/feincms/recover_form.html:7
+#: templates/admin/feincms/revision_form.html:10
+#: templates/admin/feincms/page/page/item_editor.html:16
+#: templates/admin/feincms/page/page/tree_editor.html:7
+msgid "Home"
+msgstr "Hjem"
+
+#: templates/admin/feincms/recover_form.html:10
+#, fuzzy, python-format
+msgid "Recover deleted %(verbose_name)s"
+msgstr "Legg til enda et %(verbose_name)s"
+
+#: templates/admin/feincms/recover_form.html:17
+msgid "Press the save button below to recover this version of the object."
+msgstr ""
+
+#: templates/admin/feincms/revision_form.html:14
+msgid "History"
+msgstr ""
+
+#: templates/admin/feincms/revision_form.html:15
+#, fuzzy, python-format
+msgid "Revert %(verbose_name)s"
+msgstr "Legg til enda et %(verbose_name)s"
+
+#: templates/admin/feincms/revision_form.html:28
+msgid "Press the save button below to revert to this version of the object."
+msgstr ""
+
 #: templates/admin/feincms/tree_editor.html:37
 msgid "Shortcuts"
 msgstr "Snarveier"
@@ -832,22 +859,35 @@ msgid "Filter"
 msgstr "Filter"
 
 #: templates/admin/feincms/page/page/item_editor.html:9
-#, python-format
-msgid "Replace page %(to_replace)s"
-msgstr "Erstatt side %(to_replace)s"
-
-#: templates/admin/feincms/page/page/item_editor.html:12
-msgid "Create hidden copy of this page"
-msgstr "Opprett skjult kopi av denne siden"
-
-#: templates/admin/feincms/page/page/item_editor.html:13
 msgid "Edit on site"
 msgstr "Rediger på nettsted"
 
 #: templates/admin/feincms/page/page/item_editor.html:20
-#: templates/admin/feincms/page/page/tree_editor.html:7
-msgid "Home"
-msgstr "Hjem"
+msgid "Add"
+msgstr ""
+
+#: templates/admin/medialibrary/add_to_category.html:5
+#: templates/admin/medialibrary/add_to_category.html:9
+#, fuzzy
+msgid "Add media files to category"
+msgstr "mediafil-oversettelse"
+
+#: templates/admin/medialibrary/add_to_category.html:11
+msgid "Select category to apply:"
+msgstr ""
+
+#: templates/admin/medialibrary/add_to_category.html:17
+msgid "The following media files will be added to the selected category:"
+msgstr ""
+
+#: templates/admin/medialibrary/add_to_category.html:22
+#, fuzzy
+msgid "Add to category"
+msgstr "kategori"
+
+#: templates/admin/medialibrary/add_to_category.html:23
+msgid "Cancel"
+msgstr ""
 
 #: templates/admin/medialibrary/mediafile/change_list.html:12
 msgid "Bulk upload a ZIP file:"
@@ -890,3 +930,23 @@ msgstr "Send inn"
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
 msgstr "Takk!"
+
+#~ msgid "Could not access storage"
+#~ msgstr "Fikk ikke tilgang til lagringsenheten"
+
+#~ msgid "You may edit the copied page below."
+#~ msgstr "Du kan redigere den kopierte siden under."
+
+#~ msgid ""
+#~ "You have replaced %s. You may continue editing the now-active page below."
+#~ msgstr ""
+#~ "%s er erstattet. Du kan fortsette å redigere den nå aktive siden under."
+
+#~ msgid "Remove"
+#~ msgstr "Fjern"
+
+#~ msgid "Replace page %(to_replace)s"
+#~ msgstr "Erstatt side %(to_replace)s"
+
+#~ msgid "Create hidden copy of this page"
+#~ msgstr "Opprett skjult kopi av denne siden"
