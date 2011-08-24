@@ -1336,6 +1336,20 @@ class PagesTestCase(TestCase):
         self.assertEqual(Page.objects.count(), 2)
         self.assertEqual(Page.objects.active().count(), 1)
 
+    def test_32_preview(self):
+        self.create_default_page_set()
+        page = Page.objects.get(pk=1)
+        page.template_key = 'theother'
+        page.save()
+        page.rawcontent_set.create(
+            region='main',
+            ordering=0,
+            text='Example content')
+
+        self.assertEquals(self.client.get(page.get_absolute_url()).status_code, 404)
+        self.assertContains(self.client.get('%s_preview/%s/' % (page.get_absolute_url(), page.pk)),
+            'Example content')
+
 
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
 class BlogTestCase(TestCase):

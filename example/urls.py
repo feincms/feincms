@@ -25,6 +25,8 @@ urlpatterns = patterns('',
 
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),
+
+    (r'', include('feincms.contrib.preview.urls')),
 )
 
 import django
