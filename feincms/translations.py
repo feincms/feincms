@@ -242,6 +242,11 @@ class TranslatedObjectMixin(object):
         for lang in self.available_translations:
             cache.delete(self.get_translation_cache_key(lang))
 
+        try:
+            del self._cached_translation
+        except AttributeError:
+            pass
+
 
 def Translation(model):
     """

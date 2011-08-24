@@ -23,7 +23,7 @@ def reverse_test(request):
 
 
 def full_reverse_test(request):
-    t = template.Template('home:{% url feincms.tests.applicationcontent_urls/ac_module_root %} args:{% url feincms.tests.applicationcontent_urls/ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
+    t = template.Template('home:{% url tests.testapp.applicationcontent_urls/ac_module_root %} args:{% url tests.testapp.applicationcontent_urls/ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
     return t.render(template.Context())
 
 

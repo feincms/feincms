@@ -544,11 +544,6 @@ class PagesTestCase(TestCase):
         page = Page.objects.get(pk=1)
         self.create_pagecontent(page)
 
-        path = os.path.join(settings.MEDIA_ROOT, 'somefile.jpg')
-        f = open(path, 'wb')
-        f.write('blabla')
-        f.close()
-
         category = Category.objects.create(title='Category', parent=None)
         category2 = Category.objects.create(title='Something', parent=category)
 
@@ -567,6 +562,7 @@ class PagesTestCase(TestCase):
 
         mediafile.translations.create(caption='something',
             language_code='%s-ha' % short_language_code())
+        mediafile.purge_translation_cache()
 
         self.assertTrue('something' in unicode(mediafile))
 
@@ -576,7 +572,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(mf.translation.short_language_code(), short_language_code())
         self.assertNotEqual(mf.get_absolute_url(), '')
         self.assertEqual(unicode(mf), 'something')
-        self.assertEqual(unicode(mf.file_type()), u'Binary') # Ok, so it's not really an image...
+        self.assertTrue(unicode(mf.file_type()).startswith(u'Image'))
 
         self.assertEqual(MediaFile.objects.only_language('de').count(), 0)
         self.assertEqual(MediaFile.objects.only_language('en').count(), 0)
@@ -584,8 +580,6 @@ class PagesTestCase(TestCase):
                          1)
 
         self.assertTrue('%s-ha' % short_language_code() in mf.available_translations)
-
-        os.unlink(path)
 
         # this should not raise
         self.client.get('/admin/page/page/1/')
@@ -600,7 +594,7 @@ class PagesTestCase(TestCase):
         page._ct_inventory = None
 
         self.assertTrue('somefile.jpg' in page.content.main[2].render())
-        self.assertTrue('<a href="/media/somefile.jpg">thetitle</a>' in page.content.main[3].render())
+        self.assertTrue('<a href="somefile.jpg">thetitle</a>' in page.content.main[3].render())
 
         page.mediafilecontent_set.update(mediafile=3)
         # this should not raise
@@ -618,7 +612,7 @@ class PagesTestCase(TestCase):
         (field.upload_to, field.storage, field.generate_filename) = old
 
         mediafile = MediaFile.objects.get(pk=1)
-        self.assertEqual(mediafile.file.url, '/media/somefile.jpg')
+        self.assertEqual(mediafile.file.url, 'somefile.jpg')
 
     def test_11_translations(self):
         self.create_default_page_set()
@@ -1079,7 +1073,7 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(len(page.extended_navigation()), 0)
 
-        page.navigation_extension = 'feincms.tests.navigation_extensions.PassthroughExtension'
+        page.navigation_extension = 'tests.testapp.navigation_extensions.PassthroughExtension'
 
         page2 = Page.objects.get(pk=2)
         page2.active = True
@@ -1088,11 +1082,11 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(list(page.extended_navigation()), [page2])
 
-        page.navigation_extension = 'feincms.tests.navigation_extensions.ThisExtensionDoesNotExist'
+        page.navigation_extension = 'tests.testapp.navigation_extensions.ThisExtensionDoesNotExist'
 
         self.assertEqual(len(page.extended_navigation()), 1)
 
-        page.navigation_extension = 'feincms.tests.navigation_extensions.PretenderExtension'
+        page.navigation_extension = 'tests.testapp.navigation_extensions.PretenderExtension'
 
         self.assertEqual(page.extended_navigation()[0].get_absolute_url(), '/asdsa/')
 
@@ -1127,7 +1121,7 @@ class PagesTestCase(TestCase):
 
         page.applicationcontent_set.create(
             region='main', ordering=0,
-            urlconf_path='feincms.tests.applicationcontent_urls')
+            urlconf_path='tests.testapp.applicationcontent_urls')
 
         self.assertContains(self.client.get(page.get_absolute_url()),
                             'module_root')
@@ -1146,19 +1140,19 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
-        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
             '/test-page/test-child-page/')
 
         if hasattr(self, 'assertNumQueries'):
             self.assertNumQueries(0,
-                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+                lambda: reverse('tests.testapp.applicationcontent_urls/ac_module_root'))
 
             _empty_reverse_cache()
 
             self.assertNumQueries(1,
-                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+                lambda: reverse('tests.testapp.applicationcontent_urls/ac_module_root'))
             self.assertNumQueries(0,
-                lambda: reverse('feincms.tests.applicationcontent_urls/ac_module_root'))
+                lambda: reverse('tests.testapp.applicationcontent_urls/ac_module_root'))
 
         # This should not raise
         self.assertEquals(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
@@ -1169,7 +1163,7 @@ class PagesTestCase(TestCase):
         self.assertRedirects(self.client.get(page.get_absolute_url() + 'redirect/'),
                              page.get_absolute_url())
 
-        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
             page.get_absolute_url())
 
         response = self.client.get(page.get_absolute_url() + 'response/')
@@ -1186,7 +1180,7 @@ class PagesTestCase(TestCase):
         page.applicationcontent_set.create(
             region='main',
             ordering=1,
-            urlconf_path='blog_urls')
+            urlconf_path='tests.testapp.blog_urls')
         page1.applicationcontent_set.create(
             region='main',
             ordering=0,
@@ -1197,14 +1191,14 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'args:/test-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
-        self.assertEqual(reverse('blog_urls/blog_entry_list'), '/test-page/test-child-page/')
-        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(reverse('tests.testapp.blog_urls/blog_entry_list'), '/test-page/test-child-page/')
+        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
             '/test-page/test-child-page/')
         self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
 
-        page.applicationcontent_set.get(urlconf_path='feincms.tests.applicationcontent_urls').delete()
+        page.applicationcontent_set.get(urlconf_path='tests.testapp.applicationcontent_urls').delete()
 
-        self.assertEqual(reverse('blog_urls/blog_entry_list'), '/test-page/test-child-page/')
+        self.assertEqual(reverse('tests.testapp.blog_urls/blog_entry_list'), '/test-page/test-child-page/')
         self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
 
     def test_26_page_form_initial(self):
@@ -1239,16 +1233,16 @@ class PagesTestCase(TestCase):
         page.save()
         page.applicationcontent_set.create(
             region='main', ordering=0,
-            urlconf_path='feincms.tests.applicationcontent_urls')
+            urlconf_path='tests.testapp.applicationcontent_urls')
 
         from feincms.content.application.models import app_reverse, reverse
 
         # test app_reverse
-        self.assertEqual(app_reverse('ac_module_root', 'feincms.tests.applicationcontent_urls'),
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
                          page.get_absolute_url())
 
         # test reverse replacement - should still work, but is deprecated
-        self.assertEqual(reverse('feincms.tests.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
                          page.get_absolute_url())
 
         # when specific applicationcontent exists more then once reverse should return url
@@ -1259,27 +1253,22 @@ class PagesTestCase(TestCase):
         page_de_1 = Page.objects.get(title='Child 1 DE')
         page_de_1.applicationcontent_set.create(
             region='main', ordering=0,
-            urlconf_path='feincms.tests.applicationcontent_urls')
+            urlconf_path='tests.testapp.applicationcontent_urls')
         _empty_reverse_cache()
 
         settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
         self.client.get(page_de_1.get_absolute_url())
-        self.assertEqual(app_reverse('ac_module_root', 'feincms.tests.applicationcontent_urls'),
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
                          page_de_1.get_absolute_url())
 
         self.client.get(page1.get_absolute_url())
-        self.assertEqual(app_reverse('ac_module_root', 'feincms.tests.applicationcontent_urls'),
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
                       page.get_absolute_url())
 
     def test_29_medialibrary_admin(self):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
-
-        path = os.path.join(settings.MEDIA_ROOT, 'somefile.jpg')
-        f = open(path, 'wb')
-        f.write('blabla')
-        f.close()
 
         mediafile = MediaFile.objects.create(file='somefile.jpg')
         page.mediafilecontent_set.create(
@@ -1303,7 +1292,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(MediaFile.objects.count(), 11)
 
         self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
-            'file': open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            'file': open(os.path.join(os.path.dirname(os.path.dirname(__file__)),
                 'docs', 'images', 'tree_editor.png')),
             'translations-TOTAL_FORMS': 0,
             'translations-INITIAL_FORMS': 0,
@@ -1314,8 +1303,8 @@ class PagesTestCase(TestCase):
             '100x100.png" alt="" />')
 
         stats = list(MediaFile.objects.values_list('type', flat=True))
-        self.assertEqual(stats.count('image'), 1)
-        self.assertEqual(stats.count('other'), 11)
+        self.assertEqual(stats.count('image'), 2)
+        self.assertEqual(stats.count('other'), 10)
 
     def test_30_context_processors(self):
         self.create_default_page_set()
@@ -1358,7 +1347,7 @@ class PagesTestCase(TestCase):
 
         page.applicationcontent_set.create(
             region='main', ordering=0,
-            urlconf_path='feincms.tests.applicationcontent_urls')
+            urlconf_path='tests.testapp.applicationcontent_urls')
         page.rawcontent_set.create(
             region='main', ordering=1, text='some_main_region_text')
         page.rawcontent_set.create(
@@ -1373,6 +1362,20 @@ class PagesTestCase(TestCase):
         self.assertNotContains(response, 'some_main_region_text')
         self.assertContains(response, 'some_sidebar_region_text')
         self.assertNotContains(response, 'some content outside')
+
+    def test_33_preview(self):
+        self.create_default_page_set()
+        page = Page.objects.get(pk=1)
+        page.template_key = 'theother'
+        page.save()
+        page.rawcontent_set.create(
+            region='main',
+            ordering=0,
+            text='Example content')
+
+        self.assertEquals(self.client.get(page.get_absolute_url()).status_code, 404)
+        self.assertContains(self.client.get('%s_preview/%s/' % (page.get_absolute_url(), page.pk)),
+            'Example content')
 
 
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')

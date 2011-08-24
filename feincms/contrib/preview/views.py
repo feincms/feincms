@@ -1,7 +1,6 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.views.cbv.views import Handler
 

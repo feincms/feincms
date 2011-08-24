@@ -145,16 +145,17 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         trans = None
 
         try:
-            trans = unicode(self.translation)
+            trans = self.translation
         except models.ObjectDoesNotExist:
             pass
         except AttributeError, e:
             pass
 
-        if trans and trans.strip():
-            return trans
-        else:
-            return os.path.basename(self.file.name)
+        if trans:
+            trans = unicode(trans)
+            if trans.strip():
+                return trans
+        return os.path.basename(self.file.name)
 
     def get_absolute_url(self):
         return self.file.url
