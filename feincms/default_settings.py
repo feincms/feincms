@@ -84,10 +84,6 @@ FEINCMS_ALLOW_EXTRA_PATH = getattr(settings, 'FEINCMS_ALLOW_EXTRA_PATH', False)
 FEINCMS_TRANSLATION_POLICY = getattr(settings, 'FEINCMS_TRANSLATION_POLICY', 'STANDARD')
 
 # ------------------------------------------------------------------------
-#: Set to True if you want to run the FeinCMS test suite unconditionally:
-FEINCMS_RUN_TESTS = getattr(settings, 'FEINCMS_RUN_TESTS', False)
-
-# ------------------------------------------------------------------------
 # Settings for HTML validation
 
 #: If True, HTML will be run through a tidy function before saving:
