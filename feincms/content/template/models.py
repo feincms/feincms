@@ -22,6 +22,7 @@ class TemplateChoices(object):
 
     def __iter__(self):
         seen = set()
+        choices = []
 
         for loader in self.template_loaders:
             for basepath in loader.get_template_sources('.'):
@@ -37,7 +38,9 @@ class TemplateChoices(object):
                     if template.endswith(('~', '.tmp')):
                         continue
                     seen.add(template)
-                    yield (template, template)
+                    choices.append((template, template))
+
+        return iter(sorted(choices))
 
 
 class TemplateContent(models.Model):
