@@ -189,9 +189,10 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         """
         from os.path import basename
         from feincms.utils import shorten_string
-        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" /> %s <br />%s, %s' % (
+        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" id="_refkey_%d" /> %s <br />%s, %s' % (
                 self.id,
                 self.file.name,
+                self.id,
                 shorten_string(basename(self.file.name), max_length=40),
                 self.file_type(),
                 self.formatted_file_size(),

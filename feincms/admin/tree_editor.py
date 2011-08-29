@@ -197,7 +197,10 @@ class TreeEditor(admin.ModelAdmin):
         """
         r = ''
         if hasattr(item, 'get_absolute_url'):
-            r = '<input type="hidden" class="medialibrary_file_path" value="%s" />' % item.get_absolute_url()
+            r = '<input type="hidden" class="medialibrary_file_path" value="%s" id="_refkey_%d" />' % (
+                        item.get_absolute_url(),
+                        item.id
+                      )
 
         editable_class = ''
         if not getattr(item, 'feincms_editable', True):
