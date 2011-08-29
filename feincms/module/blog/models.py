@@ -12,7 +12,7 @@ from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.admin import editor
+from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
 from feincms.utils import get_object
@@ -64,7 +64,7 @@ class Entry(Base):
 signals.post_syncdb.connect(check_database_schema(Entry, __name__), weak=False)
 
 
-class EntryAdmin(editor.ItemEditor):
+class EntryAdmin(item_editor.ItemEditor):
     date_hierarchy = 'published_on'
     list_display = ('__unicode__', 'published', 'published_on')
     list_filter = ('published',)

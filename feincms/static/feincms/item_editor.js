@@ -190,8 +190,6 @@ if(!Array.indexOf) {
         if(new_form_count > old_form_count){
             return $('#'+modvar+'_set-'+(new_form_count-1));
         }
-        // TODO: add fallback for older versions by manually cloning
-        // empty fieldset (provided using extra=1)
     }
 
     function set_item_field_value(item, field, value) {
@@ -269,6 +267,12 @@ if(!Array.indexOf) {
             contentblock_init_handlers[i]();
     }
 
+    function identify_feincms_inlines() {
+        $.each(CONTENT_NAMES, function(name, value) {
+            $('#' + name + '_set-group').addClass('feincms_inline');
+        });
+    }
+
     function hide_form_rows_with_hidden_widgets(){
         /* This is not normally done in django -- the fields are shown
            with visible labels and invisible widgets, but FeinCMS used to
@@ -337,6 +341,7 @@ if(!Array.indexOf) {
     var current_template;
 
     $(document).ready(function($){
+        identify_feincms_inlines();
         hide_form_rows_with_hidden_widgets();
 
         $("#main_wrapper > .navi_tab").click(function(){

@@ -28,10 +28,6 @@ management commands helped cleaning up the mess.
    :members:
    :noindex:
 
-.. automodule:: feincms.management.commands.rebuild_mptt_direct
-   :members:
-   :noindex:
-
 
 Miscellaneous commands
 ----------------------

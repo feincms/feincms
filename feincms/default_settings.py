@@ -34,10 +34,6 @@ FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(settings, 'FEINCMS_RICHTEXT_INIT_CONTEXT
 # ------------------------------------------------------------------------
 # Admin media settings
 
-#: Path to FeinCMS' admin media
-FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/static/feincms/')
-#: Link to google APIs instead of using local copy of JS libraries
-FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKING', False)
 #: avoid jQuery conflicts -- scripts should use feincms.jQuery instead of $
 FEINCMS_JQUERY_NO_CONFLICT = \
     getattr(settings, 'FEINCMS_JQUERY_NO_CONFLICT', False)
@@ -84,10 +80,6 @@ FEINCMS_ALLOW_EXTRA_PATH = getattr(settings, 'FEINCMS_ALLOW_EXTRA_PATH', False)
 FEINCMS_TRANSLATION_POLICY = getattr(settings, 'FEINCMS_TRANSLATION_POLICY', 'STANDARD')
 
 # ------------------------------------------------------------------------
-#: Set to True if you want to run the FeinCMS test suite unconditionally:
-FEINCMS_RUN_TESTS = getattr(settings, 'FEINCMS_RUN_TESTS', False)
-
-# ------------------------------------------------------------------------
 # Settings for HTML validation
 
 #: If True, HTML will be run through a tidy function before saving:
@@ -98,3 +90,11 @@ FEINCMS_TIDY_SHOW_WARNINGS = getattr(settings, 'FEINCMS_TIDY_SHOW_WARNINGS', Tru
 FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE = getattr(settings, 'FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE', True)
 #: Name of the tidy function - anything which takes (html) and returns (html, errors, warnings) can be used:
 FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION', 'feincms.utils.html.tidy.tidy_html')
+
+
+# ------------------------------------------------------------------------
+#: Monkey-patch django.core.urlresvolers.reverse to be application-content aware?
+#: (The monkey patch is deprecated and should not be used anymore. Use the
+#: ``app_reverse`` function and the ``{% app_reverse %}`` template tag instead.)
+#: The value of this setting will be changed to False in FeinCMS 1.6.
+FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH', True)

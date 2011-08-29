@@ -105,8 +105,6 @@ def feincms_frontend_editing(cms_obj, request):
     if hasattr(request, 'session') and request.session.get('frontend_editing'):
         context = template.RequestContext(request, {
             "feincms_page": cms_obj,
-            'FEINCMS_ADMIN_MEDIA': feincms_settings.FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING': feincms_settings.FEINCMS_ADMIN_MEDIA_HOTLINKING
             })
         return render_to_string('admin/feincms/fe_tools.html', context)
 

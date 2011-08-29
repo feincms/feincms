@@ -46,10 +46,7 @@ def _build_tree_structure(cls):
     """
     all_nodes = { }
 
-    if hasattr(cls, '_mptt_meta'): # New-style MPTT
-        mptt_opts = cls._mptt_meta
-    else:
-        mptt_opts = cls._meta
+    mptt_opts = cls._mptt_meta
 
     for p_id, parent_id in cls.objects.order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr).values_list("pk", "%s_id" % mptt_opts.parent_attr):
         all_nodes[p_id] = []
@@ -200,7 +197,10 @@ class TreeEditor(admin.ModelAdmin):
         """
         r = ''
         if hasattr(item, 'get_absolute_url'):
-            r = '<input type="hidden" class="medialibrary_file_path" value="%s" />' % item.get_absolute_url()
+            r = '<input type="hidden" class="medialibrary_file_path" value="%s" id="_refkey_%d" />' % (
+                        item.get_absolute_url(),
+                        item.id
+                      )
 
         editable_class = ''
         if not getattr(item, 'feincms_editable', True):
@@ -279,15 +279,7 @@ class TreeEditor(admin.ModelAdmin):
         except self.model.DoesNotExist:
             return HttpResponseNotFound("Object does not exist")
 
-        can_change = False
-
-        if hasattr(obj, "user_can") and obj.user_can(request.user, change_page=True):
-            # Was added in c7f04dfb5d, but I've no idea what user_can is about.
-            can_change = True
-        else:
-            can_change = self.has_change_permission(request, obj=obj)
-
-        if not can_change:
+        if not self.has_change_permission(request, obj=obj):
             logging.warning("Denied AJAX request by %s to toggle boolean %s for object %s", request.user, attr, item_id)
             return HttpResponseForbidden("You do not have permission to access this object")
 
@@ -344,8 +336,6 @@ class TreeEditor(admin.ModelAdmin):
         self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
-        extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
-        extra_context['FEINCMS_ADMIN_MEDIA_HOTLINKING'] = settings.FEINCMS_ADMIN_MEDIA_HOTLINKING
         extra_context['tree_structure'] = mark_safe(simplejson.dumps(
                                                     _build_tree_structure(self.model)))
 

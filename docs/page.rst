@@ -75,8 +75,7 @@ Setting up the admin interface
 ==============================
 
 The customized admin interface code is contained inside the :class:`ModelAdmin`
-subclass, so you do not need to do anything special here. You only need to set
-:data:`~feincms.settings.FEINCMS_ADMIN_MEDIA` as described in the installation documentation.
+subclass, so you do not need to do anything special here.
 
 If you use the :class:`~feincms.content.richtext.models.RichTextContent`, you
 need to download `TinyMCE <http://tinymce.moxiecode.com/>`_ and configure FeinCMS'

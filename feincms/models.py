@@ -329,7 +329,11 @@ class ExtensionsMixin(object):
                     raise ImproperlyConfigured, '%s is not a valid extension for %s' % (
                         ext, cls.__name__)
 
-            # Not a string, so take our chances and just try to access "register"
+            # Not a string, maybe a callable?
+            elif hasattr(ext, '__call__'):
+                fn = ext
+
+            # Take our chances and just try to access "register"
             else:
                 fn = ext.register
 
@@ -779,6 +783,8 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def _needs_templates(cls):
+            ensure_completely_loaded()
+
             # helper which can be used to ensure that either register_regions or
             # register_templates has been executed before proceeding
             if not hasattr(cls, 'template'):

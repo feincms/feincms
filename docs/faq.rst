@@ -33,25 +33,6 @@ included PageManager...
 
 
 
-I get a ``mptt.AlreadyRegistered`` exception when I try using the :mod:`~feincms.module.page` module!
-=====================================================================================================
-
-This happens when the Django model loading code encounters an ``ImportError``
-when it loads the :mod:`~feincms.module.page` module for the first time. The
-module is added to a list of postponed modules, and the import is retried
-after all other applications have been successfully imported. This will
-cause the ``mptt.register`` call to be executed twice though, which is why
-you see this exception. We could catch this exception and go on as if
-nothing had happened, but this hides a deeper problem somewhere which should
-be fixed for good instead of papering over the issue.
-
-There are several ways how you might find out what's going wrong. Raise the
-debugging level, try importing the page module (and other modules) from the
-shell you get when you use ``./manage.py shell`` are some possibilities how
-you might debug this problem.
-
-
-
 I run ``syncdb`` and get a message about missing columns in the page table
 ==========================================================================
 

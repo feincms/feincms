@@ -35,10 +35,10 @@ Usage is as follows::
 And inside your ``admin.py`` file::
 
     from django.contrib import admin
-    from feincms.admin import editor
+    from feincms.admin import tree_editor
     from yourapp.models import YourModel
 
-    class YourModelAdmin(editor.TreeEditor):
+    class YourModelAdmin(tree_editor.TreeEditor):
         pass
 
     admin.site.register(YourModel, YourModelAdmin)
@@ -68,7 +68,7 @@ the page editor however.
 Usage::
 
     from django.contrib import admin
-    from feincms.admin import editor
+    from feincms.admin import tree_editor
     import mptt
 
     class Category(models.Model):
@@ -79,9 +79,9 @@ Usage::
         # ...
     mptt.register(Category)
 
-    class CategoryAdmin(editor.TreeEditor):
+    class CategoryAdmin(tree_editor.TreeEditor):
         list_display = ('__unicode__', 'active_toggle')
-        active_toggle = editor.ajax_editable_boolean('active', _('active'))
+        active_toggle = tree_editor.ajax_editable_boolean('active', _('active'))
 
 
 
@@ -222,15 +222,15 @@ more than the following code:
 ``admin.py``::
 
     from django.contrib import admin
-    from feincms.admin import editor
+    from feincms.admin import item_editor, tree_editor
     from myapp.models import Page
 
-    class PageAdmin(editor.ItemEditor, editor.TreeEditor):
+    class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         fieldsets = [
             (None, {
                 'fields': ['active', 'title', 'slug'],
                 }),
-            editor.FEINCMS_CONTENT_FIELDSET,
+            item_editor.FEINCMS_CONTENT_FIELDSET,
             ]
         list_display = ['active', 'title']
         prepopulated_fields = {'slug': ('title',)}

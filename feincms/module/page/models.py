@@ -24,65 +24,21 @@ from django.db.models import Q, signals
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
+from django.utils.datastructures import SortedDict
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db.transaction import commit_on_success
 
-import mptt
+from mptt.models import MPTTModel
 
 from feincms import settings, ensure_completely_loaded
-from feincms.admin import editor
-from feincms.admin import item_editor
+from feincms.admin import item_editor, tree_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base, create_base_model
-from feincms.utils import get_object, copy_model_instance
+from feincms.module.page import processors
+from feincms.utils.managers import ActiveAwareContentManagerMixin
 import feincms.admin.filterspecs
 
-# ------------------------------------------------------------------------
-class ActiveAwareContentManagerMixin(object):
-    """
-    Implement what's necessary to add some kind of "active" state for content
-    objects. The notion of active is defined by a number of filter rules that
-    must all match (AND) for the object to be active.
-
-    A Manager for a content class using the "datepublisher" extension
-    should either adopt this mixin or implement a similar interface.
-    """
-
-    # A list of filters which are used to determine whether a page is active or not.
-    # Extended for example in the datepublisher extension (date-based publishing and
-    # un-publishing of pages)
-    active_filters = ()
-
-    @classmethod
-    def apply_active_filters(cls, queryset):
-        """
-        Apply all filters defined to the queryset passed and return the result.
-        """
-        for filt in cls.active_filters:
-            if callable(filt):
-                queryset = filt(queryset)
-            else:
-                queryset = queryset.filter(filt)
-
-        return queryset
-
-    @classmethod
-    def add_to_active_filters(cls, filter):
-        """
-        Add a new clause to the active filters. A filter may be either
-        a Q object to be applied to the content class or a callable taking
-        a queryset and spitting out a new one.
-        """
-        if not cls.active_filters:
-            cls.active_filters = list()
-        cls.active_filters.append(filter)
-
-    def active(self):
-        """
-        Return only currently active objects.
-        """
-        return self.apply_active_filters(self)
 
 # ------------------------------------------------------------------------
 def path_to_cache_key(path):
@@ -129,7 +85,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     def page_for_path_or_404(self, path):
         warnings.warn('page_for_path_or_404 is deprecated. Use page_for_path instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return self.page_for_path(path, raise404=True)
 
     def best_match_for_path(self, path, raise404=False):
@@ -215,19 +171,19 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
     def for_request_or_404(self, request):
         warnings.warn('for_request_or_404 is deprecated. Use for_request instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return self.for_request(request, raise404=True)
 
     def best_match_for_request(self, request, raise404=False):
         warnings.warn('best_match_for_request is deprecated. Use for_request instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         page = self.best_match_for_path(request.path, raise404=raise404)
         page.setup_request(request)
         return page
 
     def from_request(self, request, best_match=False):
         warnings.warn('from_request is deprecated. Use for_request instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
 
         if hasattr(request, '_feincms_page'):
             return request._feincms_page
@@ -236,31 +192,42 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             return self.best_match_for_request(request, raise404=False)
         return self.for_request(request)
 
-PageManager.add_to_active_filters( Q(active=True) )
+PageManager.add_to_active_filters(Q(active=True))
 
 # MARK: -
 # ------------------------------------------------------------------------
 
-try:
-    # MPTT 0.4
-    from mptt.models import MPTTModel
-    mptt_register = False
-    Base = create_base_model(MPTTModel)
-except ImportError:
-    # MPTT 0.3
-    mptt_register = True
+class _LegacyProcessorDescriptor(object):
+    """
+    Request and response processors have been moved into their own module;
+    this descriptor allows accessing them the old way (as attributes of the
+    Page class) but emits a warning. This class will only be available during
+    the FeinCMS 1.5 lifecycle.
+    """
+    def __init__(self, name):
+        self.name = name
 
+    def __get__(self, obj, objtype=None):
+        warnings.warn('Page request and response processors have been moved into '
+            'their own module. Accessing them via the Page class will not be possible '
+            'in FeinCMS 1.6 anymore.',
+            DeprecationWarning, stacklevel=2)
+        return getattr(processors, self.name)
 
-class Page(Base):
-    active = models.BooleanField(_('active'), default=False)
+    def __set__(self, obj, val):
+        setattr(processors, self.name, val)
+
+# ------------------------------------------------------------------------
+
+class Page(create_base_model(MPTTModel)):
+    active = models.BooleanField(_('active'), default=True)
 
     # structure and navigation
-    title = models.CharField(_('title'), max_length=200,
-        help_text=_('This is used for the generated navigation too.'))
+    title = models.CharField(_('title'), max_length=200)
     slug = models.SlugField(_('slug'), max_length=150)
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
-    in_navigation = models.BooleanField(_('in navigation'), default=False)
+    in_navigation = models.BooleanField(_('in navigation'), default=True)
     override_url = models.CharField(_('override URL'), max_length=300, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
     redirect_to = models.CharField(_('redirect to'), max_length=300, blank=True,
@@ -268,8 +235,8 @@ class Page(Base):
     _cached_url = models.CharField(_('Cached URL'), max_length=300, blank=True,
         editable=False, default='', db_index=True)
 
-    request_processors = []
-    response_processors = []
+    request_processors = SortedDict()
+    response_processors = SortedDict()
     cache_key_components = [ lambda p: django_settings.SITE_ID,
                              lambda p: p._django_content_type.id,
                              lambda p: p.id ]
@@ -314,7 +281,7 @@ class Page(Base):
         additionally select only child pages that are active.
         """
         warnings.warn('active_children is deprecated. Use self.children.active() instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return Page.objects.active().filter(parent=self)
 
     def active_children_in_navigation(self):
@@ -325,7 +292,7 @@ class Page(Base):
         to disclose).
         """
         warnings.warn('active_children_in_navigation is deprecated. Use self.children.in_navigation() instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return self.active_children().filter(in_navigation=True)
 
     def short_title(self):
@@ -415,7 +382,7 @@ class Page(Base):
         As the name says.
         """
         warnings.warn('get_siblings_and_self is deprecated. You probably want self.parent.children.active() anyway.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return page.get_siblings(include_self=True)
 
     def cache_key(self):
@@ -474,7 +441,7 @@ class Page(Base):
                     request.path),
                 })
 
-        for fn in self.request_processors:
+        for fn in reversed(self.request_processors.values()):
             r = fn(self, request)
             if r: return r
 
@@ -484,16 +451,8 @@ class Page(Base):
         called to modify the response, eg. for setting cache or expiration headers,
         keeping statistics, etc.
         """
-        for fn in self.response_processors:
+        for fn in self.response_processors.values():
             fn(self, request, response)
-
-    def require_path_active_request_processor(self, request):
-        """
-        Checks whether any ancestors are actually inaccessible (ie. not
-        inactive or expired) and raise a 404 if so.
-        """
-        if not self.are_ancestors_active():
-            raise Http404()
 
     def get_redirect_to_target(self, request):
         """
@@ -501,105 +460,22 @@ class Page(Base):
         """
         return self.redirect_to
 
-    def redirect_request_processor(self, request):
-        target = self.get_redirect_to_target(request)
-        if target:
-            return HttpResponseRedirect(target)
-
-    def frontendediting_request_processor(self, request):
-        if not 'frontend_editing' in request.GET:
-            return
-
-        if request.user.has_module_perms('page'):
-            try:
-                enable_fe = int(request.GET['frontend_editing']) > 0
-            except ValueError:
-                enable_fe = False
-
-            request.session['frontend_editing'] = enable_fe
-
-        # Redirect to cleanup URLs
-        return HttpResponseRedirect(request.path)
-
-    def etag_request_processor(self, request):
-
-        # XXX is this a performance concern? Does it create a new class
-        # every time the processor is called or is this optimized to a static
-        # class??
-        class DummyResponse(dict):
-            """
-            This is a dummy class with enough behaviour of HttpResponse so we
-            can use the condition decorator without too much pain.
-            """
-            def has_header(self, what):
-                return False
-
-        def dummy_response_handler(*args, **kwargs):
-            return DummyResponse()
-
-        def etagger(request, page, *args, **kwargs):
-            etag = page.etag(request)
-            return etag
-
-        def lastmodifier(request, page, *args, **kwargs):
-            lm = page.last_modified()
-            return lm
-
-        # Unavailable in Django 1.0 -- the current implementation of ETag support
-        # requires Django 1.1 unfortunately.
-        from django.views.decorators.http import condition
-
-        # Now wrap the condition decorator around our dummy handler:
-        # the net effect is that we will be getting a DummyResponse from
-        # the handler if processing is to continue and a non-DummyResponse
-        # (should be a "304 not modified") if the etag matches.
-        rsp = condition(etag_func=etagger, last_modified_func=lastmodifier)(dummy_response_handler)(request, self)
-
-        # If dummy then don't do anything, if a real response, return and
-        # thus shortcut the request processing.
-        if not isinstance(rsp, DummyResponse):
-            return rsp
-
-    def etag_response_processor(self, request, response):
+    @classmethod
+    def register_request_processor(cls, fn, key=None):
         """
-        Response processor to set an etag header on outgoing responses.
-        The Page.etag() method must return something valid as etag content
-        whenever you want an etag header generated.
+        Registers the passed callable as request processor. A request processor
+        always receives two arguments, the current page object and the request.
         """
-        etag = self.etag(request)
-        if etag is not None:
-            response['ETag'] = '"' + etag + '"'
+        cls.request_processors[fn if key is None else key] = fn
 
-    @staticmethod
-    def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
-        if not django_settings.DEBUG:
-            return lambda self, request, response: None
-
-        def processor(self, request, response):
-            from django.db import connection
-
-            print_sql = lambda x: x
-            try:
-                import sqlparse
-                print_sql = lambda x: sqlparse.format(x, reindent=True, keyword_case='upper')
-            except:
-                pass
-
-            if verbose:
-                print >> file, "--------------------------------------------------------------"
-            time = 0.0
-            i = 0
-            for q in connection.queries:
-                i += 1
-                if verbose:
-                    print >> file, "%d : [%s]\n%s\n" % ( i, q['time'], print_sql(q['sql']))
-                time += float(q['time'])
-
-            print >> file, "--------------------------------------------------------------"
-            print >> file, "Total: %d queries, %.3f ms" % (i, time)
-            print >> file, "--------------------------------------------------------------"
-
-        return processor
+    @classmethod
+    def register_response_processor(cls, fn, key=None):
+        """
+        Registers the passed callable as response processor. A response processor
+        always receives three arguments, the current page object, the request
+        and the response.
+        """
+        cls.response_processors[fn if key is None else key] = fn
 
     @classmethod
     def register_request_processors(cls, *processors):
@@ -608,7 +484,12 @@ class Page(Base):
         always receives two arguments, the current page object and the request.
         """
 
-        cls.request_processors[0:0] = processors
+        warnings.warn("register_request_processors has been deprecated,"
+            " use register_request_processor instead.",
+            DeprecationWarning, stacklevel=2)
+
+        for processor in processors:
+            cls.register_request_processor(processor)
 
     @classmethod
     def register_response_processors(cls, *processors):
@@ -618,21 +499,41 @@ class Page(Base):
         and the response.
         """
 
-        cls.response_processors.extend(processors)
+        warnings.warn("register_response_processors has been deprecated,"
+            " use register_response_processor instead.",
+            DeprecationWarning, stacklevel=2)
+
+        for processor in processors:
+            cls.register_response_processor(processor)
 
     @classmethod
     def register_extension(cls, register_fn):
         register_fn(cls, PageAdmin)
 
+    require_path_active_request_processor = _LegacyProcessorDescriptor(
+        'require_path_active_request_processor')
+    redirect_request_processor = _LegacyProcessorDescriptor(
+        'redirect_request_processor')
+    frontendediting_request_processor = _LegacyProcessorDescriptor(
+        'frontendediting_request_processor')
+    etag_request_processor = _LegacyProcessorDescriptor(
+        'etag_request_processor')
+    etag_response_processor = _LegacyProcessorDescriptor(
+        'etag_response_processor')
+    debug_sql_queries_response_processor = _LegacyProcessorDescriptor(
+        'debug_sql_queries_response_processor')
+
 
 # ------------------------------------------------------------------------
-if mptt_register: # MPTT 0.3 legacy support
-    mptt.register(Page)
-
 # Our default request processors
-Page.register_request_processors(Page.require_path_active_request_processor,
-                                 Page.frontendediting_request_processor,
-                                 Page.redirect_request_processor)
+Page.register_request_processor(processors.require_path_active_request_processor,
+    key='path_active')
+Page.register_request_processor(processors.redirect_request_processor,
+    key='redirect')
+
+if settings.FEINCMS_FRONTEND_EDITING:
+    Page.register_request_processor(processors.frontendediting_request_processor,
+        key='frontend_editing')
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
@@ -756,7 +657,7 @@ class PageAdminForm(forms.ModelForm):
         return cleaned_data
 
 # ------------------------------------------------------------------------
-class PageAdmin(editor.ItemEditor, editor.TreeEditor):
+class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     class Media:
         css = {}
         js = []
@@ -768,8 +669,11 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
     unknown_fields = ['override_url', 'redirect_to']
     fieldsets = [
         (None, {
-            'fields': ['active', 'in_navigation', 'template_key', 'title', 'slug',
-                'parent'],
+            'fields': [
+                ('title', 'slug'),
+                ('parent', 'active', 'in_navigation'),
+                'template_key',
+                ],
         }),
         item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
@@ -809,7 +713,7 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
                 if not f.editable:
                     self.readonly_fields.append(f.name)
 
-    in_navigation_toggle = editor.ajax_editable_boolean('in_navigation', _('in navigation'))
+    in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
     def _actions_column(self, page):
         editable = getattr(page, 'feincms_editable', True)
@@ -873,13 +777,13 @@ class PageAdmin(editor.ItemEditor, editor.TreeEditor):
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
                 self._visible_pages.remove(page.id)
-            return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
+            return tree_editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
 
         if page.active and not page.id in self._visible_pages:
             # is active but should not be shown, so visibility limited by extension: show a "not active"
-            return editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
+            return tree_editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
 
-        return editor.ajax_editable_boolean_cell(page, 'active')
+        return tree_editor.ajax_editable_boolean_cell(page, 'active')
     is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is active')
     is_visible_admin.editable_boolean_field = 'active'

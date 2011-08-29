@@ -34,7 +34,7 @@ class CommentsContent(models.Model):
 
     @classmethod
     def initialize_type(cls):
-        from feincms.admin.editor import ItemEditorForm
+        from feincms.admin.item_editor import ItemEditorForm
         class CommentContentAdminForm(ItemEditorForm):
             def __init__(self, *args, **kwargs):
                 super(CommentContentAdminForm, self).__init__(*args, **kwargs)

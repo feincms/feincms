@@ -47,7 +47,9 @@ def check_database_schema(cls, module_name):
                 u'%s.%s' % (field.__class__.__module__, field.__class__.__name__),
                 )
 
-        print style.NOTICE('\nPlease consult the output of `python manage.py sql %s` to find out what the correct column types are.\n' % (
+        print style.NOTICE('\nPlease consult the output of `python manage.py sql %s` to'
+            ' find out what the correct column types are. (Or use south, which is what'
+            ' you should be doing anyway.)\n' % (
             cls._meta.app_label,
             ))
     return _fn

@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
-from feincms.admin.editor import ItemEditorForm
+from feincms.admin.item_editor import ItemEditorForm
 from feincms.module.medialibrary.models import MediaFile
 
 from feincms.content.medialibrary.models import MediaFileWidget

@@ -1,5 +1,5 @@
 <script type="text/javascript" charset="utf-8">
-IMG_DELETELINK_PATH = "{{ FEINCMS_ADMIN_MEDIA }}img/icon_deletelink.gif";
+IMG_DELETELINK_PATH = "{{ STATIC_URL }}feincms/img/icon_deletelink.gif";
 
 REGION_MAP = [{% for region in original.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
 REGION_NAMES = [{% for region in original.template.regions %}'{{ region.title|capfirst }}'{% if not forloop.last %}, {% endif %}{% endfor %}];

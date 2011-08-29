@@ -23,7 +23,7 @@ def reverse_test(request):
 
 
 def full_reverse_test(request):
-    t = template.Template('home:{% url feincms.tests.applicationcontent_urls/ac_module_root %} args:{% url feincms.tests.applicationcontent_urls/ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
+    t = template.Template('home:{% url tests.testapp.applicationcontent_urls/ac_module_root %} args:{% url tests.testapp.applicationcontent_urls/ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
     return t.render(template.Context())
 
 
@@ -45,6 +45,15 @@ def response(request):
     return HttpResponse('Anything')
 
 
+def inheritance20(request):
+    return template.Template('''
+            {% extends "base.html" %}
+            some content outside
+            {% block content %}a content {{ from_appcontent }}{% endblock %}
+            {% block sidebar %}b content {{ block.super }}{% block bla %}{% endblock %}{% endblock %}
+            '''), {'from_appcontent': 42}
+
+
 urlpatterns = patterns('',
     url(r'^$', module_root, name='ac_module_root'),
     url(r'^args_test/([^/]+)/([^/]+)/$', args_test, name='ac_args_test'),
@@ -56,4 +65,5 @@ urlpatterns = patterns('',
     url(r'^redirect/$', redirect),
     url(r'^response/$', response),
     url(r'^response_decorated/$', standalone(response)),
+    url(r'^inheritance20/$', inheritance20),
 )

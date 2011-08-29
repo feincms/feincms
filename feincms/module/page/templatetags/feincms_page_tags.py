@@ -312,7 +312,7 @@ def is_equal_or_parent_of(page1, page2):
     example adds a CSS class ``current`` to the current main navigation entry::
 
         {% for page in navigation %}
-            <a {% if page|is_equal_or_parent_of:feincms_page %}class="mark"{% endif %}>
+            <a {% if page|is_equal_or_parent_of:feincms_page %}class="current"{% endif %}>
                 {{ page.title }}</a>
         {% endfor %}
     """
