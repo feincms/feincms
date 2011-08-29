@@ -922,6 +922,19 @@ class PagesTestCase(TestCase):
                 template.Template(t).render(template.Context(c)),
                 r)
 
+        # Test that navigation entries do not exist several times, even with
+        # navigation extensions. Apply the PassthroughExtension to a page
+        # which does only have direct children, because it does not collect
+        # pages further down the tree.
+        page = Page.objects.get(pk=8)
+        page.navigation_extension = 'tests.testapp.navigation_extensions.PassthroughExtension'
+        page.save()
+
+        for c, t, r in tests:
+            self.assertEqual(
+                template.Template(t).render(template.Context(c)),
+                r)
+
     def test_18_default_render_method(self):
         """
         Test the default render() behavior of selecting render_<region> methods

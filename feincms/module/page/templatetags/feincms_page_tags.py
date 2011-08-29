@@ -48,14 +48,26 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         if args.get('extended', False):
             _entries = list(entries)
             entries = []
+            extended_node_rght = [] # rght value of extended node.
+                                    # used to filter out children of
+                                    # nodes sporting a navigation extension
 
             for entry in _entries:
-                entries.append(entry)
-
                 if getattr(entry, 'navigation_extension', None):
+                    entries.append(entry)
+                    extended_node_rght.append(entry.rght)
+
                     entries.extend(e for e in entry.extended_navigation(depth=depth,
                         request=self.render_context.get('request', None))
                         if getattr(e, 'level', 0) < mptt_limit)
+                else:
+                    if extended_node_rght:
+                        if entry.rght < extended_node_rght[-1]:
+                            continue
+                        else:
+                            extended_node_rght.pop()
+
+                    entries.append(entry)
 
         return entries
 
