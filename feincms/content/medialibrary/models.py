@@ -34,7 +34,7 @@ class MediaFileWidget(forms.TextInput):
 
             try:
                 caption = mf.translation.caption
-            except AttributeError, ObjectDoesNotExist:
+            except (AttributeError, ObjectDoesNotExist):
                 caption = _('(no caption)')
 
             if mf.type == 'image':
