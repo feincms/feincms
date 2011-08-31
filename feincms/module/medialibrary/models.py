@@ -99,6 +99,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
     class Meta:
         abstract = True
+        ordering = ['-created']
         verbose_name = _('media file')
         verbose_name_plural = _('media files')
 
