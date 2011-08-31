@@ -51,6 +51,9 @@ class TrackerContentProxy(ContentProxy):
                 try:
                     self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
                 except KeyError:
+                    # It's possible that the inventory does not fit together with the
+                    # current models anymore, f.e. because a content type has been
+                    # removed.
                     pass
 
             if 'counts' not in self._cache:
