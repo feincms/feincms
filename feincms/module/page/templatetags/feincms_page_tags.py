@@ -300,6 +300,9 @@ def feincms_breadcrumbs(page, include_self=True):
     return {"trail": bc}
 
 # ------------------------------------------------------------------------
+def _is_parent_of(page1, page2):
+    return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
+
 @register.filter
 def is_parent_of(page1, page2):
     """
@@ -311,11 +314,14 @@ def is_parent_of(page1, page2):
     """
 
     try:
-        return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
+        return _is_parent_of(page1, page2)
     except AttributeError:
         return False
 
 # ------------------------------------------------------------------------
+def _is_equal_or_parent_of(page1, page2):
+    return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
+
 @register.filter
 def is_equal_or_parent_of(page1, page2):
     """
@@ -329,11 +335,14 @@ def is_equal_or_parent_of(page1, page2):
         {% endfor %}
     """
     try:
-        return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
+        return _is_equal_or_parent_of(page1, page2)
     except AttributeError:
         return False
 
 # ------------------------------------------------------------------------
+def _is_sibling_of(page1, page2):
+    return page1.parent_id == page2.parent_id
+
 @register.filter
 def is_sibling_of(page1, page2):
     """
@@ -345,8 +354,56 @@ def is_sibling_of(page1, page2):
     """
 
     try:
-        return page1.parent_id == page2.parent_id
+        return _is_sibling_of(page1, page2)
     except AttributeError:
         return False
 
 # ------------------------------------------------------------------------
+try:
+    any
+except NameError:
+    # For Python 2.4
+    from feincms.compat import c_any as any
+
+@register.filter
+def siblings_along_path_to(page_list, page2):
+    """
+    Filters a list of pages so that only those remain that are either:
+
+        * An ancestor of the current page
+        * A sibling of an ancestor of the current page
+
+    A typical use case is building a navigation menu with the active
+    path to the current page expanded::
+
+        {% feincms_navigation of feincms_page as navitems level=1,depth=3 %}
+        {% with navitems|siblings_along_path_to:feincms_page as navtree %}
+            ... whatever ...
+        {% endwith %}
+
+    """
+    try:
+        # Try to avoid hitting the database: If the current page is in_navigation,
+        # then all relevant pages are already in the incoming list, no need to
+        # fetch ancestors or children.
+
+        # NOTE: This assumes that the input list actually is complete (ie. comes from
+        # feincms_navigation). We'll cope with the fall-out of that assumption
+        # when it happens...
+        if page2 in page_list:
+            ancestors = [a_page for a_page in page_list 
+                                if _is_equal_or_parent_of(a_page, page2) or
+                                   a_page.parent_id == page2.id]
+        else:
+            ancestors = list(page2.get_ancestors(include_self=True))
+            ancestors.extend(page2.get_children())
+
+        siblings  = [a_page for a_page in page_list
+                            if any((_is_sibling_of(a_page, a) for a in ancestors))]
+
+        return siblings
+    except AttributeError:
+        return ()
+
+# ------------------------------------------------------------------------
+
