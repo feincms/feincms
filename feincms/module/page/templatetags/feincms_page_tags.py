@@ -392,15 +392,13 @@ def siblings_along_path_to(page_list, page2):
         # when it happens...
         if page2 in page_list:
             ancestors = [a_page for a_page in page_list 
-                                if _is_equal_or_parent_of(a_page, page2) or
-                                   a_page.parent_id == page2.id]
+                                if _is_equal_or_parent_of(a_page, page2)]
         else:
             ancestors = list(page2.get_ancestors(include_self=True))
-            ancestors.extend(page2.get_children())
 
         siblings  = [a_page for a_page in page_list
-                            if any((_is_sibling_of(a_page, a) for a in ancestors))]
-
+                            if a_page.parent_id == page2.id or
+                               any((_is_sibling_of(a_page, a) for a in ancestors))]
         return siblings
     except AttributeError:
         return ()
