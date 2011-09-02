@@ -192,6 +192,21 @@ class CMSBaseTest(TestCase):
         ct2 = ExampleCMSBase2.content_type_for(RawContent)
         self.assertEqual(ct2._meta.db_table, 'tests_examplecmsbase2_rawcontent2')
 
+    def test_09_related_objects_cache(self):
+        """
+        We need to define a model with relationship to our Base *after* all
+        content types have been registered; previously _fill_*_cache methods
+        were called during each content type registration, so any new related
+        objects added after the last content type time missed the boat. Now we
+        delete the cache so hopefully _fill_*_cache* won't be called until all
+        related models have been defined.
+        """
+        class Attachment(models.Model):
+            base = models.ForeignKey(ExampleCMSBase)
+
+        related_models = map(
+            lambda x: x.model, ExampleCMSBase._meta.get_all_related_objects())
+        self.assertTrue(Attachment in related_models)
 
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
