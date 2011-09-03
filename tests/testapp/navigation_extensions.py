@@ -5,7 +5,7 @@ class PassthroughExtension(NavigationExtension):
     # See PagesTestCase.test_23_navigation_extension
     name = 'passthrough extension'
 
-    def children(self, page):
+    def children(self, page, **kwargs):
         for p in page.children.in_navigation():
             yield p
 
@@ -13,5 +13,5 @@ class PassthroughExtension(NavigationExtension):
 class PretenderExtension(NavigationExtension):
     name = 'pretender extension'
 
-    def children(self, page):
+    def children(self, page, **kwargs):
         return [PagePretender(title='blabla', url='/asdsa/')]
