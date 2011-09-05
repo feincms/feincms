@@ -81,7 +81,7 @@ feincms.jQuery(function($){
 
 			$("body").disableSelection().bind('mousemove', function(event) {
 				// attach dragged item to mouse
-				var cloned = originalRow.clone();
+				var cloned = originalRow.html();
 				if($('#ghost').length == 0) {
 					$('<div id="ghost"></div>').appendTo('body');
 				}
