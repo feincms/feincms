@@ -132,11 +132,11 @@ feincms.jQuery(function($){
 						}
 
 						if(targetRow) {
-							var padding = 30 + element.attr('rel') * CHILD_PAD;
+							var padding = 30 + element.attr('rel') * CHILD_PAD + (targetLoc == CHILD ? CHILD_PAD : 0 );
 
 							$("#drag_line").css({
-								'width': targetRow.width() - padding - (targetLoc == CHILD ? CHILD_PAD : 0 ),
-								'left': targetRow.offset().left + padding + (targetLoc == CHILD ? CHILD_PAD : 0),
+								'width': targetRow.width() - padding,
+								'left': targetRow.offset().left + padding,
 								'top': targetRow.offset().top + (targetLoc == AFTER || targetLoc == CHILD ? rowHeight: 0) -1
 							});
 
