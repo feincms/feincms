@@ -79,7 +79,7 @@ feincms.jQuery(function($){
 			var moveTo = new Object();
 			var expandObj = new Object();
 
-			$("body").disableSelection().bind('mousemove', function(event) {
+			$("body").addClass('dragging').disableSelection().bind('mousemove', function(event) {
 				// attach dragged item to mouse
 				var cloned = originalRow.html();
 				if($('#ghost').length == 0) {
@@ -155,7 +155,7 @@ feincms.jQuery(function($){
 				if (event.which == '27') {
 					$("#drag_line").remove();
 					$("#ghost").remove();
-					$("body").enableSelection().unbind('mousemove').unbind('mouseup');
+					$("body").removeClass('dragging').enableSelection().unbind('mousemove').unbind('mouseup');
 					event.preventDefault();
 				}
 			});
@@ -187,7 +187,7 @@ feincms.jQuery(function($){
 					$("#drag_line").remove();
 					$("#ghost").remove();
 				}
-				$("body").enableSelection().unbind('mousemove').unbind('mouseup');
+				$("body").removeClass('dragging').enableSelection().unbind('mousemove').unbind('mouseup');
 			});
 
 		});
