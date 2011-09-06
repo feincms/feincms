@@ -1,4 +1,4 @@
-from BeautifulSoup import BeautifulStoneSoup
+from BeautifulSoup import BeautifulSoup
 import lxml.html
 import lxml.html.clean
 import re
@@ -157,7 +157,7 @@ def cleanse_html(html):
     html = re.sub(r'<([^/>]+)/>', r'<\1 />', html)
 
     # nicify entities and normalize unicode
-    html = BeautifulStoneSoup(html, convertEntities='xml').decode('utf-8')
+    html = unicode(BeautifulSoup(html, convertEntities='xml'))
     html = unicodedata.normalize('NFKC', html)
 
     return html
