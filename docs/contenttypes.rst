@@ -313,10 +313,10 @@ Comments content
 Comment list and form using ``django.contrib.comments``.
 
 
-Contact form
-------------
+Contact form content
+--------------------
 .. module:: feincms.content.contactform.models
-.. class:: ContactForm()
+.. class:: ContactFormContent()
 
 Simple contact form. Also serves as an example how forms might be used inside
 content types.
