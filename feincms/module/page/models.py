@@ -157,17 +157,15 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         could be determined.
         """
 
-        if hasattr(request, '_feincms_page'):
-            page = request._feincms_page
-        else:
+        if not hasattr(request, '_feincms_page'):
             if best_match:
-                page = self.best_match_for_path(request.path, raise404=raise404)
+                request._feincms_page = self.best_match_for_path(request.path, raise404=raise404)
             else:
-                page = self.page_for_path(request.path, raise404=raise404)
+                request._feincms_page = self.page_for_path(request.path, raise404=raise404)
 
         if setup:
-            page.setup_request(request)
-        return page
+            request._feincms_page.setup_request(request)
+        return request._feincms_page
 
     def for_request_or_404(self, request):
         warnings.warn('for_request_or_404 is deprecated. Use for_request instead.',
@@ -417,12 +415,18 @@ class Page(create_base_model(MPTTModel)):
         processor may peruse and modify the page or the request. It can also return
         a HttpResponse for shortcutting the page rendering and returning that response
         immediately to the client.
+
+        ``setup_request`` stores responses returned by request processors and returns
+        those on every subsequent call to ``setup_request``. This means that
+        ``setup_request`` can be called repeatedly during the same request-response
+        cycle without harm - request processors are executed exactly once.
         """
 
-        if hasattr(request, '_feincms_page'):
-            return
-
-        request._feincms_page = self
+        if hasattr(self, '_setup_request_result'):
+            return self._setup_request_result
+        else:
+            # Marker -- setup_request has been successfully run before
+            self._setup_request_result = None
 
         if not hasattr(request, '_feincms_extra_context'):
             request._feincms_extra_context = {}
@@ -443,7 +447,11 @@ class Page(create_base_model(MPTTModel)):
 
         for fn in reversed(self.request_processors.values()):
             r = fn(self, request)
-            if r: return r
+            if r:
+                self._setup_request_result = r
+                break
+
+        return self._setup_request_result
 
     def finalize_response(self, request, response):
         """
