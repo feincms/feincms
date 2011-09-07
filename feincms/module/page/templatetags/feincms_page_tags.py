@@ -213,13 +213,16 @@ def _translate_page_into(page, language, default=None):
     Return the translation for a given page
     """
     # Optimisation shortcut: No need to dive into translations if page already what we want
-    if page.language == language:
-        return page
+    try:
+        if page.language == language:
+            return page
 
-    if language is not None:
-        translations = dict((t.language, t) for t in page.available_translations())
-        if language in translations:
-            return translations[language]
+        if language is not None:
+            translations = dict((t.language, t) for t in page.available_translations())
+            if language in translations:
+                return translations[language]
+    except AttributeError:
+        pass
 
     if hasattr(default, '__call__'):
         return default(page=page)
@@ -262,7 +265,7 @@ register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_ar
 # ------------------------------------------------------------------------
 class TranslatedPageNodeOrBase(TranslatedPageNode):
     def what(self, page, args):
-        return super(TranslatedPageNodeOrBase, self).what(page, args, default=page.get_original_translation)
+        return super(TranslatedPageNodeOrBase, self).what(page, args, default=getattr(page, 'get_original_translation', page))
 register.tag('feincms_translatedpage_or_base', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNodeOrBase))
 
 # ------------------------------------------------------------------------
