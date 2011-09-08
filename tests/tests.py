@@ -1405,6 +1405,26 @@ class PagesTestCase(TestCase):
         self.assertContains(self.client.get('%s_preview/%s/' % (page.get_absolute_url(), page.pk)),
             'Example content')
 
+    def test_34_access(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        page.override_url = '/something/'
+        page.save()
+
+        Page.objects.update(active=True)
+
+        self.create_page(title='redirect page', override_url='/', redirect_to=page.get_absolute_url(), active=True)
+
+        # / -> redirect to /something/
+        r = self.client.get('/')
+        self.assertRedirects(r, page.get_absolute_url())
+        # /something/ should work
+        r = self.client.get(page.override_url)
+        self.assertEquals(r.status_code, 200)
+        # /foo not existant -> 404
+        r = self.client.get('/foo/')
+        self.assertEquals(r.status_code, 404)
 
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
 class BlogTestCase(TestCase):
