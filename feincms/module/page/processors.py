@@ -14,9 +14,10 @@ def require_path_active_request_processor(page, request):
 
 
 def redirect_request_processor(page, request):
-    target = page.get_redirect_to_target(request)
-    if target:
-        return HttpResponseRedirect(target)
+    if request._feincms_extra_context.get('extra_path', '/') == '/':
+        target = page.get_redirect_to_target(request)
+        if target:
+            return HttpResponseRedirect(target)
 
 
 def frontendediting_request_processor(page, request):
