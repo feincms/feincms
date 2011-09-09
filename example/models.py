@@ -12,7 +12,7 @@ from feincms.content.image.models import ImageContent
 from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.application.models import ApplicationContent
 from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
-from feincms.content.application.models import reverse
+from feincms.content.application.models import app_reverse
 
 
 Page.register_templates({
@@ -66,7 +66,7 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=reverse('blog_urls/blog_entry_details', kwargs={'object_id': entry.id}),
+                url=app_reverse('blog_entry_details', 'blog_urls', kwargs={'object_id': entry.id}),
                 )
 
 Page.register_extensions('navigation')
