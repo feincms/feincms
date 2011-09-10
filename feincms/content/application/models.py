@@ -419,7 +419,8 @@ class ApplicationContent(models.Model):
         return True # successful
 
     def send_directly(self, request, response):
-        return response.status_code != 200 or request.is_ajax() or getattr(response, 'standalone', False)
+        return (response.status_code != 200 or request.is_ajax() or getattr(response, 'standalone', False) or
+            response['Content-Type'] not in ('text/html', 'text/plain'))
 
     def render(self, **kwargs):
         return getattr(self, 'rendered_result', u'')
