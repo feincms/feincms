@@ -147,7 +147,9 @@ settings on the content type model itself:
 * ``feincms_item_editor_form``:
 
   You can specify the base class which should be used for the content type
-  model. The default value is :class:`django.forms.ModelForm`.
+  model. The default value is :class:`django.forms.ModelForm`. If you want
+  to customize the form, chances are it is a better idea to set
+  ``feincms_item_editor_inline`` instead.
 
 * ``feincms_item_editor_includes``:
 
@@ -183,8 +185,8 @@ settings on the content type model itself:
   on every drag and drop, it is your responsibility to ensure that code is
   only executed if it has to.
 
-  Take a look at the ``mediafile`` and ``richtext`` item editor include files
-  to understand how this should be done.
+  Take a look at the ``richtext`` item editor include files to understand how
+  this should be done.
 
 * ``feincms_item_editor_inline``:
 
@@ -198,8 +200,9 @@ settings on the content type model itself:
 Putting it all together
 =======================
 
-It is possible to build a limited, but fully functional page CMS using not
-more than the following code:
+It is possible to build a limited, but fully functional page CMS administration
+interface using only the following code (``urls.py`` and ``views.py`` are
+missing):
 
 ``models.py``::
 

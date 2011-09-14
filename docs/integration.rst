@@ -13,25 +13,29 @@ the CMS.
 Default page handler
 ====================
 
-The default CMS handler view is ``feincms.views.base.handler``. You can
+The default CMS handler view is ``feincms.views.cbv.handler``. You can
 add the following as last line in your ``urls.py`` to make a catch-all
-for any pages which were not matched before:
+for any pages which were not matched before::
 
-::
+    from feincms.views.cbv.views import Handler
+    handler = Handler.as_view()
 
     urlpatterns += patterns('',
-        url(r'^$', base.handler, name='feincms_home'),
-        url(r'^(.*)/$', base.handler, name='feincms_handler'),
+        url(r'^$', handler, name='feincms_home'),
+        url(r'^(.*)/$', handler, name='feincms_handler'),
     )
 
 Note that this default handler can also take a keyword parameter ``path``
 to specify which url to render. You can use that functionality to
-implement a default page by adding another entry to your ``urls.py``:
+implement a default page by adding another entry to your ``urls.py``::
 
-::
+    from feincms.views.cbv.views import Handler
+    handler = Handler.as_view()
 
-        url(r'^$', 'feincms.views.base.handler', {'path': '/rootpage'},
+    ...
+        url(r'^$', handler, {'path': '/rootpage'},
             name='feincms_home')
+    ...
 
 
 Please note that it's easier to include ``feincms.urls`` at the bottom
@@ -43,6 +47,11 @@ of your own URL patterns like this::
         url(r'', include('feincms.urls')),
     )
 
+The URLconf entry names ``feincms_home`` and ``feincms_handler`` must
+both exist somewhere in your project. The standard ``feincms.urls``
+contains definitions for both. If you want to provide your own view,
+it's your responsability to create correct URLconf entries.
+
 
 Generic views
 =============
@@ -50,12 +59,10 @@ Generic views
 If you use FeinCMS to manage your site, chances are that you still want
 to use generic views for certain parts. You probably still need a
 ``feincms_page`` object inside your template to generate the navigation and
-render regions not managed by the generic views. By simply replacing
-:mod:`django.views.generic` with :mod:`feincms.views.generic` in your
-``urls.py``. The page which
-most closely matches the current request URI will be passed into the
-template by automatically adding ``feincms_page`` to the ``extra_context``
-generic view argument.
+render regions not managed by the generic views. The best way to ensure
+the presence of a ``feincms_page`` instance in the template context is
+to add ``feincms.context_processors.add_page_if_missing`` to your
+``TEMPLATE_CONTEXT_PROCESSORS`` setting.
 
 
 .. _integration-applicationcontent:
@@ -65,6 +72,8 @@ Integrating 3rd party apps
 
 The :class:`~feincms.content.application.models.ApplicationContent` will
 help you with this.
+
+# TODO rewrite this section
 
 The plugin/content type needs a URLconf and uses resolve and a patched
 reverse to integrate the application into the CMS. The advantages are
@@ -274,9 +283,7 @@ a response and ``request.is_ajax()`` is ``True`` or if the application content
 returns a HttpResponse with the ``standalone`` attribute set to True.
 
 For example, an application can return an non-html export file -- in that case
-you don't really want the CMS to decorate the data file with the web html templates:
-
-::
+you don't really want the CMS to decorate the data file with the web html templates::
 
     from feincms.views.decorators import standalone
 

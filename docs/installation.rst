@@ -10,7 +10,7 @@ Installation
 This document describes the steps needed to get FeinCMS up and running.
 
 FeinCMS is based on Django, so you need a working Django_ installation
-first. The minimum support version of Django_ is the 1.2 line of releases.
+first. The minimum support version of Django_ is the 1.3 line of releases.
 
 You can download a stable release of FeinCMS using ``easy_install``::
 
@@ -43,11 +43,13 @@ lxml_, django-tagging_, feedparser_ and the python imaging library PIL_
 Configuration
 =============
 
-There isn't much left to do apart from adding ``feincms`` to ``INSTALLED_APPS``.
+There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS``,
+most commonly you'll want to add ``feincms``, ``feincms.module.page`` and
+``feincms.module.medialibrary``.
 The customized administration interface needs some media and javascript
-libraries which you have to make available to the browser. If you use Django 1.3's
-``django.contrib.staticfiles`` application, the media files will be picked up
-automatically by the ``collectstatic`` management command.
+libraries which you have to make available to the browser. FeinCMS uses Django's
+``django.contrib.staticfiles`` application for this purpose, the media files will
+be picked up automatically by the ``collectstatic`` management command.
 
 Please note that the ``feincms`` module will not create or need any database
 tables, but you need to put it into ``INSTALLED_APPS`` because otherwise the
