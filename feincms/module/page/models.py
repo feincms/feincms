@@ -47,13 +47,12 @@ def path_to_cache_key(path):
 
     # logic below borrowed from http://richwklein.com/2009/08/04/improving-django-cache-part-ii/
     # via acdha's django-sugar
-    if len(path) > 250:
+    if len(path) > 220:
         m = md5()
         m.update(path)
         path = m.hexdigest() + '-' + path[:200]
 
-    cache_key = 'PAGE-FOR-URL-%d-%s' % ( django_settings.SITE_ID, path )
-
+    cache_key = 'FEINCMS:%d:PAGE-FOR-URL:%s' % (django_settings.SITE_ID, path)
     return cache_key
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
