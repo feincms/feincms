@@ -1229,6 +1229,10 @@ class PagesTestCase(TestCase):
         self.assertEqual(reverse('tests.testapp.blog_urls/blog_entry_list'), '/test-page/test-child-page/')
         self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
 
+        # Ensure ApplicationContent's admin_fields support works properly
+        self.assertContains(self.client.get('/admin/page/page/%d/' % page.id),
+            'exclusive_subpages')
+
     def test_26_page_form_initial(self):
         self.create_default_page_set()
 
