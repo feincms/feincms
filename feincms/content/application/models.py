@@ -419,8 +419,13 @@ class ApplicationContent(models.Model):
         return True # successful
 
     def send_directly(self, request, response):
+        mimetype = response.get('Content-Type', 'text/plain')
+        if ';' in mimetype:
+            mimetype = mimetype.split(';')[0]
+        mimetype = mimetype.strip()
+
         return (response.status_code != 200 or request.is_ajax() or getattr(response, 'standalone', False) or
-            response['Content-Type'] not in ('text/html', 'text/plain'))
+                mimetype not in ('text/html', 'text/plain'))
 
     def render(self, **kwargs):
         return getattr(self, 'rendered_result', u'')
