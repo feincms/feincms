@@ -196,6 +196,10 @@ settings on the content type model itself:
   content type. The custom inline should inherit from ``FeinCMSInline``
   or be configured the same way.
 
+  If you override ``fieldsets`` you **must** include ``region`` and
+  ``ordering`` even though they aren't shown in the administration
+  interface.
+
 
 Putting it all together
 =======================
