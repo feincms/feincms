@@ -98,7 +98,7 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 .. function:: siblings_along_path_to:
 
    This is a filter designed to work in close conjuction with the
-   ``feincms_navigation`` template tag describe above to build a 
+   ``feincms_navigation`` template tag describe above to build a
    navigation tree following the path to the current page.
 
    Example::
@@ -214,7 +214,35 @@ Application content template tags
 
 .. module:: feincms.templatetags.applicationcontent_tags:
 
+.. function:: app_reverse:
+
+   Returns an absolute URL for applications integrated with ApplicationContent
+
+   The tag mostly works the same way as Django's own {% url %} tag::
+
+       {% load applicationcontent_tags %}
+       {% app_reverse "mymodel_detail" "myapp.urls" arg1 arg2 %}
+
+   or::
+
+       {% load applicationcontent_tags %}
+       {% app_reverse "mymodel_detail" "myapp.urls" name1=value1 name2=value2 %}
+
+   The first argument is a path to a view. The second argument is the URLconf
+   under which this app is known to the ApplicationContent.
+
+   Other arguments are space-separated values that will be filled in place of
+   positional and keyword arguments in the URL. Don't mix positional and
+   keyword arguments.
+
+   If you want to store the URL in a variable instead of showing it right away
+   you can do so too::
+
+       {% app_reverse "mymodel_detail" "myapp.urls" arg1 arg2 as url %}
+
+
 .. function:: fragment:
 .. function:: get_fragment:
 
-   See :ref:`integration-applicationcontent-morecontrol`.
+   Don't use those, read up on :ref:`integration-applicationcontent-inheritance20`
+   instead.
