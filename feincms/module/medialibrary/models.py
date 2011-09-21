@@ -6,7 +6,11 @@ from datetime import datetime
 import logging
 import os
 import re
-from PIL import Image
+# Try to import PIL in either of the two ways it can end up installed.
+try:
+    from PIL import Image
+except ImportError:
+    import Image
 
 from django import forms
 from django.contrib import admin, messages
