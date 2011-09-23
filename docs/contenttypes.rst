@@ -446,11 +446,18 @@ Template content
 .. module:: feincms.content.table.template
 .. class:: TemplateContent()
 
-This content scans all template directories for templates below
+This is a content type that just includes a snippet from a template.
+This content type scans all template directories for templates below
 ``content/template/`` and allows the user to select one of these templates
-which are rendered using the Django template language.
+which are then rendered using the Django template language.
 
-Template usage isn't restricted in any way.
+Note that some file extensions are automatically filtered so they won't
+appear in the list, namely anything that matches *.~ and *.tmp will be
+ignored.
+
+Also note that a template content is not sandboxed or specially rendered.
+Whatever a django template can do a TemplateContent snippet can do too,
+so be careful whom you grant write permissions.
 
 
 Video inclusion code for youtube, vimeo etc.
