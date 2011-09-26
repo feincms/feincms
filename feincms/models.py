@@ -744,11 +744,13 @@ def create_base_model(inherit_from=models.Model):
             # Here we flush the caches rather than actually _filling them so
             # that relations defined after all content types registrations
             # don't miss out.
-            for attr in dir(cls._meta):
-                if attr.startswith('_fill_') and attr.endswith('_cache'):
-                    cache_name = attr[len('_fill'):]
-                    if hasattr(cls._meta, cache_name):
-                        delattr(cls._meta, cache_name)
+            for cache_name in ('_field_cache', '_field_name_cache', '_m2m_cache',
+                    '_related_objects_cache', '_related_many_to_many_cache',
+                    '_name_map'):
+                try:
+                    delattr(cls._meta, cache_name)
+                except AttributeError:
+                    pass
 
             return new_type
 
