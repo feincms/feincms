@@ -157,10 +157,12 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         """
 
         if not hasattr(request, '_feincms_page'):
+            path = request.path_info or request.path
+
             if best_match:
-                request._feincms_page = self.best_match_for_path(request.path, raise404=raise404)
+                request._feincms_page = self.best_match_for_path(path, raise404=raise404)
             else:
-                request._feincms_page = self.page_for_path(request.path, raise404=raise404)
+                request._feincms_page = self.page_for_path(path, raise404=raise404)
 
         if setup:
             request._feincms_page.setup_request(request)
