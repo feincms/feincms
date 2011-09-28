@@ -203,11 +203,23 @@ class CMSBaseTest(TestCase):
         related models have been defined.
         """
         class Attachment(models.Model):
-            base = models.ForeignKey(ExampleCMSBase)
+            base = models.ForeignKey(ExampleCMSBase, related_name='test_related_name')
 
         related_models = map(
             lambda x: x.model, ExampleCMSBase._meta.get_all_related_objects())
+
         self.assertTrue(Attachment in related_models)
+        self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
+        #self.assertFalse(hasattr(Attachment, 'anycontents'))
+
+        class AnyContent(models.Model):
+            attachment = models.ForeignKey(Attachment, related_name='anycontents')
+            class Meta:
+                abstract = True
+        ct = ExampleCMSBase.create_content_type(AnyContent)
+
+        self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
+        self.assertTrue(hasattr(Attachment, 'anycontents'))
 
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
