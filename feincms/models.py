@@ -735,23 +735,6 @@ def create_base_model(inherit_from=models.Model):
                 for key, includes in model.feincms_item_editor_includes.items():
                     cls.feincms_item_editor_includes.setdefault(key, set()).update(includes)
 
-            # Ensure meta information concerning related fields is up-to-date.
-            # Upon accessing the related fields information from Model._meta,
-            # the related fields are cached and never refreshed again (because
-            # models and model relations are defined upon import time, if you
-            # do not fumble around with models like we do right here.)
-            #
-            # Here we flush the caches rather than actually _filling them so
-            # that relations defined after all content types registrations
-            # don't miss out.
-            for cache_name in ('_field_cache', '_field_name_cache', '_m2m_cache',
-                    '_related_objects_cache', '_related_many_to_many_cache',
-                    '_name_map'):
-                try:
-                    delattr(cls._meta, cache_name)
-                except AttributeError:
-                    pass
-
             return new_type
 
         @property
