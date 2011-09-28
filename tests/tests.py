@@ -988,7 +988,7 @@ class PagesTestCase(TestCase):
         self.assertRaises(Page.DoesNotExist, lambda: Page.objects.page_for_path('/asdf/'))
 
         request = Empty()
-        request.path = page.get_absolute_url()
+        request.path = request.path_info = page.get_absolute_url()
         request.method = 'GET'
         request.get_full_path = lambda: '/xyz/'
         request.GET = {}
@@ -1346,7 +1346,7 @@ class PagesTestCase(TestCase):
         request.GET = {}
         request.META = {}
         request.method = 'GET'
-        request.path = '/test-page/test-child-page/abcdef/'
+        request.path = request.path_info = '/test-page/test-child-page/abcdef/'
         request.get_full_path = lambda: '/test-page/test-child-page/abcdef/'
 
         ctx = add_page_if_missing(request)
