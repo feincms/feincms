@@ -1430,6 +1430,27 @@ class PagesTestCase(TestCase):
         r = self.client.get('/foo/')
         self.assertEquals(r.status_code, 404)
 
+
+    def test_35_access_with_extra_path(self):
+        self.login()
+        self.create_page(title='redirect again', override_url='/', redirect_to='/somewhere/', active=True)
+        self.create_page(title='somewhere', active=True)
+
+        r = self.client.get('/')
+        self.assertRedirects(r, '/somewhere/')
+        r = self.client.get('/dingdong/')
+        self.assertEquals(r.status_code, 404)
+
+        old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
+
+        r = self.client.get('/')
+        self.assertRedirects(r, '/somewhere/')
+        r = self.client.get('/dingdong/')
+        self.assertEquals(r.status_code, 404)
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
+
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
 class BlogTestCase(TestCase):
     def setUp(self):
