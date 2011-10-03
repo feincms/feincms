@@ -14,11 +14,11 @@ def require_path_active_request_processor(page, request):
 
 
 def redirect_request_processor(page, request):
-    if request._feincms_extra_context.get('extra_path', '/') == '/':
-        target = page.get_redirect_to_target(request)
-        if target:
+    target = page.get_redirect_to_target(request)
+    if target:
+        if request._feincms_extra_context.get('extra_path', '/') == '/':
             return HttpResponseRedirect(target)
-
+        raise Http404()
 
 def frontendediting_request_processor(page, request):
     if not 'frontend_editing' in request.GET:
