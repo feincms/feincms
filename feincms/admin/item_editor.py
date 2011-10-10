@@ -61,11 +61,15 @@ class ItemEditor(admin.ModelAdmin):
         ensure_completely_loaded()
 
         super(ItemEditor, self).__init__(model, admin_site)
-
-        # Add inline instances for FeinCMS content inlines
-        for inline_class in self.get_feincms_inlines(model):
+    
+    def get_inline_instances(self, request):
+        inline_instances = super(ItemEditor, self).get_inline_instances(request)
+        
+        for inline_class in self.get_feincms_inlines(self.model):
             inline_instance = inline_class(self.model, self.admin_site)
-            self.inline_instances.append(inline_instance)
+            inline_instances.append(inline_instance)
+        
+        return inline_instances
 
     def get_feincms_inlines(self, model):
         """ Generate genuine django inlines for registered content types. """
