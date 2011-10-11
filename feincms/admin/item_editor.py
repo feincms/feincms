@@ -62,10 +62,23 @@ class ItemEditor(admin.ModelAdmin):
 
         super(ItemEditor, self).__init__(model, admin_site)
 
-        # Add inline instances for FeinCMS content inlines
-        for inline_class in self.get_feincms_inlines(model):
+        if hasattr(self, 'inline_instances'):
+            # Add inline instances for FeinCMS content inlines
+            # This works in Django 1.3 and lower
+            # In Django 1.4 inline instances are generated using overridden get_inline_instances()
+            self.append_feincms_inlines(self.inline_instances)
+    
+    def get_inline_instances(self, request):
+        inline_instances = super(ItemEditor, self).get_inline_instances(request)
+        self.append_feincms_inlines(inline_instances)
+        
+        return inline_instances
+    
+    def append_feincms_inlines(self, inline_instances):
+        """ Append generated FeinCMS content inlines to native django inlines. """
+        for inline_class in self.get_feincms_inlines(self.model):
             inline_instance = inline_class(self.model, self.admin_site)
-            self.inline_instances.append(inline_instance)
+            inline_instances.append(inline_instance)
 
     def get_feincms_inlines(self, model):
         """ Generate genuine django inlines for registered content types. """
