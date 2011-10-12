@@ -10,19 +10,19 @@
     border-bottom:none;
     min-width:100px;
     margin-top:3px;
-    height:13px;
+    /* height:13px; */
     font-weight: bold;
     font-size: 12px;
     background-image:none;
     color: #333333;
-    background: #eee url(img/nav-bg.gif) top repeat-x;
+    background: #E1E1E1 url(img/nav-bg.gif) top repeat-x;
 }
 .tab_active {
     margin-top: 0;
     padding-top: 6px;
     padding-bottom: 7px;
-    background-image:url('img/default-bg.gif');
-    color: #ffffff;
+    background: #7BA0C6 url('img/default-bg.gif') top repeat-x;
+    color: white;
 }
 
 #main {
