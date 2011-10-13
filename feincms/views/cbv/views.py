@@ -111,7 +111,7 @@ class Handler(HandlerBase):
                     request.original_path_info = request.path_info
                     request.path_info = settings.FEINCMS_CMS_404_PAGE
                     return super(Handler, self).handler(request, *args, **kwargs)
-                except Http404, e:
+                except Http404:
                     raise e
             else:
                 raise
