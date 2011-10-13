@@ -91,10 +91,20 @@ FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE = getattr(settings, 'FEINCMS_TIDY_ALLOW_WAR
 #: Name of the tidy function - anything which takes (html) and returns (html, errors, warnings) can be used:
 FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION', 'feincms.utils.html.tidy.tidy_html')
 
-
 # ------------------------------------------------------------------------
 #: Monkey-patch django.core.urlresvolers.reverse to be application-content aware?
 #: (The monkey patch is deprecated and should not be used anymore. Use the
 #: ``app_reverse`` function and the ``{% app_reverse %}`` template tag instead.)
 #: The value of this setting will be changed to False in FeinCMS 1.6.
 FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH', True)
+
+# ------------------------------------------------------------------------
+#: Makes the page handling mechanism try to find a cms page with that
+#: path if it encounters a page not found situation. This allows for nice
+#: customised cms-styled error pages. Do not go overboard, this should
+#: be as simple and as error resistant as possible, so refrain from
+#: deeply nested error pages or advanced content types.
+
+FEINCMS_CMS_404_PAGE = getattr(settings, 'FEINCMS_CMS_404_PAGE', None)
+
+# ------------------------------------------------------------------------
