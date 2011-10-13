@@ -110,7 +110,9 @@ class Handler(HandlerBase):
                     http404 = e
                     request.original_path_info = request.path_info
                     request.path_info = settings.FEINCMS_CMS_404_PAGE
-                    return super(Handler, self).handler(request, *args, **kwargs)
+                    response = super(Handler, self).handler(request, *args, **kwargs)
+                    response.status_code = 404
+                    return response
                 except Http404:
                     raise e
             else:
