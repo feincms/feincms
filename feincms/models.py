@@ -25,11 +25,6 @@ from feincms import settings, ensure_completely_loaded
 from feincms.utils import get_object, copy_model_instance
 
 try:
-    import reversion
-except ImportError:
-    reversion = None
-
-try:
     any
 except NameError:
     # For Python 2.4
@@ -805,8 +800,11 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def register_with_reversion(cls):
-            if not reversion:
+            try:
+                import reversion
+            except ImportError:
                 raise EnvironmentError("django-reversion is not installed")
+
             follow = []
             for content_type_model in cls._feincms_content_types:
                 related_manager = "%s_set" % content_type_model.__name__.lower()
