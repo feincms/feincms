@@ -460,7 +460,7 @@ msgstr "Текст"
 
 #: module/medialibrary/models.py:287
 msgid "Zip archive"
-msgstr ""
+msgstr "Zip-архив"
 
 #: module/medialibrary/models.py:288
 msgid "Microsoft Word"
@@ -593,7 +593,7 @@ msgstr "У вас нет прад для редактирования объек
 
 #: module/page/models.py:774
 msgid "inherited"
-msgstr ""
+msgstr "унаследовано"
 
 #: module/page/models.py:778
 msgid "extensions"
@@ -822,7 +822,7 @@ msgstr "Начало"
 #: templates/admin/feincms/recover_form.html:10
 #, python-format
 msgid "Recover deleted %(verbose_name)s"
-msgstr ""
+msgstr "Восстановить %(verbose_name)s"
 
 #: templates/admin/feincms/recover_form.html:17
 msgid "Press the save button below to recover this version of the object."
@@ -868,11 +868,11 @@ msgstr "Добавить"
 #: templates/admin/medialibrary/add_to_category.html:5
 #: templates/admin/medialibrary/add_to_category.html:9
 msgid "Add media files to category"
-msgstr "Добавить меди файлы в категорию"
+msgstr "Добавить медиа файлы в категорию"
 
 #: templates/admin/medialibrary/add_to_category.html:11
 msgid "Select category to apply:"
-msgstr "Выбертие категорию:"
+msgstr "Выберите категорию:"
 
 #: templates/admin/medialibrary/add_to_category.html:17
 msgid "The following media files will be added to the selected category:"
