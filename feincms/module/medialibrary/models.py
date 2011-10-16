@@ -320,7 +320,7 @@ class MediaFileTranslation(Translation(MediaFile)):
 
 #-------------------------------------------------------------------------
 def admin_thumbnail(obj):
-
+    imageLink = u"&nbsp;"
     if obj.type == 'image':
         image = None
         try:
@@ -329,13 +329,13 @@ def admin_thumbnail(obj):
             pass
 
         if image:
-            return mark_safe(u"""
+            imageLink = u"""
                 <a href="%(url)s" target="_blank">
                     <img src="%(image)s" alt="" />
                 </a>""" % {
                     'url': obj.file.url,
-                    'image': image,})
-    return ''
+                    'image': image,}
+    return mark_safe( u"<div class=\"preview %s\">%s</div>" % ( obj.type, imageLink ) )
 admin_thumbnail.short_description = _('Preview')
 admin_thumbnail.allow_tags = True
 
@@ -403,6 +403,7 @@ class MediaFileAdmin(admin.ModelAdmin):
         if extra_context is None:
             extra_context = {}
         extra_context['categories'] = Category.objects.all()
+        extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
         return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
 
     @staticmethod
