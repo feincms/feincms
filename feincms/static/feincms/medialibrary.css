@@ -1,0 +1,17 @@
+.minetype {
+  background-image:url(img/mimetypes/other.png);
+  background-position: center center;
+  width: 32px;
+  height: 32px;
+}
+
+.minetype.video { background-image:url(img/mimetypes/video.png); }
+.mimetype.doc { background-image:url(img/mimetypes/doc.png); }
+.mimetype.ppt { background-image:url(img/mimetypes/ppt.png); }
+.mimetype.audio { background-image:url(img/mimetypes/audio.png); }
+.mimetype.swf { background-image:url(img/mimetypes/swf.png); }
+.mimetype.txt { background-image:url(img/mimetypes/txt.png); }
+.mimetype.rtf { background-image:url(img/mimetypes/rtf.png); }
+.mimetype.zip { background-image:url(img/mimetypes/zip.png); }
+.mimetype.xls { background-image:url(img/mimetypes/xls.png); }
+.mimetype.pdf { background-image:url(img/mimetypes/pdf.png); }
