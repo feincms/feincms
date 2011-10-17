@@ -157,12 +157,12 @@ msgstr "(без подписи)"
 #: content/section/models.py:48 module/medialibrary/fields.py:45
 #: module/medialibrary/models.py:102
 msgid "media file"
-msgstr ""
+msgstr "медиа файл"
 
 #: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
 #: module/medialibrary/models.py:103
 msgid "media files"
-msgstr ""
+msgstr "медиа файлы"
 
 #: content/medialibrary/models.py:131
 msgid "block"
@@ -282,14 +282,12 @@ msgid "data"
 msgstr "данные"
 
 #: content/template/models.py:62
-#, fuzzy
 msgid "template content"
-msgstr "шаблон"
+msgstr "содержимое шаблона"
 
 #: content/template/models.py:63
-#, fuzzy
 msgid "template contents"
-msgstr "шаблон"
+msgstr "содержимое шаблона"
 
 #: content/video/models.py:23
 msgid "video link"
@@ -365,39 +363,36 @@ msgid "modification date"
 msgstr "дата изменения"
 
 #: module/extensions/ct_tracker.py:134
-#, fuzzy
 msgid "content types"
-msgstr "содержание"
+msgstr "содержимое"
 
 #: module/extensions/featured.py:9
-#, fuzzy
 msgid "featured"
 msgstr "создан"
 
 #: module/extensions/featured.py:14
-#, fuzzy
 msgid "Featured"
 msgstr "создан"
 
 #: module/extensions/seo.py:9
 msgid "meta keywords"
-msgstr ""
+msgstr "ключевые слова"
 
 #: module/extensions/seo.py:10
 msgid "This will be prepended to the default keyword list."
-msgstr ""
+msgstr "Будет добавлено к основному списку ключевых слов"
 
 #: module/extensions/seo.py:11
 msgid "meta description"
-msgstr ""
+msgstr "описание"
 
 #: module/extensions/seo.py:12
 msgid "This will be prepended to the default description."
-msgstr ""
+msgstr "Будет добавлено к основному описанию"
 
 #: module/extensions/seo.py:18
 msgid "Search engine optimization"
-msgstr ""
+msgstr "Оптимизация для поисковых систем"
 
 #: module/medialibrary/models.py:51
 msgid "parent"
@@ -432,7 +427,6 @@ msgid "file size"
 msgstr "размер файла"
 
 #: module/medialibrary/models.py:203
-#, fuzzy
 msgid "file info"
 msgstr "файл"
 
@@ -461,13 +455,12 @@ msgid "Text"
 msgstr "Текст"
 
 #: module/medialibrary/models.py:286
-#, fuzzy
 msgid "Rich Text"
 msgstr "Текст"
 
 #: module/medialibrary/models.py:287
 msgid "Zip archive"
-msgstr ""
+msgstr "Zip-архив"
 
 #: module/medialibrary/models.py:288
 msgid "Microsoft Word"
@@ -515,7 +508,7 @@ msgstr[2] ""
 
 #: module/medialibrary/models.py:373
 msgid "Add selected media files to category"
-msgstr ""
+msgstr "Добавить выбранные файлы в категорию"
 
 #: module/medialibrary/models.py:440
 #, python-format
@@ -525,11 +518,11 @@ msgstr ""
 #: module/medialibrary/models.py:442
 #, python-format
 msgid "ZIP file invalid: %s"
-msgstr ""
+msgstr "не корректный архив"
 
 #: module/medialibrary/models.py:448
 msgid "No input file given"
-msgstr ""
+msgstr "не заданы файлы"
 
 #: module/page/models.py:256
 msgid "active"
@@ -541,7 +534,7 @@ msgstr "в навигации"
 
 #: module/page/models.py:264
 msgid "override URL"
-msgstr ""
+msgstr "перекрыть адрес"
 
 #: module/page/models.py:265
 msgid ""
@@ -556,7 +549,7 @@ msgstr "редирект на"
 
 #: module/page/models.py:267
 msgid "Target URL for automatic redirects."
-msgstr ""
+msgstr "Адрес для автоматического перенаправления"
 
 #: module/page/models.py:268
 msgid "Cached URL"
@@ -571,7 +564,6 @@ msgid "pages"
 msgstr "страницы"
 
 #: module/page/models.py:297 module/page/models.py:782
-#, fuzzy
 msgid "is active"
 msgstr "активная"
 
@@ -589,19 +581,19 @@ msgstr "Другие параметры"
 
 #: module/page/models.py:721
 msgid "Add child page"
-msgstr ""
+msgstr "Добавить дочернюю страницу"
 
 #: module/page/models.py:723
 msgid "View on site"
-msgstr ""
+msgstr "Посмотреть на сайте"
 
 #: module/page/models.py:759
 msgid "You don't have the necessary permissions to edit this object"
-msgstr ""
+msgstr "У вас нет прад для редактирования объекта"
 
 #: module/page/models.py:774
 msgid "inherited"
-msgstr ""
+msgstr "унаследовано"
 
 #: module/page/models.py:778
 msgid "extensions"
@@ -621,11 +613,11 @@ msgstr "Оставьте поле пустым, если запись должн
 
 #: module/page/extensions/datepublisher.py:78
 msgid "visible from - to"
-msgstr ""
+msgstr "видима с - по"
 
 #: module/page/extensions/datepublisher.py:88
 msgid "Date-based publishing"
-msgstr ""
+msgstr "Публикация основанная на дате"
 
 #: module/page/extensions/excerpt.py:9
 msgid "excerpt"
@@ -642,49 +634,49 @@ msgstr ""
 #: module/page/extensions/navigation.py:77
 #: module/page/extensions/navigation.py:97
 msgid "navigation extension"
-msgstr ""
+msgstr "расширение навигации"
 
 #: module/page/extensions/navigation.py:99
 msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
-msgstr ""
+msgstr "Выберите модуль, расширяющий навигацию по дочерним страницам"
 
 #: module/page/extensions/navigation.py:112
 msgid "Navigation extension"
-msgstr ""
+msgstr "Расширение навигации"
 
 #: module/page/extensions/relatedpages.py:13
 msgid "Select pages that should be listed as related content."
-msgstr ""
+msgstr "Выбертие страницу, которая будет показана в списке связанных страниц"
 
 #: module/page/extensions/relatedpages.py:20
 msgid "Related pages"
-msgstr ""
+msgstr "Связанные страницы"
 
 #: module/page/extensions/sites.py:16
 msgid "Site"
-msgstr ""
+msgstr "Сайт"
 
 #: module/page/extensions/symlinks.py:15
 msgid "symlinked page"
-msgstr ""
+msgstr "Страница-ссылка"
 
 #: module/page/extensions/symlinks.py:16
 msgid "All content is inherited from this page if given."
-msgstr ""
+msgstr "Все содержимое будет взято с этой страницы."
 
 #: module/page/extensions/symlinks.py:30
 msgid "Symlinked page"
-msgstr ""
+msgstr "Страница-ссылка"
 
 #: module/page/extensions/titles.py:13
 msgid "content title"
-msgstr ""
+msgstr "Заголовок содержимого"
 
 #: module/page/extensions/titles.py:14
 msgid "The first line is the main title, the following lines are subtitles."
-msgstr ""
+msgstr "ПЕрвая строка - основной заголовок, остальное - подзаголовоки"
 
 #: module/page/extensions/titles.py:15
 msgid "page title"
@@ -756,7 +748,7 @@ msgstr "Точно сменить шаблон? <br/> Все изменения 
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
 "%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
-msgstr ""
+msgstr "Вы действительно хотите изменить шаблон? <br /> Все сохраненные изменение и содержимое региона <strong>%(source_regions)s</strong> будут перенесены в <strong>%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
@@ -786,7 +778,7 @@ msgstr "Регион пуст"
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
-msgstr ""
+msgstr "Содержимое родительского элемента автоматически наследуется. Для перекрытия этого поведение нужно добавить содержимое."
 
 #: templates/admin/feincms/content_editor.html:23
 msgid "Add new item"
@@ -830,28 +822,28 @@ msgstr "Начало"
 #: templates/admin/feincms/recover_form.html:10
 #, python-format
 msgid "Recover deleted %(verbose_name)s"
-msgstr ""
+msgstr "Восстановить %(verbose_name)s"
 
 #: templates/admin/feincms/recover_form.html:17
 msgid "Press the save button below to recover this version of the object."
-msgstr ""
+msgstr "Для восстановления этой версии нажмите сохранить."
 
 #: templates/admin/feincms/revision_form.html:14
 msgid "History"
-msgstr ""
+msgstr "История"
 
 #: templates/admin/feincms/revision_form.html:15
 #, python-format
 msgid "Revert %(verbose_name)s"
-msgstr ""
+msgstr "Отменить %(verbose_name)s"
 
 #: templates/admin/feincms/revision_form.html:28
 msgid "Press the save button below to revert to this version of the object."
-msgstr ""
+msgstr "Для возврата к этой версии нажмите сохранить."
 
 #: templates/admin/feincms/tree_editor.html:37
 msgid "Shortcuts"
-msgstr ""
+msgstr "Ярлыки"
 
 #: templates/admin/feincms/tree_editor.html:39
 msgid "Collapse tree"
@@ -863,7 +855,7 @@ msgstr "Развернуть дерево"
 
 #: templates/admin/feincms/tree_editor.html:43
 msgid "Filter"
-msgstr ""
+msgstr "Фильтр"
 
 #: templates/admin/feincms/page/page/item_editor.html:9
 msgid "Edit on site"
@@ -871,29 +863,28 @@ msgstr "Редактировать на сайте"
 
 #: templates/admin/feincms/page/page/item_editor.html:20
 msgid "Add"
-msgstr ""
+msgstr "Добавить"
 
 #: templates/admin/medialibrary/add_to_category.html:5
 #: templates/admin/medialibrary/add_to_category.html:9
 msgid "Add media files to category"
-msgstr ""
+msgstr "Добавить медиа файлы в категорию"
 
 #: templates/admin/medialibrary/add_to_category.html:11
 msgid "Select category to apply:"
-msgstr ""
+msgstr "Выберите категорию:"
 
 #: templates/admin/medialibrary/add_to_category.html:17
 msgid "The following media files will be added to the selected category:"
-msgstr ""
+msgstr "Следующие файлы будут добавлены в выбранную категорию:"
 
 #: templates/admin/medialibrary/add_to_category.html:22
-#, fuzzy
 msgid "Add to category"
-msgstr "категория"
+msgstr "Добавить в категорию"
 
 #: templates/admin/medialibrary/add_to_category.html:23
 msgid "Cancel"
-msgstr ""
+msgstr "Отменить"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:12
 msgid "Bulk upload a ZIP file:"
