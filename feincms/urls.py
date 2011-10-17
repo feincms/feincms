@@ -1,9 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
 
-from feincms.views.cbv.views import Handler
-handler = Handler.as_view()
+from __future__ import absolute_import
 
-urlpatterns = patterns('',
-    url(r'^$', handler, name='feincms_home'),
-    url(r'^(.*)/$', handler, name='feincms_handler'),
-)
+from .views.cbv.urls import *
