@@ -1,0 +1,24 @@
+/* mimetypes, icons from Nuvola */
+.preview {
+  background-image:url(img/mimetypes/other.png);
+  background-position: center center;
+  width: 100px;
+  height: 100px;
+}
+
+.preview a {
+  line-height: 100px;
+}
+
+.preview.image { background-image:none; }
+
+.preview.video { background-image:url(img/mimetypes/video.png); }
+.preview.doc { background-image:url(img/mimetypes/doc.png); }
+.preview.ppt { background-image:url(img/mimetypes/ppt.png); }
+.preview.audio { background-image:url(img/mimetypes/audio.png); }
+.preview.swf { background-image:url(img/mimetypes/swf.png); }
+.preview.txt { background-image:url(img/mimetypes/txt.png); }
+.preview.rtf { background-image:url(img/mimetypes/rtf.png); }
+.preview.zip { background-image:url(img/mimetypes/zip.png); }
+.preview.xls { background-image:url(img/mimetypes/xls.png); }
+.preview.pdf { background-image:url(img/mimetypes/pdf.png); }
