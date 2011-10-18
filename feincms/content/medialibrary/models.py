@@ -91,7 +91,7 @@ class MediaFileContent(models.Model):
     def initialize_type(cls, POSITION_CHOICES=None, MEDIAFILE_CLASS=MediaFile):
         warnings.warn('feincms.content.medialibrary.models.MediaFileContent is deprecated.'
                 ' Use feincms.content.medialibrary.v2.MediaFileContent instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         if 'feincms.module.medialibrary' not in settings.INSTALLED_APPS:
             raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
 
