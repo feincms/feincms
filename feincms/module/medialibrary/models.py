@@ -75,14 +75,22 @@ class Category(models.Model):
 
         super(Category, self).save(*args, **kwargs)
 
+    def path_list(self):
+        if self.parent is None:
+            return [ self ]
+        p = self.parent.path_list()
+        p.append(self)
+        return p
+
+    def path(self):
+        return ' - '.join((f.title for f in self.path_list()))
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display      = ['parent', 'title']
+    list_display      = ['path']
     list_filter       = ['parent']
     list_per_page     = 25
     search_fields     = ['title']
     prepopulated_fields = { 'slug': ('title',), }
-
 
 # ------------------------------------------------------------------------
 class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
@@ -401,7 +409,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['categories'] = Category.objects.all()
+        extra_context['categories'] = Category.objects.order_by('title')
         return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
 
     @staticmethod
@@ -436,8 +444,15 @@ class MediaFileAdmin(admin.ModelAdmin):
                             mf = MediaFile()
                             mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
                             mf.save()
+
                             if category:
                                 mf.categories.add(category)
+
+                            mt = MediaFileTranslation()
+                            mt.parent  = mf
+                            mt.caption = fname.replace('_', ' ')
+                            mt.save()
+
                             count += 1
 
                 messages.info(request, _("%d files imported") % count)
