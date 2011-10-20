@@ -106,11 +106,10 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         # We flush the cache entry on page saving, so the cache should always
         # be up to date.
 
-        if settings.FEINCMS_USE_CACHE:
-            ck = path_to_cache_key(path)
-            page = django_cache.get(ck)
-            if page:
-                return page
+        ck = path_to_cache_key(path)
+        page = django_cache.get(ck)
+        if page:
+            return page
 
         if path:
             tokens = path.split('/')
@@ -119,8 +118,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
                 select={'_url_length': 'LENGTH(_cached_url)'}).order_by('-_url_length')[0]
-            if settings.FEINCMS_USE_CACHE:
-                django_cache.set(ck, page)
+            django_cache.set(ck, page)
             return page
         except IndexError:
             if raise404:
@@ -331,9 +329,8 @@ class Page(create_base_model(MPTTModel)):
         super(Page, self).save(*args, **kwargs)
 
         # Okay, we changed the URL -- remove the old stale entry from the cache
-        if settings.FEINCMS_USE_CACHE:
-            ck = path_to_cache_key( self._original_cached_url.strip('/') )
-            django_cache.delete(ck)
+        ck = path_to_cache_key( self._original_cached_url.strip('/') )
+        django_cache.delete(ck)
 
         # If our cached URL changed we need to update all descendants to
         # reflect the changes. Since this is a very expensive operation

@@ -63,11 +63,6 @@ FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS = getattr(settings, 'FEINCMS_TREE_EDITOR_
 # Various settings
 
 # ------------------------------------------------------------------------
-#: Enable caching intermediate results in feincms. Be aware that this might deliver
-#: slightly out of date pages if you are not using the 'changedate' page extension.
-FEINCMS_USE_CACHE = getattr(settings, 'FEINCMS_USE_CACHE', False)
-
-# ------------------------------------------------------------------------
 #: Allow random gunk after a valid page?
 FEINCMS_ALLOW_EXTRA_PATH = getattr(settings, 'FEINCMS_ALLOW_EXTRA_PATH', False)
 
