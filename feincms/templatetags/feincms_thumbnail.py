@@ -128,13 +128,13 @@ class CropscaleThumbnailer(Thumbnailer):
         if dst_ratio < src_ratio:
             crop_height = src_height
             crop_width = crop_height * dst_ratio
-            x_offset = float(src_width - crop_width) * x / 100
+            x_offset = int(float(src_width - crop_width) * x / 100)
             y_offset = 0
         else:
             crop_width = src_width
             crop_height = crop_width / dst_ratio
             x_offset = 0
-            y_offset = float(src_height - crop_height) * y / 100
+            y_offset = int(float(src_height - crop_height) * y / 100)
 
         format = image.format # Save format for the save() call later
         image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
