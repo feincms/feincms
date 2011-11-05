@@ -66,13 +66,13 @@ class ItemEditor(admin.ModelAdmin):
             # This works in Django 1.3 and lower
             # In Django 1.4 inline instances are generated using overridden get_inline_instances()
             self.append_feincms_inlines(self.inline_instances)
-    
+
     def get_inline_instances(self, request):
         inline_instances = super(ItemEditor, self).get_inline_instances(request)
         self.append_feincms_inlines(inline_instances)
-        
+
         return inline_instances
-    
+
     def append_feincms_inlines(self, inline_instances):
         """ Append generated FeinCMS content inlines to native django inlines. """
         for inline_class in self.get_feincms_inlines(self.model):

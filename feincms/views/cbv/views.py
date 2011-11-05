@@ -14,6 +14,7 @@ class HandlerBase(TemplateView):
 
     def get(self, request, *args, **kwargs):
         return self.handler(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         return self.handler(request, *args, **kwargs)
 
@@ -118,5 +119,3 @@ class Handler(HandlerBase):
                 raise
 
 # ------------------------------------------------------------------------
-
-

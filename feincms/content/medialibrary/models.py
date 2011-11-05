@@ -124,7 +124,6 @@ class MediaFileContent(models.Model):
             'content/mediafile/default.html',
             ], { 'content': self, 'request': request })
 
-
     @classmethod
     def default_create_content_type(cls, cms_model):
         return cms_model.create_content_type(cls, POSITION_CHOICES=(

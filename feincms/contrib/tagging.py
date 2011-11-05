@@ -57,6 +57,7 @@ class TagSelectField(TagField):
             widget = FilteredSelectMultiple(self.verbose_name, is_stacked=False)
         else:
             widget = forms.SelectMultiple()
+
         def _render(name, value, attrs=None, *args, **kwargs):
             value = parse_tag_input(value)
             return type(widget).render(widget, name, value, attrs, *args, **kwargs)
