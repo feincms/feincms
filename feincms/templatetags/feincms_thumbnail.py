@@ -1,4 +1,7 @@
-import os
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
 import re
 from cStringIO import StringIO
 # Try to import PIL in either of the two ways it can end up installed.
@@ -14,7 +17,6 @@ except ImportError:
         raise Exception, 'FeinCMS requires PIL to be installed'
 
 from django import template
-from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile

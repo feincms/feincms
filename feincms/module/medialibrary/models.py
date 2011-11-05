@@ -15,15 +15,12 @@ except ImportError:
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
-from django.contrib.contenttypes.models import ContentType
-from django.conf import settings as django_settings
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.template.defaultfilters import filesizeformat, slugify
 from django.utils.safestring import mark_safe
-from django.utils import translation
 from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
@@ -417,7 +414,6 @@ class MediaFileAdmin(admin.ModelAdmin):
     @permission_required('medialibrary.add_mediafile')
     def bulk_upload(request):
         from django.core.urlresolvers import reverse
-        from django.utils.functional import lazy
 
         def import_zipfile(request, category_id, data):
             import zipfile

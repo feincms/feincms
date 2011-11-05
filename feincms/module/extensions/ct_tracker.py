@@ -18,7 +18,6 @@ saving time, thus saving at least one DB query on page delivery.
 """
 
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
 from django.db.models.signals import class_prepared, post_save, pre_save
 from django.utils.translation import ugettext_lazy as _
 

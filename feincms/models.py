@@ -5,7 +5,6 @@ All models defined here are abstract, which means no tables are created in
 the feincms\_ namespace.
 """
 
-import itertools
 import operator
 import warnings
 
@@ -21,7 +20,7 @@ from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
-from feincms import settings, ensure_completely_loaded
+from feincms import ensure_completely_loaded
 from feincms.utils import get_object, copy_model_instance
 
 try:

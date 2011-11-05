@@ -8,7 +8,6 @@ except ImportError:
     import md5
 
 import re
-import sys
 import warnings
 
 from django import forms
@@ -26,7 +25,7 @@ from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
 from django.utils.datastructures import SortedDict
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import commit_on_success
 
 from mptt.models import MPTTModel
@@ -34,11 +33,9 @@ from mptt.models import MPTTModel
 from feincms import settings, ensure_completely_loaded
 from feincms.admin import item_editor, tree_editor
 from feincms.management.checker import check_database_schema
-from feincms.models import Base, create_base_model
+from feincms.models import create_base_model
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
-import feincms.admin.filterspecs
-
 
 # ------------------------------------------------------------------------
 def path_to_cache_key(path):

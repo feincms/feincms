@@ -11,7 +11,6 @@ All of these can be overridden by specifying them in the standard
 
 from os.path import join
 
-import django
 from django.conf import settings
 
 # ------------------------------------------------------------------------

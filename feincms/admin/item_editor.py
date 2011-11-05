@@ -7,7 +7,6 @@ import copy
 
 from django import forms, template
 from django.contrib import admin
-from django.core.exceptions import ImproperlyConfigured
 from django.db.models import loading
 from django.forms.models import modelform_factory
 from django.http import Http404

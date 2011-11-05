@@ -50,7 +50,7 @@ class TagSelectField(TagField):
         self.filter_horizontal = filter_horizontal
 
     def formfield(self, **defaults):
-        from tagging.models import Tag, TaggedItem
+        from tagging.models import Tag
         from tagging.utils import parse_tag_input
 
         if self.filter_horizontal:

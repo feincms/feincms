@@ -1,6 +1,5 @@
 from django import template
 from django.template.loader import render_to_string
-from feincms import settings as feincms_settings
 
 from feincms import utils
 

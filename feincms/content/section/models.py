@@ -1,10 +1,9 @@
 from django import forms
 from django.conf import settings as django_settings
 from django.contrib.admin.widgets import AdminRadioSelect
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
