@@ -141,8 +141,6 @@ class ChangeList(main.ChangeList):
 
         super(ChangeList, self).get_results(request)
 
-        opts = self.model_admin.opts
-        label = opts.app_label + '.' + opts.get_change_permission()
         for item in self.result_list:
             if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
                 item.feincms_editable = self.model_admin.has_change_permission(request, item)
@@ -232,7 +230,7 @@ class TreeEditor(admin.ModelAdmin):
             # to the ModelAdmin class
             try:
                 item = getattr(self.__class__, field)
-            except (AttributeError, TypeError), e:
+            except (AttributeError, TypeError):
                 continue
 
             attr = getattr(item, 'editable_boolean_field', None)
@@ -294,7 +292,7 @@ class TreeEditor(admin.ModelAdmin):
             # Construct html snippets to send back to client for status update
             data = self._ajax_editable_booleans[attr](self, obj)
 
-        except Exception, e:
+        except Exception:
             logging.exception("Unhandled exception while toggling %s on %s", attr, obj)
             return HttpResponseServerError("Unable to toggle %s on %s" % (attr, obj))
 

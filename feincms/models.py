@@ -316,7 +316,7 @@ class ExtensionsMixin(object):
                             fn = get_object('%s.%s.register' % (path, ext))
                             if fn:
                                 break
-                        except ImportError, e:
+                        except ImportError:
                             pass
 
                 if not fn:

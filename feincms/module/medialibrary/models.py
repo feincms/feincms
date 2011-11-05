@@ -158,7 +158,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             trans = self.translation
         except models.ObjectDoesNotExist:
             pass
-        except AttributeError, e:
+        except AttributeError:
             pass
 
         if trans:

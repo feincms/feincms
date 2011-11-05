@@ -42,7 +42,7 @@ class MyModel(models.Model):
 
 class TagSelectFormField(forms.MultipleChoiceField):
     def clean(self, value):
-        return taglist_to_string(list(value));
+        return taglist_to_string(list(value))
 
 class TagSelectField(TagField):
     def __init__(self, filter_horizontal=False, *args, **kwargs):
