@@ -213,7 +213,7 @@ def copy_model_instance(obj, exclude=None):
     return obj.__class__(**initial)
 
 # ------------------------------------------------------------------------
-def shorten_string(str, max_length = 50):
+def shorten_string(str, max_length=50):
     """
     Shorten a string for display, truncate it intelligently when too long.
     Try to cut it in 2/3 + ellipsis + 1/3 of the original title. The first part

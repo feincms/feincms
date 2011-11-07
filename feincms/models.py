@@ -441,7 +441,6 @@ def create_base_model(inherit_from=models.Model):
             for template in cls._feincms_templates.values():
                 cls._feincms_all_regions.update(template.regions)
 
-
         #: ``ContentProxy`` class this object uses to collect content blocks
         content_proxy_class = ContentProxy
 

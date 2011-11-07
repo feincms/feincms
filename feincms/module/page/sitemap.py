@@ -18,7 +18,7 @@ class PageSitemap(Sitemap):
         The PageSitemap accepts the following parameters for customisation
         of the resulting sitemap.xml output:
 
-        * navigation_only -- if set to True, only pages that are in_navigation 
+        * navigation_only -- if set to True, only pages that are in_navigation
         will appear in the site map.
         * max_depth -- if set to a non-negative integer, will limit the sitemap
         generated to this page hierarchy depth.
@@ -67,14 +67,13 @@ class PageSitemap(Sitemap):
             qs = qs.filter(level__lte=self.max_depth-1)
 
         pages = [ p for p in qs if p.is_active() ]
-        
+
         if self.extended_navigation:
             for idx, page in enumerate(pages):
                 if getattr(page, 'navigation_extension', None):
                     pages[idx + 1:idx + 1] = page.extended_navigation()
-        
+
         return pages
-        
 
     def lastmod(self, obj):
         return getattr(obj, 'modification_date', None)
@@ -95,7 +94,6 @@ class PageSitemap(Sitemap):
             prio += 1.2 * self.per_level
 
         return "%0.2g" % min(1.0, prio)
-
 
     # After a call to the sitemap, be sure to erase the cached _paginator
     # attribute, so next time we'll re-fetch the items list instead of using
