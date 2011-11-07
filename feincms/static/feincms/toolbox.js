@@ -5,10 +5,10 @@
 
        extract_item_id('foo_bar_baz-327') -> 327
  */
-var extract_item_id = function(elem_id) {
+function extract_item_id(elem_id) {
     var i = elem_id.indexOf('-');
     if(i >= 0)
-        return parseInt(elem_id.slice(i+1));
+        return parseInt(elem_id.slice(i+1), 10);
 
     return 0;
 }
@@ -19,13 +19,13 @@ var extract_item_id = function(elem_id) {
 
        replace_element(0, '<div id="replace_me">New Stuff!</div>')
  */
-var replace_element = function(i, html) {
+function replace_element(i, html) {
     var r_id = $(html).attr('id');
     $('#' + r_id).replaceWith(html);
 }
 
 /* Same as above, but processes an array of html snippets */
-var replace_elements = function(data) {
+function replace_elements(data) {
     $.each(data, replace_element);
 }
 
@@ -36,7 +36,7 @@ $.ajaxSetup({
     beforeSend: function(xhr, settings) {
         function getCookie(name) {
             var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
+            if (document.cookie && document.cookie !== '') {
                 var cookies = document.cookie.split(';');
                 for (var i = 0; i < cookies.length; i++) {
                     var cookie = jQuery.trim(cookies[i]);
@@ -57,7 +57,7 @@ $.ajaxSetup({
 });
 
 /* OnClick handler to toggle a boolean field via AJAX */
-var inplace_toggle_boolean = function(item_id, attr) {
+function inplace_toggle_boolean(item_id, attr) {
     $.ajax({
       url: ".",
       type: "POST",

@@ -29,12 +29,12 @@
                 fe_tools.hide();
             }
         );
-    }
+    };
 
     feincms.fe_update_content = function(identifier, content) {
         var region = $('#' + identifier);
         region.animate({'opacity': 0}).html(content);
         region.animate({'opacity': 1.5}).animate({'opacity': 0.6});
         feincms.fe_init_animations();
-    }
+    };
 })(feincms.jQuery);
