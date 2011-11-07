@@ -2,12 +2,16 @@
 {% load i18n admin_modify adminmedia %}
 
 {% block extrahead %}{{ block.super }}
+
+<link type="text/css" href="{{ STATIC_URL }}feincms/jquery-ui/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />
+
 {% block feincms_jquery_ui %}
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.7.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.16.custom.min.js"></script>
 {% endblock %}
 
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/style.css" />
+
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.alerts.js"></script>
 <script type="text/javascript">
     var feincms = {
@@ -58,7 +62,29 @@
   </div>
   <script type="text/javascript">
     feincms.jQuery(function($){
+
+// begin options as tabs //
+$('fieldset.feincms-collapse:first').before('<div id="tabs"><ul></ul></div>');
+
+$('fieldset.feincms-collapse h2').contents().each(function(i, c) {
+  $('#tabs ul').append('<li class="navi_tab"><a href="#tabs-' + i + '">' + c.textContent + '</a></li>');
+});
+$('fieldset.feincms-collapse').each(function(i, c) {
+    $(c).attr('id', 'tabs-' + i);
+});
+
+var d = $('fieldset.feincms-collapse').remove().appendTo('#tabs');
+$('fieldset.feincms-collapse > h2').remove();
+$('#tabs').tabs({ collapsible: true, selected: -1 });
+
+if(d = $('fieldset.feincms-collapse ul.errorlist:first').parents('fieldset').attr('id')) {
+  $('#tabs').tabs('select', d);
+}
+
+// end options as tabs //
+
       $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
+
     });
   </script>
 {% endblock %}

@@ -105,6 +105,10 @@ textarea {
     margin-bottom:5px;
 }
 
+fieldset.feincms-collapse {
+    margin-bottom: 0px;
+}
+
 .inline-group .tabular textarea {
     width: auto;
 }

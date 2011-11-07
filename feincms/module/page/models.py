@@ -679,12 +679,13 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 ],
         }),
         (_('Other options'), {
-            'classes': ['collapse',],
+            'classes': ['feincms-collapse'],
             'fields': unknown_fields,
         }),
         # <-- insertion point, extensions appear here, see insertion_index above
         item_editor.FEINCMS_CONTENT_FIELDSET,
         ]
+
     readonly_fields = []
     list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
     list_filter = ['active', 'in_navigation', 'template_key', 'parent']
@@ -699,7 +700,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         if isinstance(f[-1], dict):     # called with a fieldset
             cls.fieldsets.insert(cls.fieldset_insertion_index, f)
             f[1]['classes'] = list(f[1].get('classes', []))
-            f[1]['classes'].append('collapse')
+            f[1]['classes'].extend(['feincms-collapse'])
         else:   # assume called with "other" fields
             cls.fieldsets[1][1]['fields'].extend(f)
 
