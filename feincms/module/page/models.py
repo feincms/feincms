@@ -669,20 +669,21 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     # the fieldsets config here is used for the add_view, it has no effect
     # for the change_view which is completely customized anyway
-    unknown_fields = ['override_url', 'redirect_to']
+    unknown_fields = ['template_key', 'parent', 'override_url', 'redirect_to']
+    fieldset_insertion_index = 2
     fieldsets = [
         (None, {
             'fields': [
                 ('title', 'slug'),
-                ('parent', 'active', 'in_navigation'),
-                'template_key',
+                ('active', 'in_navigation'),
                 ],
         }),
-        item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
             'fields': unknown_fields,
         }),
+        # <-- insertion point, extensions appear here, see insertion_index above
+        item_editor.FEINCMS_CONTENT_FIELDSET,
         ]
     readonly_fields = []
     list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
@@ -692,6 +693,13 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     raw_id_fields = ['parent']
     radio_fields = {'template_key': admin.HORIZONTAL}
+
+    @classmethod
+    def add_extension_options(cls, *f):
+        if isinstance(f[-1], dict):     # called with a fieldset
+            cls.fieldsets.insert(cls.fieldset_insertion_index, f)
+        else:   # assume called with "other" fields
+            cls.fieldsets[1][1]['fields'].extend(f)
 
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()

@@ -10,9 +10,10 @@
 
 from __future__ import absolute_import
 
-from django.db.models.signals import pre_save
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.db.models.signals import pre_save
+from django.utils.translation import ugettext_lazy as _
 
 from tagging.fields import TagField
 
@@ -105,6 +106,12 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
     if admin_cls:
         admin_cls.list_display.append(field_name)
         admin_cls.list_filter.append(field_name)
+
+        if hasattr(admin_cls, 'add_extension_options'):
+            admin_cls.add_extension_options(_('Tagging'), {
+                'fields': (field_name,),
+                'classes': ('collapse',),
+            })
 
     if sort_tags:
         pre_save.connect(pre_save_handler, sender=cls)

@@ -183,7 +183,9 @@ def register(cls, admin_cls):
     available_translations_admin.short_description = _('translations')
     admin_cls.available_translations_admin = available_translations_admin
 
-    admin_cls.fieldsets[0][1]['fields'].extend(['language', 'translation_of'])
+    if hasattr(admin_cls, 'add_extension_options'):
+        admin_cls.add_extension_options('language', 'translation_of')
+
     admin_cls.list_display.extend(['language', 'available_translations_admin'])
     admin_cls.list_filter.extend(['language'])
 
