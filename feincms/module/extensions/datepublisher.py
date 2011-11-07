@@ -88,7 +88,6 @@ def register(cls, admin_cls):
 
     admin_cls.add_extension_options(_('Date-based publishing'), {
                 'fields': ('publication_date', 'publication_end_date'),
-                'classes': ('collapse',),
         })
 
 # ------------------------------------------------------------------------

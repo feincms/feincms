@@ -109,8 +109,7 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
 
         if hasattr(admin_cls, 'add_extension_options'):
             admin_cls.add_extension_options(_('Tagging'), {
-                'fields': (field_name,),
-                'classes': ('collapse',),
+                'fields': (field_name,)
             })
 
     if sort_tags:
