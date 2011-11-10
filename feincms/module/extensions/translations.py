@@ -16,6 +16,7 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
+from feincms.admin import add_extension_options
 from feincms.translations import is_primary_language
 from feincms._internal import monkeypatch_method, monkeypatch_property
 
@@ -183,8 +184,10 @@ def register(cls, admin_cls):
     available_translations_admin.short_description = _('translations')
     admin_cls.available_translations_admin = available_translations_admin
 
-    if hasattr(admin_cls, 'add_extension_options'):
-        admin_cls.add_extension_options('language', 'translation_of')
+    add_extension_options(admin_cls, _('translations'), {
+                'fields': ('language', 'translation_of'),
+                'no_extra_fieldset': True
+                })
 
     admin_cls.list_display.extend(['language', 'available_translations_admin'])
     admin_cls.list_filter.extend(['language'])

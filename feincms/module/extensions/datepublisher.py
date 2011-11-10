@@ -14,6 +14,8 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.admin import add_extension_options
+
 # ------------------------------------------------------------------------
 def format_date(d, if_none=''):
     """
@@ -21,7 +23,8 @@ def format_date(d, if_none=''):
     year. Also return a default value if no date is passed in.
     """
 
-    if d is None: return if_none
+    if d is None:
+        return if_none
 
     now = datetime.now()
     fmt = (d.year == now.year) and '%d.%m' or '%d.%m.%Y'
@@ -86,8 +89,7 @@ def register(cls, admin_cls):
 
     admin_cls.list_display.insert(pos + 1, 'datepublisher_admin')
 
-    admin_cls.add_extension_options(_('Date-based publishing'), {
-                'fields': ('publication_date', 'publication_end_date'),
-        })
+    add_extension_options(admin_cls, _('Date-based publishing'),
+            { 'fields': ('publication_date', 'publication_end_date') })
 
 # ------------------------------------------------------------------------

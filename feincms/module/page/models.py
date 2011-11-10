@@ -682,7 +682,8 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             'classes': ['feincms-collapse'],
             'fields': unknown_fields,
         }),
-        # <-- insertion point, extensions appear here, see insertion_index above
+        # <-- insertion point, extensions should appear here,
+        #     see insertion_index definition above
         item_editor.FEINCMS_CONTENT_FIELDSET,
         ]
 
@@ -696,13 +697,16 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     radio_fields = {'template_key': admin.HORIZONTAL}
 
     @classmethod
-    def add_extension_options(cls, *f):
-        if isinstance(f[-1], dict):     # called with a fieldset
-            cls.fieldsets.insert(cls.fieldset_insertion_index, f)
-            f[1]['classes'] = list(f[1].get('classes', []))
-            f[1]['classes'].extend(['feincms-collapse'])
-        else:   # assume called with "other" fields
-            cls.fieldsets[1][1]['fields'].extend(f)
+    def add_extension_options(cls, *fieldset):
+        """
+        Internal method for adding fieldsets instead of "somewhere"
+        to a specific place, so we can style them as tabs later.
+        """
+        # Means "append my fields somewhere, not necessarily a fieldset"
+        if fieldset[1].get('no_extra_fieldset', False):
+            cls.fieldsets[1][1]['fields'].extend(fieldset[1]['fields'])
+        else:
+            cls.fieldsets.insert(cls.fieldset_insertion_index, fieldset)
 
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
