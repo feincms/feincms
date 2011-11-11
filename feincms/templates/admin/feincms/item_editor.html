@@ -95,11 +95,16 @@ if(d = $('ul.errorlist:first', tab_fields)
     $('#tabs').tabs('select', d);
 }
 
-$('fieldset,.submit-row,input').addClass('ui-corner-all');
-
-// end options as tabs //
-
+/* place for main region tabs */
 $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
+
+/* Style stuff rounder */
+$(function() {
+    $('fieldset,.submit-row,input').addClass('ui-corner-all');
+    $('.navi_tab').addClass('ui-corner-top');
+    $('.machine-control').addClass('ui-corner-bottom');
+
+});
 
 </script>
 
