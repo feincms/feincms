@@ -57,39 +57,50 @@
 
 {% block after_related_objects %} {# as good a place as any... #}
   {{ block.super }}
+
   <div id="content-editor-fieldset" style="display: none">
     {% include "admin/feincms/content_editor.html" %}
   </div>
-  <script type="text/javascript">
-    feincms.jQuery(function($){
 
-// begin options as tabs //
-$('fieldset.feincms-collapse:first').before('<div id="tabs"><ul></ul></div>');
+<script type="text/javascript">
+/* begin options as tabs, as early as possible to avoid flashing
+   (so inline, not in document.ready) */
 
-$('fieldset.feincms-collapse h2').contents().each(function(i, c) {
-  $('#tabs ul').append('<li class="navi_tab"><a href="#tabs-' + i + '">' + c.textContent + '</a></li>');
+var tab_fields = $('fieldset.feincms-collapse');
+var ul = $('<ul></ul>');
+
+/* This is a work-around for inline js in those fields, especially
+   TagSelectFields, it would run twice. Hopefully this won't cause
+   problems elsewhere */
+$('script', tab_fields).remove();
+
+/* Convert fieldsets>h2 into structure expected by jquery-ui tabs */
+tab_fields.each(function(i, c) {
+    var tab_id = c.id = 'tabs-' + i;
+    var h2 = $('h2', c).remove().text();
+    ul.append('<li class="navi_tab"><a href="#' + tab_id + '">' + h2 + '</a></li>');
 });
-$('fieldset.feincms-collapse').each(function(i, c) {
-    $(c).attr('id', 'tabs-' + i);
-});
 
-var d = $('fieldset.feincms-collapse').remove().appendTo('#tabs');
-$('fieldset.feincms-collapse > h2').remove();
+/* If any tabs throws errors, select that immediately */
+$("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().before(
+    $('<div id="tabs"></div>')
+    .append(ul)
+    .append(tab_fields));
+
 $('#tabs').tabs({ collapsible: true, selected: -1 });
 
-if(d = $('fieldset.feincms-collapse ul.errorlist:first').parents('fieldset').attr('id')) {
-  $('#tabs').tabs('select', d);
+if(d = $('ul.errorlist:first', tab_fields)
+    .parents('fieldset')
+    .attr('id')) {
+    $('#tabs').tabs('select', d);
 }
 
-
-$('fieldset').addClass('ui-corner-all');
-$('.submit-row').addClass('ui-corner-all');
-$('input').addClass('ui-corner-all');
+$('fieldset,.submit-row,input').addClass('ui-corner-all');
 
 // end options as tabs //
 
-      $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
+$("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
 
-    });
-  </script>
+</script>
+
 {% endblock %}
