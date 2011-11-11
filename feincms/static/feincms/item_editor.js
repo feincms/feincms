@@ -139,7 +139,8 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
             function(ev) {
                 clearTimeout(this.mouseleave_timeout);
                 this.mouseleave_timeout = null;
-                ev.stopPropagation(); });
+                ev.stopPropagation();
+        });
         item_controls.unbind('toggle').toggle(
             function() { $(this).find("*").show(); },
             function() { $(this).find("*").fadeOut(); }
@@ -152,8 +153,10 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
         item_controls.unbind('mouseleave').mouseleave(
             function() {
                 var target = this;
-                if(!this.mouseleave_timeout)
-                    this.mouseleave_timeout = setTimeout(function() { $(target).click(); }, 1200);
+                if(!target.mouseleave_timeout &&
+                    $(target).find("*").is(":visible")) {
+                    target.mouseleave_timeout = setTimeout(function() { $(target).click(); }, 1200);
+                }
         });
     }
 
