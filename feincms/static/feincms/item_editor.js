@@ -9,6 +9,41 @@ if(!Array.indexOf) {
     };
 }
 
+/* --------------------------------------------------------------------- */
+/* Convert item editor fieldsets/h2/div structure to something jquery-ui
+   can use for creating tabs and convert that to tabs */
+function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
+    {
+    var tab_fields = $(selector);
+    var ul = $('<ul></ul>');
+
+    /* This is a work-around for inline js in those fields, especially
+       TagSelectFields, it would run twice. Hopefully this won't cause
+       problems elsewhere */
+    $('script', tab_fields).remove();
+
+    /* Convert fieldsets>h2 into structure expected by jquery-ui tabs */
+    tab_fields.each(function(i, c) {
+        var tab_id = c.id = id_prefix + '-' + i;
+        var h2 = $('h2', c).remove().text();
+        ul.append('<li class="navi_tab"><a href="#' + tab_id + '">' + h2 + '</a></li>');
+    });
+
+    var tabdiv = $('<div id="' + id_prefix + '"></div>')
+                    .append(ul).append(tab_fields);
+    insert_before.before(tabdiv);
+
+    var tabs = $('#' + id_prefix).tabs({ collapsible: true, selected: -1 });
+
+    /* If any tab throws errors, select that immediately */
+    var d = $('ul.errorlist:first', tab_fields).parents('fieldset').attr('id');
+    if(d)
+        tabs.tabs('select', d);
+
+    return tabdiv;
+    }
+
+/* --------------------------------------------------------------------- */
 (function($){
     // Patch up urlify maps to generate nicer slugs in german
     if(typeof(Downcoder) != "undefined"){

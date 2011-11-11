@@ -63,47 +63,19 @@
   </div>
 
 <script type="text/javascript">
-/* begin options as tabs, as early as possible to avoid flashing
-   (so inline, not in document.ready) */
+/* begin options as tabs, as early as possible to avoid flashing (so run inline, not in document.ready) */
 
-var tab_fields = $('fieldset.feincms-collapse');
-var ul = $('<ul></ul>');
-
-/* This is a work-around for inline js in those fields, especially
-   TagSelectFields, it would run twice. Hopefully this won't cause
-   problems elsewhere */
-$('script', tab_fields).remove();
-
-/* Convert fieldsets>h2 into structure expected by jquery-ui tabs */
-tab_fields.each(function(i, c) {
-    var tab_id = c.id = 'tabs-' + i;
-    var h2 = $('h2', c).remove().text();
-    ul.append('<li class="navi_tab"><a href="#' + tab_id + '">' + h2 + '</a></li>');
-});
-
-/* If any tabs throws errors, select that immediately */
-$("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().before(
-    $('<div id="tabs"></div>')
-    .append(ul)
-    .append(tab_fields));
-
-$('#tabs').tabs({ collapsible: true, selected: -1 });
-
-if(d = $('ul.errorlist:first', tab_fields)
-    .parents('fieldset')
-    .attr('id')) {
-    $('#tabs').tabs('select', d);
-}
+var insertion_point = $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent();
+convert_fieldsets_to_tabs('fieldset.feincms-collapse', insertion_point, 'option_tabs');
 
 /* place for main region tabs */
-$("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
+insertion_point.replaceWith($("#main_wrapper"));
 
 /* Style stuff rounder */
 $(function() {
     $('fieldset,.submit-row,input').addClass('ui-corner-all');
     $('.navi_tab').addClass('ui-corner-top');
     $('.machine-control').addClass('ui-corner-bottom');
-
 });
 
 </script>
