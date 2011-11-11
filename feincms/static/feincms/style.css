@@ -129,19 +129,21 @@ fieldset.feincms-collapse {
 }
 
 .item-controls {
-    background:  url('img/wrench.png') no-repeat 12px center;
-    padding-left:27px;
+    background: url('img/wrench.png') no-repeat right;
+    padding-right:27px;
     height: 35px;
+    position: absolute;
+    bottom: 3px;
+    right: 8px;
+    margin-right: 5px;
 }
 
 .item-control-unit {
+    display: none;
     float:left;
     padding: 3px 10px 0 7px;
-    border-left: 1px solid #eee;
-}
-
-.item-control-unit:first-child {
-    border-left: none;
+    border: 1px solid #eee;
+    background-color: white;
 }
 
 .machine-control {
