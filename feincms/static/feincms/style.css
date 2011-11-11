@@ -133,8 +133,8 @@ fieldset.feincms-collapse {
     padding-right:27px;
     height: 35px;
     position: absolute;
-    bottom: 3px;
-    right: 8px;
+    bottom: -5px;
+    right: 16px;
     margin-right: 5px;
 }
 
@@ -144,6 +144,8 @@ fieldset.feincms-collapse {
     padding: 3px 10px 0 7px;
     border: 1px solid #eee;
     background-color: white;
+    position: relative;
+    bottom: 7px;
 }
 
 .machine-control {
