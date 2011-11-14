@@ -17,6 +17,9 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
     var tab_fields = $(selector);
     var ul = $('<ul></ul>');
 
+    if(!tab_fields.length)
+        return null;
+
     /* This is a work-around for inline js in those fields, especially
        TagSelectFields, it would run twice. Hopefully this won't cause
        problems elsewhere */
