@@ -238,7 +238,7 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
             item.find("."+field).val(REGION_MAP[value]);
 
             old_region_item = $("#"+REGION_MAP[old_region_id]+"_body");
-            if (old_region_item.children("div.order-machine").children().length == 0)
+            if (old_region_item.children("div.order-machine").children().length === 0)
                 old_region_item.children("div.empty-machine-msg").show();
             else
                 old_region_item.children("div.empty-machine-msg").hide();
@@ -356,10 +356,10 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
                     to_remove.push($option);
             }
 
-            for (var i=0; i<to_remove.length; i++)
+            for (i=0; i<to_remove.length; i++)
                 to_remove[i].remove();
 
-            if ($select.find('option').length == 0) {
+            if ($select.find('option').length === 0) {
                 // hide the content type select box and the add button if
                 // the dropdown is empty now
                 $select.hide().next().hide();
@@ -409,9 +409,9 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
             $("body").append(popup_bg);
             var item = $(this).parents(".order-item");
             jConfirm(DELETE_MESSAGES[0], DELETE_MESSAGES[1], function(r) {
-                if (r==true) {
+                if (r) {
                     var in_database = item.find(".delete-field").length;
-                    if(in_database==0){ // remove on client-side only
+                    if(in_database===0){ // remove on client-side only
                         // decrement TOTAL_FORMS:
                         var id = item.find(".item-content > div").attr('id');
                         var modvar = id.replace(/_set-\d+$/, '');
