@@ -440,12 +440,14 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
 
         $('h2 span.collapse').live('click', function(){
             var node = this;
-            var action = $(this.parentNode.parentNode).children('.item-content')
+            var parent = $(this.parentNode.parentNode);
+            var wrench = parent.children('.item-controls').hide();
+            var action = parent.children('.item-content')
                 .slideToggle(100).promise();
 
             action.done(
                 function(){
-                    $(node.parentNode.parentNode).children('.item-controls').toggleClass('collapsed-controls');
+                    wrench.toggleClass('collapsed-controls').show();
                     $(node).text(feincms_gettext($(this).is(':visible') ? 'Hide' : 'Show'));
             });
             return false;
