@@ -3,14 +3,13 @@
 
 {% block extrahead %}{{ block.super }}
 
-<link type="text/css" href="{{ STATIC_URL }}feincms/jquery-ui/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />
+<link type="text/css" rel="Stylesheet" href="{{ STATIC_URL }}feincms/jquery-ui/jquery-ui-1.8.16.custom.css" />
+<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}feincms/style.css" />
 
 {% block feincms_jquery_ui %}
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.7.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.16.custom.min.js"></script>
 {% endblock %}
-
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/style.css" />
 
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.alerts.js"></script>
 <script type="text/javascript">
@@ -70,13 +69,6 @@ convert_fieldsets_to_tabs('fieldset.feincms-collapse', insertion_point, 'option_
 
 /* place for main region tabs */
 insertion_point.replaceWith($("#main_wrapper"));
-
-/* Style stuff rounder */
-$(function() {
-    $('fieldset,.submit-row,input').addClass('ui-corner-all');
-    $('.navi_tab').addClass('ui-corner-top');
-    $('.machine-control').addClass('ui-corner-bottom');
-});
 
 </script>
 

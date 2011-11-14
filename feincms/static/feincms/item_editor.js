@@ -29,7 +29,7 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
         ul.append('<li class="navi_tab"><a href="#' + tab_id + '">' + h2 + '</a></li>');
     });
 
-    var tabdiv = $('<div id="' + id_prefix + '"></div>')
+    var tabdiv = $('<div id="' + id_prefix + '" class="ui-tabs-hide"></div>')
                     .append(ul).append(tab_fields);
     insert_before.before(tabdiv);
 
