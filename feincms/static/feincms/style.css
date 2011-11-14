@@ -133,9 +133,13 @@ fieldset.feincms-collapse {
     padding-right:27px;
     height: 35px;
     position: absolute;
-    bottom: -5px;
     right: 16px;
     margin-right: 5px;
+    bottom: 4px;
+}
+
+.item-controls.collapsed-controls {
+    bottom: -5px;
 }
 
 .item-control-unit {
@@ -145,7 +149,7 @@ fieldset.feincms-collapse {
     border: 1px solid #eee;
     background-color: white;
     position: relative;
-    bottom: 7px;
+    bottom: -2px;
 }
 
 .machine-control {

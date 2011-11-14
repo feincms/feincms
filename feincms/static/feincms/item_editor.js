@@ -437,8 +437,13 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
 
         $('h2 span.collapse').live('click', function(){
             var node = this;
-            $(this.parentNode.parentNode).children('.item-content').slideToggle(function(){
-                $(node).text(feincms_gettext($(this).is(':visible') ? 'Hide' : 'Show'));
+            var action = $(this.parentNode.parentNode).children('.item-content')
+                .slideToggle(100).promise();
+
+            action.done(
+                function(){
+                    $(node.parentNode.parentNode).children('.item-controls').toggleClass('collapsed-controls');
+                    $(node).text(feincms_gettext($(this).is(':visible') ? 'Hide' : 'Show'));
             });
             return false;
         });
