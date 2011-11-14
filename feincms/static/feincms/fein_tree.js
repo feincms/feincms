@@ -46,7 +46,7 @@ feincms.jQuery(function($){
     }
 
     function rowLevel($row) {
-        return parseInt($row.attr('rel').replace(/[^\d]/ig, ''));
+        return parseInt($row.attr('rel').replace(/[^\d]/ig, ''), 10);
     }
 
     /*
@@ -80,17 +80,18 @@ feincms.jQuery(function($){
             var originalRow = $(event.target).closest('tr');
             var rowHeight = originalRow.height();
             var childEdge = $(event.target).offset().left + $(event.target).width();
-            var moveTo = new Object();
-            var expandObj = new Object();
+            var moveTo = {};
+            var expandObj = {};
 
             $("body").addClass('dragging').disableSelection().bind('mousemove', function(event) {
                 // attach dragged item to mouse
                 var cloned = originalRow.html();
-                if($('#ghost').length == 0) {
+
+                if($('#ghost').length === 0) {
                     $('<div id="ghost"></div>').appendTo('body');
                 }
                 $('#ghost').html(cloned).css({
-                    'opacity': .8,
+                    'opacity': 0.8,
                     'position': 'absolute',
                     'top': event.pageY,
                     'left': event.pageX-30,
@@ -111,8 +112,10 @@ feincms.jQuery(function($){
 
                 // loop trough all rows
                 $("tr", originalRow.parent()).each(function(index, element) {
-                    var element = $(element),
-                        top = element.offset().top;
+                    var top = element.offset().top,
+                        next;
+
+                    element = $(element);
 
                     // check if mouse is over a row
                     if (event.pageY >= top && event.pageY < top + rowHeight) {
@@ -124,7 +127,7 @@ feincms.jQuery(function($){
                             targetRow = element;
                             targetLoc = BEFORE;
                         } else if (event.pageY >= top + rowHeight / 3 && event.pageY < top + rowHeight * 2 / 3) {
-                            var next = element.next();
+                            next = element.next();
                             // there's no point in allowing adding children when there are some already
                             // better move the items to the correct place right away
                             if (!next.length || rowLevel(next) <= elementLevel) {
@@ -132,7 +135,7 @@ feincms.jQuery(function($){
                                 targetLoc = CHILD;
                             }
                         } else if (event.pageY >= top + rowHeight * 2 / 3 && event.pageY < top + rowHeight) {
-                            var next = element.next();
+                            next = element.next();
                             if (!next.length || rowLevel(next) <= elementLevel) {
                                 targetRow = element;
                                 targetLoc = AFTER;
@@ -148,7 +151,7 @@ feincms.jQuery(function($){
                                 'top': targetRow.offset().top + (targetLoc == AFTER || targetLoc == CHILD ? rowHeight: 0) -1
                             });
 
-                                    // Store the found row and options
+                            // Store the found row and options
                             moveTo.hovering = element;
                             moveTo.relativeTo = targetRow;
                             moveTo.side = targetLoc;
@@ -169,6 +172,7 @@ feincms.jQuery(function($){
             });
 
             $("body").bind('mouseup', function(event) {
+                var position;
                 var cutItem = extract_item_id(originalRow.find('.page_marker').attr('id'));
                 var pastedOn = extract_item_id(moveTo.relativeTo.find('.page_marker').attr('id'));
 
@@ -177,9 +181,9 @@ feincms.jQuery(function($){
                     var isParent = (moveTo.relativeTo.next().attr('rel') > moveTo.relativeTo.attr('rel'));
                     // determine position
                     if(moveTo.side == CHILD && !isParent) {
-                        var position = 'last-child';
+                        position = 'last-child';
                     } else {
-                        var position = 'left';
+                        position = 'left';
                     }
 
                     // save
@@ -212,7 +216,7 @@ feincms.jQuery(function($){
 
     function retrieveCollapsedNodes() {
         var n = $.cookie('feincms_collapsed_nodes');
-        if(n != null) {
+        if(n) {
             try {
                 n = $.parseJSON(n);
             } catch(e) {
@@ -251,7 +255,7 @@ feincms.jQuery(function($){
             expandOrCollapseNode($(this));
             if(event.stopPropagation) {
                 event.stopPropagation();
-            } else {
+            } else {
                 event.cancelBubble = true;
             }
 
@@ -328,11 +332,11 @@ feincms.jQuery(function($){
                 break;
             case 13: // return
                 where_to = extract_item_id($('span', this).attr('id'));
-                document.location = document.location.pathname + where_to + '/'
+                document.location = document.location.pathname + where_to + '/';
                 break;
             default:
                 break;
-            };
+            }
     }
 
     // fire!
@@ -348,7 +352,7 @@ feincms.jQuery(function($){
         non_editable_fields = $('.tree-item-not-editable', rlist).parents('tr');
         non_editable_fields.addClass('non-editable');
         $('input:checkbox', non_editable_fields).attr('disabled', 'disabled');
-        $('a:first', non_editable_fields).click(function(e){e.preventDefault()});
+        $('a:first', non_editable_fields).click(function(e){e.preventDefault();});
         $('.drag_handle', non_editable_fields).removeClass('drag_handle');
 
         /* Enable focussing, put focus on first result, add handler for keyboard navigation */
@@ -358,7 +362,7 @@ feincms.jQuery(function($){
 
         feincms.collapsed_nodes = [];
         var storedNodes = retrieveCollapsedNodes();
-        if(storedNodes == null) {
+        if(storedNodes === null) {
             $('#collapse_entire_tree').click();
         } else {
             for(var i=0; i<storedNodes.length; i++) {
