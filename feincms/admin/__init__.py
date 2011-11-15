@@ -21,6 +21,8 @@ def add_extension_options(admin_cls, *fieldset):
     if hasattr(admin_cls, 'add_extension_options'):
         admin_cls.add_extension_options(*fieldset)
     else:
+        if isinstance(admin_cls.fieldsets, tuple):
+            admin_cls.fieldsets = list(admin_cls.fieldsets)
         admin_cls.fieldsets.append(fieldset)
 
 # ------------------------------------------------------------------------
