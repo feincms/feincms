@@ -145,11 +145,13 @@ fieldset.feincms-collapse {
 .item-control-unit {
     display: none;
     float:left;
-    padding: 3px 10px 0 7px;
+    padding: 3px 13px 0 10px;
     border: 1px solid #eee;
-    background-color: white;
+    background-color: rgba(4, 4, 4, 0.65);
+    opacity: 10%;
     position: relative;
     bottom: -2px;
+    color: white;
 }
 
 .machine-control {
