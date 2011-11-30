@@ -84,7 +84,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
         a = [
               '<input type="checkbox"',
               value and ' checked="checked"' or '',
-              ' onclick="return inplace_toggle_boolean(%d, \'%s\')";' % (item.id, attr),
+              ' onclick="return inplace_toggle_boolean(%d, \'%s\')"' % (item.id, attr),
               ' />',
               text,
             ]
@@ -235,10 +235,12 @@ class TreeEditor(admin.ModelAdmin):
 
             attr = getattr(item, 'editable_boolean_field', None)
             if attr:
-                def _fn(self, instance):
-                    return [ ajax_editable_boolean_cell(instance, _fn.attr) ]
-                _fn.attr = attr
-                result_func = getattr(item, 'editable_boolean_result', _fn)
+                if hasattr(item, 'editable_boolean_result'):
+                    result_func = item.editable_boolean_result
+                else:
+                    def _fn(attr):
+                        return lambda self, instance: [ajax_editable_boolean_cell(instance, attr)]
+                    result_func = _fn(attr)
                 self._ajax_editable_booleans[attr] = result_func
 
     def _refresh_changelist_caches(self):
