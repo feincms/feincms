@@ -9,7 +9,8 @@ keep: keep entry in content type dropdown (defaults to false)
 {% url admin:medialibrary_mediafile_changelist as media_library_url %}
 var CONTENT_TYPE_BUTTONS = [
     {
-        type: 'richtextcontent'
+        type: 'richtextcontent',
+        keep: true
 {% if media_library_url %}
     }, {
         type: 'mediafilecontent',
@@ -17,7 +18,8 @@ var CONTENT_TYPE_BUTTONS = [
         cssclass: 'imagecontent',
         raw_id_picker: '{{ media_library_url }}?type__exact=image&pop=1'
     }, {
-        type: 'gallerycontent'
+        type: 'gallerycontent',
+        keep: true
     }, {
         type: 'mediafilecontent',
         keep: true,
@@ -25,7 +27,8 @@ var CONTENT_TYPE_BUTTONS = [
         raw_id_picker: '{{ media_library_url }}?type__exact=pdf&pop=1'
 {% endif %}
     }, {
-        type: 'oembedcontent'
+        type: 'oembedcontent',
+        keep: true
 {% if media_library_url %}
     }, {
         type: 'mediafilecontent',
