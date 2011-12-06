@@ -80,7 +80,7 @@ def pre_save_handler(sender, instance, **kwargs):
     instance.tags = taglist_to_string(taglist)
 
 # ------------------------------------------------------------------------
-def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False):
+def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False, auto_add_admin_field=True):
     """
     tag_model accepts a number of named parameters:
 
@@ -95,6 +95,8 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
                 tag combinations (e.g. in an admin filter list).
     select_field If True, show a multi select instead of the standard
                 CharField for tag entry.
+    auto_add_admin_field If True, attempts to add the tag field to the admin
+                class.
     """
     from tagging import register as tagging_register
 
@@ -107,7 +109,7 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
         admin_cls.list_display.append(field_name)
         admin_cls.list_filter.append(field_name)
 
-        if hasattr(admin_cls, 'add_extension_options'):
+        if auto_add_admin_field and hasattr(admin_cls, 'add_extension_options'):
             admin_cls.add_extension_options(_('Tagging'), {
                 'fields': (field_name,)
             })
