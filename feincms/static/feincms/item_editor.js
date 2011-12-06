@@ -334,6 +334,7 @@ function convert_fieldsets_to_tabs(selector, insert_before, id_prefix)
                     continue;
 
                 var $button = $('<a href="#" class="actionbutton" />');
+                $button.attr('title', CONTENT_NAMES[c.type]);
 
                 $button.addClass(c.cssclass ? c.cssclass : c.type).bind('click', (function(c) {
                     return function() {
