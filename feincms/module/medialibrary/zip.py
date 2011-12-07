@@ -16,8 +16,6 @@ import time
 
 from django.template.defaultfilters import slugify
 from django.utils import simplejson
-from django.contrib import messages
-from django.utils.translation import ungettext, ugettext_lazy as _
 from django.conf import settings as django_settings
 
 from .models import Category, MediaFile, MediaFileTranslation
@@ -72,36 +70,44 @@ def import_zipfile(category_id, overwrite, data):
             bname = os.path.basename(zi.filename)
             if bname and not bname.startswith(".") and "." in bname:
                 fname, ext = os.path.splitext(bname)
+                wanted_dir = os.path.dirname(zi.filename)
                 target_fname = slugify(fname) + ext.lower()
 
                 info = {}
                 if is_export_file:
                     info = simplejson.loads(zi.comment)
 
-                mf = MediaFile()
-                mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
-                mf.copyright = info.get('copyright', None)
-                mf.save()
+                mf = None
+                if overwrite:
+                    full_path = os.path.join(wanted_dir, target_fname)
+                    try:
+                        mf = MediaFile.objects.get(file=full_path)
+                        mf.file.delete(save=False)
+                    except MediaFile.DoesNotExist:
+                        mf = None
 
-                if category:
-                    mf.categories.add(category)
+                if mf is None:
+                    mf = MediaFile()
+                if overwrite:
+                    mf.file.field.upload_to = wanted_dir
+                mf.copyright = info.get('copyright', None)
+                mf.file.save(target_fname, ContentFile(z.read(zi.filename)), save=False)
+                mf.save()
 
                 found_metadata = False
                 if is_export_file:
                     try:
                         for tr in info['translations']:
                             found_metadata = True
-                            mt = MediaFileTranslation()
-                            mt.parent = mf
-                            mt.language_code = tr['lang']
+                            mt, mt_created = MediaFileTranslation.objects.get_or_create(parent=mf, language_code=tr['lang'])
                             mt.caption       = tr['caption']
                             mt.description   = tr.get('description', None)
                             mt.save()
 
                         # Add categories
                         mf.categories = (category_id_map[cat_id] for cat_id in info.get('categories', []))
-                    except Exception, e:
-                        print e
+                    except Exception:
+                        pass
 
                 if not found_metadata:
                     mt = MediaFileTranslation()
@@ -109,7 +115,9 @@ def import_zipfile(category_id, overwrite, data):
                     mt.caption = fname.replace('_', ' ')
                     mt.save()
 
-                mf.purge_translation_cache()
+                if category:
+                    mf.categories.add(category)
+
                 count += 1
 
     return count
