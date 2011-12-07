@@ -114,7 +114,7 @@ def lookup_translations(language_code=None):
         if instance_dict:
             _process(candidates, instance_dict, settings.LANGUAGE_CODE, 'istartswith')
         if instance_dict:
-            for candidate in candidates.filter(pk__in=instance_dict.keys()):
+            for candidate in candidates.filter(parent__pk__in=instance_dict.keys()):
                 if candidate.parent_id in instance_dict:
                     _found(instance_dict, candidate)
 
@@ -131,7 +131,7 @@ def lookup_translations(language_code=None):
 
     def _process(candidates, instance_dict, lang_, op_):
         for candidate in candidates.filter(
-                Q(pk__in=instance_dict.keys()),
+                Q(parent__pk__in=instance_dict.keys()),
                 Q(**{'language_code__' + op_: lang_})
                 | Q(**{'language_code__' + op_: short_language_code(lang_)})
                 ).order_by('-language_code'):
