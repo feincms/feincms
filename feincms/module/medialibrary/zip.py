@@ -26,7 +26,15 @@ from .models import Category, MediaFile, MediaFileTranslation
 export_magic = 'feincms-export-01'
 
 # ------------------------------------------------------------------------
-def import_zipfile(category_id, data):
+def import_zipfile(category_id, overwrite, data):
+    """
+    Import a collection of media files from a zip file.
+
+    category_id: if set, the pk of a Category that all uploaded
+        files will have added (eg. cathegory "newly uploaded files")
+    overwrite: attempt to overwrite existing files. This might
+        not work with non-trivial storage handlers
+    """
     category = None
     if category_id:
         category = Category.objects.get(pk=int(category_id))

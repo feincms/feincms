@@ -435,7 +435,7 @@ class MediaFileAdmin(admin.ModelAdmin):
 
         if request.method == 'POST' and 'data' in request.FILES:
             try:
-                count = import_zipfile(request.POST.get('category'), request.FILES['data'])
+                count = import_zipfile(request.POST.get('category'), request.POST.get('overwrite', False), request.FILES['data'])
                 messages.info(request, _("%d files imported") % count)
             except Exception, e:
                 messages.error(request, _("ZIP import failed: %s") % str(e))
