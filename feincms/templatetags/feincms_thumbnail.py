@@ -88,6 +88,7 @@ class Thumbnailer(object):
              # Do not crash if file does not exist for some reason
             return storage.url(original)
 
+        storage.delete(miniature)
         # defining the size
         w, h = int(size['w']), int(size['h'])
 
