@@ -2,12 +2,12 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import
+
 from datetime import datetime
 import logging
 import os
-import time
 import re
-import zipfile
 
 # Try to import PIL in either of the two ways it can end up installed.
 try:
@@ -26,7 +26,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.template.defaultfilters import filesizeformat, slugify
-from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
@@ -387,29 +386,14 @@ assign_category.short_description = _('Add selected media files to category')
 
 #-------------------------------------------------------------------------
 def save_as_zipfile(modeladmin, request, queryset):
+    from .zip import export_zipfile
+
     site = Site.objects.get_current()
-    now  = datetime.today()
-    zip_name = "export_%s_%04d%02d%02d.zip" % (slugify(site.domain), now.year, now.month, now.day)
-
-    zip_data = open(os.path.join(django_settings.MEDIA_ROOT, zip_name), "w")
-    zip_file = zipfile.ZipFile(zip_data, 'w', allowZip64=True)
-
-    for mf in queryset:
-        ctime = time.localtime(os.stat(mf.file.path).st_ctime)
-        info = simplejson.dumps({
-            'export_version': 1,
-            'copyright': mf.copyright,
-            'categories': [[ { 'title': p.title, 'slug': p.slug } for p in cat.path_list() ]
-                    for cat in mf.categories.all() ],
-            'translations': [
-                { 'lang': t.language_code, 'caption': t.caption, 'description': t.description }
-                    for t in mf.translations.all() ],
-            })
-
-        with open(mf.file.path, "r") as file_data:
-            zip_info = zipfile.ZipInfo(filename=mf.file.name, date_time=(ctime.tm_year, ctime.tm_mon, ctime.tm_mday, ctime.tm_hour, ctime.tm_min, ctime.tm_sec))
-            zip_info.comment = info
-            zip_file.writestr(zip_info, file_data.read())
+    try:
+        zip_name = export_zipfile(site, queryset)
+        messages.info(request, _("ZIP file exported as %s") % zip_name)
+    except Exception, e:
+        messages.error(request, _("ZIP file export failed: %s") % str(e))
 
     return HttpResponseRedirect(os.path.join(django_settings.MEDIA_URL, zip_name))
 
@@ -447,62 +431,14 @@ class MediaFileAdmin(admin.ModelAdmin):
     @csrf_protect
     @permission_required('medialibrary.add_mediafile')
     def bulk_upload(request):
-        def import_zipfile(request, category_id, data):
-            category = None
-            if category_id:
-                category = Category.objects.get(pk=int(category_id))
-
-            try:
-                z = zipfile.ZipFile(data)
-
-                count = 0
-                for zi in z.infolist():
-                    if not zi.filename.endswith('/'):
-                        from django.core.files.base import ContentFile
-
-                        bname = os.path.basename(zi.filename)
-                        if bname and not bname.startswith(".") and "." in bname:
-                            fname, ext = os.path.splitext(bname)
-                            target_fname = slugify(fname) + ext.lower()
-
-                            mf = MediaFile()
-                            mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
-                            mf.save()
-
-                            if category:
-                                mf.categories.add(category)
-
-                            is_export_file = False
-                            try:
-                                info = simplejson.loads(zi.comment)
-                                if info['export_version'] == 1:
-                                    is_export_file = True
-                                    for tr in info['translations']:
-                                        mt = MediaFileTranslation()
-                                        mt.parent = mf
-                                        mt.caption       = tr['caption']
-                                        mt.description   = tr['description']
-                                        mt.language_code = tr['lang']
-                                        mt.save()
-                            except:
-                                pass
-
-                            if not is_export_file:
-                                mt = MediaFileTranslation()
-                                mt.parent  = mf
-                                mt.caption = fname.replace('_', ' ')
-                                mt.save()
-
-                            mf.purge_translation_cache()
-                            count += 1
-
-                messages.info(request, _("%d files imported") % count)
-            except Exception, e:
-                messages.error(request, _("ZIP file invalid: %s") % str(e))
-                return
+        from .zip import import_zipfile
 
         if request.method == 'POST' and 'data' in request.FILES:
-            import_zipfile(request, request.POST.get('category'), request.FILES['data'])
+            try:
+                count = import_zipfile(request.POST.get('category'), request.FILES['data'])
+                messages.info(request, _("%d files imported") % count)
+            except Exception, e:
+                messages.error(request, _("ZIP import failed: %s") % str(e))
         else:
             messages.error(request, _("No input file given"))
 
