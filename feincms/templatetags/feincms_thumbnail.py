@@ -61,7 +61,7 @@ class Thumbnailer(object):
             basename, format = filename.rsplit('.', 1)
         except ValueError:
             basename, format = filename, 'jpg'
-        miniature = basename + self.MARKER + self.size + '.' +  format
+        miniature = basename + self.MARKER + self.size + '.' + format
 
         if not storage.exists(miniature):
             generate = True
@@ -71,6 +71,9 @@ class Thumbnailer(object):
             except (NotImplementedError, AttributeError):
                 # storage does NOT support modified_time
                 generate = False
+            except OSError:
+                # Someone might have delete the file
+                return u''
 
         if generate:
             return self.generate(
