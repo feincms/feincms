@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import
+
 from datetime import datetime
 import logging
 import os
@@ -381,8 +383,24 @@ def assign_category(modeladmin, request, queryset):
 assign_category.short_description = _('Add selected media files to category')
 
 #-------------------------------------------------------------------------
+class MediaFileAdminForm(forms.ModelForm):
+    class Meta:
+        model = MediaFile
 
+    def __init__(self, *args, **kwargs):
+        super(MediaFileAdminForm, self).__init__(*args, **kwargs)
+        if settings.FEINCMS_MEDIAFILE_OVERWRITE and self.instance.id:
+            original_name = self.instance.file.name
+
+            def gen_fname(*args):
+                self.instance.file.storage.delete(original_name)
+                return original_name
+            self.instance.file.field.generate_filename = gen_fname
+
+# -----------------------------------------------------------------------
 class MediaFileAdmin(admin.ModelAdmin):
+    save_on_top       = True
+    form              = MediaFileAdminForm
     date_hierarchy    = 'created'
     inlines           = [admin_translationinline(MediaFileTranslation)]
     list_display      = [admin_thumbnail, '__unicode__', 'file_info', 'formatted_created']
