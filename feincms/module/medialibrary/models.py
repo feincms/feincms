@@ -383,10 +383,10 @@ def assign_category(modeladmin, request, queryset):
 assign_category.short_description = _('Add selected media files to category')
 
 #-------------------------------------------------------------------------
-# -----------------------------------------------------------------------
 class MediaFileAdminForm(forms.ModelForm):
     class Meta:
         model = MediaFile
+
     def __init__(self, *args, **kwargs):
         super(MediaFileAdminForm, self).__init__(*args, **kwargs)
         if settings.FEINCMS_MEDIAFILE_OVERWRITE and self.instance.id:
@@ -397,6 +397,7 @@ class MediaFileAdminForm(forms.ModelForm):
                 return original_name
             self.instance.file.field.generate_filename = gen_fname
 
+# -----------------------------------------------------------------------
 class MediaFileAdmin(admin.ModelAdmin):
     save_on_top       = True
     form              = MediaFileAdminForm
