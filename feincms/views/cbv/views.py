@@ -14,6 +14,7 @@ class HandlerBase(TemplateView):
 
     def get(self, request, *args, **kwargs):
         return self.handler(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         return self.handler(request, *args, **kwargs)
 
@@ -107,7 +108,6 @@ class Handler(HandlerBase):
         except Http404, e:
             if settings.FEINCMS_CMS_404_PAGE:
                 try:
-                    http404 = e
                     request.original_path_info = request.path_info
                     request.path_info = settings.FEINCMS_CMS_404_PAGE
                     response = super(Handler, self).handler(request, *args, **kwargs)
@@ -119,5 +119,3 @@ class Handler(HandlerBase):
                 raise
 
 # ------------------------------------------------------------------------
-
-

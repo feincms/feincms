@@ -15,15 +15,12 @@ except ImportError:
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
-from django.contrib.contenttypes.models import ContentType
-from django.conf import settings as django_settings
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.template.defaultfilters import filesizeformat, slugify
 from django.utils.safestring import mark_safe
-from django.utils import translation
 from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
@@ -75,14 +72,22 @@ class Category(models.Model):
 
         super(Category, self).save(*args, **kwargs)
 
+    def path_list(self):
+        if self.parent is None:
+            return [ self ]
+        p = self.parent.path_list()
+        p.append(self)
+        return p
+
+    def path(self):
+        return ' - '.join((f.title for f in self.path_list()))
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display      = ['parent', 'title']
+    list_display      = ['path']
     list_filter       = ['parent']
     list_per_page     = 25
     search_fields     = ['title']
     prepopulated_fields = { 'slug': ('title',), }
-
 
 # ------------------------------------------------------------------------
 class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
@@ -153,7 +158,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             trans = self.translation
         except models.ObjectDoesNotExist:
             pass
-        except AttributeError, e:
+        except AttributeError:
             pass
 
         if trans:
@@ -403,7 +408,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
-        extra_context['categories'] = Category.objects.all()
+        extra_context['categories'] = Category.objects.order_by('title')
         return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
 
     @staticmethod
@@ -411,7 +416,6 @@ class MediaFileAdmin(admin.ModelAdmin):
     @permission_required('medialibrary.add_mediafile')
     def bulk_upload(request):
         from django.core.urlresolvers import reverse
-        from django.utils.functional import lazy
 
         def import_zipfile(request, category_id, data):
             import zipfile
@@ -438,8 +442,15 @@ class MediaFileAdmin(admin.ModelAdmin):
                             mf = MediaFile()
                             mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
                             mf.save()
+
                             if category:
                                 mf.categories.add(category)
+
+                            mt = MediaFileTranslation()
+                            mt.parent  = mf
+                            mt.caption = fname.replace('_', ' ')
+                            mt.save()
+
                             count += 1
 
                 messages.info(request, _("%d files imported") % count)
@@ -463,4 +474,3 @@ class MediaFileAdmin(admin.ModelAdmin):
 
 
 #-------------------------------------------------------------------------
-

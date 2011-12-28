@@ -20,4 +20,3 @@ class RawContent(models.Model):
 
     def render(self, **kwargs):
         return mark_safe(self.text)
-

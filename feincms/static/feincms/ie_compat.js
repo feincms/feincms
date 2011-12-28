@@ -12,7 +12,7 @@ if(typeof(Array.prototype.indexOf) == 'undefined') {
         else
             j=this.indexOf(elm,j+i);
         return j!==this.length?j:-1;
-    }
+    };
 }
 
 if (!Array.prototype.filter)
@@ -23,7 +23,7 @@ if (!Array.prototype.filter)
         if (typeof fun != "function")
             throw new TypeError();
 
-        var res = new Array();
+        var res = [];
         var thisp = arguments[1];
         for (var i = 0; i < len; i++)
             {

@@ -5,7 +5,6 @@ All models defined here are abstract, which means no tables are created in
 the feincms\_ namespace.
 """
 
-import itertools
 import operator
 import warnings
 
@@ -21,7 +20,7 @@ from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
-from feincms import settings, ensure_completely_loaded
+from feincms import ensure_completely_loaded
 from feincms.utils import get_object, copy_model_instance
 
 try:
@@ -317,7 +316,7 @@ class ExtensionsMixin(object):
                             fn = get_object('%s.%s.register' % (path, ext))
                             if fn:
                                 break
-                        except ImportError, e:
+                        except ImportError:
                             pass
 
                 if not fn:
@@ -441,7 +440,6 @@ def create_base_model(inherit_from=models.Model):
             cls._feincms_all_regions = set()
             for template in cls._feincms_templates.values():
                 cls._feincms_all_regions.update(template.regions)
-
 
         #: ``ContentProxy`` class this object uses to collect content blocks
         content_proxy_class = ContentProxy

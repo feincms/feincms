@@ -258,7 +258,6 @@ class PagesTestCase(TestCase):
                     ('sidebar', 'Sidebar', 'inherited'),
                     ),
                 })
-        feincms_settings.FEINCMS_USE_CACHE = True
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))

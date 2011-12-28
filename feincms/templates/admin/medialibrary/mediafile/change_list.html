@@ -19,7 +19,7 @@
         <select name="category">
             <option value="">---</option>
             {% for cat in categories %}
-                <option value="{{ cat.id }}">{{ cat.title }}</option>
+                <option value="{{ cat.id }}">{{ cat.path }}</option>
             {% endfor %}
         </select>
         <input type="submit" value="{% trans "Send" %}">

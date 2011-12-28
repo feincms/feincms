@@ -77,6 +77,11 @@ Visit these sites
 * See the google groups page at http://groups.google.com/group/django-feincms
 * FeinCMS on github: https://github.com/feincms/feincms/
 
+Quickstart
+----------
+
+You can find a short quickstart guide at QUICKSTART.rst
+
 Optional Packages
 -----------------
 

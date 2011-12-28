@@ -1,8 +1,6 @@
-from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.views import main
 from django.db.models import Q
-from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
@@ -86,7 +84,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
         a = [
               '<input type="checkbox"',
               value and ' checked="checked"' or '',
-              ' onclick="return inplace_toggle_boolean(%d, \'%s\')";' % (item.id, attr),
+              ' onclick="return inplace_toggle_boolean(%d, \'%s\')"' % (item.id, attr),
               ' />',
               text,
             ]
@@ -143,8 +141,6 @@ class ChangeList(main.ChangeList):
 
         super(ChangeList, self).get_results(request)
 
-        opts = self.model_admin.opts
-        label = opts.app_label + '.' + opts.get_change_permission()
         for item in self.result_list:
             if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
                 item.feincms_editable = self.model_admin.has_change_permission(request, item)
@@ -234,15 +230,17 @@ class TreeEditor(admin.ModelAdmin):
             # to the ModelAdmin class
             try:
                 item = getattr(self.__class__, field)
-            except (AttributeError, TypeError), e:
+            except (AttributeError, TypeError):
                 continue
 
             attr = getattr(item, 'editable_boolean_field', None)
             if attr:
-                def _fn(self, instance):
-                    return [ ajax_editable_boolean_cell(instance, _fn.attr) ]
-                _fn.attr = attr
-                result_func = getattr(item, 'editable_boolean_result', _fn)
+                if hasattr(item, 'editable_boolean_result'):
+                    result_func = item.editable_boolean_result
+                else:
+                    def _fn(attr):
+                        return lambda self, instance: [ajax_editable_boolean_cell(instance, attr)]
+                    result_func = _fn(attr)
                 self._ajax_editable_booleans[attr] = result_func
 
     def _refresh_changelist_caches(self):
@@ -296,7 +294,7 @@ class TreeEditor(admin.ModelAdmin):
             # Construct html snippets to send back to client for status update
             data = self._ajax_editable_booleans[attr](self, obj)
 
-        except Exception, e:
+        except Exception:
             logging.exception("Unhandled exception while toggling %s on %s", attr, obj)
             return HttpResponseServerError("Unable to toggle %s on %s" % (attr, obj))
 

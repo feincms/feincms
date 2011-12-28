@@ -59,5 +59,3 @@ class MediaFileContent(ContentWithMediaFile):
             'content/mediafile/%s.html' % self.type,
             'content/mediafile/default.html',
             ], ctx)
-
-

@@ -1,6 +1,5 @@
 # ------------------------------------------------------------------------
 # coding=utf-8
-# $Id$
 # ------------------------------------------------------------------------
 """
 Default settings for FeinCMS
@@ -11,7 +10,6 @@ All of these can be overridden by specifying them in the standard
 
 from os.path import join
 
-import django
 from django.conf import settings
 
 # ------------------------------------------------------------------------
@@ -61,11 +59,6 @@ FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS = getattr(settings, 'FEINCMS_TREE_EDITOR_
 
 # ------------------------------------------------------------------------
 # Various settings
-
-# ------------------------------------------------------------------------
-#: Enable caching intermediate results in feincms. Be aware that this might deliver
-#: slightly out of date pages if you are not using the 'changedate' page extension.
-FEINCMS_USE_CACHE = getattr(settings, 'FEINCMS_USE_CACHE', False)
 
 # ------------------------------------------------------------------------
 #: Allow random gunk after a valid page?

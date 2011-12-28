@@ -9,4 +9,3 @@ archive_week = add_page_to_extra_context(date_based.archive_week)
 archive_day = add_page_to_extra_context(date_based.archive_day)
 archive_today = add_page_to_extra_context(date_based.archive_today)
 object_detail = add_page_to_extra_context(date_based.object_detail)
-

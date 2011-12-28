@@ -8,7 +8,6 @@ except ImportError:
     import md5
 
 import re
-import sys
 import warnings
 
 from django import forms
@@ -26,7 +25,7 @@ from django.forms.util import ErrorList
 from django.http import Http404, HttpResponseRedirect
 from django.utils.datastructures import SortedDict
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import commit_on_success
 
 from mptt.models import MPTTModel
@@ -34,11 +33,9 @@ from mptt.models import MPTTModel
 from feincms import settings, ensure_completely_loaded
 from feincms.admin import item_editor, tree_editor
 from feincms.management.checker import check_database_schema
-from feincms.models import Base, create_base_model
+from feincms.models import create_base_model
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
-import feincms.admin.filterspecs
-
 
 # ------------------------------------------------------------------------
 def path_to_cache_key(path):
@@ -47,10 +44,10 @@ def path_to_cache_key(path):
 
     # logic below borrowed from http://richwklein.com/2009/08/04/improving-django-cache-part-ii/
     # via acdha's django-sugar
-    if len(path) > 220:
+    if len(path) > 200:
         m = md5()
         m.update(path)
-        path = m.hexdigest() + '-' + path[:200]
+        path = m.hexdigest() + '-' + path[:180]
 
     cache_key = 'FEINCMS:%d:PAGE-FOR-URL:%s' % (django_settings.SITE_ID, path)
     return cache_key
@@ -106,11 +103,10 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         # We flush the cache entry on page saving, so the cache should always
         # be up to date.
 
-        if settings.FEINCMS_USE_CACHE:
-            ck = path_to_cache_key(path)
-            page = django_cache.get(ck)
-            if page:
-                return page
+        ck = path_to_cache_key(path)
+        page = django_cache.get(ck)
+        if page:
+            return page
 
         if path:
             tokens = path.split('/')
@@ -119,8 +115,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
                 select={'_url_length': 'LENGTH(_cached_url)'}).order_by('-_url_length')[0]
-            if settings.FEINCMS_USE_CACHE:
-                django_cache.set(ck, page)
+            django_cache.set(ck, page)
             return page
         except IndexError:
             if raise404:
@@ -331,9 +326,8 @@ class Page(create_base_model(MPTTModel)):
         super(Page, self).save(*args, **kwargs)
 
         # Okay, we changed the URL -- remove the old stale entry from the cache
-        if settings.FEINCMS_USE_CACHE:
-            ck = path_to_cache_key( self._original_cached_url.strip('/') )
-            django_cache.delete(ck)
+        ck = path_to_cache_key( self._original_cached_url.strip('/') )
+        django_cache.delete(ck)
 
         # If our cached URL changed we need to update all descendants to
         # reflect the changes. Since this is a very expensive operation
@@ -675,20 +669,21 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     # the fieldsets config here is used for the add_view, it has no effect
     # for the change_view which is completely customized anyway
-    unknown_fields = ['override_url', 'redirect_to']
+    unknown_fields = ['template_key', 'parent', 'override_url', 'redirect_to']
+    fieldset_insertion_index = 2
     fieldsets = [
         (None, {
             'fields': [
                 ('title', 'slug'),
-                ('parent', 'active', 'in_navigation'),
-                'template_key',
+                ('active', 'in_navigation'),
                 ],
         }),
-        item_editor.FEINCMS_CONTENT_FIELDSET,
         (_('Other options'), {
             'classes': ['collapse',],
             'fields': unknown_fields,
         }),
+        # <-- insertion point, extensions appear here, see insertion_index above
+        item_editor.FEINCMS_CONTENT_FIELDSET,
         ]
     readonly_fields = []
     list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
@@ -698,6 +693,15 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     raw_id_fields = ['parent']
     radio_fields = {'template_key': admin.HORIZONTAL}
+
+    @classmethod
+    def add_extension_options(cls, *f):
+        if isinstance(f[-1], dict):     # called with a fieldset
+            cls.fieldsets.insert(cls.fieldset_insertion_index, f)
+            f[1]['classes'] = list(f[1].get('classes', []))
+            f[1]['classes'].append('collapse')
+        else:   # assume called with "other" fields
+            cls.fieldsets[1][1]['fields'].extend(f)
 
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()

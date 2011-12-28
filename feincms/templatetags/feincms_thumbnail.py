@@ -1,4 +1,7 @@
-import os
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
 import re
 from cStringIO import StringIO
 # Try to import PIL in either of the two ways it can end up installed.
@@ -14,7 +17,6 @@ except ImportError:
         raise Exception, 'FeinCMS requires PIL to be installed'
 
 from django import template
-from django.conf import settings
 from django.utils.encoding import force_unicode
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -59,7 +61,7 @@ class Thumbnailer(object):
             basename, format = filename.rsplit('.', 1)
         except ValueError:
             basename, format = filename, 'jpg'
-        miniature = basename + self.MARKER + self.size + '.' +  format
+        miniature = basename + self.MARKER + self.size + '.' + format
 
         if not storage.exists(miniature):
             generate = True
@@ -69,6 +71,9 @@ class Thumbnailer(object):
             except (NotImplementedError, AttributeError):
                 # storage does NOT support modified_time
                 generate = False
+            except OSError:
+                # Someone might have delete the file
+                return u''
 
         if generate:
             return self.generate(
@@ -86,14 +91,17 @@ class Thumbnailer(object):
              # Do not crash if file does not exist for some reason
             return storage.url(original)
 
+        storage.delete(miniature)
+
         # defining the size
         w, h = int(size['w']), int(size['h'])
 
+        format = image.format # Save format for the save() call later
         image.thumbnail([w, h], Image.ANTIALIAS)
         buf = StringIO()
         if image.mode not in ('RGBA', 'RGB', 'L'):
             image = image.convert('RGBA')
-        image.save(buf, image.format or 'jpeg', quality=100)
+        image.save(buf, format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()
         storage.save(miniature, ContentFile(raw_data))
@@ -112,6 +120,8 @@ class CropscaleThumbnailer(Thumbnailer):
              # Do not crash if file does not exist for some reason
             return storage.url(original)
 
+        storage.delete(miniature)
+
         w, h = int(size['w']), int(size['h'])
 
         if size['x'] and size['y']:
@@ -127,21 +137,22 @@ class CropscaleThumbnailer(Thumbnailer):
         if dst_ratio < src_ratio:
             crop_height = src_height
             crop_width = crop_height * dst_ratio
-            x_offset = float(src_width - crop_width) * x / 100
+            x_offset = int(float(src_width - crop_width) * x / 100)
             y_offset = 0
         else:
             crop_width = src_width
             crop_height = crop_width / dst_ratio
             x_offset = 0
-            y_offset = float(src_height - crop_height) * y / 100
+            y_offset = int(float(src_height - crop_height) * y / 100)
 
+        format = image.format # Save format for the save() call later
         image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
         image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
 
         buf = StringIO()
         if image.mode not in ('RGBA', 'RGB', 'L'):
             image = image.convert('RGBA')
-        image.save(buf, image.format or 'jpeg', quality=100)
+        image.save(buf, format or 'jpeg', quality=100)
         raw_data = buf.getvalue()
         buf.close()
         storage.save(miniature, ContentFile(raw_data))
