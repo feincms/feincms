@@ -550,6 +550,20 @@ msgid ""
 "%(old_ext)s with a %(new_ext)s)"
 msgstr "Kann nur gleiche Dateitypen ersetzen (versuchte ein %(old_ext)s mit einem %(new_ext)s zu überschreiben)"
 
+#: module/medialibrary/models.py:394
+#, python-format
+msgid "ZIP file exported as %s"
+msgstr "ZIP-Datei exportiert als %s"
+
+#: module/medialibrary/models.py:396
+#, python-format
+msgid "ZIP file export failed: %s"
+msgstr "ZIP-Datei Export fehlgeschlagen: %s"
+
+#: module/medialibrary/models.py:400
+msgid "Export selected media files as zip file"
+msgstr "Ausgewählte Mediendateien als ZIP exportieren"
+
 #: module/medialibrary/models.py:482
 #, python-format
 msgid "%d files imported"
@@ -557,8 +571,8 @@ msgstr "%d Dateien importiert"
 
 #: module/medialibrary/models.py:484
 #, python-format
-msgid "ZIP file invalid: %s"
-msgstr "ZIP-Datei fehlerhaft: %s"
+msgid "ZIP import failed: %s"
+msgstr "ZIP-Import schlug fehl: %s"
 
 #: module/medialibrary/models.py:490
 msgid "No input file given"
@@ -913,6 +927,10 @@ msgstr "Abbrechen"
 #: templates/admin/medialibrary/mediafile/change_list.html:12
 msgid "Bulk upload a ZIP file:"
 msgstr "Massenupload mit ZIP Dateien:"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:22
+msgid "Overwrite"
+msgstr "Überschreiben"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:21
 msgid "Send"
