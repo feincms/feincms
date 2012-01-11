@@ -8,6 +8,7 @@ from datetime import datetime
 import logging
 import os
 import re
+
 # Try to import PIL in either of the two ways it can end up installed.
 try:
     from PIL import Image
@@ -15,8 +16,11 @@ except ImportError:
     import Image
 
 from django import forms
+from django.conf import settings as django_settings
 from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -199,13 +203,12 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         the file name later on, this can be used to access the file name from
         JS, like for example a TinyMCE connector shim.
         """
-        from os.path import basename
         from feincms.utils import shorten_string
         return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" id="_refkey_%d" /> %s <br />%s, %s' % (
                 self.id,
                 self.file.name,
                 self.id,
-                shorten_string(basename(self.file.name), max_length=40),
+                shorten_string(os.path.basename(self.file.name), max_length=40),
                 self.file_type(),
                 self.formatted_file_size(),
                 )
@@ -326,7 +329,6 @@ class MediaFileTranslation(Translation(MediaFile)):
 
 #-------------------------------------------------------------------------
 def admin_thumbnail(obj):
-
     if obj.type == 'image':
         image = None
         try:
@@ -383,6 +385,21 @@ def assign_category(modeladmin, request, queryset):
 assign_category.short_description = _('Add selected media files to category')
 
 #-------------------------------------------------------------------------
+def save_as_zipfile(modeladmin, request, queryset):
+    from .zip import export_zipfile
+
+    site = Site.objects.get_current()
+    try:
+        zip_name = export_zipfile(site, queryset)
+        messages.info(request, _("ZIP file exported as %s") % zip_name)
+    except Exception, e:
+        messages.error(request, _("ZIP file export failed: %s") % str(e))
+
+    return HttpResponseRedirect(os.path.join(django_settings.MEDIA_URL, zip_name))
+
+save_as_zipfile.short_description = _('Export selected media files as zip file')
+
+# ------------------------------------------------------------------------
 class MediaFileAdminForm(forms.ModelForm):
     class Meta:
         model = MediaFile
@@ -419,7 +436,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
-    actions           = [assign_category]
+    actions           = [assign_category, save_as_zipfile]
 
     def get_urls(self):
         from django.conf.urls.defaults import url, patterns
@@ -441,51 +458,14 @@ class MediaFileAdmin(admin.ModelAdmin):
     @csrf_protect
     @permission_required('medialibrary.add_mediafile')
     def bulk_upload(request):
-        from django.core.urlresolvers import reverse
-
-        def import_zipfile(request, category_id, data):
-            import zipfile
-            from os import path
-
-            category = None
-            if category_id:
-                category = Category.objects.get(pk=int(category_id))
-
-            try:
-                z = zipfile.ZipFile(data)
-
-                count = 0
-                for zi in z.infolist():
-                    if not zi.filename.endswith('/'):
-                        from django.template.defaultfilters import slugify
-                        from django.core.files.base import ContentFile
-
-                        bname = path.basename(zi.filename)
-                        if bname and not bname.startswith(".") and "." in bname:
-                            fname, ext = path.splitext(bname)
-                            target_fname = slugify(fname) + ext.lower()
-
-                            mf = MediaFile()
-                            mf.file.save(target_fname, ContentFile(z.read(zi.filename)))
-                            mf.save()
-
-                            if category:
-                                mf.categories.add(category)
-
-                            mt = MediaFileTranslation()
-                            mt.parent  = mf
-                            mt.caption = fname.replace('_', ' ')
-                            mt.save()
-
-                            count += 1
-
-                messages.info(request, _("%d files imported") % count)
-            except Exception, e:
-                messages.error(request, _("ZIP file invalid: %s") % str(e))
-                return
+        from .zip import import_zipfile
 
         if request.method == 'POST' and 'data' in request.FILES:
-            import_zipfile(request, request.POST.get('category'), request.FILES['data'])
+            try:
+                count = import_zipfile(request.POST.get('category'), request.POST.get('overwrite', False), request.FILES['data'])
+                messages.info(request, _("%d files imported") % count)
+            except Exception, e:
+                messages.error(request, _("ZIP import failed: %s") % str(e))
         else:
             messages.error(request, _("No input file given"))
 
