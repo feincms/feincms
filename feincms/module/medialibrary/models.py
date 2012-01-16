@@ -327,6 +327,7 @@ class MediaFileTranslation(Translation(MediaFile)):
 #-------------------------------------------------------------------------
 def admin_thumbnail(obj):
 
+    thumbnail_link = u"<div class=\"mimetype %s\">&nbsp;</div>" % obj.type
     if obj.type == 'image':
         image = None
         try:
@@ -335,13 +336,14 @@ def admin_thumbnail(obj):
             pass
 
         if image:
-            return mark_safe(u"""
+            thumbnail_link = u"""
                 <a href="%(url)s" target="_blank">
                     <img src="%(image)s" alt="" />
                 </a>""" % {
                     'url': obj.file.url,
-                    'image': image,})
-    return ''
+                    'image': image,}
+
+    return mark_safe( thumbnail_link )
 admin_thumbnail.short_description = _('Preview')
 admin_thumbnail.allow_tags = True
 
