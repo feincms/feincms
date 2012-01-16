@@ -90,7 +90,7 @@ def import_zipfile(category_id, overwrite, data):
                     mf = MediaFile()
                 if overwrite:
                     mf.file.field.upload_to = wanted_dir
-                mf.copyright = info.get('copyright', None)
+                mf.copyright = info.get('copyright', '')
                 mf.file.save(target_fname, ContentFile(z.read(zi.filename)), save=False)
                 mf.save()
 
