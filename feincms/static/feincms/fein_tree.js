@@ -112,10 +112,9 @@ feincms.jQuery(function($){
 
                 // loop trough all rows
                 $("tr", originalRow.parent()).each(function(index, element) {
+                    element = $(element);
                     var top = element.offset().top,
                         next;
-
-                    element = $(element);
 
                     // check if mouse is over a row
                     if (event.pageY >= top && event.pageY < top + rowHeight) {
