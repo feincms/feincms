@@ -358,8 +358,8 @@ Additional arguments for :func:`~feincms.models.Base.create_content_type`:
   a particular image media file with type ``download``:
 
   * ``content/mediafile/image_download.html``
-  * ``content/mediafile/download.html``
   * ``content/mediafile/image.html``
+  * ``content/mediafile/download.html``
   * ``content/mediafile/default.html``
 
   The media file type is stored directly on
