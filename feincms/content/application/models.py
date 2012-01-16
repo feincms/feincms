@@ -62,6 +62,11 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
         app_reverse('mymodel-detail', 'myapp.urls', kwargs=...)
     """
 
+    # First parameter might be a request instead of an urlconf path, so
+    # we'll try to be helpful and extract the current urlconf from it
+    appconfig = getattr(urlconf, '_feincms_extra_context', {}).get('app_config', {})
+    urlconf = appconfig.get('urlconf_path', urlconf)
+
     # vargs and vkwargs are used to send through additional parameters which are
     # uninteresting to us (such as current_app)
 

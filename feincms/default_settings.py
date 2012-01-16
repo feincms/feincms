@@ -97,7 +97,13 @@ FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH',
 #: customised cms-styled error pages. Do not go overboard, this should
 #: be as simple and as error resistant as possible, so refrain from
 #: deeply nested error pages or advanced content types.
-
 FEINCMS_CMS_404_PAGE = getattr(settings, 'FEINCMS_CMS_404_PAGE', None)
+
+# ------------------------------------------------------------------------
+#: When uploading files to the media library, replacing an existing entry,
+#: try to save the new file under the old file name in order to keep the
+#: media file path (and thus the media url) constant.
+#: Experimental, this might not work with all storage backends.
+FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE', False)
 
 # ------------------------------------------------------------------------
