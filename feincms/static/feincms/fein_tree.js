@@ -169,33 +169,34 @@ feincms.jQuery(function($){
             });
 
             $("body").bind('mouseup', function(event) {
-                var cutItem = extract_item_id(originalRow.find('.page_marker').attr('id'));
-                var pastedOn = extract_item_id(moveTo.relativeTo.find('.page_marker').attr('id'));
+                if(moveTo.relativeTo) {
+                    var cutItem = extract_item_id(originalRow.find('.page_marker').attr('id'));
+                    var pastedOn = extract_item_id(moveTo.relativeTo.find('.page_marker').attr('id'));
+                    // get out early if items are the same
+                    if(cutItem != pastedOn) {
+                        var isParent = (moveTo.relativeTo.next().attr('rel') > moveTo.relativeTo.attr('rel'));
+                        // determine position
+                        if(moveTo.side == CHILD && !isParent) {
+                            var position = 'last-child';
+                        } else {
+                            var position = 'left';
+                        }
 
-                // get out early if items are the same
-                if(cutItem != pastedOn) {
-                    var isParent = (moveTo.relativeTo.next().attr('rel') > moveTo.relativeTo.attr('rel'));
-                    // determine position
-                    if(moveTo.side == CHILD && !isParent) {
-                        var position = 'last-child';
+                        // save
+                        $.post('.', {
+                            '__cmd': 'move_node',
+                            'position': position,
+                            'cut_item': cutItem,
+                            'pasted_on': pastedOn
+                        }, function(data) {
+                                window.location.reload();
+                        });
                     } else {
-                        var position = 'left';
+                        $("#drag_line").remove();
+                        $("#ghost").remove();
                     }
-
-                    // save
-                    $.post('.', {
-                        '__cmd': 'move_node',
-                        'position': position,
-                        'cut_item': cutItem,
-                        'pasted_on': pastedOn
-                    }, function(data) {
-                            window.location.reload();
-                    });
-                } else {
-                    $("#drag_line").remove();
-                    $("#ghost").remove();
+                    $("body").removeClass('dragging').enableSelection().unbind('mousemove').unbind('mouseup');
                 }
-                $("body").removeClass('dragging').enableSelection().unbind('mousemove').unbind('mouseup');
             });
 
         });
