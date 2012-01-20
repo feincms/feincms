@@ -122,6 +122,6 @@ Minor changes
   ``easy_thumbnails``, as well as ``caption`` and ``alt_text`` fields.
 
 * ``FileContent`` now displays the size of the file in the default template,
-  and uses ``span` elements to allow styling of the title / size.
+  and uses ``span`` elements to allow styling of the title / size.
 
 * A few bugs have been fixed.
