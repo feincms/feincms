@@ -3,10 +3,14 @@ Simple image inclusion content: You should probably use the media library
 instead.
 """
 
+import os
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+
+from feincms import settings
 
 class ImageContent(models.Model):
     # You should probably use
@@ -35,7 +39,9 @@ class ImageContent(models.Model):
         not those with values such as "quality=90".
     """
 
-    image = models.ImageField(_('image'), upload_to='imagecontent')
+    image = models.ImageField(
+        _('image'), max_length=255,
+        upload_to=os.path.join(settings.FEINCMS_UPLOAD_PREFIX, 'imagecontent'))
     alt_text = models.CharField(
         _('alternate text'), max_length=255, blank=True,
         help_text=_('Description of image'))
