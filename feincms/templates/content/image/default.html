@@ -1,1 +1,1 @@
-<img src="{{ content.image.url }}" alt="" />
+<div class="image-content"><img src="{{ content.get_image.url }}" class="image-content-{{ content.position }}" alt="{{ content.alt_text }}" />{% if content.caption %}<div class="caption">{{ content.caption }}</div>{% endif %}</div>

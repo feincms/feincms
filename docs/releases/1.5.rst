@@ -115,4 +115,13 @@ Minor changes
   subsequent calls which means that request processors are run
   at most once.
 
+* ``ImageContent``, ``FileContent`` and ``VideoContent`` now have pretty
+  icons out-of-the-box.
+
+* ``ImageContent`` now accepts optional ``FORMAT_CHOICES`` for use with
+  ``easy_thumbnails``, as well as ``caption`` and ``alt_text`` fields.
+
+* ``FileContent`` now displays the size of the file in the default template,
+  and uses ``span` elements to allow styling of the title / size.
+
 * A few bugs have been fixed.
