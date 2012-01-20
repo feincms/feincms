@@ -30,6 +30,7 @@ from feincms.context_processors import add_page_if_missing
 from feincms.models import Region, Template, Base, ContentProxy
 from feincms.module.blog.models import Entry
 from feincms.module.medialibrary.models import Category, MediaFile
+from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
@@ -202,11 +203,23 @@ class CMSBaseTest(TestCase):
         related models have been defined.
         """
         class Attachment(models.Model):
-            base = models.ForeignKey(ExampleCMSBase)
+            base = models.ForeignKey(ExampleCMSBase, related_name='test_related_name')
 
         related_models = map(
             lambda x: x.model, ExampleCMSBase._meta.get_all_related_objects())
+
         self.assertTrue(Attachment in related_models)
+        self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
+        #self.assertFalse(hasattr(Attachment, 'anycontents'))
+
+        class AnyContent(models.Model):
+            attachment = models.ForeignKey(Attachment, related_name='anycontents')
+            class Meta:
+                abstract = True
+        ct = ExampleCMSBase.create_content_type(AnyContent)
+
+        self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
+        self.assertTrue(hasattr(Attachment, 'anycontents'))
 
 
 Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
@@ -214,9 +227,9 @@ Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'ct_tracker')
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
-Page.register_request_processors(Page.etag_request_processor)
-Page.register_response_processors(Page.etag_response_processor)
-Page.register_response_processors(Page.debug_sql_queries_response_processor())
+Page.register_request_processors(processors.etag_request_processor)
+Page.register_response_processors(processors.etag_response_processor)
+Page.register_response_processors(processors.debug_sql_queries_response_processor())
 
 
 class PagesTestCase(TestCase):
@@ -245,7 +258,6 @@ class PagesTestCase(TestCase):
                     ('sidebar', 'Sidebar', 'inherited'),
                     ),
                 })
-        feincms_settings.FEINCMS_USE_CACHE = True
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
@@ -576,6 +588,7 @@ class PagesTestCase(TestCase):
 
         mediafile.translations.create(caption='something',
             language_code='%s-ha' % short_language_code())
+        mediafile.purge_translation_cache()
 
         self.assertTrue('something' in unicode(mediafile))
 
@@ -935,6 +948,19 @@ class PagesTestCase(TestCase):
                 template.Template(t).render(template.Context(c)),
                 r)
 
+        # Test that navigation entries do not exist several times, even with
+        # navigation extensions. Apply the PassthroughExtension to a page
+        # which does only have direct children, because it does not collect
+        # pages further down the tree.
+        page = Page.objects.get(pk=8)
+        page.navigation_extension = 'tests.testapp.navigation_extensions.PassthroughExtension'
+        page.save()
+
+        for c, t, r in tests:
+            self.assertEqual(
+                template.Template(t).render(template.Context(c)),
+                r)
+
     def test_18_default_render_method(self):
         """
         Test the default render() behavior of selecting render_<region> methods
@@ -973,7 +999,7 @@ class PagesTestCase(TestCase):
         self.assertRaises(Page.DoesNotExist, lambda: Page.objects.page_for_path('/asdf/'))
 
         request = Empty()
-        request.path = page.get_absolute_url()
+        request.path = request.path_info = page.get_absolute_url()
         request.method = 'GET'
         request.get_full_path = lambda: '/xyz/'
         request.GET = {}
@@ -1214,6 +1240,10 @@ class PagesTestCase(TestCase):
         self.assertEqual(reverse('tests.testapp.blog_urls/blog_entry_list'), '/test-page/test-child-page/')
         self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
 
+        # Ensure ApplicationContent's admin_fields support works properly
+        self.assertContains(self.client.get('/admin/page/page/%d/' % page.id),
+            'exclusive_subpages')
+
     def test_26_page_form_initial(self):
         self.create_default_page_set()
 
@@ -1248,12 +1278,15 @@ class PagesTestCase(TestCase):
             region='main', ordering=0,
             urlconf_path='tests.testapp.applicationcontent_urls')
 
-        from django.core.urlresolvers import reverse
+        from feincms.content.application.models import app_reverse, reverse
 
-        # test reverse replacement
-        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
+        # test app_reverse
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
                          page.get_absolute_url())
 
+        # test reverse replacement - should still work, but is deprecated
+        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
+                         page.get_absolute_url())
 
         # when specific applicationcontent exists more then once reverse should return url
         # for the one that has tree_id same as current feincms page
@@ -1267,12 +1300,12 @@ class PagesTestCase(TestCase):
         _empty_reverse_cache()
 
         settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
-        self.client.get(page_de.get_absolute_url())
-        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
+        self.client.get(page_de_1.get_absolute_url())
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
                          page_de_1.get_absolute_url())
 
         self.client.get(page1.get_absolute_url())
-        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
                       page.get_absolute_url())
 
     def test_29_medialibrary_admin(self):
@@ -1324,7 +1357,7 @@ class PagesTestCase(TestCase):
         request.GET = {}
         request.META = {}
         request.method = 'GET'
-        request.path = '/test-page/test-child-page/abcdef/'
+        request.path = request.path_info = '/test-page/test-child-page/abcdef/'
         request.get_full_path = lambda: '/test-page/test-child-page/abcdef/'
 
         ctx = add_page_if_missing(request)
@@ -1339,7 +1372,41 @@ class PagesTestCase(TestCase):
         self.assertEqual(Page.objects.count(), 2)
         self.assertEqual(Page.objects.active().count(), 1)
 
-    def test_32_preview(self):
+    def test_32_applicationcontent_inheritance20(self):
+        self.create_default_page_set()
+
+        page1 = Page.objects.get(pk=1)
+        page1.active = True
+        page1.save()
+
+        page = Page.objects.get(pk=2)
+        page.active = True
+        page.template_key = 'theother'
+        page.save()
+
+        # Should not be published because the page has no application contents and should
+        # therefore not catch anything below it.
+        self.is_published(page1.get_absolute_url() + 'anything/', False)
+
+        page.applicationcontent_set.create(
+            region='main', ordering=0,
+            urlconf_path='tests.testapp.applicationcontent_urls')
+        page.rawcontent_set.create(
+            region='main', ordering=1, text='some_main_region_text')
+        page.rawcontent_set.create(
+            region='sidebar', ordering=0, text='some_sidebar_region_text')
+
+        self.assertContains(self.client.get(page.get_absolute_url()),
+                            'module_root')
+
+        response = self.client.get(page.get_absolute_url() + 'inheritance20/')
+        self.assertContains(response, 'a content 42')
+        self.assertContains(response, 'b content')
+        self.assertNotContains(response, 'some_main_region_text')
+        self.assertContains(response, 'some_sidebar_region_text')
+        self.assertNotContains(response, 'some content outside')
+
+    def test_33_preview(self):
         self.create_default_page_set()
         page = Page.objects.get(pk=1)
         page.template_key = 'theother'
@@ -1353,6 +1420,47 @@ class PagesTestCase(TestCase):
         self.assertContains(self.client.get('%s_preview/%s/' % (page.get_absolute_url(), page.pk)),
             'Example content')
 
+    def test_34_access(self):
+        self.create_default_page_set()
+
+        page = Page.objects.get(pk=1)
+        page.override_url = '/something/'
+        page.save()
+
+        Page.objects.update(active=True)
+
+        self.create_page(title='redirect page', override_url='/', redirect_to=page.get_absolute_url(), active=True)
+
+        # / -> redirect to /something/
+        r = self.client.get('/')
+        self.assertRedirects(r, page.get_absolute_url())
+        # /something/ should work
+        r = self.client.get(page.override_url)
+        self.assertEquals(r.status_code, 200)
+        # /foo not existant -> 404
+        r = self.client.get('/foo/')
+        self.assertEquals(r.status_code, 404)
+
+
+    def test_35_access_with_extra_path(self):
+        self.login()
+        self.create_page(title='redirect again', override_url='/', redirect_to='/somewhere/', active=True)
+        self.create_page(title='somewhere', active=True)
+
+        r = self.client.get('/')
+        self.assertRedirects(r, '/somewhere/')
+        r = self.client.get('/dingdong/')
+        self.assertEquals(r.status_code, 404)
+
+        old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
+
+        r = self.client.get('/')
+        self.assertRedirects(r, '/somewhere/')
+        r = self.client.get('/dingdong/')
+        self.assertEquals(r.status_code, 404)
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
 
 Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
 class BlogTestCase(TestCase):

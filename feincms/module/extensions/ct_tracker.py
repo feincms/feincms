@@ -18,7 +18,6 @@ saving time, thus saving at least one DB query on page delivery.
 """
 
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
 from django.db.models.signals import class_prepared, post_save, pre_save
 from django.utils.translation import ugettext_lazy as _
 
@@ -51,6 +50,9 @@ class TrackerContentProxy(ContentProxy):
                 try:
                     self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
                 except KeyError:
+                    # It's possible that the inventory does not fit together with the
+                    # current models anymore, f.e. because a content type has been
+                    # removed.
                     pass
 
             if 'counts' not in self._cache:
@@ -110,6 +112,7 @@ def class_prepared_handler(sender, **kwargs):
     # are fully loaded and initialized when the translation map is accessed.
     # This leads to (lots of) crashes on the server. Better be safe and
     # kill the translation map when any class_prepared signal is received.
+    global _translation_map_cache
     _translation_map_cache = {}
 class_prepared.connect(class_prepared_handler)
 
@@ -137,4 +140,5 @@ def register(cls, admin_cls):
         post_save.connect(tree_post_save_handler, sender=cls)
     else:
         pre_save.connect(single_pre_save_handler, sender=cls)
+
 # ------------------------------------------------------------------------

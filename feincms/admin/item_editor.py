@@ -7,7 +7,6 @@ import copy
 
 from django import forms, template
 from django.contrib import admin
-from django.core.exceptions import ImproperlyConfigured
 from django.db.models import loading
 from django.forms.models import modelform_factory
 from django.http import Http404
@@ -67,13 +66,13 @@ class ItemEditor(admin.ModelAdmin):
             # This works in Django 1.3 and lower
             # In Django 1.4 inline instances are generated using overridden get_inline_instances()
             self.append_feincms_inlines(self.inline_instances)
-    
+
     def get_inline_instances(self, request):
         inline_instances = super(ItemEditor, self).get_inline_instances(request)
         self.append_feincms_inlines(inline_instances)
-        
+
         return inline_instances
-    
+
     def append_feincms_inlines(self, inline_instances):
         """ Append generated FeinCMS content inlines to native django inlines. """
         for inline_class in self.get_feincms_inlines(self.model):
@@ -82,6 +81,8 @@ class ItemEditor(admin.ModelAdmin):
 
     def get_feincms_inlines(self, model):
         """ Generate genuine django inlines for registered content types. """
+        model._needs_content_types()
+
         inlines = []
         for content_type in model._feincms_content_types:
             attrs = {
@@ -150,9 +151,6 @@ class ItemEditor(admin.ModelAdmin):
                 return render_to_response('admin/feincms/fe_editor_done.html', {
                     'content': obj.render(request=request),
                     'identifier': obj.fe_identifier(),
-                    'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-                    'FEINCMS_ADMIN_MEDIA_HOTLINKING': \
-                        settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
                     'FEINCMS_JQUERY_NO_CONFLICT': \
                         settings.FEINCMS_JQUERY_NO_CONFLICT,
                     })
@@ -189,9 +187,6 @@ class ItemEditor(admin.ModelAdmin):
                 getattr(self.model, '_feincms_templates', ()),
             'has_parent_attribute': hasattr(self.model, 'parent'),
             'content_types': self.get_content_type_map(),
-            'FEINCMS_ADMIN_MEDIA': settings.FEINCMS_ADMIN_MEDIA,
-            'FEINCMS_ADMIN_MEDIA_HOTLINKING':
-                settings.FEINCMS_ADMIN_MEDIA_HOTLINKING,
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
 
@@ -222,8 +217,6 @@ class ItemEditor(admin.ModelAdmin):
         return super(ItemEditor, self).add_view(request, form_url, context)
 
     def change_view(self, request, object_id, extra_context=None):
-        self.model._needs_content_types()
-
         # Recognize frontend editing requests
         # This is done here so that the developer does not need to add
         # additional entries to # urls.py or something...

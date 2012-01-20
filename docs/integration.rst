@@ -13,25 +13,29 @@ the CMS.
 Default page handler
 ====================
 
-The default CMS handler view is ``feincms.views.base.handler``. You can
+The default CMS handler view is ``feincms.views.cbv.handler``. You can
 add the following as last line in your ``urls.py`` to make a catch-all
-for any pages which were not matched before:
+for any pages which were not matched before::
 
-::
+    from feincms.views.cbv.views import Handler
+    handler = Handler.as_view()
 
     urlpatterns += patterns('',
-        url(r'^$', base.handler, name='feincms_home'),
-        url(r'^(.*)/$', base.handler, name='feincms_handler'),
+        url(r'^$', handler, name='feincms_home'),
+        url(r'^(.*)/$', handler, name='feincms_handler'),
     )
 
 Note that this default handler can also take a keyword parameter ``path``
 to specify which url to render. You can use that functionality to
-implement a default page by adding another entry to your ``urls.py``:
+implement a default page by adding another entry to your ``urls.py``::
 
-::
+    from feincms.views.cbv.views import Handler
+    handler = Handler.as_view()
 
-        url(r'^$', 'feincms.views.base.handler', {'path': '/rootpage'},
+    ...
+        url(r'^$', handler, {'path': '/rootpage'},
             name='feincms_home')
+    ...
 
 
 Please note that it's easier to include ``feincms.urls`` at the bottom
@@ -43,19 +47,22 @@ of your own URL patterns like this::
         url(r'', include('feincms.urls')),
     )
 
+The URLconf entry names ``feincms_home`` and ``feincms_handler`` must
+both exist somewhere in your project. The standard ``feincms.urls``
+contains definitions for both. If you want to provide your own view,
+it's your responsability to create correct URLconf entries.
 
-Generic views
-=============
+
+Generic and custom views
+========================
 
 If you use FeinCMS to manage your site, chances are that you still want
-to use generic views for certain parts. You probably still need a
+to use generic and/or custom views for certain parts. You probably still need a
 ``feincms_page`` object inside your template to generate the navigation and
-render regions not managed by the generic views. By simply replacing
-:mod:`django.views.generic` with :mod:`feincms.views.generic` in your
-``urls.py``. The page which
-most closely matches the current request URI will be passed into the
-template by automatically adding ``feincms_page`` to the ``extra_context``
-generic view argument.
+render regions not managed by the generic views. The best way to ensure
+the presence of a ``feincms_page`` instance in the template context is
+to add ``feincms.context_processors.add_page_if_missing`` to your
+``TEMPLATE_CONTEXT_PROCESSORS`` setting.
 
 
 .. _integration-applicationcontent:
@@ -63,32 +70,11 @@ generic view argument.
 Integrating 3rd party apps
 ==========================
 
-The :class:`~feincms.content.application.models.ApplicationContent` will
-help you with this.
-
-The plugin/content type needs a URLconf and uses resolve and a patched
-reverse to integrate the application into the CMS. The advantages are
-that there is no modification of the ROOT_URLCONF necessary when
-moving the integration point for the 3rd party application around. On
-the downside, the application's template has less control over the
-base template and views inside the 3rd party app cannot be reversed
-from outside the ApplicationContent renderer. The bigger flexibility
-in choosing the integration point comes with a cost when it comes to
-rendering the content from the 3rd party app.
-
-.. warning::
-
-   The monkey patch for ``django.core.urlresolvers.reverse`` contained
-   in the ``ApplicationContent`` code has to happen "early enough". If
-   ``reverse`` is unable to determine URLs for views integrated through
-   ``ApplicationContent`` you have to move the application content code
-   import to an earlier place (f.e. on the first line of your main
-   ``models.py`` or even in your ``urls.py`` (barring circular import
-   problems).
-
-   This might change if we find a better way to solve this or if
-   Django allows us to poke deeper into the URL resolving/reversing
-   machinery.
+Third party apps such as django-registration can be integrated in the CMS
+too. :class:`~feincms.content.application.models.ApplicationContent` lets you
+delegate a subset of your page tree to a third party application. The only
+thing you need is specifying a URLconf file which is used to determine which
+pages exist below the integration point.
 
 
 Adapting the 3rd party application for FeinCMS
@@ -111,95 +97,29 @@ can be too easily violated.
 
 An example ``urls.py`` follows::
 
-    from django.conf.urls.defaults import *
+    from django.conf.urls.defaults import patterns, include, url
+    from django.views.generic.detail import DetailView
+    from django.views.generic.list import ListView
     from news.models import Entry
 
-    entry_dict = {'queryset': Entry.objects.all()}
 
     urlpatterns = patterns('',
-       url(r'^$',
-           'django.views.generic.list_detail.object_list',
-           entry_dict,
-           name='entry_list'),
-       url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[^/]+)/',
-           'django.views.generic.date_based.object_detail',
-           dict(entry_dict, **{'date_field': 'published_date', 'month_format': '%m', 'slug_field': 'slug'}),
-           name='entry_detail'),
+        url(r'^$', ListView.as_view(
+            queryset=Entry.objects.all(),
+            ), name='entry_list'),
+        url(r'^(?P<slug>[^/]+)/$', DetailView.as_view(
+            queryset=Entry.objects.all(),
+            ), name='entry_detail'),
     )
 
-
-Please note that you should not add the ``news/`` prefix here unless
-you know exactly what you are doing. Furthermore, this ``urls.py`` is
-incomplete -- for a real world implementation, you'd need to add yearly,
-monthly and daily archive views too. Furthermore, you should *not* include
-this ``urls.py`` file anywhere accessible from your ``ROOT_URLCONF``.
-
-If you write your view methods yourself instead of using generic views, you
-should not construct whole response objects, but return the content as a unicode
-string. It does not hurt to encapsulate the content inside a response object,
-it's simply not worth it because the application content will have to extract
-the content from the response and throw the response object away anyway.
-
-The :class:`~feincms.content.application.models.ApplicationContent` patches
-the standard Django ``reverse`` function, so that ``reverse`` and the
-``{% url %}`` template tag works as expected inside the application
-content render method. Therefore, :meth:`News.get_absolute_url` is
-absolutely standard. ``models.py``::
-
-    from datetime import datetime
-    from django.db import models
-
-    class Entry(models.Model):
-       published_date = models.DateField()
-       title = models.CharField(max_length=200)
-       slug = models.SlugField()
-       description = models.TextField(blank=True)
-
-       class Meta:
-           get_latest_by = 'published_date'
-           ordering = ['-published_date']
-
-       def __unicode__(self):
-           return self.title
-
-       @models.permalink
-       def get_absolute_url(self):
-           return ('entry_detail', (), {
-               'year': self.published_date.strftime('%Y'),
-               'month': self.published_date.strftime('%m'),
-               'day': self.published_date.strftime('%d'),
-               'slug': self.slug,
-               })
+Please note that you should not add the ``news/`` prefix here. You should
+*not* reference this ``urls.py`` file anywhere in a ``include`` statement.
 
 
-Writing the templates for the application
------------------------------------------
+Registering the 3rd party application with FeinCMS' ``ApplicationContent``
+--------------------------------------------------------------------------
 
-Nothing special here. The only thing you have to avoid is adding ``<html>`` or
-``<body>`` tags and such, because you're only rendering content for a single
-content block, not the whole page. An example ``news/entry_detail.html`` follows::
-
-    <div class="entry">
-       <h2>{{ object.title }}</h2>
-       <span class="date">{{ object.published_date|date:"d.m.Y" }}</span>
-
-       {{ object.description|linebreaks }}
-    </div>
-
-And an example ``news/entry_list.html``::
-
-    {% for entry in object_list %}
-        <div class="entry">
-            {% ifchanged %}<div class="date">{{ entry.published_date|date:"d.m.Y" }}</div>{% endifchanged %}
-            <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
-        </div>
-    {% endfor %}
-
-
-Registering and integrating the 3rd party application
------------------------------------------------------
-
-First, you need to create the content type::
+It's as simple as that::
 
     from feincms.content.application.models import ApplicationContent
     from feincms.module.page.models import Page
@@ -208,83 +128,189 @@ First, you need to create the content type::
         ('news.urls', 'News application'),
         ))
 
-Your base template does not have to be structured differently just because
-you are using application contents now. You must use the bundled FeinCMS
-template tags though, because the application content needs the request
-object::
 
-    {% extends "base.html" %}
+Writing the models
+------------------
 
-    {% load feincms_tags %}
+Because the URLconf entries ``entry_list`` and ``entry_detail`` aren't
+reachable through standard means (remember, they aren't ``include``d
+anywhere) it's not possible to use standard ``reverse`` calls to determine
+the absolute URL of a news entry. FeinCMS provides its own ``app_reverse``
+function and ``permalink`` decorator mimicking the interface of Django's
+standard functionality::
 
-    {% block content %}
-       {% feincms_render_region feincms_page "main" request %}
-    {% endblock %}
 
-Please note that this necessitates the use of
-``django.core.context_processors.request``::
+    from django.db import models
+    from feincms.content.application import models as app_models
 
-    TEMPLATE_CONTEXT_PROCESSORS = (
-        'django.core.context_processors.auth',
-        'django.core.context_processors.debug',
-        'django.core.context_processors.i18n',
-        'django.core.context_processors.media',
-        'django.core.context_processors.request',
+    class Entry(models.Model):
+       title = models.CharField(max_length=200)
+       slug = models.SlugField()
+       description = models.TextField(blank=True)
+
+       class Meta:
+           ordering = ['-id']
+
+       def __unicode__(self):
+           return self.title
+
+       @app_models.permalink
+       def get_absolute_url(self):
+           return ('entry_detail', 'news.urls', (), {
+               'slug': self.slug,
+               })
+
+
+The only difference is that you do not only have to specify the view name
+(``entry_detail``) but also the URLconf file (``news.urls``) for this
+specific ``permalink`` decorator. The URLconf string must correspond to the
+specification used in the ``APPLICATIONS`` list in the ``create_content_type``
+call.
+
+.. note::
+
+   Previous FeinCMS versions only provided a monkey patched ``reverse``
+   method with a slightly different syntax for reversing URLs. This
+   behavior is still available and as of now (FeinCMS 1.5) still active
+   by default. It is recommended to start using the new way right now
+   and add ``FEINCMS_REVERSE_MONKEY_PATCH = False`` to your settings file.
+
+
+Returning content from views
+----------------------------
+
+Three different types of return values can be handled by the application
+content code:
+
+* Unicode data (i.e. the return value of ``render_to_string``)
+* ``HttpResponse`` instances
+* A tuple consisting of two elements: A template instance, template name or list
+  and a context ``dict``. More on this later under
+  :ref:`integration-applicationcontent-inheritance20`
+
+
+Unicode data is inserted verbatim into the output. ``HttpResponse`` instances
+are returned directly to the client under the following circumstances:
+
+* The HTTP status code differs from ``200 OK`` (Please note that 404 errors may
+  be ignored if more than one content type with a ``process`` method exists on
+  the current CMS page.)
+* The resource was requested by ``XmlHttpRequest`` (that is, ``request.is_ajax``
+  returns ``True``)
+* The response was explicitly marked as ``standalone`` by the
+  :func:`feincms.views.decorators.standalone` view decorator
+* The mimetype of the response was not ``text/plain`` or ``text/html``
+
+Otherwise, the content of the response is unpacked and inserted into the
+CMS output as unicode data as if the view returned the content directly, not
+wrapped into a ``HttpResponse`` instance.
+
+If you want to customize this behavior, provide your own subclass of
+``ApplicationContent`` with an overridden ``send_directly`` method. The
+described behavior is only a sane default and might not fit everyone's
+use case.
+
+.. note::
+
+   The string or response returned should not contain ``<html>`` or ``<body>``
+   tags because this would invalidate the HTML code returned by FeinCMS.
+
+
+.. _integration-applicationcontent-inheritance20:
+
+Letting the application content use the full power of Django's template inheritance
+-----------------------------------------------------------------------------------
+
+If returning a simple unicode string is not enough and you'd like to modify
+different blocks in the base template, you have to ensure two things:
+
+* Use the class-based page handler. This is already the default if you include
+  ``feincms.urls`` or ``feincms.views.cbv.urls``.
+* Make sure your application views use the third return value type described
+  above: A tuple consisting of a template and a context ``dict``.
+
+The news application views would then look as follows. Please note the absence
+of any template rendering calls:
+
+``views.py``::
+
+    from django.shortcuts import get_object_or_404
+    from news.models import Entry
+
+    def entry_list(request):
+        # TODO add pagination here
+        return 'news/entry_list.html', {'object_list': Entry.objects.all()}
+
+    def entry_detail(request, slug):
+        return 'news/entry_detail', {'object': get_object_or_404(Entry, slug=slug)}
+
+``urls.py``::
+
+    from django.conf.urls.defaults import patterns, include, url
+
+    urlpatterns = patterns('news.views',
+        url(r'^$', 'entry_list', name='entry_list'),
+        url(r'^(?P<slug>[^/]+)/$', 'entry_detail', name='entry_detail'),
     )
 
 
-The 3rd party application might know how to handle more than one URL (the example
-news application does). These subpages won't necessarily exist as page instances
-in the tree, the standard view knows how to handle this case.
+The two templates referenced, ``news/entry_list.html`` and
+``news/entry_detail.html``, should now extend a base template. The recommended
+notation is as follows::
+
+    {% extends feincms_page.template.path|default:"base.html" %}
+
+    {% block ... %}
+    {# more content snipped #}
 
 
-.. _integration-applicationcontent-morecontrol:
+This ensures that the the selected CMS template is still used when rendering
+content.
 
-Letting the application content control more than one region in the parent template
------------------------------------------------------------------------------------
+.. note::
 
-The output of the third party app is not strictly constrained to the region;
-you can pass additional fragments around, for example to extend the page title
-with content from the 3rd party application. Suppose we'd like to add the news
-title to the title tag. Add the following lines to your ``news/entry_detail.html``::
+   Older versions of FeinCMS only offered fragments for a similar purpose. They
+   are still suported, but it's recommended you switch over to this style instead.
+
+.. warning::
+
+   If you add two application content blocks on the same page and both use this
+   mechanism, the later 'wins'.
+
+
+More on reversing URLs
+----------------------
+
+Application content-aware URL reversing is available both for Python and
+Django template code.
+
+The function works almost like Django's own ``reverse()`` method except
+that it resolves URLs from application contents. The second argument,
+``urlconf``, has to correspond to the URLconf parameter passed in the
+``APPLICATIONS`` list to ``Page.create_content_type``::
+
+    app_reverse('mymodel-detail', 'myapp.urls', args=...)
+
+or::
+
+    app_reverse('mymodel-detail', 'myapp.urls', kwargs=...)
+
+
+The template tag has to be loaded from the ``applicationcontent_tags``
+template tag library first::
 
     {% load applicationcontent_tags %}
-    {% fragment request "title" %}{{ object.translation.title }} - {% endfragment %}
+    {% app_reverse "mymodel_detail" "myapp.urls" arg1 arg2 %}
 
-And read the fragment inside your base template::
+or::
 
-    {% extends "base.html" %}
+    {% load applicationcontent_tags %}
+    {% app_reverse "mymodel_detail" "myapp.urls" name1=value1 name2=value2 %}
 
-    {% load applicationcontent_tags feincms_page_tags %}
+Storing the URL in a context variable is supported too::
 
-    {% block title %}{% get_fragment request "title" %} - {{ feincms_page.title }} - {{ block.super }}{% endblock %}
-
-    {% block content %}
-       {% feincms_render_region feincms_page "main" request %}
-    {% endblock %}
-
-
-Returning responses from the embedded application without wrapping them inside the CMS template
------------------------------------------------------------------------------------------------
-
-If the 3rd party application returns a response with status code different from
-200, the standard view :func:`feincms.views.base.handler` returns
-the response verbatim. The same is true if the 3rd party application returns
-a response and ``request.is_ajax()`` is ``True`` or if the application content
-returns a HttpResponse with the ``standalone`` attribute set to True.
-
-For example, an application can return an non-html export file -- in that case
-you don't really want the CMS to decorate the data file with the web html templates:
-
-::
-
-    from feincms.views.decorators import standalone
-
-    @standalone
-    def my_view(request):
-        ...
-        xls_data = ... whatever ...
-        return HttpResponse(xls_data, content_type="application/msexcel")
+    {% load applicationcontent_tags %}
+    {% app_reverse "mymodel_detail" "myapp.urls" arg1 arg2 as url %}
 
 
 Additional customization possibilities

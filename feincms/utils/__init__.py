@@ -50,6 +50,8 @@ or::
     {% feincms_prefill_entry_list object_list "authors,richtextcontent_set,imagecontent_set" %}
 """
 
+import warnings
+
 from django.db import connection
 from django.db.models import AutoField
 from django.db.models.fields import related
@@ -76,6 +78,13 @@ def get_object(path, fail_silently=False):
 
 # ------------------------------------------------------------------------
 def prefilled_attribute(name):
+    warnings.warn("FeinCMS' own prefilled attributes mechanism for reducing"
+        " the database query count has been deprecated in favor of other,"
+        " more widely used solutions such as django-queryset-transform"
+        " (bundled as `feincms.utils.queryset_transform`) and"
+        " django-batchselect.",
+        DeprecationWarning, stacklevel=2)
+
     key = '_prefill_%s' % name
 
     def _prop(self):
@@ -107,6 +116,13 @@ def prefill_entry_list(queryset, *attrs, **kwargs):
     reverse foreign key relations. This is obviously most useful for fetching
     content objects.
     """
+
+    warnings.warn("FeinCMS' own prefilled attributes mechanism for reducing"
+        " the database query count has been deprecated in favor of other,"
+        " more widely used solutions such as django-queryset-transform"
+        " (bundled as `feincms.utils.queryset_transform`) and"
+        " django-batchselect.",
+        DeprecationWarning, stacklevel=2)
 
     region = kwargs.get('region', None)
 
@@ -197,7 +213,7 @@ def copy_model_instance(obj, exclude=None):
     return obj.__class__(**initial)
 
 # ------------------------------------------------------------------------
-def shorten_string(str, max_length = 50):
+def shorten_string(str, max_length=50):
     """
     Shorten a string for display, truncate it intelligently when too long.
     Try to cut it in 2/3 + ellipsis + 1/3 of the original title. The first part

@@ -47,6 +47,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.request',
+    'django.core.context_processors.static',
 )
 
 TEMPLATE_LOADERS = (
@@ -73,6 +74,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'django.contrib.staticfiles',
 
     'feincms',
     'feincms.module.blog',
@@ -91,7 +93,6 @@ try:
         'feincms',
         'feincms._internal',
         'feincms.admin',
-        'feincms.admin.editor',
         'feincms.admin.filterspecs',
         'feincms.admin.item_editor',
         'feincms.admin.tree_editor',
@@ -168,12 +169,9 @@ try:
         'feincms.shortcuts',
         'feincms.templatetags',
         'feincms.templatetags.applicationcontent_tags',
-        'feincms.templatetags.feincms_admin_tags',
-        'feincms.templatetags.feincms_compat_tags',
         'feincms.templatetags.feincms_tags',
         'feincms.templatetags.feincms_thumbnail',
         'feincms.templatetags.fragment_tags',
-        'feincms.templatetags.utils',
         'feincms.translations',
         'feincms.urls',
         'feincms.utils',
@@ -183,9 +181,12 @@ try:
         'feincms.utils.templatetags',
         'feincms.views',
         'feincms.views.base',
-        #'feincms.views.cbv', # Makes test-suite only runnable with Django 1.3
-        #'feincms.views.cbv.urls',
-        #'feincms.views.cbv.views',
+        'feincms.views.cbv',
+        'feincms.views.cbv.urls',
+        'feincms.views.cbv.views',
+        'feincms.views.legacy',
+        'feincms.views.legacy.urls',
+        'feincms.views.legacy.views',
         'feincms.views.decorators',
         'feincms.views.generic',
         'feincms.views.generic.create_update',

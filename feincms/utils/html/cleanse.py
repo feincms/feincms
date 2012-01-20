@@ -1,6 +1,8 @@
+from BeautifulSoup import BeautifulSoup
 import lxml.html
 import lxml.html.clean
 import re
+import unicodedata
 
 
 cleanse_html_allowed = {
@@ -153,6 +155,10 @@ def cleanse_html(html):
 
     # add a space before the closing slash in empty tags
     html = re.sub(r'<([^/>]+)/>', r'<\1 />', html)
+
+    # nicify entities and normalize unicode
+    html = unicode(BeautifulSoup(html, convertEntities='xml'))
+    html = unicodedata.normalize('NFKC', html)
 
     return html
 

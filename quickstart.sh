@@ -5,8 +5,13 @@
 
 echo "Downloading Django and django-mptt via git... (this will take some time)"
 
-git clone git://github.com/django/django.git django
-git clone git://github.com/django-mptt/django-mptt.git mptt
+mkdir lib
+cd lib
+git clone git://github.com/django/django.git
+git clone git://github.com/django-mptt/django-mptt.git
+cd ..
+ln -s lib/django/django django
+ln -s lib/django-mptt/mptt mptt
 
 cat <<EOD
 Everything should be ready now. Type the following commands into the shell

@@ -3,16 +3,11 @@
 
 {% block extrahead %}
 {{ block.super }}
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}fein_tree.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/style.css" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/fein_tree.css" />
 
-{% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-{% else %}
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.5.1.min.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-ui-1.8.13.custom.min.js"></script>
-{% endif %}
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript">
     var feincms = {
         {% if FEINCMS_JQUERY_NO_CONFLICT %}
@@ -23,10 +18,10 @@
         , "tree_structure": {{ tree_structure|default:"null" }}
     };
 </script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}ie_compat.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.cookie.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}toolbox.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}fein_tree.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/ie_compat.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.cookie.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/toolbox.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/fein_tree.js"></script>
 
 {% endblock %}
 

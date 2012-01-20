@@ -1,10 +1,5 @@
-{% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-{% else %}
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.5.1.min.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-ui-1.8.13.custom.min.js"></script>
-{% endif %}
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript">
     var feincms = {
         {% if FEINCMS_JQUERY_NO_CONFLICT %}

@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
-from feincms.admin.editor import ItemEditorForm
+from feincms.admin.item_editor import ItemEditorForm
 from feincms.utils import get_object
 
 class RichTextContentAdminForm(ItemEditorForm):

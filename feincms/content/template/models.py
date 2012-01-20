@@ -1,46 +1,40 @@
 import os
 
-from django import forms
-from django.conf import settings
 from django.db import models
-from django.template.loader import find_template_loader, render_to_string
+from django.template.loader import (Context, Template, TemplateDoesNotExist,
+    find_template_loader)
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.admin.editor import ItemEditorForm
+
+DEFAULT_TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    )
 
 
-def get_templates():
-    seen = set()
+class TemplateChoices(object):
+    def __init__(self, template_loaders):
+        self.template_loaders = template_loaders
 
-    yield ('', '----------')
+    def __iter__(self):
+        seen = set()
 
-    for loader in settings.TEMPLATE_LOADERS:
-        loader_instance = find_template_loader(loader)
-        if not loader_instance or not hasattr(loader_instance, 'get_template_sources'):
-            continue
-
-        for basepath in loader_instance.get_template_sources('.'):
-            path = os.path.join(basepath, 'content', 'template')
-            try:
-                templates = os.listdir(path)
-            except (OSError, IOError):
-                continue
-
-            for template in templates:
-                if template in seen:
+        for loader in self.template_loaders:
+            for basepath in loader.get_template_sources('.'):
+                path = os.path.join(basepath, 'content', 'template')
+                try:
+                    templates = os.listdir(path)
+                except (OSError, IOError):
                     continue
-                if template[:4] == '.tmp':
-                    continue
-                seen.add(template)
-                yield (template, template)
 
+                for template in templates:
+                    if template in seen:
+                        continue
+                    if template.endswith(('~', '.tmp')):
+                        continue
+                    seen.add(template)
 
-class TemplateContentAdminForm(ItemEditorForm):
-    filename = forms.ChoiceField(label=_('template'))
-
-    def __init__(self, *args, **kwargs):
-        super(TemplateContentAdminForm, self).__init__(*args, **kwargs)
-        self.fields['filename'].choices = sorted(get_templates(), key=lambda p: p[1])
+        return ((t, t) for t in sorted(seen))
 
 
 class TemplateContent(models.Model):
@@ -52,19 +46,43 @@ class TemplateContent(models.Model):
     The templates aren't restricted in any way.
     """
 
-    feincms_item_editor_form = TemplateContentAdminForm
-
-    filename = models.CharField(_('template'), max_length=100,
-        choices=())
-
     class Meta:
         abstract = True
         verbose_name = _('template content')
         verbose_name_plural = _('template contents')
 
+    @classmethod
+    def initialize_type(cls, TEMPLATE_LOADERS=DEFAULT_TEMPLATE_LOADERS):
+        cls.template_loaders = [find_template_loader(loader)
+            for loader in TEMPLATE_LOADERS if loader]
+
+        cls.add_to_class('filename', models.CharField(_('template'), max_length=100,
+            choices=TemplateChoices(cls.template_loaders)))
+
     def render(self, **kwargs):
         context = kwargs.pop('context', None)
+        name = 'content/template/%s' % self.filename
 
-        return render_to_string('content/template/%s' % self.filename, dict({
-            'content': self,
-            }, **kwargs), context_instance=context)
+        for loader in self.template_loaders:
+            try:
+                template, display_name = loader.load_template(name)
+            except TemplateDoesNotExist:
+                continue
+
+            if not hasattr(template, 'render'):
+                template = Template(template, name=name)
+
+            if context:
+                ctx = context
+                ctx.update(dict(content=self, **kwargs))
+            else:
+                ctx = Context(dict(content=self, **kwargs))
+
+            result = template.render(ctx)
+
+            if context:
+                context.pop()
+
+            return result
+
+        return u'' # Fail?

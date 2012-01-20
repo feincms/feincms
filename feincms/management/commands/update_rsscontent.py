@@ -22,4 +22,3 @@ class Command(BaseCommand):
                     content.cache_content(date_format=date_format)
                 else:
                     content.cache_content()
-

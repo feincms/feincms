@@ -48,14 +48,26 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         if args.get('extended', False):
             _entries = list(entries)
             entries = []
+            extended_node_rght = [] # rght value of extended node.
+                                    # used to filter out children of
+                                    # nodes sporting a navigation extension
 
             for entry in _entries:
-                entries.append(entry)
-
                 if getattr(entry, 'navigation_extension', None):
+                    entries.append(entry)
+                    extended_node_rght.append(entry.rght)
+
                     entries.extend(e for e in entry.extended_navigation(depth=depth,
                         request=self.render_context.get('request', None))
                         if getattr(e, 'level', 0) < mptt_limit)
+                else:
+                    if extended_node_rght:
+                        if entry.rght < extended_node_rght[-1]:
+                            continue
+                        else:
+                            extended_node_rght.pop()
+
+                    entries.append(entry)
 
         return entries
 
@@ -201,13 +213,16 @@ def _translate_page_into(page, language, default=None):
     Return the translation for a given page
     """
     # Optimisation shortcut: No need to dive into translations if page already what we want
-    if page.language == language:
-        return page
+    try:
+        if page.language == language:
+            return page
 
-    if language is not None:
-        translations = dict((t.language, t) for t in page.available_translations())
-        if language in translations:
-            return translations[language]
+        if language is not None:
+            translations = dict((t.language, t) for t in page.available_translations())
+            if language in translations:
+                return translations[language]
+    except AttributeError:
+        pass
 
     if hasattr(default, '__call__'):
         return default(page=page)
@@ -250,7 +265,7 @@ register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_ar
 # ------------------------------------------------------------------------
 class TranslatedPageNodeOrBase(TranslatedPageNode):
     def what(self, page, args):
-        return super(TranslatedPageNodeOrBase, self).what(page, args, default=page.get_original_translation)
+        return super(TranslatedPageNodeOrBase, self).what(page, args, default=getattr(page, 'get_original_translation', page))
 register.tag('feincms_translatedpage_or_base', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNodeOrBase))
 
 # ------------------------------------------------------------------------
@@ -288,6 +303,9 @@ def feincms_breadcrumbs(page, include_self=True):
     return {"trail": bc}
 
 # ------------------------------------------------------------------------
+def _is_parent_of(page1, page2):
+    return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
+
 @register.filter
 def is_parent_of(page1, page2):
     """
@@ -299,11 +317,14 @@ def is_parent_of(page1, page2):
     """
 
     try:
-        return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
+        return _is_parent_of(page1, page2)
     except AttributeError:
         return False
 
 # ------------------------------------------------------------------------
+def _is_equal_or_parent_of(page1, page2):
+    return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
+
 @register.filter
 def is_equal_or_parent_of(page1, page2):
     """
@@ -312,16 +333,19 @@ def is_equal_or_parent_of(page1, page2):
     example adds a CSS class ``current`` to the current main navigation entry::
 
         {% for page in navigation %}
-            <a {% if page|is_equal_or_parent_of:feincms_page %}class="mark"{% endif %}>
+            <a {% if page|is_equal_or_parent_of:feincms_page %}class="current"{% endif %}>
                 {{ page.title }}</a>
         {% endfor %}
     """
     try:
-        return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
+        return _is_equal_or_parent_of(page1, page2)
     except AttributeError:
         return False
 
 # ------------------------------------------------------------------------
+def _is_sibling_of(page1, page2):
+    return page1.parent_id == page2.parent_id
+
 @register.filter
 def is_sibling_of(page1, page2):
     """
@@ -333,8 +357,57 @@ def is_sibling_of(page1, page2):
     """
 
     try:
-        return page1.parent_id == page2.parent_id
+        return _is_sibling_of(page1, page2)
     except AttributeError:
         return False
 
 # ------------------------------------------------------------------------
+try:
+    any
+except NameError:
+    # For Python 2.4
+    from feincms.compat import c_any as any
+
+@register.filter
+def siblings_along_path_to(page_list, page2):
+    """
+    Filters a list of pages so that only those remain that are either:
+
+        * An ancestor of the current page
+        * A sibling of an ancestor of the current page
+
+    A typical use case is building a navigation menu with the active
+    path to the current page expanded::
+
+        {% feincms_navigation of feincms_page as navitems level=1,depth=3 %}
+        {% with navitems|siblings_along_path_to:feincms_page as navtree %}
+            ... whatever ...
+        {% endwith %}
+
+    """
+    try:
+        # Try to avoid hitting the database: If the current page is in_navigation,
+        # then all relevant pages are already in the incoming list, no need to
+        # fetch ancestors or children.
+
+        # NOTE: This assumes that the input list actually is complete (ie. comes from
+        # feincms_navigation). We'll cope with the fall-out of that assumption
+        # when it happens...
+        ancestors = [a_page for a_page in page_list 
+                                if _is_equal_or_parent_of(a_page, page2)]
+        if not ancestors:
+            # Happens when we sit on a page outside the navigation tree
+            # so fake an active root page to avoid a get_ancestors() db call
+            # which would only give us a non-navigation root page anyway.
+            p = Page(title="dummy", tree_id=-1, parent_id=None, in_navigation=False)
+            ancestors = (p,)
+
+        siblings  = [a_page for a_page in page_list
+                            if a_page.parent_id == page2.id or
+                               any((_is_sibling_of(a_page, a) for a in ancestors))]
+        return siblings
+    except AttributeError:
+        return ()
+
+# ------------------------------------------------------------------------
+

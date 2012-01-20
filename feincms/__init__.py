@@ -1,4 +1,4 @@
-VERSION = (1, 4, 2)
+VERSION = (1, 5, 0, 'pre1')
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -39,9 +39,24 @@ def ensure_completely_loaded():
     if COMPLETELY_LOADED:
         return True
 
-    from django.core.management.validation import get_validation_errors
-    from StringIO import StringIO
-    get_validation_errors(StringIO(), None)
+    # Ensure meta information concerning related fields is up-to-date.
+    # Upon accessing the related fields information from Model._meta,
+    # the related fields are cached and never refreshed again (because
+    # models and model relations are defined upon import time, if you
+    # do not fumble around with models like we do in FeinCMS.)
+    #
+    # Here we flush the caches rather than actually _filling them so
+    # that relations defined after all content types registrations
+    # don't miss out.
+    from django.db.models import loading
+    for model in loading.get_models():
+        for cache_name in ('_field_cache', '_field_name_cache', '_m2m_cache',
+                '_related_objects_cache', '_related_many_to_many_cache',
+                '_name_map'):
+            try:
+                delattr(model._meta, cache_name)
+            except AttributeError:
+                pass
 
     COMPLETELY_LOADED = True
     return True

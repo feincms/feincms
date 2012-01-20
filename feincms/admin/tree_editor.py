@@ -1,8 +1,6 @@
-from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.views import main
 from django.db.models import Q
-from django.db.models.query import QuerySet
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
@@ -46,10 +44,7 @@ def _build_tree_structure(cls):
     """
     all_nodes = { }
 
-    if hasattr(cls, '_mptt_meta'): # New-style MPTT
-        mptt_opts = cls._mptt_meta
-    else:
-        mptt_opts = cls._meta
+    mptt_opts = cls._mptt_meta
 
     for p_id, parent_id in cls.objects.order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr).values_list("pk", "%s_id" % mptt_opts.parent_attr):
         all_nodes[p_id] = []
@@ -89,7 +84,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
         a = [
               '<input type="checkbox"',
               value and ' checked="checked"' or '',
-              ' onclick="return inplace_toggle_boolean(%d, \'%s\')";' % (item.id, attr),
+              ' onclick="return inplace_toggle_boolean(%d, \'%s\')"' % (item.id, attr),
               ' />',
               text,
             ]
@@ -146,8 +141,6 @@ class ChangeList(main.ChangeList):
 
         super(ChangeList, self).get_results(request)
 
-        opts = self.model_admin.opts
-        label = opts.app_label + '.' + opts.get_change_permission()
         for item in self.result_list:
             if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
                 item.feincms_editable = self.model_admin.has_change_permission(request, item)
@@ -200,7 +193,10 @@ class TreeEditor(admin.ModelAdmin):
         """
         r = ''
         if hasattr(item, 'get_absolute_url'):
-            r = '<input type="hidden" class="medialibrary_file_path" value="%s" />' % item.get_absolute_url()
+            r = '<input type="hidden" class="medialibrary_file_path" value="%s" id="_refkey_%d" />' % (
+                        item.get_absolute_url(),
+                        item.id
+                      )
 
         editable_class = ''
         if not getattr(item, 'feincms_editable', True):
@@ -234,15 +230,17 @@ class TreeEditor(admin.ModelAdmin):
             # to the ModelAdmin class
             try:
                 item = getattr(self.__class__, field)
-            except (AttributeError, TypeError), e:
+            except (AttributeError, TypeError):
                 continue
 
             attr = getattr(item, 'editable_boolean_field', None)
             if attr:
-                def _fn(self, instance):
-                    return [ ajax_editable_boolean_cell(instance, _fn.attr) ]
-                _fn.attr = attr
-                result_func = getattr(item, 'editable_boolean_result', _fn)
+                if hasattr(item, 'editable_boolean_result'):
+                    result_func = item.editable_boolean_result
+                else:
+                    def _fn(attr):
+                        return lambda self, instance: [ajax_editable_boolean_cell(instance, attr)]
+                    result_func = _fn(attr)
                 self._ajax_editable_booleans[attr] = result_func
 
     def _refresh_changelist_caches(self):
@@ -279,15 +277,7 @@ class TreeEditor(admin.ModelAdmin):
         except self.model.DoesNotExist:
             return HttpResponseNotFound("Object does not exist")
 
-        can_change = False
-
-        if hasattr(obj, "user_can") and obj.user_can(request.user, change_page=True):
-            # Was added in c7f04dfb5d, but I've no idea what user_can is about.
-            can_change = True
-        else:
-            can_change = self.has_change_permission(request, obj=obj)
-
-        if not can_change:
+        if not self.has_change_permission(request, obj=obj):
             logging.warning("Denied AJAX request by %s to toggle boolean %s for object %s", request.user, attr, item_id)
             return HttpResponseForbidden("You do not have permission to access this object")
 
@@ -304,7 +294,7 @@ class TreeEditor(admin.ModelAdmin):
             # Construct html snippets to send back to client for status update
             data = self._ajax_editable_booleans[attr](self, obj)
 
-        except Exception, e:
+        except Exception:
             logging.exception("Unhandled exception while toggling %s on %s", attr, obj)
             return HttpResponseServerError("Unable to toggle %s on %s" % (attr, obj))
 
@@ -344,8 +334,6 @@ class TreeEditor(admin.ModelAdmin):
         self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
-        extra_context['FEINCMS_ADMIN_MEDIA'] = settings.FEINCMS_ADMIN_MEDIA
-        extra_context['FEINCMS_ADMIN_MEDIA_HOTLINKING'] = settings.FEINCMS_ADMIN_MEDIA_HOTLINKING
         extra_context['tree_structure'] = mark_safe(simplejson.dumps(
                                                     _build_tree_structure(self.model)))
 

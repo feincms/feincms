@@ -10,9 +10,10 @@
 
 from __future__ import absolute_import
 
-from django.db.models.signals import pre_save
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.db.models.signals import pre_save
+from django.utils.translation import ugettext_lazy as _
 
 from tagging.fields import TagField
 
@@ -42,7 +43,7 @@ class MyModel(models.Model):
 
 class TagSelectFormField(forms.MultipleChoiceField):
     def clean(self, value):
-        return taglist_to_string(list(value));
+        return taglist_to_string(list(value))
 
 class TagSelectField(TagField):
     def __init__(self, filter_horizontal=False, *args, **kwargs):
@@ -50,13 +51,14 @@ class TagSelectField(TagField):
         self.filter_horizontal = filter_horizontal
 
     def formfield(self, **defaults):
-        from tagging.models import Tag, TaggedItem
+        from tagging.models import Tag
         from tagging.utils import parse_tag_input
 
         if self.filter_horizontal:
             widget = FilteredSelectMultiple(self.verbose_name, is_stacked=False)
         else:
             widget = forms.SelectMultiple()
+
         def _render(name, value, attrs=None, *args, **kwargs):
             value = parse_tag_input(value)
             return type(widget).render(widget, name, value, attrs, *args, **kwargs)
@@ -78,7 +80,7 @@ def pre_save_handler(sender, instance, **kwargs):
     instance.tags = taglist_to_string(taglist)
 
 # ------------------------------------------------------------------------
-def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False):
+def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False, auto_add_admin_field=True):
     """
     tag_model accepts a number of named parameters:
 
@@ -93,6 +95,8 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
                 tag combinations (e.g. in an admin filter list).
     select_field If True, show a multi select instead of the standard
                 CharField for tag entry.
+    auto_add_admin_field If True, attempts to add the tag field to the admin
+                class.
     """
     from tagging import register as tagging_register
 
@@ -104,6 +108,11 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
     if admin_cls:
         admin_cls.list_display.append(field_name)
         admin_cls.list_filter.append(field_name)
+
+        if auto_add_admin_field and hasattr(admin_cls, 'add_extension_options'):
+            admin_cls.add_extension_options(_('Tagging'), {
+                'fields': (field_name,)
+            })
 
     if sort_tags:
         pre_save.connect(pre_save_handler, sender=cls)

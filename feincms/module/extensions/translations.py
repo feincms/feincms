@@ -108,28 +108,32 @@ def register(cls, admin_cls):
         help_text=_('Leave this empty for entries in the primary language.')
         ))
 
-    if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
-        cls.register_request_processors(translations_request_processor_explicit)
-    else: # STANDARD
-        cls.register_request_processors(translations_request_processor_standard)
+    if hasattr(cls, 'register_request_processor'):
+        if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
+            cls.register_request_processor(translations_request_processor_explicit,
+                key='translations')
+        else: # STANDARD
+            cls.register_request_processor(translations_request_processor_standard,
+                key='translations')
 
-    @monkeypatch_method(cls)
-    def get_redirect_to_target(self, request):
-        """
-        Find an acceptable redirect target. If this is a local link, then try
-        to find the page this redirect references and translate it according
-        to the user's language. This way, one can easily implement a localized
-        "/"-url to welcome page redirection.
-        """
-        target = self.redirect_to
-        if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
-            try:
-                page = cls.objects.page_for_path(target)
-                page = page.get_translation(getattr(request, 'LANGUAGE_CODE', None))
-                target = page.get_absolute_url()
-            except cls.DoesNotExist:
-                pass
-        return target
+    if hasattr(cls, 'get_redirect_to_target'):
+        @monkeypatch_method(cls)
+        def get_redirect_to_target(self, request):
+            """
+            Find an acceptable redirect target. If this is a local link, then try
+            to find the page this redirect references and translate it according
+            to the user's language. This way, one can easily implement a localized
+            "/"-url to welcome page redirection.
+            """
+            target = self.redirect_to
+            if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
+                try:
+                    page = cls.objects.page_for_path(target)
+                    page = page.get_translation(getattr(request, 'LANGUAGE_CODE', None))
+                    target = page.get_absolute_url()
+                except cls.DoesNotExist:
+                    pass
+            return target
 
     @monkeypatch_method(cls)
     def available_translations(self):
@@ -179,7 +183,9 @@ def register(cls, admin_cls):
     available_translations_admin.short_description = _('translations')
     admin_cls.available_translations_admin = available_translations_admin
 
-    admin_cls.fieldsets[0][1]['fields'].extend(['language', 'translation_of'])
+    if hasattr(admin_cls, 'add_extension_options'):
+        admin_cls.add_extension_options('language', 'translation_of')
+
     admin_cls.list_display.extend(['language', 'available_translations_admin'])
     admin_cls.list_filter.extend(['language'])
 

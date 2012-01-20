@@ -5,8 +5,6 @@
 Track the modification date for objects.
 """
 
-import os
-
 try:
     from email.utils import parsedate_tz, mktime_tz
 except ImportError: # py 2.4 compat

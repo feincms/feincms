@@ -18,19 +18,17 @@ which provide ordered lists of page content blocks. That's all.
 Adding your own content types is extremely easy. Do you like textile
 that much, that you'd rather die than using a rich text editor?
 Then add the following code to your project, and you can go on using the
-CMS without being forced to use whatever the developers deemed best:
-
-::
+CMS without being forced to use whatever the developers deemed best::
 
     from feincms.module.page.models import Page
     from django.contrib.markup.templatetags.markup import textile
     from django.db import models
 
     class TextilePageContent(models.Model):
+        content = models.TextField()
+
         class Meta:
             abstract = True
-
-        content = models.TextField()
 
         def render(self, **kwargs):
             return textile(self.content)
@@ -38,7 +36,7 @@ CMS without being forced to use whatever the developers deemed best:
     Page.create_content_type(TextilePageContent)
 
 
-That's it. Not even ten lines for your own page content type.
+That's it. Only ten lines of code for your own page content type.
 
 
 
@@ -92,6 +90,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/1.5
    releases/1.4
    releases/1.3
    releases/1.2

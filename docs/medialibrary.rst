@@ -16,24 +16,21 @@ of the page module -- you can use it with any CMS base model.
 To activate the media library and use it together with the page module, it is
 best to first get the page module working with a few content types. Afterwards,
 add :mod:`feincms.module.medialibrary` to your ``INSTALLED_APPS`` setting, and
-create a content type for a media file as follows:
-
-::
+create a content type for a media file as follows::
 
     from feincms.module.page.models import Page
-    from feincms.content.medialibrary.models import MediaFileContent
+    from feincms.content.medialibrary.v2 import MediaFileContent
 
-    Page.create_content_type(MediaFileContent, POSITION_CHOICES=(
-            ('block', _('block')),
-            ('left', _('left')),
-            ('right', _('right')),
+    Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
+            ('default', _('default')),
+            ('lightbox', _('lightbox')),
             ))
 
 
-The set of positions given here is just an example, you can define the methods
-like you want. You should think about positions that make sense for different
-media file types, however, because the choice cannot be customized per file
-type.
+``TYPE_CHOICES`` has nothing to do with file types -- it's about choosing
+the presentation type for a certain media file, f.e. whether the media file
+should be presented inline, in a lightbox, floated, or simply as a download
+link.
 
 
 Configuration
@@ -59,27 +56,32 @@ type. Using combinations of the name and type, the default render method tries t
 find a template for rendering the
 :class:`~feincms.content.medialibrary.models.MediaFileContent`.
 
-The default set of pre-defined content types and recognition functions is:
+The default set of pre-defined content types and recognition functions is::
 
-::
-
-    MediaFile.register_filetypes(
-            ( 'image', _('Image'),
-              lambda f: re.compile(r'\.(jpg|jpeg|gif|png)$', re.IGNORECASE).search(f) ),
-            ( 'pdf',   _('PDF document'), lambda f: f.lower().endswith('.pdf') ),
-            ( 'txt',   _('Text'),         lambda f: f.lower().endswith('.txt') ),
-            ( 'other', _('Binary'),       lambda f: True ), # Must be last
+    MediaFileBase.register_filetypes(
+            ('image', _('Image'), lambda f: re.compile(r'\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?)$', re.IGNORECASE).search(f)),
+            ('video', _('Video'), lambda f: re.compile(r'\.(mov|m[14]v|mp4|avi|mpe?g|qt|ogv|wmv)$', re.IGNORECASE).search(f)),
+            ('audio', _('Audio'), lambda f: re.compile(r'\.(au|mp3|m4a|wma|oga|ram|wav)$', re.IGNORECASE).search(f)),
+            ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
+            ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
+            ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
+            ('rtf', _('Rich Text'), lambda f: f.lower().endswith('.rtf')),
+            ('zip', _('Zip archive'), lambda f: f.lower().endswith('.zip')),
+            ('doc', _('Microsoft Word'), lambda f: re.compile(r'\.docx?$', re.IGNORECASE).search(f)),
+            ('xls', _('Microsoft Excel'), lambda f: re.compile(r'\.xlsx?$', re.IGNORECASE).search(f)),
+            ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(r'\.pptx?$', re.IGNORECASE).search(f)),
+            ('other', _('Binary'), lambda f: True), # Must be last
         )
 
 You can add to that set by calling ``MediaFile.register_filetypes()`` with your new
 file types similar to the above.
 
-If we've got an example file ``2009/06/foobar.jpg`` and a selected position of
-``left``, the templates tried to render the media file are the following:
+If we've got an example file ``2009/06/foobar.jpg`` and a presentation type of
+``inline``, the templates tried to render the media file are the following:
 
-* ``content/mediafile/image_left.html``
+* ``content/mediafile/image_inline.html``
 * ``content/mediafile/image.html``
-* ``content/mediafile/left.html``
+* ``content/mediafile/inline.html``
 * ``content/mediafile/default.html``
 
 You are of course free to do with the file what you want inside the template,
@@ -88,7 +90,7 @@ into an element that's floated to the left.
 
 
 Media file metadata
-============================
+===================
 
 Sometimes, just storing media files is not enough. You've got captions and
 copyrights which you'd like to store alongside the media file. This media

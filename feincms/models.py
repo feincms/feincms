@@ -5,7 +5,6 @@ All models defined here are abstract, which means no tables are created in
 the feincms\_ namespace.
 """
 
-import itertools
 import operator
 import warnings
 
@@ -21,13 +20,8 @@ from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
-from feincms import settings, ensure_completely_loaded
+from feincms import ensure_completely_loaded
 from feincms.utils import get_object, copy_model_instance
-
-try:
-    import reversion
-except ImportError:
-    reversion = None
 
 try:
     any
@@ -322,14 +316,18 @@ class ExtensionsMixin(object):
                             fn = get_object('%s.%s.register' % (path, ext))
                             if fn:
                                 break
-                        except ImportError, e:
+                        except ImportError:
                             pass
 
                 if not fn:
                     raise ImproperlyConfigured, '%s is not a valid extension for %s' % (
                         ext, cls.__name__)
 
-            # Not a string, so take our chances and just try to access "register"
+            # Not a string, maybe a callable?
+            elif hasattr(ext, '__call__'):
+                fn = ext
+
+            # Take our chances and just try to access "register"
             else:
                 fn = ext.register
 
@@ -442,7 +440,6 @@ def create_base_model(inherit_from=models.Model):
             cls._feincms_all_regions = set()
             for template in cls._feincms_templates.values():
                 cls._feincms_all_regions.update(template.regions)
-
 
         #: ``ContentProxy`` class this object uses to collect content blocks
         content_proxy_class = ContentProxy
@@ -731,21 +728,6 @@ def create_base_model(inherit_from=models.Model):
                 for key, includes in model.feincms_item_editor_includes.items():
                     cls.feincms_item_editor_includes.setdefault(key, set()).update(includes)
 
-            # Ensure meta information concerning related fields is up-to-date.
-            # Upon accessing the related fields information from Model._meta,
-            # the related fields are cached and never refreshed again (because
-            # models and model relations are defined upon import time, if you
-            # do not fumble around with models like we do right here.)
-            #
-            # Here we flush the caches rather than actually _filling them so
-            # that relations defined after all content types registrations
-            # don't miss out.
-            for attr in dir(cls._meta):
-                if attr.startswith('_fill_') and attr.endswith('_cache'):
-                    cache_name = attr[len('_fill'):]
-                    if hasattr(cls._meta, cache_name):
-                        delattr(cls._meta, cache_name)
-
             return new_type
 
         @property
@@ -773,6 +755,8 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def _needs_templates(cls):
+            ensure_completely_loaded()
+
             # helper which can be used to ensure that either register_regions or
             # register_templates has been executed before proceeding
             if not hasattr(cls, 'template'):
@@ -814,8 +798,11 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def register_with_reversion(cls):
-            if not reversion:
+            try:
+                import reversion
+            except ImportError:
                 raise EnvironmentError("django-reversion is not installed")
+
             follow = []
             for content_type_model in cls._feincms_content_types:
                 related_manager = "%s_set" % content_type_model.__name__.lower()

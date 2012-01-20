@@ -3,6 +3,8 @@ from django.db import models
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
+from mptt.models import MPTTModel
+
 from feincms.module.blog.models import Entry, EntryAdmin
 from feincms.module.page.models import Page
 from feincms.content.raw.models import RawContent
@@ -10,9 +12,7 @@ from feincms.content.image.models import ImageContent
 from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.application.models import ApplicationContent
 from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
-from feincms.content.application.models import reverse
-
-import mptt
+from feincms.content.application.models import app_reverse
 
 
 Page.register_templates({
@@ -66,21 +66,15 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=reverse('blog_urls/blog_entry_details', kwargs={'object_id': entry.id}),
+                url=app_reverse('blog_entry_details', 'blog_urls', kwargs={'object_id': entry.id}),
                 )
 
 Page.register_extensions('navigation')
 Page.register_extensions('sites')
 
 
-try:
-    from mptt.models import MPTTModel as base
-    mptt_register = False
-except ImportError:
-    base = models.Model
-    mptt_register = True
 
-class Category(base):
+class Category(MPTTModel):
     name = models.CharField(max_length=20)
     slug = models.SlugField()
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
@@ -93,8 +87,6 @@ class Category(base):
     def __unicode__(self):
         return self.name
 
-if mptt_register:
-    mptt.register(Category)
 
 # add m2m field to entry so it shows up in entry admin
 Entry.add_to_class('categories', models.ManyToManyField(Category, blank=True, null=True))

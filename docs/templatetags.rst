@@ -84,7 +84,7 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
    depth: 1 = only one level, 2 = subpages too
 
    If you set depth to something else than 1, you might want to look into
-   the tree_info template tag from the mptt_tags library.
+   the ``tree_info`` template tag from the mptt_tags library.
 
    Example::
 
@@ -95,6 +95,27 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
        {% endfor %}
 
+.. function:: siblings_along_path_to:
+
+   This is a filter designed to work in close conjuction with the
+   ``feincms_navigation`` template tag describe above to build a
+   navigation tree following the path to the current page.
+
+   Example::
+
+        {% feincms_navigation of feincms_page as navitems level=1,depth=3 %}
+        {% with navitems|siblings_along_path_to:feincms_page as navtree %}
+            {% recursetree navtree %}
+                * {{ node.short_title }} <br>
+                    {% if children %}
+                        <div style="margin-left: 20px">{{ children }}</div>
+                    {% endif %}
+            {% endrecursetree %}
+        {% endwith %}
+
+   For helper function converting a tree of pages into an HTML
+   representation please see the mptt_tags library's ``tree_info``
+   and ``recursetree``.
 
 .. function:: feincms_parentlink:
 
@@ -193,7 +214,35 @@ Application content template tags
 
 .. module:: feincms.templatetags.applicationcontent_tags:
 
+.. function:: app_reverse:
+
+   Returns an absolute URL for applications integrated with ApplicationContent
+
+   The tag mostly works the same way as Django's own {% url %} tag::
+
+       {% load applicationcontent_tags %}
+       {% app_reverse "mymodel_detail" "myapp.urls" arg1 arg2 %}
+
+   or::
+
+       {% load applicationcontent_tags %}
+       {% app_reverse "mymodel_detail" "myapp.urls" name1=value1 name2=value2 %}
+
+   The first argument is a path to a view. The second argument is the URLconf
+   under which this app is known to the ApplicationContent.
+
+   Other arguments are space-separated values that will be filled in place of
+   positional and keyword arguments in the URL. Don't mix positional and
+   keyword arguments.
+
+   If you want to store the URL in a variable instead of showing it right away
+   you can do so too::
+
+       {% app_reverse "mymodel_detail" "myapp.urls" arg1 arg2 as url %}
+
+
 .. function:: fragment:
 .. function:: get_fragment:
 
-   See :ref:`integration-applicationcontent-morecontrol`.
+   Don't use those, read up on :ref:`integration-applicationcontent-inheritance20`
+   instead.

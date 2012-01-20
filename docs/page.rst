@@ -31,15 +31,13 @@ because there is no possibility to unregister models. A sane default might
 be to create :class:`~feincms.content.image.models.ImageContent` and
 :class:`~feincms.content.richtext.models.RichTextContent` models; you can do this
 by adding the following lines somewhere into your project, for example in a
-``models.py`` file that will be processed anyway:
-
-::
+``models.py`` file that will be processed anyway::
 
     from django.utils.translation import ugettext_lazy as _
 
     from feincms.module.page.models import Page
     from feincms.content.richtext.models import RichTextContent
-    from feincms.content.image.models import ImageContent
+    from feincms.content.medialibrary.v2 import MediaFileContent
 
     Page.register_extensions('datepublisher', 'translations') # Example set of extensions
 
@@ -53,10 +51,9 @@ by adding the following lines somewhere into your project, for example in a
         })
 
     Page.create_content_type(RichTextContent)
-    Page.create_content_type(ImageContent, POSITION_CHOICES=(
-        ('block', _('block')),
-        ('left', _('left')),
-        ('right', _('right')),
+    Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
+        ('default', _('default')),
+        ('lightbox', _('lightbox')),
         ))
 
 
@@ -75,8 +72,7 @@ Setting up the admin interface
 ==============================
 
 The customized admin interface code is contained inside the :class:`ModelAdmin`
-subclass, so you do not need to do anything special here. You only need to set
-:data:`~feincms.settings.FEINCMS_ADMIN_MEDIA` as described in the installation documentation.
+subclass, so you do not need to do anything special here.
 
 If you use the :class:`~feincms.content.richtext.models.RichTextContent`, you
 need to download `TinyMCE <http://tinymce.moxiecode.com/>`_ and configure FeinCMS'
@@ -124,10 +120,12 @@ attributes added.
         gallery = models.ForeignKey(Gallery)
 
         class Meta:
-            abstract = True
+            abstract = True # Required by FeinCMS, content types must be abstract
 
         def render(self, **kwargs):
             return render_to_string('gallery/gallerycontent.html', {
+                'content': self, # Not required but a convention followed by
+                                 # all of FeinCMS' bundled content types
                 'images': self.gallery.image_set.order_by('?')[:5],
             })
 
@@ -234,15 +232,20 @@ If the request processor indeed returns a :class:`HttpResponse`, further renderi
 the page is cut short and this response is returned immediately to the client.
 
 This allows for various actions dependent on page and request, for example a
-simple user access check can be implemented like this:
-
-::
+simple user access check can be implemented like this::
 
     def authenticated_request_processor(page, request):
         if not request.user.is_authenticated():
             return HttpResponseForbidden()
 
-    Page.register_request_processors(authenticated_request_processor)
+    Page.register_request_processor(authenticated_request_processor)
+
+``register_request_processor`` has an optional second argument named ``key``.
+If you register a request processor with the same key, the second processor
+replaces the first. This is especially handy to replace the standard request
+processors named ``path_active`` (which checks whether all ancestors of
+a given page are active too) and ``redirect`` (which issues HTTP-level redirects
+if the ``redirect_to`` page field is filled in).
 
 
 Using page response processors
@@ -261,7 +264,10 @@ for whatever purposes you have in mind.
     def set_random_header_response_processor(page, request, response):
         response['X-Random-Number'] = 42
 
-    Page.register_response_processors(set_random_header_response_processor)
+    Page.register_response_processor(set_random_header_response_processor)
+
+``register_response_processor`` has an optional second argument named ``key``,
+exactly like ``register_request_processor`` above. It behaves in the same way.
 
 
 ETag handling
@@ -291,9 +297,7 @@ Sitemaps
 ========
 
 To create a sitemap that is automatically populated with all pages in your
-Feincms site, add the following to your top-level urls.py:
-
-::
+Feincms site, add the following to your top-level urls.py::
 
     from feincms.module.page.sitemap import PageSitemap
     sitemaps = {'pages' : PageSitemap}
@@ -304,9 +308,7 @@ Feincms site, add the following to your top-level urls.py:
         )
 
 This will produce a default sitemap at the /sitemap.xml url. A sitemap can be
-further customised by passing it appropriate parameters, like so:
-
-::
+further customised by passing it appropriate parameters, like so::
 
     sitemaps = {'pages': PageSitemap(max_depth=2)}
 
@@ -319,5 +321,10 @@ The following parameters can be used to modify the behaviour of the sitemap:
   to this page hierarchy depth.
 * ``changefreq`` -- should be a string or callable specifiying the page update frequency,
   according to the sitemap protocol.
-
-
+* ``queryset`` -- pass in a query set to restrict the Pages to include
+  in the site map.
+* ``filter`` -- pass in a callable that transforms a queryset to filter
+  out the pages you want to include in the site map.
+* ``extended_navigation`` -- if set to True, adds pages from any navigation
+  extensions. If using PagePretender, make sure to include title, url,
+  level, in_navigation and optionally modification_date.

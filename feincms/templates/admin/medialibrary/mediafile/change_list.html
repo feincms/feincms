@@ -12,12 +12,16 @@
         <label for="data">{% trans "Bulk upload a ZIP file:" %}
             <input type="file" name="data">
         </label>
+        | {% trans "Category" %}
         <select name="category">
             <option value="">---</option>
             {% for cat in categories %}
-                <option value="{{ cat.id }}">{{ cat.title }}</option>
+                <option value="{{ cat.id }}">{{ cat.path }}</option>
             {% endfor %}
         </select>
+        | {% trans "Overwrite" %}
+        <input type="checkbox" name="overwrite">
+        |
         <input type="submit" value="{% trans "Send" %}">
     </p>
     </form>

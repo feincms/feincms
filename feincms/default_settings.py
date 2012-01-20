@@ -1,6 +1,5 @@
 # ------------------------------------------------------------------------
 # coding=utf-8
-# $Id$
 # ------------------------------------------------------------------------
 """
 Default settings for FeinCMS
@@ -11,7 +10,6 @@ All of these can be overridden by specifying them in the standard
 
 from os.path import join
 
-import django
 from django.conf import settings
 
 # ------------------------------------------------------------------------
@@ -34,10 +32,6 @@ FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(settings, 'FEINCMS_RICHTEXT_INIT_CONTEXT
 # ------------------------------------------------------------------------
 # Admin media settings
 
-#: Path to FeinCMS' admin media
-FEINCMS_ADMIN_MEDIA = getattr(settings, 'FEINCMS_ADMIN_MEDIA', '/static/feincms/')
-#: Link to google APIs instead of using local copy of JS libraries
-FEINCMS_ADMIN_MEDIA_HOTLINKING = getattr(settings, 'FEINCMS_ADMIN_MEDIA_HOTLINKING', False)
 #: avoid jQuery conflicts -- scripts should use feincms.jQuery instead of $
 FEINCMS_JQUERY_NO_CONFLICT = \
     getattr(settings, 'FEINCMS_JQUERY_NO_CONFLICT', False)
@@ -67,11 +61,6 @@ FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS = getattr(settings, 'FEINCMS_TREE_EDITOR_
 # Various settings
 
 # ------------------------------------------------------------------------
-#: Enable caching intermediate results in feincms. Be aware that this might deliver
-#: slightly out of date pages if you are not using the 'changedate' page extension.
-FEINCMS_USE_CACHE = getattr(settings, 'FEINCMS_USE_CACHE', False)
-
-# ------------------------------------------------------------------------
 #: Allow random gunk after a valid page?
 FEINCMS_ALLOW_EXTRA_PATH = getattr(settings, 'FEINCMS_ALLOW_EXTRA_PATH', False)
 
@@ -94,3 +83,27 @@ FEINCMS_TIDY_SHOW_WARNINGS = getattr(settings, 'FEINCMS_TIDY_SHOW_WARNINGS', Tru
 FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE = getattr(settings, 'FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE', True)
 #: Name of the tidy function - anything which takes (html) and returns (html, errors, warnings) can be used:
 FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION', 'feincms.utils.html.tidy.tidy_html')
+
+# ------------------------------------------------------------------------
+#: Monkey-patch django.core.urlresvolers.reverse to be application-content aware?
+#: (The monkey patch is deprecated and should not be used anymore. Use the
+#: ``app_reverse`` function and the ``{% app_reverse %}`` template tag instead.)
+#: The value of this setting will be changed to False in FeinCMS 1.6.
+FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH', True)
+
+# ------------------------------------------------------------------------
+#: Makes the page handling mechanism try to find a cms page with that
+#: path if it encounters a page not found situation. This allows for nice
+#: customised cms-styled error pages. Do not go overboard, this should
+#: be as simple and as error resistant as possible, so refrain from
+#: deeply nested error pages or advanced content types.
+FEINCMS_CMS_404_PAGE = getattr(settings, 'FEINCMS_CMS_404_PAGE', None)
+
+# ------------------------------------------------------------------------
+#: When uploading files to the media library, replacing an existing entry,
+#: try to save the new file under the old file name in order to keep the
+#: media file path (and thus the media url) constant.
+#: Experimental, this might not work with all storage backends.
+FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE', False)
+
+# ------------------------------------------------------------------------

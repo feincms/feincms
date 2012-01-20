@@ -50,7 +50,7 @@ The minimal content type is an abstract Django model with a :func:`render`
 method, nothing else::
 
     class TextileContent(models.Model):
-        content = models.TextField(_('content'))
+        content = models.TextField()
 
         class Meta:
             abstract = True
@@ -76,6 +76,7 @@ in the rendered result.
 
 
 .. note::
+
    The examples on this page assume that you use the
    :class:`~feincms.module.page.models.Page` CMS base model. The principles
    outlined apply for all other CMS base types.
@@ -125,9 +126,7 @@ key depending on the current domain. The two template tags ``feincms_render_regi
 and ``feincms_render_content`` pass the current rendering context as a
 keyword argument too.
 
-The example above could be rewritten like this:
-
-::
+The example above could be rewritten like this::
 
    {% load feincms_tags %}
 
@@ -148,9 +147,7 @@ The example above could be rewritten like this:
     </div>
 
 
-Or even like this:
-
-::
+Or even like this::
 
    {% load feincms_tags %}
 
@@ -313,10 +310,10 @@ Comments content
 Comment list and form using ``django.contrib.comments``.
 
 
-Contact form
-------------
+Contact form content
+--------------------
 .. module:: feincms.content.contactform.models
-.. class:: ContactForm()
+.. class:: ContactFormContent()
 
 Simple contact form. Also serves as an example how forms might be used inside
 content types.
@@ -449,17 +446,18 @@ Template content
 .. module:: feincms.content.table.template
 .. class:: TemplateContent()
 
-This content scans all template directories for templates below
+This is a content type that just includes a snippet from a template.
+This content type scans all template directories for templates below
 ``content/template/`` and allows the user to select one of these templates
-which are rendered using the Django template language.
+which are then rendered using the Django template language.
 
-Template usage isn't restricted in any way.
+Note that some file extensions are automatically filtered so they won't
+appear in the list, namely anything that matches *.~ and *.tmp will be
+ignored.
 
-.. note::
-
-   You cannot use Django's cached template loader with ``TemplateContent``
-   currently. The cached template loader has no way of enumerating
-   available templates in the filesystem.
+Also note that a template content is not sandboxed or specially rendered.
+Whatever a django template can do a TemplateContent snippet can do too,
+so be careful whom you grant write permissions.
 
 
 Video inclusion code for youtube, vimeo etc.
@@ -478,9 +476,7 @@ Restricting a content type to a subset of regions
 Imagine that you have developed a content type which really only makes sense in
 the sidebar, not in the main content area. It is very simple to restrict a
 content type to a subset of regions, the only thing you have to do is pass a
-tuple of region keys to the create_content_type method:
-
-::
+tuple of region keys to the create_content_type method::
 
     Page.create_content_type(SomeSidebarContent, regions=('sidebar',))
 
@@ -519,7 +515,7 @@ do is adding a classmethod named :func:`initialize_type` to your content type, a
 pass additional keyword arguments to :func:`create_content_type`.
 
 If you want to see an example of these two uses, have a look at the
-:class:`~feincms.content.medialibrary.models.MediaFileContent`.
+:class:`~feincms.content.medialibrary.v2.MediaFileContent`.
 
 It is generally recommended to use this hook to configure content types
 compared to putting the configuration into the site-wide settings file. This
@@ -539,9 +535,7 @@ There are two recommended ways. The example use a ``RawContent`` content type an
 the Page CMS base class.
 
 You could take advantage of the fact that ``create_content_type`` returns the
-created model:
-
-::
+created model::
 
     from feincms.module.page.models import Page
     from feincms.content.raw.models import RawContent
@@ -549,9 +543,7 @@ created model:
     PageRawContent = Page.create_content_type(RawContent)
 
 
-Or you could use :func:`content_type_for`:
-
-::
+Or you could use :func:`content_type_for`::
 
     from feincms.content.raw.models import RawContent
 

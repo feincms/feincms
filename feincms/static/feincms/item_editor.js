@@ -6,7 +6,7 @@ if(!Array.indexOf) {
             }
         }
         return -1;
-    }
+    };
 }
 
 (function($){
@@ -174,7 +174,7 @@ if(!Array.indexOf) {
     }
 
     function create_new_spare_form(modvar) {
-        var old_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val());
+        var old_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val(), 10);
         // **** UGLY CODE WARNING, avert your gaze! ****
         // for some unknown reason, the add-button click handler function
         // fails on the first triggerHandler call in some rare cases;
@@ -186,12 +186,10 @@ if(!Array.indexOf) {
                 'div.add-row > a').triggerHandler('click');
             if(returned==false) break; // correct return value
         }
-        var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val());
+        var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val(), 10);
         if(new_form_count > old_form_count){
             return $('#'+modvar+'_set-'+(new_form_count-1));
         }
-        // TODO: add fallback for older versions by manually cloning
-        // empty fieldset (provided using extra=1)
     }
 
     function set_item_field_value(item, field, value) {
@@ -241,10 +239,10 @@ if(!Array.indexOf) {
     }
 
     function sort_by_ordering(e1, e2) {
-      var v1 = parseInt($('.order-field', e1).val()) || 0;
-      var v2 = parseInt($('.order-field', e2).val()) || 0;
+      var v1 = parseInt($('.order-field', e1).val(), 10) || 0;
+      var v2 = parseInt($('.order-field', e2).val(), 10) || 0;
       return  v1 > v2 ? 1 : -1;
-    };
+    }
 
     function give_ordering_to_content_types() {
       for (var i=0; i<REGION_MAP.length;i++) {
@@ -297,6 +295,7 @@ if(!Array.indexOf) {
                     continue;
 
                 var $button = $('<a href="#" class="actionbutton" />');
+                $button.attr('title', CONTENT_NAMES[c.type]);
 
                 $button.addClass(c.cssclass ? c.cssclass : c.type).bind('click', (function(c) {
                     return function() {
@@ -561,7 +560,7 @@ if(!Array.indexOf) {
         }
     });
 
-    $(window).load(function(){init_contentblocks()});
+    $(window).load(function(){init_contentblocks();});
 
     // externally accessible helpers
     window.ItemEditor = {

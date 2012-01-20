@@ -169,4 +169,3 @@ class SimpleAssignmentNodeWithVarAndArgs(template.Node):
         context[self.var_name] = self.what(instance, _parse_args(self.args, context))
 
         return ''
-

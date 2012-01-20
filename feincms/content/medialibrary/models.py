@@ -14,7 +14,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.admin.editor import ItemEditorForm
+from feincms.admin.item_editor import ItemEditorForm
 from feincms.module.medialibrary.models import MediaFile
 from feincms.templatetags import feincms_thumbnail
 
@@ -34,7 +34,7 @@ class MediaFileWidget(forms.TextInput):
 
             try:
                 caption = mf.translation.caption
-            except ObjectDoesNotExist:
+            except (AttributeError, ObjectDoesNotExist):
                 caption = _('(no caption)')
 
             if mf.type == 'image':
@@ -91,7 +91,7 @@ class MediaFileContent(models.Model):
     def initialize_type(cls, POSITION_CHOICES=None, MEDIAFILE_CLASS=MediaFile):
         warnings.warn('feincms.content.medialibrary.models.MediaFileContent is deprecated.'
                 ' Use feincms.content.medialibrary.v2.MediaFileContent instead.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         if 'feincms.module.medialibrary' not in settings.INSTALLED_APPS:
             raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
 
@@ -123,7 +123,6 @@ class MediaFileContent(models.Model):
             'content/mediafile/%s.html' % self.position,
             'content/mediafile/default.html',
             ], { 'content': self, 'request': request })
-
 
     @classmethod
     def default_create_content_type(cls, cms_model):

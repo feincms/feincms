@@ -54,6 +54,7 @@ def register(cls, admin_cls):
 
     # Patch in rounding the pub and pub_end dates on save
     orig_save = cls.save
+
     def granular_save(obj, *args, **kwargs):
         if obj.publication_date:
             obj.publication_date = granular_now(obj.publication_date)
@@ -66,8 +67,8 @@ def register(cls, admin_cls):
     if hasattr(cls.objects, 'add_to_active_filters'):
         cls.objects.add_to_active_filters(
             Q(publication_date__lte=granular_now) &
-            (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=granular_now))
-            )
+            (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=granular_now)),
+            key='datepublisher')
 
     def datepublisher_admin(self, page):
         return u'%s &ndash; %s' % (
@@ -85,9 +86,8 @@ def register(cls, admin_cls):
 
     admin_cls.list_display.insert(pos + 1, 'datepublisher_admin')
 
-    admin_cls.fieldsets.append((_('Date-based publishing'), {
-        'fields': ('publication_date', 'publication_end_date'),
-        'classes': ('collapse',),
-        }))
+    admin_cls.add_extension_options(_('Date-based publishing'), {
+                'fields': ('publication_date', 'publication_end_date'),
+        })
 
 # ------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.template import Template
 from django.utils.cache import add_never_cache_headers
 from django.views.generic import TemplateView
 
@@ -6,17 +7,18 @@ from feincms import settings
 from feincms.module.page.models import Page
 
 
-class Handler(TemplateView):
+class HandlerBase(TemplateView):
     """
     Class-based handler for FeinCMS page content
     """
 
     def get(self, request, *args, **kwargs):
         return self.handler(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         return self.handler(request, *args, **kwargs)
 
-    def handler(self, request, path=None, *args, **kwargs):
+    def handler(self, request, *args, **kwargs):
         self.page = Page.objects.for_request(request, raise404=True, best_match=True, setup=False)
         response = self.prepare()
         if response:
@@ -26,9 +28,12 @@ class Handler(TemplateView):
         return self.finalize(response)
 
     def get_template_names(self):
-        if self.template_name is None:
-            return [self.page.template.path]
-        return [self.template_name]
+        # According to the documentation this method is supposed to return
+        # a list. However, we can also return a Template instance...
+        if isinstance(self.template_name, (Template, list, tuple)):
+            return self.template_name
+
+        return [self.template_name or self.page.template.path]
 
     def get_context_data(self, **kwargs):
         context = self.request._feincms_extra_context
@@ -94,3 +99,23 @@ class Handler(TemplateView):
         This property is used by django-debug-toolbar
         """
         return self.__class__.__name__
+
+# ------------------------------------------------------------------------
+class Handler(HandlerBase):
+    def handler(self, request, *args, **kwargs):
+        try:
+            return super(Handler, self).handler(request, *args, **kwargs)
+        except Http404, e:
+            if settings.FEINCMS_CMS_404_PAGE:
+                try:
+                    request.original_path_info = request.path_info
+                    request.path_info = settings.FEINCMS_CMS_404_PAGE
+                    response = super(Handler, self).handler(request, *args, **kwargs)
+                    response.status_code = 404
+                    return response
+                except Http404:
+                    raise e
+            else:
+                raise
+
+# ------------------------------------------------------------------------

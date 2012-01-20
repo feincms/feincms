@@ -35,10 +35,10 @@ Usage is as follows::
 And inside your ``admin.py`` file::
 
     from django.contrib import admin
-    from feincms.admin import editor
+    from feincms.admin import tree_editor
     from yourapp.models import YourModel
 
-    class YourModelAdmin(editor.TreeEditor):
+    class YourModelAdmin(tree_editor.TreeEditor):
         pass
 
     admin.site.register(YourModel, YourModelAdmin)
@@ -68,7 +68,7 @@ the page editor however.
 Usage::
 
     from django.contrib import admin
-    from feincms.admin import editor
+    from feincms.admin import tree_editor
     import mptt
 
     class Category(models.Model):
@@ -79,9 +79,9 @@ Usage::
         # ...
     mptt.register(Category)
 
-    class CategoryAdmin(editor.TreeEditor):
+    class CategoryAdmin(tree_editor.TreeEditor):
         list_display = ('__unicode__', 'active_toggle')
-        active_toggle = editor.ajax_editable_boolean('active', _('active'))
+        active_toggle = tree_editor.ajax_editable_boolean('active', _('active'))
 
 
 
@@ -147,7 +147,9 @@ settings on the content type model itself:
 * ``feincms_item_editor_form``:
 
   You can specify the base class which should be used for the content type
-  model. The default value is :class:`django.forms.ModelForm`.
+  model. The default value is :class:`django.forms.ModelForm`. If you want
+  to customize the form, chances are it is a better idea to set
+  ``feincms_item_editor_inline`` instead.
 
 * ``feincms_item_editor_includes``:
 
@@ -183,8 +185,8 @@ settings on the content type model itself:
   on every drag and drop, it is your responsibility to ensure that code is
   only executed if it has to.
 
-  Take a look at the ``mediafile`` and ``richtext`` item editor include files
-  to understand how this should be done.
+  Take a look at the ``richtext`` item editor include files to understand how
+  this should be done.
 
 * ``feincms_item_editor_inline``:
 
@@ -194,12 +196,17 @@ settings on the content type model itself:
   content type. The custom inline should inherit from ``FeinCMSInline``
   or be configured the same way.
 
+  If you override ``fieldsets`` you **must** include ``region`` and
+  ``ordering`` even though they aren't shown in the administration
+  interface.
+
 
 Putting it all together
 =======================
 
-It is possible to build a limited, but fully functional page CMS using not
-more than the following code:
+It is possible to build a limited, but fully functional page CMS administration
+interface using only the following code (``urls.py`` and ``views.py`` are
+missing):
 
 ``models.py``::
 
@@ -222,15 +229,15 @@ more than the following code:
 ``admin.py``::
 
     from django.contrib import admin
-    from feincms.admin import editor
+    from feincms.admin import item_editor, tree_editor
     from myapp.models import Page
 
-    class PageAdmin(editor.ItemEditor, editor.TreeEditor):
+    class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         fieldsets = [
             (None, {
                 'fields': ['active', 'title', 'slug'],
                 }),
-            editor.FEINCMS_CONTENT_FIELDSET,
+            item_editor.FEINCMS_CONTENT_FIELDSET,
             ]
         list_display = ['active', 'title']
         prepopulated_fields = {'slug': ('title',)}

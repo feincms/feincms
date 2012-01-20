@@ -1,42 +1,15 @@
 import os
 
 from django.conf.urls.defaults import *
-
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'^example/', include('example.foo.urls')),
-
-    # This avoids breaking Django admin's localization JavaScript when using
-    # the FeinCMS frontend editing:
-    url(r'admin/page/page/jsi18n/',     'django.views.generic.simple.redirect_to', {'url': '/admin/jsi18n/'}),
-
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    #(r'^admin/', include(admin.site.urls)),
-    (r'^admin/', include(admin.site.urls) ),
-
-    (r'^feincms_media/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms/static/feincms/')}),
-
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve',
+    url(r'^admin/', include(admin.site.urls) ),
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),
-
-    (r'', include('feincms.contrib.preview.urls')),
-)
-
-import django
-if django.VERSION > (1, 3):
-    urlpatterns += patterns('', (r'', include('feincms.views.cbv.urls')))
-else:
-    urlpatterns += patterns('', (r'', include('feincms.urls')))
-
-try:
-    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-    urlpatterns += staticfiles_urlpatterns()
-except ImportError:
-    pass
+    url(r'', include('feincms.contrib.preview.urls')),
+    url(r'', include('feincms.urls'))
+) + staticfiles_urlpatterns()

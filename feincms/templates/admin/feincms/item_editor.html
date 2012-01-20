@@ -1,19 +1,14 @@
 {% extends "admin/change_form.html" %}
-{% load feincms_compat_tags i18n admin_modify adminmedia %}
+{% load i18n admin_modify adminmedia %}
 
 {% block extrahead %}{{ block.super }}
 {% block feincms_jquery_ui %}
-{% if FEINCMS_ADMIN_MEDIA_HOTLINKING %}
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-{% else %}
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-1.5.1.min.js"></script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery-ui-1.8.13.custom.min.js"></script>
-{% endif %}
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.16.custom.min.js"></script>
 {% endblock %}
 
-<link rel="stylesheet" type="text/css" href="{{ FEINCMS_ADMIN_MEDIA }}style.css" />
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}jquery.alerts.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/style.css" />
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.alerts.js"></script>
 <script type="text/javascript">
     var feincms = {
         {% if FEINCMS_JQUERY_NO_CONFLICT %}
@@ -23,7 +18,7 @@
         {% endif %}
     };
 </script>
-<script type="text/javascript" src="{{ FEINCMS_ADMIN_MEDIA }}item_editor.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/item_editor.js"></script>
 
 {% include "admin/feincms/_messages_js.html" %}
 {% include "admin/feincms/_regions_js.html" %}
