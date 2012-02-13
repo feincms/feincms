@@ -11,6 +11,8 @@ import warnings
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
+from django.conf import settings as django_settings
+
 from django.db import connection, models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
@@ -24,10 +26,8 @@ from django.utils.translation import ugettext_lazy as _
 from feincms import settings, ensure_completely_loaded
 from feincms.utils import get_object, copy_model_instance
 
-try:
+if (settings.FEINCMS_USE_REVERSION and 'reversion' in django_settings.INSTALLED_APPS):
     import reversion
-except ImportError:
-    reversion = None
 
 try:
     any
