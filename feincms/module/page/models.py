@@ -768,6 +768,8 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 original = original.original_translation
                 obj.copy_content_from(original)
                 obj.save()
+
+                self.message_user(request, _('The content from the original translation has been copied to the newly created page.'))
             except (AttributeError, self.model.DoesNotExist):
                 pass
 
