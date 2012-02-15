@@ -115,4 +115,16 @@ Minor changes
   subsequent calls which means that request processors are run
   at most once.
 
+* Extensions such as ``translations`` and ``datepublisher`` which were
+  only usable with the page module have been made more generic and are
+  available for other FeinCMS-derived models too.
+
+* Media files from the medialibrary can be exported and imported in
+  bulk.
+
+* When creating a new translation of a page, content is only copied
+  from the original translation when the new page does not have any
+  content yet. Furthermore the user is notified that some content-copying
+  has happened.
+
 * A few bugs have been fixed.

@@ -32,7 +32,9 @@ _local = local() # Used to store MPTT informations about the currently requested
                  # page. The information will be used to find the best application
                  # content instance if a particular application has been added
                  # more than once to the current website.
-
+                 # Additionally, we store the page class too, because when we have
+                 # more than one page class, reverse() will want to prefer the page
+                 # class used to render the current page. (See issue #240)
 
 def retrieve_page_information(page, request=None):
     """This is the request processor responsible for retrieving information
@@ -40,6 +42,7 @@ def retrieve_page_information(page, request=None):
     when reversing app URLs when the same ApplicationContent has been added
     several times to the website."""
     _local.proximity_info = (page.tree_id, page.lft, page.rght, page.level)
+    _local.page_class = page.__class__
 
 
 def _empty_reverse_cache():
@@ -89,7 +92,15 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
         except (AttributeError, KeyError):
             pass
     else:
-        model_class = ApplicationContent._feincms_content_models[0]
+        try:
+            # Take the ApplicationContent class used by the current request
+            model_class = _local.page_class.content_type_for(ApplicationContent)
+        except AttributeError:
+            model_class = None
+
+        if not model_class:
+            # Take any
+            model_class = ApplicationContent._feincms_content_models[0]
 
         # TODO: Only active pages? What about multisite support?
         contents = model_class.objects.filter(urlconf_path=urlconf).select_related('parent')

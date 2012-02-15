@@ -590,7 +590,7 @@ class PageAdminForm(forms.ModelForm):
                             pass
 
                     kwargs['initial'].update(data)
-                except Page.DoesNotExist:
+                except (AttributeError, Page.DoesNotExist):
                     pass
 
         super(PageAdminForm, self).__init__(*args, **kwargs)
@@ -762,12 +762,20 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             response['Location'] += '?parent=%s' % request.GET['parent']
         if 'translation_of' in request.GET:
             # Copy all contents
+            for content_type in obj._feincms_content_types:
+                if content_type.objects.filter(parent=obj).exists():
+                    # Short-circuit processing -- don't copy any contents if
+                    # newly added object already has some
+                    return response
+
             try:
                 original = self.model._tree_manager.get(pk=request.GET.get('translation_of'))
                 original = original.original_translation
                 obj.copy_content_from(original)
                 obj.save()
-            except self.model.DoesNotExist:
+
+                self.message_user(request, _('The content from the original translation has been copied to the newly created page.'))
+            except (AttributeError, self.model.DoesNotExist):
                 pass
 
         return response

@@ -97,13 +97,20 @@ class RichTextContent(models.Model):
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?
         if getattr(self, 'cleanse', False):
-            from feincms.utils.html.cleanse import cleanse_html
-            self.text = cleanse_html(self.text)
+            self.text = self.cleanse(self.text)
+
         super(RichTextContent, self).save(*args, **kwargs)
 
     @classmethod
     def initialize_type(cls, cleanse=False):
-        cls.cleanse = cleanse
+        if cleanse:
+            # If cleanse is True use default cleanse method
+            if cleanse == True:
+                from feincms.utils.html.cleanse import cleanse_html
+                cls.cleanse = cleanse_html
+            # Otherwise use passed callable
+            else:
+                cls.cleanse = cleanse
 
         # TODO: Move this into somewhere more generic:
         if settings.FEINCMS_TIDY_HTML:
@@ -112,4 +119,3 @@ class RichTextContent(models.Model):
                 get_object(settings.FEINCMS_TIDY_FUNCTION)
             except ImportError, e:
                 raise ImproperlyConfigured("FEINCMS_TIDY_HTML is enabled but the HTML tidy function %s could not be imported: %s" % (settings.FEINCMS_TIDY_FUNCTION, e))
-
