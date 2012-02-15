@@ -87,7 +87,7 @@ class Thumbnailer(object):
     def generate(self, storage, original, size, miniature):
         try:
             image = Image.open(StringIO(storage.open(original).read()))
-        except IOError:
+        except:
              # Do not crash if file does not exist for some reason
             return storage.url(original)
 
@@ -116,7 +116,7 @@ class CropscaleThumbnailer(Thumbnailer):
     def generate(self, storage, original, size, miniature):
         try:
             image = Image.open(StringIO(storage.open(original).read()))
-        except IOError:
+        except:
              # Do not crash if file does not exist for some reason
             return storage.url(original)
 
