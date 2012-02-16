@@ -88,7 +88,9 @@ class Thumbnailer(object):
         try:
             image = Image.open(StringIO(storage.open(original).read()))
         except:
-             # Do not crash if file does not exist for some reason
+            # PIL raises a plethora of Exceptions if reading the image
+            # is not possible. Since we cannot be sure what Exception will
+            # happen, catch them all so the thumbnailer will never fail.
             return storage.url(original)
 
         storage.delete(miniature)
@@ -117,7 +119,9 @@ class CropscaleThumbnailer(Thumbnailer):
         try:
             image = Image.open(StringIO(storage.open(original).read()))
         except:
-             # Do not crash if file does not exist for some reason
+            # PIL raises a plethora of Exceptions if reading the image
+            # is not possible. Since we cannot be sure what Exception will
+            # happen, catch them all so the thumbnailer will never fail.
             return storage.url(original)
 
         storage.delete(miniature)
