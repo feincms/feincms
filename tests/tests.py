@@ -34,8 +34,7 @@ from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
-from feincms.utils import collect_dict_values, get_object, prefill_entry_list, \
-    prefilled_attribute
+from feincms.utils import collect_dict_values, get_object
 
 
 class Empty(object):
@@ -1470,8 +1469,6 @@ class BlogTestCase(TestCase):
         u.save()
 
         Entry.register_regions(('main', 'Main region'), ('another', 'Another region'))
-        Entry.prefilled_categories = prefilled_attribute('categories')
-        Entry.prefilled_rawcontent_set = prefilled_attribute('rawcontent_set')
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
@@ -1506,27 +1503,8 @@ class BlogTestCase(TestCase):
             slug='something-3',
             language='de')
 
-    def test_01_prefilled_attributes(self):
+    def test_01_smoke_test_admin(self):
         self.create_entry()
-
-        # This should return silently
-        objects = prefill_entry_list(Entry.objects.none(), 'rawcontent_set', 'categories')
-
-        objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set', 'categories')
-
-        self.assertEqual(len(objects[0]._prefill_categories), 0)
-        self.assertEqual(len(objects[0]._prefill_rawcontent_set), 1)
-        self.assertEqual(unicode(objects[0]), 'Something')
-
-        objects = Entry.objects.published()
-
-        self.assertEqual(len(objects[0].prefilled_categories), 0)
-        self.assertEqual(len(objects[0].prefilled_rawcontent_set), 1)
-
-        objects = prefill_entry_list(Entry.objects.published(), 'rawcontent_set', 'categories', region='another')
-
-        self.assertEqual(len(objects[0]._prefill_categories), 0)
-        self.assertEqual(len(objects[0]._prefill_rawcontent_set), 0)
 
         self.login()
         self.assertEqual(self.client.get('/admin/blog/entry/').status_code, 200)

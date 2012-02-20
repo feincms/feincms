@@ -85,17 +85,6 @@ def feincms_render_content(parser, token):
 
 
 @register.simple_tag
-def feincms_prefill_entry_list(queryset, attrs, region=None):
-    """
-    {% feincms_prefill_entry_list queryset "authors,richtextcontent_set" [region] %}
-    """
-
-    queryset = utils.prefill_entry_list(queryset, region=region, *(attrs.split(',')))
-    return u''
-
-
-
-@register.simple_tag
 def feincms_frontend_editing(cms_obj, request):
     """
     {% feincms_frontend_editing feincms_page request %}
