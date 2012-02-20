@@ -54,16 +54,6 @@ the ``feincms_tags`` template tag library::
                context = kwargs.get('context')
 
 
-.. function:: feincms_prefill_entry_list:
-
-   See :ref:`tools-utils-prefilledattributes`.
-
-   ::
-
-       {% load feincms_tags %}
-
-       {% feincms_prefill_entry_list queryset "authors,richtextcontent_set" [region] %}
-
 .. function:: feincms_frontend_editing:
 
 
