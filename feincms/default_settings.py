@@ -88,8 +88,8 @@ FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION', 'feincms.util
 #: Monkey-patch django.core.urlresvolers.reverse to be application-content aware?
 #: (The monkey patch is deprecated and should not be used anymore. Use the
 #: ``app_reverse`` function and the ``{% app_reverse %}`` template tag instead.)
-#: The value of this setting will be changed to False in FeinCMS 1.6.
-FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH', True)
+#: Support for this setting will be removed in FeinCMS 1.7.
+FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH', False)
 
 # ------------------------------------------------------------------------
 #: Makes the page handling mechanism try to find a cms page with that
