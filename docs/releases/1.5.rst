@@ -1,6 +1,6 @@
-====================================
-FeinCMS 1.5 release notes (upcoming)
-====================================
+=========================
+FeinCMS 1.5 release notes
+=========================
 
 
 Explicit reversing of URLs from ``ApplicationContent``-embedded apps
