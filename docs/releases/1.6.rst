@@ -41,3 +41,5 @@ FeinCMS 1.6 release notes (upcoming)
 
 * The deprecated ``feincms.views.base`` module has been removed. The code has
   been moved to ``feincms.views.legacy`` during the FeinCMS v1.5 cycle.
+
+* The value of ``FEINCMS_FRONTEND_EDITING`` defaults to ``False`` now.
