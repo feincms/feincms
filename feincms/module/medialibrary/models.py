@@ -394,6 +394,7 @@ def save_as_zipfile(modeladmin, request, queryset):
         messages.info(request, _("ZIP file exported as %s") % zip_name)
     except Exception, e:
         messages.error(request, _("ZIP file export failed: %s") % str(e))
+        return
 
     return HttpResponseRedirect(os.path.join(django_settings.MEDIA_URL, zip_name))
 
