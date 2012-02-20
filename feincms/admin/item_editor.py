@@ -214,7 +214,7 @@ class ItemEditor(admin.ModelAdmin):
 
         context.update(self.get_extra_context(request))
         context.update(extra_context or {})
-        return super(ItemEditor, self).add_view(request, form_url, context)
+        return super(ItemEditor, self).add_view(request, form_url, extra_context=context)
 
     def change_view(self, request, object_id, extra_context=None):
         # Recognize frontend editing requests
@@ -228,7 +228,7 @@ class ItemEditor(admin.ModelAdmin):
         context = {}
         context.update(self.get_extra_context(request))
         context.update(extra_context or {})
-        return super(ItemEditor, self).change_view(request, object_id, context)
+        return super(ItemEditor, self).change_view(request, object_id, extra_context=context)
 
     # The next two add support for sending a "saving done" signal as soon
     # as all relevant data have been saved (especially all foreign key relations)
