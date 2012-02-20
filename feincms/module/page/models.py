@@ -79,11 +79,6 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
                 raise Http404
             raise
 
-    def page_for_path_or_404(self, path):
-        warnings.warn('page_for_path_or_404 is deprecated. Use page_for_path instead.',
-            DeprecationWarning, stacklevel=2)
-        return self.page_for_path(path, raise404=True)
-
     def best_match_for_path(self, path, raise404=False):
         """
         Return the best match for a path. If the path as given is unavailable,
@@ -163,53 +158,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             request._feincms_page.setup_request(request)
         return request._feincms_page
 
-    def for_request_or_404(self, request):
-        warnings.warn('for_request_or_404 is deprecated. Use for_request instead.',
-            DeprecationWarning, stacklevel=2)
-        return self.for_request(request, raise404=True)
-
-    def best_match_for_request(self, request, raise404=False):
-        warnings.warn('best_match_for_request is deprecated. Use for_request instead.',
-            DeprecationWarning, stacklevel=2)
-        page = self.best_match_for_path(request.path, raise404=raise404)
-        page.setup_request(request)
-        return page
-
-    def from_request(self, request, best_match=False):
-        warnings.warn('from_request is deprecated. Use for_request instead.',
-            DeprecationWarning, stacklevel=2)
-
-        if hasattr(request, '_feincms_page'):
-            return request._feincms_page
-
-        if best_match:
-            return self.best_match_for_request(request, raise404=False)
-        return self.for_request(request)
 
 PageManager.add_to_active_filters(Q(active=True))
-
-# MARK: -
-# ------------------------------------------------------------------------
-
-class _LegacyProcessorDescriptor(object):
-    """
-    Request and response processors have been moved into their own module;
-    this descriptor allows accessing them the old way (as attributes of the
-    Page class) but emits a warning. This class will only be available during
-    the FeinCMS 1.5 lifecycle.
-    """
-    def __init__(self, name):
-        self.name = name
-
-    def __get__(self, obj, objtype=None):
-        warnings.warn('Page request and response processors have been moved into '
-            'their own module. Accessing them via the Page class will not be possible '
-            'in FeinCMS 1.6 anymore.',
-            DeprecationWarning, stacklevel=2)
-        return getattr(processors, self.name)
-
-    def __set__(self, obj, val):
-        setattr(processors, self.name, val)
 
 # ------------------------------------------------------------------------
 
@@ -267,27 +217,6 @@ class Page(create_base_model(MPTTModel)):
 
         queryset = PageManager.apply_active_filters(self.get_ancestors())
         return queryset.count() >= self.level
-
-    def active_children(self):
-        """
-        Returns a queryset describing all active children of the current page.
-        This is different than page.get_descendants (from mptt) as it will
-        additionally select only child pages that are active.
-        """
-        warnings.warn('active_children is deprecated. Use self.children.active() instead.',
-            DeprecationWarning, stacklevel=2)
-        return Page.objects.active().filter(parent=self)
-
-    def active_children_in_navigation(self):
-        """
-        Returns a queryset describing all active children that also have the
-        in_navigation flag set. This might be used eg. in building navigation
-        menues (only show a disclosure indicator if there actually is something
-        to disclose).
-        """
-        warnings.warn('active_children_in_navigation is deprecated. Use self.children.in_navigation() instead.',
-            DeprecationWarning, stacklevel=2)
-        return self.active_children().filter(in_navigation=True)
 
     def short_title(self):
         """
@@ -369,14 +298,6 @@ class Page(create_base_model(MPTTModel)):
         """
 
         return self.redirect_to or self._cached_url
-
-    def get_siblings_and_self(page):
-        """
-        As the name says.
-        """
-        warnings.warn('get_siblings_and_self is deprecated. You probably want self.parent.children.active() anyway.',
-            DeprecationWarning, stacklevel=2)
-        return page.get_siblings(include_self=True)
 
     def cache_key(self):
         """
@@ -481,50 +402,8 @@ class Page(create_base_model(MPTTModel)):
         cls.response_processors[fn if key is None else key] = fn
 
     @classmethod
-    def register_request_processors(cls, *processors):
-        """
-        Registers all passed callables as request processors. A request processor
-        always receives two arguments, the current page object and the request.
-        """
-
-        warnings.warn("register_request_processors has been deprecated,"
-            " use register_request_processor instead.",
-            DeprecationWarning, stacklevel=2)
-
-        for processor in processors:
-            cls.register_request_processor(processor)
-
-    @classmethod
-    def register_response_processors(cls, *processors):
-        """
-        Registers all passed callables as response processors. A response processor
-        always receives three arguments, the current page object, the request
-        and the response.
-        """
-
-        warnings.warn("register_response_processors has been deprecated,"
-            " use register_response_processor instead.",
-            DeprecationWarning, stacklevel=2)
-
-        for processor in processors:
-            cls.register_response_processor(processor)
-
-    @classmethod
     def register_extension(cls, register_fn):
         register_fn(cls, PageAdmin)
-
-    require_path_active_request_processor = _LegacyProcessorDescriptor(
-        'require_path_active_request_processor')
-    redirect_request_processor = _LegacyProcessorDescriptor(
-        'redirect_request_processor')
-    frontendediting_request_processor = _LegacyProcessorDescriptor(
-        'frontendediting_request_processor')
-    etag_request_processor = _LegacyProcessorDescriptor(
-        'etag_request_processor')
-    etag_response_processor = _LegacyProcessorDescriptor(
-        'etag_response_processor')
-    debug_sql_queries_response_processor = _LegacyProcessorDescriptor(
-        'debug_sql_queries_response_processor')
 
 
 # ------------------------------------------------------------------------
