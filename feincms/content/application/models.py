@@ -220,7 +220,8 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
 
         import warnings
         warnings.warn("Reversing URLs through a patched 'django.core.urlresolvers.reverse'"
-            " function or using the 'urlconf/view_name' notation has been deprecated."
+            " function or using the 'urlconf/view_name' notation has been deprecated and"
+            " support for it will be removed in FeinCMS v1.7."
             " Use 'feincms.content.application.models.app_reverse' or the 'app_reverse'"
             " template tag from 'applicationcontent_tags' directly.",
             DeprecationWarning, stacklevel=2)
@@ -242,10 +243,10 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
 
 if settings.FEINCMS_REVERSE_MONKEY_PATCH:
     import warnings
-    warnings.warn("FeinCMS will stop monkey-patching Django's 'django.core.urlresolvers.reverse'"
-        " method in v1.6. You should use the explicit 'feincms.content.application.models.app_reverse'"
+    warnings.warn("FeinCMS will stop supporting the old 'urlconf/view_name' notation "
+        " method in v1.7. You should use the explicit 'feincms.content.application.models.app_reverse'"
         " function and {% app_reverse %} template tag instead. Set 'FEINCMS_REVERSE_MONKEY_PATCH'"
-        " to False to use the new behavior now.",
+        " to False to use the new behavior now (which is the default since v1.6).",
         DeprecationWarning, stacklevel=2)
     urlresolvers.reverse = reverse
 
