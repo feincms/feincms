@@ -1,0 +1,43 @@
+====================================
+FeinCMS 1.6 release notes (upcoming)
+====================================
+
+
+* The default value of ``FEINCMS_REVERSE_MONKEY_PATCH`` has been changed to
+  ``False``. Support for monkey-patching the ``reverse()`` method to support
+  the old ``'urlconf/viewname'`` notation will be removed in the 1.7 release.
+
+* Deprecated page manager methods have been removed. You should use
+  ``Page.objects.for_request`` instead of the following manager methods:
+
+    * ``Page.objects.page_for_path_or_404()``
+    * ``Page.objects.for_request_or_404()``
+    * ``Page.objects.best_match_for_request()``
+    * ``Page.objects.from_request()``
+
+* Deprecated page methods have been removed:
+
+    * ``Page.active_children()``: Use ``Page.children.active()`` instead.
+    * ``Page.active_children_in_navigation()``: Use
+      ``Page.children.in_navigation()`` instead.
+    * ``Page.get_siblings_and_self()``: You probably wanted
+      ``self.parent.children.active()`` or
+      ``self.get_siblings(include_self=True).active()`` anyway.
+
+* The shortcuts ``Page.register_request_processors()`` and
+  ``Page.register_response_processors()`` to register several request or response
+  processors at once have been removed in favor of their counterparts which
+  only allow one processor at a time, but allow for replacing FeinCMS' included
+  processors, ``require_path_active_request_processor`` and
+  ``redirect_request_processor``.
+
+* It is not possible anymore to access the request and response processors as
+  methods of the ``Page`` class. The processors are all in
+  ``feincms.module.page.processors`` now.
+
+* The deprecated support for prefilled attributes has been removed. Use
+  Django's own ``prefetch_related`` or ``feincms.utils.queryset_transform``
+  instead.
+
+* The deprecated ``feincms.views.base`` module has been removed. The code has
+  been moved to ``feincms.views.legacy`` during the FeinCMS v1.5 cycle.
