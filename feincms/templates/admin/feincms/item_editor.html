@@ -34,13 +34,16 @@
 {% endblock %}
 
 {% block form_top %}
-  {% with original.available_translations as translations %}
-    {% if translations %}
+{% with original.available_translations as translations %}
+{% for translation in translations %}
+{# look for something the translation extension's available_translations method might return #}
+{% if translation.id %}
+    {% if forloop.first %}
       <div style="float: right;padding: 5px 0 0 0" id="available_translations">
         {% trans "available translations" %}:
-        {% for translation in translations %}
+    {% endif %}
           <a href="../{{ translation.id }}/" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
-        {% endfor %}
+    {% if forloop.last %}
       </div>
       <script type="text/javascript">
         feincms.jQuery(function($){
@@ -48,7 +51,8 @@
         });
       </script>
     {% endif %}
-  {% endwith %}
+{% endif %}{% endfor %}
+{% endwith %}
 {% endblock %}
 
 {% block after_related_objects %} {# as good a place as any... #}

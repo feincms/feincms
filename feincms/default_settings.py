@@ -50,7 +50,7 @@ else:
 FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = getattr(settings, 'FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS', False)
 
 #: Show frontend-editing button?
-FEINCMS_FRONTEND_EDITING = getattr(settings, 'FEINCMS_FRONTEND_EDITING', True)
+FEINCMS_FRONTEND_EDITING = getattr(settings, 'FEINCMS_FRONTEND_EDITING', False)
 
 #: Enable checking of object level permissions. Note that if this option is enabled,
 #: you must plug in an authentication backend that actually does implement object
