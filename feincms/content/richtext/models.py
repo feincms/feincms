@@ -97,7 +97,14 @@ class RichTextContent(models.Model):
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?
         if getattr(self, 'cleanse', False):
-            self.text = self.cleanse(self.text)
+            try:
+                # Passes the rich text content as first argument because
+                # the passed callable has been converted into a bound method
+                self.text = self.cleanse(self.text)
+            except TypeError:
+                # Call the original callable, does not pass the rich text
+                # content instance along
+                self.text = self.cleanse.im_func(self.text)
 
         super(RichTextContent, self).save(*args, **kwargs)
 
