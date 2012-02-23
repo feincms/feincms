@@ -198,7 +198,7 @@ class ItemEditor(admin.ModelAdmin):
 
         return extra_context
 
-    def add_view(self, request, form_url='', extra_context=None):
+    def add_view(self, request, **kwargs):
         context = {}
 
         # insert dummy object as 'original' so template code can grab defaults
@@ -213,10 +213,11 @@ class ItemEditor(admin.ModelAdmin):
             context['original'].template_key = request.POST['template_key']
 
         context.update(self.get_extra_context(request))
-        context.update(extra_context or {})
-        return super(ItemEditor, self).add_view(request, form_url, extra_context=context)
+        context.update(kwargs.get('extra_context', {}))
+        kwargs['extra_context'] = context
+        return super(ItemEditor, self).add_view(request, **kwargs)
 
-    def change_view(self, request, object_id, extra_context=None):
+    def change_view(self, request, object_id, **kwargs):
         # Recognize frontend editing requests
         # This is done here so that the developer does not need to add
         # additional entries to # urls.py or something...
@@ -227,8 +228,9 @@ class ItemEditor(admin.ModelAdmin):
 
         context = {}
         context.update(self.get_extra_context(request))
-        context.update(extra_context or {})
-        return super(ItemEditor, self).change_view(request, object_id, extra_context=context)
+        context.update(kwargs.get('extra_context', {}))
+        kwargs['extra_context'] = context
+        return super(ItemEditor, self).change_view(request, object_id, **kwargs)
 
     # The next two add support for sending a "saving done" signal as soon
     # as all relevant data have been saved (especially all foreign key relations)
