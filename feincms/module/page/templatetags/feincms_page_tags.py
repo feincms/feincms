@@ -393,8 +393,10 @@ def siblings_along_path_to(page_list, page2):
         # NOTE: This assumes that the input list actually is complete (ie. comes from
         # feincms_navigation). We'll cope with the fall-out of that assumption
         # when it happens...
-        ancestors = [a_page for a_page in page_list 
+        ancestors = [a_page for a_page in page_list
                                 if _is_equal_or_parent_of(a_page, page2)]
+        top_level = min((a_page.level for a_page in page_list))
+
         if not ancestors:
             # Happens when we sit on a page outside the navigation tree
             # so fake an active root page to avoid a get_ancestors() db call
@@ -404,6 +406,7 @@ def siblings_along_path_to(page_list, page2):
 
         siblings  = [a_page for a_page in page_list
                             if a_page.parent_id == page2.id or
+                               a_page.level == top_level or
                                any((_is_sibling_of(a_page, a) for a in ancestors))]
         return siblings
     except AttributeError:
