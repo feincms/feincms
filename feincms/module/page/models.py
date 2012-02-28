@@ -585,7 +585,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
 
-        if len(Page._feincms_templates) > 4:
+        if len(Page._feincms_templates) > 4 and 'template_key' in self.radio_fields:
             del(self.radio_fields['template_key'])
 
         super(PageAdmin, self).__init__(*args, **kwargs)
