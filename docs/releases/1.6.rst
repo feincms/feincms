@@ -49,7 +49,19 @@ FeinCMS 1.6 release notes (upcoming)
 
 * ``ImageContent`` now accepts optional ``FORMAT_CHOICES`` for use with
   FeinCMS' bundled thumbnailers, as well as ``caption`` and ``alt_text`` fields.
-  TODO: Insert migration instructions here for existing installations of FeinCMS.
+
+.. note::
+
+   If you are upgrading from an earlier version of FeinCMS, you'll have to
+   add the new database columns yourself or use a migration tool like South
+   to do it for you. Instructions for MySQL and the page module follow::
+
+       ALTER TABLE page_page_imagecontent ADD COLUMN `alt_text` varchar(255) NOT NULL;
+       ALTER TABLE page_page_imagecontent ADD COLUMN `caption` varchar(255) NOT NULL;
+
+   If you want to use ``FORMAT_CHOICES``::
+
+       ALTER TABLE page_page_imagecontent ADD COLUMN `format` varchar(64) NOT NULL;
 
 * ``FileContent`` now displays the size of the file in the default template,
   and uses ``span`` elements to allow styling of the title / size.
