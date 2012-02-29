@@ -13,6 +13,13 @@ from os.path import join
 from django.conf import settings
 
 # ------------------------------------------------------------------------
+# Settings for Generic Content
+
+# e.g. 'uploads' if you would prefer <media root>/uploads/imagecontent/test.jpg
+# to <media root>/imagecontent/test.jpg.
+FEINCMS_UPLOAD_PREFIX = getattr(settings, 'FEINCMS_UPLOAD_PREFIX', '')
+
+# ------------------------------------------------------------------------
 # Settings for MediaLibrary
 
 #: Local path to newly uploaded media files

@@ -43,3 +43,12 @@ FeinCMS 1.6 release notes (upcoming)
   been moved to ``feincms.views.legacy`` during the FeinCMS v1.5 cycle.
 
 * The value of ``FEINCMS_FRONTEND_EDITING`` defaults to ``False`` now.
+
+* ``ImageContent``, ``FileContent`` and ``VideoContent`` now have pretty
+  icons out-of-the-box.
+
+* ``ImageContent`` now accepts optional ``FORMAT_CHOICES`` for use with
+  ``easy_thumbnails``, as well as ``caption`` and ``alt_text`` fields.
+
+* ``FileContent`` now displays the size of the file in the default template,
+  and uses ``span`` elements to allow styling of the title / size.

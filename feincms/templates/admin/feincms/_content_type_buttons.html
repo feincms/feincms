@@ -11,6 +11,17 @@ var CONTENT_TYPE_BUTTONS = [
     {
         type: 'richtextcontent',
         keep: true
+    }, {
+        type: 'imagecontent',
+        keep: true
+    }, {
+        type: 'filecontent',
+        keep: true,
+        cssclass: 'pdfcontent'
+    }, {
+        type: 'videocontent',
+        keep: true,
+        cssclass: 'oembedcontent'
 {% if media_library_url %}
     }, {
         type: 'mediafilecontent',
