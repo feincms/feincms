@@ -48,7 +48,8 @@ FeinCMS 1.6 release notes (upcoming)
   icons out-of-the-box.
 
 * ``ImageContent`` now accepts optional ``FORMAT_CHOICES`` for use with
-  ``easy_thumbnails``, as well as ``caption`` and ``alt_text`` fields.
+  FeinCMS' bundled thumbnailers, as well as ``caption`` and ``alt_text`` fields.
+  TODO: Insert migration instructions here for existing installations of FeinCMS.
 
 * ``FileContent`` now displays the size of the file in the default template,
   and uses ``span`` elements to allow styling of the title / size.

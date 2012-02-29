@@ -11,6 +11,8 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
+from feincms.templatetags import feincms_thumbnail
+
 
 class ImageContent(models.Model):
     # You should probably use
@@ -25,18 +27,16 @@ class ImageContent(models.Model):
                 ('left', 'Left'),
                 ('right', 'Right'),
             ),
-            SIZE_CHOICES=(
+            FORMAT_CHOICES=(
                 ('', 'Do not resize'),
-                ('100x100 crop', 'Square Thumbnail'),
-                ('200x450 upscale crop', 'Medium Portait'),
-                ('1000x1000', 'Large'),
+                ('cropscale:100x100', 'Square Thumbnail'),
+                ('cropscale:200x450', 'Medium Portait'),
+                ('thumbnail:1000x1000', 'Large'),
             ))
 
-        Note that SIZE_CHOICES is optional, requires easy_thumbnails to be
-        installed.
-
-        Also note that only boolean easy_thumbnail arguments are supported,
-        not those with values such as "quality=90".
+        Note that FORMAT_CHOICES is optional. The part before the colon
+        corresponds to the template filters in the ``feincms_thumbnail``
+        template filter library.
     """
 
     image = models.ImageField(
@@ -59,17 +59,14 @@ class ImageContent(models.Model):
             ], {'content': self})
 
     def get_image(self):
-        try:
-            from easy_thumbnails.files import get_thumbnailer
-        except ImportError:
+        type, separator, size = getattr(self, 'format', '').partition(':')
+        if not size:
             return self.image
-        else:
-            size, space, options = getattr(self, 'format', '').partition(' ')
-            thumbnailer = get_thumbnailer(self.image)
-            thumbnail_options = {'size': size.split('x')}
-            for option in options.split(' '):
-                thumbnail_options[option] = True
-            return thumbnailer.get_thumbnail(thumbnail_options)
+
+        thumbnailer = {
+            'cropscale': feincms_thumbnail.CropscaleThumbnailer,
+            }.get(type, feincms_thumbnail.Thumbnailer)
+        return thumbnailer(self.image, size)
 
     @classmethod
     def initialize_type(cls, POSITION_CHOICES=None, FORMAT_CHOICES=None):
