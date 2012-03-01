@@ -585,7 +585,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
 
-        if len(Page._feincms_templates) > 4:
+        if len(Page._feincms_templates) > 4 and 'template_key' in self.radio_fields:
             del(self.radio_fields['template_key'])
 
         super(PageAdmin, self).__init__(*args, **kwargs)
@@ -622,12 +622,10 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
         return actions
 
-    def add_view(self, request, form_url='', extra_context=None):
+    def add_view(self, request, **kwargs):
         # Preserve GET parameters
-        return super(PageAdmin, self).add_view(
-            request=request,
-            form_url=request.get_full_path(),
-            extra_context=extra_context)
+        kwargs['form_url'] = request.get_full_path()
+        return super(PageAdmin, self).add_view(request, **kwargs)
 
     def response_add(self, request, obj, *args, **kwargs):
         response = super(PageAdmin, self).response_add(request, obj, *args, **kwargs)
@@ -657,9 +655,9 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     def _refresh_changelist_caches(self, *args, **kwargs):
         self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
 
-    def change_view(self, request, object_id, extra_context=None):
+    def change_view(self, request, object_id, **kwargs):
         try:
-            return super(PageAdmin, self).change_view(request, object_id, extra_context)
+            return super(PageAdmin, self).change_view(request, object_id, **kwargs)
         except PermissionDenied:
             from django.contrib import messages
             messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
