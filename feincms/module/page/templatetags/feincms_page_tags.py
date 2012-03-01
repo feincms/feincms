@@ -395,7 +395,9 @@ def siblings_along_path_to(page_list, page2):
         # when it happens...
         ancestors = [a_page for a_page in page_list
                                 if _is_equal_or_parent_of(a_page, page2)]
-        top_level = min((a_page.level for a_page in page_list))
+        top_level = 1
+        if page_list:
+            top_level = min((a_page.level for a_page in page_list))
 
         if not ancestors:
             # Happens when we sit on a page outside the navigation tree
