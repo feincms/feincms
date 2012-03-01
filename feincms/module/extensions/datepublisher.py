@@ -67,8 +67,8 @@ def register(cls, admin_cls):
     cls.save = granular_save
 
     # Append publication date active check
-    if hasattr(cls.objects, 'add_to_active_filters'):
-        cls.objects.add_to_active_filters(
+    if hasattr(cls._default_manager, 'add_to_active_filters'):
+        cls._default_manager.add_to_active_filters(
             Q(publication_date__lte=granular_now) &
             (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=granular_now)),
             key='datepublisher')
