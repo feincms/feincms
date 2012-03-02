@@ -176,46 +176,6 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     def get_absolute_url(self):
         return self.file.url
 
-    def file_type(self):
-        t = self.filetypes_dict[self.type]
-        if self.type == 'image':
-            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property)
-            try:
-                self.file.path
-            except NotImplementedError:
-                return t
-            try:
-                from django.core.files.images import get_image_dimensions
-                d = get_image_dimensions(self.file.file)
-                if d: t += " %d&times;%d" % ( d[0], d[1] )
-            except IOError, e:
-                t += " (%s)" % e.strerror
-        return t
-    file_type.admin_order_field = 'type'
-    file_type.short_description = _('file type')
-    file_type.allow_tags = True
-
-    def file_info(self):
-        """
-        Method for showing the file name in admin.
-
-        Note: This also includes a hidden field that can be used to extract
-        the file name later on, this can be used to access the file name from
-        JS, like for example a TinyMCE connector shim.
-        """
-        from feincms.utils import shorten_string
-        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" id="_refkey_%d" /> %s <br />%s, %s' % (
-                self.id,
-                self.file.name,
-                self.id,
-                shorten_string(os.path.basename(self.file.name), max_length=40),
-                self.file_type(),
-                self.formatted_file_size(),
-                )
-    file_info.admin_order_field = 'file'
-    file_info.short_description = _('file info')
-    file_info.allow_tags = True
-
     def determine_file_type(self, name):
         """
         >>> t = MediaFileBase()
@@ -328,25 +288,6 @@ class MediaFileTranslation(Translation(MediaFile)):
         return self.caption
 
 #-------------------------------------------------------------------------
-def admin_thumbnail(obj):
-    if obj.type == 'image':
-        image = None
-        try:
-            image = feincms_thumbnail.thumbnail(obj.file.name, '100x100')
-        except:
-            pass
-
-        if image:
-            return mark_safe(u"""
-                <a href="%(url)s" target="_blank">
-                    <img src="%(image)s" alt="" />
-                </a>""" % {
-                    'url': obj.file.url,
-                    'image': image,})
-    return ''
-admin_thumbnail.short_description = _('Preview')
-admin_thumbnail.allow_tags = True
-
 #-------------------------------------------------------------------------
 def assign_category(modeladmin, request, queryset):
     class AddCategoryForm(forms.Form):
@@ -431,7 +372,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     form              = MediaFileAdminForm
     date_hierarchy    = 'created'
     inlines           = [admin_translationinline(MediaFileTranslation)]
-    list_display      = [admin_thumbnail, '__unicode__', 'file_info', 'formatted_created']
+    list_display      = ['admin_thumbnail', '__unicode__', 'file_info', 'formatted_created']
     list_display_links = ['__unicode__']
     list_filter       = ['type', 'categories']
     list_per_page     = 25
@@ -454,6 +395,66 @@ class MediaFileAdmin(admin.ModelAdmin):
             extra_context = {}
         extra_context['categories'] = Category.objects.order_by('title')
         return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
+
+    def admin_thumbnail(self, obj):
+        if obj.type == 'image':
+            image = None
+            try:
+                image = feincms_thumbnail.thumbnail(obj.file.name, '100x100')
+            except:
+                pass
+
+            if image:
+                return mark_safe(u"""
+                    <a href="%(url)s" target="_blank">
+                        <img src="%(image)s" alt="" />
+                    </a>""" % {
+                        'url': obj.file.url,
+                        'image': image,})
+        return ''
+    admin_thumbnail.short_description = _('Preview')
+    admin_thumbnail.allow_tags = True
+
+    def file_type(self, obj):
+        t = obj.filetypes_dict[obj.type]
+        if obj.type == 'image':
+            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property)
+            try:
+                obj.file.path
+            except NotImplementedError:
+                return t
+            try:
+                from django.core.files.images import get_image_dimensions
+                d = get_image_dimensions(obj.file.file)
+                if d:
+                    t += " %d&times;%d" % ( d[0], d[1] )
+            except IOError, e:
+                t += " (%s)" % e.strerror
+        return t
+    file_type.admin_order_field = 'type'
+    file_type.short_description = _('file type')
+    file_type.allow_tags = True
+
+    def file_info(self, obj):
+        """
+        Method for showing the file name in admin.
+
+        Note: This also includes a hidden field that can be used to extract
+        the file name later on, this can be used to access the file name from
+        JS, like for example a TinyMCE connector shim.
+        """
+        from feincms.utils import shorten_string
+        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" id="_refkey_%d" /> %s <br />%s, %s' % (
+                obj.id,
+                obj.file.name,
+                obj.id,
+                shorten_string(os.path.basename(obj.file.name), max_length=40),
+                self.file_type(obj),
+                obj.formatted_file_size(),
+                )
+    file_info.admin_order_field = 'file'
+    file_info.short_description = _('file info')
+    file_info.allow_tags = True
 
     @staticmethod
     @csrf_protect
