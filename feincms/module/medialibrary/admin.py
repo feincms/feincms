@@ -1,6 +1,16 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
+from __future__ import absolute_import
+
 from django.contrib import admin
 
-from feincms.module.medialibrary.models import Category, CategoryAdmin, MediaFile, MediaFileAdmin
+from .models import Category, MediaFile
+from .modeladmins import CategoryAdmin, MediaFileAdmin
 
+# ------------------------------------------------------------------------
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(MediaFile, MediaFileAdmin)
+
+# ------------------------------------------------------------------------

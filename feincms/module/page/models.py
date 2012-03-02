@@ -2,56 +2,28 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-try:
-    from hashlib import md5
-except ImportError:
-    import md5
-
 import re
-import warnings
 
-from django import forms
 from django.core.cache import cache as django_cache
-from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.sites.models import Site
-from django.contrib import admin
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q, signals
-from django.forms.models import model_to_dict
-from django.forms.util import ErrorList
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404
 from django.utils.datastructures import SortedDict
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import commit_on_success
 
 from mptt.models import MPTTModel
 
-from feincms import settings, ensure_completely_loaded
-from feincms.admin import item_editor, tree_editor
+from feincms import settings
 from feincms.management.checker import check_database_schema
 from feincms.models import create_base_model
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
+from feincms.utils import path_to_cache_key
+
 # ------------------------------------------------------------------------
-def path_to_cache_key(path):
-    from django.utils.encoding import iri_to_uri
-    path = iri_to_uri(path)
-
-    # logic below borrowed from http://richwklein.com/2009/08/04/improving-django-cache-part-ii/
-    # via acdha's django-sugar
-    if len(path) > 200:
-        m = md5()
-        m.update(path)
-        path = m.hexdigest() + '-' + path[:180]
-
-    cache_key = 'FEINCMS:%d:PAGE-FOR-URL:%s' % (django_settings.SITE_ID, path)
-    return cache_key
-
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
     """
     The page manager. Only adds new methods, does not modify standard Django
@@ -98,7 +70,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         # We flush the cache entry on page saving, so the cache should always
         # be up to date.
 
-        ck = path_to_cache_key(path)
+        ck = Page.path_to_cache_key(path)
         page = django_cache.get(ck)
         if page:
             return page
@@ -162,7 +134,6 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 PageManager.add_to_active_filters(Q(active=True))
 
 # ------------------------------------------------------------------------
-
 class Page(create_base_model(MPTTModel)):
     active = models.BooleanField(_('active'), default=True)
 
@@ -255,7 +226,7 @@ class Page(create_base_model(MPTTModel)):
         super(Page, self).save(*args, **kwargs)
 
         # Okay, we changed the URL -- remove the old stale entry from the cache
-        ck = path_to_cache_key( self._original_cached_url.strip('/') )
+        ck = self.path_to_cache_key(self._original_cached_url)
         django_cache.delete(ck)
 
         # If our cached URL changed we need to update all descendants to
@@ -405,9 +376,13 @@ class Page(create_base_model(MPTTModel)):
     def register_extension(cls, register_fn):
         register_fn(cls, PageAdmin)
 
+    @staticmethod
+    def path_to_cache_key(path):
+        return path_to_cache_key(path.strip('/'), prefix="PAGE-FOR-URL")
 
 # ------------------------------------------------------------------------
 # Our default request processors
+
 Page.register_request_processor(processors.require_path_active_request_processor,
     key='path_active')
 Page.register_request_processor(processors.redirect_request_processor,
@@ -419,285 +394,9 @@ if settings.FEINCMS_FRONTEND_EDITING:
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 
-# MARK: -
 # ------------------------------------------------------------------------
-class PageAdminForm(forms.ModelForm):
-    never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
-        'translation_of', '_content_title', '_page_title')
-
-    def __init__(self, *args, **kwargs):
-        ensure_completely_loaded()
-
-        if 'initial' in kwargs:
-            if 'parent' in kwargs['initial']:
-                # Prefill a few form values from the parent page
-                try:
-                    page = Page.objects.get(pk=kwargs['initial']['parent'])
-                    data = model_to_dict(page)
-
-                    for field in PageManager.exclude_from_copy:
-                        if field in data:
-                            del data[field]
-
-                    # These are always excluded from prefilling
-                    for field in self.never_copy_fields:
-                        if field in data:
-                            del data[field]
-
-                    kwargs['initial'].update(data)
-                except Page.DoesNotExist:
-                    pass
-
-            elif 'translation_of' in kwargs['initial']:
-                # Only if translation extension is active
-                try:
-                    page = Page.objects.get(pk=kwargs['initial']['translation_of'])
-                    original = page.original_translation
-
-                    data = {
-                        'translation_of': original.id,
-                        'template_key': original.template_key,
-                        'active': original.active,
-                        'in_navigation': original.in_navigation,
-                        }
-
-                    if original.parent:
-                        try:
-                            data['parent'] = original.parent.get_translation(kwargs['initial']['language']).id
-                        except Page.DoesNotExist:
-                            # ignore this -- the translation does not exist
-                            pass
-
-                    kwargs['initial'].update(data)
-                except (AttributeError, Page.DoesNotExist):
-                    pass
-
-        super(PageAdminForm, self).__init__(*args, **kwargs)
-        if 'instance' in kwargs:
-            choices = []
-            for key, template in kwargs['instance'].TEMPLATE_CHOICES:
-                template = kwargs['instance']._feincms_templates[key]
-                if template.preview_image:
-                    choices.append((template.key,
-                                    mark_safe(u'<img src="%s" alt="%s" /> %s' % (
-                                              template.preview_image, template.key, template.title))))
-                else:
-                    choices.append((template.key, template.title))
-
-            self.fields['template_key'].choices = choices
-
-    def clean(self):
-        cleaned_data = super(PageAdminForm, self).clean()
-
-        # No need to think further, let the user correct errors first
-        if self._errors:
-            return cleaned_data
-
-        current_id = None
-        # See the comment below on why we do not use Page.objects.active(),
-        # at least for now.
-        active_pages = Page.objects.filter(active=True)
-
-        if self.instance:
-            current_id = self.instance.id
-            active_pages = active_pages.exclude(id=current_id)
-
-        if hasattr(Site, 'page_set') and 'site' in cleaned_data:
-            active_pages = active_pages.filter(site=cleaned_data['site'])
-
-        if not cleaned_data['active']:
-            # If the current item is inactive, we do not need to conduct
-            # further validation. Note that we only check for the flag, not
-            # for any other active filters. This is because we do not want
-            # to inspect the active filters to determine whether two pages
-            # really won't be active at the same time.
-            return cleaned_data
-
-        if cleaned_data['override_url']:
-            if active_pages.filter(_cached_url=cleaned_data['override_url']).count():
-                self._errors['override_url'] = ErrorList([_('This URL is already taken by an active page.')])
-                del cleaned_data['override_url']
-
-            return cleaned_data
-
-        if current_id:
-            # We are editing an existing page
-            parent = Page.objects.get(pk=current_id).parent
-        else:
-            # The user tries to create a new page
-            parent = cleaned_data['parent']
-
-        if parent:
-            new_url = '%s%s/' % (parent._cached_url, cleaned_data['slug'])
-        else:
-            new_url = '/%s/' % cleaned_data['slug']
-
-        if active_pages.filter(_cached_url=new_url).count():
-            self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
-            del cleaned_data['active']
-
-        return cleaned_data
-
-# ------------------------------------------------------------------------
-class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
-    class Media:
-        css = {}
-        js = []
-
-    form = PageAdminForm
-
-    # the fieldsets config here is used for the add_view, it has no effect
-    # for the change_view which is completely customized anyway
-    unknown_fields = ['template_key', 'parent', 'override_url', 'redirect_to']
-    fieldset_insertion_index = 2
-    fieldsets = [
-        (None, {
-            'fields': [
-                ('title', 'slug'),
-                ('active', 'in_navigation'),
-                ],
-        }),
-        (_('Other options'), {
-            'classes': ['feincms-collapse'],
-            'fields': unknown_fields,
-        }),
-        # <-- insertion point, extensions should appear here,
-        #     see insertion_index definition above
-        item_editor.FEINCMS_CONTENT_FIELDSET,
-        ]
-
-    readonly_fields = []
-    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
-    list_filter = ['active', 'in_navigation', 'template_key', 'parent']
-    search_fields = ['title', 'slug']
-    prepopulated_fields = { 'slug': ('title',), }
-
-    raw_id_fields = ['parent']
-    radio_fields = {'template_key': admin.HORIZONTAL}
-
-    @classmethod
-    def add_extension_options(cls, *fieldset):
-        """
-        Internal method for adding fieldsets instead of "somewhere"
-        to a specific place, so we can style them as tabs later.
-        """
-        # Means "append my fields somewhere, not necessarily a fieldset"
-        if fieldset[1].get('no_extra_fieldset', False):
-            cls.fieldsets[1][1]['fields'].extend(fieldset[1]['fields'])
-        else:
-            cls.fieldsets.insert(cls.fieldset_insertion_index, fieldset)
-
-    def __init__(self, *args, **kwargs):
-        ensure_completely_loaded()
-
-        if len(Page._feincms_templates) > 4 and 'template_key' in self.radio_fields:
-            del(self.radio_fields['template_key'])
-
-        super(PageAdmin, self).__init__(*args, **kwargs)
-
-        # The use of fieldsets makes only fields explicitly listed in there
-        # actually appear in the admin form. However, extensions should not be
-        # aware that there is a fieldsets structure and even less modify it;
-        # we therefore enumerate all of the model's field and forcibly add them
-        # to the last section in the admin. That way, nobody is left behind.
-        from django.contrib.admin.util import flatten_fieldsets
-        present_fields = flatten_fieldsets(self.fieldsets)
-
-        for f in self.model._meta.fields:
-            if not f.name.startswith('_') and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level') and \
-                    not f.auto_created and not f.name in present_fields and f.editable:
-                self.unknown_fields.append(f.name)
-                if not f.editable:
-                    self.readonly_fields.append(f.name)
-
-    in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
-
-    def _actions_column(self, page):
-        editable = getattr(page, 'feincms_editable', True)
-
-        preview_url = "../../r/%s/%s/" % (
-                ContentType.objects.get_for_model(self.model).id,
-                page.id)
-        actions = super(PageAdmin, self)._actions_column(page)
-        if editable:
-            actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%sicon_addlink.gif" alt="%s"></a>' % (
-                page.pk, _('Add child page'), settings._HACK_ADMIN_MEDIA_IMAGES ,_('Add child page')))
-        actions.insert(0, u'<a href="%s" title="%s"><img src="%sselector-search.gif" alt="%s" /></a>' % (
-            preview_url, _('View on site'), settings._HACK_ADMIN_MEDIA_IMAGES, _('View on site')))
-
-        return actions
-
-    def add_view(self, request, **kwargs):
-        # Preserve GET parameters
-        kwargs['form_url'] = request.get_full_path()
-        return super(PageAdmin, self).add_view(request, **kwargs)
-
-    def response_add(self, request, obj, *args, **kwargs):
-        response = super(PageAdmin, self).response_add(request, obj, *args, **kwargs)
-        if 'parent' in request.GET and '_addanother' in request.POST and response.status_code in (301, 302):
-            # Preserve GET parameters if we are about to add another page
-            response['Location'] += '?parent=%s' % request.GET['parent']
-        if 'translation_of' in request.GET:
-            # Copy all contents
-            for content_type in obj._feincms_content_types:
-                if content_type.objects.filter(parent=obj).exists():
-                    # Short-circuit processing -- don't copy any contents if
-                    # newly added object already has some
-                    return response
-
-            try:
-                original = self.model._tree_manager.get(pk=request.GET.get('translation_of'))
-                original = original.original_translation
-                obj.copy_content_from(original)
-                obj.save()
-
-                self.message_user(request, _('The content from the original translation has been copied to the newly created page.'))
-            except (AttributeError, self.model.DoesNotExist):
-                pass
-
-        return response
-
-    def _refresh_changelist_caches(self, *args, **kwargs):
-        self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
-
-    def change_view(self, request, object_id, **kwargs):
-        try:
-            return super(PageAdmin, self).change_view(request, object_id, **kwargs)
-        except PermissionDenied:
-            from django.contrib import messages
-            messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
-        return HttpResponseRedirect(reverse('admin:page_page_changelist'))
-
-    def is_visible_admin(self, page):
-        """
-        Instead of just showing an on/off boolean, also indicate whether this
-        page is not visible because of publishing dates or inherited status.
-        """
-        if not hasattr(self, "_visible_pages"):
-            self._visible_pages = list() # Sanity check in case this is not already defined
-
-        if page.parent_id and not page.parent_id in self._visible_pages:
-            # parent page's invisibility is inherited
-            if page.id in self._visible_pages:
-                self._visible_pages.remove(page.id)
-            return tree_editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
-
-        if page.active and not page.id in self._visible_pages:
-            # is active but should not be shown, so visibility limited by extension: show a "not active"
-            return tree_editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
-
-        return tree_editor.ajax_editable_boolean_cell(page, 'active')
-    is_visible_admin.allow_tags = True
-    is_visible_admin.short_description = _('is active')
-    is_visible_admin.editable_boolean_field = 'active'
-
-    # active toggle needs more sophisticated result function
-    def is_visible_recursive(self, page):
-        retval = []
-        for c in page.get_descendants(include_self=True):
-            retval.append(self.is_visible_admin(c))
-        return retval
-    is_visible_admin.editable_boolean_result = is_visible_recursive
+# Down here as to avoid circular imports
+from .modeladmins import PageAdmin
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
