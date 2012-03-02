@@ -6,7 +6,8 @@ from __future__ import absolute_import
 
 from django.contrib import admin
 
-from .models import Page, PageAdmin
+from .models import Page
+from .modeladmins import PageAdmin
 
 # ------------------------------------------------------------------------
 admin.site.register(Page, PageAdmin)
