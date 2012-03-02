@@ -385,34 +385,34 @@ def siblings_along_path_to(page_list, page2):
         {% endwith %}
 
     """
-    try:
-        # Try to avoid hitting the database: If the current page is in_navigation,
-        # then all relevant pages are already in the incoming list, no need to
-        # fetch ancestors or children.
+    if page_list:
+        try:
+            # Try to avoid hitting the database: If the current page is in_navigation,
+            # then all relevant pages are already in the incoming list, no need to
+            # fetch ancestors or children.
 
-        # NOTE: This assumes that the input list actually is complete (ie. comes from
-        # feincms_navigation). We'll cope with the fall-out of that assumption
-        # when it happens...
-        ancestors = [a_page for a_page in page_list
-                                if _is_equal_or_parent_of(a_page, page2)]
-        top_level = 1
-        if page_list:
+            # NOTE: This assumes that the input list actually is complete (ie. comes from
+            # feincms_navigation). We'll cope with the fall-out of that assumption
+            # when it happens...
+            ancestors = [a_page for a_page in page_list
+                                    if _is_equal_or_parent_of(a_page, page2)]
             top_level = min((a_page.level for a_page in page_list))
 
-        if not ancestors:
-            # Happens when we sit on a page outside the navigation tree
-            # so fake an active root page to avoid a get_ancestors() db call
-            # which would only give us a non-navigation root page anyway.
-            p = Page(title="dummy", tree_id=-1, parent_id=None, in_navigation=False)
-            ancestors = (p,)
+            if not ancestors:
+                # Happens when we sit on a page outside the navigation tree
+                # so fake an active root page to avoid a get_ancestors() db call
+                # which would only give us a non-navigation root page anyway.
+                p = Page(title="dummy", tree_id=-1, parent_id=None, in_navigation=False)
+                ancestors = (p,)
 
-        siblings  = [a_page for a_page in page_list
-                            if a_page.parent_id == page2.id or
-                               a_page.level == top_level or
-                               any((_is_sibling_of(a_page, a) for a in ancestors))]
-        return siblings
-    except AttributeError:
-        return ()
+            siblings  = [a_page for a_page in page_list
+                                if a_page.parent_id == page2.id or
+                                   a_page.level == top_level or
+                                   any((_is_sibling_of(a_page, a) for a in ancestors))]
+            return siblings
+        except AttributeError:
+            pass
+
+    return ()
 
 # ------------------------------------------------------------------------
-
