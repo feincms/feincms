@@ -32,20 +32,7 @@ from feincms.models import create_base_model
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
-# ------------------------------------------------------------------------
-def path_to_cache_key(path):
-    from django.utils.encoding import iri_to_uri
-    path = iri_to_uri(path)
-
-    # logic below borrowed from http://richwklein.com/2009/08/04/improving-django-cache-part-ii/
-    # via acdha's django-sugar
-    if len(path) > 200:
-        m = md5()
-        m.update(path)
-        path = m.hexdigest() + '-' + path[:180]
-
-    cache_key = 'FEINCMS:%d:PAGE-FOR-URL:%s' % (django_settings.SITE_ID, path)
-    return cache_key
+from feincms.utils import path_to_cache_key
 
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
     """
@@ -93,7 +80,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         # We flush the cache entry on page saving, so the cache should always
         # be up to date.
 
-        ck = path_to_cache_key(path)
+        ck = Page.path_to_cache_key(path)
         page = django_cache.get(ck)
         if page:
             return page
@@ -157,7 +144,6 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 PageManager.add_to_active_filters(Q(active=True))
 
 # ------------------------------------------------------------------------
-
 class Page(create_base_model(MPTTModel)):
     active = models.BooleanField(_('active'), default=True)
 
@@ -250,7 +236,7 @@ class Page(create_base_model(MPTTModel)):
         super(Page, self).save(*args, **kwargs)
 
         # Okay, we changed the URL -- remove the old stale entry from the cache
-        ck = path_to_cache_key( self._original_cached_url.strip('/') )
+        ck = self.path_to_cache_key(self._original_cached_url)
         django_cache.delete(ck)
 
         # If our cached URL changed we need to update all descendants to
@@ -400,9 +386,13 @@ class Page(create_base_model(MPTTModel)):
     def register_extension(cls, register_fn):
         register_fn(cls, PageAdmin)
 
+    @staticmethod
+    def path_to_cache_key(path):
+        return path_to_cache_key(path.strip('/'), prefix="PAGE-FOR-URL")
 
 # ------------------------------------------------------------------------
 # Our default request processors
+
 Page.register_request_processor(processors.require_path_active_request_processor,
     key='path_active')
 Page.register_request_processor(processors.redirect_request_processor,

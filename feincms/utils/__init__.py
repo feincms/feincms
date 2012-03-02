@@ -2,6 +2,12 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+try:
+    from hashlib import md5
+except ImportError:
+    import md5
+
+from django.conf import settings as django_settings
 from django.db.models import AutoField
 from django.utils.importlib import import_module
 
@@ -61,5 +67,26 @@ def shorten_string(str, max_length=50):
             first_part += next_space
         return str[:first_part] + u' … ' + str[-(max_length - first_part):]
     return str
+
+# ------------------------------------------------------------------------
+def path_to_cache_key(path, max_length=200, prefix=""):
+    """
+    Convert a string (path) into something that can be fed to django's
+    cache mechanism as cache key. Ensure the string stays below the
+    max key size, so if too long, hash it and use that instead.
+    """
+
+    from django.utils.encoding import iri_to_uri
+    path = iri_to_uri(path)
+
+    # logic below borrowed from http://richwklein.com/2009/08/04/improving-django-cache-part-ii/
+    # via acdha's django-sugar
+    if len(path) > max_length:
+        m = md5()
+        m.update(path)
+        path = m.hexdigest() + '-' + path[:max_length - 20]
+
+    cache_key = 'FEINCMS:%d:%s:%s' % (django_settings.SITE_ID, prefix, path)
+    return cache_key
 
 # ------------------------------------------------------------------------
