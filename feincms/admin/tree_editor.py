@@ -366,19 +366,19 @@ class TreeEditor(admin.ModelAdmin):
         return r and super(TreeEditor, self).has_delete_permission(request, obj)
 
     def _move_node(self, request):
-        cut_item = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
-        pasted_on = self.model._tree_manager.get(pk=request.POST.get('pasted_on'))
+        cut_item = self.model.objects.get(pk=request.POST.get('cut_item'))
+        pasted_on = self.model.objects.get(pk=request.POST.get('pasted_on'))
         position = request.POST.get('position')
 
         if position in ('last-child', 'left'):
             try:
-                self.model._tree_manager.move_node(cut_item, pasted_on, position)
+                self.model.objects.move_node(cut_item, pasted_on, position)
             except InvalidMove, e:
                 self.message_user(request, unicode(e))
                 return HttpResponse('FAIL')
 
             # Ensure that model save has been run
-            cut_item = self.model._tree_manager.get(pk=cut_item.pk)
+            cut_item = self.model.objects.get(pk=cut_item.pk)
             cut_item.save()
 
             self.message_user(request, ugettext('%s has been moved to a new position.') %
