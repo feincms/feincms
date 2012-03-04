@@ -114,3 +114,7 @@ FEINCMS_CMS_404_PAGE = getattr(settings, 'FEINCMS_CMS_404_PAGE', None)
 FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE', False)
 
 # ------------------------------------------------------------------------
+# Make page activation in settings.py
+FEINCMS_PAGE_EXTENSIONS = getattr(settings, 'FEINCMS_PAGE_EXTENSIONS', None)
+FEINCMS_PAGE_TEMPLATES  = getattr(settings, 'FEINCMS_PAGE_TEMPLATES',  None)
+FEINCMS_PAGE_CONTENTS   = getattr(settings, 'FEINCMS_PAGE_CONTENTS',   None)

@@ -583,6 +583,23 @@ def create_base_model(inherit_from=models.Model):
                 cls.feincms_item_editor_includes = {}
 
         @classmethod
+        def create_content_types(cls, *contents):
+            for content in contents:
+                if isinstance(content['model'], basestring):
+                    try:
+                        content['model'] = get_object(content['model'])
+                    except ImportError:
+                        raise ImproperlyConfigured, '%s is not a valid \
+                            content type' % content['model']
+                    cls.create_content_type(**content)
+                else:
+                    try:
+                        cls.create_content_type(**content)
+                    except:
+                        raise ImproperlyConfigured, 'Your configuration for \
+                            FEINCMS_PAGE_CONTENTS is invalid!'
+
+        @classmethod
         def create_content_type(cls, model, regions=None, class_name=None, **kwargs):
             """
             This is the method you'll use to create concrete content types.

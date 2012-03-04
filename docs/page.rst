@@ -67,6 +67,37 @@ Please note that you should put these statements into a ``models.py`` file
 which is executed at Django startup time, i.e. into a ``models.py`` file
 contained in ``INSTALLED_APPS``.
 
+Also you can use a more django way to put all your extensions, templates and
+content types initialzation in project's ``settings.py`` via
+``FEINCMS_PAGE_EXTENSIONS``, ``FEINCMS_PAGE_TEMPLATES`` and
+``FEINCMS_PAGE_CONTENTS``. The codes below is a same example as above::
+
+    from django.utils.translation import ugettext_lazy as _
+
+    FEINCMS_PAGE_EXTENSIONS = (
+        'datepublisher',
+        'translation',
+    )
+
+    FEINCMS_PAGE_TEMPLATES = ({
+        'title': _('Standard template'),
+        'path': 'base.html',
+        'regions': (
+            ('main', _('Main content area')),
+            ('sidebar', _('Sidebar'), 'inherited'),
+            ),
+        }
+    )
+
+    FEINCMS_PAGE_CONTENTS = (
+        {'model': 'feincms.content.richtext.models.RichTextContent'},
+        {'model': 'feincms.content.medialibrary.v2.MediaFileContent',
+            'TYPE_CHOICES': (
+                ('lightbox', _('lightbox')),
+                ('download', _('as download'))
+            )
+        }
+    )
 
 Setting up the admin interface
 ==============================

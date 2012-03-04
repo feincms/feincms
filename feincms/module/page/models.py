@@ -695,4 +695,16 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     is_visible_admin.editable_boolean_result = is_visible_recursive
 
 # ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
+# initial loading extensions, templates and content types of page
+
+if settings.FEINCMS_PAGE_EXTENSIONS:
+    Page.register_extensions(*settings.FEINCMS_PAGE_EXTENSIONS)
+
+if settings.FEINCMS_PAGE_TEMPLATES:
+    Page.register_templates(*settings.FEINCMS_PAGE_TEMPLATES)
+
+if settings.FEINCMS_PAGE_CONTENTS:
+    Page.create_content_types(*settings.FEINCMS_PAGE_CONTENTS)
+
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
