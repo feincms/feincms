@@ -5,7 +5,6 @@
 from __future__ import absolute_import
 
 from datetime import datetime
-import logging
 import os
 import re
 
@@ -23,7 +22,7 @@ from feincms import settings
 from feincms.models import ExtensionsMixin
 from feincms.translations import TranslatedObjectMixin, Translation, TranslatedObjectManager
 
-logger = logging.getLogger('feincms.medialibrary')
+from . import logger
 
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
@@ -185,9 +184,9 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             # Not an image? PIL raises "IOError: cannot identify image file"
             # Note: it also raises that exception for any real I/O error *sigh*
             except IOError, e:
+                logger.warning("Uploaded file %s cannot be opened by PIL: %s" % (self.file.name, e))
                 if not e.errno: # Not a real IOError but PIL-generated
                     self.type = self.determine_file_type('***') # It's binary something
-                    logger.warning("Uploaded file %s cannot be opened by PIL: %s" % (self.file.name, e))
 
         super(MediaFileBase, self).save(*args, **kwargs)
 
