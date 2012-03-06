@@ -65,3 +65,9 @@ FeinCMS 1.6 release notes (upcoming)
 
 * ``FileContent`` now displays the size of the file in the default template,
   and uses ``span`` elements to allow styling of the title / size.
+
+* ``MediaFile`` does no longer auto-rotate images on upload. It really is not a
+  media library's job to magically modify user content; if needed, it should be
+  done in an image filter (like sorl). Also, reading through the image data
+  seems to have a side effect on some external storage engines which then would
+  only save half the image data, see issue #254.
