@@ -181,37 +181,20 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         # Try to detect things that are not really images
         if self.type == 'image':
             try:
-                try:
-                    image = Image.open(self.file)
-                except (OSError, IOError):
-                    image = Image.open(self.file.path)
+                Image.open(self.file)
+            # Not an image? PIL raises "IOError: cannot identify image file"
+            # Note: it also raises that exception for any real I/O error *sigh*
+            except IOError, e:
+                if not e.errno: # Not a real IOError but PIL-generated
+                    self.type = self.determine_file_type('***') # It's binary something
+                    logger.warning("Uploaded file %s cannot be opened by PIL: %s" % (self.file.name, e))
 
-                # Rotate image based on exif data.
-                if image:
-                    try:
-                        exif = image._getexif()
-                    except (AttributeError, IOError):
-                        exif = False
-                    # PIL < 1.1.7 chokes on JPEGs with minimal EXIF data and
-                    # throws a KeyError deep in its guts.
-                    except KeyError:
-                        exif = False
+        super(MediaFileBase, self).save(*args, **kwargs)
 
-                    if exif:
-                        orientation = exif.get(274)
-                        rotation = 0
-                        if orientation == 3:
-                            rotation = 180
-                        elif orientation == 6:
-                            rotation = 270
-                        elif orientation == 8:
-                            rotation = 90
-                        if rotation:
-                            image = image.rotate(rotation)
-                            image.save(self.file.path)
-            except (OSError, IOError), e:
-                self.type = self.determine_file_type('***') # It's binary something
+        logger.info("Saved mediafile %d (%s, type %s, %d bytes)" % (self.id, self.file.name, self.type, self.file_size))
 
+        # User uploaded a new file. Try to get rid of the old file in
+        # storage, to avoid having orphaned files hanging around.
         if getattr(self, '_original_file_name', None):
             if self.file.name != self._original_file_name:
                 try:
@@ -219,7 +202,6 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
                 except Exception, e:
                     logger.error("Cannot delete orphaned file %s: %s" % (self._original_file_name, e))
 
-        super(MediaFileBase, self).save(*args, **kwargs)
         self.purge_translation_cache()
 
 # ------------------------------------------------------------------------
