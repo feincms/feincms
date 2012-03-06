@@ -23,6 +23,8 @@ from feincms import settings
 from feincms.models import ExtensionsMixin
 from feincms.translations import TranslatedObjectMixin, Translation, TranslatedObjectManager
 
+logger = logging.getLogger('feincms.medialibrary')
+
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
     """
@@ -174,7 +176,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             try:
                 self.file_size = self.file.size
             except (OSError, IOError, ValueError), e:
-                logging.error("Unable to read file size for %s: %s", self, e)
+                logger.error("Unable to read file size for %s: %s" % (self, e))
 
         # Try to detect things that are not really images
         if self.type == 'image':
@@ -212,7 +214,10 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
         if getattr(self, '_original_file_name', None):
             if self.file.name != self._original_file_name:
-                self.file.storage.delete(self._original_file_name)
+                try:
+                    self.file.storage.delete(self._original_file_name)
+                except Exception, e:
+                    logger.error("Cannot delete orphaned file %s: %s" % (self._original_file_name, e))
 
         super(MediaFileBase, self).save(*args, **kwargs)
         self.purge_translation_cache()
