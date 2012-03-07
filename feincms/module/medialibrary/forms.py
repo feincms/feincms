@@ -7,8 +7,9 @@ from __future__ import absolute_import
 import os
 
 from django import forms
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+
+from feincms import settings
 
 from . import logger
 from .models import MediaFile
