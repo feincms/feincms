@@ -205,7 +205,7 @@ media files they need::
         def media(self):
             return forms.Media(
                 css={'all': ('gallery/gallery.css',),},
-                js=('gallery/gallery.js'),
+                js=('gallery/gallery.js',),
                 )
 
         def render(self, **kwargs):
