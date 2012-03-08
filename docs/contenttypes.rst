@@ -219,6 +219,18 @@ provide the ``media`` property yourself. As with form and widget media definitio
 either ``STATIC_URL`` or ``MEDIA_URL`` (in this order) will be prepended to
 the media file path if it is not an absolute path already.
 
+Alternatively, you can use the ``media_property`` function from django.forms
+to implement the functionality, which then also supports inheritance
+of media files::
+
+    from django.forms.widgets import media_property
+
+    class MediaUsingContentType(models.Model):
+        class Media:
+            js = ('whizbang.js',)
+
+    MediaUsingContentType.media = media_property(MediaUsingContentType)
+
 
 
 .. _contenttypes-processfinalize:
