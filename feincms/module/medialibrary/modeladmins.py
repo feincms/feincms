@@ -26,10 +26,12 @@ from ...templatetags import feincms_thumbnail
 from ...translations import admin_translationinline, lookup_translations
 
 from .models import Category, MediaFileTranslation
-from .forms import MediaFileAdminForm
+from .forms import MediaCategoryAdminForm, MediaFileAdminForm
 
 # -----------------------------------------------------------------------
 class CategoryAdmin(admin.ModelAdmin):
+    form = MediaCategoryAdminForm
+
     list_display      = ['path']
     list_filter       = ['parent']
     list_per_page     = 25
@@ -91,8 +93,9 @@ save_as_zipfile.short_description = _('Export selected media files as zip file')
 
 # ------------------------------------------------------------------------
 class MediaFileAdmin(admin.ModelAdmin):
-    save_on_top       = True
     form              = MediaFileAdminForm
+
+    save_on_top       = True
     date_hierarchy    = 'created'
     inlines           = [admin_translationinline(MediaFileTranslation)]
     list_display      = ['admin_thumbnail', '__unicode__', 'file_info', 'formatted_created']
