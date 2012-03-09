@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 17:04+0100\n"
+"POT-Creation-Date: 2012-03-09 16:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,11 +34,12 @@ msgstr "Sprache"
 msgid "All"
 msgstr "Alle"
 
-#: admin/filterspecs.py:57 module/page/models.py:222
+#: admin/filterspecs.py:57 module/page/models.py:143
 msgid "Parent"
 msgstr "Übergeordnet"
 
 #: admin/filterspecs.py:95
+#: templates/admin/medialibrary/mediafile/change_list.html:15
 msgid "Category"
 msgstr "Kategorie"
 
@@ -49,33 +50,33 @@ msgstr "%s ändern"
 
 #: admin/tree_editor.py:214 content/rss/models.py:20
 #: content/section/models.py:31 module/blog/models.py:30
-#: module/medialibrary/models.py:51 module/page/models.py:220
-#: module/page/models.py:299
+#: module/medialibrary/models.py:43 module/page/models.py:141
+#: module/page/models.py:199
 msgid "title"
 msgstr "Titel"
 
-#: admin/tree_editor.py:384
+#: admin/tree_editor.py:389
 #, python-format
 msgid "%s has been moved to a new position."
 msgstr "%s wurde an eine neue Position verschoben."
 
-#: admin/tree_editor.py:388
+#: admin/tree_editor.py:393
 msgid "Did not understand moving instruction."
 msgstr "Unbekannter Verschiebe-Befehl."
 
-#: admin/tree_editor.py:397
+#: admin/tree_editor.py:402
 msgid "actions"
 msgstr "Aktionen"
 
-#: content/application/models.py:252
+#: content/application/models.py:264
 msgid "application content"
 msgstr "Applikation"
 
-#: content/application/models.py:253
+#: content/application/models.py:265
 msgid "application contents"
 msgstr "Applikationen"
 
-#: content/application/models.py:284
+#: content/application/models.py:296
 msgid "application"
 msgstr "Applikation"
 
@@ -123,27 +124,43 @@ msgstr "Kontaktformular"
 msgid "contact forms"
 msgstr "Kontaktformulare"
 
-#: content/file/models.py:16 content/file/models.py:20
-#: module/medialibrary/models.py:101
+#: content/file/models.py:20 content/file/models.py:25
+#: module/medialibrary/models.py:86
 msgid "file"
 msgstr "Datei"
 
-#: content/file/models.py:21
+#: content/file/models.py:26
 msgid "files"
 msgstr "Dateien"
 
-#: content/image/models.py:24 content/image/models.py:28
+#: content/image/models.py:43 content/image/models.py:52
 msgid "image"
 msgstr "Bild"
 
-#: content/image/models.py:29
+#: content/image/models.py:46
+msgid "alternate text"
+msgstr "Textalternative"
+
+#: content/image/models.py:47
+msgid "Description of image"
+msgstr "Beschreibung des Bildes"
+
+#: content/image/models.py:48 module/medialibrary/models.py:237
+msgid "caption"
+msgstr "Legende"
+
+#: content/image/models.py:53
 msgid "images"
 msgstr "Bilder"
 
-#: content/image/models.py:42 content/medialibrary/models.py:105
+#: content/image/models.py:79 content/medialibrary/models.py:105
 #: content/medialibrary/models.py:113
 msgid "position"
 msgstr "Position"
+
+#: content/image/models.py:87
+msgid "format"
+msgstr "Format"
 
 #: content/medialibrary/models.py:38
 msgid "(no caption)"
@@ -152,12 +169,12 @@ msgstr "(Keine Legende)"
 #: content/medialibrary/models.py:87 content/medialibrary/models.py:101
 #: content/medialibrary/models.py:111 content/medialibrary/v2.py:44
 #: content/section/models.py:47 module/medialibrary/fields.py:45
-#: module/medialibrary/models.py:114
+#: module/medialibrary/models.py:99
 msgid "media file"
 msgstr "Mediendatei"
 
 #: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
-#: module/medialibrary/models.py:115
+#: module/medialibrary/models.py:100
 msgid "media files"
 msgstr "Mediendateien"
 
@@ -351,7 +368,7 @@ msgid "Leave this empty for entries in the primary language."
 msgstr "Dieses Feld für Einträge in der Primärsprache leer lassen."
 
 #: module/blog/extensions/translations.py:44
-#: templates/admin/feincms/item_editor.html:40
+#: templates/admin/feincms/item_editor.html:43
 msgid "available translations"
 msgstr "Verfügbare Übersetzungen"
 
@@ -427,170 +444,215 @@ msgstr "Übersetzung erstellen"
 msgid "translations"
 msgstr "Übersetzungen"
 
-#: module/medialibrary/models.py:54
-msgid "parent"
-msgstr "Übergeordnet"
+#: module/medialibrary/forms.py:25
+msgid "This would create a loop in the hierarchy"
+msgstr "Dies würde eine Schleife in der Hierarchie erzeugen"
 
-#: module/medialibrary/models.py:56 module/page/models.py:221
-msgid "slug"
-msgstr "Slug"
+#: module/medialibrary/forms.py:57
+#, python-format
+msgid ""
+"Cannot overwrite with different file type (attempt to overwrite a "
+"%(old_ext)s with a %(new_ext)s)"
+msgstr ""
+"Kann nur gleiche Dateitypen ersetzen (versuchte ein %(old_ext)s mit einem "
+"%(new_ext)s zu überschreiben)"
 
-#: module/medialibrary/models.py:60
-msgid "category"
-msgstr "Kategorie"
-
-#: module/medialibrary/models.py:61 module/medialibrary/models.py:107
-msgid "categories"
-msgstr "Kategorien"
-
-#: module/medialibrary/models.py:102 module/medialibrary/models.py:191
-msgid "file type"
-msgstr "Dateityp"
-
-#: module/medialibrary/models.py:103 module/medialibrary/models.py:129
-msgid "created"
-msgstr "Erstellt"
-
-#: module/medialibrary/models.py:104
-msgid "copyright"
-msgstr "Copyright"
-
-#: module/medialibrary/models.py:105 module/medialibrary/models.py:124
-msgid "file size"
-msgstr "Dateigrösse"
-
-#: module/medialibrary/models.py:213
-msgid "file info"
-msgstr "Dateiinfo"
-
-#: module/medialibrary/models.py:290
-msgid "Image"
-msgstr "Bild"
-
-#: module/medialibrary/models.py:291
-msgid "Video"
-msgstr "Video"
-
-#: module/medialibrary/models.py:292
-msgid "Audio"
-msgstr "Audio"
-
-#: module/medialibrary/models.py:293
-msgid "PDF document"
-msgstr "PDF-Dokument"
-
-#: module/medialibrary/models.py:294
-msgid "Flash"
-msgstr "Flash"
-
-#: module/medialibrary/models.py:295
-msgid "Text"
-msgstr "Text"
-
-#: module/medialibrary/models.py:296
-msgid "Rich Text"
-msgstr "Text"
-
-#: module/medialibrary/models.py:297
-msgid "Zip archive"
-msgstr "ZIP-Archiv"
-
-#: module/medialibrary/models.py:298
-msgid "Microsoft Word"
-msgstr "Microsoft Word"
-
-#: module/medialibrary/models.py:299
-msgid "Microsoft Excel"
-msgstr "Microsoft Excel"
-
-#: module/medialibrary/models.py:300
-msgid "Microsoft PowerPoint"
-msgstr "Microsoft PowerPoint"
-
-#: module/medialibrary/models.py:301
-msgid "Binary"
-msgstr "Binärdaten"
-
-#: module/medialibrary/models.py:317
-msgid "caption"
-msgstr "Legende"
-
-#: module/medialibrary/models.py:318
-msgid "description"
-msgstr "Beschreibung"
-
-#: module/medialibrary/models.py:321
-msgid "media file translation"
-msgstr "Mediendatei-Übersetzung"
-
-#: module/medialibrary/models.py:322
-msgid "media file translations"
-msgstr "Mediendatei-Übersetzungen"
-
-#: module/medialibrary/models.py:345
-#: templates/admin/feincms/page/page/item_editor.html:14
-msgid "Preview"
-msgstr "Vorschau"
-
-#: module/medialibrary/models.py:365
+#: module/medialibrary/modeladmins.py:58
 #, python-format
 msgid "Successfully added %(count)d media file to %(category)s."
 msgid_plural "Successfully added %(count)d media files to %(category)s."
 msgstr[0] "%(count)d Mediendatei zu %(category)s hinzugefügt."
 msgstr[1] "%(count)d Mediendateien zu %(category)s hinzugefügt."
 
-#: module/medialibrary/models.py:383
+#: module/medialibrary/modeladmins.py:76
 msgid "Add selected media files to category"
 msgstr "Ausgewählte zu Kategorie hinzufügen"
 
-#: module/medialibrary/models.py:406
-#, python-format
-msgid ""
-"Cannot overwrite with different file type (attempt to overwrite a "
-"%(old_ext)s with a %(new_ext)s)"
-msgstr "Kann nur gleiche Dateitypen ersetzen (versuchte ein %(old_ext)s mit einem %(new_ext)s zu überschreiben)"
-
-#: module/medialibrary/models.py:394
+#: module/medialibrary/modeladmins.py:85
 #, python-format
 msgid "ZIP file exported as %s"
 msgstr "ZIP-Datei exportiert als %s"
 
-#: module/medialibrary/models.py:396
+#: module/medialibrary/modeladmins.py:87
 #, python-format
 msgid "ZIP file export failed: %s"
 msgstr "ZIP-Datei Export fehlgeschlagen: %s"
 
-#: module/medialibrary/models.py:400
+#: module/medialibrary/modeladmins.py:92
 msgid "Export selected media files as zip file"
 msgstr "Ausgewählte Mediendateien als ZIP exportieren"
 
-#: module/medialibrary/models.py:482
+#: module/medialibrary/modeladmins.py:141
+#: templates/admin/feincms/page/page/item_editor.html:14
+msgid "Preview"
+msgstr "Vorschau"
+
+#: module/medialibrary/modeladmins.py:146 module/medialibrary/models.py:90
+msgid "file size"
+msgstr "Dateigrösse"
+
+#: module/medialibrary/modeladmins.py:151 module/medialibrary/models.py:88
+msgid "created"
+msgstr "Erstellt"
+
+#: module/medialibrary/modeladmins.py:170 module/medialibrary/models.py:87
+msgid "file type"
+msgstr "Dateityp"
+
+#: module/medialibrary/modeladmins.py:191
+msgid "file info"
+msgstr "Dateiinfo"
+
+#: module/medialibrary/modeladmins.py:203
 #, python-format
 msgid "%d files imported"
 msgstr "%d Dateien importiert"
 
-#: module/medialibrary/models.py:484
+#: module/medialibrary/modeladmins.py:205
 #, python-format
 msgid "ZIP import failed: %s"
 msgstr "ZIP-Import schlug fehl: %s"
 
-#: module/medialibrary/models.py:490
+#: module/medialibrary/modeladmins.py:207
 msgid "No input file given"
 msgstr "Keine Datei angegeben"
 
-#: module/page/models.py:217
-msgid "active"
-msgstr "Aktiv"
+#: module/medialibrary/models.py:46
+msgid "parent"
+msgstr "Übergeordnet"
 
-#: module/page/models.py:224 module/page/models.py:729
+#: module/medialibrary/models.py:48 module/page/models.py:142
+msgid "slug"
+msgstr "Slug"
+
+#: module/medialibrary/models.py:52
+msgid "category"
+msgstr "Kategorie"
+
+#: module/medialibrary/models.py:53 module/medialibrary/models.py:92
+msgid "categories"
+msgstr "Kategorien"
+
+#: module/medialibrary/models.py:89
+msgid "copyright"
+msgstr "Copyright"
+
+#: module/medialibrary/models.py:209
+msgid "Image"
+msgstr "Bild"
+
+#: module/medialibrary/models.py:210
+msgid "Video"
+msgstr "Video"
+
+#: module/medialibrary/models.py:211
+msgid "Audio"
+msgstr "Audio"
+
+#: module/medialibrary/models.py:212
+msgid "PDF document"
+msgstr "PDF-Dokument"
+
+#: module/medialibrary/models.py:213
+msgid "Flash"
+msgstr "Flash"
+
+#: module/medialibrary/models.py:214
+msgid "Text"
+msgstr "Text"
+
+#: module/medialibrary/models.py:215
+msgid "Rich Text"
+msgstr "Text"
+
+#: module/medialibrary/models.py:216
+msgid "Zip archive"
+msgstr "ZIP-Archiv"
+
+#: module/medialibrary/models.py:217
+msgid "Microsoft Word"
+msgstr "Microsoft Word"
+
+#: module/medialibrary/models.py:218
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+#: module/medialibrary/models.py:219
+msgid "Microsoft PowerPoint"
+msgstr "Microsoft PowerPoint"
+
+#: module/medialibrary/models.py:220
+msgid "Binary"
+msgstr "Binärdaten"
+
+#: module/medialibrary/models.py:238
+msgid "description"
+msgstr "Beschreibung"
+
+#: module/medialibrary/models.py:241
+msgid "media file translation"
+msgstr "Mediendatei-Übersetzung"
+
+#: module/medialibrary/models.py:242
+msgid "media file translations"
+msgstr "Mediendatei-Übersetzungen"
+
+#: module/page/forms.py:113
+msgid "This URL is already taken by an active page."
+msgstr "Die URL wird schon von einer aktiven Seite verwendet."
+
+#: module/page/forms.py:131
+msgid "This URL is already taken by another active page."
+msgstr "Die URL wird schon von einer anderen aktiven Seite verwendet."
+
+#: module/page/modeladmins.py:40
+msgid "Other options"
+msgstr "Weitere Optionen"
+
+#: module/page/modeladmins.py:88 module/page/models.py:145
 msgid "in navigation"
 msgstr "Im Menü"
 
-#: module/page/models.py:225
+#: module/page/modeladmins.py:99
+msgid "Add child page"
+msgstr "Unterseite hinzufügen"
+
+#: module/page/modeladmins.py:101
+#: templates/admin/feincms/content_inline.html:9
+msgid "View on site"
+msgstr "Auf der Webseite anzeigen"
+
+#: module/page/modeladmins.py:129
+msgid ""
+"The content from the original translation has been copied to the newly "
+"created page."
+msgstr ""
+
+#: module/page/modeladmins.py:143
+msgid "You don't have the necessary permissions to edit this object"
+msgstr "Ungenügende Berechtigung um dieses Objekt zu bearbeiten"
+
+#: module/page/modeladmins.py:158
+msgid "inherited"
+msgstr "geerbt"
+
+#: module/page/modeladmins.py:162
+msgid "extensions"
+msgstr "Erweiterungen"
+
+#: module/page/modeladmins.py:166 module/page/models.py:179
+msgid "is active"
+msgstr "Aktiv"
+
+#: module/page/models.py:138
+msgid "active"
+msgstr "Aktiv"
+
+#: module/page/models.py:146
 msgid "override URL"
 msgstr "Überschriebene URL"
 
-#: module/page/models.py:226
+#: module/page/models.py:147
 msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL. This affects both the navigation and subpages' "
@@ -600,61 +662,25 @@ msgstr ""
 "eine lokale URL handelt. Dieses Feld bestimmt die Navigation und die URLs "
 "von Unterseiten."
 
-#: module/page/models.py:227
+#: module/page/models.py:148
 msgid "redirect to"
 msgstr "Weiterleiten zu"
 
-#: module/page/models.py:228
+#: module/page/models.py:149
 msgid "Target URL for automatic redirects."
 msgstr "Ziel-URL für automatische Weiterleitungen."
 
-#: module/page/models.py:229
+#: module/page/models.py:150
 msgid "Cached URL"
 msgstr "Zwischengespeicherte URL"
 
-#: module/page/models.py:240
+#: module/page/models.py:161
 msgid "page"
 msgstr "Seite"
 
-#: module/page/models.py:241
+#: module/page/models.py:162
 msgid "pages"
 msgstr "Seiten"
-
-#: module/page/models.py:258 module/page/models.py:801
-msgid "is active"
-msgstr "Aktiv"
-
-#: module/page/models.py:639
-msgid "This URL is already taken by an active page."
-msgstr "Die URL wird schon von einer aktiven Seite verwendet."
-
-#: module/page/models.py:657
-msgid "This URL is already taken by another active page."
-msgstr "Die URL wird schon von einer anderen aktiven Seite verwendet."
-
-#: module/page/models.py:681
-msgid "Other options"
-msgstr "Weitere Optionen"
-
-#: module/page/models.py:740
-msgid "Add child page"
-msgstr "Unterseite hinzufügen"
-
-#: module/page/models.py:742 templates/admin/feincms/content_inline.html:9
-msgid "View on site"
-msgstr "Auf der Webseite anzeigen"
-
-#: module/page/models.py:778
-msgid "You don't have the necessary permissions to edit this object"
-msgstr "Ungenügende Berechtigung um dieses Objekt zu bearbeiten"
-
-#: module/page/models.py:793
-msgid "inherited"
-msgstr "geerbt"
-
-#: module/page/models.py:797
-msgid "extensions"
-msgstr "Erweiterungen"
 
 #: module/page/extensions/excerpt.py:9
 msgid "excerpt"
@@ -863,7 +889,7 @@ msgstr "Gelöschtes Element %(verbose_name)s wiederherstellen"
 
 #: templates/admin/feincms/recover_form.html:17
 msgid "Press the save button below to recover this version of the object."
-msgstr ""
+msgstr "Diese Version kann durch Drücken des Speichern-Knopfes wiederhergestellt werden"
 
 #: templates/admin/feincms/revision_form.html:14
 msgid "History"
@@ -876,7 +902,7 @@ msgstr "Alte Version von %(verbose_name)s wiederherstellen"
 
 #: templates/admin/feincms/revision_form.html:28
 msgid "Press the save button below to revert to this version of the object."
-msgstr ""
+msgstr "Diese Version kann durch Drücken des Speichern-Knopfes zurückgeholt werden"
 
 #: templates/admin/feincms/tree_editor.html:32
 msgid "Shortcuts"
@@ -932,7 +958,7 @@ msgstr "Massenupload mit ZIP Dateien:"
 msgid "Overwrite"
 msgstr "Überschreiben"
 
-#: templates/admin/medialibrary/mediafile/change_list.html:21
+#: templates/admin/medialibrary/mediafile/change_list.html:25
 msgid "Send"
 msgstr "Senden"
 
