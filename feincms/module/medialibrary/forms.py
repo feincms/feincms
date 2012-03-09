@@ -26,6 +26,10 @@ class MediaCategoryAdminForm(forms.ModelForm):
 
         return data
 
+    def __init__(self,* args, **kwargs):
+        super(MediaCategoryAdminForm, self).__init__(*args, **kwargs)
+        self.fields['parent'].queryset = Category.objects.exclude(pk=self.instance.pk)
+
 # ------------------------------------------------------------------------
 class MediaFileAdminForm(forms.ModelForm):
     class Meta:
