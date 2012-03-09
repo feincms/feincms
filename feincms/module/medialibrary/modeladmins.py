@@ -31,7 +31,6 @@ from .forms import MediaCategoryAdminForm, MediaFileAdminForm
 # -----------------------------------------------------------------------
 class CategoryAdmin(admin.ModelAdmin):
     form = MediaCategoryAdminForm
-
     list_display      = ['path']
     list_filter       = ['parent']
     list_per_page     = 25
