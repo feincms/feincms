@@ -12,7 +12,19 @@ from django.utils.translation import ugettext_lazy as _
 from feincms import settings
 
 from . import logger
-from .models import MediaFile
+from .models import Category, MediaFile
+
+# ------------------------------------------------------------------------
+class MediaCategoryAdminForm(forms.ModelForm):
+    class Meta:
+        model = Category
+
+    def clean_parent(self):
+        data = self.cleaned_data['parent']
+        if data is not None and self.instance in data.path_list():
+            raise forms.ValidationError(_("This would create a loop in the hierarchy"))
+
+        return data
 
 # ------------------------------------------------------------------------
 class MediaFileAdminForm(forms.ModelForm):
@@ -47,13 +59,5 @@ class MediaFileAdminForm(forms.ModelForm):
             self.instance.original_name = self.instance.file.name
 
         return self.cleaned_data['file']
-
-# ------------------------------------------------------------------------
-class CategoryAdminForm(forms.ModelForm):
-    def clean_parent(self):
-        parent = self.cleaned_data.get('parent')
-        if parent and self.instance == parent:
-            raise forms.ValidationError(_('A category cannot be its own parent.'))
-        return parent
 
 # ------------------------------------------------------------------------
