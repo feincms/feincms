@@ -26,10 +26,11 @@ from ...templatetags import feincms_thumbnail
 from ...translations import admin_translationinline, lookup_translations
 
 from .models import Category, MediaFileTranslation
-from .forms import MediaFileAdminForm
+from .forms import CategoryAdminForm, MediaFileAdminForm
 
 # -----------------------------------------------------------------------
 class CategoryAdmin(admin.ModelAdmin):
+    form              = CategoryAdminForm
     list_display      = ['path']
     list_filter       = ['parent']
     list_per_page     = 25

@@ -49,3 +49,11 @@ class MediaFileAdminForm(forms.ModelForm):
         return self.cleaned_data['file']
 
 # ------------------------------------------------------------------------
+class CategoryAdminForm(forms.ModelForm):
+    def clean_parent(self):
+        parent = self.cleaned_data.get('parent')
+        if parent and self.instance == parent:
+            raise forms.ValidationError(_('A category cannot be its own parent.'))
+        return parent
+
+# ------------------------------------------------------------------------
