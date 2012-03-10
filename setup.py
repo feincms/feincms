@@ -4,7 +4,7 @@ from distutils.core import setup
 import os
 import setuplib
 
-packages, data_files = setuplib.find_files('feincms')
+packages, package_data = setuplib.find_files('feincms')
 
 setup(name='FeinCMS',
     version=__import__('feincms').__version__,
@@ -16,7 +16,7 @@ setup(name='FeinCMS',
     license='BSD License',
     platforms=['OS Independent'],
     packages=packages,
-    data_files=data_files,
+    package_data=package_data,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
