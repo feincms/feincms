@@ -19,7 +19,7 @@ def fullsplit(path, result=None):
     return fullsplit(head, [tail] + result)
 
 
-def find_files(package_dir):
+def find_packages(package_dir):
     """
     Returns a tuple consisting of a ``packages`` list and a ``package_data``
     dictionary suitable for passing on to ``distutils.core.setup``

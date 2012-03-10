@@ -4,7 +4,7 @@ from distutils.core import setup
 import os
 import setuplib
 
-packages, package_data = setuplib.find_files('feincms')
+packages, package_data = setuplib.find_packages('feincms')
 
 setup(name='FeinCMS',
     version=__import__('feincms').__version__,
