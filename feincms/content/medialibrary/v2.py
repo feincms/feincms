@@ -1,5 +1,10 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
 from django.contrib import admin
 from django.db import models
+from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -49,7 +54,7 @@ class MediaFileContent(ContentWithMediaFile):
         cls.add_to_class('type', models.CharField(_('type'),
             max_length=20, choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0]))
 
-    def render(self, **kwargs):
+    def render(self, request, **kwargs):
         ctx = {'content': self}
         ctx.update(kwargs)
 
@@ -58,4 +63,4 @@ class MediaFileContent(ContentWithMediaFile):
             'content/mediafile/%s.html' % self.mediafile.type,
             'content/mediafile/%s.html' % self.type,
             'content/mediafile/default.html',
-            ], ctx)
+            ], ctx, context_instance=RequestContext(request))
