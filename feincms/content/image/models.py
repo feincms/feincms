@@ -56,7 +56,7 @@ class ImageContent(models.Model):
         return render_to_string([
             'content/image/%s.html' % self.position,
             'content/image/default.html',
-            ], {'content': self})
+            ], {'content': self}, context_instance=kwargs.get('context'))
 
     def get_image(self):
         type, separator, size = getattr(self, 'format', '').partition(':')

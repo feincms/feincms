@@ -29,5 +29,5 @@ class FileContent(models.Model):
         return render_to_string([
             'content/file/%s.html' % self.region,
             'content/file/default.html',
-            ], {'content': self})
+            ], {'content': self}, context_instance=kwargs.get('context'))
 
