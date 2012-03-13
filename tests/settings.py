@@ -29,6 +29,7 @@ STATIC_URL = '/static/'
 BASEDIR = os.path.dirname(__file__)
 MEDIA_ROOT = os.path.join(BASEDIR, 'media/')
 STATIC_ROOT = os.path.join(BASEDIR, 'static/')
+SECRET_KEY = 'supersikret'
 
 ROOT_URLCONF = 'tests.urls'
 LANGUAGES = (('en', 'English'), ('de', 'German'))
