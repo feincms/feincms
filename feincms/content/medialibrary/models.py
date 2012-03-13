@@ -14,7 +14,6 @@ from django.conf import settings
 from django.contrib.admin.widgets import AdminRadioSelect
 from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.db import models
-from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -120,14 +119,13 @@ class MediaFileContent(models.Model):
 
         cls.feincms_item_editor_form = MediaFileContentAdminForm
 
-    def render(self, request, **kwargs):
+    def render(self, **kwargs):
         return render_to_string([
             'content/mediafile/%s_%s.html' % (self.mediafile.type, self.position),
             'content/mediafile/%s.html' % self.mediafile.type,
             'content/mediafile/%s.html' % self.position,
             'content/mediafile/default.html',
-            ], { 'content': self }, context_instance=RequestContext(request))
-
+            ], { 'content': self }, context_instance=kwargs.get('context'))
 
     @classmethod
     def default_create_content_type(cls, cms_model):
