@@ -893,30 +893,51 @@ class PagesTestCase(TestCase):
 
         self.login()
 
-        self.create_page('Page 1')
+        self.create_page('Page 1') # 1
         self.create_page('Page 1.1', 1)
-        self.create_page('Page 1.2', 1)
+        self.create_page('Page 1.2', 1) # 3
         self.create_page('Page 1.2.1', 3)
         self.create_page('Page 1.2.2', 3)
         self.create_page('Page 1.2.3', 3)
         self.create_page('Page 1.3', 1)
 
-        self.create_page('Page 2')
+        self.create_page('Page 2') # 8
         self.create_page('Page 2.1', 8)
         self.create_page('Page 2.2', 8)
         self.create_page('Page 2.3', 8)
 
-        self.create_page('Page 3')
+        self.create_page('Page 3') # 12
         self.create_page('Page 3.1', 12)
         self.create_page('Page 3.2', 12)
-        self.create_page('Page 3.3', 12)
-        self.create_page('Page 3.3.1', 15)
+        self.create_page('Page 3.3', 12) # 15
+        self.create_page('Page 3.3.1', 15) # 16
         self.create_page('Page 3.3.1.1', 16)
         self.create_page('Page 3.3.2', 15)
 
-        self.create_page('Page 4')
+        self.create_page('Page 4') # 19
         self.create_page('Page 4.1', 19)
         self.create_page('Page 4.2', 19)
+
+        """
+        Creates the following structure:
+
+            1 (1) -+- 1.1 (2)
+                   +- 1.2 (3) -+- 1.2.1 (4)
+                   |           +- 1.2.2 (5)
+                   |           +- 1.2.3 (6)
+                   +- 1.3 (7)
+
+            2 (8) -+- 2.1 (9)
+                   +- 2.2 (10)
+                   +- 2.3 (11)
+
+            3 (12) -+- 3.1 (13)
+                    +- 3.2 (14)
+                    +- 3.3 (15) -+- 3.3.1 (16) --- 3.3.1.1 (17)
+                                 +- 3.3.2 (18)
+            4 (19) -+- 4.1 (20)
+                    +- 4.2 (21)
+        """
 
         Page.objects.all().update(active=True, in_navigation=True)
         Page.objects.filter(id__in=(5, 9, 19)).update(in_navigation=False)
@@ -961,6 +982,20 @@ class PagesTestCase(TestCase):
             self.assertEqual(
                 template.Template(t).render(template.Context(c)),
                 r)
+
+        # Now check that disabling a page also disables it in Navigation:
+        p = Page.objects.get(pk=15)
+        tmpl = '{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=3 %}{% for p in nav %}{{ p.pk }}{% if not forloop.last %},{% endif %}{% endfor %}'
+
+        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
+        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',), "Original navigation")
+
+        p.active = False
+        p.save()
+        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
+        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14',), "Navigation after disabling intermediate page")
+
+#        print "**********", data
 
     def test_18_default_render_method(self):
         """
