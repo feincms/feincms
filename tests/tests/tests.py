@@ -2,39 +2,16 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from datetime import datetime, timedelta
-import os
-import re
-
-from django import forms, template
-from django.conf import settings
-from django.contrib.auth.models import User, AnonymousUser
-from django.contrib.contenttypes.models import ContentType
-from django.core import mail
-from django.core.urlresolvers import reverse
-from django.db import models
-from django.contrib.sites.models import Site
-from django.http import Http404, HttpResponseBadRequest
-from django.template import TemplateDoesNotExist
-from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User
 from django.test import TestCase
 
-from feincms import settings as feincms_settings
-from feincms.content.application.models import _empty_reverse_cache
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
-from feincms.content.image.models import ImageContent
-from feincms.content.raw.models import RawContent
-from feincms.content.richtext.models import RichTextContent
 
-from feincms.context_processors import add_page_if_missing
-from feincms.models import Region, Template, Base, ContentProxy
+from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
-from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page import processors
 from feincms.module.page.models import Page
-from feincms.templatetags import feincms_tags
-from feincms.translations import short_language_code
 from feincms.utils import collect_dict_values, get_object
 
 # ------------------------------------------------------------------------
