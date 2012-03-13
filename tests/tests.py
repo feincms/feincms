@@ -2,6 +2,8 @@
 
 from datetime import datetime, timedelta
 import os
+import re
+
 
 from django import forms, template
 from django.conf import settings
@@ -18,7 +20,7 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase
 
 from feincms import settings as feincms_settings
-from feincms.content.application.models import ApplicationContent, _empty_reverse_cache, reverse
+from feincms.content.application.models import _empty_reverse_cache, app_reverse
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
 from feincms.content.image.models import ImageContent
@@ -226,9 +228,9 @@ Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
                          'ct_tracker')
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
-Page.register_request_processors(processors.etag_request_processor)
-Page.register_response_processors(processors.etag_response_processor)
-Page.register_response_processors(processors.debug_sql_queries_response_processor())
+Page.register_request_processor(processors.etag_request_processor)
+Page.register_response_processor(processors.etag_response_processor)
+Page.register_response_processor(processors.debug_sql_queries_response_processor())
 
 
 class PagesTestCase(TestCase):
@@ -597,7 +599,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(mf.translation.short_language_code(), short_language_code())
         self.assertNotEqual(mf.get_absolute_url(), '')
         self.assertEqual(unicode(mf), 'something')
-        self.assertTrue(unicode(mf.file_type()).startswith(u'Image'))
+        self.assertTrue(mf.type == 'image')
 
         self.assertEqual(MediaFile.objects.only_language('de').count(), 0)
         self.assertEqual(MediaFile.objects.only_language('en').count(), 0)
@@ -619,7 +621,7 @@ class PagesTestCase(TestCase):
         page._ct_inventory = None
 
         self.assertTrue('somefile.jpg' in page.content.main[2].render())
-        self.assertTrue('<a href="somefile.jpg">thetitle</a>' in page.content.main[3].render())
+        self.assertTrue(re.search('<a .*href="somefile\.jpg">.*thetitle.*</a>', page.content.main[3].render(), re.MULTILINE + re.DOTALL) is not None)
 
         page.mediafilecontent_set.update(mediafile=3)
         # this should not raise
@@ -1331,7 +1333,7 @@ class PagesTestCase(TestCase):
             'data': open('test.zip'),
             }), '/admin/medialibrary/mediafile/')
 
-        self.assertEqual(MediaFile.objects.count(), 11)
+        self.assertEqual(MediaFile.objects.count(), 11, "Upload of media files with ZIP does not work")
 
         self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
             'file': open(os.path.join(os.path.dirname(os.path.dirname(__file__)),
