@@ -1,4 +1,8 @@
+# ------------------------------------------------------------------------
 # coding=utf-8
+# ------------------------------------------------------------------------
+
+from __future__ import absolute_import
 
 from datetime import datetime, timedelta
 import os
@@ -10,7 +14,6 @@ from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
-from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.sites.models import Site
@@ -20,225 +23,27 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase
 
 from feincms import settings as feincms_settings
-from feincms.content.application.models import _empty_reverse_cache, app_reverse
-from feincms.content.contactform.models import ContactFormContent, ContactForm
-from feincms.content.file.models import FileContent
+from feincms.content.application.models import _empty_reverse_cache
 from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
-from feincms.content.video.models import VideoContent
 
 from feincms.context_processors import add_page_if_missing
-from feincms.models import Region, Template, Base, ContentProxy
-from feincms.module.blog.models import Entry
+from feincms.models import ContentProxy
 from feincms.module.medialibrary.models import Category, MediaFile
-from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
-from feincms.utils import collect_dict_values, get_object
 
+from .tests import Empty
 
-class Empty(object):
-    """
-    Helper class to use as request substitute (or whatever)
-    """
-
-    pass
-
-class TranslationsTest(TestCase):
-    def test_short_language_code(self):
-        # this is quite stupid, but it's the first time I do something
-        # with TestCase
-
-        import feincms.translations
-        import doctest
-
-        doctest.testmod(feincms.translations)
-
-
-class ModelsTest(TestCase):
-    def test_region(self):
-        # Creation should not fail
-
-        r = Region('region', 'region title')
-        t = Template('base template', 'base.html', (
-            ('region', 'region title'),
-            Region('region2', 'region2 title'),
-            ))
-
-        # I'm not sure whether this test tests anything at all
-        self.assertEqual(r.key, t.regions[0].key)
-        self.assertEqual(unicode(r), 'region title')
-
-
-class UtilsTest(TestCase):
-    def test_get_object(self):
-        self.assertRaises(AttributeError, lambda: get_object('feincms.does_not_exist'))
-        self.assertRaises(ImportError, lambda: get_object('feincms.does_not_exist.fn'))
-
-        self.assertEqual(get_object, get_object('feincms.utils.get_object'))
-
-    def test_collect_dict_values(self):
-        self.assertEqual({'a': [1, 2], 'b': [3]},
-            collect_dict_values([('a', 1), ('a', 2), ('b', 3)]))
-
-
-class ExampleCMSBase(Base):
-    pass
-
-ExampleCMSBase.register_regions(('region', 'region title'), ('region2', 'region2 title'))
-
-
-class ExampleCMSBase2(Base):
-        pass
-
-ExampleCMSBase2.register_regions(('region', 'region title'),
-        ('region2', 'region2 title'))
-
-
-class CMSBaseTest(TestCase):
-    def test_01_simple_content_type_creation(self):
-        self.assertEqual(ExampleCMSBase.content_type_for(FileContent), None)
-
-        ExampleCMSBase.create_content_type(ContactFormContent)
-        ExampleCMSBase.create_content_type(FileContent, regions=('region2',))
-
-        # no POSITION_CHOICES, should raise
-        self.assertRaises(ImproperlyConfigured,
-                          lambda: ExampleCMSBase.create_content_type(ImageContent))
-
-        ExampleCMSBase.create_content_type(RawContent)
-        ExampleCMSBase.create_content_type(RichTextContent)
-
-        # test creating a cotent with arguments, but no initialize_type classmethod
-        ExampleCMSBase.create_content_type(VideoContent, arbitrary_arg='arbitrary_value')
-
-        # content_type_for should return None if it does not have a subclass registered
-        self.assertEqual(ExampleCMSBase.content_type_for(Empty), None)
-
-        self.assertTrue('filecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).keys())
-        self.assertTrue('filecontent' in dict(ExampleCMSBase.template.regions[1].content_types).keys())
-
-    def test_02_rsscontent_creation(self):
-        # this test resides in its own method because the required feedparser
-        # module is not available everywhere
-        from feincms.content.rss.models import RSSContent
-        type = ExampleCMSBase.create_content_type(RSSContent)
-        obj = type()
-
-        self.assertTrue('yahoo' not in obj.render())
-
-        obj.link = 'http://rss.news.yahoo.com/rss/topstories'
-        obj.cache_content(save=False)
-
-        self.assertTrue('yahoo' in obj.render())
-
-    #Creating a content type twice isn't forbidden anymore
-    #def test_03_double_creation(self):
-    #    # creating a content type twice is forbidden
-    #    self.assertRaises(ImproperlyConfigured,
-    #        lambda: ExampleCMSBase.create_content_type(RawContent))
-
-    def test_04_mediafilecontent_creation(self):
-        # the medialibrary needs to be enabled, otherwise this test fails
-
-        from feincms.content.medialibrary.models import MediaFileContent
-
-        # no POSITION_CHOICES, should raise
-        self.assertRaises(ImproperlyConfigured,
-                          lambda: ExampleCMSBase.create_content_type(MediaFileContent))
-
-    def test_05_non_abstract_content_type(self):
-        # Should not be able to create a content type from a non-abstract base type
-        class TestContentType(models.Model):
-            pass
-
-        self.assertRaises(ImproperlyConfigured,
-            lambda: ExampleCMSBase.create_content_type(TestContentType))
-
-    def test_06_videocontent(self):
-        type = ExampleCMSBase.content_type_for(VideoContent)
-        obj = type()
-        obj.video = 'http://www.youtube.com/watch?v=zmj1rpzDRZ0'
-
-        self.assertTrue('x-shockwave-flash' in obj.render())
-
-        self.assertEqual(getattr(type, 'arbitrary_arg'), 'arbitrary_value')
-
-        obj.video = 'http://www.example.com/'
-
-        self.assertTrue(obj.video in obj.render())
-
-    def test_07_default_render_method(self):
-        class SomethingElse(models.Model):
-            class Meta:
-                abstract = True
-
-            def render_region(self):
-                return 'hello'
-
-        type = ExampleCMSBase.create_content_type(SomethingElse)
-        obj = type()
-        self.assertRaises(NotImplementedError, lambda: obj.render())
-
-        obj.region = 'region'
-        self.assertEqual(obj.render(), 'hello')
-
-    def test_08_creating_two_content_types_in_same_application(self):
-        ExampleCMSBase.create_content_type(RawContent)
-        ct = ExampleCMSBase.content_type_for(RawContent)
-        self.assertEqual(ct._meta.db_table, 'tests_examplecmsbase_rawcontent')
-
-        ExampleCMSBase2.create_content_type(RawContent, class_name='RawContent2')
-        ct2 = ExampleCMSBase2.content_type_for(RawContent)
-        self.assertEqual(ct2._meta.db_table, 'tests_examplecmsbase2_rawcontent2')
-
-    def test_09_related_objects_cache(self):
-        """
-        We need to define a model with relationship to our Base *after* all
-        content types have been registered; previously _fill_*_cache methods
-        were called during each content type registration, so any new related
-        objects added after the last content type time missed the boat. Now we
-        delete the cache so hopefully _fill_*_cache* won't be called until all
-        related models have been defined.
-        """
-        class Attachment(models.Model):
-            base = models.ForeignKey(ExampleCMSBase, related_name='test_related_name')
-
-        related_models = map(
-            lambda x: x.model, ExampleCMSBase._meta.get_all_related_objects())
-
-        self.assertTrue(Attachment in related_models)
-        self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
-        #self.assertFalse(hasattr(Attachment, 'anycontents'))
-
-        class AnyContent(models.Model):
-            attachment = models.ForeignKey(Attachment, related_name='anycontents')
-            class Meta:
-                abstract = True
-        ct = ExampleCMSBase.create_content_type(AnyContent)
-
-        self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
-        self.assertTrue(hasattr(Attachment, 'anycontents'))
-
-
-Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
-                         'titles', 'translations', 'seo', 'changedate',
-                         'ct_tracker')
-Page.create_content_type(ContactFormContent, form=ContactForm)
-Page.create_content_type(FileContent)
-Page.register_request_processor(processors.etag_request_processor)
-Page.register_response_processor(processors.etag_response_processor)
-Page.register_response_processor(processors.debug_sql_queries_response_processor())
-
+# ------------------------------------------------------------------------
 
 class PagesTestCase(TestCase):
     def setUp(self):
         u = User(username='test', is_active=True, is_staff=True, is_superuser=True)
         u.set_password('test')
         u.save()
-
 
         self.site_1 = Site.objects.all()[0]
 
@@ -893,30 +698,51 @@ class PagesTestCase(TestCase):
 
         self.login()
 
-        self.create_page('Page 1')
+        self.create_page('Page 1') # 1
         self.create_page('Page 1.1', 1)
-        self.create_page('Page 1.2', 1)
+        self.create_page('Page 1.2', 1) # 3
         self.create_page('Page 1.2.1', 3)
         self.create_page('Page 1.2.2', 3)
         self.create_page('Page 1.2.3', 3)
         self.create_page('Page 1.3', 1)
 
-        self.create_page('Page 2')
+        self.create_page('Page 2') # 8
         self.create_page('Page 2.1', 8)
         self.create_page('Page 2.2', 8)
         self.create_page('Page 2.3', 8)
 
-        self.create_page('Page 3')
+        self.create_page('Page 3') # 12
         self.create_page('Page 3.1', 12)
         self.create_page('Page 3.2', 12)
-        self.create_page('Page 3.3', 12)
-        self.create_page('Page 3.3.1', 15)
+        self.create_page('Page 3.3', 12) # 15
+        self.create_page('Page 3.3.1', 15) # 16
         self.create_page('Page 3.3.1.1', 16)
         self.create_page('Page 3.3.2', 15)
 
-        self.create_page('Page 4')
+        self.create_page('Page 4') # 19
         self.create_page('Page 4.1', 19)
         self.create_page('Page 4.2', 19)
+
+        """
+        Creates the following structure:
+
+            1 (1) -+- 1.1 (2)
+                   +- 1.2 (3) -+- 1.2.1 (4)
+                   |           +- 1.2.2 (5)
+                   |           +- 1.2.3 (6)
+                   +- 1.3 (7)
+
+            2 (8) -+- 2.1 (9)
+                   +- 2.2 (10)
+                   +- 2.3 (11)
+
+            3 (12) -+- 3.1 (13)
+                    +- 3.2 (14)
+                    +- 3.3 (15) -+- 3.3.1 (16) --- 3.3.1.1 (17)
+                                 +- 3.3.2 (18)
+            4 (19) -+- 4.1 (20)
+                    +- 4.2 (21)
+        """
 
         Page.objects.all().update(active=True, in_navigation=True)
         Page.objects.filter(id__in=(5, 9, 19)).update(in_navigation=False)
@@ -961,6 +787,18 @@ class PagesTestCase(TestCase):
             self.assertEqual(
                 template.Template(t).render(template.Context(c)),
                 r)
+
+        # Now check that disabling a page also disables it in Navigation:
+        p = Page.objects.get(pk=15)
+        tmpl = '{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=3 %}{% for p in nav %}{{ p.pk }}{% if not forloop.last %},{% endif %}{% endfor %}'
+
+        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
+        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',), "Original navigation")
+
+        p.active = False
+        p.save()
+        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
+        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14',), "Navigation after disabling intermediate page")
 
     def test_18_default_render_method(self):
         """
@@ -1442,7 +1280,6 @@ class PagesTestCase(TestCase):
         r = self.client.get('/foo/')
         self.assertEquals(r.status_code, 404)
 
-
     def test_35_access_with_extra_path(self):
         self.login()
         self.create_page(title='redirect again', override_url='/', redirect_to='/somewhere/', active=True)
@@ -1462,84 +1299,3 @@ class PagesTestCase(TestCase):
         self.assertEquals(r.status_code, 404)
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
-
-Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
-class BlogTestCase(TestCase):
-    def setUp(self):
-        u = User(username='test', is_active=True, is_staff=True, is_superuser=True)
-        u.set_password('test')
-        u.save()
-
-        Entry.register_regions(('main', 'Main region'), ('another', 'Another region'))
-
-    def login(self):
-        self.assertTrue(self.client.login(username='test', password='test'))
-
-    def create_entry(self):
-        entry = Entry.objects.create(
-            published=True,
-            title='Something',
-            slug='something',
-            language='en')
-
-        entry.rawcontent_set.create(
-            region='main',
-            ordering=0,
-            text='Something awful')
-
-        return entry
-
-    def create_entries(self):
-        entry = self.create_entry()
-
-        Entry.objects.create(
-            published=True,
-            title='Something 2',
-            slug='something-2',
-            language='de',
-            translation_of=entry)
-
-        Entry.objects.create(
-            published=True,
-            title='Something 3',
-            slug='something-3',
-            language='de')
-
-    def test_01_smoke_test_admin(self):
-        self.create_entry()
-
-        self.login()
-        self.assertEqual(self.client.get('/admin/blog/entry/').status_code, 200)
-        self.assertEqual(self.client.get('/admin/blog/entry/1/').status_code, 200)
-
-    def test_02_translations(self):
-        self.create_entries()
-
-        entries = Entry.objects.in_bulk((1, 2, 3))
-
-        self.assertEqual(len(entries[1].available_translations()), 1)
-        self.assertEqual(len(entries[2].available_translations()), 1)
-        self.assertEqual(len(entries[3].available_translations()), 0)
-
-    def test_03_admin(self):
-        self.login()
-        self.create_entries()
-        self.assertEqual(self.client.get('/admin/blog/entry/').status_code, 200)
-        self.assertEqual(self.client.get('/admin/blog/entry/1/').status_code, 200)
-
-
-class CleanseTestCase(TestCase):
-    def test_01_cleanse(self):
-        from feincms.utils.html.cleanse import cleanse_html
-
-        entries = [
-            (u'<p>&nbsp;</p>', u''),
-            (u'<span style="font-weight: bold;">Something</span><p></p>', u'<strong>Something</strong>'),
-            (u'<p>abc <span>def <em>ghi</em> jkl</span> mno</p>', u'<p>abc def <em>ghi</em> jkl mno</p>'),
-            (u'<span style="font-style: italic;">Something</span><p></p>', u'<em>Something</em>'),
-            (u'<p>abc<br />def</p>', u'<p>abc<br />def</p>'),
-            (u'<p><p><p>&nbsp;</p> </p><p><br /></p></p>', u' '),
-            ]
-
-        for a, b in entries:
-            self.assertEqual(cleanse_html(a), b)
