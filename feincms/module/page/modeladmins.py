@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import
 
+from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
@@ -98,7 +99,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%sicon_addlink.gif" alt="%s"></a>' % (
                 page.pk, _('Add child page'), settings._HACK_ADMIN_MEDIA_IMAGES, _('Add child page')))
         actions.insert(0, u'<a href="%s" title="%s"><img src="%sfeincms/img/selector-search.gif" alt="%s" /></a>' % (
-            preview_url, _('View on site'), settings.STATIC_URL, _('View on site')))
+            preview_url, _('View on site'), django_settings.STATIC_URL, _('View on site')))
 
         return actions
 
