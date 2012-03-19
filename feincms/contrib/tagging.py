@@ -16,6 +16,7 @@ from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _
 
 from tagging.fields import TagField
+from tagging import AlreadyRegistered
 
 # ------------------------------------------------------------------------
 def taglist_to_string(taglist):
@@ -103,7 +104,10 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
     cls.add_to_class(field_name, (select_field and TagSelectField or TagField)(field_name.capitalize(), blank=True))
     # use another name for the tag descriptor
     # See http://code.google.com/p/django-tagging/issues/detail?id=95 for the reason why
-    tagging_register(cls, tag_descriptor_attr='tagging_' + field_name)
+    try:
+        tagging_register(cls, tag_descriptor_attr='tagging_' + field_name)
+    except AlreadyRegistered:
+        return
 
     if admin_cls:
         admin_cls.list_display.append(field_name)
