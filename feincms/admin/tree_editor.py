@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
+from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.views import main
 from django.db.models import Q
@@ -26,8 +31,8 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
         title = 'title="%s" ' % title
     else:
         title = ''
-    return mark_safe(u'<img src="%sicon-%s.gif" alt="%s" %s/>' %
-            (settings._HACK_ADMIN_MEDIA_IMAGES, BOOLEAN_MAPPING[field_val], alt_text, title))
+    return mark_safe(u'<img src="%s/feincms/img/icon-%s.gif" alt="%s" %s/>' %
+            (django_settings.STATIC_URL, BOOLEAN_MAPPING[field_val], alt_text, title))
 
 
 def _build_tree_structure(cls):
