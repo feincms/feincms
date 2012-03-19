@@ -6,7 +6,7 @@
             var elem = $(this);
 
             elem.siblings('span').remove().end();
-            elem.css('width', '50px').after("<span class=\"mediafile\" id=\"lookup_"+this.id+"\"> <img src=\"{% admin_media_prefix %}img/admin/selector-search.gif\" alt=\"{% trans "Search" %}\" /></span>");
+            elem.css('width', '50px').after("<span class=\"mediafile\" id=\"lookup_"+this.id+"\"> <img src=\"{{ STATIC_URL }}feincms/img/selector-search.gif\" alt=\"{% trans "Search" %}\" /></span>");
         });
     });
     $(function(){
