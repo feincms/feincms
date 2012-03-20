@@ -82,7 +82,9 @@ def app_reverse(parser, token):
         {% app_reverse "mymodel_detail" "myapp.urls" name1=value1 name2=value2 %}
 
     The first argument is a path to a view. The second argument is the URLconf
-    under which this app is known to the ApplicationContent.
+    under which this app is known to the ApplicationContent. The second argument
+    may also be a request object if you want to reverse an URL belonging to the
+    current application content.
 
     Other arguments are space-separated values that will be filled in place of
     positional and keyword arguments in the URL. Don't mix positional and
