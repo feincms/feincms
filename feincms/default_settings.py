@@ -36,13 +36,6 @@ FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(settings, 'FEINCMS_RICHTEXT_INIT_CONTEXT
 FEINCMS_JQUERY_NO_CONFLICT = \
     getattr(settings, 'FEINCMS_JQUERY_NO_CONFLICT', False)
 
-# Django's admin media files have been transitioned over to standard staticfiles.
-# ADMIN_MEDIA_PREFIX isn't available anymore with newer versions (Django >= 1.4).
-if hasattr(settings, 'ADMIN_MEDIA_PREFIX'):
-    _HACK_ADMIN_MEDIA_IMAGES = settings.ADMIN_MEDIA_PREFIX + 'img/admin/'
-else:
-    _HACK_ADMIN_MEDIA_IMAGES = settings.STATIC_URL + 'admin/img/'
-
 # ------------------------------------------------------------------------
 # Settings for the page module
 
