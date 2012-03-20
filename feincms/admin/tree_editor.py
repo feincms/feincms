@@ -31,7 +31,7 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
         title = 'title="%s" ' % title
     else:
         title = ''
-    return mark_safe(u'<img src="%s/feincms/img/icon-%s.gif" alt="%s" %s/>' %
+    return mark_safe(u'<img src="%sfeincms/img/icon-%s.gif" alt="%s" %s/>' %
             (django_settings.STATIC_URL, BOOLEAN_MAPPING[field_val], alt_text, title))
 
 
