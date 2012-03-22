@@ -405,7 +405,7 @@ def create_base_model(inherit_from=models.Model):
                 cls._feincms_templates = SortedDict()
                 cls.TEMPLATES_CHOICES = []
 
-            instances = getattr(cls, '_feincms_templates', SortedDict())
+            instances = cls._feincms_templates
 
             for template in templates:
                 if not isinstance(template, Template):
