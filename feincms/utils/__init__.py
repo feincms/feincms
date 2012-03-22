@@ -18,11 +18,8 @@ def get_object(path, fail_silently=False):
     if not isinstance(path, (str, unicode)):
         return path
 
-    try:
-        dot = path.rindex('.')
-        mod, fn = path[:dot], path[dot+1:]
-    except ValueError:
-        mod, fn = callback, ''
+    dot = path.rindex('.')
+    mod, fn = path[:dot], path[dot+1:]
 
     try:
         return getattr(import_module(mod), fn)

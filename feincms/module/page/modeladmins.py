@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 
-from feincms import settings, ensure_completely_loaded
+from feincms import ensure_completely_loaded
 from feincms.admin import item_editor, tree_editor
 
 # ------------------------------------------------------------------------

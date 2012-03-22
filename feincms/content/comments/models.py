@@ -12,16 +12,13 @@ Embed a comment list and comment form anywhere. Uses the standard
 ``django.contrib.comments`` application.
 """
 
-from django import forms
 from django.contrib import comments
 from django.contrib.comments.models import Comment
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-
 
 # ------------------------------------------------------------------------
 class CommentsContent(models.Model):
@@ -35,6 +32,7 @@ class CommentsContent(models.Model):
     @classmethod
     def initialize_type(cls):
         from feincms.admin.item_editor import ItemEditorForm
+
         class CommentContentAdminForm(ItemEditorForm):
             def __init__(self, *args, **kwargs):
                 super(CommentContentAdminForm, self).__init__(*args, **kwargs)
