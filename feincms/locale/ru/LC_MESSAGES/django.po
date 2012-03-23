@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-05 06:19-0500\n"
+"POT-Creation-Date: 2012-03-23 11:30+0700\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Mikhail Korobov <kmike84@gmail.com>\n"
 "Language-Team: RUSSIAN\n"
@@ -18,16 +18,16 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: models.py:421 content/template/models.py:39 content/template/models.py:57
+#: models.py:419 content/template/models.py:59
 msgid "template"
 msgstr "шаблон"
 
-#: models.py:553
+#: models.py:550
 msgid "ordering"
 msgstr "сортировка"
 
-#: translations.py:171 module/blog/extensions/translations.py:17
-#: module/page/extensions/translations.py:102
+#: translations.py:259 module/blog/extensions/translations.py:17
+#: module/extensions/translations.py:102
 msgid "language"
 msgstr "язык"
 
@@ -35,48 +35,49 @@ msgstr "язык"
 msgid "All"
 msgstr "Все"
 
-#: admin/filterspecs.py:57 module/page/models.py:261
+#: admin/filterspecs.py:57 module/page/models.py:222
 msgid "Parent"
 msgstr "Родитель"
 
 #: admin/filterspecs.py:95
+#: templates/admin/medialibrary/mediafile/change_list.html:15
 msgid "Category"
 msgstr "Категория"
 
-#: admin/item_editor.py:150
+#: admin/item_editor.py:163
 #, python-format
 msgid "Change %s"
 msgstr "Изменить %s"
 
-#: admin/tree_editor.py:218 content/rss/models.py:20
-#: content/section/models.py:32 module/blog/models.py:32
-#: module/medialibrary/models.py:48 module/page/models.py:259
-#: module/page/models.py:338
+#: admin/tree_editor.py:215 content/rss/models.py:20
+#: content/section/models.py:31 module/blog/models.py:30
+#: module/medialibrary/models.py:55 module/page/models.py:220
+#: module/page/models.py:299
 msgid "title"
 msgstr "заголовок"
 
-#: admin/tree_editor.py:396
+#: admin/tree_editor.py:385
 #, python-format
 msgid "%s has been moved to a new position."
 msgstr "Узел \"%s\" был перемещен на новое место."
 
-#: admin/tree_editor.py:400
+#: admin/tree_editor.py:389
 msgid "Did not understand moving instruction."
 msgstr "Перемещение не удалось. Непонятная команда."
 
-#: admin/tree_editor.py:409
+#: admin/tree_editor.py:398
 msgid "actions"
 msgstr "действия"
 
-#: content/application/models.py:241
+#: content/application/models.py:263
 msgid "application content"
-msgstr ""
+msgstr "содержимое из приложения"
 
-#: content/application/models.py:242
+#: content/application/models.py:264
 msgid "application contents"
-msgstr ""
+msgstr "содержимое из приложения"
 
-#: content/application/models.py:273
+#: content/application/models.py:295
 msgid "application"
 msgstr "приложение"
 
@@ -86,21 +87,19 @@ msgstr "включены"
 
 #: content/comments/models.py:28
 msgid "New comments may be added"
-msgstr ""
+msgstr "Можно добавить комментарии"
 
 #: content/comments/models.py:32 content/comments/models.py:33
-#, fuzzy
 msgid "comments"
-msgstr "содержание"
+msgstr "комментарии"
 
 #: content/comments/models.py:48
-#, fuzzy
 msgid "public"
 msgstr "опубликовано"
 
 #: content/comments/models.py:48
 msgid "not public"
-msgstr ""
+msgstr "не опубликовано"
 
 #: content/contactform/models.py:18
 msgid "name"
@@ -116,7 +115,7 @@ msgstr "тема"
 
 #: content/contactform/models.py:23 content/raw/models.py:14
 msgid "content"
-msgstr "содержание"
+msgstr "содержимое"
 
 #: content/contactform/models.py:34
 msgid "contact form"
@@ -127,7 +126,7 @@ msgid "contact forms"
 msgstr "формы обратной связи"
 
 #: content/file/models.py:16 content/file/models.py:20
-#: module/medialibrary/models.py:90
+#: module/medialibrary/models.py:105
 msgid "file"
 msgstr "файл"
 
@@ -137,11 +136,11 @@ msgstr "файлы"
 
 #: content/image/models.py:24 content/image/models.py:28
 msgid "image"
-msgstr "картинка"
+msgstr "изображение"
 
 #: content/image/models.py:29
 msgid "images"
-msgstr "картинки"
+msgstr "изображения"
 
 #: content/image/models.py:42 content/medialibrary/models.py:105
 #: content/medialibrary/models.py:113
@@ -154,43 +153,43 @@ msgstr "(без подписи)"
 
 #: content/medialibrary/models.py:87 content/medialibrary/models.py:101
 #: content/medialibrary/models.py:111 content/medialibrary/v2.py:44
-#: content/section/models.py:48 module/medialibrary/fields.py:45
-#: module/medialibrary/models.py:102
+#: content/section/models.py:47 module/medialibrary/fields.py:45
+#: module/medialibrary/models.py:118
 msgid "media file"
 msgstr "медиа файл"
 
 #: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
-#: module/medialibrary/models.py:103
+#: module/medialibrary/models.py:119
 msgid "media files"
 msgstr "медиа файлы"
 
-#: content/medialibrary/models.py:131
+#: content/medialibrary/models.py:130
 msgid "block"
 msgstr "блок"
 
-#: content/medialibrary/models.py:132
+#: content/medialibrary/models.py:131
 msgid "left"
 msgstr "слева"
 
-#: content/medialibrary/models.py:133
+#: content/medialibrary/models.py:132
 msgid "right"
 msgstr "справа"
 
-#: content/medialibrary/v2.py:49 content/section/models.py:53
-#: content/section/models.py:61 content/table/models.py:81
+#: content/medialibrary/v2.py:49 content/section/models.py:52
+#: content/section/models.py:60 content/table/models.py:81
 msgid "type"
 msgstr "тип"
 
 #: content/raw/models.py:18
 msgid "raw content"
-msgstr ""
+msgstr "сырые данные"
 
 #: content/raw/models.py:19
 msgid "raw contents"
-msgstr ""
+msgstr "сырые данные"
 
 #: content/richtext/models.py:15 content/richtext/models.py:85
-#: content/section/models.py:33
+#: content/section/models.py:32
 msgid "text"
 msgstr "текст"
 
@@ -200,7 +199,7 @@ msgstr ""
 
 #: content/richtext/models.py:27
 msgid "Ignore the HTML validation warnings"
-msgstr ""
+msgstr "Игнорировать предупреждения о некорректном HTML"
 
 #: content/richtext/models.py:51
 #, python-format
@@ -208,20 +207,24 @@ msgid ""
 "HTML validation produced %(count)d warnings. Please review the updated "
 "content below before continuing: %(messages)s"
 msgstr ""
+"Во время проверки HTML обнаружено %(count)d предупреджений. Перед тем как "
+"продолжить обратите внимание на следующее: %(messages)s"
 
 #: content/richtext/models.py:89
 msgid "rich text"
-msgstr ""
+msgstr "форматированный текст"
 
 #: content/richtext/models.py:90
 msgid "rich texts"
-msgstr ""
+msgstr "форматированный тексты"
 
 #: content/rss/models.py:21
 msgid ""
 "The rss field is updated several times a day. A change in the title will "
 "only be visible on the home page after the next feed update."
 msgstr ""
+"Данное поле обновляется несколько раз в день. Изменения в названии на "
+"домашней странице будут видны только после следующегог обновления"
 
 #: content/rss/models.py:22
 msgid "link"
@@ -247,15 +250,13 @@ msgstr ""
 msgid "RSS feeds"
 msgstr ""
 
-#: content/section/models.py:37
-#, fuzzy
+#: content/section/models.py:36
 msgid "section"
-msgstr "действия"
+msgstr "секция"
 
-#: content/section/models.py:38
-#, fuzzy
+#: content/section/models.py:37
 msgid "sections"
-msgstr "действия"
+msgstr "секции"
 
 #: content/table/models.py:62
 msgid "plain"
@@ -263,11 +264,11 @@ msgstr ""
 
 #: content/table/models.py:63
 msgid "title row"
-msgstr ""
+msgstr "заголовок строки"
 
 #: content/table/models.py:65
 msgid "title row and column"
-msgstr ""
+msgstr "заголовок строки и столбца"
 
 #: content/table/models.py:71
 msgid "table"
@@ -281,19 +282,19 @@ msgstr "таблицы"
 msgid "data"
 msgstr "данные"
 
-#: content/template/models.py:62
+#: content/template/models.py:51
 msgid "template content"
 msgstr "содержимое шаблона"
 
-#: content/template/models.py:63
+#: content/template/models.py:52
 msgid "template contents"
 msgstr "содержимое шаблона"
 
-#: content/video/models.py:23
+#: content/video/models.py:25
 msgid "video link"
 msgstr "ссылка на видео"
 
-#: content/video/models.py:24
+#: content/video/models.py:26
 msgid ""
 "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
 "com/watch?v=zmj1rpzDRZ0"
@@ -301,37 +302,41 @@ msgstr ""
 "Это должно быть ссылкой на видео, размещенное на youtube или vimeo, "
 "например, http://www.youtube.com/watch?v=zmj1rpzDRZ0"
 
-#: content/video/models.py:28
+#: content/video/models.py:30
 msgid "video"
 msgstr "видео"
 
-#: content/video/models.py:29
+#: content/video/models.py:31
 msgid "videos"
 msgstr "видео"
 
-#: module/blog/models.py:31
+#: contrib/tagging.py:113
+msgid "Tagging"
+msgstr ""
+
+#: module/blog/models.py:29
 msgid "published"
 msgstr "опубликовано"
 
-#: module/blog/models.py:33
+#: module/blog/models.py:31
 msgid "This is used for the generated navigation too."
 msgstr "Используется также в сгенерированно навигации."
 
-#: module/blog/models.py:36
+#: module/blog/models.py:34
 msgid "published on"
 msgstr "опубликовано"
 
-#: module/blog/models.py:37
+#: module/blog/models.py:35
 msgid "Will be set automatically once you tick the `published` checkbox above."
 msgstr ""
 "Будет установлено автоматически, как только Вы отметите пункт \"опубликовано"
 "\" выше."
 
-#: module/blog/models.py:42
+#: module/blog/models.py:40
 msgid "entry"
 msgstr "запись"
 
-#: module/blog/models.py:43
+#: module/blog/models.py:41
 msgid "entries"
 msgstr "записи"
 
@@ -340,31 +345,51 @@ msgid "tags"
 msgstr "теги"
 
 #: module/blog/extensions/translations.py:20
-#: module/page/extensions/translations.py:105
+#: module/extensions/translations.py:105
 msgid "translation of"
-msgstr ""
+msgstr "перевод для"
 
 #: module/blog/extensions/translations.py:23
-#: module/page/extensions/translations.py:108
+#: module/extensions/translations.py:108
 msgid "Leave this empty for entries in the primary language."
 msgstr "Оставьте поле пустым для записей на основном языке (%s)."
 
 #: module/blog/extensions/translations.py:44
-#: templates/admin/feincms/item_editor.html:45
+#: templates/admin/feincms/item_editor.html:40
 msgid "available translations"
 msgstr "доступные переводы"
 
-#: module/extensions/changedate.py:38
+#: module/extensions/changedate.py:36
 msgid "creation date"
 msgstr "дата создания"
 
-#: module/extensions/changedate.py:39
+#: module/extensions/changedate.py:37
 msgid "modification date"
 msgstr "дата изменения"
 
-#: module/extensions/ct_tracker.py:134
+#: module/extensions/ct_tracker.py:136
 msgid "content types"
-msgstr "содержимое"
+msgstr "тип данных"
+
+#: module/extensions/datepublisher.py:48
+msgid "publication date"
+msgstr "дата публикации"
+
+#: module/extensions/datepublisher.py:50
+msgid "publication end date"
+msgstr "дата окончания публикации"
+
+#: module/extensions/datepublisher.py:52
+msgid "Leave empty if the entry should stay active forever."
+msgstr "Оставьте поле пустым, если запись должна оставаться активной навсегда."
+
+#: module/extensions/datepublisher.py:79
+msgid "visible from - to"
+msgstr "видима с - по"
+
+#: module/extensions/datepublisher.py:89
+msgid "Date-based publishing"
+msgstr "Публикация основанная на дате"
 
 #: module/extensions/featured.py:9
 msgid "featured"
@@ -394,255 +419,278 @@ msgstr "Будет добавлено к основному описанию"
 msgid "Search engine optimization"
 msgstr "Оптимизация для поисковых систем"
 
-#: module/medialibrary/models.py:51
+#: module/extensions/translations.py:175
+msgid "Edit translation"
+msgstr "Изменить перевод"
+
+#: module/extensions/translations.py:178
+msgid "Create translation"
+msgstr "Создать перевод"
+
+#: module/extensions/translations.py:183
+msgid "translations"
+msgstr "переводы"
+
+#: module/medialibrary/models.py:58
 msgid "parent"
 msgstr "родитель"
 
-#: module/medialibrary/models.py:53 module/page/models.py:260
+#: module/medialibrary/models.py:60 module/page/models.py:221
 msgid "slug"
 msgstr "путь в URL"
 
-#: module/medialibrary/models.py:57
+#: module/medialibrary/models.py:64
 msgid "category"
 msgstr "категория"
 
-#: module/medialibrary/models.py:58 module/medialibrary/models.py:96
+#: module/medialibrary/models.py:65 module/medialibrary/models.py:111
 msgid "categories"
 msgstr "категории"
 
-#: module/medialibrary/models.py:91 module/medialibrary/models.py:182
+#: module/medialibrary/models.py:106 module/medialibrary/models.py:195
 msgid "file type"
 msgstr "тип файла"
 
-#: module/medialibrary/models.py:92 module/medialibrary/models.py:117
+#: module/medialibrary/models.py:107 module/medialibrary/models.py:133
 msgid "created"
 msgstr "создан"
 
-#: module/medialibrary/models.py:93
+#: module/medialibrary/models.py:108
 msgid "copyright"
 msgstr ""
 
-#: module/medialibrary/models.py:94 module/medialibrary/models.py:112
+#: module/medialibrary/models.py:109 module/medialibrary/models.py:128
 msgid "file size"
 msgstr "размер файла"
 
-#: module/medialibrary/models.py:203
+#: module/medialibrary/models.py:216
 msgid "file info"
 msgstr "файл"
 
-#: module/medialibrary/models.py:280
+#: module/medialibrary/models.py:293
 msgid "Image"
 msgstr "Изображение"
 
-#: module/medialibrary/models.py:281
+#: module/medialibrary/models.py:294
 msgid "Video"
 msgstr "Видео"
 
-#: module/medialibrary/models.py:282
+#: module/medialibrary/models.py:295
 msgid "Audio"
 msgstr "Аудио"
 
-#: module/medialibrary/models.py:283
+#: module/medialibrary/models.py:296
 msgid "PDF document"
 msgstr "Документ PDF"
 
-#: module/medialibrary/models.py:284
+#: module/medialibrary/models.py:297
 msgid "Flash"
 msgstr ""
 
-#: module/medialibrary/models.py:285
+#: module/medialibrary/models.py:298
 msgid "Text"
 msgstr "Текст"
 
-#: module/medialibrary/models.py:286
+#: module/medialibrary/models.py:299
 msgid "Rich Text"
 msgstr "Текст"
 
-#: module/medialibrary/models.py:287
+#: module/medialibrary/models.py:300
 msgid "Zip archive"
 msgstr "Zip-архив"
 
-#: module/medialibrary/models.py:288
+#: module/medialibrary/models.py:301
 msgid "Microsoft Word"
-msgstr ""
+msgstr "документ Microsoft Word"
 
-#: module/medialibrary/models.py:289
+#: module/medialibrary/models.py:302
 msgid "Microsoft Excel"
-msgstr ""
+msgstr "документ Microsoft Excel"
 
-#: module/medialibrary/models.py:290
+#: module/medialibrary/models.py:303
 msgid "Microsoft PowerPoint"
-msgstr ""
+msgstr "PowerPoint документ"
 
-#: module/medialibrary/models.py:291
+#: module/medialibrary/models.py:304
 msgid "Binary"
 msgstr "Двоичный"
 
-#: module/medialibrary/models.py:307
+#: module/medialibrary/models.py:320
 msgid "caption"
 msgstr "подпись"
 
-#: module/medialibrary/models.py:308
+#: module/medialibrary/models.py:321
 msgid "description"
 msgstr "описание"
 
-#: module/medialibrary/models.py:311
+#: module/medialibrary/models.py:324
 msgid "media file translation"
 msgstr ""
 
-#: module/medialibrary/models.py:312
+#: module/medialibrary/models.py:325
 msgid "media file translations"
 msgstr ""
 
-#: module/medialibrary/models.py:335
+#: module/medialibrary/models.py:347
+#: templates/admin/feincms/page/page/item_editor.html:14
 msgid "Preview"
 msgstr "Предпросмотр"
 
-#: module/medialibrary/models.py:355
+#: module/medialibrary/models.py:367
 #, python-format
 msgid "Successfully added %(count)d media file to %(category)s."
 msgid_plural "Successfully added %(count)d media files to %(category)s."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Добавлено %(count)d документов в %(category)s."
+msgstr[1] "Добавлен %(count)d документ в %(category)s."
+msgstr[2] "Добавлено %(count)d документов в %(category)s."
 
-#: module/medialibrary/models.py:373
+#: module/medialibrary/models.py:385
 msgid "Add selected media files to category"
 msgstr "Добавить выбранные файлы в категорию"
 
-#: module/medialibrary/models.py:440
+#: module/medialibrary/models.py:394
+#, python-format
+msgid "ZIP file exported as %s"
+msgstr "ZIP-архив экспортирован как %s"
+
+#: module/medialibrary/models.py:396
+#, python-format
+msgid "ZIP file export failed: %s"
+msgstr "Ошибка экспорта в ZIP-архив: %s"
+
+#: module/medialibrary/models.py:400
+msgid "Export selected media files as zip file"
+msgstr "Упаковать выбранные файлы в ZIP-архив"
+
+#: module/medialibrary/models.py:423
+#, python-format
+msgid ""
+"Cannot overwrite with different file type (attempt to overwrite a "
+"%(old_ext)s with a %(new_ext)s)"
+msgstr ""
+"Невозможно изменить тип файла (Попытка сохранить %(old_ext)s в %(new_ext)s))"
+
+#: module/medialibrary/models.py:466
 #, python-format
 msgid "%d files imported"
-msgstr ""
+msgstr "%d файлов импортировано"
 
-#: module/medialibrary/models.py:442
+#: module/medialibrary/models.py:468
 #, python-format
-msgid "ZIP file invalid: %s"
-msgstr "не корректный архив"
+msgid "ZIP import failed: %s"
+msgstr "Загрузка ZIP-архива не удалась: %s"
 
-#: module/medialibrary/models.py:448
+#: module/medialibrary/models.py:470
 msgid "No input file given"
 msgstr "не заданы файлы"
 
-#: module/page/models.py:256
+#: module/page/models.py:217
 msgid "active"
 msgstr "активная"
 
-#: module/page/models.py:263 module/page/models.py:711
+#: module/page/models.py:224 module/page/models.py:729
 msgid "in navigation"
 msgstr "в навигации"
 
-#: module/page/models.py:264
+#: module/page/models.py:225
 msgid "override URL"
 msgstr "перекрыть адрес"
 
-#: module/page/models.py:265
+#: module/page/models.py:226
 msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL. This affects both the navigation and subpages' "
 "URLs."
 msgstr ""
+"Перекрыть адрес. Убедитесь что адрес начинается и заканчивается слэшем (/) "
+"для локальных адресов. Это отностися и к навигации и к подстраницам."
 
-#: module/page/models.py:266
+#: module/page/models.py:227
 msgid "redirect to"
 msgstr "редирект на"
 
-#: module/page/models.py:267
+#: module/page/models.py:228
 msgid "Target URL for automatic redirects."
 msgstr "Адрес для автоматического перенаправления"
 
-#: module/page/models.py:268
+#: module/page/models.py:229
 msgid "Cached URL"
 msgstr ""
 
-#: module/page/models.py:279
+#: module/page/models.py:240
 msgid "page"
 msgstr "страница"
 
-#: module/page/models.py:280
+#: module/page/models.py:241
 msgid "pages"
 msgstr "страницы"
 
-#: module/page/models.py:297 module/page/models.py:782
+#: module/page/models.py:258 module/page/models.py:809
 msgid "is active"
 msgstr "активная"
 
-#: module/page/models.py:631
+#: module/page/models.py:639
 msgid "This URL is already taken by an active page."
 msgstr "Этот URL уже занят активной страницей."
 
-#: module/page/models.py:649
+#: module/page/models.py:657
 msgid "This URL is already taken by another active page."
 msgstr "Этот URL уже занят другой активной страницей."
 
-#: module/page/models.py:674
+#: module/page/models.py:681
 msgid "Other options"
 msgstr "Другие параметры"
 
-#: module/page/models.py:721
+#: module/page/models.py:740
 msgid "Add child page"
 msgstr "Добавить дочернюю страницу"
 
-#: module/page/models.py:723
+#: module/page/models.py:742 templates/admin/feincms/content_inline.html:9
 msgid "View on site"
 msgstr "Посмотреть на сайте"
 
-#: module/page/models.py:759
+#: module/page/models.py:772
+msgid ""
+"The content from the original translation has been copied to the newly "
+"created page."
+msgstr "Содержимое с оригинальной страницы скопировано в новую."
+
+#: module/page/models.py:786
 msgid "You don't have the necessary permissions to edit this object"
 msgstr "У вас нет прад для редактирования объекта"
 
-#: module/page/models.py:774
+#: module/page/models.py:801
 msgid "inherited"
 msgstr "унаследовано"
 
-#: module/page/models.py:778
+#: module/page/models.py:805
 msgid "extensions"
 msgstr "расширения"
 
-#: module/page/extensions/datepublisher.py:48
-msgid "publication date"
-msgstr "дата публикации"
-
-#: module/page/extensions/datepublisher.py:50
-msgid "publication end date"
-msgstr "дата окончания публикации"
-
-#: module/page/extensions/datepublisher.py:52
-msgid "Leave empty if the entry should stay active forever."
-msgstr "Оставьте поле пустым, если запись должна оставаться активной навсегда."
-
-#: module/page/extensions/datepublisher.py:78
-msgid "visible from - to"
-msgstr "видима с - по"
-
-#: module/page/extensions/datepublisher.py:88
-msgid "Date-based publishing"
-msgstr "Публикация основанная на дате"
-
 #: module/page/extensions/excerpt.py:9
 msgid "excerpt"
-msgstr ""
+msgstr "выдержка"
 
 #: module/page/extensions/excerpt.py:10
 msgid "Add a brief excerpt summarizing the content of this page."
-msgstr ""
+msgstr "Добавить краткую выдержку описывающую содержимое страницы."
 
 #: module/page/extensions/excerpt.py:12
 msgid "Excerpt"
-msgstr ""
+msgstr "Выдержка"
 
-#: module/page/extensions/navigation.py:77
-#: module/page/extensions/navigation.py:97
+#: module/page/extensions/navigation.py:74
+#: module/page/extensions/navigation.py:94
 msgid "navigation extension"
 msgstr "расширение навигации"
 
-#: module/page/extensions/navigation.py:99
+#: module/page/extensions/navigation.py:96
 msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr "Выберите модуль, расширяющий навигацию по дочерним страницам"
 
-#: module/page/extensions/navigation.py:112
+#: module/page/extensions/navigation.py:109
 msgid "Navigation extension"
 msgstr "Расширение навигации"
 
@@ -692,18 +740,6 @@ msgstr ""
 msgid "Titles"
 msgstr "Заголовки"
 
-#: module/page/extensions/translations.py:171
-msgid "Edit translation"
-msgstr "Изменить перевод"
-
-#: module/page/extensions/translations.py:174
-msgid "Create translation"
-msgstr "Создать перевод"
-
-#: module/page/extensions/translations.py:179
-msgid "translations"
-msgstr "переводы"
-
 #: templates/admin/filter.html:3
 #, python-format
 msgid " By %(filter_title)s "
@@ -727,12 +763,12 @@ msgstr "Элемент успешно удален."
 
 #: templates/admin/feincms/_messages_js.html:5
 msgid "Cannot delete item"
-msgstr "Не выходит удалить элемент"
+msgstr "невозможно удалить элемент"
 
 #: templates/admin/feincms/_messages_js.html:6
 msgid "Cannot delete item, because it is parent of at least one other item."
 msgstr ""
-"Не выходит удалить элемент, т.к. он является родителем как минимум для "
+"Невозможно удалить элемент, т.к. он является родителем как минимум для "
 "одного другого элемента."
 
 #: templates/admin/feincms/_messages_js.html:7
@@ -748,7 +784,10 @@ msgstr "Точно сменить шаблон? <br/> Все изменения 
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
 "%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
-msgstr "Вы действительно хотите изменить шаблон? <br /> Все сохраненные изменение и содержимое региона <strong>%(source_regions)s</strong> будут перенесены в <strong>%(target_region)s</strong>."
+msgstr ""
+"Вы действительно хотите изменить шаблон? <br /> Все сохраненные изменение и "
+"содержимое региона <strong>%(source_regions)s</strong> будут перенесены в "
+"<strong>%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
@@ -778,13 +817,24 @@ msgstr "Регион пуст"
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
-msgstr "Содержимое родительского элемента автоматически наследуется. Для перекрытия этого поведение нужно добавить содержимое."
+msgstr ""
+"Содержимое родительского элемента автоматически наследуется. Для перекрытия "
+"этого поведение нужно добавить содержимое."
 
 #: templates/admin/feincms/content_editor.html:23
 msgid "Add new item"
 msgstr "Добавить элемент"
 
-#: templates/admin/feincms/fe_editor.html:46
+#: templates/admin/feincms/content_inline.html:91
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr "Добавить еще %(verbose_name)s"
+
+#: templates/admin/feincms/content_inline.html:94
+msgid "Remove"
+msgstr "Удалить"
+
+#: templates/admin/feincms/fe_editor.html:40
 msgid "Save"
 msgstr "Сохранить"
 
@@ -814,7 +864,7 @@ msgstr "удалить"
 
 #: templates/admin/feincms/recover_form.html:7
 #: templates/admin/feincms/revision_form.html:10
-#: templates/admin/feincms/page/page/item_editor.html:16
+#: templates/admin/feincms/page/page/item_editor.html:22
 #: templates/admin/feincms/page/page/tree_editor.html:7
 msgid "Home"
 msgstr "Начало"
@@ -841,19 +891,19 @@ msgstr "Отменить %(verbose_name)s"
 msgid "Press the save button below to revert to this version of the object."
 msgstr "Для возврата к этой версии нажмите сохранить."
 
-#: templates/admin/feincms/tree_editor.html:37
+#: templates/admin/feincms/tree_editor.html:32
 msgid "Shortcuts"
 msgstr "Ярлыки"
 
-#: templates/admin/feincms/tree_editor.html:39
+#: templates/admin/feincms/tree_editor.html:34
 msgid "Collapse tree"
 msgstr "Свернуть дерево"
 
-#: templates/admin/feincms/tree_editor.html:40
+#: templates/admin/feincms/tree_editor.html:35
 msgid "Expand tree"
 msgstr "Развернуть дерево"
 
-#: templates/admin/feincms/tree_editor.html:43
+#: templates/admin/feincms/tree_editor.html:38
 msgid "Filter"
 msgstr "Фильтр"
 
@@ -861,7 +911,7 @@ msgstr "Фильтр"
 msgid "Edit on site"
 msgstr "Редактировать на сайте"
 
-#: templates/admin/feincms/page/page/item_editor.html:20
+#: templates/admin/feincms/page/page/item_editor.html:26
 msgid "Add"
 msgstr "Добавить"
 
@@ -890,7 +940,11 @@ msgstr "Отменить"
 msgid "Bulk upload a ZIP file:"
 msgstr "Загрузить несколько файлов в ZIP-архиве:"
 
-#: templates/admin/medialibrary/mediafile/change_list.html:21
+#: templates/admin/medialibrary/mediafile/change_list.html:22
+msgid "Overwrite"
+msgstr "Перезаписать"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:25
 msgid "Send"
 msgstr "Отправить"
 
@@ -930,9 +984,6 @@ msgstr "Спасибо!"
 
 #~ msgid "You may edit the copied page below."
 #~ msgstr "Вы можете отредактировать скопированную страницу ниже."
-
-#~ msgid "Remove"
-#~ msgstr "Удалить"
 
 #~ msgid "Replace page %(to_replace)s"
 #~ msgstr "Заменить страницу  %(to_replace)s"
