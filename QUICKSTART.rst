@@ -29,7 +29,7 @@ Create a directory named 'lib' in your development folder and clone the django-m
 
 	$ mkdir lib
 	$ cd lib
-	$ git clone git://github.com/feincms/feincms.git
+	$ git clone git://github.com/django-mptt/django-mptt.git
 
 Change into your project root and create a symbolic link to the downloaded mptt module
 
@@ -45,7 +45,7 @@ Step into the example app and start the runserver
 	$ cd example 
 	$ ./manage.py runserver
 
-The username and password for the examples admin-interface are 'username' and 'password'
+The username and password for the examples admin-interface are 'admin' and 'password'
 
 
 Quickstart Variant
@@ -65,7 +65,7 @@ Wait while django and mptt are being fetched and then follow the on-screen instr
 	$ cd example 
 	$ ./manage.py runserver
 
-The username and password for the examples admin-interface are 'username' and 'password'
+The username and password for the examples admin-interface are 'admin' and 'password'
 
 Further Steps
 -------------------
