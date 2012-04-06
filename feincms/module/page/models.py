@@ -357,8 +357,8 @@ class Page(create_base_model(MPTTModel)):
         """
         Return the absolute URL of this page.
         """
-
-        url = self._cached_url[1:-1]
+        # result url never begins or ends with a slash
+        url = self._cached_url.strip('/')
         if url:
             return ('feincms_handler', (url,), {})
         return ('feincms_home', (), {})
@@ -432,11 +432,12 @@ class Page(create_base_model(MPTTModel)):
                                             # an appcontent subpage.
             'extra_path': '/',
             })
-
-        if request.path != self.get_absolute_url():
+        # url must not end with a slash
+        url = self.get_absolute_url().rstrip('/')
+        if request.path != url:
             request._feincms_extra_context.update({
                 'in_appcontent_subpage': True,
-                'extra_path': re.sub('^' + re.escape(self.get_absolute_url()[:-1]), '',
+                'extra_path': re.sub('^' + re.escape(url), '',
                     request.path),
                 })
 
