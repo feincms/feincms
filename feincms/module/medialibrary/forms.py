@@ -13,6 +13,7 @@ from feincms import settings
 
 from . import logger
 from .models import Category, MediaFile
+from .fields import AdminFileWithPreviewWidget
 
 # ------------------------------------------------------------------------
 class MediaCategoryAdminForm(forms.ModelForm):
@@ -34,6 +35,7 @@ class MediaCategoryAdminForm(forms.ModelForm):
 class MediaFileAdminForm(forms.ModelForm):
     class Meta:
         model = MediaFile
+        widgets = { 'file': AdminFileWithPreviewWidget }
 
     def __init__(self, *args, **kwargs):
         super(MediaFileAdminForm, self).__init__(*args, **kwargs)
