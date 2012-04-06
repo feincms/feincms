@@ -432,12 +432,13 @@ class Page(create_base_model(MPTTModel)):
                                             # an appcontent subpage.
             'extra_path': '/',
             })
-        # url must not end with a slash
-        url = self.get_absolute_url().rstrip('/')
+
+        url = self.get_absolute_url()
         if request.path != url:
+            # extra_path must not end with a slash
             request._feincms_extra_context.update({
                 'in_appcontent_subpage': True,
-                'extra_path': re.sub('^' + re.escape(url), '',
+                'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
                     request.path),
                 })
 
