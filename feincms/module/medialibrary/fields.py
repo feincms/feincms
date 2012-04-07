@@ -73,7 +73,7 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
             if mimetypes.types_map.get(ext, '-').startswith('image'):
                 thumb_url = feincms_thumbnail.thumbnail(value, "100x100")
                 if thumb_url:
-                    r = mark_safe((u'<img src="%s" alt="" style="float: left; margin-right: 10px;">' % thumb_url) + r)
+                    r = mark_safe((u'<img src="%s" alt="" style="float: left; padding-right: 8px; border-right: 1px solid #ccc; margin-right: 8px">' % thumb_url) + r)
 
         return r
 
