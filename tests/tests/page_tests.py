@@ -23,7 +23,7 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase
 
 from feincms import settings as feincms_settings
-from feincms.content.application.models import _empty_reverse_cache
+from feincms.content.application.models import _empty_reverse_cache, app_reverse
 from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
@@ -1008,29 +1008,24 @@ class PagesTestCase(TestCase):
         self.assertContains(self.client.get(page.get_absolute_url() + 'kwargs_test/abc/def/'),
                             'def-abc')
 
-        response = self.client.get(page.get_absolute_url() + 'reverse_test/')
-        self.assertContains(response, 'home:/test-page/test-child-page/')
-        self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
-        self.assertContains(response, 'base:/test/')
-
         response = self.client.get(page.get_absolute_url() + 'full_reverse_test/')
         self.assertContains(response, 'home:/test-page/test-child-page/')
         self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
-        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
             '/test-page/test-child-page/')
 
         if hasattr(self, 'assertNumQueries'):
             self.assertNumQueries(0,
-                lambda: reverse('tests.testapp.applicationcontent_urls/ac_module_root'))
+                lambda: app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'))
 
             _empty_reverse_cache()
 
             self.assertNumQueries(1,
-                lambda: reverse('tests.testapp.applicationcontent_urls/ac_module_root'))
+                lambda: app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'))
             self.assertNumQueries(0,
-                lambda: reverse('tests.testapp.applicationcontent_urls/ac_module_root'))
+                lambda: app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'))
 
         # This should not raise
         self.assertEquals(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
@@ -1041,7 +1036,7 @@ class PagesTestCase(TestCase):
         self.assertRedirects(self.client.get(page.get_absolute_url() + 'redirect/'),
                              page.get_absolute_url())
 
-        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
             page.get_absolute_url())
 
         response = self.client.get(page.get_absolute_url() + 'response/')
@@ -1069,15 +1064,15 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'args:/test-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
-        self.assertEqual(reverse('tests.testapp.blog_urls/blog_entry_list'), '/test-page/test-child-page/')
-        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
+        self.assertEqual(app_reverse('blog_entry_list', 'tests.testapp.blog_urls'), '/test-page/test-child-page/')
+        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
             '/test-page/test-child-page/')
-        self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
+        self.assertEqual(app_reverse('ac_module_root', 'whatever'), '/test-page/')
 
         page.applicationcontent_set.get(urlconf_path='tests.testapp.applicationcontent_urls').delete()
 
-        self.assertEqual(reverse('tests.testapp.blog_urls/blog_entry_list'), '/test-page/test-child-page/')
-        self.assertEqual(reverse('whatever/ac_module_root'), '/test-page/')
+        self.assertEqual(app_reverse('blog_entry_list', 'tests.testapp.blog_urls'), '/test-page/test-child-page/')
+        self.assertEqual(app_reverse('ac_module_root', 'whatever'), '/test-page/')
 
         # Ensure ApplicationContent's admin_fields support works properly
         self.assertContains(self.client.get('/admin/page/page/%d/' % page.id),
@@ -1121,10 +1116,6 @@ class PagesTestCase(TestCase):
 
         # test app_reverse
         self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
-                         page.get_absolute_url())
-
-        # test reverse replacement - should still work, but is deprecated
-        self.assertEqual(reverse('tests.testapp.applicationcontent_urls/ac_module_root'),
                          page.get_absolute_url())
 
         # when specific applicationcontent exists more then once reverse should return url

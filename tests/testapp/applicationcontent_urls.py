@@ -17,18 +17,13 @@ def args_test(request, kwarg1, kwarg2):
     return HttpResponse(u'%s-%s' % (kwarg1, kwarg2))
 
 
-def reverse_test(request):
-    t = template.Template('home:{% url ac_module_root %} args:{% url ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
-    return t.render(template.Context())
-
-
 def full_reverse_test(request):
-    t = template.Template('home:{% url tests.testapp.applicationcontent_urls/ac_module_root %} args:{% url tests.testapp.applicationcontent_urls/ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
+    t = template.Template('{% load applicationcontent_tags %}home:{% app_reverse "ac_module_root" "tests.testapp.applicationcontent_urls" %} args:{% app_reverse "ac_args_test" "tests.testapp.applicationcontent_urls" "xy" "zzy" %} base:{% url feincms_handler "test" %}')
     return t.render(template.Context())
 
 
 def alias_reverse_test(request):
-    t = template.Template('home:{% url whatever/ac_module_root %} args:{% url whatever/ac_args_test "xy" "zzy" %} base:{% url feincms_handler "test" %}')
+    t = template.Template('{% load applicationcontent_tags %}home:{% app_reverse "ac_module_root" "whatever" %} args:{% app_reverse "ac_args_test" "whatever" "xy" "zzy" %} base:{% url feincms_handler "test" %}')
     return t.render(template.Context())
 
 
@@ -58,7 +53,6 @@ urlpatterns = patterns('',
     url(r'^$', module_root, name='ac_module_root'),
     url(r'^args_test/([^/]+)/([^/]+)/$', args_test, name='ac_args_test'),
     url(r'^kwargs_test/(?P<kwarg2>[^/]+)/(?P<kwarg1>[^/]+)/$', args_test),
-    url(r'^reverse_test/$', reverse_test),
     url(r'^full_reverse_test/$', full_reverse_test),
     url(r'^alias_reverse_test/$', alias_reverse_test),
     url(r'^fragment/$', fragment),
