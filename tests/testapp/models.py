@@ -41,8 +41,8 @@ def get_admin_fields(form, *args, **kwargs):
     }
 
 Page.create_content_type(ApplicationContent, APPLICATIONS=(
-    ('tests.testapp.blog_urls', 'Blog', {'admin_fields': get_admin_fields}),
-    ('whatever', 'Test Urls', {'urls': 'tests.testapp.applicationcontent_urls'}),
+    ('testapp.blog_urls', 'Blog', {'admin_fields': get_admin_fields}),
+    ('whatever', 'Test Urls', {'urls': 'testapp.applicationcontent_urls'}),
     ))
 
 
@@ -67,7 +67,7 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=reverse('tests.testapp.blog_urls/blog_entry_details', kwargs={'object_id': entry.id}),
+                url=reverse('testapp.blog_urls/blog_entry_details', kwargs={'object_id': entry.id}),
                 )
 
 Page.register_extensions('navigation')

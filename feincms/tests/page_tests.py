@@ -780,7 +780,7 @@ class PagesTestCase(TestCase):
         # which does only have direct children, because it does not collect
         # pages further down the tree.
         page = Page.objects.get(pk=8)
-        page.navigation_extension = 'tests.testapp.navigation_extensions.PassthroughExtension'
+        page.navigation_extension = 'testapp.navigation_extensions.PassthroughExtension'
         page.save()
 
         for c, t, r in tests:
@@ -951,7 +951,7 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(len(page.extended_navigation()), 0)
 
-        page.navigation_extension = 'tests.testapp.navigation_extensions.PassthroughExtension'
+        page.navigation_extension = 'testapp.navigation_extensions.PassthroughExtension'
 
         page2 = Page.objects.get(pk=2)
         page2.active = True
@@ -960,11 +960,11 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(list(page.extended_navigation()), [page2])
 
-        page.navigation_extension = 'tests.testapp.navigation_extensions.ThisExtensionDoesNotExist'
+        page.navigation_extension = 'testapp.navigation_extensions.ThisExtensionDoesNotExist'
 
         self.assertEqual(len(page.extended_navigation()), 1)
 
-        page.navigation_extension = 'tests.testapp.navigation_extensions.PretenderExtension'
+        page.navigation_extension = 'testapp.navigation_extensions.PretenderExtension'
 
         self.assertEqual(page.extended_navigation()[0].get_absolute_url(), '/asdsa/')
 
@@ -999,7 +999,7 @@ class PagesTestCase(TestCase):
 
         page.applicationcontent_set.create(
             region='main', ordering=0,
-            urlconf_path='tests.testapp.applicationcontent_urls')
+            urlconf_path='testapp.applicationcontent_urls')
 
         self.assertContains(self.client.get(page.get_absolute_url()),
                             'module_root')
@@ -1013,19 +1013,19 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
-        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
+        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
             '/test-page/test-child-page/')
 
         if hasattr(self, 'assertNumQueries'):
             self.assertNumQueries(0,
-                lambda: app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'))
+                lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
 
             _empty_reverse_cache()
 
             self.assertNumQueries(1,
-                lambda: app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'))
+                lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
             self.assertNumQueries(0,
-                lambda: app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'))
+                lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
 
         # This should not raise
         self.assertEquals(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
@@ -1036,7 +1036,7 @@ class PagesTestCase(TestCase):
         self.assertRedirects(self.client.get(page.get_absolute_url() + 'redirect/'),
                              page.get_absolute_url())
 
-        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
+        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
             page.get_absolute_url())
 
         response = self.client.get(page.get_absolute_url() + 'response/')
@@ -1053,7 +1053,7 @@ class PagesTestCase(TestCase):
         page.applicationcontent_set.create(
             region='main',
             ordering=1,
-            urlconf_path='tests.testapp.blog_urls')
+            urlconf_path='testapp.blog_urls')
         page1.applicationcontent_set.create(
             region='main',
             ordering=0,
@@ -1064,14 +1064,14 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'args:/test-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
-        self.assertEqual(app_reverse('blog_entry_list', 'tests.testapp.blog_urls'), '/test-page/test-child-page/')
-        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
+        self.assertEqual(app_reverse('blog_entry_list', 'testapp.blog_urls'), '/test-page/test-child-page/')
+        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
             '/test-page/test-child-page/')
         self.assertEqual(app_reverse('ac_module_root', 'whatever'), '/test-page/')
 
-        page.applicationcontent_set.get(urlconf_path='tests.testapp.applicationcontent_urls').delete()
+        page.applicationcontent_set.get(urlconf_path='testapp.applicationcontent_urls').delete()
 
-        self.assertEqual(app_reverse('blog_entry_list', 'tests.testapp.blog_urls'), '/test-page/test-child-page/')
+        self.assertEqual(app_reverse('blog_entry_list', 'testapp.blog_urls'), '/test-page/test-child-page/')
         self.assertEqual(app_reverse('ac_module_root', 'whatever'), '/test-page/')
 
         # Ensure ApplicationContent's admin_fields support works properly
@@ -1110,12 +1110,12 @@ class PagesTestCase(TestCase):
         page.save()
         page.applicationcontent_set.create(
             region='main', ordering=0,
-            urlconf_path='tests.testapp.applicationcontent_urls')
+            urlconf_path='testapp.applicationcontent_urls')
 
         from feincms.content.application.models import app_reverse, reverse
 
         # test app_reverse
-        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
+        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
                          page.get_absolute_url())
 
         # when specific applicationcontent exists more then once reverse should return url
@@ -1126,16 +1126,16 @@ class PagesTestCase(TestCase):
         page_de_1 = Page.objects.get(title='Child 1 DE')
         page_de_1.applicationcontent_set.create(
             region='main', ordering=0,
-            urlconf_path='tests.testapp.applicationcontent_urls')
+            urlconf_path='testapp.applicationcontent_urls')
         _empty_reverse_cache()
 
         settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
         self.client.get(page_de_1.get_absolute_url())
-        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
+        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
                          page_de_1.get_absolute_url())
 
         self.client.get(page1.get_absolute_url())
-        self.assertEqual(app_reverse('ac_module_root', 'tests.testapp.applicationcontent_urls'),
+        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
                       page.get_absolute_url())
 
     def test_29_medialibrary_admin(self):
@@ -1165,7 +1165,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(MediaFile.objects.count(), 11, "Upload of media files with ZIP does not work")
 
         self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
-            'file': open(os.path.join(os.path.dirname(os.path.dirname(__file__)),
+            'file': open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
                 'docs', 'images', 'tree_editor.png')),
             'translations-TOTAL_FORMS': 0,
             'translations-INITIAL_FORMS': 0,
@@ -1220,7 +1220,7 @@ class PagesTestCase(TestCase):
 
         page.applicationcontent_set.create(
             region='main', ordering=0,
-            urlconf_path='tests.testapp.applicationcontent_urls')
+            urlconf_path='testapp.applicationcontent_urls')
         page.rawcontent_set.create(
             region='main', ordering=1, text='some_main_region_text')
         page.rawcontent_set.create(

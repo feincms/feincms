@@ -20,8 +20,7 @@ INSTALLED_APPS = [
     'feincms.module.medialibrary',
     'feincms.module.page',
     'mptt',
-    'tests',
-    'tests.testapp',
+    'testapp',
 ]
 
 MEDIA_ROOT = '/media/'
@@ -31,7 +30,7 @@ MEDIA_ROOT = os.path.join(BASEDIR, 'media/')
 STATIC_ROOT = os.path.join(BASEDIR, 'static/')
 SECRET_KEY = 'supersikret'
 
-ROOT_URLCONF = 'tests.urls'
+ROOT_URLCONF = 'testapp.urls'
 LANGUAGES = (('en', 'English'), ('de', 'German'))
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
