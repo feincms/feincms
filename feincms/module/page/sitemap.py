@@ -98,9 +98,11 @@ class PageSitemap(Sitemap):
     # After a call to the sitemap, be sure to erase the cached _paginator
     # attribute, so next time we'll re-fetch the items list instead of using
     # a stale list.
+    # This has been fixed in Django r17468
     def get_urls(self, *args, **kwargs):
         urls = super(PageSitemap, self).get_urls(*args, **kwargs)
-        del(self._paginator)
+        if hasattr(self, '_paginator'):
+            del(self._paginator)
         return urls
 
 # ------------------------------------------------------------------------
