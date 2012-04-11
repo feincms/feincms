@@ -104,6 +104,10 @@ Notable features and improvements
 
 * The value of ``FEINCMS_FRONTEND_EDITING`` defaults to ``False`` now.
 
+* The ``SectionContent`` content type has been updated and does properly
+  use ``raw_id_fields`` for the media files instead of the hack which was used
+  before.
+
 
 Bugfixes
 ========
