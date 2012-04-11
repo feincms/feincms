@@ -25,6 +25,11 @@ FEINCMS_UPLOAD_PREFIX = getattr(settings, 'FEINCMS_UPLOAD_PREFIX', '')
 #: Local path to newly uploaded media files
 FEINCMS_MEDIALIBRARY_UPLOAD_TO = getattr(settings, 'FEINCMS_MEDIALIBRARY_UPLOAD_TO', 'medialibrary/%Y/%m/')
 
+#: Thumbnail function for suitable mediafiles. Only receives the media file
+#: and should return a thumbnail URL (or nothing).
+FEINCMS_MEDIALIBRARY_THUMBNAIL = getattr(settings, 'FEINCMS_MEDIALIBRARY_THUMBNAIL',
+    'feincms.module.medialibrary.thumbnail.default_admin_thumbnail')
+
 # ------------------------------------------------------------------------
 # Settings for RichText
 
