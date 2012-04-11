@@ -112,3 +112,8 @@ FEINCMS_CMS_404_PAGE = getattr(settings, 'FEINCMS_CMS_404_PAGE', None)
 FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE', False)
 
 # ------------------------------------------------------------------------
+#: Prefix for thumbnails. Set this to something non-empty to separate thumbs
+#: from uploads. The value should end with a slash, but this is not enforced.
+FEINCMS_THUMBNAIL_DIR = getattr(settings, 'FEINCMS_THUMBNAIL_DIR', '_thumbs/')
+
+# ------------------------------------------------------------------------
