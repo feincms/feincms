@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import
 
-import mimetypes
 from os.path import splitext
 
 from django.contrib.admin.widgets import AdminFileWidget
