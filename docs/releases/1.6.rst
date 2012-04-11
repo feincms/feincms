@@ -77,3 +77,11 @@ FeinCMS 1.6 release notes (upcoming)
   tags (``feincms_render_region`` and ``feincms_render_content``) you can take
   advantage of all variables from your context processors in content types'
   templates too.
+
+* A new model field has been added, ``feincms.contrib.richtext.RichTextField``.
+  This is a drop-in replacement for Django's ``models.TextField`` with the
+  difference that it adds the CSS classes required by rich text fields in the
+  item editor.
+
+* The core page methods support running with ``APPEND_SLASH = False`` now.
+  Many content types using forms do not, however.
