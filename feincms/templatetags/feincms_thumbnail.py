@@ -87,28 +87,28 @@ class Thumbnailer(object):
     def generate(self, storage, original, size, miniature):
         try:
             image = Image.open(StringIO(storage.open(original).read()))
+
+            # defining the size
+            w, h = int(size['w']), int(size['h'])
+
+            format = image.format # Save format for the save() call later
+            image.thumbnail([w, h], Image.ANTIALIAS)
+            buf = StringIO()
+            if image.mode not in ('RGBA', 'RGB', 'L'):
+                image = image.convert('RGBA')
+            image.save(buf, format or 'jpeg', quality=80)
+            raw_data = buf.getvalue()
+            buf.close()
+
+            storage.delete(miniature)
+            storage.save(miniature, ContentFile(raw_data))
+
+            return storage.url(miniature)
         except:
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
             # happen, catch them all so the thumbnailer will never fail.
             return storage.url(original)
-
-        storage.delete(miniature)
-
-        # defining the size
-        w, h = int(size['w']), int(size['h'])
-
-        format = image.format # Save format for the save() call later
-        image.thumbnail([w, h], Image.ANTIALIAS)
-        buf = StringIO()
-        if image.mode not in ('RGBA', 'RGB', 'L'):
-            image = image.convert('RGBA')
-        image.save(buf, format or 'jpeg', quality=100)
-        raw_data = buf.getvalue()
-        buf.close()
-        storage.save(miniature, ContentFile(raw_data))
-
-        return storage.url(miniature)
 
 
 class CropscaleThumbnailer(Thumbnailer):

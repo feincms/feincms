@@ -1,17 +1,27 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
+from __future__ import absolute_import
+
+import mimetypes
+from os.path import splitext
+
+from django.contrib.admin.widgets import AdminFileWidget
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db import models
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.utils.text import truncate_words
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
-from feincms.module.medialibrary.models import MediaFile
 from feincms.templatetags import feincms_thumbnail
-
+from .models import MediaFile
 
 __all__ = ('MediaFileForeignKey', 'ContentWithMediaFile')
 
-
+# ------------------------------------------------------------------------
 class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
     def __init__(self, original):
         self.__dict__ = original.__dict__
@@ -48,6 +58,26 @@ class ContentWithMediaFile(models.Model):
     class Meta:
         abstract = True
 
+# ------------------------------------------------------------------------
+class AdminFileWithPreviewWidget(AdminFileWidget):
+    """
+    Simple AdminFileWidget, but detects if the file is an image and
+    tries to render a small thumbnail besides the input field.
+    """
+    def render(self, name, value, attrs=None):
+        r = super(AdminFileWithPreviewWidget, self).render(name, value, attrs=attrs)
+
+        if value:
+            ext = splitext(value.name)[1].lower()
+            # This could also add icons for other file types?
+            if mimetypes.types_map.get(ext, '-').startswith('image'):
+                thumb_url = feincms_thumbnail.thumbnail(value, "100x100")
+                if thumb_url:
+                    r = mark_safe((u'<img src="%s" alt="" style="float: left; padding-right: 8px; border-right: 1px solid #ccc; margin-right: 8px">' % thumb_url) + r)
+
+        return r
+
+# ------------------------------------------------------------------------
 
 try:
     from south.modelsinspector import add_introspection_rules

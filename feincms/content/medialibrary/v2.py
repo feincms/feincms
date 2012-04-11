@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
 from django.contrib import admin
 from django.db import models
 from django.template.loader import render_to_string
@@ -52,10 +56,9 @@ class MediaFileContent(ContentWithMediaFile):
     def render(self, **kwargs):
         ctx = {'content': self}
         ctx.update(kwargs)
-
         return render_to_string([
             'content/mediafile/%s_%s.html' % (self.mediafile.type, self.type),
             'content/mediafile/%s.html' % self.mediafile.type,
             'content/mediafile/%s.html' % self.type,
             'content/mediafile/default.html',
-            ], ctx)
+            ], ctx, context_instance=kwargs.get('context'))

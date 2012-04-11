@@ -26,8 +26,3 @@ def register(cls, admin_cls):
         return self._content_proxy
 
     admin_cls.raw_id_fields.append('symlinked_page')
-
-    admin_cls.fieldsets.append((_('Symlinked page'), {
-        'fields': ('symlinked_page',),
-        'classes': ('collapse',),
-        }))

@@ -220,60 +220,6 @@ td span select {
     top:0px; left:0px;
 }
 
-#sitetree-wrapper {
-    margin: 0;
-    padding: 20px 1px 0 1px;
-}
-
-#sitetree {
-    width: 100%;
-}
-
-#sitetree tr td {
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.suchadrag img {
-    cursor: move;
-    float: right;
-    margin: 0 0 0 3px;
-}
-
-.suchadrag a {
-    display: block;
-    margin-right: 28px;
-    overflow: hidden;
-}
-
-.del-page {
-    cursor: pointer;
-    margin: 0 0 1px 0;
-}
-
-tr.level0 td {background: #f4f4f4;}
-tr.level1 td {background: #fafafa;}
-tr.level2 td {background: #fdfdfd;}
-tr.level0 td:first-child {padding-left: 5px;}
-tr.level1 td:first-child {padding-left: 15px;}
-tr.level2 td:first-child {padding-left: 25px;}
-tr.level3 td:first-child {padding-left: 35px;}
-tr.level4 td:first-child {padding-left: 45px;}
-tr.level5 td:first-child {padding-left: 55px;}
-tr.level6 td:first-child {padding-left: 65px;}
-tr.level7 td:first-child {padding-left: 75px;}
-tr.level8 td:first-child {padding-left: 85px;}
-tr.level9 td:first-child {padding-left: 95px;}
-tr.level10 td:first-child {padding-left: 105px;}
-tr.level11 td:first-child {padding-left: 115px;}
-tr.level12 td:first-child {padding-left: 125px;}
-tr td:first-child div.expander {float: left; width: 15px; height: 10px;}
-tr.parent td:first-child div.expander {background: url(img/toggle-expand-dark.png) no-repeat 0 -2px; cursor: pointer;}
-tr.parent.expanded td:first-child div.expander {background-image: url(img/toggle-collapse-dark.png);}
-tr td.hover {background-color: #abc;}
-tr td.highlight {background-color: #8f8;}
-tr td.nohighlight {background-color: #fff;}
-
 
 /* jQuery alerts */
 #popup_container {

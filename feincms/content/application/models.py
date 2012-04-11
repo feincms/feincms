@@ -63,6 +63,9 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
         or
 
         app_reverse('mymodel-detail', 'myapp.urls', kwargs=...)
+
+    The second argument may also be a request object if you want to reverse
+    an URL belonging to the current application content.
     """
 
     # First parameter might be a request instead of an urlconf path, so
@@ -156,6 +159,9 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
             url = content.parent._cached_url[1:-1]
             if url:
                 prefix = _reverse('feincms_handler', args=(url,))
+                # prefix must always ends with a slash
+                prefix += '/' if prefix[-1] != '/' else ''
+
             else:
                 prefix = _reverse('feincms_home')
 

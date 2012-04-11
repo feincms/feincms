@@ -205,7 +205,7 @@ media files they need::
         def media(self):
             return forms.Media(
                 css={'all': ('gallery/gallery.css',),},
-                js=('gallery/gallery.js'),
+                js=('gallery/gallery.js',),
                 )
 
         def render(self, **kwargs):
@@ -218,6 +218,18 @@ Please note that you can't define a ``Media`` inner class (yet). You have to
 provide the ``media`` property yourself. As with form and widget media definitions,
 either ``STATIC_URL`` or ``MEDIA_URL`` (in this order) will be prepended to
 the media file path if it is not an absolute path already.
+
+Alternatively, you can use the ``media_property`` function from django.forms
+to implement the functionality, which then also supports inheritance
+of media files::
+
+    from django.forms.widgets import media_property
+
+    class MediaUsingContentType(models.Model):
+        class Media:
+            js = ('whizbang.js',)
+
+    MediaUsingContentType.media = media_property(MediaUsingContentType)
 
 
 

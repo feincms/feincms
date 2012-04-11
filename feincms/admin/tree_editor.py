@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
+from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.views import main
 from django.db.models import Q
@@ -26,8 +31,8 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
         title = 'title="%s" ' % title
     else:
         title = ''
-    return mark_safe(u'<img src="%sicon-%s.gif" alt="%s" %s/>' %
-            (settings._HACK_ADMIN_MEDIA_IMAGES, BOOLEAN_MAPPING[field_val], alt_text, title))
+    return mark_safe(u'<img src="%sfeincms/img/icon-%s.gif" alt="%s" %s/>' %
+            (django_settings.STATIC_URL, BOOLEAN_MAPPING[field_val], alt_text, title))
 
 
 def _build_tree_structure(cls):
@@ -366,19 +371,24 @@ class TreeEditor(admin.ModelAdmin):
         return r and super(TreeEditor, self).has_delete_permission(request, obj)
 
     def _move_node(self, request):
-        cut_item = self.model._tree_manager.get(pk=request.POST.get('cut_item'))
-        pasted_on = self.model._tree_manager.get(pk=request.POST.get('pasted_on'))
+        if hasattr(self.model.objects, 'move_node'):
+            tree_manager = self.model.objects
+        else:
+            tree_manager = self.model._tree_manager
+
+        cut_item = tree_manager.get(pk=request.POST.get('cut_item'))
+        pasted_on = tree_manager.get(pk=request.POST.get('pasted_on'))
         position = request.POST.get('position')
 
         if position in ('last-child', 'left'):
             try:
-                self.model._tree_manager.move_node(cut_item, pasted_on, position)
+                tree_manager.move_node(cut_item, pasted_on, position)
             except InvalidMove, e:
                 self.message_user(request, unicode(e))
                 return HttpResponse('FAIL')
 
             # Ensure that model save has been run
-            cut_item = self.model._tree_manager.get(pk=cut_item.pk)
+            cut_item = self.model.objects.get(pk=cut_item.pk)
             cut_item.save()
 
             self.message_user(request, ugettext('%s has been moved to a new position.') %

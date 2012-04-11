@@ -289,6 +289,7 @@ that it resolves URLs from application contents. The second argument,
 ``urlconf``, has to correspond to the URLconf parameter passed in the
 ``APPLICATIONS`` list to ``Page.create_content_type``::
 
+    from feincms.content.application.models import app_reverse
     app_reverse('mymodel-detail', 'myapp.urls', args=...)
 
 or::

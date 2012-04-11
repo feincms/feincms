@@ -75,6 +75,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         q = Q(level__lt=level + depth)
         for i in range(depth):
             q &= Q(level__lt=level + i) | Q(**{
+                'parent__' * i + 'active': True,
                 'parent__' * i + 'in_navigation': True,
                 'level__gte': level + i,
             })

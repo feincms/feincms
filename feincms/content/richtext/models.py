@@ -9,15 +9,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
 from feincms.admin.item_editor import ItemEditorForm
+from feincms.contrib.richtext import RichTextField
 from feincms.utils import get_object
 
+
 class RichTextContentAdminForm(ItemEditorForm):
-    text = forms.CharField(widget=forms.Textarea, required=False, label=_('text'))
-
-    def __init__(self, *args, **kwargs):
-        super(RichTextContentAdminForm, self).__init__(*args, **kwargs)
-        self.fields['text'].widget.attrs.update({'class': 'item-richtext'})
-
     #: If FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE allows, we'll convert this into
     # a checkbox so the user can choose whether to ignore HTML validation
     # warnings instead of fixing them:
@@ -82,7 +78,7 @@ class RichTextContent(models.Model):
         'head': [ settings.FEINCMS_RICHTEXT_INIT_TEMPLATE ],
     }
 
-    text = models.TextField(_('text'), blank=True)
+    text = RichTextField(_('text'), blank=True)
 
     class Meta:
         abstract = True
@@ -90,9 +86,8 @@ class RichTextContent(models.Model):
         verbose_name_plural = _('rich texts')
 
     def render(self, **kwargs):
-        request = kwargs.get('request')
         return render_to_string('content/richtext/default.html',
-            { 'content': self, 'request': request })
+            { 'content': self }, context_instance=kwargs.get('context'))
 
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?

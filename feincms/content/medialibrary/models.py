@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------------
+# coding=utf-8
+# ------------------------------------------------------------------------
+
 """
 Media library-based file inclusion tool. Can handle any type of media file,
 not only images.
@@ -116,13 +120,12 @@ class MediaFileContent(models.Model):
         cls.feincms_item_editor_form = MediaFileContentAdminForm
 
     def render(self, **kwargs):
-        request = kwargs.get('request')
         return render_to_string([
             'content/mediafile/%s_%s.html' % (self.mediafile.type, self.position),
             'content/mediafile/%s.html' % self.mediafile.type,
             'content/mediafile/%s.html' % self.position,
             'content/mediafile/default.html',
-            ], { 'content': self, 'request': request })
+            ], { 'content': self }, context_instance=kwargs.get('context'))
 
     @classmethod
     def default_create_content_type(cls, cms_model):
