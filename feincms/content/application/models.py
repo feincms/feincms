@@ -159,6 +159,9 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
             url = content.parent._cached_url[1:-1]
             if url:
                 prefix = _reverse('feincms_handler', args=(url,))
+                # prefix must always ends with a slash
+                prefix += '/' if prefix[-1] != '/' else ''
+
             else:
                 prefix = _reverse('feincms_home')
 

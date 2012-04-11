@@ -162,7 +162,7 @@ class MediaFileAdmin(admin.ModelAdmin):
                 d = get_image_dimensions(obj.file.file)
                 if d:
                     t += " %d&times;%d" % ( d[0], d[1] )
-            except IOError, e:
+            except (IOError, ValueError), e:
                 t += " (%s)" % e.strerror
         return t
     file_type.admin_order_field = 'type'

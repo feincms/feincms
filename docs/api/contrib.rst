@@ -10,6 +10,11 @@ Model and form fields
    :noindex:
 
 
+.. automodule:: feincms.contrib.richtext
+   :members:
+   :noindex:
+
+
 Tagging
 -------
 

@@ -5,7 +5,15 @@ Views and decorators
 Standard views
 --------------
 
-.. automodule:: feincms.views.base
+.. automodule:: feincms.views.cbv.views
+   :members:
+   :noindex:
+
+
+Legacy views
+------------
+
+.. automodule:: feincms.views.legacy.views
    :members:
    :noindex:
 
@@ -16,7 +24,9 @@ Generic-views replacements
 All views in the ``feincms.views.generic`` module are almost the same
 as their counterparts in ``django.views.generic`` (before class-based
 views came along), except that they add a ``feincms_page`` object to
-the context.
+the context. Not recommended anymore because they are deprecated in
+Django. Use the ``feincms.context_processors.add_page_if_missing``
+context processor instead.
 
 
 .. automodule:: feincms.views.generic.simple

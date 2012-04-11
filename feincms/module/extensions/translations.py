@@ -9,7 +9,9 @@ Pages in secondary languages can be said to be a translation of a page in the
 primary language (the first language in settings.LANGUAGES), thereby enabling
 deeplinks between translated pages.
 
-This extension requires an activated LocaleMiddleware or something equivalent.
+It is recommended to activate :class:`django.middleware.locale.LocaleMiddleware`
+so that the correct language will be activated per user or session even for
+non-FeinCMS managed views such as Django's administration tool.
 """
 
 # ------------------------------------------------------------------------

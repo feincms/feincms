@@ -2,27 +2,66 @@
 FeinCMS 1.6 release notes (upcoming)
 ====================================
 
+Welcome to FeinCMS 1.6!
 
-* The default value of ``FEINCMS_REVERSE_MONKEY_PATCH`` has been changed to
-  ``False``. Support for monkey-patching the ``reverse()`` method to support
-  the old ``'urlconf/viewname'`` notation will be removed in the 1.7 release.
+
+Backwards-incompatible changes
+==============================
+
+
+Reversing application content URLs
+----------------------------------
+
+The default value of ``FEINCMS_REVERSE_MONKEY_PATCH`` has been changed to
+``False``. Support for monkey-patching the ``reverse()`` method to support
+the old ``'urlconf/viewname'`` notation will be removed in the 1.7 release.
+
+
+Improvements to the bundled file and image contents
+---------------------------------------------------
+
+* ``ImageContent``, ``FileContent`` and ``VideoContent`` now have pretty
+  icons out-of-the-box.
+
+* ``ImageContent`` now accepts optional ``FORMAT_CHOICES`` for use with
+  FeinCMS' bundled thumbnailers, as well as ``caption`` and ``alt_text`` fields.
+
+  .. note::
+
+     If you are upgrading from an earlier version of FeinCMS, you'll have to
+     add the new database columns yourself or use a migration tool like South
+     to do it for you. Instructions for MySQL and the page module follow::
+
+         ALTER TABLE page_page_imagecontent ADD COLUMN `alt_text` varchar(255) NOT NULL;
+         ALTER TABLE page_page_imagecontent ADD COLUMN `caption` varchar(255) NOT NULL;
+
+     If you want to use ``FORMAT_CHOICES``::
+
+         ALTER TABLE page_page_imagecontent ADD COLUMN `format` varchar(64) NOT NULL;
+
+* ``FileContent`` now displays the size of the file in the default template,
+  and uses ``span`` elements to allow styling of the title / size.
+
+
+Removal of deprecated features
+------------------------------
 
 * Deprecated page manager methods have been removed. You should use
   ``Page.objects.for_request`` instead of the following manager methods:
 
-    * ``Page.objects.page_for_path_or_404()``
-    * ``Page.objects.for_request_or_404()``
-    * ``Page.objects.best_match_for_request()``
-    * ``Page.objects.from_request()``
+  * ``Page.objects.page_for_path_or_404()``
+  * ``Page.objects.for_request_or_404()``
+  * ``Page.objects.best_match_for_request()``
+  * ``Page.objects.from_request()``
 
 * Deprecated page methods have been removed:
 
-    * ``Page.active_children()``: Use ``Page.children.active()`` instead.
-    * ``Page.active_children_in_navigation()``: Use
-      ``Page.children.in_navigation()`` instead.
-    * ``Page.get_siblings_and_self()``: You probably wanted
-      ``self.parent.children.active()`` or
-      ``self.get_siblings(include_self=True).active()`` anyway.
+  * ``Page.active_children()``: Use ``Page.children.active()`` instead.
+  * ``Page.active_children_in_navigation()``: Use
+    ``Page.children.in_navigation()`` instead.
+  * ``Page.get_siblings_and_self()``: You probably wanted
+    ``self.parent.children.active()`` or
+    ``self.get_siblings(include_self=True).active()`` anyway.
 
 * The shortcuts ``Page.register_request_processors()`` and
   ``Page.register_response_processors()`` to register several request or response
@@ -42,29 +81,15 @@ FeinCMS 1.6 release notes (upcoming)
 * The deprecated ``feincms.views.base`` module has been removed. The code has
   been moved to ``feincms.views.legacy`` during the FeinCMS v1.5 cycle.
 
-* The value of ``FEINCMS_FRONTEND_EDITING`` defaults to ``False`` now.
 
-* ``ImageContent``, ``FileContent`` and ``VideoContent`` now have pretty
-  icons out-of-the-box.
+Notable features and improvements
+=================================
 
-* ``ImageContent`` now accepts optional ``FORMAT_CHOICES`` for use with
-  FeinCMS' bundled thumbnailers, as well as ``caption`` and ``alt_text`` fields.
-
-.. note::
-
-   If you are upgrading from an earlier version of FeinCMS, you'll have to
-   add the new database columns yourself or use a migration tool like South
-   to do it for you. Instructions for MySQL and the page module follow::
-
-       ALTER TABLE page_page_imagecontent ADD COLUMN `alt_text` varchar(255) NOT NULL;
-       ALTER TABLE page_page_imagecontent ADD COLUMN `caption` varchar(255) NOT NULL;
-
-   If you want to use ``FORMAT_CHOICES``::
-
-       ALTER TABLE page_page_imagecontent ADD COLUMN `format` varchar(64) NOT NULL;
-
-* ``FileContent`` now displays the size of the file in the default template,
-  and uses ``span`` elements to allow styling of the title / size.
+* The bundled content types take additional steps to ensure that the main view
+  context is available in content types' templates. If you only use the rendering
+  tags (``feincms_render_region`` and ``feincms_render_content``) you can take
+  advantage of all variables from your context processors in content types'
+  templates too.
 
 * ``MediaFile`` does no longer auto-rotate images on upload. It really is not a
   media library's job to magically modify user content; if needed, it should be
@@ -72,8 +97,20 @@ FeinCMS 1.6 release notes (upcoming)
   seems to have a side effect on some external storage engines which then would
   only save half the image data, see issue #254.
 
-* The bundled content types take additional steps to ensure that the main view
-  context is available in content types' templates. If you only use the rendering
-  tags (``feincms_render_region`` and ``feincms_render_content``) you can take
-  advantage of all variables from your context processors in content types'
-  templates too.
+* A new model field has been added, ``feincms.contrib.richtext.RichTextField``.
+  This is a drop-in replacement for Django's ``models.TextField`` with the
+  difference that it adds the CSS classes required by rich text fields in the
+  item editor.
+
+* The value of ``FEINCMS_FRONTEND_EDITING`` defaults to ``False`` now.
+
+* The ``SectionContent`` content type has been updated and does properly
+  use ``raw_id_fields`` for the media files instead of the hack which was used
+  before.
+
+
+Bugfixes
+========
+
+* The core page methods support running with ``APPEND_SLASH = False`` now.
+  Many content types using forms do not, however.

@@ -15,6 +15,10 @@ class RichTextFormField(forms.fields.CharField):
 
 
 class RichTextField(models.TextField):
+    """
+    Drop-in replacement for Django's ``models.TextField`` which allows editing
+    rich text instead of plain text in the item editor.
+    """
     formfield = RichTextFormField
 
 

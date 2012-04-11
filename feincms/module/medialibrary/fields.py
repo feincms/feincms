@@ -42,6 +42,10 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
 
 
 class MediaFileForeignKey(models.ForeignKey):
+    """
+    Drop-in replacement for Django's ``models.ForeignKey`` which automatically adds a
+    thumbnail of media files if the media file foreign key is shown using ``raw_id_fields``.
+    """
     def formfield(self, **kwargs):
         if 'widget' in kwargs and isinstance(kwargs['widget'], ForeignKeyRawIdWidget):
             kwargs['widget'] = MediaFileForeignKeyRawIdWidget(kwargs['widget'])
@@ -73,7 +77,7 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
             if mimetypes.types_map.get(ext, '-').startswith('image'):
                 thumb_url = feincms_thumbnail.thumbnail(value, "100x100")
                 if thumb_url:
-                    r = mark_safe((u'<img src="%s" alt="" style="float: left; margin-right: 10px;">' % thumb_url) + r)
+                    r = mark_safe((u'<img src="%s" alt="" style="float: left; padding-right: 8px; border-right: 1px solid #ccc; margin-right: 8px">' % thumb_url) + r)
 
         return r
 

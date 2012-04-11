@@ -8,6 +8,10 @@ ItemEditor
    :members:
    :noindex:
 
+.. automodule:: feincms.templatetags.feincms_admin_tags
+   :members:
+   :noindex:
+
 
 TreeEditor
 ----------

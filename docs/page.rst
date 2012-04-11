@@ -214,6 +214,13 @@ The following extensions are available currently:
   the Django i18n tools are initialized with the language given on the page
   object.
 
+  While it is not required by FeinCMS itself it's still recommended to add
+  :class:`django.middleware.locale.LocaleMiddleware` to the
+  ``MIDDLEWARE_CLASSES``; otherwise you will see strange language switching
+  behavior in non-FeinCMS managed views (such as third party apps not integrated
+  using :class:`feincms.content.application.models.ApplicationContent` or
+  Django's own administration tool).
+
 
 .. note::
 
