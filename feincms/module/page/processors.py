@@ -14,6 +14,10 @@ def require_path_active_request_processor(page, request):
 
 
 def redirect_request_processor(page, request):
+    """
+    Returns a ``HttpResponseRedirect`` instance if the current page says
+    a redirect should happen.
+    """
     target = page.get_redirect_to_target(request)
     if target:
         if request._feincms_extra_context.get('extra_path', '/') == '/':
@@ -21,6 +25,10 @@ def redirect_request_processor(page, request):
         raise Http404()
 
 def frontendediting_request_processor(page, request):
+    """
+    Sets the frontend editing state in the session depending on the
+    ``frontend_editing`` GET parameter and the user's permissions.
+    """
     if not 'frontend_editing' in request.GET:
         return
 
@@ -37,6 +45,9 @@ def frontendediting_request_processor(page, request):
 
 
 def etag_request_processor(page, request):
+    """
+    Short-circuits the request-response cycle if the ETag matches.
+    """
 
     # XXX is this a performance concern? Does it create a new class
     # every time the processor is called or is this optimized to a static
@@ -88,6 +99,17 @@ def etag_response_processor(page, request, response):
 
 
 def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
+    """
+    Attaches a handler which prints the query count (and optionally all individual queries
+    which have been executed) on the console. Does nothing if ``DEBUG = False``.
+
+    Example::
+
+        from feincms.module.page import models, processors
+        models.Page.register_response_procesors(
+            processors.debug_sql_queries_response_processor(verbose=True),
+            )
+    """
     if not django_settings.DEBUG:
         return lambda page, request, response: None
 

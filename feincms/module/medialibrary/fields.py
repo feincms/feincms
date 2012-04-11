@@ -42,6 +42,10 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
 
 
 class MediaFileForeignKey(models.ForeignKey):
+    """
+    Drop-in replacement for Django's ``models.ForeignKey`` which automatically adds a
+    thumbnail of media files if the media file foreign key is shown using ``raw_id_fields``.
+    """
     def formfield(self, **kwargs):
         if 'widget' in kwargs and isinstance(kwargs['widget'], ForeignKeyRawIdWidget):
             kwargs['widget'] = MediaFileForeignKeyRawIdWidget(kwargs['widget'])

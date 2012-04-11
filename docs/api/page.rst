@@ -2,7 +2,30 @@ Page module
 ===========
 
 
+Models
+------
+
 .. automodule:: feincms.module.page.models
+   :members:
+   :noindex:
+
+
+Request and response processors
+-------------------------------
+
+.. automodule:: feincms.module.page.processors
+   :members:
+   :noindex:
+
+
+Admin classes
+-------------
+
+.. automodule:: feincms.module.page.modeladmins
+   :members:
+   :noindex:
+
+.. automodule:: feincms.module.page.forms
    :members:
    :noindex:
 
@@ -17,14 +40,6 @@ Sitemap module
 
 Extensions
 ----------
-
-Date-based publishing
-*********************
-
-.. automodule:: feincms.module.page.extensions.datepublisher
-   :members:
-   :noindex:
-
 
 Page excerpts
 *************
@@ -66,14 +81,6 @@ Flexible page titles
    :noindex:
 
 
-Page translations
-*****************
-
-.. automodule:: feincms.module.page.extensions.translations
-   :members:
-   :noindex:
-
-
 Extensions not specific to the page module
 ------------------------------------------
 
@@ -93,6 +100,14 @@ Content type count denormalization
    :noindex:
 
 
+Date-based publishing
+*********************
+
+.. automodule:: feincms.module.extensions.datepublisher
+   :members:
+   :noindex:
+
+
 Featured items
 **************
 
@@ -105,5 +120,13 @@ Search engine optimization fields
 *********************************
 
 .. automodule:: feincms.module.extensions.seo
+   :members:
+   :noindex:
+
+
+Translations
+************
+
+.. automodule:: feincms.module.extensions.translations
    :members:
    :noindex:
