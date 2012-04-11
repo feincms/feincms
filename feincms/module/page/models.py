@@ -565,7 +565,8 @@ class PageAdminForm(forms.ModelForm):
                         if field in data:
                             del data[field]
 
-                    kwargs['initial'].update(data)
+                    data.update(kwargs['initial'])
+                    kwargs['initial'] = data
                 except Page.DoesNotExist:
                     pass
 
@@ -589,7 +590,8 @@ class PageAdminForm(forms.ModelForm):
                             # ignore this -- the translation does not exist
                             pass
 
-                    kwargs['initial'].update(data)
+                    data.update(kwargs['initial'])
+                    kwargs['initial'] = data
                 except (AttributeError, Page.DoesNotExist):
                     pass
 
