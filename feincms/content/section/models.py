@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
 from feincms.admin.item_editor import ItemEditorForm
+from feincms.contrib.richtext import RichTextField
 from feincms.module.medialibrary.models import MediaFile
 
 from feincms.content.medialibrary.models import MediaFileWidget
@@ -29,7 +30,7 @@ class SectionContent(models.Model):
         }
 
     title = models.CharField(_('title'), max_length=200, blank=True)
-    richtext = models.TextField(_('text'), blank=True)
+    richtext = RichTextField(_('text'), blank=True)
 
     class Meta:
         abstract = True
@@ -59,10 +60,6 @@ class SectionContent(models.Model):
             type = forms.ChoiceField(choices=TYPE_CHOICES,
                 initial=TYPE_CHOICES[0][0], label=_('type'),
                 widget=AdminRadioSelect(attrs={'class': 'radiolist'}))
-
-            def __init__(self, *args, **kwargs):
-                super(MediaFileContentAdminForm, self).__init__(*args, **kwargs)
-                self.fields['richtext'].widget.attrs.update({'class': 'item-richtext'})
 
         cls.feincms_item_editor_form = MediaFileContentAdminForm
         cls.form = MediaFileContentAdminForm
