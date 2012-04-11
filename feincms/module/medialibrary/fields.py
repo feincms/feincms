@@ -33,7 +33,7 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
             label = [u'&nbsp;<strong>%s</strong>' % escape(truncate_words(obj, 14))]
 
             if obj.type == 'image':
-                image = feincms_thumbnail.thumbnail(obj.file.name, '240x120')
+                image = feincms_thumbnail.thumbnail(obj.file.name, '100x100')
                 label.append(u'<br /><img src="%s" alt="" style="margin:1em 0 0 10em" />' % image)
 
             return u''.join(label)
