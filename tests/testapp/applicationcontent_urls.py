@@ -18,7 +18,7 @@ def args_test(request, kwarg1, kwarg2):
 
 
 def full_reverse_test(request):
-    t = template.Template('{% load applicationcontent_tags %}home:{% app_reverse "ac_module_root" "testapp.applicationcontent_urls" %} args:{% app_reverse "ac_args_test" "testapp.applicationcontent_urls" "xy" "zzy" %} base:{% url feincms_handler "test" %}')
+    t = template.Template('{% load applicationcontent_tags %}home:{% app_reverse "ac_module_root" "testapp.applicationcontent_urls" %} args:{% app_reverse "ac_args_test" "testapp.applicationcontent_urls" "xy" "zzy" %} base:{% url feincms_handler "test" %} homeas:{% app_reverse "ac_module_root" "testapp.applicationcontent_urls" as reversed %}{{ reversed }}')
     return t.render(template.Context())
 
 

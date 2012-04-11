@@ -1012,6 +1012,7 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'home:/test-page/test-child-page/')
         self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
+        self.assertContains(response, 'homeas:/test-page/test-child-page/')
 
         self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
             '/test-page/test-child-page/')
