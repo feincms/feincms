@@ -127,16 +127,19 @@ class ChangeList(main.ChangeList):
         super(ChangeList, self).__init__(request, *args, **kwargs)
 
     def get_query_set(self, *args, **kwargs):
-        return super(ChangeList, self).get_query_set(*args, **kwargs).order_by('tree_id', 'lft')
+        mptt_opts = self.model._mptt_meta
+        return super(ChangeList, self).get_query_set(*args, **kwargs).order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr)
 
     def get_results(self, request):
+        mptt_opts = self.model._mptt_meta
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            clauses = [Q(
-                tree_id=tree_id,
-                lft__lte=lft,
-                rght__gte=rght,
+            clauses = [Q(**{
+                mptt_opts.tree_id_attr: tree_id,
+                mptt_opts.left_attr + '__lte': lft,
+                mptt_opts.right_attr + '__gte': rght,
+                }
                 ) for lft, rght, tree_id in \
-                    self.query_set.values_list('lft', 'rght', 'tree_id')]
+                    self.query_set.values_list(mptt_opts.left_attr, mptt_opts.right_attr, mptt_opts.tree_id_attr)]
             if clauses:
                 self.query_set = self.model._default_manager.filter(reduce(lambda p, q: p|q, clauses))
 
@@ -192,11 +195,12 @@ class TreeEditor(admin.ModelAdmin):
         Generate a short title for an object, indent it depending on
         the object's depth in the hierarchy.
         """
+        mptt_opts = item._mptt_meta
         r = ''
         if hasattr(item, 'get_absolute_url'):
             r = '<input type="hidden" class="medialibrary_file_path" value="%s" id="_refkey_%d" />' % (
                         item.get_absolute_url(),
-                        item.id
+                        item.pk
                       )
 
         editable_class = ''
@@ -204,7 +208,7 @@ class TreeEditor(admin.ModelAdmin):
             editable_class = ' tree-item-not-editable'
 
         r += '<span id="page_marker-%d" class="page_marker%s" style="width: %dpx;">&nbsp;</span>&nbsp;' % (
-                item.id, editable_class, 14+item.level*18)
+                item.pk, editable_class, 14+getattr(item, mptt_opts.level_attr)*18)
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):
             r += item.short_title()
