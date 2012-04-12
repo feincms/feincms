@@ -17,4 +17,4 @@ class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
         print "Rebuilding MPTT pointers for Page"
-        Page.tree.rebuild()
+        Page._tree_manager.rebuild()

@@ -153,7 +153,7 @@ class ItemEditor(admin.ModelAdmin):
                     'identifier': obj.fe_identifier(),
                     'FEINCMS_JQUERY_NO_CONFLICT': \
                         settings.FEINCMS_JQUERY_NO_CONFLICT,
-                    })
+                    }, context_instance=template.RequestContext(request))
         else:
             form = ModelForm(instance=obj, prefix=content_type)
 

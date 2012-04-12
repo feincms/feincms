@@ -95,7 +95,10 @@ Notable features and improvements
   media library's job to magically modify user content; if needed, it should be
   done in an image filter (like sorl). Also, reading through the image data
   seems to have a side effect on some external storage engines which then would
-  only save half the image data, see issue #254.
+  only save half the image data, see issue #254. Additionally, FeinCMS does not
+  try anymore to detect whether uploaded files really are images, and only looks
+  at the file extension by default. We did not peek at the contents of other file
+  types either.
 
 * A new model field has been added, ``feincms.contrib.richtext.RichTextField``.
   This is a drop-in replacement for Django's ``models.TextField`` with the

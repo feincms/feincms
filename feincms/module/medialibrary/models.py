@@ -8,12 +8,6 @@ from datetime import datetime
 import os
 import re
 
-# Try to import PIL in either of the two ways it can end up installed.
-try:
-    from PIL import Image
-except ImportError:
-    import Image
-
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
@@ -176,17 +170,6 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
                 self.file_size = self.file.size
             except (OSError, IOError, ValueError), e:
                 logger.error("Unable to read file size for %s: %s" % (self, e))
-
-        # Try to detect things that are not really images
-        if self.type == 'image':
-            try:
-                Image.open(self.file)
-            # Not an image? PIL raises "IOError: cannot identify image file"
-            # Note: it also raises that exception for any real I/O error *sigh*
-            except IOError, e:
-                logger.warning("Uploaded file %s cannot be opened by PIL: %s" % (self.file.name, e))
-                if not e.errno: # Not a real IOError but PIL-generated
-                    self.type = self.determine_file_type('***') # It's binary something
 
         super(MediaFileBase, self).save(*args, **kwargs)
 
