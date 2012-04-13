@@ -70,9 +70,8 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
     def render(self, name, value, attrs=None):
         r = super(AdminFileWithPreviewWidget, self).render(name, value, attrs=attrs)
 
-        if hasattr(self, 'mediafile_instance'):
-            image = admin_thumbnail(self.mediafile_instance)
-
+        if value and getattr(value, 'instance', None):
+            image = admin_thumbnail(value.instance)
             if image:
                 r = mark_safe((u'<img src="%s" alt="" style="float: left; padding-right: 8px; border-right: 1px solid #ccc; margin-right: 8px">' % image) + r)
 

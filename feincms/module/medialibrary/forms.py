@@ -40,11 +40,6 @@ class MediaFileAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(MediaFileAdminForm, self).__init__(*args, **kwargs)
 
-        # HACK: Make the media file instance available inside the widget
-        # so that the widget can display a thumbnail of the media file
-        # (if the thumbnailer supports it)
-        self.fields['file'].widget.mediafile_instance = self.instance
-
         if settings.FEINCMS_MEDIAFILE_OVERWRITE and self.instance.id:
             if not hasattr(self.instance.file.field, '_feincms_generate_filename_patched'):
                 orig_generate_filename = self.instance.file.field.generate_filename
