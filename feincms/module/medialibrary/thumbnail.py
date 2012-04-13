@@ -1,0 +1,18 @@
+from feincms import settings
+from feincms.templatetags import feincms_thumbnail
+from feincms.utils import get_object
+
+
+def default_admin_thumbnail(mediafile):
+    if mediafile.type != 'image':
+        return None
+
+    return feincms_thumbnail.thumbnail(mediafile.file, '100x100')
+
+
+_cached_thumbnailer = None
+def admin_thumbnail(mediafile):
+    global _cached_thumbnailer
+    if not _cached_thumbnailer:
+        _cached_thumbnailer = get_object(settings.FEINCMS_MEDIALIBRARY_THUMBNAIL)
+    return _cached_thumbnailer(mediafile)

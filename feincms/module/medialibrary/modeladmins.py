@@ -22,11 +22,11 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
-from ...templatetags import feincms_thumbnail
 from ...translations import admin_translationinline, lookup_translations
 
 from .models import Category, MediaFileTranslation
 from .forms import MediaCategoryAdminForm, MediaFileAdminForm
+from .thumbnail import admin_thumbnail
 
 # -----------------------------------------------------------------------
 class CategoryAdmin(admin.ModelAdmin):
@@ -122,20 +122,14 @@ class MediaFileAdmin(admin.ModelAdmin):
         return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
 
     def admin_thumbnail(self, obj):
-        if obj.type == 'image':
-            image = None
-            try:
-                image = feincms_thumbnail.thumbnail(obj.file.name, '100x100')
-            except:
-                pass
-
-            if image:
-                return mark_safe(u"""
-                    <a href="%(url)s" target="_blank">
-                        <img src="%(image)s" alt="" />
-                    </a>""" % {
-                        'url': obj.file.url,
-                        'image': image,})
+        image = admin_thumbnail(obj)
+        if image:
+            return mark_safe(u"""
+                <a href="%(url)s" target="_blank">
+                    <img src="%(image)s" alt="" />
+                </a>""" % {
+                    'url': obj.file.url,
+                    'image': image,})
         return ''
     admin_thumbnail.short_description = _('Preview')
     admin_thumbnail.allow_tags = True

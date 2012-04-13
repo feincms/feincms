@@ -21,6 +21,8 @@ from django.utils.encoding import force_unicode
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
+from feincms import settings
+
 
 register = template.Library()
 
@@ -61,7 +63,15 @@ class Thumbnailer(object):
             basename, format = filename.rsplit('.', 1)
         except ValueError:
             basename, format = filename, 'jpg'
-        miniature = basename + self.MARKER + self.size + '.' + format
+
+        miniature = u''.join([
+            settings.FEINCMS_THUMBNAIL_DIR,
+            basename,
+            self.MARKER,
+            self.size,
+            '.',
+            format,
+            ])
 
         if not storage.exists(miniature):
             generate = True

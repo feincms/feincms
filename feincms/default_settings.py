@@ -25,6 +25,11 @@ FEINCMS_UPLOAD_PREFIX = getattr(settings, 'FEINCMS_UPLOAD_PREFIX', '')
 #: Local path to newly uploaded media files
 FEINCMS_MEDIALIBRARY_UPLOAD_TO = getattr(settings, 'FEINCMS_MEDIALIBRARY_UPLOAD_TO', 'medialibrary/%Y/%m/')
 
+#: Thumbnail function for suitable mediafiles. Only receives the media file
+#: and should return a thumbnail URL (or nothing).
+FEINCMS_MEDIALIBRARY_THUMBNAIL = getattr(settings, 'FEINCMS_MEDIALIBRARY_THUMBNAIL',
+    'feincms.module.medialibrary.thumbnail.default_admin_thumbnail')
+
 # ------------------------------------------------------------------------
 # Settings for RichText
 
@@ -105,5 +110,10 @@ FEINCMS_CMS_404_PAGE = getattr(settings, 'FEINCMS_CMS_404_PAGE', None)
 #: media file path (and thus the media url) constant.
 #: Experimental, this might not work with all storage backends.
 FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE', False)
+
+# ------------------------------------------------------------------------
+#: Prefix for thumbnails. Set this to something non-empty to separate thumbs
+#: from uploads. The value should end with a slash, but this is not enforced.
+FEINCMS_THUMBNAIL_DIR = getattr(settings, 'FEINCMS_THUMBNAIL_DIR', '_thumbs/')
 
 # ------------------------------------------------------------------------

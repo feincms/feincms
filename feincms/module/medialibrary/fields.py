@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import
 
-import mimetypes
 from os.path import splitext
 
 from django.contrib.admin.widgets import AdminFileWidget
@@ -16,8 +15,8 @@ from django.utils.text import truncate_words
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
-from feincms.templatetags import feincms_thumbnail
 from .models import MediaFile
+from .thumbnail import admin_thumbnail
 
 __all__ = ('MediaFileForeignKey', 'ContentWithMediaFile')
 
@@ -31,9 +30,9 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
         try:
             obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
             label = [u'&nbsp;<strong>%s</strong>' % escape(truncate_words(obj, 14))]
+            image = admin_thumbnail(obj)
 
-            if obj.type == 'image':
-                image = feincms_thumbnail.thumbnail(obj.file.name, '240x120')
+            if image:
                 label.append(u'<br /><img src="%s" alt="" style="margin:1em 0 0 10em" />' % image)
 
             return u''.join(label)
@@ -71,13 +70,11 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
     def render(self, name, value, attrs=None):
         r = super(AdminFileWithPreviewWidget, self).render(name, value, attrs=attrs)
 
-        if value:
-            ext = splitext(value.name)[1].lower()
-            # This could also add icons for other file types?
-            if mimetypes.types_map.get(ext, '-').startswith('image'):
-                thumb_url = feincms_thumbnail.thumbnail(value, "100x100")
-                if thumb_url:
-                    r = mark_safe((u'<img src="%s" alt="" style="float: left; padding-right: 8px; border-right: 1px solid #ccc; margin-right: 8px">' % thumb_url) + r)
+        if hasattr(self, 'mediafile_instance'):
+            image = admin_thumbnail(self.mediafile_instance)
+
+            if image:
+                r = mark_safe((u'<img src="%s" alt="" style="float: left; padding-right: 8px; border-right: 1px solid #ccc; margin-right: 8px">' % image) + r)
 
         return r
 
