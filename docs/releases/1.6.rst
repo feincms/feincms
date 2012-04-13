@@ -123,3 +123,7 @@ Bugfixes
 
 * The core page methods support running with ``APPEND_SLASH = False`` now.
   Many content types using forms do not, however.
+
+* The MPTT attributes aren't hardcoded in the tree editor anymore. Custom names
+  for the ``left``, ``right``, ``level`` and ``tree_id`` attributes are now
+  supported.
