@@ -20,7 +20,7 @@ def pre_save_handler(sender, instance, **kwargs):
     Intercept attempts to save and insert the current date and time into
     creation and modification date fields.
     """
-    from feincms.utils import compatible_now
+    from feincms.compat import compatible_now
 
     now = compatible_now()
     if instance.id is None:

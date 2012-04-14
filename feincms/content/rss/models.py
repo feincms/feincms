@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 import feedparser
-from feincms.utils import compatible_now
+from feincms.compat import compatible_now
 
 
 class RSSContent(models.Model):

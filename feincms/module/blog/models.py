@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
-from feincms.utils import compatible_now
+from feincms.compat import compatible_now
 
 
 class EntryManager(models.Manager):

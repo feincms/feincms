@@ -13,7 +13,7 @@ from datetime import datetime
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from feincms.utils import compatible_now
+from feincms.compat import compatible_now
 
 # ------------------------------------------------------------------------
 def format_date(d, if_none=''):

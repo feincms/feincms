@@ -230,12 +230,3 @@ def shorten_string(str, max_length=50):
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
-
-
-def compatible_now():
-    from django import VERSION
-    if (VERSION[0] >= 1 and VERSION[1] >= 4):
-        from django.utils import timezone
-        return timezone.now()
-    import datetime
-    return datetime.datetime.now()

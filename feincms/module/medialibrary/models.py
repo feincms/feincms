@@ -34,7 +34,7 @@ from feincms.models import ExtensionsMixin
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import (TranslatedObjectMixin, Translation,
     TranslatedObjectManager, admin_translationinline, lookup_translations)
-from feincms.utils import compatible_now
+from feincms.compat import compatible_now
 
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
