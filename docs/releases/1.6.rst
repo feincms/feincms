@@ -82,6 +82,16 @@ Removal of deprecated features
   been moved to ``feincms.views.legacy`` during the FeinCMS v1.5 cycle.
 
 
+New deprecations
+----------------
+
+* The view decorator ``feincms.views.decorators.add_page_to_extra_context``
+  has been deprecated as it was mostly used with function-based generic views,
+  which have been deprecated in Django as well. Use Django's class-based generic
+  views and the ``feincms.context_processors.add_page_if_missing`` context
+  processor if you need similar functionality instead.
+
+
 Notable features and improvements
 =================================
 

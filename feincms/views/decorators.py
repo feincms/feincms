@@ -14,6 +14,14 @@ def add_page_to_extra_context(view_func):
     """
 
     def inner(request, *args, **kwargs):
+        import warnings
+        warnings.warn("The `add_page_to_extra_context` view decorator has been"
+            " deprecated, as have the function-based generic views in"
+            " `django.views.generic` and `feincms.views.generic`. Use the"
+            " `feincms.context_processors.add_page_if_missing` context processor"
+            " and Django's class-based generic views instead.",
+            DeprecationWarning, stacklevel=2)
+
         kwargs.setdefault('extra_context', {})
         kwargs['extra_context']['feincms_page'] = Page.objects.for_request(
             request, best_match=True)
