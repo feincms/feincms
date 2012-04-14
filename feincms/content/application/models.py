@@ -272,12 +272,6 @@ class ApplicationContent(models.Model):
 
     @classmethod
     def initialize_type(cls, APPLICATIONS):
-        # Generate a more flexible application configuration structure from
-        # the legacy pattern:
-
-        # TODO: Consider changing the input signature to something cleaner, at
-        # the cost of a one-time backwards incompatible change
-
         for i in APPLICATIONS:
             if not 2 <= len(i) <= 3:
                 raise ValueError("APPLICATIONS must be provided with tuples containing at least two parameters (urls, name) and an optional extra config dict")
@@ -313,6 +307,8 @@ class ApplicationContent(models.Model):
 
                 if instance:
                     try:
+                        # TODO use urlconf_path from POST if set
+                        # urlconf_path = request.POST.get('...urlconf_path', instance.urlconf_path)
                         self.app_config = cls.ALL_APPS_CONFIG[instance.urlconf_path]['config']
                     except KeyError:
                         self.app_config = {}
@@ -328,14 +324,6 @@ class ApplicationContent(models.Model):
 
                     for k, v in self.custom_fields.items():
                         self.fields[k] = v
-
-
-            def clean(self, *args, **kwargs):
-                cleaned_data = super(ApplicationContentItemEditorForm, self).clean(*args, **kwargs)
-
-                # TODO: Check for newly added instances so we can force a re-validation of their custom fields
-
-                return cleaned_data
 
             def save(self, commit=True, *args, **kwargs):
                 # Django ModelForms return the model instance from save. We'll
