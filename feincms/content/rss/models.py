@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 
 from django.db import models
 from django.utils.safestring import mark_safe
@@ -7,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 import feedparser
+from feincms.utils import compatible_now
 
 
 class RSSContent(models.Model):
@@ -45,7 +45,7 @@ class RSSContent(models.Model):
             'feed_link': feed['feed']['link'],
             'entries': entries,
             })
-        self.last_updated = datetime.now()
+        self.last_updated = compatible_now()
 
         if save:
             self.save()

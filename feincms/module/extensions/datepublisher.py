@@ -13,6 +13,7 @@ from datetime import datetime
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
+from feincms.utils import compatible_now
 
 # ------------------------------------------------------------------------
 def format_date(d, if_none=''):
@@ -40,7 +41,7 @@ def granular_now(n=None):
     Also useful if you are using johnny-cache or a similar queryset cache.
     """
     if n is None:
-        n = datetime.now()
+        n = compatible_now()
     return datetime(n.year, n.month, n.day, n.hour, (n.minute // 5) * 5)
 
 # ------------------------------------------------------------------------
