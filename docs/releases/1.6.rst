@@ -143,3 +143,5 @@ Bugfixes
 * The MPTT attributes aren't hardcoded in the tree editor anymore. Custom names
   for the ``left``, ``right``, ``level`` and ``tree_id`` attributes are now
   supported.
+
+* FeinCMS uses timezone-aware datetimes now.

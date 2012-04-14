@@ -5,8 +5,6 @@ subclasses than a polished or even sufficient blog module implementation.
 It does work, though.
 """
 
-from datetime import datetime
-
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
@@ -14,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
+from feincms.compat import compatible_now
 
 
 class EntryManager(models.Manager):
@@ -21,7 +20,7 @@ class EntryManager(models.Manager):
         return self.filter(
             published=True,
             published_on__isnull=False,
-            published_on__lte=datetime.now(),
+            published_on__lte=compatible_now(),
             )
 
 
@@ -47,7 +46,7 @@ class Entry(Base):
 
     def save(self, *args, **kwargs):
         if self.published and not self.published_on:
-            self.published_on = datetime.now()
+            self.published_on = compatible_now()
         super(Entry, self).save(*args, **kwargs)
 
     @models.permalink
