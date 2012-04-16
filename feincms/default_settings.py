@@ -103,4 +103,4 @@ FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE', F
 #: When caching using thread-local in application content, prefix the cache
 #: key by the result of calling this function (referenced by the full path).
 #: Example: "django.utils.translation.get_language"
-FEINCMS_CACHE_KEY_PREFIX = getattr(settings, 'FEINCMS_CACHE_KEY_PREFIX')
+FEINCMS_CACHE_KEY_PREFIX = getattr(settings, 'FEINCMS_CACHE_KEY_PREFIX', None)
