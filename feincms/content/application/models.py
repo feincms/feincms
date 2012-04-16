@@ -6,6 +6,7 @@ from time import mktime
 import re
 
 from django.core import urlresolvers
+from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse, NoReverseMatch
 from django.db import models
 from django.http import HttpResponse
@@ -49,6 +50,16 @@ def _empty_reverse_cache():
     _local.reverse_cache = {}
 
 
+# TODO: Move this into somewhere more generic:
+cache_key_prefix = None
+if settings.FEINCMS_CACHE_KEY_PREFIX:
+    # Make sure we can load the cache key prefix function without dependency failures:
+    try:
+        cache_key_prefix = get_object(settings.FEINCMS_CACHE_KEY_PREFIX)
+    except ImportError, e:
+        raise ImproperlyConfigured("FEINCMS_CACHE_KEY_PREFIX is enabled but the function %s could not be imported: %s" % (settings.FEINCMS_CACHE_KEY_PREFIX, e))
+
+
 def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, **vkwargs):
     """
     Reverse URLs from application contents
@@ -74,16 +85,22 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
     # uninteresting to us (such as current_app)
 
     app_cache_keys = {
-        'none': 'app_%s_none' % urlconf,
+        'none': u'app_%s_none' % urlconf,
         }
     proximity_info = getattr(_local, 'proximity_info', None)
     url_prefix = None
 
     if proximity_info:
         app_cache_keys.update({
-            'all': 'app_%s_%s_%s_%s_%s' % ((urlconf,) + proximity_info),
-            'tree': 'app_%s_%s' % (urlconf, proximity_info[0]),
+            'all': u'app_%s_%s_%s_%s_%s' % ((urlconf,) + proximity_info),
+            'tree': u'app_%s_%s' % (urlconf, proximity_info[0]),
             })
+
+    if cache_key_prefix:
+        ck_prefix = cache_key_prefix()
+
+        for key, value in app_cache_keys.items():
+            app_cache_keys[key] = u'%s:%s' % (ck_prefix, value)
 
     for key in ('all', 'tree', 'none'):
         try:
