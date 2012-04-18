@@ -8,10 +8,12 @@ from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import FieldDoesNotExist
 
+from feincms import ensure_completely_loaded
 from .models import Page
 from .modeladmins import PageAdmin
 
 # ------------------------------------------------------------------------
+ensure_completely_loaded()
 try:
     Page._meta.get_field('template_key')
 except FieldDoesNotExist:
