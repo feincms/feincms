@@ -92,6 +92,13 @@ New deprecations
   processor if you need similar functionality instead.
 
 
+Compatibility with Django and other apps
+----------------------------------------
+
+FeinCMS 1.6 requires Django 1.4. If you want to use django-reversion with FeinCMS
+you have to use django-reversion 1.6 or newer.
+
+
 Notable features and improvements
 =================================
 
