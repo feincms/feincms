@@ -363,12 +363,6 @@ def is_sibling_of(page1, page2):
         return False
 
 # ------------------------------------------------------------------------
-try:
-    any
-except NameError:
-    # For Python 2.4
-    from feincms.compat import c_any as any
-
 @register.filter
 def siblings_along_path_to(page_list, page2):
     """
