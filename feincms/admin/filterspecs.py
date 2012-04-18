@@ -4,15 +4,7 @@
 # Authors: Marinho Brandao <marinho at gmail.com>
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
-try:
-    from django.contrib.admin.filters import FieldListFilter, ChoicesFieldListFilter
-    legacy = False
-except ImportError: # Django up to 1.3
-    from django.contrib.admin.filterspecs import (
-        FilterSpec as FieldListFilter,
-        ChoicesFilterSpec as ChoicesFieldListFilter)
-    legacy = True
-
+from django.contrib.admin.filters import FieldListFilter, ChoicesFieldListFilter
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
@@ -30,10 +22,7 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
     def __init__(self, f, request, params, model, model_admin, field_path=None):
         from feincms.utils import shorten_string
 
-        try:
-            super(ParentFieldListFilter, self).__init__(f, request, params, model, model_admin, field_path)
-        except TypeError: # Django 1.2
-            super(ParentFieldListFilter, self).__init__(f, request, params, model, model_admin)
+        super(ParentFieldListFilter, self).__init__(f, request, params, model, model_admin, field_path)
 
         parent_ids = model.objects.exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
         parents = model.objects.filter(pk__in=parent_ids).values_list("pk", "title", "level")
@@ -64,10 +53,7 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
     """
 
     def __init__(self, f, request, params, model, model_admin, field_path=None):
-        try:
-            super(CategoryFieldListFilter, self).__init__(f, request, params, model, model_admin, field_path)
-        except TypeError: # Django 1.2
-            super(CategoryFieldListFilter, self).__init__(f, request, params, model, model_admin)
+        super(CategoryFieldListFilter, self).__init__(f, request, params, model, model_admin, field_path)
 
         # Restrict results to categories which are actually in use:
         self.lookup_choices = [
@@ -95,19 +81,9 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
         return _('Category')
 
 
-if legacy:
-    # registering the filter
-    FieldListFilter.filter_specs.insert(0,
-        (lambda f: getattr(f, 'parent_filter', False), ParentFieldListFilter)
-    )
-
-    FieldListFilter.filter_specs.insert(1,
-        (lambda f: getattr(f, 'category_filter', False), CategoryFieldListFilter)
-    )
-else:
-    FieldListFilter.register(lambda f: getattr(f, 'parent_filter', False),
-        ParentFieldListFilter,
-        take_priority=True)
-    FieldListFilter.register(lambda f: getattr(f, 'category_filter', False),
-        CategoryFieldListFilter,
-        take_priority=True)
+FieldListFilter.register(lambda f: getattr(f, 'parent_filter', False),
+    ParentFieldListFilter,
+    take_priority=True)
+FieldListFilter.register(lambda f: getattr(f, 'category_filter', False),
+    CategoryFieldListFilter,
+    take_priority=True)
