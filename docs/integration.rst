@@ -134,10 +134,11 @@ Writing the models
 
 Because the URLconf entries ``entry_list`` and ``entry_detail`` aren't
 reachable through standard means (remember, they aren't ``include``d
-anywhere) it's not possible to use standard ``reverse`` calls to determine
-the absolute URL of a news entry. FeinCMS provides its own ``app_reverse``
-function and ``permalink`` decorator mimicking the interface of Django's
-standard functionality::
+anywhere) it's not possible to use standard ``reverse`` calls to
+determine the absolute URL of a news entry. FeinCMS provides its own
+``app_reverse`` function (see :ref:`integration-reversing-urls` for
+details) and ``permalink`` decorator mimicking the interface of
+Django's standard functionality::
 
 
     from django.db import models
@@ -277,6 +278,7 @@ content.
    If you add two application content blocks on the same page and both use this
    mechanism, the later 'wins'.
 
+.. _integration-reversing-urls:
 
 More on reversing URLs
 ----------------------
@@ -289,6 +291,7 @@ that it resolves URLs from application contents. The second argument,
 ``urlconf``, has to correspond to the URLconf parameter passed in the
 ``APPLICATIONS`` list to ``Page.create_content_type``::
 
+    from feincms.content.application.models import app_reverse
     app_reverse('mymodel-detail', 'myapp.urls', args=...)
 
 or::
