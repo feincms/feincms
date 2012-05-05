@@ -79,6 +79,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 'parent__' * i + 'in_navigation': True,
                 'level__gte': level + i,
             })
+            # TODO handle the case where active_filters has been extended
         return q
 
     def _what(self, instance, level, depth):
