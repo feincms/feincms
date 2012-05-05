@@ -23,6 +23,12 @@ from feincms.module.medialibrary.models import MediaFile
 from feincms.module.medialibrary.thumbnail import admin_thumbnail
 
 
+warnings.warn("The contents of feincms.content.medialibrary.models will be replaced"
+    " with feincms.content.medialibrary.v2 in FeinCMS v1.7. The old media file content"
+    " here interferes with Django's raw_id_fields and is generally messy.",
+    DeprecationWarning, stacklevel=2)
+
+
 class MediaFileWidget(forms.TextInput):
     """
     TextInput widget, shows a link to the current value if there is one.
