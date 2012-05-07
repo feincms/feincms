@@ -43,3 +43,5 @@ Finally, you should ensure that initial revisions are created using
    You should ensure that you're using a reversion release which is
    compatible with your installed Django version. The reversion documentation
    contains an up-to-date list of compatible releases.
+
+   The reversion support in FeinCMS requires at least django-reversion 1.6.

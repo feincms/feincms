@@ -1177,8 +1177,9 @@ class PagesTestCase(TestCase):
             '100x100.png" alt="" />')
 
         stats = list(MediaFile.objects.values_list('type', flat=True))
-        self.assertEqual(stats.count('image'), 2)
-        self.assertEqual(stats.count('other'), 10)
+        self.assertEqual(stats.count('image'), 12)
+        self.assertEqual(stats.count('other'), 0)
+        # XXX: Test mediafile type detection some more?
 
     def test_30_context_processors(self):
         self.create_default_page_set()
