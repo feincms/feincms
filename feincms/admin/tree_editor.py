@@ -2,20 +2,20 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+import json
+import logging
+
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.views import main
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
-from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 from mptt.exceptions import InvalidMove
 
 from feincms import settings
-
-import logging
 
 
 # ------------------------------------------------------------------------
@@ -316,7 +316,7 @@ class TreeEditor(admin.ModelAdmin):
                 d.append(b)
 
         # TODO: Shorter: [ y for x,y in zip(a,b) if x!=y ]
-        return HttpResponse(simplejson.dumps(d), mimetype="application/json")
+        return HttpResponse(json.dumps(d), mimetype="application/json")
 
     def get_changelist(self, request, **kwargs):
         return ChangeList
@@ -343,7 +343,7 @@ class TreeEditor(admin.ModelAdmin):
         self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
-        extra_context['tree_structure'] = mark_safe(simplejson.dumps(
+        extra_context['tree_structure'] = mark_safe(json.dumps(
                                                     _build_tree_structure(self.model)))
 
         return super(TreeEditor, self).changelist_view(request, extra_context, *args, **kwargs)
