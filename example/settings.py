@@ -41,6 +41,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'django.core.context_processors.static',
+
+    'feincms.context_processors.add_page_if_missing',
 )
 
 TEMPLATE_LOADERS = (
