@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-08 19:16+0200\n"
+"POT-Creation-Date: 2012-05-10 12:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -179,6 +179,38 @@ msgstr "vpravo"
 msgid "type"
 msgstr "typ"
 
+#: content/pollquestion/models.py:44
+msgid "poll content"
+msgstr "obsah otázky"
+
+#: content/pollquestion/models.py:45
+msgid "poll contents"
+msgstr "obsahy otázek"
+
+#: content/pollquestion/models.py:58 content/pollquestion/models.py:69
+msgid "poll object"
+msgstr "objekt Otázka"
+
+#: content/pollquestion/models.py:62 content/pollquestion/models.py:71
+msgid "polltype"
+msgstr "typ"
+
+#: content/pollquestion/models.py:65
+msgid "Type of poll form to me rendered."
+msgstr "Způsob, jakým se zobrazí výsledky"
+
+#: content/pollquestion/models.py:94
+msgid "Default"
+msgstr "Běžně - vodorovné grafy"
+
+#: content/pollquestion/models.py:95
+msgid "applepie"
+msgstr "Koláčový graf"
+
+#: content/pollquestion/models.py:96
+msgid "Whatever"
+msgstr "Cololiv ... :)"
+
 #: content/raw/models.py:18
 msgid "raw content"
 msgstr "binární obsah"
@@ -205,8 +237,9 @@ msgstr "ignorovat HTML validační varovnání"
 msgid ""
 "HTML validation produced %(count)d warnings. Please review the updated "
 "content below before continuing: %(messages)s"
-msgstr "HTML validace vyplivla %(count)d varování. Prosím zkontroluj "
-"obsah níže před pokračováním: %(messages)s"
+msgstr ""
+"HTML validace vyplivla %(count)d varování. Prosím zkontroluj obsah níže před "
+"pokračováním: %(messages)s"
 
 #: content/richtext/models.py:89
 msgid "rich text"
@@ -220,7 +253,9 @@ msgstr ""
 msgid ""
 "The rss field is updated several times a day. A change in the title will "
 "only be visible on the home page after the next feed update."
-msgstr "RSS pole je měněno několikrát za den. Změna v titulku bude patrná při přístí změně RSS kanálu."
+msgstr ""
+"RSS pole je měněno několikrát za den. Změna v titulku bude patrná při přístí "
+"změně RSS kanálu."
 
 #: content/rss/models.py:22
 msgid "link"
@@ -294,8 +329,9 @@ msgstr "odkaz na video"
 msgid ""
 "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
 "com/watch?v=zmj1rpzDRZ0"
-msgstr "Toto má být odkaz na youtube nebo vimeo video, např. http://www.youtube."
-"com/watch?v=zmj1rpzDRZ0"
+msgstr ""
+"Toto má být odkaz na youtube nebo vimeo video, např. http://www.youtube.com/"
+"watch?v=zmj1rpzDRZ0"
 
 #: content/video/models.py:30
 msgid "video"
@@ -323,7 +359,8 @@ msgstr "publikovaný"
 
 #: module/blog/models.py:35
 msgid "Will be set automatically once you tick the `published` checkbox above."
-msgstr "Bude automaticky nastaven jakmile klikneš na zaškrtávátko `publikovaný` výše."
+msgstr ""
+"Bude automaticky nastaven jakmile klikneš na zaškrtávátko `publikovaný` výše."
 
 #: module/blog/models.py:40
 msgid "entry"
@@ -559,8 +596,9 @@ msgstr "Vyexportuj vybrané mediální soubory jako zip archiv"
 msgid ""
 "Cannot overwrite with different file type (attempt to overwrite a "
 "%(old_ext)s with a %(new_ext)s)"
-msgstr "Nemůže být přepsán jiným typem (pokoušíš se přepsat "
-"%(old_ext)s s %(new_ext)s)"
+msgstr ""
+"Nemůže být přepsán jiným typem (pokoušíš se přepsat %(old_ext)s s "
+"%(new_ext)s)"
 
 #: module/medialibrary/models.py:466
 #, python-format
@@ -593,8 +631,9 @@ msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL. This affects both the navigation and subpages' "
 "URLs."
-msgstr "Přepíše cílové URL. Ujisti se, že máš \"/\" na začátku a na konci pro lokální URL."
-"Toto ovlivňuje navigaci cílové stránky i podstránek"
+msgstr ""
+"Přepíše cílové URL. Ujisti se, že máš \"/\" na začátku a na konci pro "
+"lokální URL.Toto ovlivňuje navigaci cílové stránky i podstránek"
 
 #: module/page/models.py:227
 msgid "redirect to"
@@ -679,7 +718,9 @@ msgstr "rozšíření navigace"
 msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
-msgstr "Vyber modul nabízející podstránky pro tuto stránku jestli chceš upravit navigaci."
+msgstr ""
+"Vyber modul nabízející podstránky pro tuto stránku jestli chceš upravit "
+"navigaci."
 
 #: module/page/extensions/navigation.py:109
 msgid "Navigation extension"
@@ -771,8 +812,10 @@ msgstr "Opravdu změnit šablonu? <br />Všechny změny uloženy."
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
 "%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
-msgstr "Opravdu změnit šablonu? <br />Všechny změny uloženy a obsah <strong>"
-"%(source_regions)s</strong> je přesunut do <strong>%(target_region)s</strong>."
+msgstr ""
+"Opravdu změnit šablonu? <br />Všechny změny uloženy a obsah <strong>"
+"%(source_regions)s</strong> je přesunut do <strong>%(target_region)s</"
+"strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
@@ -802,7 +845,9 @@ msgstr "Region je prázdný"
 msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
-msgstr "Obsah z nadřazené stránky je automaticky zděděn. Přidej nějaký obsah, který ho přepíše."
+msgstr ""
+"Obsah z nadřazené stránky je automaticky zděděn. Přidej nějaký obsah, který "
+"ho přepíše."
 
 #: templates/admin/feincms/content_editor.html:23
 msgid "Add new item"
@@ -937,8 +982,12 @@ msgid "%(comment_count)s comments."
 msgstr "%(comment_count)s komentářů"
 
 #: templates/content/comments/default.html:18
-#, python-format
-msgid "%(comment_username)s said on %(comment_submit_date)s<br />"
+#, fuzzy, python-format
+msgid ""
+"\n"
+"                    %(comment_username)s said on %(comment_submit_date)s<br /"
+">\n"
+"                "
 msgstr "%(comment_username)s řekl v %(comment_submit_date)s <br />"
 
 #: templates/content/comments/default.html:28
