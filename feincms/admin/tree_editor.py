@@ -85,12 +85,12 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
         a = [
               '<input type="checkbox"',
               value and ' checked="checked"' or '',
-              ' onclick="return inplace_toggle_boolean(%d, \'%s\')"' % (item.id, attr),
+              ' onclick="return inplace_toggle_boolean(%d, \'%s\')"' % (item.pk, attr),
               ' />',
               text,
             ]
 
-    a.insert(0, '<div id="wrap_%s_%d">' % ( attr, item.id ))
+    a.insert(0, '<div id="wrap_%s_%d">' % ( attr, item.pk ))
     a.append('</div>')
     return unicode(''.join(a))
 
@@ -196,7 +196,7 @@ class TreeEditor(admin.ModelAdmin):
         if hasattr(item, 'get_absolute_url'):
             r = '<input type="hidden" class="medialibrary_file_path" value="%s" id="_refkey_%d" />' % (
                         item.get_absolute_url(),
-                        item.id
+                        item.pk
                       )
 
         editable_class = ''
@@ -204,7 +204,7 @@ class TreeEditor(admin.ModelAdmin):
             editable_class = ' tree-item-not-editable'
 
         r += '<span id="page_marker-%d" class="page_marker%s" style="width: %dpx;">&nbsp;</span>&nbsp;' % (
-                item.id, editable_class, 14+item.level*18)
+                item.pk, editable_class, 14+item.level*18)
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):
             r += item.short_title()
