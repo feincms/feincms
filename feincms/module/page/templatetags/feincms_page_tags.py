@@ -23,6 +23,8 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
     level: 1 = toplevel, 2 = sublevel, 3 = sub-sublevel
     depth: 1 = only one level, 2 = subpages too
     extended: run navigation extension on returned pages, not only on top-level node
+    auto_root: when using with request, try to found best match page for current request
+               Makes possible show navigation outside of feincms's handled pages.
 
     If you set depth to something else than 1, you might want to look into
     the tree_info template tag from the mptt_tags library.
@@ -41,7 +43,10 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
 
         if isinstance(instance, HttpRequest):
-            instance = Page.objects.for_request(instance)
+            bmatch = False
+            if args.get('auto_root', False):
+                bmatch = True
+            instance = Page.objects.for_request(instance, best_match=bmatch)
 
         entries = self._what(instance, level, depth)
 
