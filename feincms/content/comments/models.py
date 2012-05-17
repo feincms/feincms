@@ -12,14 +12,11 @@ Embed a comment list and comment form anywhere. Uses the standard
 ``django.contrib.comments`` application.
 """
 
-from django import forms
 from django.contrib import comments
-from django.contrib.comments.models import Comment
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -43,9 +40,16 @@ class CommentsContent(models.Model):
                     f = self.fields['comments_enabled']
                     r = f.help_text
                     r += u'<hr />'
-                    for c in Comment.objects.for_model(parent.parent).order_by('-submit_date'):
-                        r += '<div class="form-row" style="margin-left: 60px"># %d <a href="/admin/comments/comment/%d/">%s</a> - %s</div>' % \
-                            ( c.id, c.id, c.comment[:80], c.is_public and _('public') or _('not public') )
+                    comments_model = comments.get_model()
+                    for c in comments_model.objects.for_model(parent.parent).order_by('-submit_date'):
+                        r += '<div class="form-row" style="margin-left: 60px"># %(pk)d <a href="/admin/%(app)s/%(model)s/%(pk)d/">%(comment)s</a> - %(is_public)s</div>' % \
+                            {
+                                'pk': c.id,
+                                'comment': c.comment[:80],
+                                'is_public': c.is_public and _('public') or _('not public'),
+                                'app': comments_model._meta.app_label,
+                                'model': comments_model._meta.module_name
+                            }
                     f.help_text = r
 
         cls.feincms_item_editor_form = CommentContentAdminForm
