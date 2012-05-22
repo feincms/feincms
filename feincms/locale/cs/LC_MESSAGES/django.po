@@ -1,0 +1,958 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-05-08 19:16+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+
+#: models.py:419 content/template/models.py:59
+msgid "template"
+msgstr "šablona"
+
+#: models.py:550
+msgid "ordering"
+msgstr "řazení"
+
+#: translations.py:259 module/blog/extensions/translations.py:17
+#: module/extensions/translations.py:102
+msgid "language"
+msgstr "jazyk"
+
+#: admin/filterspecs.py:46 admin/filterspecs.py:84
+msgid "All"
+msgstr "vše"
+
+#: admin/filterspecs.py:57 module/page/models.py:222
+msgid "Parent"
+msgstr "rodič"
+
+#: admin/filterspecs.py:95
+#: templates/admin/medialibrary/mediafile/change_list.html:15
+msgid "Category"
+msgstr "kategorie"
+
+#: admin/item_editor.py:163
+#, python-format
+msgid "Change %s"
+msgstr "změň %s"
+
+#: admin/tree_editor.py:215 content/rss/models.py:20
+#: content/section/models.py:31 module/blog/models.py:30
+#: module/medialibrary/models.py:55 module/page/models.py:220
+#: module/page/models.py:299
+msgid "title"
+msgstr "Název"
+
+#: admin/tree_editor.py:385
+#, python-format
+msgid "%s has been moved to a new position."
+msgstr "%s přesunut na novou pozici"
+
+#: admin/tree_editor.py:389
+msgid "Did not understand moving instruction."
+msgstr "Nesrozumitelné přesunutí"
+
+#: admin/tree_editor.py:398
+msgid "actions"
+msgstr "akce"
+
+#: content/application/models.py:263
+msgid "application content"
+msgstr "aplikační obsah"
+
+#: content/application/models.py:264
+msgid "application contents"
+msgstr "aplikační obsahy"
+
+#: content/application/models.py:295
+msgid "application"
+msgstr "aplikace"
+
+#: content/comments/models.py:28
+msgid "enabled"
+msgstr "zapnutý"
+
+#: content/comments/models.py:28
+msgid "New comments may be added"
+msgstr "Komentáře povoleny"
+
+#: content/comments/models.py:32 content/comments/models.py:33
+msgid "comments"
+msgstr "komentáře"
+
+#: content/comments/models.py:48
+msgid "public"
+msgstr "veřejný"
+
+#: content/comments/models.py:48
+msgid "not public"
+msgstr "neveřejný"
+
+#: content/contactform/models.py:18
+msgid "name"
+msgstr "jméno"
+
+#: content/contactform/models.py:19
+msgid "email"
+msgstr "mail"
+
+#: content/contactform/models.py:20
+msgid "subject"
+msgstr "předmět"
+
+#: content/contactform/models.py:23 content/raw/models.py:14
+msgid "content"
+msgstr "obsah"
+
+#: content/contactform/models.py:34
+msgid "contact form"
+msgstr "kontaktní formulář"
+
+#: content/contactform/models.py:35
+msgid "contact forms"
+msgstr "kontaktní formuláře"
+
+#: content/file/models.py:16 content/file/models.py:20
+#: module/medialibrary/models.py:105
+msgid "file"
+msgstr "soubor"
+
+#: content/file/models.py:21
+msgid "files"
+msgstr "soubory"
+
+#: content/image/models.py:24 content/image/models.py:28
+msgid "image"
+msgstr "obrázek"
+
+#: content/image/models.py:29
+msgid "images"
+msgstr "obrázky"
+
+#: content/image/models.py:42 content/medialibrary/models.py:105
+#: content/medialibrary/models.py:113
+msgid "position"
+msgstr "pozice"
+
+#: content/medialibrary/models.py:38
+msgid "(no caption)"
+msgstr "(bez názvu)"
+
+#: content/medialibrary/models.py:87 content/medialibrary/models.py:101
+#: content/medialibrary/models.py:111 content/medialibrary/v2.py:44
+#: content/section/models.py:47 module/medialibrary/fields.py:45
+#: module/medialibrary/models.py:118
+msgid "media file"
+msgstr "mediální soubor"
+
+#: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
+#: module/medialibrary/models.py:119
+msgid "media files"
+msgstr "mediální soubory"
+
+#: content/medialibrary/models.py:130
+msgid "block"
+msgstr "do bloku"
+
+#: content/medialibrary/models.py:131
+msgid "left"
+msgstr "vlevo"
+
+#: content/medialibrary/models.py:132
+msgid "right"
+msgstr "vpravo"
+
+#: content/medialibrary/v2.py:49 content/section/models.py:52
+#: content/section/models.py:60 content/table/models.py:81
+msgid "type"
+msgstr "typ"
+
+#: content/raw/models.py:18
+msgid "raw content"
+msgstr "binární obsah"
+
+#: content/raw/models.py:19
+msgid "raw contents"
+msgstr "binární obsahy"
+
+#: content/richtext/models.py:15 content/richtext/models.py:85
+#: content/section/models.py:32
+msgid "text"
+msgstr "text"
+
+#: content/richtext/models.py:26
+msgid "HTML Tidy"
+msgstr "čisté HTML "
+
+#: content/richtext/models.py:27
+msgid "Ignore the HTML validation warnings"
+msgstr "ignorovat HTML validační varovnání"
+
+#: content/richtext/models.py:51
+#, python-format
+msgid ""
+"HTML validation produced %(count)d warnings. Please review the updated "
+"content below before continuing: %(messages)s"
+msgstr "HTML validace vyplivla %(count)d varování. Prosím zkontroluj "
+"obsah níže před pokračováním: %(messages)s"
+
+#: content/richtext/models.py:89
+msgid "rich text"
+msgstr ""
+
+#: content/richtext/models.py:90
+msgid "rich texts"
+msgstr ""
+
+#: content/rss/models.py:21
+msgid ""
+"The rss field is updated several times a day. A change in the title will "
+"only be visible on the home page after the next feed update."
+msgstr "RSS pole je měněno několikrát za den. Změna v titulku bude patrná při přístí změně RSS kanálu."
+
+#: content/rss/models.py:22
+msgid "link"
+msgstr "odkaz"
+
+#: content/rss/models.py:23
+msgid "pre-rendered content"
+msgstr "predrenderovaný obsah"
+
+#: content/rss/models.py:24
+msgid "last updated"
+msgstr "naposledy změněno"
+
+#: content/rss/models.py:25
+msgid "max. items"
+msgstr "max. položek"
+
+#: content/rss/models.py:29
+msgid "RSS feed"
+msgstr "RSS kanál"
+
+#: content/rss/models.py:30
+msgid "RSS feeds"
+msgstr "RSS kanály"
+
+#: content/section/models.py:36
+msgid "section"
+msgstr "sekce"
+
+#: content/section/models.py:37
+msgid "sections"
+msgstr "sekce"
+
+#: content/table/models.py:62
+msgid "plain"
+msgstr "prostý"
+
+#: content/table/models.py:63
+msgid "title row"
+msgstr "titulní řádka"
+
+#: content/table/models.py:65
+msgid "title row and column"
+msgstr "titulní řádka a sloupec"
+
+#: content/table/models.py:71
+msgid "table"
+msgstr "tabulka"
+
+#: content/table/models.py:72
+msgid "tables"
+msgstr "tabulky"
+
+#: content/table/models.py:86
+msgid "data"
+msgstr ""
+
+#: content/template/models.py:51
+msgid "template content"
+msgstr "šablonový obsah"
+
+#: content/template/models.py:52
+msgid "template contents"
+msgstr "šablonové obsahy"
+
+#: content/video/models.py:25
+msgid "video link"
+msgstr "odkaz na video"
+
+#: content/video/models.py:26
+msgid ""
+"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
+"com/watch?v=zmj1rpzDRZ0"
+msgstr "Toto má být odkaz na youtube nebo vimeo video, např. http://www.youtube."
+"com/watch?v=zmj1rpzDRZ0"
+
+#: content/video/models.py:30
+msgid "video"
+msgstr "video"
+
+#: content/video/models.py:31
+msgid "videos"
+msgstr "videoa"
+
+#: contrib/tagging.py:113
+msgid "Tagging"
+msgstr "Tagy"
+
+#: module/blog/models.py:29
+msgid "published"
+msgstr "publikovaný"
+
+#: module/blog/models.py:31
+msgid "This is used for the generated navigation too."
+msgstr "Toto je také použito pro generovanou navigaci"
+
+#: module/blog/models.py:34
+msgid "published on"
+msgstr "publikovaný"
+
+#: module/blog/models.py:35
+msgid "Will be set automatically once you tick the `published` checkbox above."
+msgstr "Bude automaticky nastaven jakmile klikneš na zaškrtávátko `publikovaný` výše."
+
+#: module/blog/models.py:40
+msgid "entry"
+msgstr "Článek"
+
+#: module/blog/models.py:41
+msgid "entries"
+msgstr "Články"
+
+#: module/blog/extensions/tags.py:12
+msgid "tags"
+msgstr "tagy"
+
+#: module/blog/extensions/translations.py:20
+#: module/extensions/translations.py:105
+msgid "translation of"
+msgstr "překlad"
+
+#: module/blog/extensions/translations.py:23
+#: module/extensions/translations.py:108
+msgid "Leave this empty for entries in the primary language."
+msgstr "Nech prázdné pro články v primárním jazyce"
+
+#: module/blog/extensions/translations.py:44
+#: templates/admin/feincms/item_editor.html:40
+msgid "available translations"
+msgstr "překlady k dispozici"
+
+#: module/extensions/changedate.py:36
+msgid "creation date"
+msgstr "datum vytvoření"
+
+#: module/extensions/changedate.py:37
+msgid "modification date"
+msgstr "datum úpravy"
+
+#: module/extensions/ct_tracker.py:136
+msgid "content types"
+msgstr "typy obsahu"
+
+#: module/extensions/datepublisher.py:48
+msgid "publication date"
+msgstr "datum publikace"
+
+#: module/extensions/datepublisher.py:50
+msgid "publication end date"
+msgstr "konec publikace"
+
+#: module/extensions/datepublisher.py:52
+msgid "Leave empty if the entry should stay active forever."
+msgstr "Nech prázdné pro články, které mají být publikovány stále"
+
+#: module/extensions/datepublisher.py:79
+msgid "visible from - to"
+msgstr "Publikováno od - do"
+
+#: module/extensions/datepublisher.py:89
+msgid "Date-based publishing"
+msgstr "Publikování na základě data"
+
+#: module/extensions/featured.py:9
+msgid "featured"
+msgstr "zvýrazněný"
+
+#: module/extensions/featured.py:14
+msgid "Featured"
+msgstr "zvýrazněný"
+
+#: module/extensions/seo.py:9
+msgid "meta keywords"
+msgstr "meta klíčová slova"
+
+#: module/extensions/seo.py:10
+msgid "This will be prepended to the default keyword list."
+msgstr "Toto bude přidáno k výchozím klíčovým slovům"
+
+#: module/extensions/seo.py:11
+msgid "meta description"
+msgstr "meta popis"
+
+#: module/extensions/seo.py:12
+msgid "This will be prepended to the default description."
+msgstr "Toto bude přidáno k výchozímu popisu"
+
+#: module/extensions/seo.py:18
+msgid "Search engine optimization"
+msgstr "Optimalizace pro vyhledávače"
+
+#: module/extensions/translations.py:175
+msgid "Edit translation"
+msgstr ""
+
+#: module/extensions/translations.py:178
+msgid "Create translation"
+msgstr "Vytvoř překlad"
+
+#: module/extensions/translations.py:183
+msgid "translations"
+msgstr "překlady"
+
+#: module/medialibrary/models.py:58
+msgid "parent"
+msgstr "rodič"
+
+#: module/medialibrary/models.py:60 module/page/models.py:221
+msgid "slug"
+msgstr ""
+
+#: module/medialibrary/models.py:64
+msgid "category"
+msgstr "kategorie"
+
+#: module/medialibrary/models.py:65 module/medialibrary/models.py:111
+msgid "categories"
+msgstr "kategorie"
+
+#: module/medialibrary/models.py:106 module/medialibrary/models.py:195
+msgid "file type"
+msgstr "typ souboru"
+
+#: module/medialibrary/models.py:107 module/medialibrary/models.py:133
+msgid "created"
+msgstr "vytvoreno"
+
+#: module/medialibrary/models.py:108
+msgid "copyright"
+msgstr ""
+
+#: module/medialibrary/models.py:109 module/medialibrary/models.py:128
+msgid "file size"
+msgstr "velikost souboru"
+
+#: module/medialibrary/models.py:216
+msgid "file info"
+msgstr "info o souboru"
+
+#: module/medialibrary/models.py:293
+msgid "Image"
+msgstr "obrázek"
+
+#: module/medialibrary/models.py:294
+msgid "Video"
+msgstr ""
+
+#: module/medialibrary/models.py:295
+msgid "Audio"
+msgstr ""
+
+#: module/medialibrary/models.py:296
+msgid "PDF document"
+msgstr "PDF dokument"
+
+#: module/medialibrary/models.py:297
+msgid "Flash"
+msgstr ""
+
+#: module/medialibrary/models.py:298
+msgid "Text"
+msgstr ""
+
+#: module/medialibrary/models.py:299
+msgid "Rich Text"
+msgstr ""
+
+#: module/medialibrary/models.py:300
+msgid "Zip archive"
+msgstr ""
+
+#: module/medialibrary/models.py:301
+msgid "Microsoft Word"
+msgstr ""
+
+#: module/medialibrary/models.py:302
+msgid "Microsoft Excel"
+msgstr ""
+
+#: module/medialibrary/models.py:303
+msgid "Microsoft PowerPoint"
+msgstr ""
+
+#: module/medialibrary/models.py:304
+msgid "Binary"
+msgstr "Binární"
+
+#: module/medialibrary/models.py:320
+msgid "caption"
+msgstr "název"
+
+#: module/medialibrary/models.py:321
+msgid "description"
+msgstr "popis"
+
+#: module/medialibrary/models.py:324
+msgid "media file translation"
+msgstr "překlad mediálního souboru"
+
+#: module/medialibrary/models.py:325
+msgid "media file translations"
+msgstr "překlady mediálního souboru"
+
+#: module/medialibrary/models.py:347
+#: templates/admin/feincms/page/page/item_editor.html:14
+msgid "Preview"
+msgstr "náhled"
+
+#: module/medialibrary/models.py:367
+#, python-format
+msgid "Successfully added %(count)d media file to %(category)s."
+msgid_plural "Successfully added %(count)d media files to %(category)s."
+msgstr[0] "Úspěšně přidáno %(count)d mediálních souborů do %(category)s."
+msgstr[1] "Úspěšně přidáno %(count)d mediálních souborů do %(category)s."
+
+#: module/medialibrary/models.py:385
+msgid "Add selected media files to category"
+msgstr "Přiděj vybrané mediální soubory do kategorie"
+
+#: module/medialibrary/models.py:394
+#, python-format
+msgid "ZIP file exported as %s"
+msgstr "ZIP archiv exporotován jako %s"
+
+#: module/medialibrary/models.py:396
+#, python-format
+msgid "ZIP file export failed: %s"
+msgstr "export ZIP archivu selhal: %s"
+
+#: module/medialibrary/models.py:400
+msgid "Export selected media files as zip file"
+msgstr "Vyexportuj vybrané mediální soubory jako zip archiv"
+
+#: module/medialibrary/models.py:423
+#, python-format
+msgid ""
+"Cannot overwrite with different file type (attempt to overwrite a "
+"%(old_ext)s with a %(new_ext)s)"
+msgstr "Nemůže být přepsán jiným typem (pokoušíš se přepsat "
+"%(old_ext)s s %(new_ext)s)"
+
+#: module/medialibrary/models.py:466
+#, python-format
+msgid "%d files imported"
+msgstr "%d souborů importováno"
+
+#: module/medialibrary/models.py:468
+#, python-format
+msgid "ZIP import failed: %s"
+msgstr "import ZIPu selhal: %s"
+
+#: module/medialibrary/models.py:470
+msgid "No input file given"
+msgstr "Žádný vstupní soubor"
+
+#: module/page/models.py:217
+msgid "active"
+msgstr "aktivní"
+
+#: module/page/models.py:224 module/page/models.py:731
+msgid "in navigation"
+msgstr "v navigaci"
+
+#: module/page/models.py:225
+msgid "override URL"
+msgstr "vynucené URL"
+
+#: module/page/models.py:226
+msgid ""
+"Override the target URL. Be sure to include slashes at the beginning and at "
+"the end if it is a local URL. This affects both the navigation and subpages' "
+"URLs."
+msgstr "Přepíše cílové URL. Ujisti se, že máš \"/\" na začátku a na konci pro lokální URL."
+"Toto ovlivňuje navigaci cílové stránky i podstránek"
+
+#: module/page/models.py:227
+msgid "redirect to"
+msgstr "přesměruj na"
+
+#: module/page/models.py:228
+msgid "Target URL for automatic redirects."
+msgstr "Cílová adresa pro automatické přeměrování"
+
+#: module/page/models.py:229
+msgid "Cached URL"
+msgstr ""
+
+#: module/page/models.py:240
+msgid "page"
+msgstr "stránka"
+
+#: module/page/models.py:241
+msgid "pages"
+msgstr "stránky"
+
+#: module/page/models.py:258 module/page/models.py:811
+msgid "is active"
+msgstr "je aktivní"
+
+#: module/page/models.py:641
+msgid "This URL is already taken by an active page."
+msgstr "Toto URL je už obsazeno aktivní stránkou."
+
+#: module/page/models.py:659
+msgid "This URL is already taken by another active page."
+msgstr "Toto URL je už obsazeno jinou stránkou."
+
+#: module/page/models.py:683
+msgid "Other options"
+msgstr "Další nastavení"
+
+#: module/page/models.py:742
+msgid "Add child page"
+msgstr "Přidej podřízenou stránku"
+
+#: module/page/models.py:744 templates/admin/feincms/content_inline.html:9
+msgid "View on site"
+msgstr "Zobrazena na sajtě."
+
+#: module/page/models.py:774
+msgid ""
+"The content from the original translation has been copied to the newly "
+"created page."
+msgstr "Originálnío překlad zkopírován do nově vytvořené stránky."
+
+#: module/page/models.py:788
+msgid "You don't have the necessary permissions to edit this object"
+msgstr "Nemáte dostatečná oprávnění pro editaci tohoto objektu"
+
+#: module/page/models.py:803
+msgid "inherited"
+msgstr "zděděný"
+
+#: module/page/models.py:807
+msgid "extensions"
+msgstr "rozšíření"
+
+#: module/page/extensions/excerpt.py:9
+msgid "excerpt"
+msgstr ""
+
+#: module/page/extensions/excerpt.py:10
+msgid "Add a brief excerpt summarizing the content of this page."
+msgstr ""
+
+#: module/page/extensions/excerpt.py:12
+msgid "Excerpt"
+msgstr "výňatek"
+
+#: module/page/extensions/navigation.py:74
+#: module/page/extensions/navigation.py:94
+msgid "navigation extension"
+msgstr "rozšíření navigace"
+
+#: module/page/extensions/navigation.py:96
+msgid ""
+"Select the module providing subpages for this page if you need to customize "
+"the navigation."
+msgstr "Vyber modul nabízející podstránky pro tuto stránku jestli chceš upravit navigaci."
+
+#: module/page/extensions/navigation.py:109
+msgid "Navigation extension"
+msgstr "rozšíření navigace"
+
+#: module/page/extensions/relatedpages.py:13
+msgid "Select pages that should be listed as related content."
+msgstr "Vyber příbuzné stránky"
+
+#: module/page/extensions/relatedpages.py:20
+msgid "Related pages"
+msgstr "Příbuzné stránky"
+
+#: module/page/extensions/sites.py:16
+msgid "Site"
+msgstr ""
+
+#: module/page/extensions/symlinks.py:15
+msgid "symlinked page"
+msgstr "propojená stránka"
+
+#: module/page/extensions/symlinks.py:16
+msgid "All content is inherited from this page if given."
+msgstr "Všechen obsah je poděděn do této stránky, pakliže vybrána"
+
+#: module/page/extensions/symlinks.py:30
+msgid "Symlinked page"
+msgstr "Propojená stránka"
+
+#: module/page/extensions/titles.py:13
+msgid "content title"
+msgstr "Název obsahu"
+
+#: module/page/extensions/titles.py:14
+msgid "The first line is the main title, the following lines are subtitles."
+msgstr "První řádka je hlavní titulek, ostatní řádky podtitulky"
+
+#: module/page/extensions/titles.py:15
+msgid "page title"
+msgstr "titulek stránky"
+
+#: module/page/extensions/titles.py:16
+msgid "Page title for browser window. Same as title by default."
+msgstr "Titulek pro okno prohlížeče. Výchozí: stejné jako titulek stránky."
+
+#: module/page/extensions/titles.py:43
+msgid "Titles"
+msgstr "Titulky"
+
+#: templates/admin/filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr ""
+
+#: templates/admin/content/mediafile/init.html:9
+msgid "Search"
+msgstr "Vyhledat"
+
+#: templates/admin/feincms/_messages_js.html:4
+msgid "Really delete item?"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:4
+msgid "Confirm to delete item"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:5
+msgid "Item deleted successfully."
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:5
+msgid "Cannot delete item"
+msgstr ""
+
+#: templates/admin/feincms/_messages_js.html:6
+msgid "Cannot delete item, because it is parent of at least one other item."
+msgstr "Nemůžeš smazat tuto položku, protože má podřazená jiné."
+
+#: templates/admin/feincms/_messages_js.html:7
+msgid "Change template"
+msgstr "Změň šablonu"
+
+#: templates/admin/feincms/_messages_js.html:8
+msgid "Really change template? <br />All changes are saved."
+msgstr "Opravdu změnit šablonu? <br />Všechny změny uloženy."
+
+#: templates/admin/feincms/_messages_js.html:9
+#, python-format
+msgid ""
+"Really change template? <br />All changes are saved and content from <strong>"
+"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+msgstr "Opravdu změnit šablonu? <br />Všechny změny uloženy a obsah <strong>"
+"%(source_regions)s</strong> je přesunut do <strong>%(target_region)s</strong>."
+
+#: templates/admin/feincms/_messages_js.html:12
+msgid "Hide"
+msgstr "Schovat"
+
+#: templates/admin/feincms/_messages_js.html:13
+msgid "Show"
+msgstr "Ukázat"
+
+#: templates/admin/feincms/_messages_js.html:14
+msgid "After"
+msgstr "Po"
+
+#: templates/admin/feincms/_messages_js.html:15
+msgid "Before"
+msgstr "Před"
+
+#: templates/admin/feincms/_messages_js.html:16
+msgid "Insert new:"
+msgstr "Přidat novou:"
+
+#: templates/admin/feincms/content_editor.html:11
+msgid "Region empty"
+msgstr "Region je prázdný"
+
+#: templates/admin/feincms/content_editor.html:15
+msgid ""
+"Content from the parent site is automatically inherited. To override this "
+"behaviour, add some content."
+msgstr "Obsah z nadřazené stránky je automaticky zděděn. Přidej nějaký obsah, který ho přepíše."
+
+#: templates/admin/feincms/content_editor.html:23
+msgid "Add new item"
+msgstr "Přidej novou položku"
+
+#: templates/admin/feincms/content_inline.html:91
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr "Přidej nové %(verbose_name)s"
+
+#: templates/admin/feincms/content_inline.html:94
+msgid "Remove"
+msgstr "Smaž"
+
+#: templates/admin/feincms/fe_editor.html:40
+msgid "Save"
+msgstr "Ulož"
+
+#: templates/admin/feincms/fe_tools.html:27
+msgid "Stop Editing"
+msgstr "Ukončit editaci"
+
+#: templates/admin/feincms/fe_tools.html:32
+msgid "edit"
+msgstr "edituj"
+
+#: templates/admin/feincms/fe_tools.html:34
+msgid "new"
+msgstr "nový"
+
+#: templates/admin/feincms/fe_tools.html:35
+msgid "up"
+msgstr "nahoru"
+
+#: templates/admin/feincms/fe_tools.html:36
+msgid "down"
+msgstr "dolů"
+
+#: templates/admin/feincms/fe_tools.html:37
+msgid "remove"
+msgstr "odeber"
+
+#: templates/admin/feincms/recover_form.html:7
+#: templates/admin/feincms/revision_form.html:10
+#: templates/admin/feincms/page/page/item_editor.html:22
+#: templates/admin/feincms/page/page/tree_editor.html:7
+msgid "Home"
+msgstr "Domů"
+
+#: templates/admin/feincms/recover_form.html:10
+#, python-format
+msgid "Recover deleted %(verbose_name)s"
+msgstr "Obnov smazané %(verbose_name)s"
+
+#: templates/admin/feincms/recover_form.html:17
+msgid "Press the save button below to recover this version of the object."
+msgstr "Zmáčkni tlačítko ulož níže pro obnovení této verze objektu."
+
+#: templates/admin/feincms/revision_form.html:14
+msgid "History"
+msgstr "Historie"
+
+#: templates/admin/feincms/revision_form.html:15
+#, python-format
+msgid "Revert %(verbose_name)s"
+msgstr "Revertuj %(verbose_name)s"
+
+#: templates/admin/feincms/revision_form.html:28
+msgid "Press the save button below to revert to this version of the object."
+msgstr "Zmáčkni tlačítko ulož níže pro revertování na tuto verzi objektu."
+
+#: templates/admin/feincms/tree_editor.html:32
+msgid "Shortcuts"
+msgstr "Zkratky"
+
+#: templates/admin/feincms/tree_editor.html:34
+msgid "Collapse tree"
+msgstr "Rozbal strom"
+
+#: templates/admin/feincms/tree_editor.html:35
+msgid "Expand tree"
+msgstr "Zabal strom"
+
+#: templates/admin/feincms/tree_editor.html:38
+msgid "Filter"
+msgstr "Filtruj"
+
+#: templates/admin/feincms/page/page/item_editor.html:9
+msgid "Edit on site"
+msgstr "Edituj přímo na webu"
+
+#: templates/admin/feincms/page/page/item_editor.html:26
+msgid "Add"
+msgstr "Přidej"
+
+#: templates/admin/medialibrary/add_to_category.html:5
+#: templates/admin/medialibrary/add_to_category.html:9
+msgid "Add media files to category"
+msgstr "Přidej mediální soubory do kategorie"
+
+#: templates/admin/medialibrary/add_to_category.html:11
+msgid "Select category to apply:"
+msgstr "Vytvoř kategorii:"
+
+#: templates/admin/medialibrary/add_to_category.html:17
+msgid "The following media files will be added to the selected category:"
+msgstr "Následující mediální soubory budou přidány do vybrané kategorie:"
+
+#: templates/admin/medialibrary/add_to_category.html:22
+msgid "Add to category"
+msgstr "Přidej do kategorie"
+
+#: templates/admin/medialibrary/add_to_category.html:23
+msgid "Cancel"
+msgstr ""
+
+#: templates/admin/medialibrary/mediafile/change_list.html:12
+msgid "Bulk upload a ZIP file:"
+msgstr "Nahrát dávku v ZIP souboru:"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:22
+msgid "Overwrite"
+msgstr "Přepsat"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:25
+msgid "Send"
+msgstr "Poslat"
+
+#: templates/content/comments/default.html:10
+#, python-format
+msgid "%(comment_count)s comments."
+msgstr "%(comment_count)s komentářů"
+
+#: templates/content/comments/default.html:18
+#, python-format
+msgid "%(comment_username)s said on %(comment_submit_date)s<br />"
+msgstr "%(comment_username)s řekl v %(comment_submit_date)s <br />"
+
+#: templates/content/comments/default.html:28
+msgid "No comments."
+msgstr "Žádné komentáře"
+
+#: templates/content/comments/default.html:36
+msgid "Post Comment"
+msgstr "Poslat komentář"
+
+#: templates/content/contactform/form.html:9
+msgid "Submit"
+msgstr "Odeslat"
+
+#: templates/content/contactform/thanks.html:3
+msgid "Thanks!"
+msgstr "Díky!"
