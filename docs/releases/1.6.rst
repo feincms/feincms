@@ -91,6 +91,13 @@ New deprecations
   views and the ``feincms.context_processors.add_page_if_missing`` context
   processor if you need similar functionality instead.
 
+* The content type ``feincms.content.medialibrary.models.MediaFileContent`` has
+  been deprecated since FeinCMS v1.4. The whole module has been deprecated now
+  and will be replaced with the contents of ``feincms.content.medialibrary.v2``
+  in FeinCMS v1.7. The ``v2`` module will stay around for another release or
+  two so that code using ``v2`` will continue working with FeinCMS v1.8 (at
+  least).
+
 
 Compatibility with Django and other apps
 ----------------------------------------

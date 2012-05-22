@@ -184,9 +184,16 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
                 try:
                     self.file.storage.delete(self._original_file_name)
                 except Exception, e:
-                    logger.error("Cannot delete orphaned file %s: %s" % (self._original_file_name, e))
+                    logger.error("Cannot delete orphaned file %s on MediaFile change: %s" % (self._original_file_name, e))
 
         self.purge_translation_cache()
+
+    def delete(self, *args, **kwargs):
+        try:
+            self.file.storage.delete(self.file.name)
+        except Exception, e:
+            logger.error("Cannot delete orphaned file %s on MediaFile delete: %s" % (self.file.name, e))
+        super(MediaFileBase, self).delete(*args, **kwargs)
 
 # ------------------------------------------------------------------------
 MediaFileBase.register_filetypes(

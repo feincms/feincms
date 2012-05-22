@@ -61,12 +61,6 @@ class ItemEditor(admin.ModelAdmin):
 
         super(ItemEditor, self).__init__(model, admin_site)
 
-        if hasattr(self, 'inline_instances'):
-            # Add inline instances for FeinCMS content inlines
-            # This works in Django 1.3 and lower
-            # In Django 1.4 inline instances are generated using overridden get_inline_instances()
-            self.append_feincms_inlines(self.inline_instances)
-
     def get_inline_instances(self, request):
         inline_instances = super(ItemEditor, self).get_inline_instances(request)
         self.append_feincms_inlines(inline_instances)
