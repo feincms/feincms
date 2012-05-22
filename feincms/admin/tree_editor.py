@@ -89,12 +89,12 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
         a = [
               '<input type="checkbox"',
               value and ' checked="checked"' or '',
-              ' onclick="return inplace_toggle_boolean(%d, \'%s\')"' % (item.id, attr),
+              ' onclick="return inplace_toggle_boolean(%d, \'%s\')"' % (item.pk, attr),
               ' />',
               text,
             ]
 
-    a.insert(0, '<div id="wrap_%s_%d">' % ( attr, item.id ))
+    a.insert(0, '<div id="wrap_%s_%d">' % ( attr, item.pk ))
     a.append('</div>')
     return unicode(''.join(a))
 
