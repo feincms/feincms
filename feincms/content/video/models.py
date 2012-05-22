@@ -31,12 +31,16 @@ class VideoContent(models.Model):
         verbose_name_plural = _('videos')
 
     def render(self, **kwargs):
+        context_instance = kwargs.get('context', None)
+
         for portal, match, context_fn in self.PORTALS:
             if match.search(self.video):
                 return render_to_string([
                     'content/video/%s.html' % portal,
                     'content/video/unknown.html',
-                    ], dict(context_fn(self.video), content=self))
+                    ], dict(context_fn(self.video), content=self),
+                    context_instance=context_instance)
 
         return render_to_string('content/video/unknown.html', {
-            'content': self})
+            'content': self,
+            }, context_instance=context_instance)

@@ -79,6 +79,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 'parent__' * i + 'in_navigation': True,
                 'level__gte': level + i,
             })
+            # TODO handle the case where active_filters has been extended
         return q
 
     def _what(self, instance, level, depth):
@@ -363,12 +364,6 @@ def is_sibling_of(page1, page2):
         return False
 
 # ------------------------------------------------------------------------
-try:
-    any
-except NameError:
-    # For Python 2.4
-    from feincms.compat import c_any as any
-
 @register.filter
 def siblings_along_path_to(page_list, page2):
     """

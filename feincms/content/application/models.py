@@ -2,6 +2,7 @@
 Third-party application inclusion support.
 """
 
+from email.utils import parsedate
 from time import mktime
 import re
 
@@ -17,11 +18,6 @@ from feincms import settings
 from feincms.admin.item_editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
 from feincms.utils import get_object
-
-try:
-    from email.utils import parsedate
-except ImportError: # py 2.4 compat
-    from email.Utils import parsedate
 
 try:
     from threading import local

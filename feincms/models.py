@@ -23,12 +23,6 @@ from django.utils.translation import ugettext_lazy as _
 from feincms import ensure_completely_loaded
 from feincms.utils import get_object, copy_model_instance
 
-try:
-    any
-except NameError:
-    # For Python 2.4
-    from feincms.compat import c_any as any
-
 
 class Region(object):
     """
