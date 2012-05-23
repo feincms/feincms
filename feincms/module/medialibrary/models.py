@@ -222,6 +222,7 @@ class MediaFile(MediaFileBase):
 @receiver(pre_delete, sender=MediaFile)
 def _mediafile_pre_delete(sender, instance, **kwargs):
     instance.delete_mediafile()
+    logger.info("Deleted mediafile %d (%s)" % (instance.id, instance.file.name))
 
 # ------------------------------------------------------------------------
 class MediaFileTranslation(Translation(MediaFile)):
