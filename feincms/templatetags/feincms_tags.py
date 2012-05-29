@@ -20,9 +20,10 @@ def _render_content(content, **kwargs):
             return
         setattr(request, 'feincms_render_level', level + 1)
 
-    try:
+    if (request and request.COOKIES.get('frontend_editing', False) and\
+            hasattr(content, 'fe_render')):
         r = content.fe_render(**kwargs)
-    except AttributeError:
+    else:
         r = content.render(**kwargs)
 
     if request is not None:

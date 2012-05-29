@@ -87,7 +87,7 @@ class HandlerBase(TemplateView):
         self.page.finalize_response(self.request, response)
 
         # Add never cache headers in case frontend editing is active
-        if hasattr(self.request, "session") and self.request.session.get('frontend_editing', False):
+        if hasattr(self.request, "COOKIES") and self.request.COOKIES.get('frontend_editing', False):
             add_never_cache_headers(response)
 
         return response
