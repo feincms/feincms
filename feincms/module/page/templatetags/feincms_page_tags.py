@@ -26,7 +26,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1, experimental=False):
             'Pass experimental=True to feincms_nav to silence this exception.')
 
     if isinstance(feincms_page, HttpRequest):
-        feincms_page = Page.objects.for_request(feincms_page)
+        feincms_page = Page.objects.for_request(feincms_page, best_match=True)
 
     mptt_opts = feincms_page._mptt_meta
 
@@ -134,7 +134,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
 
         if isinstance(instance, HttpRequest):
-            instance = Page.objects.for_request(instance)
+            instance = Page.objects.for_request(instance, best_match=True)
 
         entries = self._what(instance, level, depth)
 
