@@ -51,6 +51,8 @@ libraries which you have to make available to the browser. FeinCMS uses Django's
 ``django.contrib.staticfiles`` application for this purpose, the media files will
 be picked up automatically by the ``collectstatic`` management command.
 
+If your website is multi-language you have to define ``LANGUAGES_`` in the settings.
+
 Please note that the ``feincms`` module will not create or need any database
 tables, but you need to put it into ``INSTALLED_APPS`` because otherwise the
 templates in ``feincms/templates/`` will not be found by the template loader.
@@ -60,3 +62,5 @@ activities. The most common use of a CMS is to manage a hierarchy of
 pages and this is the most advanced module of FeinCMS too. Please
 proceed to :ref:`page` to find out how you can get the page module
 up and running.
+
+.. _LANGUAGES: https://docs.djangoproject.com/en/dev/topics/i18n/translation/#how-django-discovers-language-preference
