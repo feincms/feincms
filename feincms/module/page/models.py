@@ -275,7 +275,7 @@ class Page(create_base_model(MPTTModel)):
         Return a string that may be used as cache key for the current page.
         The cache_key is unique for each content type and content instance.
         """
-        return '-'.join(unicode(x(self)) for x in self.cache_key_components)
+        return '-'.join(unicode(fn(self)) for fn in self.cache_key_components)
 
     def etag(self, request):
         """
