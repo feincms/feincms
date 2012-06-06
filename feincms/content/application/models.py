@@ -209,7 +209,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs,
       author to resolve URLs only reachable via an ``ApplicationContent``,
       even inside another application contents' ``process`` method::
 
-          {% url registration.urls/auth_logout %}
+          {% url "registration.urls/auth_logout" %}
     """
 
     if isinstance(viewname, basestring) and APPLICATIONCONTENT_RE.match(viewname):

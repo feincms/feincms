@@ -8,7 +8,7 @@ import os
 import re
 
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
@@ -219,8 +219,8 @@ class MediaFile(MediaFileBase):
 
         register_fn(cls, MediaFileAdmin)
 
-@receiver(pre_delete, sender=MediaFile)
-def _mediafile_pre_delete(sender, instance, **kwargs):
+@receiver(post_delete, sender=MediaFile)
+def _mediafile_post_delete(sender, instance, **kwargs):
     instance.delete_mediafile()
     logger.info("Deleted mediafile %d (%s)" % (instance.id, instance.file.name))
 

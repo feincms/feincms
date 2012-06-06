@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load url from future %}
 
 <script type="text/javascript" charset="utf-8">
 (function () {
@@ -11,7 +12,7 @@
 </script>
 <script type="text/javascript">
     var feincms = {
-        "admin_index": "{% url admin:index %}",
+        "admin_index": "{% url "admin:index" %}",
         {% if FEINCMS_JQUERY_NO_CONFLICT %}
         "jQuery": jQuery.noConflict(true)
         {% else %}
@@ -25,7 +26,7 @@
 
 <div id="fe_controls">
     <a href="?frontend_editing=0">{% trans "Stop Editing" %}</a>
-    <a href="{% url admin:page_page_change feincms_page.pk %}">Admin Page</a>
+    <a href="{% url "admin:page_page_change" feincms_page.pk %}">Admin Page</a>
 </div>
 
 <div id="fe_tools">

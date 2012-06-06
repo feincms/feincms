@@ -10,12 +10,12 @@
 from __future__ import absolute_import
 
 from datetime import datetime
+import json
 import zipfile
 import os
 import time
 
 from django.template.defaultfilters import slugify
-from django.utils import simplejson
 from django.conf import settings as django_settings
 
 from .models import Category, MediaFile, MediaFileTranslation
@@ -43,7 +43,7 @@ def import_zipfile(category_id, overwrite, data):
     is_export_file = False
     info = {}
     try:
-        info = simplejson.loads(z.comment)
+        info = json.loads(z.comment)
         if info['export_magic'] == export_magic:
             is_export_file = True
     except:
@@ -75,7 +75,7 @@ def import_zipfile(category_id, overwrite, data):
 
                 info = {}
                 if is_export_file:
-                    info = simplejson.loads(zi.comment)
+                    info = json.loads(zi.comment)
 
                 mf = None
                 if overwrite:
@@ -139,11 +139,11 @@ def export_zipfile(site, queryset):
     info = { 'export_magic': export_magic,
              'categories': [ { 'id': cat.id, 'title': cat.title, 'slug': cat.slug, 'parent': cat.parent_id or 0, 'level': len(cat.path_list()) } for cat in used_categories ],
             }
-    zip_file.comment = simplejson.dumps(info)
+    zip_file.comment = json.dumps(info)
 
     for mf in queryset:
         ctime = time.localtime(os.stat(mf.file.path).st_ctime)
-        info = simplejson.dumps({
+        info = json.dumps({
             'copyright': mf.copyright,
             'categories': [ cat.id for cat in mf.categories.all() ],
             'translations': [

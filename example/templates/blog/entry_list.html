@@ -1,6 +1,5 @@
+{% load applicationcontent_tags %}
+
 {% for object in object_list %}
-
-<h3><a href="{% url blog_entry_details object_id=object.id %}">{{ object.title }}</a></h3>
-
-
+<h3><a href="{% app_reverse "blog_entry_details" "blog_urls" pk=object.id %}">{{ object.title }}</a></h3>
 {% endfor %}

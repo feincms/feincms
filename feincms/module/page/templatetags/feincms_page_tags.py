@@ -15,6 +15,99 @@ register = template.Library()
 
 
 # ------------------------------------------------------------------------
+@register.assignment_tag(takes_context=True)
+def feincms_nav(context, feincms_page, level=1, depth=1, experimental=False):
+    """
+    New, simplified version of the ``{% feincms_navigation %}`` template tag.
+    """
+
+    if not experimental:
+        raise template.TemplateSyntaxError(
+            'Pass experimental=True to feincms_nav to silence this exception.')
+
+    if isinstance(feincms_page, HttpRequest):
+        feincms_page = Page.objects.for_request(feincms_page, best_match=True)
+
+    mptt_opts = feincms_page._mptt_meta
+
+    # mptt starts counting at zero
+    mptt_level_range = [level - 1, level + depth - 1]
+
+    queryset = Page.objects.in_navigation().filter(**{
+        '%s__gte' % mptt_opts.level_attr: mptt_level_range[0],
+        '%s__lt' % mptt_opts.level_attr: mptt_level_range[1],
+        })
+
+    page_level = getattr(feincms_page, mptt_opts.level_attr)
+
+    # Used for subset filtering (level>1)
+    parent = None
+
+    if level > 1:
+        # A subset of the pages is requested. Determine it depending
+        # upon the passed page instance
+
+        if level - 2 == page_level:
+            # The requested pages start directly below the current page
+            parent = feincms_page
+
+        elif level - 2 < page_level:
+            # The requested pages start somewhere higher up in the tree
+            parent = feincms_page.get_ancestors()[level - 2]
+
+        if parent:
+            # Special case for navigation extensions
+            if getattr(parent, 'navigation_extension', None):
+                return parent.extended_navigation(depth=depth,
+                    request=context.get('request'))
+            queryset &= parent.get_descendants()
+
+    if depth > 1:
+        # Filter out children with inactive parents
+        # None (no parent) is always allowed
+        parents = set([None])
+        if parent:
+            # Subset filtering; allow children of parent as well
+            parents.add(parent.id)
+
+        def _filter(iterable):
+            for elem in iterable:
+                if elem.parent_id in parents:
+                    yield elem
+                parents.add(elem.id)
+
+        queryset = _filter(queryset)
+
+    if 'navigation' in feincms_page._feincms_extensions:
+        # Filter out children of nodes which have a navigation extension
+        extended_node_rght = [] # mptt node right value
+
+        def _filter(iterable):
+            for elem in iterable:
+                if extended_node_rght:
+                    if getattr(elem, mptt_opts.right_attr) < extended_node_rght[-1]:
+                        # Still inside some navigation extension
+                        continue
+                    else:
+                        extended_node_rght.pop()
+
+                if getattr(elem, 'navigation_extension', None):
+                    yield elem
+                    extended_node_rght.append(getattr(elem, mptt_opts.right_attr))
+
+                    for extended in elem.extended_navigation(depth=depth,
+                            request=context.get('request')):
+                        if getattr(extended, mptt_opts.level_attr, 0) < level + depth - 1:
+                            yield extended
+
+                else:
+                    yield elem
+
+        queryset = _filter(queryset)
+
+    return queryset
+
+
 # ------------------------------------------------------------------------
 class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
     """
@@ -41,7 +134,7 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
         mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
 
         if isinstance(instance, HttpRequest):
-            instance = Page.objects.for_request(instance)
+            instance = Page.objects.for_request(instance, best_match=True)
 
         entries = self._what(instance, level, depth)
 

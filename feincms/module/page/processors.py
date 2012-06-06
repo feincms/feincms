@@ -38,10 +38,11 @@ def frontendediting_request_processor(page, request):
         except ValueError:
             enable_fe = False
 
-        request.session['frontend_editing'] = enable_fe
+    response = HttpResponseRedirect(request.path)
+    response.set_cookie('frontend_editing', enable_fe)
 
     # Redirect to cleanup URLs
-    return HttpResponseRedirect(request.path)
+    return response
 
 
 def etag_request_processor(page, request):
