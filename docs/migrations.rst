@@ -33,3 +33,8 @@ in your project:
 
 * Run ``./manage.py convert_to_south page`` and ``./manage.py convert_to_south medialibrary``
 * That's it!
+
+.. warning::
+
+   You **must not** use ``migrations`` as folder name for the FeinCMS
+   migrations, otherwise South **will** get confused.
