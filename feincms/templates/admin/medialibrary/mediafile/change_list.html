@@ -1,12 +1,11 @@
 {% extends "admin/change_list.html" %}
+
+{% load url from future %}
 {% load i18n %}
 
-{% block content %}
-
-{{ block.super }}
-
+{% block content %}{{ block.super }}
 <div class="module">
-    <form action="{% url admin:mediafile_bulk_upload %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url "admin:mediafile_bulk_upload" %}" method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
     <p style="color: #666; font-size: 11px;">
         <label for="data">{% trans "Bulk upload a ZIP file:" %}

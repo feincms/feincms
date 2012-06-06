@@ -1,9 +1,10 @@
+import json
 import logging
 
 from django import forms
 from django.db import models
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import simplejson as json
+
 
 class JSONFormField(forms.fields.CharField):
     def clean(self, value, *args, **kwargs):

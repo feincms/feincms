@@ -1,5 +1,6 @@
 {% extends "admin/feincms/item_editor.html" %}
 
+{% load url from future %}
 {% load i18n %}
 
 {% block object-tools %}
@@ -9,7 +10,7 @@
 	    <li><a target="_blank" href="{{ original.get_absolute_url }}?frontend_editing=1" class="frontend_editing_link">{% trans "Edit on site" %}</a></li>
 	{% endif %}
 	{% if not original.is_active %}
-	    {% url feincms_preview original.get_absolute_url|slice:"1:-1" original.pk as preview_url %}
+	    {% url "feincms_preview" original.get_absolute_url|slice:"1:-1" original.pk as preview_url %}
 	    {% if preview_url %}
 	        <li><a target="_blank" href="{{ preview_url }}" class="viewsitelink">{% trans "Preview" %}</a></li>
 	    {% endif %}

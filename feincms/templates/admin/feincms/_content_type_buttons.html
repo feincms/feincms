@@ -1,3 +1,4 @@
+{% load url from future %}
 <script type="text/javascript">
 /*
 type: content type identifier (required)
@@ -6,7 +7,7 @@ raw_id_picker: URL of raw_id_fields picker which should be automatically opened
 after: callback, receives new fieldset as argument
 keep: keep entry in content type dropdown (defaults to false)
 */
-{% url admin:medialibrary_mediafile_changelist as media_library_url %}
+{% url "admin:medialibrary_mediafile_changelist" as media_library_url %}
 var CONTENT_TYPE_BUTTONS = [
     {
         type: 'richtextcontent',

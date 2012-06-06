@@ -20,9 +20,10 @@ def _render_content(content, **kwargs):
             return
         setattr(request, 'feincms_render_level', level + 1)
 
-    try:
+    if (request and request.COOKIES.get('frontend_editing', False) and\
+            hasattr(content, 'fe_render')):
         r = content.fe_render(**kwargs)
-    except AttributeError:
+    else:
         r = content.render(**kwargs)
 
     if request is not None:
@@ -32,57 +33,21 @@ def _render_content(content, **kwargs):
     return r
 
 
-class RenderRegionNode(template.Node):
-    def __init__(self, feincms_object, region, request):
-        self.feincms_object = template.Variable(feincms_object)
-        self.region = template.Variable(region)
-        self.request = template.Variable(request)
-
-    def render(self, context):
-        feincms_object = self.feincms_object.resolve(context)
-        region = self.region.resolve(context)
-        request = self.request.resolve(context)
-
-        return u''.join(_render_content(content, request=request, context=context)\
-            for content in getattr(feincms_object.content, region))
-
-
-@register.tag
-def feincms_render_region(parser, token):
+@register.simple_tag(takes_context=True)
+def feincms_render_region(context, feincms_object, region, request):
     """
     {% feincms_render_region feincms_page "main" request %}
     """
-    try:
-        tag_name, feincms_object, region, request = token.contents.split()
-    except ValueError:
-        raise template.TemplateSyntaxError, 'Invalid syntax for feincms_render_region: %s' % token.contents
-
-    return RenderRegionNode(feincms_object, region, request)
+    return u''.join(_render_content(content, request=request, context=context)
+        for content in getattr(feincms_object.content, region))
 
 
-class RenderContentNode(template.Node):
-    def __init__(self, content, request):
-        self.content = template.Variable(content)
-        self.request = template.Variable(request)
-
-    def render(self, context):
-        content = self.content.resolve(context)
-        request = self.request.resolve(context)
-
-        return _render_content(content, request=request, context=context)
-
-
-@register.tag
-def feincms_render_content(parser, token):
+@register.simple_tag(takes_context=True)
+def feincms_render_content(context, content, request):
     """
-    {% feincms_render_content contentblock request %}
+    {% feincms_render_content content request %}
     """
-    try:
-        tag_name, content, request = token.contents.split()
-    except ValueError:
-        raise template.TemplateSyntaxError, 'Invalid syntax for feincms_render_content: %s' % token.contents
-
-    return RenderContentNode(content, request)
+    return _render_content(content, request=request, context=context)
 
 
 @register.simple_tag
