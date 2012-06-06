@@ -9,10 +9,10 @@ import re
 
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
-from feincms.compat import compatible_now
 from feincms.models import ExtensionsMixin
 from feincms.translations import (TranslatedObjectMixin, Translation,
     TranslatedObjectManager)
@@ -81,7 +81,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
     file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO)
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
-    created = models.DateTimeField(_('created'), editable=False, default=compatible_now)
+    created = models.DateTimeField(_('created'), editable=False, default=timezone.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
     file_size  = models.IntegerField(_("file size"), blank=True, null=True, editable=False)
 
@@ -164,7 +164,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
     def save(self, *args, **kwargs):
         if not self.id and not self.created:
-            self.created = compatible_now()
+            self.created = timezone.now()
 
         self.type = self.determine_file_type(self.file.name)
         if self.file:
