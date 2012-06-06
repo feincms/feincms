@@ -56,6 +56,15 @@ class SectionContent(models.Model):
         if cleanse:
             # If cleanse is True use default cleanse method
             if cleanse == True:
+                import warnings
+                warnings.warn("Please pass a callable instead. cleanse=True is"
+                    " being deprecated in favor of explicitly specifying the"
+                    " cleansing function. To continue using the same"
+                    " functionality, pip install feincms-cleanse and pass"
+                    " cleanse=feincms_cleanse.cleanse_html to the"
+                    " create_content_type call.",
+                    DeprecationWarning, stacklevel=2)
+
                 from feincms.utils.html.cleanse import cleanse_html
                 cls.cleanse = cleanse_html
             # Otherwise use passed callable
