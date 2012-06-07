@@ -178,7 +178,8 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 'parent__' * i + 'in_navigation': True,
                 'level__gte': level + i,
             })
-            # TODO handle the case where active_filters has been extended
+            # should handle the case where active_filters has been extended
+            # we do not fix this anymore, use feincms_nav instead
         return q
 
     def _what(self, instance, level, depth):
