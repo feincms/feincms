@@ -309,6 +309,13 @@ class ExtensionsMixin(object):
                         try:
                             fn = get_object('%s.%s.register' % (path, ext))
                             if fn:
+                                warnings.warn(
+                                    'Using short names for extensions has been deprecated'
+                                    ' and will be removed in FeinCMS v1.8.'
+                                    ' Please provide the full python path to the extension'
+                                    ' %s instead (%s.%s).' % (ext, path, ext),
+                                    DeprecationWarning, stacklevel=2)
+
                                 break
                         except ImportError:
                             pass
