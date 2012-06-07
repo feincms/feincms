@@ -110,6 +110,13 @@ New deprecations
   start passing a callable to ``cleanse`` right now. The existing support for
   cleansing will only be available up to FeinCMS v1.7.
 
+* FeinCMS v1.8 will not support shorthands anymore when registering extensions.
+  Always provide the full python path to the extension file (or pass callables)
+  to ``feincms.models.Base.register_extensions``. That is,
+  ``Page.register_extensions('feincms.module.extensions.ct_tracker')`` should
+  be used instead of ``Page.register_extensions('ct_tracker')``. While it is
+  a bit more work it will make it much more explicit what's going on.
+
 
 Compatibility with Django and other apps
 ----------------------------------------
