@@ -8,6 +8,8 @@ import os
 import re
 
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -18,7 +20,6 @@ from feincms.translations import (TranslatedObjectMixin, Translation,
     TranslatedObjectManager)
 
 from . import logger
-
 
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
@@ -181,12 +182,17 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         # storage, to avoid having orphaned files hanging around.
         if getattr(self, '_original_file_name', None):
             if self.file.name != self._original_file_name:
-                try:
-                    self.file.storage.delete(self._original_file_name)
-                except Exception, e:
-                    logger.error("Cannot delete orphaned file %s: %s" % (self._original_file_name, e))
+                self.delete_mediafile(self._original_file_name)
 
         self.purge_translation_cache()
+
+    def delete_mediafile(self, name=None):
+        if name is None:
+            name = self.file.name
+        try:
+            self.file.storage.delete(name)
+        except Exception, e:
+            logger.warn("Cannot delete media file %s: %s" % (name, e))
 
 # ------------------------------------------------------------------------
 MediaFileBase.register_filetypes(
@@ -212,6 +218,11 @@ class MediaFile(MediaFileBase):
         from .admin import MediaFileAdmin
 
         register_fn(cls, MediaFileAdmin)
+
+@receiver(post_delete, sender=MediaFile)
+def _mediafile_post_delete(sender, instance, **kwargs):
+    instance.delete_mediafile()
+    logger.info("Deleted mediafile %d (%s)" % (instance.id, instance.file.name))
 
 # ------------------------------------------------------------------------
 class MediaFileTranslation(Translation(MediaFile)):
