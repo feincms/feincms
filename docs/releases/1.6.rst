@@ -176,6 +176,9 @@ Notable features and improvements
 
 * Custom comment models are now supported in the ``CommentsContent``.
 
+* Media files are now removed from the disk too if a media file entry is
+  removed from the database.
+
 
 Bugfixes
 ========
