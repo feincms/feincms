@@ -1,12 +1,12 @@
 import time
 
 from django.db import models
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
 import feedparser
-from feincms.compat import compatible_now
 
 
 class RSSContent(models.Model):
@@ -45,7 +45,7 @@ class RSSContent(models.Model):
             'feed_link': feed['feed']['link'],
             'entries': entries,
             })
-        self.last_updated = compatible_now()
+        self.last_updated = timezone.now()
 
         if save:
             self.save()

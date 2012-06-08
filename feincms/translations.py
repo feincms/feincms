@@ -6,7 +6,7 @@ Usage example::
 
     class News(models.Model, TranslatedObjectMixin):
         active = models.BooleanField(default=False)
-        created = models.DateTimeField(default=datetime.now)
+        created = models.DateTimeField(default=timezone.now)
 
 
     class NewsTranslation(Translation(News)):

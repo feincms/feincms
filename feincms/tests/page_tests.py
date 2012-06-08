@@ -21,6 +21,7 @@ from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
+from django.utils import timezone
 
 from feincms import settings as feincms_settings
 from feincms.content.application.models import _empty_reverse_cache, app_reverse
@@ -269,7 +270,7 @@ class PagesTestCase(TestCase):
         self.is_published(page2.get_absolute_url(), should_be=True)
 
         old_publication = page.publication_date
-        page.publication_date = datetime.now() + timedelta(days=1)
+        page.publication_date = timezone.now() + timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=False)
 
@@ -277,14 +278,14 @@ class PagesTestCase(TestCase):
         self.is_published(page2.get_absolute_url(), should_be=False)
 
         page.publication_date = old_publication
-        page.publication_end_date = datetime.now() - timedelta(days=1)
+        page.publication_end_date = timezone.now() - timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=False)
 
         # Should be not accessible because of its parent's inactivity
         self.is_published(page2.get_absolute_url(), should_be=False)
 
-        page.publication_end_date = datetime.now() + timedelta(days=1)
+        page.publication_end_date = timezone.now() + timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=True)
         self.is_published(page2.get_absolute_url(), should_be=True)
@@ -885,7 +886,7 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
 
         page2.active = True
-        page2.publication_date = datetime.now() - timedelta(days=1)
+        page2.publication_date = timezone.now() - timedelta(days=1)
         page2.override_url = '/blablabla/'
         page2.redirect_to = page1.get_absolute_url()
         page2.save()
