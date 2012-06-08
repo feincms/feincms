@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+import warnings
+
 from django import template
 from django.conf import settings
 from django.db.models import Q
@@ -16,14 +18,13 @@ register = template.Library()
 
 # ------------------------------------------------------------------------
 @register.assignment_tag(takes_context=True)
-def feincms_nav(context, feincms_page, level=1, depth=1, experimental=False):
+def feincms_nav(context, feincms_page, level=1, depth=1):
     """
     New, simplified version of the ``{% feincms_navigation %}`` template tag.
-    """
 
-    if not experimental:
-        raise template.TemplateSyntaxError(
-            'Pass experimental=True to feincms_nav to silence this exception.')
+    Generally we don't like abbreviations too much, but the similarity with
+    the HTML5 <nav> tag was just too tempting.
+    """
 
     if isinstance(feincms_page, HttpRequest):
         feincms_page = Page.objects.for_request(feincms_page, best_match=True)
@@ -129,6 +130,11 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
     """
 
     def what(self, instance, args):
+        warnings.warn('feincms_navigation and feincms_navigation_extended have'
+            ' been deprecated and will be removed in FeinCMS v1.8. Start using'
+            ' the new, shiny and bug-free feincms_nav today!',
+            DeprecationWarning, stacklevel=3)
+
         level = int(args.get('level', 1))
         depth = int(args.get('depth', 1))
         mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
@@ -172,7 +178,8 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
                 'parent__' * i + 'in_navigation': True,
                 'level__gte': level + i,
             })
-            # TODO handle the case where active_filters has been extended
+            # should handle the case where active_filters has been extended
+            # we do not fix this anymore, use feincms_nav instead
         return q
 
     def _what(self, instance, level, depth):

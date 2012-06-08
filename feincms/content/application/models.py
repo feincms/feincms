@@ -39,6 +39,7 @@ def retrieve_page_information(page, request=None):
     several times to the website."""
     _local.proximity_info = (page.tree_id, page.lft, page.rght, page.level)
     _local.page_class = page.__class__
+    _local.page_cache_key_fn = page.cache_key
 
 
 def _empty_reverse_cache():
@@ -72,16 +73,21 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
     # vargs and vkwargs are used to send through additional parameters which are
     # uninteresting to us (such as current_app)
 
+    # get additional cache keys from the page if available
+    # refs https://github.com/feincms/feincms/pull/277/
+    fn = getattr(_local, 'page_cache_key_fn', lambda: '')
+    cache_key_prefix = fn()
+
     app_cache_keys = {
-        'none': 'app_%s_none' % urlconf,
+        'none': '%s:app_%s_none' % (cache_key_prefix, urlconf),
         }
     proximity_info = getattr(_local, 'proximity_info', None)
     url_prefix = None
 
     if proximity_info:
         app_cache_keys.update({
-            'all': 'app_%s_%s_%s_%s_%s' % ((urlconf,) + proximity_info),
-            'tree': 'app_%s_%s' % (urlconf, proximity_info[0]),
+            'all': '%s:app_%s_%s_%s_%s_%s' % ((cache_key_prefix, urlconf,) + proximity_info),
+            'tree': '%s:app_%s_%s' % (cache_key_prefix, urlconf, proximity_info[0]),
             })
 
     for key in ('all', 'tree', 'none'):
