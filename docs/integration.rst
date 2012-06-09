@@ -97,7 +97,7 @@ can be too easily violated.
 
 An example ``urls.py`` follows::
 
-    from django.conf.urls.defaults import patterns, include, url
+    from django.conf.urls import patterns, include, url
     from django.views.generic.detail import DetailView
     from django.views.generic.list import ListView
     from news.models import Entry
