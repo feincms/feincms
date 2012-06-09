@@ -63,9 +63,9 @@ signals.post_syncdb.connect(check_database_schema(Entry, __name__), weak=False)
 
 class EntryAdmin(item_editor.ItemEditor):
     date_hierarchy = 'published_on'
-    list_display = ('__unicode__', 'published', 'published_on')
-    list_filter = ('published',)
-    search_fields = ('title', 'slug',)
+    list_display = ['__unicode__', 'published', 'published_on']
+    list_filter = ['published',]
+    search_fields = ['title', 'slug']
     prepopulated_fields = {
         'slug': ('title',),
         }
