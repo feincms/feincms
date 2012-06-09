@@ -3,7 +3,7 @@ Extend or modify the navigation with custom entries.
 
 This extension allows the website administrator to select an extension
 which processes, modifies or adds subnavigation entries. The bundled
-``feincms_navigation`` template tag knows how to collect navigation entries,
+``feincms_nav`` template tag knows how to collect navigation entries,
 be they real Page instances or extended navigation entries.
 """
 

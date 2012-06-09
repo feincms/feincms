@@ -475,7 +475,7 @@ def siblings_along_path_to(page_list, page2):
     A typical use case is building a navigation menu with the active
     path to the current page expanded::
 
-        {% feincms_navigation of feincms_page as navitems level=1,depth=3 %}
+        {% feincms_nav feincms_page level=1 depth=3 as navitems %}
         {% with navitems|siblings_along_path_to:feincms_page as navtree %}
             ... whatever ...
         {% endwith %}
@@ -488,7 +488,7 @@ def siblings_along_path_to(page_list, page2):
             # fetch ancestors or children.
 
             # NOTE: This assumes that the input list actually is complete (ie. comes from
-            # feincms_navigation). We'll cope with the fall-out of that assumption
+            # feincms_nav). We'll cope with the fall-out of that assumption
             # when it happens...
             ancestors = [a_page for a_page in page_list
                                     if _is_equal_or_parent_of(a_page, page2)]
