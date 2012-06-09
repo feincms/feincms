@@ -72,9 +72,17 @@ class ExampleCMSBase2(Base):
 ExampleCMSBase2.register_regions(('region', 'region title'),
         ('region2', 'region2 title'))
 
-Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
-                         'titles', 'translations', 'seo', 'changedate',
-                         'ct_tracker')
+Page.register_extensions(
+    'feincms.module.extensions.datepublisher',
+    'feincms.module.extensions.translations',
+    'feincms.module.extensions.ct_tracker',
+    'feincms.module.extensions.seo',
+    'feincms.module.extensions.changedate',
+    'feincms.module.extensions.seo',  # duplicate
+    'feincms.module.page.extensions.navigation',
+    'feincms.module.page.extensions.symlinks',
+    'feincms.module.page.extensions.titles',
+    )
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
 Page.register_request_processor(processors.etag_request_processor)
