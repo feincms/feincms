@@ -455,7 +455,7 @@ representation of the table.
 
 Template content
 ----------------
-.. module:: feincms.content.table.template
+.. module:: feincms.content.template.models
 .. class:: TemplateContent()
 
 This is a content type that just includes a snippet from a template.
