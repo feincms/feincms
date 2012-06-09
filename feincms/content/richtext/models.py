@@ -114,8 +114,8 @@ class RichTextContent(models.Model):
                     " cleansing function. To continue using the same"
                     " functionality, pip install feincms-cleanse and pass"
                     " cleanse=feincms_cleanse.cleanse_html to the"
-                    " create_content_type call.",
-                    " Support for cleanse=True will be removed in FeinCMS v1.8."
+                    " create_content_type call."
+                    " Support for cleanse=True will be removed in FeinCMS v1.8.",
                     DeprecationWarning, stacklevel=2)
 
                 from feincms.utils.html.cleanse import cleanse_html
