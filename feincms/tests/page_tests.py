@@ -137,7 +137,7 @@ class PagesTestCase(TestCase):
         self.assertRedirects(self.create_page(title='Test page ' * 10, slug='test-page'),
                              '/admin/page/page/')
         self.assertEqual(Page.objects.count(), 1)
-        self.assertContains(self.client.get('/admin/page/page/'), '…')
+        self.assertContains(self.client.get('/admin/page/page/'), u'…')
 
     def test_03_item_editor(self):
         self.login()
