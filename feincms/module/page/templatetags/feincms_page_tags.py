@@ -106,7 +106,9 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
         queryset = _filter(queryset)
 
-    return queryset
+    # Return a list, not a generator so that it can be consumed
+    # several times in a template.
+    return list(queryset)
 
 
 # ------------------------------------------------------------------------
