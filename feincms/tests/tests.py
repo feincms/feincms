@@ -72,9 +72,17 @@ class ExampleCMSBase2(Base):
 ExampleCMSBase2.register_regions(('region', 'region title'),
         ('region2', 'region2 title'))
 
-Page.register_extensions('datepublisher', 'navigation', 'seo', 'symlinks',
-                         'titles', 'translations', 'seo', 'changedate',
-                         'ct_tracker')
+Page.register_extensions(
+    'feincms.module.extensions.datepublisher',
+    'feincms.module.extensions.translations',
+    'feincms.module.extensions.ct_tracker',
+    'feincms.module.extensions.seo',
+    'feincms.module.extensions.changedate',
+    'feincms.module.extensions.seo',  # duplicate
+    'feincms.module.page.extensions.navigation',
+    'feincms.module.page.extensions.symlinks',
+    'feincms.module.page.extensions.titles',
+    )
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
 Page.register_request_processor(processors.etag_request_processor)
@@ -82,7 +90,12 @@ Page.register_response_processor(processors.etag_response_processor)
 Page.register_response_processor(processors.debug_sql_queries_response_processor())
 
 
-Entry.register_extensions('seo', 'translations', 'seo', 'ct_tracker')
+Entry.register_extensions(
+    'feincms.module.extensions.seo',
+    'feincms.module.extensions.translations',
+    'feincms.module.extensions.seo',
+    'feincms.module.extensions.ct_tracker',
+    )
 class BlogTestCase(TestCase):
     def setUp(self):
         u = User(username='test', is_active=True, is_staff=True, is_superuser=True)

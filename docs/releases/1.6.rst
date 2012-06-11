@@ -98,6 +98,25 @@ New deprecations
   two so that code using ``v2`` will continue working with FeinCMS v1.8 (at
   least).
 
+* The template tag ``feincms_navigation`` has been superseded by ``feincms_nav``
+  which fixes a few problems with the old code and is generally much more
+  maintainable. The old version will stay around for one more version and will
+  be removed for FeinCMS v1.8.
+
+* The HTML cleaning support in ``feincms.utils.html.cleanse`` which could be
+  easily used in the ``RichTextContent`` by passing ``cleanse=True`` has been
+  copied into its own Python package,
+  `feincms-cleanse <http://pypi.python.org/pypi/feincms-cleanse>`_. You should
+  start passing a callable to ``cleanse`` right now. The existing support for
+  cleansing will only be available up to FeinCMS v1.7.
+
+* FeinCMS v1.8 will not support shorthands anymore when registering extensions.
+  Always provide the full python path to the extension file (or pass callables)
+  to ``feincms.models.Base.register_extensions``. That is,
+  ``Page.register_extensions('feincms.module.extensions.ct_tracker')`` should
+  be used instead of ``Page.register_extensions('ct_tracker')``. While it is
+  a bit more work it will make it much more explicit what's going on.
+
 
 Compatibility with Django and other apps
 ----------------------------------------
@@ -113,7 +132,9 @@ Notable features and improvements
   context is available in content types' templates. If you only use the rendering
   tags (``feincms_render_region`` and ``feincms_render_content``) you can take
   advantage of all variables from your context processors in content types'
-  templates too.
+  templates too. Furthermore, those templatetags have been simplified by using
+  Django's ``template.Library.simple_tag`` method now, which means that filters
+  etc. are supported as template tag arguments now.
 
 * ``MediaFile`` does no longer auto-rotate images on upload. It really is not a
   media library's job to magically modify user content; if needed, it should be
@@ -131,6 +152,9 @@ Notable features and improvements
 
 * The value of ``FEINCMS_FRONTEND_EDITING`` defaults to ``False`` now.
 
+* Frontend editing can now safely be used with caching. This is accomplished
+  by saving state in a cookie instead of creating sessions all the time.
+
 * The ``SectionContent`` content type has been updated and does properly
   use ``raw_id_fields`` for the media files instead of the hack which was used
   before.
@@ -147,6 +171,14 @@ Notable features and improvements
   If you need the old behavior for some reason, set the setting
   ``FEINCMS_THUMBNAIL_DIR`` to an empty string. The default setting is ``'_thumbs/'``.
 
+* All templates and examples have been converted to the new ``{% url %}``
+  syntax.
+
+* Custom comment models are now supported in the ``CommentsContent``.
+
+* Media files are now removed from the disk too if a media file entry is
+  removed from the database.
+
 
 Bugfixes
 ========
@@ -156,6 +188,7 @@ Bugfixes
 
 * The MPTT attributes aren't hardcoded in the tree editor anymore. Custom names
   for the ``left``, ``right``, ``level`` and ``tree_id`` attributes are now
-  supported.
+  supported. Models which do not use ``id`` as their primary key are supported
+  now as well.
 
 * FeinCMS uses timezone-aware datetimes now.

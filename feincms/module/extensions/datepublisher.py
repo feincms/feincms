@@ -12,8 +12,8 @@ from datetime import datetime
 
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from feincms.compat import compatible_now
 
 from feincms.admin import add_extension_options
 
@@ -27,7 +27,7 @@ def format_date(d, if_none=''):
     if d is None:
         return if_none
 
-    now = datetime.now()
+    now = timezone.now()
     fmt = (d.year == now.year) and '%d.%m' or '%d.%m.%Y'
     return d.strftime(fmt)
 
@@ -44,7 +44,7 @@ def granular_now(n=None):
     Also useful if you are using johnny-cache or a similar queryset cache.
     """
     if n is None:
-        n = compatible_now()
+        n = timezone.now()
     return datetime(n.year, n.month, n.day, n.hour, (n.minute // 5) * 5)
 
 # ------------------------------------------------------------------------

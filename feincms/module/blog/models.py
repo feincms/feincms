@@ -7,12 +7,12 @@ It does work, though.
 
 from django.db import models
 from django.db.models import signals
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
-from feincms.compat import compatible_now
 
 
 class EntryManager(models.Manager):
@@ -20,7 +20,7 @@ class EntryManager(models.Manager):
         return self.filter(
             published=True,
             published_on__isnull=False,
-            published_on__lte=compatible_now(),
+            published_on__lte=timezone.now(),
             )
 
 
@@ -46,7 +46,7 @@ class Entry(Base):
 
     def save(self, *args, **kwargs):
         if self.published and not self.published_on:
-            self.published_on = compatible_now()
+            self.published_on = timezone.now()
         super(Entry, self).save(*args, **kwargs)
 
     @models.permalink
@@ -63,9 +63,9 @@ signals.post_syncdb.connect(check_database_schema(Entry, __name__), weak=False)
 
 class EntryAdmin(item_editor.ItemEditor):
     date_hierarchy = 'published_on'
-    list_display = ('__unicode__', 'published', 'published_on')
-    list_filter = ('published',)
-    search_fields = ('title', 'slug',)
+    list_display = ['__unicode__', 'published', 'published_on']
+    list_filter = ['published',]
+    search_fields = ['title', 'slug']
     prepopulated_fields = {
         'slug': ('title',),
         }

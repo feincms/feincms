@@ -12,7 +12,7 @@ from feincms.content.application.models import ApplicationContent
 from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
 from feincms.content.application.models import reverse
 
-import mptt
+from mptt.models import MPTTModel
 
 
 Page.register_templates({
@@ -70,21 +70,17 @@ class BlogEntriesNavigationExtension(NavigationExtension):
                 url=reverse('testapp.blog_urls/blog_entry_details', kwargs={'object_id': entry.id}),
                 )
 
-Page.register_extensions('navigation')
-Page.register_extensions('sites')
+Page.register_extensions(
+    'feincms.module.page.extensions.navigation',
+    'feincms.module.page.extensions.sites',
+    )
 
 
-try:
-    from mptt.models import MPTTModel as base
-    mptt_register = False
-except ImportError:
-    base = models.Model
-    mptt_register = True
-
-class Category(base):
+class Category(MPTTModel):
     name = models.CharField(max_length=20)
     slug = models.SlugField()
-    parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
+    parent = models.ForeignKey('self', blank=True, null=True,
+        related_name='children')
 
     class Meta:
         ordering = ['tree_id', 'lft']
@@ -94,10 +90,9 @@ class Category(base):
     def __unicode__(self):
         return self.name
 
-if mptt_register:
-    mptt.register(Category)
 
 # add m2m field to entry so it shows up in entry admin
-Entry.add_to_class('categories', models.ManyToManyField(Category, blank=True, null=True))
+Entry.add_to_class('categories',
+    models.ManyToManyField(Category, blank=True, null=True))
 EntryAdmin.list_filter += ('categories',)
 

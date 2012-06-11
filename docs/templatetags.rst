@@ -66,7 +66,7 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 
     {% load feincms_page_tags %}
 
-.. function:: feincms_navigation:
+.. function:: feincms_nav:
 
    Return a list of pages to be used for the navigation
 
@@ -80,10 +80,14 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 
        {% load feincms_page_tags %}
 
-       {% feincms_navigation of feincms_page as sublevel level=2,depth=1 %}
+       {% feincms_nav feincms_page level=2 depth=1 as sublevel %}
        {% for p in sublevel %}
            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
        {% endfor %}
+
+    This template tag has replaced ``feincms_navigation``, which used
+    a hand-grown parser and had several bugs which were hard to fix without
+    a complete rewrite.
 
 .. function:: siblings_along_path_to:
 

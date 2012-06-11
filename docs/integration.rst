@@ -97,7 +97,7 @@ can be too easily violated.
 
 An example ``urls.py`` follows::
 
-    from django.conf.urls.defaults import patterns, include, url
+    from django.conf.urls import patterns, include, url
     from django.views.generic.detail import DetailView
     from django.views.generic.list import ListView
     from news.models import Entry
@@ -423,7 +423,7 @@ entries, you could do it as follows:
 #. Assign this navigation extension to the CMS page where you want these navigation entries to appear
 
 You don't need to do anything else as long as you use the built-in
-``feincms_navigation`` template tag -- it knows how to handle extended navigations.
+``feincms_nav`` template tag -- it knows how to handle extended navigations.
 
 ::
 

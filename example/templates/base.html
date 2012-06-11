@@ -84,7 +84,7 @@
     <h1>{{ feincms_page.title }}</h1>
 
     <div id="navigation" class="clearfix">
-        {% feincms_navigation of feincms_page as toplevel level=1 %}
+        {% feincms_nav feincms_page level=1 as toplevel %}
         {% for p in toplevel %}
         <a {% if p|is_equal_or_parent_of:feincms_page %}class="mark"{% endif %} href="{{ p.get_absolute_url }}">{{ p.title }}</a>
         {% endfor %}
@@ -98,7 +98,7 @@
 
         <div id="sidebar">
             <h2>Sidebar content</h2>
-                {% feincms_navigation of feincms_page as sublevel level=2 %}
+                {% feincms_nav feincms_page level=2 as sublevel %}
                 {% for p in sublevel %}
                     {% if forloop.first %}<ul>{% endif %}
                     <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></li>

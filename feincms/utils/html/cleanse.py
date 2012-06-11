@@ -5,6 +5,14 @@ import re
 import unicodedata
 
 
+import warnings
+warnings.warn("The module feincms.utils.html.cleanse is being deprecated."
+    " Please use the feincms-cleanse package (installable with pip) instead."
+    " Improvements will only be made in the feincms-cleanse package. This"
+    " module will be removed in FeinCMS v1.8.",
+    DeprecationWarning, stacklevel=2)
+
+
 cleanse_html_allowed = {
     'a': ('href', 'name', 'target', 'title'),
     'h2': (),

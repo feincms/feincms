@@ -21,6 +21,7 @@ from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
+from django.utils import timezone
 
 from feincms import settings as feincms_settings
 from feincms.content.application.models import _empty_reverse_cache, app_reverse
@@ -136,7 +137,7 @@ class PagesTestCase(TestCase):
         self.assertRedirects(self.create_page(title='Test page ' * 10, slug='test-page'),
                              '/admin/page/page/')
         self.assertEqual(Page.objects.count(), 1)
-        self.assertContains(self.client.get('/admin/page/page/'), '…')
+        self.assertContains(self.client.get('/admin/page/page/'), u'…')
 
     def test_03_item_editor(self):
         self.login()
@@ -269,7 +270,7 @@ class PagesTestCase(TestCase):
         self.is_published(page2.get_absolute_url(), should_be=True)
 
         old_publication = page.publication_date
-        page.publication_date = datetime.now() + timedelta(days=1)
+        page.publication_date = timezone.now() + timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=False)
 
@@ -277,14 +278,14 @@ class PagesTestCase(TestCase):
         self.is_published(page2.get_absolute_url(), should_be=False)
 
         page.publication_date = old_publication
-        page.publication_end_date = datetime.now() - timedelta(days=1)
+        page.publication_end_date = timezone.now() - timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=False)
 
         # Should be not accessible because of its parent's inactivity
         self.is_published(page2.get_absolute_url(), should_be=False)
 
-        page.publication_end_date = datetime.now() + timedelta(days=1)
+        page.publication_end_date = timezone.now() + timedelta(days=1)
         page.save()
         self.is_published(page.get_absolute_url(), should_be=True)
         self.is_published(page2.get_absolute_url(), should_be=True)
@@ -768,6 +769,28 @@ class PagesTestCase(TestCase):
                 '{% load feincms_page_tags %}{% feincms_navigation of feincms_page as nav level=1,depth=2 %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
                 '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-3/page-31/,/page-3/page-32/,/page-3/page-33/',
             ),
+
+            # Exactly the same tests, but with feincms_nav instead of feincms_navigation
+            (
+                {'feincms_page': Page.objects.get(pk=1)},
+                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-3/page-31/,/page-3/page-32/,/page-3/page-33/',
+            ),
+            (
+                {'feincms_page': Page.objects.get(pk=14)},
+                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=2 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/page-33/page-331/,/page-3/page-33/page-332/',
+            ),
+            (
+                {'feincms_page': Page.objects.get(pk=14)},
+                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=2 depth=3 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/page-33/page-331/,/page-3/page-33/page-331/page-3311/,/page-3/page-33/page-332/',
+            ),
+            (
+                {'feincms_page': Page.objects.get(pk=19)},
+                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-3/page-31/,/page-3/page-32/,/page-3/page-33/',
+            ),
         ]
 
         for c, t, r in tests:
@@ -799,6 +822,18 @@ class PagesTestCase(TestCase):
         p.save()
         data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
         self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14',), "Navigation after disabling intermediate page")
+
+        # Same test with feincms_nav
+        tmpl = '{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=3 as nav %}{% for p in nav %}{{ p.pk }}{% if not forloop.last %},{% endif %}{% endfor %}'
+
+        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
+        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14',), "Navigation after disabling intermediate page")
+
+        p.active = True
+        p.save()
+
+        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
+        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',), "Original navigation")
 
     def test_18_default_render_method(self):
         """
@@ -885,7 +920,7 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
 
         page2.active = True
-        page2.publication_date = datetime.now() - timedelta(days=1)
+        page2.publication_date = timezone.now() - timedelta(days=1)
         page2.override_url = '/blablabla/'
         page2.redirect_to = page1.get_absolute_url()
         page2.save()

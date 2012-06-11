@@ -9,7 +9,6 @@
 
 from __future__ import absolute_import
 
-from datetime import datetime
 import json
 import zipfile
 import os
@@ -17,6 +16,7 @@ import time
 
 from django.template.defaultfilters import slugify
 from django.conf import settings as django_settings
+from django.utils import timezone
 
 from .models import Category, MediaFile, MediaFileTranslation
 
@@ -124,7 +124,7 @@ def import_zipfile(category_id, overwrite, data):
 
 # ------------------------------------------------------------------------
 def export_zipfile(site, queryset):
-    now  = datetime.today()
+    now  = timezone.now()
     zip_name = "export_%s_%04d%02d%02d.zip" % (slugify(site.domain), now.year, now.month, now.day)
 
     zip_data = open(os.path.join(django_settings.MEDIA_ROOT, zip_name), "w")

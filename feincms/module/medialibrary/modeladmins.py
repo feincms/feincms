@@ -106,7 +106,7 @@ class MediaFileAdmin(admin.ModelAdmin):
     actions           = [assign_category, save_as_zipfile]
 
     def get_urls(self):
-        from django.conf.urls.defaults import url, patterns
+        from django.conf.urls import patterns, include, url
 
         urls = super(MediaFileAdmin, self).get_urls()
         my_urls = patterns('',
