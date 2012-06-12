@@ -14,6 +14,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 from mptt.exceptions import InvalidMove
+from mptt.forms import MPTTAdminForm
 
 from feincms import settings
 
@@ -166,6 +167,8 @@ class TreeEditor(admin.ModelAdmin):
 
     .. _django-mptt: http://github.com/mptt/django-mptt/
     """
+
+    form = MPTTAdminForm
 
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
         # Make sure that no pagination is displayed. Slicing is disabled anyway,
