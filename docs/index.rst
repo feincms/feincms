@@ -58,6 +58,7 @@ Contents
    advanced/index
    faq
    contributing
+   deprecation
 
 
 API Documentation
