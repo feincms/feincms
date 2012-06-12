@@ -101,7 +101,11 @@ New deprecations
 * The template tag ``feincms_navigation`` has been superseded by ``feincms_nav``
   which fixes a few problems with the old code and is generally much more
   maintainable. The old version will stay around for one more version and will
-  be removed for FeinCMS v1.8.
+  be removed for FeinCMS v1.8. The only difference (apart from the bugfixes and
+  the slightly different syntax) is that ``feincms_nav`` unconditionally uses
+  navigation extensions.  Additionally, ``feincms_navigation`` uses
+  ``feincms_nav``'s implementation behind the scenes, which means that the
+  ``extended`` argument does not have an effect anymore (it's always active).
 
 * The HTML cleaning support in ``feincms.utils.html.cleanse`` which could be
   easily used in the ``RichTextContent`` by passing ``cleanse=True`` has been
