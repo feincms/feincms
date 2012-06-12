@@ -164,7 +164,7 @@ class TreeEditor(admin.ModelAdmin):
     The ``TreeEditor`` modifies the standard Django administration change list
     to a drag-drop enabled interface for django-mptt_-managed Django models.
 
-    .. _django-mptt: http://github.com/mptt/django-mptt/
+    .. _django-mptt: https://github.com/django-mptt/django-mptt/
     """
 
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
