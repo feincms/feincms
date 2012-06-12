@@ -77,6 +77,13 @@ Visit these sites
 * See the google groups page at http://groups.google.com/group/django-feincms
 * FeinCMS on github: https://github.com/feincms/feincms/
 
+IRC
+---
+
+Visit us on IRC! We are hanging around in ``#feincms`` on freenode. If you
+do not have an IRC client you can use the
+`freenode Web IRC client <http://webchat.freenode.net/>`_.
+
 Quickstart
 ----------
 
