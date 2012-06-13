@@ -15,8 +15,11 @@ from feincms import ensure_completely_loaded
 
 from .models import Page, PageManager
 
+from mptt.forms import MPTTAdminForm
+
+
 # ------------------------------------------------------------------------
-class PageAdminForm(forms.ModelForm):
+class PageAdminForm(MPTTAdminForm):
     never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
         'translation_of', '_content_title', '_page_title')
 
