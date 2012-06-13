@@ -14,6 +14,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 from mptt.exceptions import InvalidMove
+from mptt.forms import MPTTAdminForm
 
 from feincms import settings
 
@@ -166,6 +167,8 @@ class TreeEditor(admin.ModelAdmin):
 
     .. _django-mptt: https://github.com/django-mptt/django-mptt/
     """
+
+    form = MPTTAdminForm
 
     if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
         # Make sure that no pagination is displayed. Slicing is disabled anyway,
@@ -409,3 +412,24 @@ class TreeEditor(admin.ModelAdmin):
         return u' '.join(self._actions_column(instance))
     actions_column.allow_tags = True
     actions_column.short_description = _('actions')
+
+    def delete_selected_tree(self, modeladmin, request, queryset):
+        """
+        Deletes multiple instances and makes sure the MPTT fields get
+        recalculated properly.  (Because merely doing a bulk delete doesn't
+        trigger the post_delete hooks.)
+        """
+        n = 0
+        for obj in queryset:
+            obj.delete()
+            n += 1
+        self.message_user(request, _("Successfully deleted %s items.") % n)
+
+    def get_actions(self, request):
+        actions = super(TreeEditor, self).get_actions(request)
+        if 'delete_selected' in actions:
+            actions['delete_selected'] = (
+                self.delete_selected_tree,
+                'delete_selected',
+                _("Delete selected %(verbose_name_plural)s"))
+        return actions
