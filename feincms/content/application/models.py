@@ -7,7 +7,7 @@ from time import mktime
 import re
 
 from django.core import urlresolvers
-from django.core.urlresolvers import Resolver404, resolve, reverse as _reverse, NoReverseMatch
+from django.core.urlresolvers import Resolver404, resolve, reverse, NoReverseMatch
 from django.db import models
 from django.http import HttpResponse
 from django.utils.functional import curry as partial, wraps
@@ -160,18 +160,18 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
             # reverse monkey patch
             url = content.parent._cached_url[1:-1]
             if url:
-                prefix = _reverse('feincms_handler', args=(url,))
+                prefix = reverse('feincms_handler', args=(url,))
                 # prefix must always ends with a slash
                 prefix += '/' if prefix[-1] != '/' else ''
 
             else:
-                prefix = _reverse('feincms_home')
+                prefix = reverse('feincms_home')
 
             _local.reverse_cache[app_cache_keys[cache_key]] = url_prefix = (
                 urlconf, prefix)
 
     if url_prefix:
-        return _reverse(viewname,
+        return reverse(viewname,
             url_prefix[0],
             args=args,
             kwargs=kwargs,
@@ -199,64 +199,6 @@ def permalink(func):
 
 
 APPLICATIONCONTENT_RE = re.compile(r'^([^/]+)/([^/]+)$')
-
-
-def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, *vargs, **vkwargs):
-    """
-    This reverse replacement adds two new capabilities to the Django reverse method:
-
-    - If reverse is called from inside ``ApplicationContent.process``, it
-      automatically prepends the URL of the page the ``ApplicationContent``
-      is attached to, thereby allowing ``reverse`` and ``{% url %}`` to
-      return correct URLs without hard-coding the application integration
-      point into the templates or URLconf files.
-    - If the viewname contains a slash, the part before the slash is
-      interpreted as the path to an URLconf file. This allows the template
-      author to resolve URLs only reachable via an ``ApplicationContent``,
-      even inside another application contents' ``process`` method::
-
-          {% url "registration.urls/auth_logout" %}
-    """
-
-    if isinstance(viewname, basestring) and APPLICATIONCONTENT_RE.match(viewname):
-        # try to reverse an URL inside another applicationcontent
-        other_urlconf, other_viewname = viewname.split('/')
-
-        if hasattr(_local, 'urlconf') and other_urlconf == _local.urlconf[0]:
-            return app_reverse(other_viewname, other_urlconf,
-            args=args, kwargs=kwargs, prefix=prefix, *vargs, **vkwargs)
-
-        import warnings
-        warnings.warn("Reversing URLs through a patched 'django.core.urlresolvers.reverse'"
-            " function or using the 'urlconf/view_name' notation has been deprecated and"
-            " support for it will be removed in FeinCMS v1.7."
-            " Use 'feincms.content.application.models.app_reverse' or the 'app_reverse'"
-            " template tag from 'applicationcontent_tags' directly.",
-            DeprecationWarning, stacklevel=2)
-
-        return app_reverse(other_viewname, other_urlconf,
-            args=args, kwargs=kwargs, prefix=prefix, *vargs, **vkwargs)
-
-    if hasattr(_local, 'urlconf'):
-        # Special handling inside ApplicationContent.render; override urlconf
-        # and prefix variables so that reverse works as expected.
-        urlconf1, prefix1 = _local.urlconf
-        try:
-            return app_reverse(viewname, urlconf1, args, kwargs, prefix1, *vargs, **vkwargs)
-        except NoReverseMatch:
-            # fall through to calling reverse with default arguments
-            pass
-
-    return _reverse(viewname, urlconf, args, kwargs, prefix, *vargs, **vkwargs)
-
-if settings.FEINCMS_REVERSE_MONKEY_PATCH:
-    import warnings
-    warnings.warn("FeinCMS will stop supporting the old 'urlconf/view_name' notation "
-        " method in v1.7. You should use the explicit 'feincms.content.application.models.app_reverse'"
-        " function and {% app_reverse %} template tag instead. Set 'FEINCMS_REVERSE_MONKEY_PATCH'"
-        " to False to use the new behavior now (which is the default since v1.6).",
-        DeprecationWarning, stacklevel=2)
-    urlresolvers.reverse = reverse
 
 
 class ApplicationContent(models.Model):

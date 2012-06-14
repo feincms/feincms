@@ -105,14 +105,6 @@ FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION',
     'feincms.utils.html.tidy.tidy_html')
 
 # ------------------------------------------------------------------------
-#: Monkey-patch django.core.urlresvolers.reverse to be application-content aware?
-#: (The monkey patch is deprecated and should not be used anymore. Use the
-#: ``app_reverse`` function and the ``{% app_reverse %}`` template tag instead.)
-#: Support for this setting will be removed in FeinCMS 1.7.
-FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH',
-    False)
-
-# ------------------------------------------------------------------------
 #: Makes the page handling mechanism try to find a cms page with that
 #: path if it encounters a page not found situation. This allows for nice
 #: customised cms-styled error pages. Do not go overboard, this should
