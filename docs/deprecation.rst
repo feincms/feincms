@@ -73,3 +73,7 @@ will be issued for at least two releases.
   anymore. :mod:`feincms.views.generic` and
   :func:`feincms.views.decorators.add_page_to_extra_context` will be removed
   as well.
+
+* The module :mod:`feincms.content.medialibrary.v2`, which is only an alias for
+  :mod:`feincms.content.medialibrary.models` starting with FeinCMS v1.7 will be
+  removed.
