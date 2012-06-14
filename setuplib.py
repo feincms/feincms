@@ -51,7 +51,7 @@ def find_packages(package_dir):
                 package_data[cur_pack] = []
             package_dir = "/".join(cur_pack.split(".")) + "/"
             for f in filenames:
-                package_data[cur_pack].append(os.path.join(dirpath.replace(package_dir, ""), f))
+                package_data[cur_pack].append(os.path.join(dirpath.replace(package_dir, "", 1), f))
 
     return packages, package_data
 
