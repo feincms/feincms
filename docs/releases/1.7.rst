@@ -1,0 +1,40 @@
+====================================
+FeinCMS 1.7 release notes (upcoming)
+====================================
+
+Welcome to FeinCMS 1.7!
+
+
+Backwards-incompatible changes
+==============================
+
+
+Reversing application content URLs
+----------------------------------
+
+The support for monkey-patching applicationcontent-awareness into Django's
+:py:func:`django.core.urlresolvers.reverse` has been removed.
+
+
+Removal of deprecated features
+------------------------------
+
+
+
+New deprecations
+----------------
+
+
+Compatibility with Django and other apps
+----------------------------------------
+
+FeinCMS 1.7 requires Django 1.4.
+
+
+Notable features and improvements
+=================================
+
+
+
+Bugfixes
+========
