@@ -13,7 +13,22 @@ will be issued for at least two releases.
 1.6
 ===
 
-* The value of ``FEINCMS_REVERSE_MONKEY_PATCH`` is changed to ``False``.
+* The value of ``FEINCMS_REVERSE_MONKEY_PATCH`` has been changed to ``False``.
+* Deprecated page manager methods have been removed (``page_for_path_or_404``,
+  ``for_request_or_404``, ``best_match_for_request``, ``from_request``) -
+  ``Page.objects.for_request()``, ``Page.objects.page_for_path`` and
+  ``Page.objects.best_match_for_path`` should cover all use cases.
+* Deprecated page methods have been removed (``active_children``,
+  ``active_children_in_navigation``, ``get_siblings_and_self``)
+* Request and response processors have to be imported from
+  :mod:`feincms.module.page.processors`. Additionally, they must be registered
+  individually by using ``register_request_processor`` and
+  ``register_response_processor``.
+* Prefilled attributes have been removed. Use Django's ``prefetch_related``
+  or ``feincms.utils.queryset_transform`` instead.
+* ``feincms.views.base`` has been moved to ``feincms.views.legacy``. Use
+  ``feincms.views.cbv`` instead.
+* ``FEINCMS_FRONTEND_EDITING``'s default has been changed to ``False``.
 
 
 1.7
