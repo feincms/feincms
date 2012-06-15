@@ -183,6 +183,10 @@ Notable features and improvements
 * Media files are now removed from the disk too if a media file entry is
   removed from the database.
 
+* The modules :mod:`feincms.module.page.models` and
+  :mod:`feincms.module.medialibrary.models` have been split up. Admin code has
+  been moved into ``modeladmin.py`` files, form code into ``forms.py``.
+
 
 Bugfixes
 ========
