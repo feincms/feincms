@@ -441,11 +441,11 @@ if(!Array.indexOf) {
             jConfirm(msg, CHANGE_TEMPLATE_MESSAGES[0], function(ret) {
                 if(ret) {
                     for(var i=0; i<not_in_new.length; i++) {
-                        var items = $('#'+not_in_new[i]+'_body div.order-machine').children();
-                        // FIXME: this moves all soon-to-be-homeless items
-                        // to the first region, but that region is quite likely
-                        // not in the new template.
-                        move_item(0, items);
+                        var body = $('#' + not_in_new[i] + '_body'),
+                            machine = body.find('.order-machine'),
+                            inputs = machine.find('input[name$=region]');
+
+                        inputs.val(new_regions[0]);
                     }
 
                     input_element.checked = true;
