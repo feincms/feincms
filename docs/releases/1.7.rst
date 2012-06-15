@@ -34,6 +34,10 @@ FeinCMS 1.7 requires Django 1.4.
 Notable features and improvements
 =================================
 
+* A lazy version of :py:func:`~feincms.content.application.models.app_reverse`
+  is now available,
+  :py:func:`~feincms.content.application.models.app_reverse_lazy`.
+
 
 
 Bugfixes

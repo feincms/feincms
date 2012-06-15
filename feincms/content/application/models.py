@@ -10,7 +10,7 @@ from django.core import urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse, NoReverseMatch
 from django.db import models
 from django.http import HttpResponse
-from django.utils.functional import curry as partial, wraps
+from django.utils.functional import curry as partial, lazy, wraps
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -178,6 +178,10 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
             prefix=url_prefix[1],
             *vargs, **vkwargs)
     raise NoReverseMatch("Unable to find ApplicationContent for '%s'" % urlconf)
+
+
+#: Lazy version of ``app_reverse``
+app_reverse_lazy = lazy(app_reverse, str)
 
 
 def permalink(func):
