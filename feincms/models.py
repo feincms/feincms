@@ -150,11 +150,14 @@ class ContentProxy(object):
         return self._cache['counts']
 
     def _fetch_content_type_count_helper(self, pk, regions=None):
-        tmpl = ['SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s']
+        tmpl = [
+            'SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s'
+            ]
         args = []
 
         if regions:
-            tmpl.append('AND region IN (' + ','.join(['%%s'] * len(regions)) + ')')
+            tmpl.append(
+                'AND region IN (' + ','.join(['%%s'] * len(regions)) + ')')
             args.extend(regions * len(self.item._feincms_content_types))
 
         tmpl.append('GROUP BY region')
@@ -207,7 +210,8 @@ class ContentProxy(object):
         """
 
         if 'regions' not in self._cache:
-            self._popuplate_content_type_caches(self.item._feincms_content_types)
+            self._popuplate_content_type_caches(
+                self.item._feincms_content_types)
             contents = {}
             for cls, content_list in self._cache['cts'].items():
                 for instance in content_list:
@@ -432,7 +436,8 @@ def create_base_model(inherit_from=models.Model):
                 field = cls._meta.get_field_by_name('template_key')[0]
             except (FieldDoesNotExist, IndexError):
                 cls.add_to_class('template_key',
-                    models.CharField(_('template'), max_length=255, choices=()))
+                    models.CharField(_('template'), max_length=255, choices=())
+                    )
                 field = cls._meta.get_field_by_name('template_key')[0]
 
                 def _template(self):
@@ -557,12 +562,13 @@ def create_base_model(inherit_from=models.Model):
                 return cls.objects.select_related().filter(filter_args)
 
             attrs = {
-                '__module__': cls.__module__, # The basic content type is put into
-                                              # the same module as the CMS base type.
-                                              # If an app_label is not given, Django
-                                              # needs to know where a model comes
-                                              # from, therefore we ensure that the
-                                              # module is always known.
+                # The basic content type is put into
+                # the same module as the CMS base type.
+                # If an app_label is not given, Django
+                # needs to know where a model comes
+                # from, therefore we ensure that the
+                # module is always known.
+                '__module__': cls.__module__,
                 '__unicode__': __unicode__,
                 'render': render,
                 'fe_render': fe_render,
@@ -767,16 +773,17 @@ def create_base_model(inherit_from=models.Model):
 
             # collect item editor includes from the content type
             if hasattr(model, 'feincms_item_editor_includes'):
-                for key, includes in model.feincms_item_editor_includes.items():
+                for key, incls in model.feincms_item_editor_includes.items():
                     cls.feincms_item_editor_includes.setdefault(
-                        key, set()).update(includes)
+                        key, set()).update(incls)
 
             return new_type
 
         @property
         def _django_content_type(self):
-            if getattr(self.__class__, '_cached_django_content_type', None) is None:
-                self.__class__._cached_django_content_type = ContentType.objects.get_for_model(self)
+            if not getattr(self, '_cached_django_content_type', None):
+                self.__class__._cached_django_content_type = (
+                    ContentType.objects.get_for_model(self))
             return self.__class__._cached_django_content_type
 
         @classmethod
@@ -827,7 +834,8 @@ def create_base_model(inherit_from=models.Model):
 
             for cls in self._feincms_content_types:
                 for content in cls.objects.filter(parent=obj):
-                    new = copy_model_instance(content, exclude=('id', 'parent'))
+                    new = copy_model_instance(content,
+                        exclude=('id', 'parent'))
                     new.parent = self
                     new.save()
 
@@ -851,10 +859,9 @@ def create_base_model(inherit_from=models.Model):
                 raise EnvironmentError("django-reversion is not installed")
 
             follow = []
-            for content_type_model in cls._feincms_content_types:
-                related_manager = "%s_set" % content_type_model.__name__.lower()
-                follow.append(related_manager)
-                reversion.register(content_type_model)
+            for content_type in cls._feincms_content_types:
+                follow.append('%s_set' % content_type.__name__.lower())
+                reversion.register(content_type)
             reversion.register(cls, follow=follow)
 
     return Base
