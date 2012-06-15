@@ -57,10 +57,12 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
             parent = feincms_page.get_ancestors()[level - 2]
 
         if parent:
-            # Special case for navigation extensions
             if getattr(parent, 'navigation_extension', None):
+                # Special case for navigation extensions
                 return parent.extended_navigation(depth=depth,
                     request=context.get('request'))
+
+            # Apply descendant filter
             queryset &= parent.get_descendants()
 
     if depth > 1:
