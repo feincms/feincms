@@ -29,6 +29,10 @@ will be issued for at least two releases.
 * ``feincms.views.base`` has been moved to ``feincms.views.legacy``. Use
   ``feincms.views.cbv`` instead.
 * ``FEINCMS_FRONTEND_EDITING``'s default has been changed to ``False``.
+* The code in :mod:`feincms.module.page.models` has been split up. The admin
+  classes are in :mod:`feincms.module.page.modeladmin`, the forms in
+  :mod:`feincms.module.page.forms` now. Analogous changes have been made
+  to :mod:`feincms.module.medialibrary.models`.
 
 
 1.7
