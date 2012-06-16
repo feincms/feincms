@@ -66,7 +66,7 @@ class CMSBaseTest(TestCase):
 
         from feincms.content.medialibrary.models import MediaFileContent
 
-        # no POSITION_CHOICES, should raise
+        # no TYPE_CHOICES, should raise
         self.assertRaises(ImproperlyConfigured,
                           lambda: ExampleCMSBase.create_content_type(MediaFileContent))
 

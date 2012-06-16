@@ -3,6 +3,7 @@
 # ------------------------------------------------------------------------
 
 from django.contrib import admin
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -50,6 +51,10 @@ class MediaFileContent(ContentWithMediaFile):
 
     @classmethod
     def initialize_type(cls, TYPE_CHOICES=None):
+        if TYPE_CHOICES is None:
+            raise ImproperlyConfigured('You have to set TYPE_CHOICES when'
+                ' creating a %s' % cls.__name__)
+
         cls.add_to_class('type', models.CharField(_('type'),
             max_length=20, choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0]))
 
