@@ -4,6 +4,8 @@
 \#*#
 /secrets.py
 .DS_Store
+.idea
+.project
 ._*
 /FeinCMS.egg-info
 /MANIFEST
