@@ -28,7 +28,7 @@ several extensions.
 
 You need to create some content models too. No models are created by default,
 because there is no possibility to unregister models. A sane default might
-be to create :class:`~feincms.content.image.models.ImageContent` and
+be to create :class:`~feincms.content.medialibrary.models.MediaFileContent` and
 :class:`~feincms.content.richtext.models.RichTextContent` models; you can do this
 by adding the following lines somewhere into your project, for example in a
 ``models.py`` file that will be processed anyway::
@@ -37,7 +37,7 @@ by adding the following lines somewhere into your project, for example in a
 
     from feincms.module.page.models import Page
     from feincms.content.richtext.models import RichTextContent
-    from feincms.content.medialibrary.v2 import MediaFileContent
+    from feincms.content.medialibrary.models import MediaFileContent
 
     Page.register_extensions('datepublisher', 'translations') # Example set of extensions
 
@@ -64,8 +64,7 @@ content type dropdown will contain content types in the same order as they
 were registered.
 
 Please note that you should put these statements into a ``models.py`` file
-which is executed at Django startup time, i.e. into a ``models.py`` file
-contained in ``INSTALLED_APPS``.
+of an app contained in ``INSTALLED_APPS``. That file is executed at Django startup time.
 
 
 Setting up the admin interface
@@ -75,11 +74,11 @@ The customized admin interface code is contained inside the :class:`ModelAdmin`
 subclass, so you do not need to do anything special here.
 
 If you use the :class:`~feincms.content.richtext.models.RichTextContent`, you
-need to download `TinyMCE <http://tinymce.moxiecode.com/>`_ and configure FeinCMS'
+need to download `TinyMCE <http://www.tinymce.com/>`_ and configure FeinCMS'
 richtext support::
 
     FEINCMS_RICHTEXT_INIT_CONTEXT = {
-        'TINYMCE_JS_URL': '/your_custom_path/tiny_mce.js',
+        'TINYMCE_JS_URL': STATIC_URL + 'your_custom_path/tiny_mce.js',
         }
 
 
@@ -162,20 +161,35 @@ be activated as follows::
 
 The following extensions are available currently:
 
-* :mod:`~feincms.module.page.extension.changedate` --- Creation and modification dates
+* :mod:`~feincms.module.extensions.changedate` --- Creation and modification dates
 
   Adds automatically maintained creation and modification date fields
   to the page.
 
 
-* :mod:`~feincms.module.page.extension.datepublisher` --- Date-based publishing
+* :mod:`~feincms.module.extensions.ct_tracker` --- Content type cache
+
+  Helps reduce database queries if you have three or more content types.
+
+
+* :mod:`~feincms.module.extensions.datepublisher` --- Date-based publishing
 
   Adds publication date and end date fields to the page, thereby enabling the
   administrator to define a date range where a page will be available to
   website visitors.
 
 
-* :mod:`~feincms.module.page.extension.navigation` --- Navigation extensions
+* :mod:`~feincms.module.page.extensions.excerpt` --- Page summary
+
+  Add a brief excerpt summarizing the content of this page.
+
+
+* :mod:`~feincms.module.extensions.featured` --- Simple featured flag for a page
+
+  Lets administrators set a featured flag that lets you treat that page special.
+
+
+* :mod:`~feincms.module.page.extensions.navigation` --- Navigation extensions
 
   Adds navigation extensions to the page model. You can define subclasses of
   ``NavigationExtension``, which provide submenus to the navigation generation
@@ -183,19 +197,29 @@ The following extensions are available currently:
   this extension.
 
 
-* :mod:`~feincms.module.page.extension.seo` --- Search engine optimization
+* :mod:`~feincms.module.page.extensions.relatedpages` --- Links related content
+
+  Add a many-to-many relationship field to relate this page to other pages.
+
+
+* :mod:`~feincms.module.extensions.seo` --- Search engine optimization
 
   Adds fields to the page relevant for search engine optimization (SEO),
   currently only meta keywords and description.
 
 
-* :mod:`~feincms.module.page.extension.symlinks` --- Symlinked content extension
+* :mod:`~feincms.module.page.extensions.sites` --- Limit pages to sites
+
+  Allows to limit a page to a certain site and not display it on other sites.
+
+
+* :mod:`~feincms.module.page.extensions.symlinks` --- Symlinked content extension
 
   Sometimes you want to reuse all content from a page in another place. This
   extension lets you do that.
 
 
-* :mod:`~feincms.module.page.extension.titles` --- Additional titles
+* :mod:`~feincms.module.page.extensions.titles` --- Additional titles
 
   Adds additional title fields to the page model. You may not only define a
   single title for the page to be used in the navigation, the <title> tag and
@@ -204,7 +228,7 @@ The following extensions are available currently:
   content area.
 
 
-* :mod:`~feincms.module.page.extension.translations` --- Page translations
+* :mod:`~feincms.module.extensions.translations` --- Page translations
 
   Adds a language field and a recursive translations many to many field to the
   page, so that you can define the language the page is in and assign
@@ -220,6 +244,7 @@ The following extensions are available currently:
   behavior in non-FeinCMS managed views (such as third party apps not integrated
   using :class:`feincms.content.application.models.ApplicationContent` or
   Django's own administration tool).
+  You need to have defined ``settings.LANGUAGES`` as well.
 
 
 .. note::
