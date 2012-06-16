@@ -317,7 +317,7 @@ class PagesTestCase(TestCase):
             'mediafilecontent_set-MAX_NUM_FORMS': 10,
 
             'mediafilecontent_set-0-parent': 1,
-            'mediafilecontent_set-0-position': 'block',
+            'mediafilecontent_set-0-type': 'default',
 
             'imagecontent_set-TOTAL_FORMS': 1,
             'imagecontent_set-INITIAL_FORMS': 0,
@@ -388,7 +388,7 @@ class PagesTestCase(TestCase):
         page.mediafilecontent_set.create(
             mediafile=mediafile,
             region='main',
-            position='block',
+            type='default',
             ordering=1)
 
         self.assertEqual(unicode(mediafile), 'somefile.jpg')
@@ -1183,7 +1183,7 @@ class PagesTestCase(TestCase):
         page.mediafilecontent_set.create(
             mediafile=mediafile,
             region='main',
-            position='block',
+            type='default',
             ordering=1)
 
         self.assertContains(self.client.get('/admin/medialibrary/mediafile/'), 'somefile.jpg')
