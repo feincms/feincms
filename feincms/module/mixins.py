@@ -17,10 +17,10 @@ class ContentMixin(object):
     """
 
     #: Collection of request processors
-    request_processors = SortedDict()
+    request_processors = None
 
     #: Collection of response processors
-    response_processors = SortedDict()
+    response_processors = None
 
     def setup_request(self, request):
         import warnings
@@ -35,6 +35,8 @@ class ContentMixin(object):
         Registers the passed callable as request processor. A request processor
         always receives two arguments, the current object and the request.
         """
+        if cls.request_processors is None:
+            cls.request_processors = SortedDict()
         cls.request_processors[fn if key is None else key] = fn
 
     @classmethod
@@ -44,6 +46,8 @@ class ContentMixin(object):
         processor always receives three arguments, the current object, the
         request and the response.
         """
+        if cls.response_processors is None:
+            cls.response_processors = SortedDict()
         cls.response_processors[fn if key is None else key] = fn
 
 
@@ -123,6 +127,9 @@ class ContentView(TemplateView):
         also return a ``HttpResponse`` for shortcutting the rendering and
         returning that response immediately to the client.
         """
+        if self.object.request_processors is None:
+            return
+
         for fn in reversed(self.object.request_processors.values()):
             r = fn(self.object, self.request)
             if r:
@@ -134,6 +141,9 @@ class ContentView(TemplateView):
         processors are called to modify the response, eg. for setting cache or
         expiration headers, keeping statistics, etc.
         """
+        if self.object.response_processors is None:
+            return
+
         for fn in self.object.response_processors.values():
             r = fn(self.object, self.request, response)
             if r:
