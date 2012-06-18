@@ -86,7 +86,7 @@ class ExtensionsMixin(object):
                 cls._extensions.append(extension(cls))
                 cls._feincms_extensions.add(extension.ident)
             else:
-                cls._extensions.append(OldSchoolExtension(cls, extension=extension))
+                cls._extensions.append(LegacyExtension(cls, extension=extension))
                 cls._feincms_extensions.add(ext)
 
 
@@ -112,12 +112,12 @@ class Extension(object):
         pass
 
 
-class OldSchoolExtension(Extension):
+class LegacyExtension(Extension):
     """
-    Wrapper for old-school extensions
+    Wrapper for legacy extensions
     """
 
-    #: Old-school extension function
+    #: Legacy extension function
     extension = None
 
     def handle_model(self):
