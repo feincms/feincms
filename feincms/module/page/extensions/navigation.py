@@ -119,5 +119,3 @@ class Extension(extensions.Extension):
             'fields': ('navigation_extension',),
             'classes': ('collapse',),
             })
-
-register = Extension
