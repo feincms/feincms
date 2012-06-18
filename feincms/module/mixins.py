@@ -52,10 +52,24 @@ class ContentView(TemplateView):
     context_object_name = 'feincms_object'
 
     def handle_object(self, object):
+        self.object = object
+
         if not hasattr(self.request, '_feincms_extra_context'):
             self.request._feincms_extra_context = {}
 
-        self.object = object
+        self.request._feincms_extra_context.update({
+            # XXX This variable name isn't accurate anymore.
+            'in_appcontent_subpage': False,
+            'extra_path': '/',
+            })
+
+        url = self.object.get_absolute_url()
+        if self.request.path != url:
+            self.request._feincms_extra_context.update({
+                'in_appcontent_subpage': True,
+                'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
+                    self.request.path),
+                })
 
         r = self.run_request_processors()
         if r:
@@ -110,24 +124,6 @@ class ContentView(TemplateView):
         also return a ``HttpResponse`` for shortcutting the rendering and
         returning that response immediately to the client.
         """
-
-        self.request._feincms_extra_context.update({
-            # XXX This variable name isn't accurate anymore.
-            # We _are_ in a subpage, but it isn't necessarily
-            # an appcontent subpage.
-            'in_appcontent_subpage': False,
-            'extra_path': '/',
-            })
-
-        url = self.object.get_absolute_url()
-        if self.request.path != url:
-            # extra_path must not end with a slash
-            self.request._feincms_extra_context.update({
-                'in_appcontent_subpage': True,
-                'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
-                    self.request.path),
-                })
-
         for fn in reversed(self.object.request_processors.values()):
             r = fn(self.object, self.request)
             if r:
