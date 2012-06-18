@@ -100,8 +100,7 @@ class ContentView(TemplateView):
         if self.template_name:
             return [self.template_name]
 
-        # Hopefully someone run register_templates on the object class
-        # beforehand, otherwise we'll crash...
+        self.object._needs_templates()
         return [self.object.template.path]
 
     def get_context_data(self, **kwargs):
