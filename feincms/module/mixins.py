@@ -1,5 +1,3 @@
-import re
-
 from django.http import Http404
 from django.template import Template
 from django.utils.cache import add_never_cache_headers
@@ -64,23 +62,8 @@ class ContentView(DetailView):
         return self.handler(request, *args, **kwargs)
 
     def handler(self, request, *args, **kwargs):
-
         if not hasattr(self.request, '_feincms_extra_context'):
             self.request._feincms_extra_context = {}
-
-        self.request._feincms_extra_context.update({
-            # XXX This variable name isn't accurate anymore.
-            'in_appcontent_subpage': False,
-            'extra_path': '/',
-            })
-
-        url = self.object.get_absolute_url()
-        if self.request.path != url:
-            self.request._feincms_extra_context.update({
-                'in_appcontent_subpage': True,
-                'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
-                    self.request.path),
-                })
 
         r = self.run_request_processors()
         if r:
@@ -184,7 +167,7 @@ class ContentView(DetailView):
                 raise http404
 
             if not settings.FEINCMS_ALLOW_EXTRA_PATH and \
-                    self.request._feincms_extra_context['extra_path'] != '/':
+                    self.request._feincms_extra_context.get('extra_path', '/') != '/':
                 raise Http404()
 
     def finalize_content_types(self, response):

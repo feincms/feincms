@@ -1,3 +1,4 @@
+import re
 import sys
 
 from django.conf import settings as django_settings
@@ -14,6 +15,25 @@ def redirect_request_processor(page, request):
         if request._feincms_extra_context.get('extra_path', '/') == '/':
             return HttpResponseRedirect(target)
         raise Http404()
+
+
+def extra_context_request_processor(page, request):
+    """
+    Fills ``request._feincms_extra_context`` with a few useful variables.
+    """
+    request._feincms_extra_context.update({
+        # XXX This variable name isn't accurate anymore.
+        'in_appcontent_subpage': False,
+        'extra_path': '/',
+        })
+
+    url = object.get_absolute_url()
+    if request.path != url:
+        request._feincms_extra_context.update({
+            'in_appcontent_subpage': True,
+            'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
+                request.path),
+            })
 
 
 def frontendediting_request_processor(page, request):
