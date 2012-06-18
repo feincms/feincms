@@ -5,6 +5,7 @@ Base types for extensions refactor
 import warnings
 
 from django.contrib import admin
+from django.core.exceptions import ImproperlyConfigured
 
 from feincms.utils import get_object
 
@@ -29,8 +30,7 @@ class ExtensionsMixin(object):
             cls._feincms_extensions = set()
 
         here = cls.__module__.split('.')[:-1]
-
-        paths = [
+        search_paths = [
             '.'.join(here + ['extensions']),
             '.'.join(here[:-1] + ['extensions']),
             'feincms.module.extensions',
@@ -40,45 +40,53 @@ class ExtensionsMixin(object):
             if ext in cls._feincms_extensions:
                 continue
 
-            fn = None
+            extension = None
+
             if isinstance(ext, basestring):
-                try:
-                    fn = get_object(ext + '.register')
-                except ImportError:
-                    for path in paths:
-                        try:
-                            fn = get_object('%s.%s.register' % (path, ext))
-                            if fn:
-                                warnings.warn(
-                                    'Using short names for extensions has been'
-                                    ' deprecated and will be removed in'
-                                    ' FeinCMS v1.8. Please provide the full'
-                                    ' python path to the extension'
-                                    ' %s instead (%s.%s).' % (ext, path, ext),
-                                    DeprecationWarning, stacklevel=2)
+                paths = [ext, '%s.register' % ext] + [
+                    '%s.%s.register' % (path, ext) for path in search_paths]
 
-                                break
-                        except ImportError:
-                            pass
+                for path in paths:
+                    try:
+                        extension = get_object(path)
+                        break
+                    except (AttributeError, ImportError):
+                        pass
 
-                if not fn:
-                    raise ImproperlyConfigured(
-                        '%s is not a valid extension for %s' % (
-                            ext, cls.__name__))
+                    """
+                    warnings.warn(
+                        'Using short names for extensions has been'
+                        ' deprecated and will be removed in'
+                        ' FeinCMS v1.8. Please provide the full'
+                        ' python path to the extension'
+                        ' %s instead (%s.%s).' % (ext, path, ext),
+                        DeprecationWarning, stacklevel=2)
+                    """
 
-            # Not a string, maybe a callable?
-            elif hasattr(ext, '__call__'):
-                fn = ext
+            if not extension:
+                raise ImproperlyConfigured(
+                    '%s is not a valid extension for %s' % (
+                        ext, cls.__name__))
 
-            elif hasattr(ext, 'register'):
-                fn = ext.register
+            if hasattr(extension, 'register'):
+                extension = extension.register
 
+            elif hasattr(extension, 'Extension'):
+                extension = extension.Extension
 
-            if isinstance(ext, type) and issubclass(ext, Extension):
-                cls._extensions.append(ext(cls))
-                cls._feincms_extensions.append(ext.ident)
+            elif hasattr(extension, '__call__'):
+                pass
+
             else:
-                cls._extensions.append(OldSchoolExtension(cls, extension=fn))
+                raise ImproperlyConfigured(
+                    '%s is not a valid extension for %s' % (
+                        ext, cls.__name__))
+
+            if hasattr(extension, 'ident'):
+                cls._extensions.append(extension(cls))
+                cls._feincms_extensions.add(extension.ident)
+            else:
+                cls._extensions.append(OldSchoolExtension(cls, extension=extension))
                 cls._feincms_extensions.add(ext)
 
 
