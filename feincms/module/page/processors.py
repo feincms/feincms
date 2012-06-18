@@ -15,6 +15,7 @@ def redirect_request_processor(page, request):
             return HttpResponseRedirect(target)
         raise Http404()
 
+
 def frontendediting_request_processor(page, request):
     """
     Sets the frontend editing state in the session depending on the

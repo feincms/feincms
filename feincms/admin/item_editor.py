@@ -116,7 +116,7 @@ class ItemEditor(admin.ModelAdmin):
             model_cls = loading.get_model(self.model._meta.app_label, content_type)
             obj = model_cls.objects.get(parent=cms_id, id=content_id)
         except:
-            raise Http404
+            raise Http404()
 
         form_class_base = getattr(model_cls, 'feincms_item_editor_form', ItemEditorForm)
 

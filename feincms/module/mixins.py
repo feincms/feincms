@@ -183,7 +183,7 @@ class ContentView(TemplateView):
 
             if not settings.FEINCMS_ALLOW_EXTRA_PATH and \
                     self.request._feincms_extra_context['extra_path'] != '/':
-                raise Http404
+                raise Http404()
 
     def finalize_content_types(self, response):
         """

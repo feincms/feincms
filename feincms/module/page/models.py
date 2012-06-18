@@ -55,7 +55,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         except self.model.DoesNotExist:
             if raise404:
-                raise Http404
+                raise Http404()
             raise
 
     def best_match_for_path(self, path, raise404=False):
@@ -98,7 +98,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         except IndexError:
             if raise404:
-                raise Http404
+                raise Http404()
 
         raise self.model.DoesNotExist
 

@@ -16,7 +16,7 @@ class PreviewHandler(Handler):
 
     def handler(self, request, path, page_id):
         if not request.user.is_staff:
-            raise Http404
+            raise Http404()
 
         page = get_object_or_404(Page, pk=page_id)
 
