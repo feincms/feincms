@@ -139,7 +139,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
                     raise404=raise404)
             else:
                 request._feincms_page = self.page_for_path(path,
-                    raise404=raise404):
+                    raise404=raise404)
 
         if setup:
             import warnings
