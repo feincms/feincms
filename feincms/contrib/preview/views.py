@@ -14,17 +14,21 @@ class PreviewHandler(Handler):
     *** Everything here is subject to change. ***
     """
 
-    def handler(self, request, path, page_id):
-        if not request.user.is_staff:
-            raise Http404()
+    def get_object(self):
+        """Get the page by the id in the url here instead."""
 
-        page = get_object_or_404(Page, pk=page_id)
+        page = get_object_or_404(Page, pk=self.args[1])
 
         # Remove _preview/42/ from URL, the rest of the handler code should not
         # know that anything about previewing. Handler.prepare will still raise
         # a 404 if the extra_path isn't consumed by any content type
-        request.path = page.get_absolute_url()
+        self.request.path = page.get_absolute_url()
 
-        response = self.handle_object(page)
+        return page
+
+    def handler(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            raise Http404()
+        response = super(PreviewHandler, self).handler(request, *args, **kwargs)
         response['Cache-Control'] = 'no-cache, must-revalidate, no-store, private'
         return response

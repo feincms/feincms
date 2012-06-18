@@ -1,11 +1,10 @@
 import re
 
-from django.db import models
 from django.http import Http404
 from django.template import Template
 from django.utils.cache import add_never_cache_headers
 from django.utils.datastructures import SortedDict
-from django.views.generic import TemplateView
+from django.views.generic import DetailView
 
 from feincms import settings
 
@@ -51,12 +50,20 @@ class ContentMixin(object):
         cls.response_processors[fn if key is None else key] = fn
 
 
-class ContentView(TemplateView):
+class ContentView(DetailView):
     #: The name of the object for the template rendering context
     context_object_name = 'feincms_object'
 
-    def handle_object(self, object):
-        self.object = object
+    def dispatch(self, request, *args, **kwargs):
+        if request.method.lower() not in self.http_method_names:
+            return self.http_method_not_allowed(request, *args, **kwargs)
+        self.request = request
+        self.args = args
+        self.kwargs = kwargs
+        self.object = self.get_object()
+        return self.handler(request, *args, **kwargs)
+
+    def handler(self, request, *args, **kwargs):
 
         if not hasattr(self.request, '_feincms_extra_context'):
             self.request._feincms_extra_context = {}
