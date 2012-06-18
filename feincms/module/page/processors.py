@@ -28,7 +28,7 @@ def extra_context_request_processor(page, request):
         'extra_path': '/',
         })
 
-    url = object.get_absolute_url()
+    url = page.get_absolute_url()
     if request.path != url:
         request._feincms_extra_context.update({
             'in_appcontent_subpage': True,
