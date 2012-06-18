@@ -322,7 +322,7 @@ that one. Change the following settings::
 
 	FEINCMS_RICHTEXT_INIT_TEMPLATE = 'admin/content/richtext/init_ckeditor.html'
 	FEINCMS_RICHTEXT_INIT_CONTEXT = {
-		'CKEDITOR_JS_URL': STATIC_URL + 'path_to_your/ckeditor.js')
+		'CKEDITOR_JS_URL': STATIC_URL + 'path_to_your/ckeditor.js',
 	}
 
 .. _TinyMCE: http://www.tinymce.com/
