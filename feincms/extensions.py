@@ -184,9 +184,12 @@ class ExtensionModelAdmin(admin.ModelAdmin):
                 extension.handle_modeladmin(self)
 
     def add_extension_options(self, *f):
+        if self.fieldsets is None:
+            return
+
         if isinstance(f[-1], dict):     # called with a fieldset
             self.fieldsets.insert(self.fieldset_insertion_index, f)
             f[1]['classes'] = list(f[1].get('classes', []))
             f[1]['classes'].append('collapse')
-        elif f and self.fieldsets:   # assume called with "other" fields
+        elif f:   # assume called with "other" fields
             self.fieldsets[1][1]['fields'].extend(f)
