@@ -340,6 +340,9 @@ if settings.FEINCMS_FRONTEND_EDITING:
     Page.register_request_processor(
         processors.frontendediting_request_processor,
         key='frontend_editing')
+    Page.register_response_processor(
+        processors.frontendediting_response_processor,
+        key='frontend_editing')
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 

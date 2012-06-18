@@ -3,6 +3,7 @@ import sys
 
 from django.conf import settings as django_settings
 from django.http import Http404, HttpResponseRedirect
+from django.utils.cache import add_never_cache_headers
 
 
 def redirect_request_processor(page, request):
@@ -55,6 +56,17 @@ def frontendediting_request_processor(page, request):
 
     # Redirect to cleanup URLs
     return response
+
+
+def frontendediting_response_processor(page, request, response):
+    # Add never cache headers in case frontend editing is active
+    if (hasattr(request, 'COOKIES')
+            and request.COOKIES.get('frontend_editing', False)):
+
+        if hasattr(response, 'add_post_render_callback'):
+            response.add_post_render_callback(add_never_cache_headers)
+        else:
+            add_never_cache_headers(response)
 
 
 def etag_request_processor(page, request):
@@ -119,7 +131,7 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
     Example::
 
         from feincms.module.page import models, processors
-        models.Page.register_response_procesors(
+        models.Page.register_response_processor(
             processors.debug_sql_queries_response_processor(verbose=True),
             )
     """

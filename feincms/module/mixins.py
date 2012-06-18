@@ -1,6 +1,5 @@
 from django.http import Http404
 from django.template import Template
-from django.utils.cache import add_never_cache_headers
 from django.utils.datastructures import SortedDict
 from django.views.generic import DetailView
 
@@ -182,12 +181,3 @@ class ContentView(DetailView):
             r = content.finalize(self.request, response)
             if r:
                 return r
-
-        # Add never cache headers in case frontend editing is active
-        if (hasattr(self.request, "COOKIES")
-                and self.request.COOKIES.get('frontend_editing', False)):
-
-            if hasattr(response, 'add_post_render_callback'):
-                response.add_post_render_callback(add_never_cache_headers)
-            else:
-                add_never_cache_headers(response)
