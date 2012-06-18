@@ -23,8 +23,11 @@ class ContentMixin(object):
     response_processors = SortedDict()
 
     def setup_request(self, request):
-        if not hasattr(request, '_feincms_extra_context'):
-            request._feincms_extra_context = {}
+        import warnings
+        warnings.warn(
+            '%s.setup_request does nothing anymore, and will be removed in'
+            ' FeinCMS v1.8',
+            DeprecationWarning, stacklevel=2)
 
     @classmethod
     def register_request_processor(cls, fn, key=None):
@@ -56,7 +59,7 @@ class ContentView(TemplateView):
 
     def handler(self, request, *args, **kwargs):
         self.page = Page.objects.for_request(request,
-            raise404=True, best_match=True, setup=False)
+            raise404=True, best_match=True)
 
     def handle_object(self, object):
         if not hasattr(self.request, '_feincms_extra_context'):

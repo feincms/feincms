@@ -888,20 +888,17 @@ class PagesTestCase(TestCase):
         page.save()
 
         self.assertRaises(Http404,
-            lambda: Page.objects.for_request(request, raise404=True,
-                require_path_active=True))
+            lambda: Page.objects.for_request(request, raise404=True))
 
         page.active = True
         page.save()
 
         self.assertRaises(Http404,
-            lambda: Page.objects.for_request(request, raise404=True,
-                require_path_active=True))
+            lambda: Page.objects.for_request(request, raise404=True))
 
         page.parent.active = True
         page.parent.save()
-        self.assertEqual(page, Page.objects.for_request(request,
-            require_path_active=True))
+        self.assertEqual(page, Page.objects.for_request(request))
 
         old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
         request.path += 'hello/'

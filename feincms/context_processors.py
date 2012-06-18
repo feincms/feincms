@@ -10,10 +10,7 @@ def add_page_if_missing(request):
 
     try:
         return {
-            'feincms_page': Page.objects.for_request(request,
-                best_match=True,
-                setup=False,
-                require_path_active=True),
+            'feincms_page': Page.objects.for_request(request, best_match=True),
             }
     except Page.DoesNotExist:
         return {}

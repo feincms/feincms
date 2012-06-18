@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------------
 
 """
-This extension adds a language field to every page. When calling setup_request,
-the page's language is activated.
+This extension adds a language field to every page. When calling the request
+processors the page's language is activated.
 Pages in secondary languages can be said to be a translation of a page in the
 primary language (the first language in settings.LANGUAGES), thereby enabling
 deeplinks between translated pages.
@@ -145,8 +145,7 @@ def register(cls, admin_cls):
             target = self.redirect_to
             if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
                 try:
-                    page = cls.objects.page_for_path(target,
-                        require_path_active=True)
+                    page = cls.objects.page_for_path(target)
                     page = page.get_translation(get_current_language_code(request))
                     target = page.get_absolute_url()
                 except cls.DoesNotExist:

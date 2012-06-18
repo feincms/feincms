@@ -4,15 +4,6 @@ from django.conf import settings as django_settings
 from django.http import Http404, HttpResponseRedirect
 
 
-def require_path_active_request_processor(page, request):
-    """
-    Checks whether any ancestors are actually inaccessible (ie. not
-    inactive or expired) and raise a 404 if so.
-    """
-    if not page.are_ancestors_active():
-        raise Http404()
-
-
 def redirect_request_processor(page, request):
     """
     Returns a ``HttpResponseRedirect`` instance if the current page says

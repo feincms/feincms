@@ -2,7 +2,6 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-import warnings
 import re
 
 from django.core.cache import cache as django_cache
@@ -34,7 +33,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
     # The fields which should be excluded when creating a copy.
     exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
 
-    def page_for_path(self, path, raise404=False, require_path_active=False):
+    def page_for_path(self, path, raise404=False):
         """
         Return a page for a path. Optionally raises a 404 error if requested.
 
@@ -43,20 +42,13 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             Page.objects.page_for_path(request.path)
         """
 
-        if not require_path_active:
-            warnings.warn(
-                'Calling page_for_path with require_path_active=False is'
-                ' discouraged. require_path_active will default to True in'
-                ' FeinCMS v1.8.',
-                DeprecationWarning, stacklevel=2)
-
         stripped = path.strip('/')
 
         try:
             page = self.active().get(
                 _cached_url=u'/%s/' % stripped if stripped else '/')
 
-            if require_path_active and not page.are_ancestors_active():
+            if not page.are_ancestors_active():
                 raise self.model.DoesNotExist('Parents are inactive.')
 
             return page
@@ -66,8 +58,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
                 raise Http404
             raise
 
-    def best_match_for_path(self, path, raise404=False,
-            require_path_active=False):
+    def best_match_for_path(self, path, raise404=False):
         """
         Return the best match for a path. If the path as given is unavailable,
         continues to search by chopping path components off the end.
@@ -78,13 +69,6 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         Page.best_match_for_path('/photos/album/2008/09') might return the
         page with url '/photos/album/'.
         """
-
-        if not require_path_active:
-            warnings.warn(
-                'Calling best_match_for_path with require_path_active=False is'
-                ' discouraged. require_path_active will default to True in'
-                ' FeinCMS v1.8.',
-                DeprecationWarning, stacklevel=2)
 
         paths = ['/']
         path = path.strip('/')
@@ -106,7 +90,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             page = self.active().filter(_cached_url__in=paths).extra(
                 select={'_url_length': 'LENGTH(_cached_url)'}).order_by('-_url_length')[0]
 
-            if require_path_active and not page.are_ancestors_active():
+            if not page.are_ancestors_active():
                 raise IndexError('Parents are inactive.')
 
             django_cache.set(ck, page)
@@ -133,7 +117,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         return self.in_navigation().filter(parent__isnull=True)
 
     def for_request(self, request, raise404=False, best_match=False,
-            setup=True, require_path_active=False):
+            setup=False):
         """
         Return a page for the request
 
@@ -147,32 +131,23 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         could be determined.
         """
 
-        if not require_path_active:
-            warnings.warn(
-                'Calling for_request with require_path_active=False is'
-                ' discouraged. require_path_active will default to True in'
-                ' FeinCMS v1.8.',
-                DeprecationWarning, stacklevel=2)
-
         if not hasattr(request, '_feincms_page'):
             path = request.path_info or request.path
 
             if best_match:
                 request._feincms_page = self.best_match_for_path(path,
-                    raise404=raise404, require_path_active=require_path_active)
+                    raise404=raise404)
             else:
                 request._feincms_page = self.page_for_path(path,
-                    raise404=raise404, require_path_active=require_path_active)
+                    raise404=raise404):
 
         if setup:
+            import warnings
             warnings.warn(
-                'Calling for_request with setup=True is discouraged. setup'
-                ' will do nothing in FeinCMS v1.8 and the parameter will be'
-                ' removed. Use require_path_active and active_filters or'
-                ' the appropriate request processors instead.',
+                'Calling for_request with setup=True does nothing anymore.'
+                ' The parameter will be removed in FeinCMS v1.8.',
                 DeprecationWarning, stacklevel=2)
 
-            request._feincms_page.setup_request(request)
         return request._feincms_page
 
 
@@ -356,9 +331,6 @@ class Page(create_base_model(MPTTModel), ContentMixin):
 # ------------------------------------------------------------------------
 # Our default request processors
 
-Page.register_request_processor(
-    processors.require_path_active_request_processor,
-    key='path_active')
 Page.register_request_processor(processors.redirect_request_processor,
     key='redirect')
 
