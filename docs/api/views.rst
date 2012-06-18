@@ -1,19 +1,7 @@
 Views and decorators
 ====================
 
-
-Standard views
---------------
-
 .. automodule:: feincms.views.cbv.views
-   :members:
-   :noindex:
-
-
-Legacy views
-------------
-
-.. automodule:: feincms.views.legacy.views
    :members:
    :noindex:
 
