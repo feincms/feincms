@@ -137,6 +137,7 @@ class LegacyExtension(Extension):
         self.search_fields = []
 
         self.extension_options = []
+        self.known_keys = self.__dict__.keys()
 
         self.extension(self.model, self)
 
@@ -154,7 +155,11 @@ class LegacyExtension(Extension):
 
         if self.extension_options:
             for f in self.extension_options:
-                modeladmin.add_extension_options(f)
+                modeladmin.add_extension_options(*f)
+
+        for key, value in self.__dict__.items():
+            if key not in self.known_keys:
+                setattr(modeladmin.__class__, key, value)
 
     def add_extension_options(self, *f):
         if f:
@@ -172,11 +177,10 @@ class ExtensionModelAdmin(admin.ModelAdmin):
             for extension in getattr(self.model, '_extensions', []):
                 extension.handle_modeladmin(self)
 
-    @classmethod
-    def add_extension_options(cls, *f):
+    def add_extension_options(self, *f):
         if isinstance(f[-1], dict):     # called with a fieldset
-            cls.fieldsets.insert(cls.fieldset_insertion_index, f)
+            self.fieldsets.insert(self.fieldset_insertion_index, f)
             f[1]['classes'] = list(f[1].get('classes', []))
             f[1]['classes'].append('collapse')
-        else:   # assume called with "other" fields
-            cls.fieldsets[1][1]['fields'].extend(f)
+        elif f and self.fieldsets:   # assume called with "other" fields
+            self.fieldsets[1][1]['fields'].extend(f)
