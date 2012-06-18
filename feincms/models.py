@@ -10,7 +10,7 @@ import warnings
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-from django.db import connection, models
+from django.db import connections, models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
 from django.db.models.loading import get_model
@@ -93,6 +93,7 @@ class ContentProxy(object):
     def __init__(self, item):
         item._needs_content_types()
         self.item = item
+        self.db = item._state.db
         self._cache = {
             'cts': {},
             }
@@ -167,7 +168,7 @@ class ContentProxy(object):
             for idx, cls in enumerate(self.item._feincms_content_types)])
         sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
 
-        cursor = connection.cursor()
+        cursor = connections[self.db].cursor()
         cursor.execute(sql, args)
 
         _c = {}
