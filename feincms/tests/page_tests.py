@@ -864,13 +864,21 @@ class PagesTestCase(TestCase):
         page.active = True
         page.save()
 
-        self.assertEqual(page, Page.objects.page_for_path(page.get_absolute_url()))
-        self.assertEqual(page, Page.objects.best_match_for_path(page.get_absolute_url() + 'something/hello/'))
+        self.assertRaises(Page.DoesNotExist,
+            lambda: Page.objects.page_for_path(page.get_absolute_url()))
+        self.assertRaises(Page.DoesNotExist,
+            lambda: Page.objects.best_match_for_path(
+                page.get_absolute_url() + 'something/hello/'))
 
-        self.assertRaises(Http404, lambda: Page.objects.best_match_for_path('/blabla/blabla/', raise404=True))
-        self.assertRaises(Http404, lambda: Page.objects.page_for_path('/asdf/', raise404=True))
-        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
-        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.page_for_path('/asdf/'))
+        self.assertRaises(Http404,
+            lambda: Page.objects.best_match_for_path(
+                '/blabla/blabla/', raise404=True))
+        self.assertRaises(Http404,
+            lambda: Page.objects.page_for_path('/asdf/', raise404=True))
+        self.assertRaises(Page.DoesNotExist,
+            lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
+        self.assertRaises(Page.DoesNotExist,
+            lambda: Page.objects.page_for_path('/asdf/'))
 
         request = Empty()
         request.path = request.path_info = page.get_absolute_url()
@@ -899,6 +907,12 @@ class PagesTestCase(TestCase):
         page.parent.active = True
         page.parent.save()
         self.assertEqual(page, Page.objects.for_request(request))
+
+        self.assertEqual(page,
+            Page.objects.page_for_path(page.get_absolute_url()))
+        self.assertEqual(page,
+            Page.objects.best_match_for_path(
+                page.get_absolute_url() + 'something/hello/'))
 
         old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
         request.path += 'hello/'
