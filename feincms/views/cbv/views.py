@@ -20,7 +20,8 @@ class HandlerBase(ContentView):
 
     def handler(self, request, *args, **kwargs):
         page = Page.objects.for_request(request,
-            raise404=True, best_match=True, setup=False)
+            raise404=True, best_match=True, setup=False,
+            require_path_active=True)
 
         return self.handle_object(page)
 
