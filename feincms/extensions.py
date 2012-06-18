@@ -128,7 +128,10 @@ class LegacyExtension(Extension):
         self.fieldsets = []
         self.list_display = []
         self.list_filter = []
+        self.raw_id_fields = []
         self.search_fields = []
+
+        self.extension_options = []
 
         self.extension(self.model, self)
 
@@ -139,17 +142,18 @@ class LegacyExtension(Extension):
             modeladmin.list_display.extend(self.list_display)
         if self.list_filter:
             modeladmin.list_filter.extend(self.list_filter)
+        if self.raw_id_fields:
+            modeladmin.raw_id_fields.extend(self.raw_id_fields)
         if self.search_fields:
             modeladmin.search_fields.extend(self.search_fields)
 
-    @classmethod
-    def add_extension_options(cls, *f):
-        if isinstance(f[-1], dict):     # called with a fieldset
-            cls.fieldsets.insert(cls.fieldset_insertion_index, f)
-            f[1]['classes'] = list(f[1].get('classes', []))
-            f[1]['classes'].append('collapse')
-        else:   # assume called with "other" fields
-            cls.fieldsets[1][1]['fields'].extend(f)
+        if self.extension_options:
+            for f in self.extension_options:
+                modeladmin.add_extension_options(f)
+
+    def add_extension_options(self, *f):
+        if f:
+            self.extension_options.append(f)
 
 
 class ExtensionModelAdmin(admin.ModelAdmin):
