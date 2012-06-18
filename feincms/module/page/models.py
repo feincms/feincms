@@ -9,7 +9,6 @@ from django.conf import settings as django_settings
 from django.db import models
 from django.db.models import Q, signals
 from django.http import Http404
-from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import commit_on_success
 
@@ -18,6 +17,7 @@ from mptt.models import MPTTModel
 from feincms import settings
 from feincms.management.checker import check_database_schema
 from feincms.models import create_base_model
+from feincms.module.mixins import ContentMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
@@ -134,7 +134,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 PageManager.add_to_active_filters(Q(active=True))
 
 # ------------------------------------------------------------------------
-class Page(create_base_model(MPTTModel)):
+class Page(create_base_model(MPTTModel), ContentMixin):
     active = models.BooleanField(_('active'), default=True)
 
     # structure and navigation
@@ -150,8 +150,6 @@ class Page(create_base_model(MPTTModel)):
     _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
 
-    request_processors = SortedDict()
-    response_processors = SortedDict()
     cache_key_components = [ lambda p: django_settings.SITE_ID,
                              lambda p: p._django_content_type.id,
                              lambda p: p.id ]
@@ -296,83 +294,11 @@ class Page(create_base_model(MPTTModel)):
         """
         return None
 
-    def setup_request(self, request):
-        """
-        Before rendering a page, run all registered request processors. A request
-        processor may peruse and modify the page or the request. It can also return
-        a HttpResponse for shortcutting the page rendering and returning that response
-        immediately to the client.
-
-        ``setup_request`` stores responses returned by request processors and returns
-        those on every subsequent call to ``setup_request``. This means that
-        ``setup_request`` can be called repeatedly during the same request-response
-        cycle without harm - request processors are executed exactly once.
-        """
-
-        if hasattr(self, '_setup_request_result'):
-            return self._setup_request_result
-        else:
-            # Marker -- setup_request has been successfully run before
-            self._setup_request_result = None
-
-        if not hasattr(request, '_feincms_extra_context'):
-            request._feincms_extra_context = {}
-
-        request._feincms_extra_context.update({
-            'in_appcontent_subpage': False, # XXX This variable name isn't accurate anymore.
-                                            # We _are_ in a subpage, but it isn't necessarily
-                                            # an appcontent subpage.
-            'extra_path': '/',
-            })
-
-        url = self.get_absolute_url()
-        if request.path != url:
-            # extra_path must not end with a slash
-            request._feincms_extra_context.update({
-                'in_appcontent_subpage': True,
-                'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
-                    request.path),
-                })
-
-        for fn in reversed(self.request_processors.values()):
-            r = fn(self, request)
-            if r:
-                self._setup_request_result = r
-                break
-
-        return self._setup_request_result
-
-    def finalize_response(self, request, response):
-        """
-        After rendering a page to a response, the registered response processors are
-        called to modify the response, eg. for setting cache or expiration headers,
-        keeping statistics, etc.
-        """
-        for fn in self.response_processors.values():
-            fn(self, request, response)
-
     def get_redirect_to_target(self, request):
         """
         This might be overriden/extended by extension modules.
         """
         return self.redirect_to
-
-    @classmethod
-    def register_request_processor(cls, fn, key=None):
-        """
-        Registers the passed callable as request processor. A request processor
-        always receives two arguments, the current page object and the request.
-        """
-        cls.request_processors[fn if key is None else key] = fn
-
-    @classmethod
-    def register_response_processor(cls, fn, key=None):
-        """
-        Registers the passed callable as response processor. A response processor
-        always receives three arguments, the current page object, the request
-        and the response.
-        """
-        cls.response_processors[fn if key is None else key] = fn
 
     @classmethod
     def register_extension(cls, register_fn):
@@ -385,13 +311,15 @@ class Page(create_base_model(MPTTModel)):
 # ------------------------------------------------------------------------
 # Our default request processors
 
-Page.register_request_processor(processors.require_path_active_request_processor,
+Page.register_request_processor(
+    processors.require_path_active_request_processor,
     key='path_active')
 Page.register_request_processor(processors.redirect_request_processor,
     key='redirect')
 
 if settings.FEINCMS_FRONTEND_EDITING:
-    Page.register_request_processor(processors.frontendediting_request_processor,
+    Page.register_request_processor(
+        processors.frontendediting_request_processor,
         key='frontend_editing')
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
