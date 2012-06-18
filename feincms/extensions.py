@@ -11,6 +11,15 @@ from feincms.utils import get_object
 
 
 class ExtensionsMixin(object):
+    @property
+    def _feincms_extensions(self):
+        warnings.warn(
+            'Start using _extensions instead of _feincms_extensions'
+            ' today!',
+            DeprecationWarning, stacklevel=2)
+
+        return set(self._extensions)
+
     @classmethod
     def register_extensions(cls, *extensions):
         """
@@ -26,9 +35,6 @@ class ExtensionsMixin(object):
         if not hasattr(cls, '_extensions'):
             cls._extensions = []
 
-        if not hasattr(cls, '_feincms_extensions'):
-            cls._feincms_extensions = set()
-
         here = cls.__module__.split('.')[:-1]
         search_paths = [
             '.'.join(here + ['extensions']),
@@ -37,7 +43,7 @@ class ExtensionsMixin(object):
             ]
 
         for ext in extensions:
-            if ext in cls._feincms_extensions:
+            if ext in cls._extensions:
                 continue
 
             extension = None
@@ -84,17 +90,11 @@ class ExtensionsMixin(object):
 
             if hasattr(extension, 'ident'):
                 cls._extensions.append(extension(cls))
-                cls._feincms_extensions.add(extension.ident)
             else:
                 cls._extensions.append(LegacyExtension(cls, extension=extension))
-                cls._feincms_extensions.add(ext)
 
 
 class Extension(object):
-    #: Unique identifier for this extension, will be added
-    #: to ``cls._feincms_extensions`` to prevent double registration
-    ident = ''
-
     def __init__(self, model, **kwargs):
         self.model = model
         for key, value in kwargs.items():
