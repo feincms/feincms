@@ -9,7 +9,6 @@ from django.conf import settings as django_settings
 from django.db import models
 from django.db.models import Q, signals
 from django.http import Http404
-from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import commit_on_success
 
@@ -18,6 +17,7 @@ from mptt.models import MPTTModel
 from feincms import settings
 from feincms.management.checker import check_database_schema
 from feincms.models import create_base_model
+from feincms.module.mixins import ContentMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
@@ -45,10 +45,17 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         stripped = path.strip('/')
 
         try:
-            return self.active().get(_cached_url=stripped and u'/%s/' % stripped or '/')
+            page = self.active().get(
+                _cached_url=u'/%s/' % stripped if stripped else '/')
+
+            if not page.are_ancestors_active():
+                raise self.model.DoesNotExist('Parents are inactive.')
+
+            return page
+
         except self.model.DoesNotExist:
             if raise404:
-                raise Http404
+                raise Http404()
             raise
 
     def best_match_for_path(self, path, raise404=False):
@@ -82,11 +89,16 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
                 select={'_url_length': 'LENGTH(_cached_url)'}).order_by('-_url_length')[0]
+
+            if not page.are_ancestors_active():
+                raise IndexError('Parents are inactive.')
+
             django_cache.set(ck, page)
             return page
+
         except IndexError:
             if raise404:
-                raise Http404
+                raise Http404()
 
         raise self.model.DoesNotExist
 
@@ -104,7 +116,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return self.in_navigation().filter(parent__isnull=True)
 
-    def for_request(self, request, raise404=False, best_match=False, setup=True):
+    def for_request(self, request, raise404=False, best_match=False,
+            setup=False):
         """
         Return a page for the request
 
@@ -122,19 +135,26 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             path = request.path_info or request.path
 
             if best_match:
-                request._feincms_page = self.best_match_for_path(path, raise404=raise404)
+                request._feincms_page = self.best_match_for_path(path,
+                    raise404=raise404)
             else:
-                request._feincms_page = self.page_for_path(path, raise404=raise404)
+                request._feincms_page = self.page_for_path(path,
+                    raise404=raise404)
 
         if setup:
-            request._feincms_page.setup_request(request)
+            import warnings
+            warnings.warn(
+                'Calling for_request with setup=True does nothing anymore.'
+                ' The parameter will be removed in FeinCMS v1.8.',
+                DeprecationWarning, stacklevel=2)
+
         return request._feincms_page
 
 
 PageManager.add_to_active_filters(Q(active=True))
 
 # ------------------------------------------------------------------------
-class Page(create_base_model(MPTTModel)):
+class Page(create_base_model(MPTTModel), ContentMixin):
     active = models.BooleanField(_('active'), default=True)
 
     # structure and navigation
@@ -150,8 +170,6 @@ class Page(create_base_model(MPTTModel)):
     _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
 
-    request_processors = SortedDict()
-    response_processors = SortedDict()
     cache_key_components = [ lambda p: django_settings.SITE_ID,
                              lambda p: p._django_content_type.id,
                              lambda p: p.id ]
@@ -296,83 +314,11 @@ class Page(create_base_model(MPTTModel)):
         """
         return None
 
-    def setup_request(self, request):
-        """
-        Before rendering a page, run all registered request processors. A request
-        processor may peruse and modify the page or the request. It can also return
-        a HttpResponse for shortcutting the page rendering and returning that response
-        immediately to the client.
-
-        ``setup_request`` stores responses returned by request processors and returns
-        those on every subsequent call to ``setup_request``. This means that
-        ``setup_request`` can be called repeatedly during the same request-response
-        cycle without harm - request processors are executed exactly once.
-        """
-
-        if hasattr(self, '_setup_request_result'):
-            return self._setup_request_result
-        else:
-            # Marker -- setup_request has been successfully run before
-            self._setup_request_result = None
-
-        if not hasattr(request, '_feincms_extra_context'):
-            request._feincms_extra_context = {}
-
-        request._feincms_extra_context.update({
-            'in_appcontent_subpage': False, # XXX This variable name isn't accurate anymore.
-                                            # We _are_ in a subpage, but it isn't necessarily
-                                            # an appcontent subpage.
-            'extra_path': '/',
-            })
-
-        url = self.get_absolute_url()
-        if request.path != url:
-            # extra_path must not end with a slash
-            request._feincms_extra_context.update({
-                'in_appcontent_subpage': True,
-                'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
-                    request.path),
-                })
-
-        for fn in reversed(self.request_processors.values()):
-            r = fn(self, request)
-            if r:
-                self._setup_request_result = r
-                break
-
-        return self._setup_request_result
-
-    def finalize_response(self, request, response):
-        """
-        After rendering a page to a response, the registered response processors are
-        called to modify the response, eg. for setting cache or expiration headers,
-        keeping statistics, etc.
-        """
-        for fn in self.response_processors.values():
-            fn(self, request, response)
-
     def get_redirect_to_target(self, request):
         """
         This might be overriden/extended by extension modules.
         """
         return self.redirect_to
-
-    @classmethod
-    def register_request_processor(cls, fn, key=None):
-        """
-        Registers the passed callable as request processor. A request processor
-        always receives two arguments, the current page object and the request.
-        """
-        cls.request_processors[fn if key is None else key] = fn
-
-    @classmethod
-    def register_response_processor(cls, fn, key=None):
-        """
-        Registers the passed callable as response processor. A response processor
-        always receives three arguments, the current page object, the request
-        and the response.
-        """
-        cls.response_processors[fn if key is None else key] = fn
 
     @classmethod
     def register_extension(cls, register_fn):
@@ -385,13 +331,17 @@ class Page(create_base_model(MPTTModel)):
 # ------------------------------------------------------------------------
 # Our default request processors
 
-Page.register_request_processor(processors.require_path_active_request_processor,
-    key='path_active')
+Page.register_request_processor(processors.extra_context_request_processor,
+    key='extra_context')
 Page.register_request_processor(processors.redirect_request_processor,
     key='redirect')
 
 if settings.FEINCMS_FRONTEND_EDITING:
-    Page.register_request_processor(processors.frontendediting_request_processor,
+    Page.register_request_processor(
+        processors.frontendediting_request_processor,
+        key='frontend_editing')
+    Page.register_response_processor(
+        processors.frontendediting_response_processor,
         key='frontend_editing')
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
