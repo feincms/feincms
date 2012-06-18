@@ -12,10 +12,9 @@ def register(cls, admin_cls):
         help_text=_('This will be prepended to the default description.')))
 
     if admin_cls:
-        admin_cls.search_fields += ('meta_keywords', 'meta_description')
+        admin_cls.search_fields.extend(['meta_keywords', 'meta_description'])
 
-        if admin_cls.fieldsets:
-            admin_cls.fieldsets.append((_('Search engine optimization'), {
-                    'fields': ('meta_keywords', 'meta_description'),
-                    'classes': ('collapse',),
-                }))
+        admin_cls.add_extension_options(_('Search engine optimization'), {
+            'fields': ('meta_keywords', 'meta_description'),
+            'classes': ('collapse',),
+            })

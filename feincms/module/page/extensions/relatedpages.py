@@ -17,7 +17,7 @@ def register(cls, admin_cls):
     except AttributeError:
         admin_cls.filter_horizontal = ['related_pages']
 
-    admin_cls.fieldsets.append((_('Related pages'), {
+    admin_cls.add_extension_options(_('Related pages'), {
         'fields': ('related_pages',),
         'classes': ('collapse',),
-        }))
+        })

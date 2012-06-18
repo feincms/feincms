@@ -11,7 +11,7 @@ def register(cls, admin_cls):
     if hasattr(cls, 'cache_key_components'):
         cls.cache_key_components.append(lambda page: page.featured)
 
-    admin_cls.fieldsets.append((_('Featured'), {
+    admin_cls.add_extension_options(_('Featured'), {
         'fields': ('featured',),
         'classes': ('collapse',),
-        }))
+        })

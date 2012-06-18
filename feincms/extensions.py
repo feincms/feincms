@@ -131,6 +131,8 @@ class LegacyExtension(Extension):
 
     def handle_model(self):
         self.fieldsets = []
+        self.filter_horizontal = []
+        self.filter_vertical = []
         self.list_display = []
         self.list_filter = []
         self.raw_id_fields = []
@@ -144,6 +146,10 @@ class LegacyExtension(Extension):
     def handle_modeladmin(self, modeladmin):
         if self.fieldsets:
             modeladmin.fieldsets.extend(self.fieldsets)
+        if self.filter_horizontal:
+            modeladmin.filter_horizontal.extend(self.filter_horizontal)
+        if self.filter_vertical:
+            modeladmin.filter_vertical.extend(self.filter_vertical)
         if self.list_display:
             modeladmin.list_display.extend(self.list_display)
         if self.list_filter:

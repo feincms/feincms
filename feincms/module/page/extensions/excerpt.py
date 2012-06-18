@@ -9,7 +9,7 @@ def register(cls, admin_cls):
     cls.add_to_class('excerpt', models.TextField(_('excerpt'), blank=True,
         help_text=_('Add a brief excerpt summarizing the content of this page.')))
 
-    admin_cls.fieldsets.append((_('Excerpt'), {
+    admin_cls.add_extension_options(_('Excerpt'), {
         'fields': ('excerpt',),
         'classes': ('collapse',),
-        }))
+        })
