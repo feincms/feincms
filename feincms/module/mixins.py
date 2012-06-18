@@ -51,16 +51,6 @@ class ContentView(TemplateView):
     #: The name of the object for the template rendering context
     context_object_name = 'feincms_object'
 
-    def get(self, request, *args, **kwargs):
-        return self.handler(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.handler(request, *args, **kwargs)
-
-    def handler(self, request, *args, **kwargs):
-        self.page = Page.objects.for_request(request,
-            raise404=True, best_match=True)
-
     def handle_object(self, object):
         if not hasattr(self.request, '_feincms_extra_context'):
             self.request._feincms_extra_context = {}
