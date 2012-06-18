@@ -17,6 +17,7 @@ from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm
 
 from feincms import settings
+from feincms.extensions import ExtensionModelAdmin
 
 
 # ------------------------------------------------------------------------
@@ -160,7 +161,7 @@ class ChangeList(main.ChangeList):
 # MARK: -
 # ------------------------------------------------------------------------
 
-class TreeEditor(admin.ModelAdmin):
+class TreeEditor(ExtensionModelAdmin):
     """
     The ``TreeEditor`` modifies the standard Django administration change list
     to a drag-drop enabled interface for django-mptt_-managed Django models.
