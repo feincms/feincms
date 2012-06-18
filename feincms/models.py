@@ -21,7 +21,8 @@ from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms.utils import get_object, copy_model_instance
+from feincms.extensions import ExtensionsMixin
+from feincms.utils import copy_model_instance
 
 
 class Region(object):
@@ -277,81 +278,6 @@ class ContentProxy(object):
             return []
 
         return self._fetch_regions().get(attr, [])
-
-
-class ExtensionsMixin(object):
-    @classmethod
-    def register_extension(cls, register_fn):
-        """
-        Call the register function of an extension. You must override this
-        if you provide a custom ModelAdmin class and want your extensions to
-        be able to patch stuff in.
-        """
-        register_fn(cls, None)
-
-    @classmethod
-    def register_extensions(cls, *extensions):
-        """
-        Register all extensions passed as arguments.
-
-        Extensions should be specified as a string to the python module
-        containing the extension. If it is a bundled extension of FeinCMS,
-        you do not need to specify the full python module path -- only
-        specifying the last part (f.e. ``'seo'`` or ``'translations'``) is
-        sufficient.
-        """
-
-        if not hasattr(cls, '_feincms_extensions'):
-            cls._feincms_extensions = set()
-
-        here = cls.__module__.split('.')[:-1]
-
-        paths = [
-            '.'.join(here + ['extensions']),
-            '.'.join(here[:-1] + ['extensions']),
-            'feincms.module.extensions',
-            ]
-
-        for ext in extensions:
-            if ext in cls._feincms_extensions:
-                continue
-
-            fn = None
-            if isinstance(ext, basestring):
-                try:
-                    fn = get_object(ext + '.register')
-                except ImportError:
-                    for path in paths:
-                        try:
-                            fn = get_object('%s.%s.register' % (path, ext))
-                            if fn:
-                                warnings.warn(
-                                    'Using short names for extensions has been'
-                                    ' deprecated and will be removed in'
-                                    ' FeinCMS v1.8. Please provide the full'
-                                    ' python path to the extension'
-                                    ' %s instead (%s.%s).' % (ext, path, ext),
-                                    DeprecationWarning, stacklevel=2)
-
-                                break
-                        except ImportError:
-                            pass
-
-                if not fn:
-                    raise ImproperlyConfigured(
-                        '%s is not a valid extension for %s' % (
-                            ext, cls.__name__))
-
-            # Not a string, maybe a callable?
-            elif hasattr(ext, '__call__'):
-                fn = ext
-
-            # Take our chances and just try to access "register"
-            else:
-                fn = ext.register
-
-            cls.register_extension(fn)
-            cls._feincms_extensions.add(ext)
 
 
 def create_base_model(inherit_from=models.Model):

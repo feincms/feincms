@@ -81,7 +81,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
         queryset = _filter(queryset)
 
-    if 'navigation' in feincms_page._feincms_extensions:
+    if hasattr(feincms_page, 'navigation_extension'):
         # Filter out children of nodes which have a navigation extension
         extended_node_rght = [] # mptt node right value
 
