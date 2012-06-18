@@ -331,10 +331,10 @@ class Page(create_base_model(MPTTModel), ContentMixin):
 # ------------------------------------------------------------------------
 # Our default request processors
 
-Page.register_request_processor(processors.extra_context_request_processor,
-    key='extra_context')
 Page.register_request_processor(processors.redirect_request_processor,
     key='redirect')
+Page.register_request_processor(processors.extra_context_request_processor,
+    key='extra_context')
 
 if settings.FEINCMS_FRONTEND_EDITING:
     Page.register_request_processor(
