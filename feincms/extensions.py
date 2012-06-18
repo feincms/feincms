@@ -35,6 +35,7 @@ class ExtensionsMixin(object):
 
         if not hasattr(cls, '_extensions'):
             cls._extensions = []
+            cls._extensions_seen = []
 
         here = cls.__module__.split('.')[:-1]
         search_paths = [
@@ -92,7 +93,11 @@ class ExtensionsMixin(object):
                     '%s is not a valid extension for %s' % (
                         ext, cls.__name__))
 
-            if hasattr(extension, 'ident'):
+            if extension in cls._extensions_seen:
+                continue
+            cls._extensions_seen.append(extension)
+
+            if hasattr(extension, 'handle_model'):
                 cls._extensions.append(extension(cls))
             else:
                 cls._extensions.append(LegacyExtension(cls, extension=extension))
