@@ -19,3 +19,4 @@ def register(cls, admin_cls):
     PageManager.add_to_active_filters(current_site, key='current_site')
 
     admin_cls.list_display.extend(['site'])
+    admin_cls.list_filter.extend(['site'])

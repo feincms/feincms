@@ -374,10 +374,6 @@ class Page(create_base_model(MPTTModel)):
         """
         cls.response_processors[fn if key is None else key] = fn
 
-    @classmethod
-    def register_extension(cls, register_fn):
-        register_fn(cls, PageAdmin)
-
     @staticmethod
     def path_to_cache_key(path):
         return path_to_cache_key(path.strip('/'), prefix="PAGE-FOR-URL")
@@ -395,10 +391,6 @@ if settings.FEINCMS_FRONTEND_EDITING:
         key='frontend_editing')
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
-
-# ------------------------------------------------------------------------
-# Down here as to avoid circular imports
-from .modeladmins import PageAdmin
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
