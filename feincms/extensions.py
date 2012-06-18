@@ -2,6 +2,7 @@
 Base types for extensions refactor
 """
 
+import re
 import warnings
 
 from django.contrib import admin
@@ -52,33 +53,36 @@ class ExtensionsMixin(object):
                 paths = [ext, '%s.register' % ext] + [
                     '%s.%s.register' % (path, ext) for path in search_paths]
 
-                for path in paths:
+                for idx, path in enumerate(paths):
                     try:
                         extension = get_object(path)
-                        break
-                    except (AttributeError, ImportError):
-                        pass
 
-                    """
-                    warnings.warn(
-                        'Using short names for extensions has been'
-                        ' deprecated and will be removed in'
-                        ' FeinCMS v1.8. Please provide the full'
-                        ' python path to the extension'
-                        ' %s instead (%s.%s).' % (ext, path, ext),
-                        DeprecationWarning, stacklevel=2)
-                    """
+                        if idx >= 2:
+                            warnings.warn(
+                                'Using short names for extensions has been'
+                                ' deprecated and will be removed in'
+                                ' FeinCMS v1.8. Please provide the full'
+                                ' python path to the extension'
+                                ' %s instead (%s).' % (
+                                    ext,
+                                    re.sub(r'\.register$', '', path),
+                                    ),
+                                DeprecationWarning, stacklevel=2)
+
+                        break
+                    except (AttributeError, ImportError, ValueError):
+                        pass
 
             if not extension:
                 raise ImproperlyConfigured(
                     '%s is not a valid extension for %s' % (
                         ext, cls.__name__))
 
-            if hasattr(extension, 'register'):
-                extension = extension.register
-
-            elif hasattr(extension, 'Extension'):
+            if hasattr(extension, 'Extension'):
                 extension = extension.Extension
+
+            elif hasattr(extension, 'register'):
+                extension = extension.register
 
             elif hasattr(extension, '__call__'):
                 pass
