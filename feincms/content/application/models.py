@@ -330,13 +330,9 @@ class ApplicationContent(models.Model):
         # Resolve the module holding the application urls.
         urlconf_path = self.app_config.get('urls', self.urlconf_path)
 
-        # Change the prefix and urlconf for the monkey-patched reverse function ...
-        _local.urlconf = (urlconf_path, page_url)
-
         try:
             fn, args, kwargs = resolve(path, urlconf_path)
         except (ValueError, Resolver404):
-            del _local.urlconf
             raise Resolver404('Not found (resolving %r in %r failed)' % (
                 path, urlconf_path))
 
@@ -358,36 +354,30 @@ class ApplicationContent(models.Model):
                 appcontent_parameters=self.parameters
             )
 
-        try:
-            output = fn(request, *args, **kwargs)
+        output = fn(request, *args, **kwargs)
 
-            if isinstance(output, HttpResponse):
-                if self.send_directly(request, output):
-                    return output
-                elif output.status_code == 200:
+        if isinstance(output, HttpResponse):
+            if self.send_directly(request, output):
+                return output
+            elif output.status_code == 200:
 
-                    # If the response supports deferred rendering, render the
-                    # response right now. We do not handle template response
-                    # middleware.
-                    if hasattr(output, 'render') and callable(output.render):
-                        output.render()
+                # If the response supports deferred rendering, render the
+                # response right now. We do not handle template response
+                # middleware.
+                if hasattr(output, 'render') and callable(output.render):
+                    output.render()
 
-                    self.rendered_result = mark_safe(output.content.decode('utf-8'))
-                    self.rendered_headers = {}
-                    # Copy relevant headers for later perusal
-                    for h in ('Cache-Control', 'Last-Modified', 'Expires'):
-                        if h in output:
-                            self.rendered_headers.setdefault(h, []).append(output[h])
-            elif isinstance(output, tuple) and 'view' in kw:
-                kw['view'].template_name = output[0]
-                kw['view'].request._feincms_extra_context.update(output[1])
-            else:
-                self.rendered_result = mark_safe(output)
-
-        finally:
-            # We want exceptions to propagate, but we cannot allow the
-            # modifications to reverse() to stay here.
-            del _local.urlconf
+                self.rendered_result = mark_safe(output.content.decode('utf-8'))
+                self.rendered_headers = {}
+                # Copy relevant headers for later perusal
+                for h in ('Cache-Control', 'Last-Modified', 'Expires'):
+                    if h in output:
+                        self.rendered_headers.setdefault(h, []).append(output[h])
+        elif isinstance(output, tuple) and 'view' in kw:
+            kw['view'].template_name = output[0]
+            kw['view'].request._feincms_extra_context.update(output[1])
+        else:
+            self.rendered_result = mark_safe(output)
 
         return True # successful
 
