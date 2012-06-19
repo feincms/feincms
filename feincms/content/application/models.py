@@ -9,6 +9,7 @@ import re
 from django.core import urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse, NoReverseMatch
 from django.db import models
+from django.db.models import signals
 from django.http import HttpResponse
 from django.utils.functional import curry as partial, lazy, wraps
 from django.utils.safestring import mark_safe
@@ -44,7 +45,7 @@ def retrieve_page_information(page, request=None):
     _local.page_cache_key_fn = page.cache_key
 
 
-def _empty_reverse_cache():
+def _empty_reverse_cache(*args, **kwargs):
     _local.reverse_cache = {}
 
 
@@ -305,6 +306,9 @@ class ApplicationContent(models.Model):
         cls.parent.field.rel.to.register_request_processor(
             retrieve_page_information)
 
+        signals.post_save.connect(_empty_reverse_cache, sender=cls)
+        signals.post_delete.connect(_empty_reverse_cache, sender=cls)
+
     def __init__(self, *args, **kwargs):
         super(ApplicationContent, self).__init__(*args, **kwargs)
         self.app_config = self.ALL_APPS_CONFIG.get(
@@ -397,16 +401,6 @@ class ApplicationContent(models.Model):
         headers = getattr(self, 'rendered_headers', None)
         if headers:
             self._update_response_headers(request, response, headers)
-
-    def save(self, *args, **kwargs):
-        super(ApplicationContent, self).save(*args, **kwargs)
-        # Clear reverse() cache
-        _empty_reverse_cache()
-
-    def delete(self, *args, **kwargs):
-        super(ApplicationContent, self).delete(*args, **kwargs)
-        # Clear reverse() cache
-        _empty_reverse_cache()
 
     def _update_response_headers(self, request, response, headers):
         """
