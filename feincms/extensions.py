@@ -192,4 +192,9 @@ class ExtensionModelAdmin(admin.ModelAdmin):
             f[1]['classes'] = list(f[1].get('classes', []))
             f[1]['classes'].append('collapse')
         elif f:   # assume called with "other" fields
-            self.fieldsets[1][1]['fields'].extend(f)
+            try:
+                self.fieldsets[1][1]['fields'].extend(f)
+            except IndexError:
+                # Fall back to first fieldset if second does not exist
+                # XXX This is really messy.
+                self.fieldsets[0][1]['fields'].extend(f)
