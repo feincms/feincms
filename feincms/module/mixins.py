@@ -174,7 +174,9 @@ class ContentObjectMixin(TemplateResponseMixin):
 
             if (not settings.FEINCMS_ALLOW_EXTRA_PATH
                     and extra_context.get('extra_path', '/') != '/'
-                    and not extra_context.get('app_config')  # Nested ContentModelMixin classes...
+                    # XXX Already inside application content.  I'm not sure
+                    # whether this fix is really correct...
+                    and not extra_context.get('app_config')
                     ):
                 raise Http404('Not found')
 
