@@ -162,14 +162,8 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
             if not hasattr(_local, 'reverse_cache'):
                 _local.reverse_cache = {}
 
-            url = content.parent._cached_url[1:-1]
-            if url:
-                prefix = reverse('feincms_handler', args=(url,))
-                # prefix must always ends with a slash
-                prefix += '/' if prefix[-1] != '/' else ''
-
-            else:
-                prefix = reverse('feincms_home')
+            prefix = content.parent.get_absolute_url()
+            prefix += '/' if prefix[-1] != '' else ''
 
             _local.reverse_cache[app_cache_keys[cache_key]] = url_prefix = (
                 urlconf, prefix)
