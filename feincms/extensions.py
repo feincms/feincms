@@ -114,7 +114,7 @@ class Extension(object):
 
         self.handle_model()
 
-    def handle_model(self, model):
+    def handle_model(self):
         raise NotImplementedError
 
     def handle_modeladmin(self, modeladmin):
