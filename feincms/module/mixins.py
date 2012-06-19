@@ -98,7 +98,12 @@ class ContentObjectMixin(TemplateResponseMixin):
             return [self.template_name]
 
         self.object._needs_templates()
-        return [self.object.template.path]
+        if self.object.template.path:
+            return [self.object.template.path]
+
+        # Hopefully someone else has a usable get_template_names()
+        # implementation...
+        return super(ContentObjectMixin, self).get_template_names()
 
     def get_context_data(self, **kwargs):
         context = self.request._feincms_extra_context
