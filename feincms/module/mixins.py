@@ -183,7 +183,7 @@ class ContentObjectMixin(TemplateResponseMixin):
                     # whether this fix is really correct...
                     and not extra_context.get('app_config')
                     ):
-                raise Http404('Not found')
+                raise Http404('Not found (unhandled extra_path)')
 
     def finalize_content_types(self, response):
         """

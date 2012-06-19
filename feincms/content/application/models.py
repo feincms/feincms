@@ -325,7 +325,8 @@ class ApplicationContent(models.Model):
             fn, args, kwargs = resolve(path, urlconf_path)
         except (ValueError, Resolver404):
             del _local.urlconf
-            raise Resolver404
+            raise Resolver404('Not found (resolving %r in %r failed)' % (
+                path, urlconf_path))
 
         #: Variables from the ApplicationContent parameters are added to request
         #  so we can expose them to our templates via the appcontent_parameters
