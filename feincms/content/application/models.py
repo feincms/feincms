@@ -164,7 +164,7 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
                 _local.reverse_cache = {}
 
             prefix = content.parent.get_absolute_url()
-            prefix += '/' if prefix[-1] != '' else ''
+            prefix += '/' if prefix[-1] != '/' else ''
 
             _local.reverse_cache[app_cache_keys[cache_key]] = url_prefix = (
                 urlconf, prefix)
