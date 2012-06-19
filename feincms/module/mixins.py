@@ -6,7 +6,7 @@ from django.views.generic import DetailView
 from feincms import settings
 
 
-class ContentMixin(object):
+class ContentModelMixin(object):
     """
     Mixin for ``feincms.models.Base`` subclasses which need need some degree of
     additional control over the request-response cycle.

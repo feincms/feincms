@@ -17,7 +17,7 @@ from mptt.models import MPTTModel
 from feincms import settings
 from feincms.management.checker import check_database_schema
 from feincms.models import create_base_model
-from feincms.module.mixins import ContentMixin
+from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
@@ -154,7 +154,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 PageManager.add_to_active_filters(Q(active=True))
 
 # ------------------------------------------------------------------------
-class Page(create_base_model(MPTTModel), ContentMixin):
+class Page(create_base_model(MPTTModel), ContentModelMixin):
     active = models.BooleanField(_('active'), default=True)
 
     # structure and navigation
