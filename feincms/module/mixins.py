@@ -1,7 +1,8 @@
 from django.http import Http404
 from django.template import Template
 from django.utils.datastructures import SortedDict
-from django.views.generic import DetailView
+from django.views import generic
+from django.views.generic.base import TemplateResponseMixin
 
 from feincms import settings
 
@@ -47,18 +48,21 @@ class ContentModelMixin(object):
         cls.response_processors[fn if key is None else key] = fn
 
 
-class ContentView(DetailView):
-    #: The name of the object for the template rendering context
-    context_object_name = 'feincms_object'
+class ContentObjectMixin(TemplateResponseMixin):
+    """
+    Mixin for Django's class based views which knows how to handle
+    ``ContentModelMixin`` detail pages.
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.method.lower() not in self.http_method_names:
-            return self.http_method_not_allowed(request, *args, **kwargs)
-        self.request = request
-        self.args = args
-        self.kwargs = kwargs
-        self.object = self.get_object()
-        return self.handler(request, *args, **kwargs)
+    This is a mixture of Django's ``SingleObjectMixin`` and
+    ``TemplateResponseMixin`` conceptually to support FeinCMS'
+    ``ApplicationContent`` inheritance. It does not inherit
+    ``SingleObjectMixin`` however, because that would set a
+    precedence for the way how detail objects are determined
+    (and would f.e. make the page and blog module implementation
+    harder).
+    """
+
+    context_object_name = None
 
     def handler(self, request, *args, **kwargs):
         if not hasattr(self.request, '_feincms_extra_context'):
@@ -98,8 +102,9 @@ class ContentView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = self.request._feincms_extra_context
-        context[self.context_object_name] = self.object
-        return context
+        context[self.context_object_name or 'feincms_object'] = self.object
+        context.update(kwargs)
+        return super(ContentObjectMixin, self).get_context_data(**context)
 
     @property
     def __name__(self):
@@ -181,3 +186,14 @@ class ContentView(DetailView):
             r = content.finalize(self.request, response)
             if r:
                 return r
+
+
+class ContentView(generic.DetailView, ContentObjectMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.method.lower() not in self.http_method_names:
+            return self.http_method_not_allowed(request, *args, **kwargs)
+        self.request = request
+        self.args = args
+        self.kwargs = kwargs
+        self.object = self.get_object()
+        return self.handler(request, *args, **kwargs)
