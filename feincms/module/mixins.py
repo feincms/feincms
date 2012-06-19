@@ -194,7 +194,7 @@ class ContentObjectMixin(TemplateResponseMixin):
                 return r
 
 
-class ContentView(generic.DetailView, ContentObjectMixin):
+class ContentView(ContentObjectMixin, generic.DetailView):
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() not in self.http_method_names:
             return self.http_method_not_allowed(request, *args, **kwargs)
