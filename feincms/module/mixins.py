@@ -178,13 +178,9 @@ class ContentObjectMixin(TemplateResponseMixin):
             extra_context = self.request._feincms_extra_context
 
             if (not settings.FEINCMS_ALLOW_EXTRA_PATH
-                    and extra_context.get('extra_path', '/') != '/'
-                    # XXX Already inside application content.  I'm not sure
-                    # whether this fix is really correct...
-                    and not extra_context.get('app_config')
-                    ):
+                    and extra_context.get('extra_path', ['/'])[-1] != '/'):
                 raise Http404('Not found (extra_path %r on %r)' % (
-                    extra_context.get('extra_path', '/'),
+                    extra_context.get('extra_path'),
                     self.object,
                     ))
 

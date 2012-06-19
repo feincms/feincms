@@ -234,7 +234,7 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
         request = args.get('request', None)
         if request:
             # Trailing path without first slash
-            trailing_path = request._feincms_extra_context.get('extra_path', '')[1:]
+            trailing_path = request._feincms_extra_context.get('extra_path', ['/'])[0][1:]
 
         translations = dict((t.language, t) for t in page.available_translations())
         translations[page.language] = page
