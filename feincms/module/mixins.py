@@ -170,9 +170,13 @@ class ContentObjectMixin(TemplateResponseMixin):
                 # re-raise stored Http404 exception
                 raise http404
 
-            if not settings.FEINCMS_ALLOW_EXTRA_PATH and \
-                    self.request._feincms_extra_context.get('extra_path', '/') != '/':
-                raise Http404()
+            extra_context = self.request._feincms_extra_context
+
+            if (not settings.FEINCMS_ALLOW_EXTRA_PATH
+                    and extra_context.get('extra_path', '/') != '/'
+                    and not extra_context.get('app_config')  # Nested ContentModelMixin classes...
+                    ):
+                raise Http404('Not found')
 
     def finalize_content_types(self, response):
         """
