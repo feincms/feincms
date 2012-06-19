@@ -369,12 +369,16 @@ class ApplicationContent(models.Model):
                 if hasattr(output, 'render') and callable(output.render):
                     output.render()
 
-                self.rendered_result = mark_safe(output.content.decode('utf-8'))
+                self.rendered_result = mark_safe(
+                    output.content.decode('utf-8'))
                 self.rendered_headers = {}
+
                 # Copy relevant headers for later perusal
                 for h in ('Cache-Control', 'Last-Modified', 'Expires'):
                     if h in output:
-                        self.rendered_headers.setdefault(h, []).append(output[h])
+                        self.rendered_headers.setdefault(
+                            h, []).append(output[h])
+
         elif isinstance(output, tuple) and 'view' in kw:
             kw['view'].template_name = output[0]
             kw['view'].request._feincms_extra_context.update(output[1])
