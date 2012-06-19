@@ -313,8 +313,6 @@ class ApplicationContent(models.Model):
     def process(self, request, **kw):
         page_url = self.parent.get_absolute_url()
 
-        # Get the rest of the URL
-
         # Provide a way for appcontent items to customize URL processing by
         # altering the perceived path of the page:
         if "path_mapper" in self.app_config:
