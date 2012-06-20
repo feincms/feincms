@@ -39,19 +39,33 @@ class ContactFormContent(models.Model):
         if form:
             cls.form = form
 
+    def get_template_names(self):
+        return 'content/contactform/form.html'
+
+    def get_thanks_template_names(self):
+        return 'content/contactform/thanks.html'
+
+    def get_email_template_names(self):
+        return 'content/contactform/email.txt'
+
+    def get_form_class(self):
+        return self.form
+
     def process(self, request, **kwargs):
+        form_class = self.get_form_class()
+
         if request.GET.get('_cf_thanks'):
-            self.rendered_output = render_to_string('content/contactform/thanks.html',
+            self.rendered_output = render_to_string(self.get_thanks_template_names(),
                 context_instance=RequestContext(request))
             return
 
         if request.method == 'POST':
-            form = self.form(request.POST)
+            form = form_class(request.POST)
 
             if form.is_valid():
                 send_mail(
-                    form.cleaned_data['subject'],
-                    render_to_string('content/contactform/email.txt', {
+                    form.cleaned_data['subject'] or self.subject,
+                    render_to_string(self.get_email_template_names(), {
                         'data': form.cleaned_data,
                         }),
                     form.cleaned_data['email'],
@@ -65,9 +79,9 @@ class ContactFormContent(models.Model):
                 initial['email'] = request.user.email
                 initial['name'] = request.user.get_full_name()
 
-            form = self.form(initial=initial)
+            form = form_class(initial=initial)
 
-        self.rendered_output = render_to_string('content/contactform/form.html', {
+        self.rendered_output = render_to_string(self.get_template_names(), {
             'content': self,
             'form': form,
             }, context_instance=RequestContext(request))
