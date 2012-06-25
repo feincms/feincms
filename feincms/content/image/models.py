@@ -28,7 +28,7 @@ class ImageContent(models.Model):
                 ('right', 'Right'),
             ),
             FORMAT_CHOICES=(
-                ('cropscale', 'Do not resize'),
+                ('noop', 'Do not resize'),
                 ('cropscale:100x100', 'Square Thumbnail'),
                 ('cropscale:200x450', 'Medium Portait'),
                 ('thumbnail:1000x1000', 'Large'),
@@ -36,7 +36,8 @@ class ImageContent(models.Model):
 
         Note that FORMAT_CHOICES is optional. The part before the colon
         corresponds to the template filters in the ``feincms_thumbnail``
-        template filter library.
+        template filter library. Known values are ``cropscale`` and
+        ``thumbnail``. Everything else (such as ``noop``) is ignored.
     """
 
     image = models.ImageField(
