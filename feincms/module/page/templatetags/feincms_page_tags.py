@@ -91,8 +91,10 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
         def _filter(iterable):
             for elem in iterable:
+                elem_right = getattr(elem, mptt_opts.right_attr)
+
                 if extended_node_rght:
-                    if getattr(elem, mptt_opts.right_attr) < extended_node_rght[-1]:
+                    if elem_right < extended_node_rght[-1]:
                         # Still inside some navigation extension
                         continue
                     else:
@@ -100,11 +102,17 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
                 if getattr(elem, 'navigation_extension', None):
                     yield elem
-                    extended_node_rght.append(getattr(elem, mptt_opts.right_attr))
+                    extended_node_rght.append(elem_right)
 
                     for extended in elem.extended_navigation(depth=depth,
                             request=context.get('request')):
-                        if getattr(extended, mptt_opts.level_attr, 0) < level + depth - 1:
+
+                        # Only return items from the extended navigation which
+                        # are inside the requested level+depth values. The
+                        # "-1" accounts for the differences in MPTT and
+                        # navigation level counting
+                        this_level = getattr(extended, mptt_opts.level_attr, 0)
+                        if this_level < level + depth - 1:
                             yield extended
 
                 else:
