@@ -27,7 +27,11 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
     """
 
     if isinstance(feincms_page, HttpRequest):
-        feincms_page = Page.objects.for_request(feincms_page, best_match=True)
+        try:
+            feincms_page = Page.objects.for_request(
+                feincms_page, best_match=True)
+        except Page.DoesNotExist:
+            return []
 
     mptt_opts = feincms_page._mptt_meta
 
