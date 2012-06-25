@@ -27,6 +27,7 @@ def tidy_html(html):
     if not isinstance(html, unicode):
         raise ValueError("tidyhtml must be called with a Unicode string!")
 
+    errors = list()
     warnings = list()
 
     # First, deal with embedded control codes:
@@ -64,9 +65,6 @@ def tidy_html(html):
 
     # postprocess warnings to avoid HTML fragments being reported as lacking
     # doctype and title:
-    errors = list()
-    warnings = list()
-
     for msg in messages:
         if not doc_mode and "Warning: missing <!DOCTYPE> declaration" in msg:
             continue

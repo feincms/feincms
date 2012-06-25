@@ -28,7 +28,7 @@ class ImageContent(models.Model):
                 ('right', 'Right'),
             ),
             FORMAT_CHOICES=(
-                ('', 'Do not resize'),
+                ('cropscale', 'Do not resize'),
                 ('cropscale:100x100', 'Square Thumbnail'),
                 ('cropscale:200x450', 'Medium Portait'),
                 ('thumbnail:1000x1000', 'Large'),

@@ -120,8 +120,14 @@
         table.siblings('textarea').val($.toJSON(data));
     }
 
+    var tablecontent_added = {};
+
     contentblock_init_handlers.push(function(){
-        $('.order-machine textarea[name*=tablecontent]:visible').each(function(){
+        $('.order-machine textarea[name*=tablecontent]').each(function(){
+            if (tablecontent_added[this.id])
+                return;
+            tablecontent_added[this.id] = true;
+
             var textarea = $(this);
             var data = $.secureEvalJSON(textarea.val() || '[[""]]');
 

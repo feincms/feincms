@@ -18,14 +18,17 @@ def get_object(path, fail_silently=False):
     if not isinstance(path, (str, unicode)):
         return path
 
-    dot = path.rindex('.')
-    mod, fn = path[:dot], path[dot+1:]
-
     try:
-        return getattr(import_module(mod), fn)
-    except (AttributeError, ImportError):
-        if not fail_silently:
-            raise
+        return import_module(path)
+    except ImportError:
+        try:
+            dot = path.rindex('.')
+            mod, fn = path[:dot], path[dot+1:]
+
+            return getattr(import_module(mod), fn)
+        except (AttributeError, ImportError):
+            if not fail_silently:
+                raise
 
 # ------------------------------------------------------------------------
 def collect_dict_values(data):

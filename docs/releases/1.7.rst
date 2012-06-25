@@ -1,0 +1,171 @@
+====================================
+FeinCMS 1.7 release notes (upcoming)
+====================================
+
+Welcome to FeinCMS 1.7!
+
+
+Extensions-mechanism refactor
+=============================
+
+The extensions mechanism has been refactored to remove the need to make models
+know about their related model admin classes. The new module
+:py:mod:`feincms.extensions` contains mixins and base classes - their purpose
+is as follows:
+
+.. class:: feincms.extensions.ExtensionsMixin
+
+    This mixin provides the ``register_extensions`` method which is the place
+    where extensions are registered for a certain model. Extensions can be
+    specified in the following ways:
+
+    - Subclasses of :py:class:`~feincms.extensions.Extension`
+    - Dotted Python module paths pointing to a subclass of the aforementioned
+      extension class
+    - Dotted Python module paths pointing to a module containing either a class
+      named ``Extension`` or a function named ``register`` (for legacy
+      extensions)
+
+
+.. class:: feincms.extensions.Extension
+
+    This is the base class for your own extension. It has the following methods
+    and properties:
+
+    .. attribute:: model
+
+        The model class.
+
+    .. method:: handle_model(self)
+
+        The method which modifies the Django model class. The model class is
+        available as ``self.model``.
+
+    .. method:: handle_modeladmin(self, modeladmin)
+
+        This method receives the model admin instance bound to the model. This
+        method could be called more than once, especially when using more than
+        one admin site.
+
+
+.. class:: feincms.extensions.ExtensionModelAdmin()
+
+    This is a model admin subclass which knows about extensions, and lets the
+    extensions do their work modifying the model admin instance after it has
+    been successfully initialized. It has the following methods and properties:
+
+    .. method:: initialize_extensions(self)
+
+        This method is automatically called at the end of initialization and
+        loops through all registered extensions and calls their
+        ``handle_modeladmin`` method.
+
+    .. method:: add_extension_options(self, \*f)
+
+        This is a helper to add fields and fieldsets to a model admin instance.
+        Usage is as follows::
+
+            modeladmin.add_extension_options('field1', 'field2')
+
+        Or::
+
+            modeladmin.add_extension_options(_('Fieldset title'), {
+                'fields': ('field1', 'field2'),
+                })
+
+
+View code refactor
+==================
+
+Made views, content type and request / response processors reusable.
+
+The legacy views at :py:mod:`feincms.views.legacy` did were considered
+unhelpful and were removed.
+
+
+Backwards-incompatible changes
+==============================
+
+
+Page manager methods behavior
+-----------------------------
+
+Previously, the following page manager methods sometimes returned inactive
+objects or did not raise the appropriate (and asked for)
+:py:class:`~django.http.Http404` exception:
+
+- ``Page.objects.page_for_path``
+- ``Page.objects.best_match_for_path``
+- ``Page.objects.for_request``
+
+The reason for that was that only the page itself was tested for activity
+in the manager method, and none of its ancestors. The check whether all
+ancestors are active was only conducted later in a request processor. This
+request processor was registered by default and was always run when
+``Page.objects.for_request`` was called with ``setup=True``.
+
+However, request processors do not belong into the model layer. The necessity
+of running code belonging to a request-response cycle to get the correct answer
+from a manager method was undesirable. This has been rectified, those manager
+methods check the ancestry directly. The now redundant request processor
+``require_path_active_request_processor`` has been removed.
+
+
+Reversing application content URLs
+----------------------------------
+
+The support for monkey-patching applicationcontent-awareness into Django's
+:py:func:`django.core.urlresolvers.reverse` has been removed.
+
+
+Removal of deprecated features
+------------------------------
+
+* The old media library content type module
+  :py:mod:`feincms.content.medialibrary.models` has been replaced with the
+  contents of :py:mod:`feincms.content.medialibrary.v2`. The model field
+  ``position`` has been renamed to ``type``, instead of ``POSITION_CHOICES``
+  you should use ``TYPE_CHOICES`` now. The code has been simplified and
+  hacks to imitate ``raw_id_fields`` have been replaced by working stock
+  code. The ``v2`` module will stay around for another release and will be
+  removed in FeinCMS v1.8. The now-unused template
+  ``admin/content/mediafile/init.html`` has been deleted.
+
+
+New deprecations
+----------------
+
+* ``Page.setup_request()`` does not do anything anymore and will be removed
+  in FeinCMS v1.8.
+
+
+Notable features and improvements
+=================================
+
+* A lazy version of :py:func:`~feincms.content.application.models.app_reverse`
+  is now available,
+  :py:func:`~feincms.content.application.models.app_reverse_lazy`.
+
+* Because of the extensions refactor mentioned above, all
+  ``register_extension`` methods have been removed. Additionally, the model
+  admin classes are not imported inside the ``models.py`` files anymore.
+
+
+Bugfixes
+========
+
+* It should be possible to store FeinCMS models in a secondary database, as
+  long as the base model and all content types are stored in the same
+  database.
+
+* Changing templates in the item editor where the templates do not share
+  common regions does not result in orphaned content blocks anymore.
+
+* :py:func:`feincms.utils.get_object` knows how to import modules, not only
+  objects inside modules now.
+
+
+Compatibility with Django and other apps
+========================================
+
+FeinCMS 1.7 requires Django 1.4.
