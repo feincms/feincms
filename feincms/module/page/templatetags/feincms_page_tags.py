@@ -56,6 +56,13 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
             # The requested pages start somewhere higher up in the tree
             parent = feincms_page.get_ancestors()[level - 2]
 
+        elif level - 1 > page_level:
+            # The requested pages are grandchildren of the current page
+            # (or even deeper in the tree). If we would continue processing,
+            # this would result in pages from different subtrees being
+            # returned directly adjacent to each other.
+            queryset = Page.objects.none()
+
         if parent:
             # Special case for navigation extensions
             if getattr(parent, 'navigation_extension', None):

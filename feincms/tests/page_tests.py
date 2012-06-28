@@ -791,6 +791,11 @@ class PagesTestCase(TestCase):
                 '{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
                 '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-3/page-31/,/page-3/page-32/,/page-3/page-33/',
             ),
+            (
+                {'feincms_page': Page.objects.get(pk=1)},
+                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=3 depth=1 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '',
+            ),
         ]
 
         for c, t, r in tests:
