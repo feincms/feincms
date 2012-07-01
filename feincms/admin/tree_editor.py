@@ -320,7 +320,7 @@ class TreeEditor(ExtensionModelAdmin):
                 d.append(b)
 
         # TODO: Shorter: [ y for x,y in zip(a,b) if x!=y ]
-        return HttpResponse(json.dumps(d), mimetype="application/json")
+        return HttpResponse(json.dumps(d), content_type="application/json")
 
     def get_changelist(self, request, **kwargs):
         return ChangeList
