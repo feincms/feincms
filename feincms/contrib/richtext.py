@@ -19,7 +19,8 @@ class RichTextField(models.TextField):
     Drop-in replacement for Django's ``models.TextField`` which allows editing
     rich text instead of plain text in the item editor.
     """
-    formfield = RichTextFormField
+    def formfield(self, form_class=RichTextFormField, **kwargs):
+        return super(RichTextField, self).formfield(form_class=form_class, **kwargs)
 
 
 try:
