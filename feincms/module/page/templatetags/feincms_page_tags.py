@@ -106,7 +106,9 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
         queryset = _filter(queryset)
 
-    return queryset
+    # Return a list, not a generator so that it can be consumed
+    # several times in a template.
+    return list(queryset)
 
 
 # ------------------------------------------------------------------------
@@ -135,86 +137,14 @@ class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
             ' the new, shiny and bug-free feincms_nav today!',
             DeprecationWarning, stacklevel=3)
 
-        level = int(args.get('level', 1))
-        depth = int(args.get('depth', 1))
-        mptt_limit = level + depth - 1 # adjust limit to mptt level indexing
-
-        if isinstance(instance, HttpRequest):
-            instance = Page.objects.for_request(instance, best_match=True)
-
-        entries = self._what(instance, level, depth)
-
-        if args.get('extended', False):
-            _entries = list(entries)
-            entries = []
-            extended_node_rght = [] # rght value of extended node.
-                                    # used to filter out children of
-                                    # nodes sporting a navigation extension
-
-            for entry in _entries:
-                if getattr(entry, 'navigation_extension', None):
-                    entries.append(entry)
-                    extended_node_rght.append(entry.rght)
-
-                    entries.extend(e for e in entry.extended_navigation(depth=depth,
-                        request=self.render_context.get('request', None))
-                        if getattr(e, 'level', 0) < mptt_limit)
-                else:
-                    if extended_node_rght:
-                        if entry.rght < extended_node_rght[-1]:
-                            continue
-                        else:
-                            extended_node_rght.pop()
-
-                    entries.append(entry)
-
-        return entries
-
-    def _in_navigation_depth(self, level, depth):
-        q = Q(level__lt=level + depth)
-        for i in range(depth):
-            q &= Q(level__lt=level + i) | Q(**{
-                'parent__' * i + 'active': True,
-                'parent__' * i + 'in_navigation': True,
-                'level__gte': level + i,
-            })
-            # should handle the case where active_filters has been extended
-            # we do not fix this anymore, use feincms_nav instead
-        return q
-
-    def _what(self, instance, level, depth):
-        if level <= 1:
-            if depth == 1:
-                return Page.objects.toplevel_navigation()
-            else:
-                return Page.objects.active().filter(
-                    self._in_navigation_depth(0, depth))
-
-        # mptt starts counting at 0, NavigationNode at 1; if we need the submenu
-        # of the current page, we have to add 2 to the mptt level
-        if instance.level + 2 == level:
-            pass
-        elif instance.level + 2 < level:
-            try:
-                queryset = instance.get_descendants().filter(level=level - 2, in_navigation=True)
-                instance = PageManager.apply_active_filters(queryset)[0]
-            except IndexError:
-                return []
-        else:
-            instance = instance.get_ancestors()[level - 2]
-
-        # special case for the navigation extension
-        if getattr(instance, 'navigation_extension', None):
-            return instance.extended_navigation(depth=depth,
-                                                request=self.render_context.get('request', None))
-        else:
-            if depth == 1:
-                return instance.children.in_navigation()
-            else:
-                queryset = instance.get_descendants().filter(
-                    self._in_navigation_depth(level - 1, depth))
-                return PageManager.apply_active_filters(queryset)
-register.tag('feincms_navigation', do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
+        return feincms_nav(
+            self.render_context,
+            instance,
+            level=int(args.get('level', 1)),
+            depth=int(args.get('depth', 1)),
+            )
+register.tag('feincms_navigation',
+    do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
 
 # ------------------------------------------------------------------------
 class ExtendedNavigationNode(NavigationNode):
@@ -229,7 +159,8 @@ class ExtendedNavigationNode(NavigationNode):
         context[self.var_name] = self.what(instance, _parse_args(self.args, context))
 
         return ''
-register.tag('feincms_navigation_extended', do_simple_assignment_node_with_var_and_args_helper(ExtendedNavigationNode))
+register.tag('feincms_navigation_extended',
+    do_simple_assignment_node_with_var_and_args_helper(ExtendedNavigationNode))
 
 # ------------------------------------------------------------------------
 class ParentLinkNode(SimpleNodeWithVarAndArgs):
