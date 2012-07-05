@@ -133,7 +133,7 @@ Writing the models
 ------------------
 
 Because the URLconf entries ``entry_list`` and ``entry_detail`` aren't
-reachable through standard means (remember, they aren't ``include``d
+reachable through standard means (remember, they aren't ``include``\d
 anywhere) it's not possible to use standard ``reverse`` calls to
 determine the absolute URL of a news entry. FeinCMS provides its own
 ``app_reverse`` function (see :ref:`integration-reversing-urls` for
