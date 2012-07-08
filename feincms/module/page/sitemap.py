@@ -71,12 +71,14 @@ class PageSitemap(Sitemap):
                 if self.depth_cutoff > 0 and page.level == self.max_depth:
                     continue
                 if getattr(page, 'navigation_extension', None):
+                    cnt = 0
                     for p in page.extended_navigation():
                         depth_too_deep = self.depth_cutoff > 0 and p.level > self.depth_cutoff
                         not_in_nav = self.navigation_only and not p.in_navigation
                         if depth_too_deep or not_in_nav:
                             continue
-                        pages.insert(idx + 1, p)
+                        cnt += 1
+                        pages.insert(idx + cnt, p)
                         if p.level > self.max_depth:
                             self.max_depth = p.level
 
