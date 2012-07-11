@@ -13,8 +13,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
 
-from .models import Page, PageManager
-
 from mptt.forms import MPTTAdminForm
 
 
@@ -23,6 +21,14 @@ class PageAdminForm(MPTTAdminForm):
     never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
         'translation_of', '_content_title', '_page_title')
 
+    @property
+    def page_model(self):
+        return self._meta.model
+
+    @property
+    def page_manager(self):
+        return self.page_model._default_manager
+
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
 
@@ -30,10 +36,11 @@ class PageAdminForm(MPTTAdminForm):
             if 'parent' in kwargs['initial']:
                 # Prefill a few form values from the parent page
                 try:
-                    page = Page.objects.get(pk=kwargs['initial']['parent'])
+                    page = self.page_manager.get(
+                        pk=kwargs['initial']['parent'])
                     data = model_to_dict(page)
 
-                    for field in PageManager.exclude_from_copy:
+                    for field in self.page_manager.exclude_from_copy:
                         if field in data:
                             del data[field]
 
@@ -44,13 +51,14 @@ class PageAdminForm(MPTTAdminForm):
 
                     data.update(kwargs['initial'])
                     kwargs['initial'] = data
-                except Page.DoesNotExist:
+                except self.page_model.DoesNotExist:
                     pass
 
             elif 'translation_of' in kwargs['initial']:
                 # Only if translation extension is active
                 try:
-                    page = Page.objects.get(pk=kwargs['initial']['translation_of'])
+                    page = self.page_manager.get(
+                        pk=kwargs['initial']['translation_of'])
                     original = page.original_translation
 
                     data = {
@@ -63,13 +71,13 @@ class PageAdminForm(MPTTAdminForm):
                     if original.parent:
                         try:
                             data['parent'] = original.parent.get_translation(kwargs['initial']['language']).id
-                        except Page.DoesNotExist:
+                        except self.page_model.DoesNotExist:
                             # ignore this -- the translation does not exist
                             pass
 
                     data.update(kwargs['initial'])
                     kwargs['initial'] = data
-                except (AttributeError, Page.DoesNotExist):
+                except (AttributeError, self.page_model.DoesNotExist):
                     pass
 
         super(PageAdminForm, self).__init__(*args, **kwargs)
@@ -96,7 +104,7 @@ class PageAdminForm(MPTTAdminForm):
         current_id = None
         # See the comment below on why we do not use Page.objects.active(),
         # at least for now.
-        active_pages = Page.objects.filter(active=True)
+        active_pages = self.page_manager.filter(active=True)
 
         if self.instance:
             current_id = self.instance.id
@@ -122,7 +130,7 @@ class PageAdminForm(MPTTAdminForm):
 
         if current_id:
             # We are editing an existing page
-            parent = Page.objects.get(pk=current_id).parent
+            parent = self.page_manager.get(pk=current_id).parent
         else:
             # The user tries to create a new page
             parent = cleaned_data['parent']
