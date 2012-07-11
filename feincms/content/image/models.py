@@ -24,8 +24,9 @@ class ImageContent(models.Model):
         Cls.create_content_type(
             ImageContent,
             POSITION_CHOICES=(
-                ('left', 'Left'),
-                ('right', 'Right'),
+                ('left', 'Float to left'),
+                ('right', 'Float to right'),
+                ('block', 'Block'),
             ),
             FORMAT_CHOICES=(
                 ('noop', 'Do not resize'),
@@ -54,10 +55,13 @@ class ImageContent(models.Model):
         verbose_name_plural = _('images')
 
     def render(self, **kwargs):
-        return render_to_string([
-            'content/image/%s.html' % self.position,
-            'content/image/default.html',
-            ], {'content': self}, context_instance=kwargs.get('context'))
+        templates = ['content/image/default.html']
+        if hasattr(self, 'position'):
+            templates.insert(0, 'content/image/%s.html' % self.position)
+        return render_to_string(
+            templates,
+            {'content': self},
+            context_instance=kwargs.get('context'))
 
     def get_image(self):
         type, separator, size = getattr(self, 'format', '').partition(':')
@@ -71,17 +75,13 @@ class ImageContent(models.Model):
 
     @classmethod
     def initialize_type(cls, POSITION_CHOICES=None, FORMAT_CHOICES=None):
-        if POSITION_CHOICES is None:
-            raise ImproperlyConfigured(
-                'You need to set POSITION_CHOICES when creating a %s' %
-                cls.__name__)
-
-        models.CharField(
-            _('position'),
-            max_length=10,
-            choices=POSITION_CHOICES,
-            default=POSITION_CHOICES[0][0]
-            ).contribute_to_class(cls, 'position')
+        if POSITION_CHOICES:
+            models.CharField(
+                _('position'),
+                max_length=10,
+                choices=POSITION_CHOICES,
+                default=POSITION_CHOICES[0][0]
+                ).contribute_to_class(cls, 'position')
 
         if FORMAT_CHOICES:
             models.CharField(

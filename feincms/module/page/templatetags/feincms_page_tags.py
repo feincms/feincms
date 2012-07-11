@@ -28,6 +28,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
     if isinstance(feincms_page, HttpRequest):
         try:
+            # warning: explicit Page reference here
             feincms_page = Page.objects.for_request(
                 feincms_page, best_match=True)
         except Page.DoesNotExist:
@@ -38,10 +39,12 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
     # mptt starts counting at zero
     mptt_level_range = [level - 1, level + depth - 1]
 
-    queryset = Page.objects.in_navigation().filter(**{
-        '%s__gte' % mptt_opts.level_attr: mptt_level_range[0],
-        '%s__lt' % mptt_opts.level_attr: mptt_level_range[1],
-        })
+    queryset = feincms_page.__class__._default_manager.in_navigation().filter(
+        **{
+            '%s__gte' % mptt_opts.level_attr: mptt_level_range[0],
+            '%s__lt' % mptt_opts.level_attr: mptt_level_range[1],
+        }
+    )
 
     page_level = getattr(feincms_page, mptt_opts.level_attr)
 
