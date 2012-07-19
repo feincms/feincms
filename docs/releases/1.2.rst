@@ -31,7 +31,7 @@ FeinCMS 1.2 sports several large changes, including:
 * A new content type, ``TemplateContent`` has been added which can be used to
   render templates residing on the hard disk.
 
-* The ``TreeEditor`` javascript code has been rewritten, reintroducing
+* The ``TreeEditor`` JavaScript code has been rewritten, reintroducing
   drag-drop for reordering pages, but this time in a well-performing way not
   sluggish as before.
 
