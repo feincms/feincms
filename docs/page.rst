@@ -224,7 +224,7 @@ The following extensions are available currently:
   Adds additional title fields to the page model. You may not only define a
   single title for the page to be used in the navigation, the <title> tag and
   inside the content area, you are not only allowed to define different titles
-  for the three uses but also enabld to define titles and subtitles for the
+  for the three uses but also enabled to define titles and subtitles for the
   content area.
 
 
@@ -283,12 +283,12 @@ if the ``redirect_to`` page field is filled in).
 Using page response processors
 ==============================
 
-Analogous to a request processor, a reponse processor runs after a page
+Analogous to a request processor, a response processor runs after a page
 has been rendered. It needs to accept the page, the request and the response
 as parameters and may change the response (or throw an exception, but try
 not to).
 
-A reponse processor is the right place to tweak the returned http response
+A response processor is the right place to tweak the returned http response
 for whatever purposes you have in mind.
 
 ::
@@ -309,7 +309,7 @@ TinyMCE is configured by default to only allow for minimal formatting. This has 
 to be the best compromise between letting the client format text without destroying the
 page design concept. You can customize the TinyMCE settings by creating your own 
 init_richtext.html that inherits from `admin/content/richtext/init_tinymce.html`.
-You can even set your own css and linklist files like so::
+You can even set your own CSS and linklist files like so::
 	
 	FEINCMS_RICHTEXT_INIT_CONTEXT = {
 		'TINYMCE_JS_URL': STATIC_URL + 'your_custom_path/tiny_mce.js',
@@ -378,7 +378,7 @@ The following parameters can be used to modify the behaviour of the sitemap:
   in the site map.
 * ``max_depth`` -- if set to a non-negative integer, will limit the sitemap generated
   to this page hierarchy depth.
-* ``changefreq`` -- should be a string or callable specifiying the page update frequency,
+* ``changefreq`` -- should be a string or callable specifying the page update frequency,
   according to the sitemap protocol.
 * ``queryset`` -- pass in a query set to restrict the Pages to include
   in the site map.
