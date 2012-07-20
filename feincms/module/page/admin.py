@@ -15,6 +15,7 @@ from .modeladmins import PageAdmin
 
 # ------------------------------------------------------------------------
 
+# XXX move this setting to feincms.settings?
 if getattr(settings, 'FEINCMS_USE_PAGE_ADMIN', True):
     ensure_completely_loaded()
     try:
