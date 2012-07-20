@@ -22,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
 from feincms.utils import get_object, copy_model_instance
+from django.conf import settings
 
 try:
     any
@@ -29,6 +30,7 @@ except NameError:
     # For Python 2.4
     from feincms.compat import c_any as any
 
+SITE_WIDE_INHRTNC_PAGE = getattr(settings, 'SITE_WIDE_INHERITANCE_PAGE', None)
 
 class Region(object):
     """
@@ -149,6 +151,11 @@ class ContentProxy(object):
 
                     if not empty_inherited_regions:
                         break
+                if empty_inherited_regions and SITE_WIDE_INHRTNC_PAGE:
+                    parent_counts = self._fetch_content_type_count_helper(
+                        SITE_WIDE_INHRTNC_PAGE, 
+                        regions=tuple(empty_inherited_regions))
+                    counts.update(parent_counts)
 
             self._cache['counts'] = counts
         return self._cache['counts']
