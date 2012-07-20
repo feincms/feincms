@@ -74,7 +74,7 @@ Visit these sites
 
 * FeinCMS Website: http://www.feincms.org/
 * Read the documentation: http://feincms-django-cms.readthedocs.org/
-* See the google groups page at http://groups.google.com/group/django-feincms
+* See the Google Groups page at http://groups.google.com/group/django-feincms
 * FeinCMS on github: https://github.com/feincms/feincms/
 
 IRC

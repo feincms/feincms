@@ -62,7 +62,7 @@ Apart from all these new features a few cleanups have been made:
   library have a look at ``MediaFile.reconfigure``.
 
 * Support for the ``show_on_top`` option for the ``ItemEditor`` has been
-  completely removed. This functionatliy has been deprecated since 1.2.
+  completely removed. This functionality has been deprecated since 1.2.
 
 * A few one-line Page manager methods which were too similar to each other
   have been deprecated. They will be removed in the next release of FeinCMS.
