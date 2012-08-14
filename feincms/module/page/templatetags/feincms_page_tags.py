@@ -66,8 +66,10 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
         if parent:
             # Special case for navigation extensions
             if getattr(parent, 'navigation_extension', None):
-                return parent.extended_navigation(depth=depth,
-                    request=context.get('request'))
+                children = parent.extended_navigation(depth=depth,
+                                    request=context.get('request'))
+                return list(children)
+
             queryset &= parent.get_descendants()
 
     if depth > 1:
@@ -88,6 +90,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
     if any(( ext in feincms_page._feincms_extensions for ext in (
         'navigation', 'feincms.module.page.extensions.navigation'))):
+
         # Filter out children of nodes which have a navigation extension
         extended_node_rght = [] # mptt node right value
 
@@ -108,7 +111,6 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
                             request=context.get('request')):
                         if getattr(extended, mptt_opts.level_attr, 0) < level + depth - 1:
                             yield extended
-
                 else:
                     yield elem
 
