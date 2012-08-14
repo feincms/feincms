@@ -36,6 +36,8 @@ class PagePretender(object):
     parameters on creation: title, url, level. If using the translation extension,
     also add language.
     """
+    pk = None
+
     # emulate mptt properties to get the template tags working
     class _mptt_meta:
         level_attr = 'level'
@@ -61,6 +63,10 @@ class PagePretender(object):
 
     def get_original_translation(self, page):
         return page
+
+    def short_title(self):
+        from feincms.utils import shorten_string
+        return shorten_string(self.title)
 
 
 class NavigationExtension(object):
