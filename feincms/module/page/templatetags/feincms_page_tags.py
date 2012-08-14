@@ -29,7 +29,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
     if isinstance(feincms_page, HttpRequest):
         feincms_page = Page.objects.for_request(feincms_page, best_match=True)
 
-    mptt_opts = feincms_page._mptt_meta
+    mptt_opts = feincms_page._mptt_meta  # default 'level'
 
     # mptt starts counting at zero
     mptt_level_range = [level - 1, level + depth - 1]
@@ -86,7 +86,8 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
         queryset = _filter(queryset)
 
-    if 'navigation' in feincms_page._feincms_extensions:
+    if any(( ext in feincms_page._feincms_extensions for ext in (
+        'navigation', 'feincms.module.page.extensions.navigation'))):
         # Filter out children of nodes which have a navigation extension
         extended_node_rght = [] # mptt node right value
 
