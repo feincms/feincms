@@ -29,7 +29,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
     if isinstance(feincms_page, HttpRequest):
         feincms_page = Page.objects.for_request(feincms_page, best_match=True)
 
-    mptt_opts = feincms_page._mptt_meta
+    mptt_opts = feincms_page._mptt_meta  # default 'level'
 
     # mptt starts counting at zero
     mptt_level_range = [level - 1, level + depth - 1]
@@ -66,8 +66,10 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
         if parent:
             # Special case for navigation extensions
             if getattr(parent, 'navigation_extension', None):
-                return parent.extended_navigation(depth=depth,
-                    request=context.get('request'))
+                children = parent.extended_navigation(depth=depth,
+                                    request=context.get('request'))
+                return list(children)
+
             queryset &= parent.get_descendants()
 
     if depth > 1:
@@ -86,7 +88,9 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
         queryset = _filter(queryset)
 
-    if 'navigation' in feincms_page._feincms_extensions:
+    if any(( ext in feincms_page._feincms_extensions for ext in (
+        'navigation', 'feincms.module.page.extensions.navigation'))):
+
         # Filter out children of nodes which have a navigation extension
         extended_node_rght = [] # mptt node right value
 
@@ -107,7 +111,6 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
                             request=context.get('request')):
                         if getattr(extended, mptt_opts.level_attr, 0) < level + depth - 1:
                             yield extended
-
                 else:
                     yield elem
 
@@ -444,7 +447,7 @@ def siblings_along_path_to(page_list, page2):
                                    a_page.level == top_level or
                                    any((_is_sibling_of(a_page, a) for a in ancestors))]
             return siblings
-        except AttributeError:
+        except (AttributeError, ValueError):
             pass
 
     return ()
