@@ -444,7 +444,7 @@ def siblings_along_path_to(page_list, page2):
                                    a_page.level == top_level or
                                    any((_is_sibling_of(a_page, a) for a in ancestors))]
             return siblings
-        except AttributeError:
+        except (AttributeError, ValueError):
             pass
 
     return ()
