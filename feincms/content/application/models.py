@@ -452,11 +452,13 @@ class ApplicationContent(models.Model):
         super(ApplicationContent, self).save(*args, **kwargs)
         # Clear reverse() cache
         _empty_reverse_cache()
+    save.alters_data = True
 
     def delete(self, *args, **kwargs):
         super(ApplicationContent, self).delete(*args, **kwargs)
         # Clear reverse() cache
         _empty_reverse_cache()
+    delete.alters_data = True
 
     def _update_response_headers(self, request, response, headers):
         """

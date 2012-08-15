@@ -48,6 +48,7 @@ class Entry(Base):
         if self.published and not self.published_on:
             self.published_on = timezone.now()
         super(Entry, self).save(*args, **kwargs)
+    save.alters_data = True
 
     @models.permalink
     def get_absolute_url(self):

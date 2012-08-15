@@ -95,3 +95,4 @@ class TableContent(models.Model):
         self.html = self.data and self.FORMATTERS[self.type](json.loads(self.data)) or u''
 
         super(TableContent, self).save(*args, **kwargs)
+    save.alters_data = True
