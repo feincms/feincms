@@ -1,103 +1,113 @@
-# Traducción española de FeinCMS
-# Copyright (C) 2009 proycon
-# This file is distributed under the same license as the FeinCMS package.
-# Maarten van Gompel (proycon) <proycon@anaproy.nl>, 2009.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 #
+# Translators:
+# Maarten van Gompel (proycon) <proycon@anaproy.nl>, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-05 06:19-0500\n"
-"PO-Revision-Date: 2010-09-20 20:39+0100\n"
-"Last-Translator: antoni aloy <aaloy@apsl.net>\n"
-"Language-Team: ca <antoni.aloy@trespams.com>\n"
-"Language: \n"
+"POT-Creation-Date: 2012-08-16 18:17+0200\n"
+"PO-Revision-Date: 2012-06-15 08:25+0000\n"
+"Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Catalan\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-Country: SPAIN\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: models.py:421 content/template/models.py:39 content/template/models.py:57
+#: models.py:420 content/template/models.py:59
 msgid "template"
 msgstr "plantilla"
 
-#: models.py:553
+#: models.py:551
 msgid "ordering"
 msgstr "ordenació"
 
-#: translations.py:171 module/blog/extensions/translations.py:17
-#: module/page/extensions/translations.py:102
+#: translations.py:259 module/blog/extensions/translations.py:17
+#: module/extensions/translations.py:119
 msgid "language"
 msgstr "idioma"
 
-#: admin/filterspecs.py:46 admin/filterspecs.py:84
+#: admin/filterspecs.py:35 admin/filterspecs.py:70
 msgid "All"
 msgstr "Tots"
 
-#: admin/filterspecs.py:57 module/page/models.py:261
+#: admin/filterspecs.py:46 module/page/models.py:143
 msgid "Parent"
 msgstr "Pare"
 
-#: admin/filterspecs.py:95
+#: admin/filterspecs.py:81
+#: templates/admin/medialibrary/mediafile/change_list.html:14
 msgid "Category"
 msgstr "Categoria"
 
-#: admin/item_editor.py:150
+#: admin/item_editor.py:157
 #, python-format
 msgid "Change %s"
 msgstr "Modificar %s"
 
-#: admin/tree_editor.py:218 content/rss/models.py:20
-#: content/section/models.py:32 module/blog/models.py:32
-#: module/medialibrary/models.py:48 module/page/models.py:259
-#: module/page/models.py:338
+#: admin/tree_editor.py:229 content/rss/models.py:20
+#: content/section/models.py:34 module/blog/models.py:29
+#: module/medialibrary/models.py:40 module/page/models.py:141
+#: module/page/models.py:199
 msgid "title"
 msgstr "títol"
 
-#: admin/tree_editor.py:396
+#: admin/tree_editor.py:404
 #, python-format
 msgid "%s has been moved to a new position."
 msgstr "%s ha sigut mogut a una nova posició"
 
-#: admin/tree_editor.py:400
+#: admin/tree_editor.py:408
 msgid "Did not understand moving instruction."
 msgstr "No entenc l'odre de moviment"
 
-#: admin/tree_editor.py:409
+#: admin/tree_editor.py:417
 msgid "actions"
 msgstr "accions"
 
-#: content/application/models.py:241
+#: admin/tree_editor.py:429
+#, fuzzy, python-format
+msgid "Successfully deleted %s items."
+msgstr "Segur que vols esborrar l'element?"
+
+#: admin/tree_editor.py:437
+#, python-format
+msgid "Delete selected %(verbose_name_plural)s"
+msgstr ""
+
+#: content/application/models.py:272
 msgid "application content"
 msgstr "contingut de l'aplicació"
 
-#: content/application/models.py:242
+#: content/application/models.py:273
 msgid "application contents"
 msgstr "continguts de l'aplicació"
 
-#: content/application/models.py:273
+#: content/application/models.py:298
 msgid "application"
 msgstr "aplicació"
 
-#: content/comments/models.py:28
+#: content/comments/models.py:24
 msgid "enabled"
 msgstr "actiu"
 
-#: content/comments/models.py:28
+#: content/comments/models.py:24
 msgid "New comments may be added"
 msgstr "Es podran afegir nous comentaris"
 
-#: content/comments/models.py:32 content/comments/models.py:33
+#: content/comments/models.py:28 content/comments/models.py:29
 msgid "comments"
 msgstr "comentaris"
 
-#: content/comments/models.py:48
+#: content/comments/models.py:49
 msgid "public"
 msgstr "públic"
 
-#: content/comments/models.py:48
+#: content/comments/models.py:49
 msgid "not public"
 msgstr "privat"
 
@@ -125,58 +135,74 @@ msgstr "formulari de contacte"
 msgid "contact forms"
 msgstr "formularis de contacte"
 
-#: content/file/models.py:16 content/file/models.py:20
-#: module/medialibrary/models.py:90
+#: content/file/models.py:20 content/file/models.py:25
+#: module/medialibrary/models.py:84
 msgid "file"
 msgstr "arxiu"
 
-#: content/file/models.py:21
+#: content/file/models.py:26
 msgid "files"
 msgstr "arxius"
 
-#: content/image/models.py:24 content/image/models.py:28
+#: content/image/models.py:43 content/image/models.py:52
 msgid "image"
 msgstr "imatge"
 
-#: content/image/models.py:29
+#: content/image/models.py:46
+msgid "alternate text"
+msgstr ""
+
+#: content/image/models.py:47
+msgid "Description of image"
+msgstr ""
+
+#: content/image/models.py:48 module/medialibrary/models.py:235
+msgid "caption"
+msgstr "llegenda"
+
+#: content/image/models.py:53
 msgid "images"
 msgstr "imatges"
 
-#: content/image/models.py:42 content/medialibrary/models.py:105
-#: content/medialibrary/models.py:113
+#: content/image/models.py:79 content/medialibrary/models.py:115
+#: content/medialibrary/models.py:123
 msgid "position"
 msgstr "posició"
 
-#: content/medialibrary/models.py:38
+#: content/image/models.py:87
+msgid "format"
+msgstr ""
+
+#: content/medialibrary/models.py:48
 msgid "(no caption)"
 msgstr "(sense llegenda)"
 
-#: content/medialibrary/models.py:87 content/medialibrary/models.py:101
-#: content/medialibrary/models.py:111 content/medialibrary/v2.py:44
-#: content/section/models.py:48 module/medialibrary/fields.py:45
-#: module/medialibrary/models.py:102
+#: content/medialibrary/models.py:97 content/medialibrary/models.py:111
+#: content/medialibrary/models.py:121 content/medialibrary/v2.py:48
+#: content/section/models.py:36 module/medialibrary/fields.py:58
+#: module/medialibrary/models.py:97
 msgid "media file"
 msgstr "arxiu de medis"
 
-#: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
-#: module/medialibrary/models.py:103
+#: content/medialibrary/models.py:98 content/medialibrary/v2.py:49
+#: module/medialibrary/models.py:98
 msgid "media files"
 msgstr "arxius de medis"
 
-#: content/medialibrary/models.py:131
+#: content/medialibrary/models.py:139
 msgid "block"
 msgstr "bloc"
 
-#: content/medialibrary/models.py:132
+#: content/medialibrary/models.py:140
 msgid "left"
 msgstr "esquerra"
 
-#: content/medialibrary/models.py:133
+#: content/medialibrary/models.py:141
 msgid "right"
 msgstr "dreta"
 
-#: content/medialibrary/v2.py:49 content/section/models.py:53
-#: content/section/models.py:61 content/table/models.py:81
+#: content/medialibrary/v2.py:53 content/section/models.py:52
+#: content/table/models.py:85
 msgid "type"
 msgstr "tipus"
 
@@ -188,20 +214,15 @@ msgstr "contingut en cruu"
 msgid "raw contents"
 msgstr "continguts en cruu"
 
-#: content/richtext/models.py:15 content/richtext/models.py:85
-#: content/section/models.py:33
-msgid "text"
-msgstr "text"
-
-#: content/richtext/models.py:26
+#: content/richtext/models.py:22
 msgid "HTML Tidy"
 msgstr "HTML Tidy"
 
-#: content/richtext/models.py:27
+#: content/richtext/models.py:23
 msgid "Ignore the HTML validation warnings"
 msgstr "Ignora els avisos de validació de l'HTML"
 
-#: content/richtext/models.py:51
+#: content/richtext/models.py:47
 #, python-format
 msgid ""
 "HTML validation produced %(count)d warnings. Please review the updated "
@@ -210,11 +231,15 @@ msgstr ""
 "La validació de l'HTML generà %(count)d avisos. Per favor, revisa el "
 "contingut actualitzat de la part inferior abans de continuar: %(messages)s"
 
-#: content/richtext/models.py:89
+#: content/richtext/models.py:81 content/section/models.py:35
+msgid "text"
+msgstr "text"
+
+#: content/richtext/models.py:85
 msgid "rich text"
 msgstr "text ric"
 
-#: content/richtext/models.py:90
+#: content/richtext/models.py:86
 msgid "rich texts"
 msgstr "texts rics"
 
@@ -250,51 +275,51 @@ msgstr "feed RSS"
 msgid "RSS feeds"
 msgstr "feeds RSS"
 
-#: content/section/models.py:37
+#: content/section/models.py:41
 msgid "section"
 msgstr "secció"
 
-#: content/section/models.py:38
+#: content/section/models.py:42
 msgid "sections"
 msgstr "seccions"
 
-#: content/table/models.py:62
+#: content/table/models.py:66
 msgid "plain"
 msgstr "plà"
 
-#: content/table/models.py:63
+#: content/table/models.py:67
 msgid "title row"
 msgstr "títol de la fila"
 
-#: content/table/models.py:65
+#: content/table/models.py:69
 msgid "title row and column"
 msgstr "títol de fila i columna"
 
-#: content/table/models.py:71
+#: content/table/models.py:75
 msgid "table"
 msgstr "taula"
 
-#: content/table/models.py:72
+#: content/table/models.py:76
 msgid "tables"
 msgstr "taules"
 
-#: content/table/models.py:86
+#: content/table/models.py:90
 msgid "data"
 msgstr "dades"
 
-#: content/template/models.py:62
+#: content/template/models.py:51
 msgid "template content"
 msgstr "plantilla de contingut"
 
-#: content/template/models.py:63
+#: content/template/models.py:52
 msgid "template contents"
 msgstr "plantilles de continguts"
 
-#: content/video/models.py:23
+#: content/video/models.py:25
 msgid "video link"
 msgstr "enllaç de vídeo"
 
-#: content/video/models.py:24
+#: content/video/models.py:26
 msgid ""
 "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
 "com/watch?v=zmj1rpzDRZ0"
@@ -302,36 +327,40 @@ msgstr ""
 "Això ha de ser un enllaç a un vídeo de Youtube o Vimeo. Per exemple: http://"
 "www.youtube.com/watch?v=zmj1rpzDRZ0"
 
-#: content/video/models.py:28
+#: content/video/models.py:30
 msgid "video"
 msgstr "vídeo"
 
-#: content/video/models.py:29
+#: content/video/models.py:31
 msgid "videos"
 msgstr "vídeos"
 
-#: module/blog/models.py:31
+#: contrib/tagging.py:117
+msgid "Tagging"
+msgstr ""
+
+#: module/blog/models.py:28
 msgid "published"
 msgstr "publicat"
 
-#: module/blog/models.py:33
+#: module/blog/models.py:30
 msgid "This is used for the generated navigation too."
 msgstr "Això també es fa servir per la navegació generada automàticament."
 
-#: module/blog/models.py:36
+#: module/blog/models.py:33
 msgid "published on"
 msgstr "publicat el"
 
-#: module/blog/models.py:37
+#: module/blog/models.py:34
 msgid "Will be set automatically once you tick the `published` checkbox above."
 msgstr ""
 "S'establirà automàticament quan marquis la casella superior de 'publicat'"
 
-#: module/blog/models.py:42
+#: module/blog/models.py:39
 msgid "entry"
 msgstr "entrada"
 
-#: module/blog/models.py:43
+#: module/blog/models.py:40
 msgid "entries"
 msgstr "entrades"
 
@@ -340,31 +369,51 @@ msgid "tags"
 msgstr "etiquetes"
 
 #: module/blog/extensions/translations.py:20
-#: module/page/extensions/translations.py:105
+#: module/extensions/translations.py:122
 msgid "translation of"
 msgstr "tradució de"
 
 #: module/blog/extensions/translations.py:23
-#: module/page/extensions/translations.py:108
+#: module/extensions/translations.py:125
 msgid "Leave this empty for entries in the primary language."
 msgstr "Deixa aquest camp buid per les entrades en l'idioma base"
 
 #: module/blog/extensions/translations.py:44
-#: templates/admin/feincms/item_editor.html:45
+#: templates/admin/feincms/item_editor.html:43
 msgid "available translations"
 msgstr "traduccions disponibles"
 
-#: module/extensions/changedate.py:38
+#: module/extensions/changedate.py:32
 msgid "creation date"
 msgstr "data de creació"
 
-#: module/extensions/changedate.py:39
+#: module/extensions/changedate.py:33
 msgid "modification date"
 msgstr "data de modificació"
 
-#: module/extensions/ct_tracker.py:134
+#: module/extensions/ct_tracker.py:136
 msgid "content types"
 msgstr "tipus de contingut"
+
+#: module/extensions/datepublisher.py:49
+msgid "publication date"
+msgstr "data de publicació"
+
+#: module/extensions/datepublisher.py:51
+msgid "publication end date"
+msgstr "publicar fins a"
+
+#: module/extensions/datepublisher.py:53
+msgid "Leave empty if the entry should stay active forever."
+msgstr "Si la deixen en blanc l'entrada estarà activa per sempre"
+
+#: module/extensions/datepublisher.py:80
+msgid "visible from - to"
+msgstr "visible de-fins a"
+
+#: module/extensions/datepublisher.py:90
+msgid "Date-based publishing"
+msgstr "Publicació segons la data"
 
 #: module/extensions/featured.py:9
 msgid "featured"
@@ -394,148 +443,225 @@ msgstr "Això serà afegit a la descripció per defecte"
 msgid "Search engine optimization"
 msgstr "Optimització per als motors de cerca"
 
-#: module/medialibrary/models.py:51
-msgid "parent"
-msgstr "pare"
+#: module/extensions/translations.py:192
+msgid "Edit translation"
+msgstr "Editar la traducció"
 
-#: module/medialibrary/models.py:53 module/page/models.py:260
-msgid "slug"
-msgstr "slug"
+#: module/extensions/translations.py:195
+msgid "Create translation"
+msgstr "Crear traducció"
 
-#: module/medialibrary/models.py:57
-msgid "category"
-msgstr "categoria"
+#: module/extensions/translations.py:200
+msgid "translations"
+msgstr "traduccions"
 
-#: module/medialibrary/models.py:58 module/medialibrary/models.py:96
-msgid "categories"
-msgstr "categories"
-
-#: module/medialibrary/models.py:91 module/medialibrary/models.py:182
-msgid "file type"
-msgstr "tipus d'arxiu"
-
-#: module/medialibrary/models.py:92 module/medialibrary/models.py:117
-msgid "created"
-msgstr "creat"
-
-#: module/medialibrary/models.py:93
-msgid "copyright"
-msgstr "drets de còpia"
-
-#: module/medialibrary/models.py:94 module/medialibrary/models.py:112
-msgid "file size"
-msgstr "tamany d'arxiu"
-
-#: module/medialibrary/models.py:203
-msgid "file info"
-msgstr "informació de l'arxiu"
-
-#: module/medialibrary/models.py:280
-msgid "Image"
-msgstr "Imatge"
-
-#: module/medialibrary/models.py:281
-msgid "Video"
-msgstr "Vídeo"
-
-#: module/medialibrary/models.py:282
-msgid "Audio"
-msgstr "Audio"
-
-#: module/medialibrary/models.py:283
-msgid "PDF document"
-msgstr "document PDF"
-
-#: module/medialibrary/models.py:284
-msgid "Flash"
-msgstr "Flash"
-
-#: module/medialibrary/models.py:285
-msgid "Text"
-msgstr "Text"
-
-#: module/medialibrary/models.py:286
-msgid "Rich Text"
-msgstr "Text ric"
-
-#: module/medialibrary/models.py:287
-msgid "Zip archive"
+#: module/medialibrary/forms.py:26
+msgid "This would create a loop in the hierarchy"
 msgstr ""
 
-#: module/medialibrary/models.py:288
-msgid "Microsoft Word"
-msgstr "Microsoft Word"
+#: module/medialibrary/forms.py:64
+#, python-format
+msgid ""
+"Cannot overwrite with different file type (attempt to overwrite a "
+"%(old_ext)s with a %(new_ext)s)"
+msgstr ""
 
-#: module/medialibrary/models.py:289
-msgid "Microsoft Excel"
-msgstr "Microsoft Excel"
-
-#: module/medialibrary/models.py:290
-msgid "Microsoft PowerPoint"
-msgstr "Microsoft PowerPoint"
-
-#: module/medialibrary/models.py:291
-msgid "Binary"
-msgstr "Binari"
-
-#: module/medialibrary/models.py:307
-msgid "caption"
-msgstr "llegenda"
-
-#: module/medialibrary/models.py:308
-msgid "description"
-msgstr "descripció"
-
-#: module/medialibrary/models.py:311
-msgid "media file translation"
-msgstr "traducció de l'arxiu de medis"
-
-#: module/medialibrary/models.py:312
-msgid "media file translations"
-msgstr "traduccions dels arxius de medis"
-
-#: module/medialibrary/models.py:335
-msgid "Preview"
-msgstr "Previsualitzar"
-
-#: module/medialibrary/models.py:355
+#: module/medialibrary/modeladmins.py:57
 #, python-format
 msgid "Successfully added %(count)d media file to %(category)s."
 msgid_plural "Successfully added %(count)d media files to %(category)s."
 msgstr[0] ""
 msgstr[1] ""
 
-#: module/medialibrary/models.py:373
+#: module/medialibrary/modeladmins.py:75
 msgid "Add selected media files to category"
 msgstr ""
 
-#: module/medialibrary/models.py:440
+#: module/medialibrary/modeladmins.py:84
+#, python-format
+msgid "ZIP file exported as %s"
+msgstr ""
+
+#: module/medialibrary/modeladmins.py:86
+#, python-format
+msgid "ZIP file export failed: %s"
+msgstr ""
+
+#: module/medialibrary/modeladmins.py:91
+msgid "Export selected media files as zip file"
+msgstr ""
+
+#: module/medialibrary/modeladmins.py:134
+#: templates/admin/feincms/page/page/item_editor.html:15
+msgid "Preview"
+msgstr "Previsualitzar"
+
+#: module/medialibrary/modeladmins.py:139 module/medialibrary/models.py:88
+msgid "file size"
+msgstr "tamany d'arxiu"
+
+#: module/medialibrary/modeladmins.py:144 module/medialibrary/models.py:86
+msgid "created"
+msgstr "creat"
+
+#: module/medialibrary/modeladmins.py:163 module/medialibrary/models.py:85
+msgid "file type"
+msgstr "tipus d'arxiu"
+
+#: module/medialibrary/modeladmins.py:184
+msgid "file info"
+msgstr "informació de l'arxiu"
+
+#: module/medialibrary/modeladmins.py:196
 #, python-format
 msgid "%d files imported"
 msgstr ""
 
-#: module/medialibrary/models.py:442
+#: module/medialibrary/modeladmins.py:198
 #, python-format
-msgid "ZIP file invalid: %s"
+msgid "ZIP import failed: %s"
 msgstr ""
 
-#: module/medialibrary/models.py:448
+#: module/medialibrary/modeladmins.py:200
 msgid "No input file given"
 msgstr ""
 
-#: module/page/models.py:256
-msgid "active"
-msgstr "actiu"
+#: module/medialibrary/models.py:43
+msgid "parent"
+msgstr "pare"
 
-#: module/page/models.py:263 module/page/models.py:711
+#: module/medialibrary/models.py:45 module/page/models.py:142
+msgid "slug"
+msgstr "slug"
+
+#: module/medialibrary/models.py:49
+msgid "category"
+msgstr "categoria"
+
+#: module/medialibrary/models.py:50 module/medialibrary/models.py:90
+msgid "categories"
+msgstr "categories"
+
+#: module/medialibrary/models.py:87
+msgid "copyright"
+msgstr "drets de còpia"
+
+#: module/medialibrary/models.py:202
+msgid "Image"
+msgstr "Imatge"
+
+#: module/medialibrary/models.py:203
+msgid "Video"
+msgstr "Vídeo"
+
+#: module/medialibrary/models.py:204
+msgid "Audio"
+msgstr "Audio"
+
+#: module/medialibrary/models.py:205
+msgid "PDF document"
+msgstr "document PDF"
+
+#: module/medialibrary/models.py:206
+msgid "Flash"
+msgstr "Flash"
+
+#: module/medialibrary/models.py:207
+msgid "Text"
+msgstr "Text"
+
+#: module/medialibrary/models.py:208
+msgid "Rich Text"
+msgstr "Text ric"
+
+#: module/medialibrary/models.py:209
+msgid "Zip archive"
+msgstr ""
+
+#: module/medialibrary/models.py:210
+msgid "Microsoft Word"
+msgstr "Microsoft Word"
+
+#: module/medialibrary/models.py:211
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+#: module/medialibrary/models.py:212
+msgid "Microsoft PowerPoint"
+msgstr "Microsoft PowerPoint"
+
+#: module/medialibrary/models.py:213
+msgid "Binary"
+msgstr "Binari"
+
+#: module/medialibrary/models.py:236
+msgid "description"
+msgstr "descripció"
+
+#: module/medialibrary/models.py:239
+msgid "media file translation"
+msgstr "traducció de l'arxiu de medis"
+
+#: module/medialibrary/models.py:240
+msgid "media file translations"
+msgstr "traduccions dels arxius de medis"
+
+#: module/page/forms.py:118
+msgid "This URL is already taken by an active page."
+msgstr "Aquesta URL ja està en ús en una plana activa."
+
+#: module/page/forms.py:136
+msgid "This URL is already taken by another active page."
+msgstr "Aquesta URL ja età en ús per una altra plana activa."
+
+#: module/page/modeladmins.py:41
+msgid "Other options"
+msgstr "Altres opcions"
+
+#: module/page/modeladmins.py:89 module/page/models.py:145
 msgid "in navigation"
 msgstr "a la navegació"
 
-#: module/page/models.py:264
+#: module/page/modeladmins.py:100
+msgid "Add child page"
+msgstr "Afegeix una plana filla."
+
+#: module/page/modeladmins.py:102
+#: templates/admin/feincms/content_inline.html:9
+msgid "View on site"
+msgstr "Veure a Lloc"
+
+#: module/page/modeladmins.py:130
+msgid ""
+"The content from the original translation has been copied to the newly "
+"created page."
+msgstr ""
+
+#: module/page/modeladmins.py:144
+msgid "You don't have the necessary permissions to edit this object"
+msgstr ""
+
+#: module/page/modeladmins.py:159
+msgid "inherited"
+msgstr "heretat"
+
+#: module/page/modeladmins.py:163
+msgid "extensions"
+msgstr "extensions"
+
+#: module/page/modeladmins.py:167 module/page/models.py:179
+msgid "is active"
+msgstr "és activa"
+
+#: module/page/models.py:138
+msgid "active"
+msgstr "actiu"
+
+#: module/page/models.py:146
 msgid "override URL"
 msgstr "URL sobrescrit"
 
-#: module/page/models.py:265
+#: module/page/models.py:147
 msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL. This affects both the navigation and subpages' "
@@ -545,81 +671,25 @@ msgstr ""
 "tracti d'una URL local. Afecta tant a la navegació com a les  URLs de les "
 "subplanes."
 
-#: module/page/models.py:266
+#: module/page/models.py:148
 msgid "redirect to"
 msgstr "redirecciona a"
 
-#: module/page/models.py:267
+#: module/page/models.py:149
 msgid "Target URL for automatic redirects."
 msgstr "URL de destí per les redireccions automàtiques"
 
-#: module/page/models.py:268
+#: module/page/models.py:150
 msgid "Cached URL"
 msgstr "URL en caché"
 
-#: module/page/models.py:279
+#: module/page/models.py:161
 msgid "page"
 msgstr "plana"
 
-#: module/page/models.py:280
+#: module/page/models.py:162
 msgid "pages"
 msgstr "planes"
-
-#: module/page/models.py:297 module/page/models.py:782
-msgid "is active"
-msgstr "és activa"
-
-#: module/page/models.py:631
-msgid "This URL is already taken by an active page."
-msgstr "Aquesta URL ja està en ús en una plana activa."
-
-#: module/page/models.py:649
-msgid "This URL is already taken by another active page."
-msgstr "Aquesta URL ja età en ús per una altra plana activa."
-
-#: module/page/models.py:674
-msgid "Other options"
-msgstr "Altres opcions"
-
-#: module/page/models.py:721
-msgid "Add child page"
-msgstr "Afegeix una plana filla."
-
-#: module/page/models.py:723
-msgid "View on site"
-msgstr "Veure a Lloc"
-
-#: module/page/models.py:759
-msgid "You don't have the necessary permissions to edit this object"
-msgstr ""
-
-#: module/page/models.py:774
-msgid "inherited"
-msgstr "heretat"
-
-#: module/page/models.py:778
-msgid "extensions"
-msgstr "extensions"
-
-#: module/page/extensions/datepublisher.py:48
-msgid "publication date"
-msgstr "data de publicació"
-
-#: module/page/extensions/datepublisher.py:50
-msgid "publication end date"
-msgstr "publicar fins a"
-
-#: module/page/extensions/datepublisher.py:52
-msgid "Leave empty if the entry should stay active forever."
-msgstr "Si la deixen en blanc l'entrada estarà activa per sempre"
-
-#: module/page/extensions/datepublisher.py:78
-msgid "visible from - to"
-msgstr "visible de-fins a"
-
-#: module/page/extensions/datepublisher.py:88
-msgid "Date-based publishing"
-msgstr "Publicació segons la data"
 
 #: module/page/extensions/excerpt.py:9
 msgid "excerpt"
@@ -633,12 +703,12 @@ msgstr "Afegeix una breu descripció resumint el contingut de la plana"
 msgid "Excerpt"
 msgstr "Extracte"
 
-#: module/page/extensions/navigation.py:77
-#: module/page/extensions/navigation.py:97
+#: module/page/extensions/navigation.py:80
+#: module/page/extensions/navigation.py:100
 msgid "navigation extension"
 msgstr "extensió de navegació"
 
-#: module/page/extensions/navigation.py:99
+#: module/page/extensions/navigation.py:102
 msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
@@ -646,7 +716,7 @@ msgstr ""
 "Selecciona el mòdul que proveeix les subplanes si necessites personalitzar "
 "la navegació."
 
-#: module/page/extensions/navigation.py:112
+#: module/page/extensions/navigation.py:115
 msgid "Navigation extension"
 msgstr "Extensió de navegació"
 
@@ -670,10 +740,6 @@ msgstr "Plana enllaçada"
 msgid "All content is inherited from this page if given."
 msgstr "Tot el contingut es heretat d'aquesta plana."
 
-#: module/page/extensions/symlinks.py:30
-msgid "Symlinked page"
-msgstr "Plana enllaçada"
-
 #: module/page/extensions/titles.py:13
 msgid "content title"
 msgstr "títol del contingut"
@@ -693,18 +759,6 @@ msgstr "Títol de la plana pel navegador. Per defecte el mateix que el títol."
 #: module/page/extensions/titles.py:43
 msgid "Titles"
 msgstr "Títols"
-
-#: module/page/extensions/translations.py:171
-msgid "Edit translation"
-msgstr "Editar la traducció"
-
-#: module/page/extensions/translations.py:174
-msgid "Create translation"
-msgstr "Crear traducció"
-
-#: module/page/extensions/translations.py:179
-msgid "translations"
-msgstr "traduccions"
 
 #: templates/admin/filter.html:3
 #, python-format
@@ -745,10 +799,10 @@ msgid "Really change template? <br />All changes are saved."
 msgstr "Vols canviar la plantilla?<br /> Tots els canvis es guardaran."
 
 #: templates/admin/feincms/_messages_js.html:9
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
-"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+"%%(source_regions)s</strong> is moved to <strong>%%(target_region)s</strong>."
 msgstr ""
 "Vols canviar la plantilla? <br/>Tots els canvis es guardaran i el contingut "
 "des de <strong>%(source_regions)s</strong> se mourà a <strong>"
@@ -790,42 +844,51 @@ msgstr ""
 msgid "Add new item"
 msgstr "Afegir un nou element"
 
-#: templates/admin/feincms/fe_editor.html:46
+#: templates/admin/feincms/content_inline.html:91
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr ""
+
+#: templates/admin/feincms/content_inline.html:94
+msgid "Remove"
+msgstr ""
+
+#: templates/admin/feincms/fe_editor.html:40
 msgid "Save"
 msgstr "Guardar"
 
-#: templates/admin/feincms/fe_tools.html:27
+#: templates/admin/feincms/fe_tools.html:28
 msgid "Stop Editing"
 msgstr "Acabar l'edició"
 
-#: templates/admin/feincms/fe_tools.html:32
+#: templates/admin/feincms/fe_tools.html:33
 msgid "edit"
 msgstr "editar"
 
-#: templates/admin/feincms/fe_tools.html:34
+#: templates/admin/feincms/fe_tools.html:35
 msgid "new"
 msgstr "nou"
 
-#: templates/admin/feincms/fe_tools.html:35
+#: templates/admin/feincms/fe_tools.html:36
 msgid "up"
 msgstr "amunt"
 
-#: templates/admin/feincms/fe_tools.html:36
+#: templates/admin/feincms/fe_tools.html:37
 msgid "down"
 msgstr "avall"
 
-#: templates/admin/feincms/fe_tools.html:37
+#: templates/admin/feincms/fe_tools.html:38
 msgid "remove"
 msgstr "esborrar"
 
-#: templates/admin/feincms/recover_form.html:7
-#: templates/admin/feincms/revision_form.html:10
-#: templates/admin/feincms/page/page/item_editor.html:16
+#: templates/admin/feincms/recover_form.html:8
+#: templates/admin/feincms/revision_form.html:8
+#: templates/admin/feincms/page/page/item_editor.html:23
 #: templates/admin/feincms/page/page/tree_editor.html:7
 msgid "Home"
 msgstr "Inici"
 
-#: templates/admin/feincms/recover_form.html:10
+#: templates/admin/feincms/recover_form.html:11
 #, python-format
 msgid "Recover deleted %(verbose_name)s"
 msgstr ""
@@ -834,48 +897,47 @@ msgstr ""
 msgid "Press the save button below to recover this version of the object."
 msgstr ""
 
-#: templates/admin/feincms/revision_form.html:14
+#: templates/admin/feincms/revision_form.html:12
 msgid "History"
 msgstr ""
 
-#: templates/admin/feincms/revision_form.html:15
+#: templates/admin/feincms/revision_form.html:13
 #, python-format
 msgid "Revert %(verbose_name)s"
 msgstr ""
 
-#: templates/admin/feincms/revision_form.html:28
+#: templates/admin/feincms/revision_form.html:24
 msgid "Press the save button below to revert to this version of the object."
 msgstr ""
 
-#: templates/admin/feincms/tree_editor.html:37
+#: templates/admin/feincms/tree_editor.html:32
 msgid "Shortcuts"
 msgstr "Dreceres"
 
-#: templates/admin/feincms/tree_editor.html:39
+#: templates/admin/feincms/tree_editor.html:34
 msgid "Collapse tree"
 msgstr "Tancar l'arbre"
 
-#: templates/admin/feincms/tree_editor.html:40
+#: templates/admin/feincms/tree_editor.html:35
 msgid "Expand tree"
 msgstr "Expandir l'arbre"
 
-#: templates/admin/feincms/tree_editor.html:43
+#: templates/admin/feincms/tree_editor.html:38
 msgid "Filter"
 msgstr "Filtrar"
 
-#: templates/admin/feincms/page/page/item_editor.html:9
+#: templates/admin/feincms/page/page/item_editor.html:10
 msgid "Edit on site"
 msgstr "Editar al Lloc"
 
-#: templates/admin/feincms/page/page/item_editor.html:20
+#: templates/admin/feincms/page/page/item_editor.html:27
 msgid "Add"
 msgstr ""
 
 #: templates/admin/medialibrary/add_to_category.html:5
 #: templates/admin/medialibrary/add_to_category.html:9
-#, fuzzy
 msgid "Add media files to category"
-msgstr "traducció de l'arxiu de medis"
+msgstr ""
 
 #: templates/admin/medialibrary/add_to_category.html:11
 msgid "Select category to apply:"
@@ -886,19 +948,22 @@ msgid "The following media files will be added to the selected category:"
 msgstr ""
 
 #: templates/admin/medialibrary/add_to_category.html:22
-#, fuzzy
 msgid "Add to category"
-msgstr "categoria"
+msgstr ""
 
 #: templates/admin/medialibrary/add_to_category.html:23
 msgid "Cancel"
 msgstr ""
 
-#: templates/admin/medialibrary/mediafile/change_list.html:12
+#: templates/admin/medialibrary/mediafile/change_list.html:11
 msgid "Bulk upload a ZIP file:"
 msgstr "Puja un arxiu ZIP:"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:21
+msgid "Overwrite"
+msgstr ""
+
+#: templates/admin/medialibrary/mediafile/change_list.html:24
 msgid "Send"
 msgstr "Enviar"
 
@@ -935,116 +1000,5 @@ msgstr "Enviar"
 msgid "Thanks!"
 msgstr "Gràcies!"
 
-#~ msgid "rich text (ckeditor)"
-#~ msgstr "text rico (ckeditor)"
-
-#~ msgid "rich texts (ckeditor)"
-#~ msgstr "texts rics (ckeditor)"
-
-#~ msgid "You may edit the copied page below."
-#~ msgstr "Pots editar la plana copiada just aquí abaix."
-
-#~ msgid ""
-#~ "You have replaced %s. You may continue editing the now-active page below."
-#~ msgstr ""
-#~ "Has reemplaçat %s. Pots continuar editant la ara plana activa aquí sota."
-
-#~ msgid "Move to"
-#~ msgstr "Moure a"
-
-#~ msgid "Move"
-#~ msgstr "Moure"
-
-#~ msgid "Replace page %(to_replace)s"
-#~ msgstr "Reemplaçar la plana %(to_replace)s"
-
-#~ msgid "Create hidden copy of this page"
-#~ msgstr "Crea una còpia oculta d'aquesta plana"
-
-#~ msgid "The %(name)s \"%(obj)s\" was changed successfully."
-#~ msgstr "%(name)s \"%(obj)s\" fue modificado con éxito."
-
-#~ msgid "You may edit it again below."
-#~ msgstr "Puedes volver a editar el elemento."
-
-#~ msgid "You may add another %s below."
-#~ msgstr "Puedes añadir un nuevo %s aquí debajo."
-
-#~ msgid "Insert as child"
-#~ msgstr "Incluir como descendente"
-
-#~ msgid "Insert before"
-#~ msgstr "Incluir antes"
-
-#~ msgid "is visible"
-#~ msgstr "es visible"
-
-#~ msgid "Video from unknown portal"
-#~ msgstr "Vídeo de un portal desconocido"
-
-#~ msgid "Tree saved successfully."
-#~ msgstr "Árbol guardado con éxito."
-
-#~ msgid "Cannot make a node a child of itself."
-#~ msgstr "No se puede ser dependiente de si mismo."
-
-#~ msgid "Delete"
-#~ msgstr "Borrar"
-
-#~ msgid "Save and add another"
-#~ msgstr "Guardar y añadir otro"
-
-#~ msgid "Save and continue editing"
-#~ msgstr "Guardar y continuar a editar"
-
-#~ msgid "Properties"
-#~ msgstr "Propiedades"
-
-#~ msgid "Move selected item to"
-#~ msgstr "Mover elemento seleccionado para"
-
-#~ msgid "OK"
-#~ msgstr "Vale"
-
-#~ msgid "Add %(name)s"
-#~ msgstr "Añadir %(name)s"
-
-#~ msgid "Edit"
-#~ msgstr "editar"
-
-#~ msgid "Database error"
-#~ msgstr "Error de base de dados"
-
-#~ msgid "view content"
-#~ msgstr "mostrar contenido"
-
-#~ msgid ""
-#~ "Could not parse the view content because the view is excluded from "
-#~ "infanta handling."
-#~ msgstr ""
-#~ "No fue posible leer el contenido de la vista, porque esta está excluida "
-#~ "del tratamiento de infanta."
-
-#~ msgid "Placeholder for the %(viewname)s calling %(viewfunc)s"
-#~ msgstr "Substituto para %(viewname)s, que llama %(viewfunc)s"
-
-#~ msgid "Placeholder for calling %(viewfunc)s"
-#~ msgstr "Substituto para llamar %(viewfunc)s"
-
-#~ msgid "not active"
-#~ msgstr "inactivo"
-
-#~ msgid "Save tree"
-#~ msgstr "Guardar árbol"
-
-#~ msgid "%(icon)s (not active)"
-#~ msgstr "%(icon)s (inactivo)"
-
-#~ msgid "%(icon)s (until %(from)s)"
-#~ msgstr "%(icon)s (hasta %(from)s)"
-
-#~ msgid "%(icon)s (since %(to)s)"
-#~ msgstr "%(icon)s (a partir de %(to)s)"
-
-#~ msgid "%(icon)s (%(from)s &ndash; %(to)s)"
-#~ msgstr "%(icon)s (%(from)s &ndash; %(to)s)"
+#~ msgid "Symlinked page"
+#~ msgstr "Plana enllaçada"

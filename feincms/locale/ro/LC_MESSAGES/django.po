@@ -1,109 +1,115 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# GABRIEL KOVACS <kovacs.gabi@gmail.com>, 2010.
 #
+# Translators:
+# GABRIEL KOVACS <kovacs.gabi@gmail.com>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: FienCMS\n"
+"Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-05 06:19-0500\n"
-"PO-Revision-Date: 2009-07-16 17:21+0100\n"
-"Last-Translator: Gabriel Kovacs <kovacs.gabi@gmail.com>\n"
-"Language-Team: ro <kovacs.gabi@gmail.com>\n"
-"Language: \n"
+"POT-Creation-Date: 2012-08-16 18:17+0200\n"
+"PO-Revision-Date: 2012-06-15 08:25+0000\n"
+"Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
+"Language-Team: Romanian (http://www.transifex.com/projects/p/feincms/"
+"language/ro/)\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Language: Romanian\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-Country: ROMANIA\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
+"2:1))\n"
 
-#: models.py:421 content/template/models.py:39 content/template/models.py:57
+#: models.py:420 content/template/models.py:59
 msgid "template"
 msgstr "șablon"
 
-#: models.py:553
+#: models.py:551
 msgid "ordering"
 msgstr "ordonare"
 
-#: translations.py:171 module/blog/extensions/translations.py:17
-#: module/page/extensions/translations.py:102
+#: translations.py:259 module/blog/extensions/translations.py:17
+#: module/extensions/translations.py:119
 msgid "language"
 msgstr "limbă"
 
-#: admin/filterspecs.py:46 admin/filterspecs.py:84
+#: admin/filterspecs.py:35 admin/filterspecs.py:70
 msgid "All"
 msgstr ""
 
-#: admin/filterspecs.py:57 module/page/models.py:261
-#, fuzzy
+#: admin/filterspecs.py:46 module/page/models.py:143
 msgid "Parent"
-msgstr "părinte"
+msgstr ""
 
-#: admin/filterspecs.py:95
-#, fuzzy
+#: admin/filterspecs.py:81
+#: templates/admin/medialibrary/mediafile/change_list.html:14
 msgid "Category"
-msgstr "categorie"
+msgstr ""
 
-#: admin/item_editor.py:150
+#: admin/item_editor.py:157
 #, python-format
 msgid "Change %s"
 msgstr "Modifică %s"
 
-#: admin/tree_editor.py:218 content/rss/models.py:20
-#: content/section/models.py:32 module/blog/models.py:32
-#: module/medialibrary/models.py:48 module/page/models.py:259
-#: module/page/models.py:338
+#: admin/tree_editor.py:229 content/rss/models.py:20
+#: content/section/models.py:34 module/blog/models.py:29
+#: module/medialibrary/models.py:40 module/page/models.py:141
+#: module/page/models.py:199
 msgid "title"
 msgstr "titlu"
 
-#: admin/tree_editor.py:396
+#: admin/tree_editor.py:404
 #, python-format
 msgid "%s has been moved to a new position."
 msgstr ""
 
-#: admin/tree_editor.py:400
+#: admin/tree_editor.py:408
 msgid "Did not understand moving instruction."
 msgstr ""
 
-#: admin/tree_editor.py:409
+#: admin/tree_editor.py:417
 msgid "actions"
 msgstr "acțiuni"
 
-#: content/application/models.py:241
+#: admin/tree_editor.py:429
+#, fuzzy, python-format
+msgid "Successfully deleted %s items."
+msgstr "Confirmți ștergerea obiectului?"
+
+#: admin/tree_editor.py:437
+#, python-format
+msgid "Delete selected %(verbose_name_plural)s"
+msgstr ""
+
+#: content/application/models.py:272
 msgid "application content"
 msgstr "conținutul aplicației"
 
-#: content/application/models.py:242
+#: content/application/models.py:273
 msgid "application contents"
 msgstr "conținuturile aplicației"
 
-#: content/application/models.py:273
+#: content/application/models.py:298
 msgid "application"
 msgstr "aplicație"
 
-#: content/comments/models.py:28
-#, fuzzy
+#: content/comments/models.py:24
 msgid "enabled"
-msgstr "tabel"
+msgstr ""
 
-#: content/comments/models.py:28
+#: content/comments/models.py:24
 msgid "New comments may be added"
 msgstr ""
 
-#: content/comments/models.py:32 content/comments/models.py:33
-#, fuzzy
+#: content/comments/models.py:28 content/comments/models.py:29
 msgid "comments"
-msgstr "conținut"
+msgstr ""
 
-#: content/comments/models.py:48
-#, fuzzy
+#: content/comments/models.py:49
 msgid "public"
-msgstr "publicat"
+msgstr ""
 
-#: content/comments/models.py:48
+#: content/comments/models.py:49
 msgid "not public"
 msgstr ""
 
@@ -131,58 +137,74 @@ msgstr "formular de contact"
 msgid "contact forms"
 msgstr "formulare de contact"
 
-#: content/file/models.py:16 content/file/models.py:20
-#: module/medialibrary/models.py:90
+#: content/file/models.py:20 content/file/models.py:25
+#: module/medialibrary/models.py:84
 msgid "file"
 msgstr "fișier"
 
-#: content/file/models.py:21
+#: content/file/models.py:26
 msgid "files"
 msgstr "fișiere"
 
-#: content/image/models.py:24 content/image/models.py:28
+#: content/image/models.py:43 content/image/models.py:52
 msgid "image"
 msgstr "imagine"
 
-#: content/image/models.py:29
+#: content/image/models.py:46
+msgid "alternate text"
+msgstr ""
+
+#: content/image/models.py:47
+msgid "Description of image"
+msgstr ""
+
+#: content/image/models.py:48 module/medialibrary/models.py:235
+msgid "caption"
+msgstr "legendă"
+
+#: content/image/models.py:53
 msgid "images"
 msgstr "imagini"
 
-#: content/image/models.py:42 content/medialibrary/models.py:105
-#: content/medialibrary/models.py:113
+#: content/image/models.py:79 content/medialibrary/models.py:115
+#: content/medialibrary/models.py:123
 msgid "position"
 msgstr "poziție"
 
-#: content/medialibrary/models.py:38
+#: content/image/models.py:87
+msgid "format"
+msgstr ""
+
+#: content/medialibrary/models.py:48
 msgid "(no caption)"
 msgstr "(fără legendă)"
 
-#: content/medialibrary/models.py:87 content/medialibrary/models.py:101
-#: content/medialibrary/models.py:111 content/medialibrary/v2.py:44
-#: content/section/models.py:48 module/medialibrary/fields.py:45
-#: module/medialibrary/models.py:102
+#: content/medialibrary/models.py:97 content/medialibrary/models.py:111
+#: content/medialibrary/models.py:121 content/medialibrary/v2.py:48
+#: content/section/models.py:36 module/medialibrary/fields.py:58
+#: module/medialibrary/models.py:97
 msgid "media file"
 msgstr "fișier media"
 
-#: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
-#: module/medialibrary/models.py:103
+#: content/medialibrary/models.py:98 content/medialibrary/v2.py:49
+#: module/medialibrary/models.py:98
 msgid "media files"
 msgstr "fișiere media"
 
-#: content/medialibrary/models.py:131
+#: content/medialibrary/models.py:139
 msgid "block"
 msgstr "blochează"
 
-#: content/medialibrary/models.py:132
+#: content/medialibrary/models.py:140
 msgid "left"
 msgstr "stânga"
 
-#: content/medialibrary/models.py:133
+#: content/medialibrary/models.py:141
 msgid "right"
 msgstr "dreapta"
 
-#: content/medialibrary/v2.py:49 content/section/models.py:53
-#: content/section/models.py:61 content/table/models.py:81
+#: content/medialibrary/v2.py:53 content/section/models.py:52
+#: content/table/models.py:85
 msgid "type"
 msgstr "tip"
 
@@ -194,31 +216,30 @@ msgstr "conținut neformatat"
 msgid "raw contents"
 msgstr "conținuturi neformatate"
 
-#: content/richtext/models.py:15 content/richtext/models.py:85
-#: content/section/models.py:33
-msgid "text"
-msgstr "text"
-
-#: content/richtext/models.py:26
+#: content/richtext/models.py:22
 msgid "HTML Tidy"
 msgstr ""
 
-#: content/richtext/models.py:27
+#: content/richtext/models.py:23
 msgid "Ignore the HTML validation warnings"
 msgstr ""
 
-#: content/richtext/models.py:51
+#: content/richtext/models.py:47
 #, python-format
 msgid ""
 "HTML validation produced %(count)d warnings. Please review the updated "
 "content below before continuing: %(messages)s"
 msgstr ""
 
-#: content/richtext/models.py:89
+#: content/richtext/models.py:81 content/section/models.py:35
+msgid "text"
+msgstr "text"
+
+#: content/richtext/models.py:85
 msgid "rich text"
 msgstr "text formatabil"
 
-#: content/richtext/models.py:90
+#: content/richtext/models.py:86
 msgid "rich texts"
 msgstr "texte formatabile"
 
@@ -254,55 +275,51 @@ msgstr "flux RSS"
 msgid "RSS feeds"
 msgstr "fluxuri RSS"
 
-#: content/section/models.py:37
-#, fuzzy
+#: content/section/models.py:41
 msgid "section"
-msgstr "acțiuni"
+msgstr ""
 
-#: content/section/models.py:38
-#, fuzzy
+#: content/section/models.py:42
 msgid "sections"
-msgstr "acțiuni"
+msgstr ""
 
-#: content/table/models.py:62
+#: content/table/models.py:66
 msgid "plain"
 msgstr "simplu"
 
-#: content/table/models.py:63
+#: content/table/models.py:67
 msgid "title row"
 msgstr "titlu"
 
-#: content/table/models.py:65
+#: content/table/models.py:69
 msgid "title row and column"
 msgstr "titlu rând și coloană"
 
-#: content/table/models.py:71
+#: content/table/models.py:75
 msgid "table"
 msgstr "tabel"
 
-#: content/table/models.py:72
+#: content/table/models.py:76
 msgid "tables"
 msgstr "tabele"
 
-#: content/table/models.py:86
+#: content/table/models.py:90
 msgid "data"
 msgstr "data"
 
-#: content/template/models.py:62
-#, fuzzy
+#: content/template/models.py:51
 msgid "template content"
-msgstr "conținutul aplicației"
+msgstr ""
 
-#: content/template/models.py:63
-#, fuzzy
+#: content/template/models.py:52
 msgid "template contents"
-msgstr "conținuturile aplicației"
+msgstr ""
 
-#: content/video/models.py:23
+#: content/video/models.py:25
 msgid "video link"
 msgstr "legătură film"
 
-#: content/video/models.py:24
+#: content/video/models.py:26
 msgid ""
 "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
 "com/watch?v=zmj1rpzDRZ0"
@@ -310,37 +327,41 @@ msgstr ""
 "Aceasta ar trebui să fie o legătură către un film de pe youtube sau vimeo, "
 "de ex.: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
 
-#: content/video/models.py:28
+#: content/video/models.py:30
 msgid "video"
 msgstr "film"
 
-#: content/video/models.py:29
+#: content/video/models.py:31
 msgid "videos"
 msgstr "filme"
 
-#: module/blog/models.py:31
+#: contrib/tagging.py:117
+msgid "Tagging"
+msgstr ""
+
+#: module/blog/models.py:28
 msgid "published"
 msgstr "publicat"
 
-#: module/blog/models.py:33
+#: module/blog/models.py:30
 msgid "This is used for the generated navigation too."
 msgstr "Aceasta este deasemenea folosită pentru navigarea generată."
 
-#: module/blog/models.py:36
+#: module/blog/models.py:33
 msgid "published on"
 msgstr "publicat la"
 
-#: module/blog/models.py:37
+#: module/blog/models.py:34
 msgid "Will be set automatically once you tick the `published` checkbox above."
 msgstr ""
 "Va fi trimis automat în momentul in care bifați butonul `publicat` de mai "
 "sus."
 
-#: module/blog/models.py:42
+#: module/blog/models.py:39
 msgid "entry"
 msgstr "înregistrare"
 
-#: module/blog/models.py:43
+#: module/blog/models.py:40
 msgid "entries"
 msgstr "înregistrari"
 
@@ -349,43 +370,59 @@ msgid "tags"
 msgstr "etichete"
 
 #: module/blog/extensions/translations.py:20
-#: module/page/extensions/translations.py:105
+#: module/extensions/translations.py:122
 msgid "translation of"
 msgstr "tradus de"
 
 #: module/blog/extensions/translations.py:23
-#: module/page/extensions/translations.py:108
-#, fuzzy
+#: module/extensions/translations.py:125
 msgid "Leave this empty for entries in the primary language."
-msgstr "Lăsați gol pentru inregistrări in limba primară (%s)."
+msgstr ""
 
 #: module/blog/extensions/translations.py:44
-#: templates/admin/feincms/item_editor.html:45
+#: templates/admin/feincms/item_editor.html:43
 msgid "available translations"
 msgstr "traduceri disponibile"
 
-#: module/extensions/changedate.py:38
+#: module/extensions/changedate.py:32
 msgid "creation date"
 msgstr "data creerii"
 
-#: module/extensions/changedate.py:39
+#: module/extensions/changedate.py:33
 msgid "modification date"
 msgstr "data modificării"
 
-#: module/extensions/ct_tracker.py:134
-#, fuzzy
+#: module/extensions/ct_tracker.py:136
 msgid "content types"
-msgstr "titlu conținut"
+msgstr ""
+
+#: module/extensions/datepublisher.py:49
+msgid "publication date"
+msgstr "data publicării"
+
+#: module/extensions/datepublisher.py:51
+msgid "publication end date"
+msgstr "sfârșitul publicării"
+
+#: module/extensions/datepublisher.py:53
+msgid "Leave empty if the entry should stay active forever."
+msgstr "Lasă gol dacă înregistrarea ar trebui să fie activă întotdeauna"
+
+#: module/extensions/datepublisher.py:80
+msgid "visible from - to"
+msgstr "vizibil de la - până la"
+
+#: module/extensions/datepublisher.py:90
+msgid "Date-based publishing"
+msgstr ""
 
 #: module/extensions/featured.py:9
-#, fuzzy
 msgid "featured"
-msgstr "creat"
+msgstr ""
 
 #: module/extensions/featured.py:14
-#, fuzzy
 msgid "Featured"
-msgstr "creat"
+msgstr ""
 
 #: module/extensions/seo.py:9
 msgid "meta keywords"
@@ -407,152 +444,226 @@ msgstr "Va fi inserată la descrierea predefinită."
 msgid "Search engine optimization"
 msgstr ""
 
-#: module/medialibrary/models.py:51
-msgid "parent"
-msgstr "părinte"
+#: module/extensions/translations.py:192
+msgid "Edit translation"
+msgstr "Modifică translatarea"
 
-#: module/medialibrary/models.py:53 module/page/models.py:260
-msgid "slug"
-msgstr "slug"
+#: module/extensions/translations.py:195
+msgid "Create translation"
+msgstr "Creează o translatare"
 
-#: module/medialibrary/models.py:57
-msgid "category"
-msgstr "categorie"
+#: module/extensions/translations.py:200
+msgid "translations"
+msgstr "translații"
 
-#: module/medialibrary/models.py:58 module/medialibrary/models.py:96
-msgid "categories"
-msgstr "categorii"
-
-#: module/medialibrary/models.py:91 module/medialibrary/models.py:182
-msgid "file type"
-msgstr "tipul fișierului"
-
-#: module/medialibrary/models.py:92 module/medialibrary/models.py:117
-msgid "created"
-msgstr "creat"
-
-#: module/medialibrary/models.py:93
-msgid "copyright"
-msgstr "copyright"
-
-#: module/medialibrary/models.py:94 module/medialibrary/models.py:112
-#, fuzzy
-msgid "file size"
-msgstr "fișiere"
-
-#: module/medialibrary/models.py:203
-#, fuzzy
-msgid "file info"
-msgstr "fișier"
-
-#: module/medialibrary/models.py:280
-msgid "Image"
-msgstr "Imagine"
-
-#: module/medialibrary/models.py:281
-#, fuzzy
-msgid "Video"
-msgstr "film"
-
-#: module/medialibrary/models.py:282
-msgid "Audio"
+#: module/medialibrary/forms.py:26
+msgid "This would create a loop in the hierarchy"
 msgstr ""
 
-#: module/medialibrary/models.py:283
-msgid "PDF document"
-msgstr "document PDF"
-
-#: module/medialibrary/models.py:284
-msgid "Flash"
-msgstr "Flash"
-
-#: module/medialibrary/models.py:285
-msgid "Text"
-msgstr "Text"
-
-#: module/medialibrary/models.py:286
-#, fuzzy
-msgid "Rich Text"
-msgstr "text formatabil"
-
-#: module/medialibrary/models.py:287
-msgid "Zip archive"
+#: module/medialibrary/forms.py:64
+#, python-format
+msgid ""
+"Cannot overwrite with different file type (attempt to overwrite a "
+"%(old_ext)s with a %(new_ext)s)"
 msgstr ""
 
-#: module/medialibrary/models.py:288
-msgid "Microsoft Word"
-msgstr ""
-
-#: module/medialibrary/models.py:289
-msgid "Microsoft Excel"
-msgstr ""
-
-#: module/medialibrary/models.py:290
-msgid "Microsoft PowerPoint"
-msgstr ""
-
-#: module/medialibrary/models.py:291
-msgid "Binary"
-msgstr "Binar"
-
-#: module/medialibrary/models.py:307
-msgid "caption"
-msgstr "legendă"
-
-#: module/medialibrary/models.py:308
-msgid "description"
-msgstr "descriere"
-
-#: module/medialibrary/models.py:311
-msgid "media file translation"
-msgstr "traducere fișier media"
-
-#: module/medialibrary/models.py:312
-msgid "media file translations"
-msgstr "traduceri fișier media"
-
-#: module/medialibrary/models.py:335
-msgid "Preview"
-msgstr "Pre-vizualizare"
-
-#: module/medialibrary/models.py:355
+#: module/medialibrary/modeladmins.py:57
 #, python-format
 msgid "Successfully added %(count)d media file to %(category)s."
 msgid_plural "Successfully added %(count)d media files to %(category)s."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
-#: module/medialibrary/models.py:373
+#: module/medialibrary/modeladmins.py:75
 msgid "Add selected media files to category"
 msgstr ""
 
-#: module/medialibrary/models.py:440
+#: module/medialibrary/modeladmins.py:84
+#, python-format
+msgid "ZIP file exported as %s"
+msgstr ""
+
+#: module/medialibrary/modeladmins.py:86
+#, python-format
+msgid "ZIP file export failed: %s"
+msgstr ""
+
+#: module/medialibrary/modeladmins.py:91
+msgid "Export selected media files as zip file"
+msgstr ""
+
+#: module/medialibrary/modeladmins.py:134
+#: templates/admin/feincms/page/page/item_editor.html:15
+msgid "Preview"
+msgstr "Pre-vizualizare"
+
+#: module/medialibrary/modeladmins.py:139 module/medialibrary/models.py:88
+msgid "file size"
+msgstr ""
+
+#: module/medialibrary/modeladmins.py:144 module/medialibrary/models.py:86
+msgid "created"
+msgstr "creat"
+
+#: module/medialibrary/modeladmins.py:163 module/medialibrary/models.py:85
+msgid "file type"
+msgstr "tipul fișierului"
+
+#: module/medialibrary/modeladmins.py:184
+msgid "file info"
+msgstr ""
+
+#: module/medialibrary/modeladmins.py:196
 #, python-format
 msgid "%d files imported"
 msgstr ""
 
-#: module/medialibrary/models.py:442
+#: module/medialibrary/modeladmins.py:198
 #, python-format
-msgid "ZIP file invalid: %s"
+msgid "ZIP import failed: %s"
 msgstr ""
 
-#: module/medialibrary/models.py:448
+#: module/medialibrary/modeladmins.py:200
 msgid "No input file given"
 msgstr ""
 
-#: module/page/models.py:256
-msgid "active"
-msgstr "activ"
+#: module/medialibrary/models.py:43
+msgid "parent"
+msgstr "părinte"
 
-#: module/page/models.py:263 module/page/models.py:711
+#: module/medialibrary/models.py:45 module/page/models.py:142
+msgid "slug"
+msgstr "slug"
+
+#: module/medialibrary/models.py:49
+msgid "category"
+msgstr "categorie"
+
+#: module/medialibrary/models.py:50 module/medialibrary/models.py:90
+msgid "categories"
+msgstr "categorii"
+
+#: module/medialibrary/models.py:87
+msgid "copyright"
+msgstr "copyright"
+
+#: module/medialibrary/models.py:202
+msgid "Image"
+msgstr "Imagine"
+
+#: module/medialibrary/models.py:203
+msgid "Video"
+msgstr ""
+
+#: module/medialibrary/models.py:204
+msgid "Audio"
+msgstr ""
+
+#: module/medialibrary/models.py:205
+msgid "PDF document"
+msgstr "document PDF"
+
+#: module/medialibrary/models.py:206
+msgid "Flash"
+msgstr "Flash"
+
+#: module/medialibrary/models.py:207
+msgid "Text"
+msgstr "Text"
+
+#: module/medialibrary/models.py:208
+msgid "Rich Text"
+msgstr ""
+
+#: module/medialibrary/models.py:209
+msgid "Zip archive"
+msgstr ""
+
+#: module/medialibrary/models.py:210
+msgid "Microsoft Word"
+msgstr ""
+
+#: module/medialibrary/models.py:211
+msgid "Microsoft Excel"
+msgstr ""
+
+#: module/medialibrary/models.py:212
+msgid "Microsoft PowerPoint"
+msgstr ""
+
+#: module/medialibrary/models.py:213
+msgid "Binary"
+msgstr "Binar"
+
+#: module/medialibrary/models.py:236
+msgid "description"
+msgstr "descriere"
+
+#: module/medialibrary/models.py:239
+msgid "media file translation"
+msgstr "traducere fișier media"
+
+#: module/medialibrary/models.py:240
+msgid "media file translations"
+msgstr "traduceri fișier media"
+
+#: module/page/forms.py:118
+msgid "This URL is already taken by an active page."
+msgstr "Acest URL este deja rezervat de către o pagină activă."
+
+#: module/page/forms.py:136
+msgid "This URL is already taken by another active page."
+msgstr "Acest URL este deja rezervat de către o altă pagină activă."
+
+#: module/page/modeladmins.py:41
+msgid "Other options"
+msgstr "Alte opțiuni"
+
+#: module/page/modeladmins.py:89 module/page/models.py:145
 msgid "in navigation"
 msgstr "în navigare"
 
-#: module/page/models.py:264
+#: module/page/modeladmins.py:100
+msgid "Add child page"
+msgstr "Adaugă o pagină copil"
+
+#: module/page/modeladmins.py:102
+#: templates/admin/feincms/content_inline.html:9
+msgid "View on site"
+msgstr "Vezi pe site"
+
+#: module/page/modeladmins.py:130
+msgid ""
+"The content from the original translation has been copied to the newly "
+"created page."
+msgstr ""
+
+#: module/page/modeladmins.py:144
+msgid "You don't have the necessary permissions to edit this object"
+msgstr ""
+
+#: module/page/modeladmins.py:159
+msgid "inherited"
+msgstr "moștenit"
+
+#: module/page/modeladmins.py:163
+msgid "extensions"
+msgstr "extensii"
+
+#: module/page/modeladmins.py:167 module/page/models.py:179
+msgid "is active"
+msgstr ""
+
+#: module/page/models.py:138
+msgid "active"
+msgstr "activ"
+
+#: module/page/models.py:146
 msgid "override URL"
 msgstr "suprascrie URL"
 
-#: module/page/models.py:265
+#: module/page/models.py:147
 msgid ""
 "Override the target URL. Be sure to include slashes at the beginning and at "
 "the end if it is a local URL. This affects both the navigation and subpages' "
@@ -561,82 +672,25 @@ msgstr ""
 "Suprascrie URL-ul țintă. Aveți grijă să scrieti / la început și la șfârșit "
 "dacă este un URL local.Aceasta afectează atât navigația cât și subpaginile."
 
-#: module/page/models.py:266
+#: module/page/models.py:148
 msgid "redirect to"
 msgstr "redirecționare către"
 
-#: module/page/models.py:267
+#: module/page/models.py:149
 msgid "Target URL for automatic redirects."
 msgstr "URL-ul țintă pentru redirectări automate."
 
-#: module/page/models.py:268
+#: module/page/models.py:150
 msgid "Cached URL"
 msgstr "URL în cache"
 
-#: module/page/models.py:279
+#: module/page/models.py:161
 msgid "page"
 msgstr "pagină"
 
-#: module/page/models.py:280
+#: module/page/models.py:162
 msgid "pages"
 msgstr "pagini"
-
-#: module/page/models.py:297 module/page/models.py:782
-#, fuzzy
-msgid "is active"
-msgstr "activ"
-
-#: module/page/models.py:631
-msgid "This URL is already taken by an active page."
-msgstr "Acest URL este deja rezervat de către o pagină activă."
-
-#: module/page/models.py:649
-msgid "This URL is already taken by another active page."
-msgstr "Acest URL este deja rezervat de către o altă pagină activă."
-
-#: module/page/models.py:674
-msgid "Other options"
-msgstr "Alte opțiuni"
-
-#: module/page/models.py:721
-msgid "Add child page"
-msgstr "Adaugă o pagină copil"
-
-#: module/page/models.py:723
-msgid "View on site"
-msgstr "Vezi pe site"
-
-#: module/page/models.py:759
-msgid "You don't have the necessary permissions to edit this object"
-msgstr ""
-
-#: module/page/models.py:774
-msgid "inherited"
-msgstr "moștenit"
-
-#: module/page/models.py:778
-msgid "extensions"
-msgstr "extensii"
-
-#: module/page/extensions/datepublisher.py:48
-msgid "publication date"
-msgstr "data publicării"
-
-#: module/page/extensions/datepublisher.py:50
-msgid "publication end date"
-msgstr "sfârșitul publicării"
-
-#: module/page/extensions/datepublisher.py:52
-msgid "Leave empty if the entry should stay active forever."
-msgstr "Lasă gol dacă înregistrarea ar trebui să fie activă întotdeauna"
-
-#: module/page/extensions/datepublisher.py:78
-msgid "visible from - to"
-msgstr "vizibil de la - până la"
-
-#: module/page/extensions/datepublisher.py:88
-msgid "Date-based publishing"
-msgstr ""
 
 #: module/page/extensions/excerpt.py:9
 msgid "excerpt"
@@ -650,12 +704,12 @@ msgstr ""
 msgid "Excerpt"
 msgstr ""
 
-#: module/page/extensions/navigation.py:77
-#: module/page/extensions/navigation.py:97
+#: module/page/extensions/navigation.py:80
+#: module/page/extensions/navigation.py:100
 msgid "navigation extension"
 msgstr "navigare extinsă"
 
-#: module/page/extensions/navigation.py:99
+#: module/page/extensions/navigation.py:102
 msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
@@ -663,10 +717,9 @@ msgstr ""
 "Selectați modulul care furnizează subpaginile pentru această pagină dacă "
 "doriți să personalizaţi."
 
-#: module/page/extensions/navigation.py:112
-#, fuzzy
+#: module/page/extensions/navigation.py:115
 msgid "Navigation extension"
-msgstr "navigare extinsă"
+msgstr ""
 
 #: module/page/extensions/relatedpages.py:13
 msgid "Select pages that should be listed as related content."
@@ -688,11 +741,6 @@ msgstr "legătură pagină"
 msgid "All content is inherited from this page if given."
 msgstr "Întreg conținutul este moștenit de la această pagină daca se dorește."
 
-#: module/page/extensions/symlinks.py:30
-#, fuzzy
-msgid "Symlinked page"
-msgstr "legătură pagină"
-
 #: module/page/extensions/titles.py:13
 msgid "content title"
 msgstr "titlu conținut"
@@ -712,21 +760,8 @@ msgstr ""
 "titlul paginii."
 
 #: module/page/extensions/titles.py:43
-#, fuzzy
 msgid "Titles"
-msgstr "titlu"
-
-#: module/page/extensions/translations.py:171
-msgid "Edit translation"
-msgstr "Modifică translatarea"
-
-#: module/page/extensions/translations.py:174
-msgid "Create translation"
-msgstr "Creează o translatare"
-
-#: module/page/extensions/translations.py:179
-msgid "translations"
-msgstr "translații"
+msgstr ""
 
 #: templates/admin/filter.html:3
 #, python-format
@@ -768,19 +803,18 @@ msgid "Really change template? <br />All changes are saved."
 msgstr "Doriți ștergerea șablonului? <br />Toate modificarile au fost salvate."
 
 #: templates/admin/feincms/_messages_js.html:9
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
-"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+"%%(source_regions)s</strong> is moved to <strong>%%(target_region)s</strong>."
 msgstr ""
 "Doriți ștergerea șablonului? <br />Toate schimbările au fost salvate și "
 "conținutul de la <strong>%(source_regions)s</strong> a fost mutat la <strong>"
 "%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
-#, fuzzy
 msgid "Hide"
-msgstr "film"
+msgstr ""
 
 #: templates/admin/feincms/_messages_js.html:13
 msgid "Show"
@@ -795,9 +829,8 @@ msgid "Before"
 msgstr ""
 
 #: templates/admin/feincms/_messages_js.html:16
-#, fuzzy
 msgid "Insert new:"
-msgstr "Inssereaza după"
+msgstr ""
 
 #: templates/admin/feincms/content_editor.html:11
 msgid "Region empty"
@@ -815,42 +848,51 @@ msgstr ""
 msgid "Add new item"
 msgstr "Adaugă un obiect nou"
 
-#: templates/admin/feincms/fe_editor.html:46
+#: templates/admin/feincms/content_inline.html:91
+#, python-format
+msgid "Add another %(verbose_name)s"
+msgstr ""
+
+#: templates/admin/feincms/content_inline.html:94
+msgid "Remove"
+msgstr ""
+
+#: templates/admin/feincms/fe_editor.html:40
 msgid "Save"
 msgstr "Salvează"
 
-#: templates/admin/feincms/fe_tools.html:27
+#: templates/admin/feincms/fe_tools.html:28
 msgid "Stop Editing"
 msgstr ""
 
-#: templates/admin/feincms/fe_tools.html:32
+#: templates/admin/feincms/fe_tools.html:33
 msgid "edit"
 msgstr "modifică"
 
-#: templates/admin/feincms/fe_tools.html:34
+#: templates/admin/feincms/fe_tools.html:35
 msgid "new"
 msgstr "nou"
 
-#: templates/admin/feincms/fe_tools.html:35
+#: templates/admin/feincms/fe_tools.html:36
 msgid "up"
 msgstr "sus"
 
-#: templates/admin/feincms/fe_tools.html:36
+#: templates/admin/feincms/fe_tools.html:37
 msgid "down"
 msgstr "jos"
 
-#: templates/admin/feincms/fe_tools.html:37
+#: templates/admin/feincms/fe_tools.html:38
 msgid "remove"
 msgstr "scoate"
 
-#: templates/admin/feincms/recover_form.html:7
-#: templates/admin/feincms/revision_form.html:10
-#: templates/admin/feincms/page/page/item_editor.html:16
+#: templates/admin/feincms/recover_form.html:8
+#: templates/admin/feincms/revision_form.html:8
+#: templates/admin/feincms/page/page/item_editor.html:23
 #: templates/admin/feincms/page/page/tree_editor.html:7
 msgid "Home"
 msgstr "Acasă"
 
-#: templates/admin/feincms/recover_form.html:10
+#: templates/admin/feincms/recover_form.html:11
 #, python-format
 msgid "Recover deleted %(verbose_name)s"
 msgstr ""
@@ -859,49 +901,47 @@ msgstr ""
 msgid "Press the save button below to recover this version of the object."
 msgstr ""
 
-#: templates/admin/feincms/revision_form.html:14
+#: templates/admin/feincms/revision_form.html:12
 msgid "History"
 msgstr ""
 
-#: templates/admin/feincms/revision_form.html:15
+#: templates/admin/feincms/revision_form.html:13
 #, python-format
 msgid "Revert %(verbose_name)s"
 msgstr ""
 
-#: templates/admin/feincms/revision_form.html:28
+#: templates/admin/feincms/revision_form.html:24
 msgid "Press the save button below to revert to this version of the object."
 msgstr ""
 
-#: templates/admin/feincms/tree_editor.html:37
+#: templates/admin/feincms/tree_editor.html:32
 msgid "Shortcuts"
 msgstr "Scurtături"
 
-#: templates/admin/feincms/tree_editor.html:39
+#: templates/admin/feincms/tree_editor.html:34
 msgid "Collapse tree"
 msgstr "Închide arborele"
 
-#: templates/admin/feincms/tree_editor.html:40
+#: templates/admin/feincms/tree_editor.html:35
 msgid "Expand tree"
 msgstr "Deschide arborele"
 
-#: templates/admin/feincms/tree_editor.html:43
+#: templates/admin/feincms/tree_editor.html:38
 msgid "Filter"
 msgstr "Filtrează"
 
-#: templates/admin/feincms/page/page/item_editor.html:9
-#, fuzzy
+#: templates/admin/feincms/page/page/item_editor.html:10
 msgid "Edit on site"
-msgstr "Vezi pe site"
+msgstr ""
 
-#: templates/admin/feincms/page/page/item_editor.html:20
+#: templates/admin/feincms/page/page/item_editor.html:27
 msgid "Add"
 msgstr ""
 
 #: templates/admin/medialibrary/add_to_category.html:5
 #: templates/admin/medialibrary/add_to_category.html:9
-#, fuzzy
 msgid "Add media files to category"
-msgstr "traducere fișier media"
+msgstr ""
 
 #: templates/admin/medialibrary/add_to_category.html:11
 msgid "Select category to apply:"
@@ -912,19 +952,22 @@ msgid "The following media files will be added to the selected category:"
 msgstr ""
 
 #: templates/admin/medialibrary/add_to_category.html:22
-#, fuzzy
 msgid "Add to category"
-msgstr "categorie"
+msgstr ""
 
 #: templates/admin/medialibrary/add_to_category.html:23
 msgid "Cancel"
 msgstr ""
 
-#: templates/admin/medialibrary/mediafile/change_list.html:12
+#: templates/admin/medialibrary/mediafile/change_list.html:11
 msgid "Bulk upload a ZIP file:"
 msgstr ""
 
 #: templates/admin/medialibrary/mediafile/change_list.html:21
+msgid "Overwrite"
+msgstr ""
+
+#: templates/admin/medialibrary/mediafile/change_list.html:24
 msgid "Send"
 msgstr ""
 
@@ -957,152 +1000,3 @@ msgstr "Trimite"
 #: templates/content/contactform/thanks.html:3
 msgid "Thanks!"
 msgstr "Mulțumesc!"
-
-#, fuzzy
-#~ msgid "rich text (ckeditor)"
-#~ msgstr "text formatabil"
-
-#, fuzzy
-#~ msgid "rich texts (ckeditor)"
-#~ msgstr "texte formatabile"
-
-#~ msgid "You may edit the copied page below."
-#~ msgstr "Puteți modifica pagina copiată mai jos."
-
-#~ msgid ""
-#~ "You have replaced %s. You may continue editing the now-active page below."
-#~ msgstr "Ai înlocuit %s. Poți continua să modifici actuala pagină activă."
-
-#, fuzzy
-#~ msgid "Move"
-#~ msgstr "scoate"
-
-#~ msgid "Replace page %(to_replace)s"
-#~ msgstr "Înlocuieste pagina %(to_replace)s"
-
-#~ msgid "Create hidden copy of this page"
-#~ msgstr "Creează o copie ascunsă a paginii"
-
-#~ msgid "The %(name)s \"%(obj)s\" was changed successfully."
-#~ msgstr "%(name)s \"%(obj)s\" a fost modificat cu succes."
-
-#~ msgid "You may edit it again below."
-#~ msgstr "Poți să-l modifici din nou."
-
-#~ msgid "You may add another %s below."
-#~ msgstr "Poți adăuga %s incă odata mai jos."
-
-#~ msgid "Cut"
-#~ msgstr "Taie"
-
-#~ msgid "Insert as child"
-#~ msgstr "Inserează ca și copil"
-
-#~ msgid "Insert before"
-#~ msgstr "Inserează inainte"
-
-#~ msgid "is visible"
-#~ msgstr "este vizibil"
-
-#~ msgid "Video from unknown portal"
-#~ msgstr "Film de pe un portal necunoscut"
-
-#~ msgid "Tree saved successfully."
-#~ msgstr "Arbore salvat cu succes."
-
-#~ msgid "Cannot make a node a child of itself."
-#~ msgstr "Un nod nu poate fi făcut un copil al său."
-
-#~ msgid "No item has been selected."
-#~ msgstr "Niciun obiect nu a fost selectat."
-
-#~ msgid "Delete"
-#~ msgstr "Șterge"
-
-#~ msgid "Save and add another"
-#~ msgstr "Salvează si adaugă alta"
-
-#~ msgid "Save and continue editing"
-#~ msgstr "Salvează și continuă să modifici"
-
-#~ msgid "Please correct the error below."
-#~ msgid_plural "Please correct the errors below."
-#~ msgstr[0] "Vă rugăm să corectați eroarea de mai jos"
-#~ msgstr[1] "Vă rugăm să corectați erorile de mai jos"
-
-#~ msgid "Properties"
-#~ msgstr "Proprietăți"
-
-#~ msgid "Move selected item to"
-#~ msgstr "Mută obiectul selectat la"
-
-#~ msgid "OK"
-#~ msgstr "OK"
-
-#~ msgid "Add %(name)s"
-#~ msgstr "Adaugă %(name)s"
-
-#~ msgid "Select an item on the left side if you want to edit it."
-#~ msgstr "Selectați un obiect din partea stângă dacă doriți să-l modificați"
-
-#~ msgid ""
-#~ "You can change the structure of the tree by drag-dropping elements. "
-#~ "Please note that changes will be saved immediately. "
-#~ msgstr ""
-#~ "Se poate schimba structura arborelui prin tragere și lăsare ( mutare ) a "
-#~ "unui element. Luați notă faptul că aceste schimbări for fi salvate imediat"
-
-#~ msgid ""
-#~ "The context menu on the tree root and tree nodes provide you with "
-#~ "additional modes of operation."
-#~ msgstr ""
-#~ "Meniul contextual al arborelui rădăcină și ale nodurilor pune la "
-#~ "dispoziție moduri de operare adiționale."
-
-#~ msgid "Cannot remove this frame while inside this admin section."
-#~ msgstr ""
-#~ "Acestă zonă nu se poate șterge atâta timp cât se află în această secțiune "
-#~ "a administrării."
-
-#~ msgid "Reload"
-#~ msgstr "Reîncarcă"
-
-#~ msgid "Edit"
-#~ msgstr "Modifică"
-
-#~ msgid "Database error"
-#~ msgstr "Eroare la baza de date"
-
-#~ msgid "view content"
-#~ msgstr "vizualizează conținutul"
-
-#~ msgid ""
-#~ "Could not parse the view content because the view is excluded from "
-#~ "infanta handling."
-#~ msgstr ""
-#~ "Nu s-a putut parcurge view-ul deoarec view-ul este exclus din  "
-#~ "manipularea infantei."
-
-#~ msgid "Placeholder for the %(viewname)s calling %(viewfunc)s"
-#~ msgstr "Cadru pentru %(viewname)s, care cheamă %(viewfunc)s"
-
-#~ msgid "Placeholder for calling %(viewfunc)s"
-#~ msgstr "Cadru pentru chemarea %(viewfunc)s"
-
-#~ msgid "not active"
-#~ msgstr "inactiv"
-
-#~ msgid "Save tree"
-#~ msgstr "Salvează arborele"
-
-#~ msgid "%(icon)s (not active)"
-#~ msgstr "%(icon)s (inactiv)"
-
-#~ msgid "%(icon)s (until %(from)s)"
-#~ msgstr "%(icon)s (până la %(from)s)"
-
-#~ msgid "%(icon)s (since %(to)s)"
-#~ msgstr "%(icon)s (de %(to)s)"
-
-#~ msgid "%(icon)s (%(from)s &ndash; %(to)s)"
-#~ msgstr "%(icon)s (%(de la)s &ndash; %(până la)s)"
