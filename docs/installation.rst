@@ -11,6 +11,7 @@ This document describes the steps needed to get FeinCMS up and running.
 
 FeinCMS is based on Django, so you need a working Django_ installation
 first. The minimum support version of Django_ is the 1.4 line of releases.
+Minimum Python version is 2.6.
 
 You can download a stable release of FeinCMS using ``pip``::
 
