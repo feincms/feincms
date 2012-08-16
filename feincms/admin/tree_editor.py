@@ -2,7 +2,10 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-import json
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json  # Python 2.5
 import logging
 
 from django.conf import settings as django_settings
