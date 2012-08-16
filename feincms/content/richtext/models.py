@@ -102,6 +102,7 @@ class RichTextContent(models.Model):
                 self.text = self.cleanse.im_func(self.text)
 
         super(RichTextContent, self).save(*args, **kwargs)
+    save.alters_data = True
 
     @classmethod
     def initialize_type(cls, cleanse=False):

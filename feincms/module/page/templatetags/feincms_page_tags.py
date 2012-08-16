@@ -73,8 +73,8 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
         if parent:
             if getattr(parent, 'navigation_extension', None):
                 # Special case for navigation extensions
-                return parent.extended_navigation(depth=depth,
-                    request=context.get('request'))
+                return list(parent.extended_navigation(depth=depth,
+                    request=context.get('request')))
 
             # Apply descendant filter
             queryset &= parent.get_descendants()
@@ -461,7 +461,7 @@ def siblings_along_path_to(page_list, page2):
                                    a_page.level == top_level or
                                    any((_is_sibling_of(a_page, a) for a in ancestors))]
             return siblings
-        except AttributeError:
+        except (AttributeError, ValueError):
             pass
 
     return ()
