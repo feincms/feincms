@@ -56,6 +56,7 @@ class PagePretender(object):
         return self.level
 
     def get_children(self):
+        """ overwrite this if you want nested extensions using recursetree """
         return []
 
     def available_translations(self):
