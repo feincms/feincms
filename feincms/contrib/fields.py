@@ -1,4 +1,7 @@
-import json
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json  # Python 2.5
 import logging
 
 from django import forms
