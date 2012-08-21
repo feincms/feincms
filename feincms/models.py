@@ -751,7 +751,8 @@ def create_base_model(inherit_from=models.Model):
 
             for type in cls._feincms_content_types:
                 if issubclass(type, model):
-                    return type
+                    if type.__base__ is model:
+                        return type
             return None
 
         @classmethod
