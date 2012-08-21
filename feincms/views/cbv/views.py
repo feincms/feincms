@@ -1,16 +1,24 @@
+from django.db.models import get_model
 from django.http import Http404
 
 from feincms import settings
 from feincms.module.mixins import ContentView
-from feincms.module.page.models import Page
 
 
 class Handler(ContentView):
 
+    page_model_path = 'page.Page'
     context_object_name = 'feincms_page'
 
+    @property
+    def page_model(self):
+        if not hasattr(self, '_page_model'):
+            self._page_model = get_model(*self.page_model_path.split('.'))
+        return self._page_model
+
     def get_object(self):
-        return Page.objects.for_request(self.request, raise404=True,
+        return self.page_model._default_manager.for_request(
+            self.request, raise404=True,
                 best_match=True, setup=False)
 
     def dispatch(self, request, *args, **kwargs):

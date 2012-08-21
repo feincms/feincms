@@ -56,8 +56,6 @@ class PageSitemap(Sitemap):
         if self.depth_cutoff > 0:
             self.max_depth = min(self.depth_cutoff, self.max_depth)
 
-        self.per_level = 1.0 / (self.max_depth + 1.0)
-
         qs = base_qs.filter(redirect_to="")
         if self.filter:
             qs = self.filter(qs)
@@ -70,9 +68,21 @@ class PageSitemap(Sitemap):
 
         if self.extended_navigation:
             for idx, page in enumerate(pages):
+                if self.depth_cutoff > 0 and page.level == self.max_depth:
+                    continue
                 if getattr(page, 'navigation_extension', None):
-                    pages[idx + 1:idx + 1] = page.extended_navigation()
+                    cnt = 0
+                    for p in page.extended_navigation():
+                        depth_too_deep = self.depth_cutoff > 0 and p.level > self.depth_cutoff
+                        not_in_nav = self.navigation_only and not p.in_navigation
+                        if depth_too_deep or not_in_nav:
+                            continue
+                        cnt += 1
+                        pages.insert(idx + cnt, p)
+                        if p.level > self.max_depth:
+                            self.max_depth = p.level
 
+        self.per_level = 1.0 / (self.max_depth + 1.0)
         return pages
 
     def lastmod(self, obj):
@@ -86,7 +96,10 @@ class PageSitemap(Sitemap):
         the site. Top level get highest priority, then each level is decreased
         by per_level.
         """
-        prio = 1.0 - (obj.level + 1) * self.per_level
+        if getattr(obj, 'override_url', '') == '/':
+            prio = 1.0
+        else:
+            prio = 1.0 - (obj.level + 1) * self.per_level
 
         # If the page is in_navigation, then it's more important, so boost
         # its importance

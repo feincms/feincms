@@ -269,10 +269,12 @@ def Translation(model):
         def save(self, *args, **kwargs):
             super(Inner, self).save(*args, **kwargs)
             self.parent.purge_translation_cache()
+        save.alters_data = True
 
         def delete(self, *args, **kwargs):
             super(Inner, self).delete(*args, **kwargs)
             self.parent.purge_translation_cache()
+        delete.alters_data = True
 
     return Inner
 

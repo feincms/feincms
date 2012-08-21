@@ -62,6 +62,7 @@ class Category(models.Model):
             self.slug = slugify(self.title)
 
         super(Category, self).save(*args, **kwargs)
+    save.alters_data = True
 
     def path_list(self):
         if self.parent is None:
@@ -185,6 +186,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
                 self.delete_mediafile(self._original_file_name)
 
         self.purge_translation_cache()
+    save.alters_data = True
 
     def delete_mediafile(self, name=None):
         if name is None:

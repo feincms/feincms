@@ -102,3 +102,4 @@ class SectionContent(models.Model):
                 self.richtext = self.cleanse.im_func(self.text)
 
         super(SectionContent, self).save(*args, **kwargs)
+    save.alters_data = True

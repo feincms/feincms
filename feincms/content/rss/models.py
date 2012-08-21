@@ -49,4 +49,4 @@ class RSSContent(models.Model):
 
         if save:
             self.save()
-
+    cache_content.alters_data = True

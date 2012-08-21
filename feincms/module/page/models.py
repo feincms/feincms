@@ -269,6 +269,7 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
 
             cached_page_urls[page.id] = page._cached_url
             super(Page, page).save() # do not recurse
+    save.alters_data = True
 
     @models.permalink
     def get_absolute_url(self):

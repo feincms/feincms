@@ -28,6 +28,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
     if isinstance(feincms_page, HttpRequest):
         try:
+            # warning: explicit Page reference here
             feincms_page = Page.objects.for_request(
                 feincms_page, best_match=True)
         except Page.DoesNotExist:
@@ -38,10 +39,12 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
     # mptt starts counting at zero
     mptt_level_range = [level - 1, level + depth - 1]
 
-    queryset = Page.objects.in_navigation().filter(**{
-        '%s__gte' % mptt_opts.level_attr: mptt_level_range[0],
-        '%s__lt' % mptt_opts.level_attr: mptt_level_range[1],
-        })
+    queryset = feincms_page.__class__._default_manager.in_navigation().filter(
+        **{
+            '%s__gte' % mptt_opts.level_attr: mptt_level_range[0],
+            '%s__lt' % mptt_opts.level_attr: mptt_level_range[1],
+        }
+    )
 
     page_level = getattr(feincms_page, mptt_opts.level_attr)
 
@@ -60,11 +63,18 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
             # The requested pages start somewhere higher up in the tree
             parent = feincms_page.get_ancestors()[level - 2]
 
+        elif level - 1 > page_level:
+            # The requested pages are grandchildren of the current page
+            # (or even deeper in the tree). If we would continue processing,
+            # this would result in pages from different subtrees being
+            # returned directly adjacent to each other.
+            queryset = Page.objects.none()
+
         if parent:
             if getattr(parent, 'navigation_extension', None):
                 # Special case for navigation extensions
-                return parent.extended_navigation(depth=depth,
-                    request=context.get('request'))
+                return list(parent.extended_navigation(depth=depth,
+                    request=context.get('request')))
 
             # Apply descendant filter
             queryset &= parent.get_descendants()
@@ -451,7 +461,7 @@ def siblings_along_path_to(page_list, page2):
                                    a_page.level == top_level or
                                    any((_is_sibling_of(a_page, a) for a in ancestors))]
             return siblings
-        except AttributeError:
+        except (AttributeError, ValueError):
             pass
 
     return ()
