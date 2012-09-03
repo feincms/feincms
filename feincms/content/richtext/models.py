@@ -92,20 +92,20 @@ class RichTextContent(models.Model):
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?
         if getattr(self, 'cleanse', False):
-            try:
-                # Passes the rich text content as first argument because
-                # the passed callable has been converted into a bound method
-                self.text = self.cleanse(self.text)
-            except TypeError:
-                # Call the original callable, does not pass the rich text
-                # content instance along
-                self.text = self.cleanse.im_func(self.text)
+            # Passes the rich text content as first argument because
+            # the passed callable has been converted into a bound method
+            self.text = self.cleanse(self.text)
 
         super(RichTextContent, self).save(*args, **kwargs)
     save.alters_data = True
 
     @classmethod
     def initialize_type(cls, cleanse=False):
+        def to_instance_method(func):
+            def func_im(self, *args, **kwargs):
+                return func(*args, **kwargs)
+            return func_im
+
         if cleanse:
             # If cleanse is True use default cleanse method
             if cleanse == True:
@@ -120,10 +120,10 @@ class RichTextContent(models.Model):
                     DeprecationWarning, stacklevel=2)
 
                 from feincms.utils.html.cleanse import cleanse_html
-                cls.cleanse = cleanse_html
+                cls.cleanse = to_instance_method(cleanse_html)
             # Otherwise use passed callable
             else:
-                cls.cleanse = cleanse
+                cls.cleanse = to_instance_method(cleanse)
 
         # TODO: Move this into somewhere more generic:
         if settings.FEINCMS_TIDY_HTML:
