@@ -22,20 +22,21 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.template.defaultfilters import filesizeformat, slugify
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 
 from feincms import settings
 from feincms.models import ExtensionsMixin
 from feincms.templatetags import feincms_thumbnail
 from feincms.translations import (TranslatedObjectMixin, Translation,
     TranslatedObjectManager, admin_translationinline, lookup_translations)
-
+from .uploadutils import process_chunk
+    
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
     """
@@ -443,7 +444,8 @@ class MediaFileAdmin(admin.ModelAdmin):
 
         urls = super(MediaFileAdmin, self).get_urls()
         my_urls = patterns('',
-            url(r'^mediafile-bulk-upload/$', self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {}, name='mediafile_bulk_upload')
+            url(r'^mediafile-bulk-upload/$', self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {}, name='mediafile_bulk_upload'),
+            url(r'^mediafile-async-upload/$', self.admin_site.admin_view(MediaFileAdmin.async_upload), {}, name='mediafile_async_upload')
             )
 
         return my_urls + urls
@@ -470,6 +472,18 @@ class MediaFileAdmin(admin.ModelAdmin):
             messages.error(request, _("No input file given"))
 
         return HttpResponseRedirect(reverse('admin:medialibrary_mediafile_changelist'))
+    
+    @staticmethod
+    @csrf_exempt
+    @permission_required('medialibrary.add_mediafile')
+    def async_upload(request):
+        try:
+            result = process_chunk(request)
+            if result and not MediaFile.objects.filter(file=result).exists():
+                MediaFile(file=result).save()
+            return HttpResponse()
+        except Exception, e:
+            return HttpResponse(str(e), status=500)
 
     def queryset(self, request):
         return super(MediaFileAdmin, self).queryset(request).transform(lookup_translations())

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-10 12:16+0200\n"
+"POT-Creation-Date: 2012-09-07 10:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: models.py:419 content/template/models.py:59
+#: models.py:426 content/template/models.py:59
 msgid "template"
 msgstr "šablona"
 
-#: models.py:550
+#: models.py:557
 msgid "ordering"
 msgstr "řazení"
 
@@ -39,7 +39,7 @@ msgid "Parent"
 msgstr "rodič"
 
 #: admin/filterspecs.py:95
-#: templates/admin/medialibrary/mediafile/change_list.html:15
+#: templates/admin/medialibrary/mediafile/change_list.html:21
 msgid "Category"
 msgstr "kategorie"
 
@@ -50,7 +50,7 @@ msgstr "změň %s"
 
 #: admin/tree_editor.py:215 content/rss/models.py:20
 #: content/section/models.py:31 module/blog/models.py:30
-#: module/medialibrary/models.py:55 module/page/models.py:220
+#: module/medialibrary/models.py:56 module/page/models.py:220
 #: module/page/models.py:299
 msgid "title"
 msgstr "Název"
@@ -125,7 +125,7 @@ msgid "contact forms"
 msgstr "kontaktní formuláře"
 
 #: content/file/models.py:16 content/file/models.py:20
-#: module/medialibrary/models.py:105
+#: module/medialibrary/models.py:106
 msgid "file"
 msgstr "soubor"
 
@@ -153,12 +153,12 @@ msgstr "(bez názvu)"
 #: content/medialibrary/models.py:87 content/medialibrary/models.py:101
 #: content/medialibrary/models.py:111 content/medialibrary/v2.py:44
 #: content/section/models.py:47 module/medialibrary/fields.py:45
-#: module/medialibrary/models.py:118
+#: module/medialibrary/models.py:119
 msgid "media file"
 msgstr "mediální soubor"
 
 #: content/medialibrary/models.py:88 content/medialibrary/v2.py:45
-#: module/medialibrary/models.py:119
+#: module/medialibrary/models.py:120
 msgid "media files"
 msgstr "mediální soubory"
 
@@ -321,11 +321,11 @@ msgstr "šablonový obsah"
 msgid "template contents"
 msgstr "šablonové obsahy"
 
-#: content/video/models.py:25
+#: content/video/models.py:26
 msgid "video link"
 msgstr "odkaz na video"
 
-#: content/video/models.py:26
+#: content/video/models.py:27
 msgid ""
 "This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
 "com/watch?v=zmj1rpzDRZ0"
@@ -333,11 +333,15 @@ msgstr ""
 "Toto má být odkaz na youtube nebo vimeo video, např. http://www.youtube.com/"
 "watch?v=zmj1rpzDRZ0"
 
-#: content/video/models.py:30
+#: content/video/models.py:28
+msgid "width"
+msgstr ""
+
+#: content/video/models.py:32
 msgid "video"
 msgstr "video"
 
-#: content/video/models.py:31
+#: content/video/models.py:33
 msgid "videos"
 msgstr "videoa"
 
@@ -461,137 +465,137 @@ msgstr "Vytvoř překlad"
 msgid "translations"
 msgstr "překlady"
 
-#: module/medialibrary/models.py:58
+#: module/medialibrary/models.py:59
 msgid "parent"
 msgstr "rodič"
 
-#: module/medialibrary/models.py:60 module/page/models.py:221
+#: module/medialibrary/models.py:61 module/page/models.py:221
 msgid "slug"
 msgstr ""
 
-#: module/medialibrary/models.py:64
+#: module/medialibrary/models.py:65
 msgid "category"
 msgstr "kategorie"
 
-#: module/medialibrary/models.py:65 module/medialibrary/models.py:111
+#: module/medialibrary/models.py:66 module/medialibrary/models.py:112
 msgid "categories"
 msgstr "kategorie"
 
-#: module/medialibrary/models.py:106 module/medialibrary/models.py:195
+#: module/medialibrary/models.py:107 module/medialibrary/models.py:196
 msgid "file type"
 msgstr "typ souboru"
 
-#: module/medialibrary/models.py:107 module/medialibrary/models.py:133
+#: module/medialibrary/models.py:108 module/medialibrary/models.py:134
 msgid "created"
 msgstr "vytvoreno"
 
-#: module/medialibrary/models.py:108
+#: module/medialibrary/models.py:109
 msgid "copyright"
 msgstr ""
 
-#: module/medialibrary/models.py:109 module/medialibrary/models.py:128
+#: module/medialibrary/models.py:110 module/medialibrary/models.py:129
 msgid "file size"
 msgstr "velikost souboru"
 
-#: module/medialibrary/models.py:216
+#: module/medialibrary/models.py:217
 msgid "file info"
 msgstr "info o souboru"
 
-#: module/medialibrary/models.py:293
+#: module/medialibrary/models.py:294
 msgid "Image"
 msgstr "obrázek"
 
-#: module/medialibrary/models.py:294
+#: module/medialibrary/models.py:295
 msgid "Video"
 msgstr ""
 
-#: module/medialibrary/models.py:295
+#: module/medialibrary/models.py:296
 msgid "Audio"
 msgstr ""
 
-#: module/medialibrary/models.py:296
+#: module/medialibrary/models.py:297
 msgid "PDF document"
 msgstr "PDF dokument"
 
-#: module/medialibrary/models.py:297
+#: module/medialibrary/models.py:298
 msgid "Flash"
 msgstr ""
 
-#: module/medialibrary/models.py:298
+#: module/medialibrary/models.py:299
 msgid "Text"
 msgstr ""
 
-#: module/medialibrary/models.py:299
+#: module/medialibrary/models.py:300
 msgid "Rich Text"
 msgstr ""
 
-#: module/medialibrary/models.py:300
+#: module/medialibrary/models.py:301
 msgid "Zip archive"
 msgstr ""
 
-#: module/medialibrary/models.py:301
+#: module/medialibrary/models.py:302
 msgid "Microsoft Word"
 msgstr ""
 
-#: module/medialibrary/models.py:302
+#: module/medialibrary/models.py:303
 msgid "Microsoft Excel"
 msgstr ""
 
-#: module/medialibrary/models.py:303
+#: module/medialibrary/models.py:304
 msgid "Microsoft PowerPoint"
 msgstr ""
 
-#: module/medialibrary/models.py:304
+#: module/medialibrary/models.py:305
 msgid "Binary"
 msgstr "Binární"
 
-#: module/medialibrary/models.py:320
+#: module/medialibrary/models.py:321
 msgid "caption"
 msgstr "název"
 
-#: module/medialibrary/models.py:321
+#: module/medialibrary/models.py:322
 msgid "description"
 msgstr "popis"
 
-#: module/medialibrary/models.py:324
+#: module/medialibrary/models.py:325
 msgid "media file translation"
 msgstr "překlad mediálního souboru"
 
-#: module/medialibrary/models.py:325
+#: module/medialibrary/models.py:326
 msgid "media file translations"
 msgstr "překlady mediálního souboru"
 
-#: module/medialibrary/models.py:347
+#: module/medialibrary/models.py:348
 #: templates/admin/feincms/page/page/item_editor.html:14
 msgid "Preview"
 msgstr "náhled"
 
-#: module/medialibrary/models.py:367
+#: module/medialibrary/models.py:368
 #, python-format
 msgid "Successfully added %(count)d media file to %(category)s."
 msgid_plural "Successfully added %(count)d media files to %(category)s."
 msgstr[0] "Úspěšně přidáno %(count)d mediálních souborů do %(category)s."
 msgstr[1] "Úspěšně přidáno %(count)d mediálních souborů do %(category)s."
 
-#: module/medialibrary/models.py:385
+#: module/medialibrary/models.py:386
 msgid "Add selected media files to category"
 msgstr "Přiděj vybrané mediální soubory do kategorie"
 
-#: module/medialibrary/models.py:394
+#: module/medialibrary/models.py:395
 #, python-format
 msgid "ZIP file exported as %s"
 msgstr "ZIP archiv exporotován jako %s"
 
-#: module/medialibrary/models.py:396
+#: module/medialibrary/models.py:397
 #, python-format
 msgid "ZIP file export failed: %s"
 msgstr "export ZIP archivu selhal: %s"
 
-#: module/medialibrary/models.py:400
+#: module/medialibrary/models.py:401
 msgid "Export selected media files as zip file"
 msgstr "Vyexportuj vybrané mediální soubory jako zip archiv"
 
-#: module/medialibrary/models.py:423
+#: module/medialibrary/models.py:424
 #, python-format
 msgid ""
 "Cannot overwrite with different file type (attempt to overwrite a "
@@ -600,17 +604,17 @@ msgstr ""
 "Nemůže být přepsán jiným typem (pokoušíš se přepsat %(old_ext)s s "
 "%(new_ext)s)"
 
-#: module/medialibrary/models.py:466
+#: module/medialibrary/models.py:468
 #, python-format
 msgid "%d files imported"
 msgstr "%d souborů importováno"
 
-#: module/medialibrary/models.py:468
+#: module/medialibrary/models.py:470
 #, python-format
 msgid "ZIP import failed: %s"
 msgstr "import ZIPu selhal: %s"
 
-#: module/medialibrary/models.py:470
+#: module/medialibrary/models.py:472
 msgid "No input file given"
 msgstr "Žádný vstupní soubor"
 
@@ -811,11 +815,10 @@ msgstr "Opravdu změnit šablonu? <br />Všechny změny uloženy."
 #, python-format
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
-"%(source_regions)s</strong> is moved to <strong>%(target_region)s</strong>."
+"%%(source_regions)s</strong> is moved to <strong>%%(target_region)s</strong>."
 msgstr ""
 "Opravdu změnit šablonu? <br />Všechny změny uloženy a obsah <strong>"
-"%(source_regions)s</strong> je přesunut do <strong>%(target_region)s</"
-"strong>."
+"%%(source_regions)s</strong> je přesunut do <strong>%%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
@@ -964,17 +967,45 @@ msgstr "Přidej do kategorie"
 msgid "Cancel"
 msgstr ""
 
-#: templates/admin/medialibrary/mediafile/change_list.html:12
+#: templates/admin/medialibrary/mediafile/change_list.html:18
 msgid "Bulk upload a ZIP file:"
 msgstr "Nahrát dávku v ZIP souboru:"
 
-#: templates/admin/medialibrary/mediafile/change_list.html:22
+#: templates/admin/medialibrary/mediafile/change_list.html:28
 msgid "Overwrite"
 msgstr "Přepsat"
 
-#: templates/admin/medialibrary/mediafile/change_list.html:25
+#: templates/admin/medialibrary/mediafile/change_list.html:31
 msgid "Send"
 msgstr "Poslat"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:37
+msgid ""
+"Your browser, unfortunately, is not supported by Resumable.js. The library "
+"requires support for <a href=\"http://www.w3.org/TR/FileAPI/\">the HTML5 "
+"File API</a> along with <a href=\"http://www.w3.org/TR/FileAPI/"
+"#normalization-of-params\">file slicing</a>."
+msgstr ""
+"Bohužel tvůj prohlížeč nepodporuje Resumable.js, který "
+"vyžaduje podporu pro <a href=\"http://www.w3.org/TR/FileAPI/\"> HTML5 "
+"File API</a> along with <a href=\"http://www.w3.org/TR/FileAPI/"
+"#normalization-of-params\">file slicing</a>."
+
+#: templates/admin/medialibrary/mediafile/change_list.html:41
+msgid "Drop files here to upload or "
+msgstr "Přetáhni soubory sem nebo "
+
+#: templates/admin/medialibrary/mediafile/change_list.html:41
+msgid "select from your computer"
+msgstr "je vyber z počítače"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:50
+msgid "Resume upload"
+msgstr "Obnovit nahrávání"
+
+#: templates/admin/medialibrary/mediafile/change_list.html:51
+msgid "Pause upload"
+msgstr "Přerušit nahrávání"
 
 #: templates/content/comments/default.html:10
 #, python-format
@@ -982,13 +1013,18 @@ msgid "%(comment_count)s comments."
 msgstr "%(comment_count)s komentářů"
 
 #: templates/content/comments/default.html:18
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "                    %(comment_username)s said on %(comment_submit_date)s<br /"
 ">\n"
 "                "
-msgstr "%(comment_username)s řekl v %(comment_submit_date)s <br />"
+
+msgstr ""
+"\n"
+"                    %(comment_username)s řekl v %(comment_submit_date)s <br /"
+">\n"
+"                "
 
 #: templates/content/comments/default.html:28
 msgid "No comments."
