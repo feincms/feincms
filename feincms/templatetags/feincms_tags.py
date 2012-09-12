@@ -2,6 +2,9 @@ from django import template
 from django.template.loader import render_to_string
 
 from feincms import utils
+import os
+from django.conf import settings
+from django.template.base import Node, TemplateSyntaxError, NodeList
 
 
 register = template.Library()
@@ -126,3 +129,65 @@ def show_content_type_selection_widget(context, region):
         else:
             ungrouped.append(ct_info)
     return {'grouped': grouped, 'ungrouped': ungrouped}
+
+
+class IfMediaExistsNode(Node):
+    child_nodelists = ('nodelist_true')
+
+    def __init__(self, var, nodelist_true, nodelist_false, extra):
+        self.var = var
+        self.nodelist_true, self.nodelist_false = nodelist_true, nodelist_false
+        self.extra = extra
+
+    def __repr__(self):
+        return "<IfMediaExistsNode>"
+
+    def render(self, context):
+        val = self.var
+        if not isinstance(self.var, unicode):
+            val = self.var.resolve(context, True)
+        val += ''.join(self.extra)
+        if val and os.path.exists(os.path.join(settings.MEDIA_ROOT, val)):
+            return self.nodelist_true.render(context)
+        return self.nodelist_false.render(context)
+    
+@register.tag
+def media_exists(parser, token):
+    """
+    Outputs the contents of the block if mediafile in argument exists.
+
+    Examples::
+
+        {% media_exists fm.file.name %}
+            ...
+        {% endmedia_exists %}
+
+        {% media_exists "medialibrary/2012/08/food-as.mp4.ogv" %}
+            ...
+        {% else %}
+            ...
+        {% endmedia_exists %}
+    """
+    bits = list(token.split_contents())
+    if len(bits) < 2:
+        raise TemplateSyntaxError("%r takes at least two arguments" % bits[0])
+    end_tag = 'end' + bits[0]
+    nodelist_true = parser.parse(('else', end_tag))
+    token = parser.next_token()
+    if token.contents == 'else':
+        nodelist_false = parser.parse((end_tag,))
+        parser.delete_first_token()
+    else:
+        nodelist_false = NodeList()
+        
+    val = bits[1]
+    if not bits[1].startswith('"') or not bits[1].endswith('"'): 
+        val = parser.compile_filter(val)
+    try:
+        return IfMediaExistsNode(val, nodelist_true, nodelist_false, bits[2:])
+    except IndexError:
+        return IfMediaExistsNode(val, nodelist_true, nodelist_false, [])
+
+@register.filter
+def suffix_cutoff(value):
+    return ''.join(value.split('.')[:-1])
