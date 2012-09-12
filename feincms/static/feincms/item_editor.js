@@ -394,7 +394,7 @@ if(!Array.indexOf) {
                         set_item_field_value(item,"delete-field","checked");
                     }
                     item.fadeOut(200, function() {
-                      region_item = $("#"+REGION_MAP[ACTIVE_REGION]+"_body");
+                      var region_item = $("#"+REGION_MAP[ACTIVE_REGION]+"_body");
                       if (region_item.children("div.order-machine").children(":visible").length == 0) {
                           region_item.children("div.empty-machine-msg").show();
                       }
