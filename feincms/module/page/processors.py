@@ -32,14 +32,14 @@ def frontendediting_request_processor(page, request):
     if not 'frontend_editing' in request.GET:
         return
 
+    response = HttpResponseRedirect(request.path)
     if request.user.has_module_perms('page'):
         try:
             enable_fe = int(request.GET['frontend_editing']) > 0
         except ValueError:
             enable_fe = False
 
-    response = HttpResponseRedirect(request.path)
-    response.set_cookie('frontend_editing', enable_fe)
+        response.set_cookie('frontend_editing', enable_fe)
 
     # Redirect to cleanup URLs
     return response
