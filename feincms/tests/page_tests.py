@@ -589,7 +589,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), u'')
 
         request = Empty()
-        request.session = {'frontend_editing': True}
+        request.COOKIES = {'frontend_editing': True}
 
         self.assertTrue('class="fe_box"' in\
             page.content.main[0].fe_render(request=request))

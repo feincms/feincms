@@ -56,7 +56,7 @@ def feincms_frontend_editing(cms_obj, request):
     {% feincms_frontend_editing feincms_page request %}
     """
 
-    if hasattr(request, 'session') and request.session.get('frontend_editing'):
+    if hasattr(request, 'COOKIES') and request.COOKIES.get('frontend_editing'):
         context = template.RequestContext(request, {
             "feincms_page": cms_obj,
             })
