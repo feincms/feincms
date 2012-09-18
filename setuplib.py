@@ -49,9 +49,10 @@ def find_packages(package_dir):
             cur_pack = packages[0] # Assign all data files to the toplevel package
             if cur_pack not in package_data:
                 package_data[cur_pack] = []
-            package_dir = "/".join(cur_pack.split(".")) + "/"
+            package_dir = os.path.join(*cur_pack.split("."))
+            dir_relpath = os.path.relpath(dirpath, package_dir)
             for f in filenames:
-                package_data[cur_pack].append(os.path.join(dirpath.replace(package_dir, "", 1), f))
+                package_data[cur_pack].append(os.path.join(dir_relpath, f))
 
     return packages, package_data
 
