@@ -381,7 +381,6 @@ if(!Array.indexOf) {
                         var id = item.find(".item-content > div").attr('id');
                         var modvar = id.replace(/_set-\d+$/, '');
                         var count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
-                        $('#id_'+modvar+'_set-TOTAL_FORMS').val(count-1);
                         // remove form:
                         item.find(".item-content").remove();
 
@@ -394,7 +393,12 @@ if(!Array.indexOf) {
                     else{ // saved on server, don't remove form
                         set_item_field_value(item,"delete-field","checked");
                     }
-                    item.fadeOut(200);
+                    item.fadeOut(200, function() {
+                      var region_item = $("#"+REGION_MAP[ACTIVE_REGION]+"_body");
+                      if (region_item.children("div.order-machine").children(":visible").length == 0) {
+                          region_item.children("div.empty-machine-msg").show();
+                      }
+                    });
                 }
                 $(".popup_bg").remove();
             });
