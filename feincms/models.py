@@ -461,7 +461,6 @@ def create_base_model(inherit_from=models.Model):
 
                     if (hasattr(request, 'COOKIES')
                             and request.COOKIES.get('frontend_editing')):
-
                         return render_to_string('admin/feincms/fe_box.html', {
                             'content': self.render(**kwargs),
                             'identifier': self.fe_identifier(),

@@ -9,7 +9,7 @@
 }
 
 #fe_controls, #fe_tools {
-    z-index: 100;
+    z-index: 10000;
     background-color: white;
     /* CSS3 standard: */
     opacity: 0.8;
