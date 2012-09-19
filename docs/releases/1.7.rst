@@ -13,6 +13,8 @@ know about their related model admin classes. The new module
 :py:mod:`feincms.extensions` contains mixins and base classes - their purpose
 is as follows:
 
+**TODO move this somewhere else, this isn't release notes material**
+
 .. class:: feincms.extensions.ExtensionsMixin
 
     This mixin provides the ``register_extensions`` method which is the place
@@ -79,8 +81,8 @@ View code refactor
 
 Made views, content type and request / response processors reusable.
 
-The legacy views at :py:mod:`feincms.views.legacy` did were considered
-unhelpful and were removed.
+The legacy views at :py:mod:`feincms.views.legacy` were considered unhelpful
+and were removed.
 
 
 Backwards-incompatible changes
@@ -132,6 +134,19 @@ Removal of deprecated features
   ``admin/content/mediafile/init.html`` has been deleted.
 
 
+Nested ``ContentObjectMixin`` processing
+----------------------------------------
+
+FeinCMS now supports nested :py:class:`feincms.models.Base` subclasses
+on a page, i.e. a content type with a ``process`` method inside an elephantblog
+entry inside an application content. It's up to you to decide if this makes
+sense or not --
+
+Because of that, ``request._feincms_extra_context['extra_path']`` is now a
+list, where the last element is always the remainder of the URL which is
+relevant for the current content type.
+
+
 New deprecations
 ----------------
 
@@ -150,6 +165,14 @@ Notable features and improvements
   ``register_extension`` methods have been removed. Additionally, the model
   admin classes are not imported inside the ``models.py`` files anymore.
 
+* The setting ``FEINCMS_USE_PAGE_ADMIN`` can be set to false to prevent
+  registration of the page model with the administration. This is especially
+  useful if you only want to reuse parts of the page module.
+
+* Various classes in :py:mod:`feincms.module.page` do not hardcode the page
+  class anymore; hooks are provided to use your own models instead. Please
+  refer to the source for additional information.
+
 
 Bugfixes
 ========
@@ -163,6 +186,12 @@ Bugfixes
 
 * :py:func:`feincms.utils.get_object` knows how to import modules, not only
   objects inside modules now.
+
+* The order and priority values for pages have been fixed when generating
+  sitemaps.
+
+* Various ``save`` and ``delete`` methods now come with ``alters_data=True``
+  to prevent their use in templates.
 
 
 Compatibility with Django and other apps
