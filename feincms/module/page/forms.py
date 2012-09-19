@@ -5,6 +5,7 @@
 from __future__ import absolute_import
 
 from django import forms
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.sites.models import Site
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
@@ -72,15 +73,28 @@ class PageAdminForm(MPTTAdminForm):
                 except (AttributeError, Page.DoesNotExist):
                     pass
 
+        # Not required, only a nice-to-have for the `redirect_to` field
+        modeladmin = kwargs.pop('modeladmin', None)
         super(PageAdminForm, self).__init__(*args, **kwargs)
+        if modeladmin:
+            # Note: Using `parent` is not strictly correct, but we can be
+            # sure that `parent` always points to another page instance,
+            # and that's good enough for us.
+            self.fields['redirect_to'].widget = ForeignKeyRawIdWidget(
+                Page._meta.get_field('parent').rel,
+                modeladmin.admin_site)
+
         if 'instance' in kwargs:
             choices = []
             for key, template in kwargs['instance'].TEMPLATE_CHOICES:
                 template = kwargs['instance']._feincms_templates[key]
                 if template.preview_image:
                     choices.append((template.key,
-                                    mark_safe(u'<img src="%s" alt="%s" /> %s' % (
-                                              template.preview_image, template.key, template.title))))
+                        mark_safe(u'<img src="%s" alt="%s" /> %s' % (
+                              template.preview_image,
+                              template.key,
+                              template.title,
+                              ))))
                 else:
                     choices.append((template.key, template.title))
 

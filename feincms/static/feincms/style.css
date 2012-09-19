@@ -321,3 +321,7 @@ div.order-machine div.inline-related > h3{
 .hidden-form-row{
     display: none;
 }
+
+
+/* various overrides */
+#id_redirect_to { width: 20em; } /* raw_id_fields act-a-like for redirect_to */
