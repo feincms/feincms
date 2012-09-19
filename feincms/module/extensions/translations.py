@@ -134,6 +134,7 @@ def register(cls, admin_cls):
                 key='translations')
 
     if hasattr(cls, 'get_redirect_to_target'):
+        original_get_redirect_to_target = cls.get_redirect_to_target
         @monkeypatch_method(cls)
         def get_redirect_to_target(self, request):
             """
@@ -142,7 +143,7 @@ def register(cls, admin_cls):
             to the user's language. This way, one can easily implement a localized
             "/"-url to welcome page redirection.
             """
-            target = self.redirect_to
+            target = original_get_redirect_to_target(self, request)
             if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
                 try:
                     page = cls.objects.page_for_path(target)
