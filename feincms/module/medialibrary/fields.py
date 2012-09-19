@@ -11,10 +11,10 @@ from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db import models
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from django.utils.text import truncate_words
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
+from feincms.utils import shorten_string
 from .models import MediaFile
 from .thumbnail import admin_thumbnail
 
@@ -29,7 +29,8 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
         key = self.rel.get_related_field().name
         try:
             obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
-            label = [u'&nbsp;<strong>%s</strong>' % escape(truncate_words(obj, 14))]
+            label = [u'&nbsp;<strong>%s</strong>' % escape(
+                shorten_string(unicode(obj)))]
             image = admin_thumbnail(obj)
 
             if image:
