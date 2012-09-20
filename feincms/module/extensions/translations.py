@@ -137,6 +137,7 @@ class Extension(extensions.Extension):
                     key='translations')
 
         if hasattr(cls, 'get_redirect_to_target'):
+            original_get_redirect_to_target = cls.get_redirect_to_target
             @monkeypatch_method(cls)
             def get_redirect_to_target(self, request):
                 """
@@ -145,8 +146,8 @@ class Extension(extensions.Extension):
                 to the user's language. This way, one can easily implement a localized
                 "/"-url to welcome page redirection.
                 """
-                target = self.redirect_to
-                if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
+                target = original_get_redirect_to_target(self, request)
+                if target and target.find('//') == -1:  # Not an offsite link http://bla/blubb
                     try:
                         page = cls.objects.page_for_path(target)
                         page = page.get_translation(get_current_language_code(request))

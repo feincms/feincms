@@ -166,7 +166,8 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
     override_url = models.CharField(_('override URL'), max_length=255, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
     redirect_to = models.CharField(_('redirect to'), max_length=255, blank=True,
-        help_text=_('Target URL for automatic redirects.'))
+        help_text=_('Target URL for automatic redirects'
+            ' or the primary key of a page.'))
     _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
 
@@ -319,6 +320,17 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
         """
         This might be overriden/extended by extension modules.
         """
+
+        if re.match(r'^\d+$', self.redirect_to):
+            # It might the primary key of a page
+            try:
+                page = self.__class__.objects.get(pk=int(self.redirect_to))
+                return page.get_absolute_url()
+            except (ValueError, TypeError):
+                pass
+            except (self.DoesNotExist):
+                return None
+
         return self.redirect_to
 
     @staticmethod
