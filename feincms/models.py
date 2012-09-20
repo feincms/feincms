@@ -231,6 +231,10 @@ class ContentProxy(object):
         Returns all content type instances belonging to the type or types
         passed.  If you want to filter for several types at the same time, type
         must be a tuple.
+
+        The content type instances are sorted by their ``ordering`` value,
+        but that isn't necessarily meaningful if the same content type exists
+        in different regions.
         """
 
         content_list = []
@@ -242,7 +246,6 @@ class ContentProxy(object):
             if any(issubclass(type, t) for t in type_or_tuple):
                 content_list.extend(contents)
 
-        # TODO: Sort content types by region?
         return sorted(content_list, key=lambda c: c.ordering)
 
     def _get_media(self):
