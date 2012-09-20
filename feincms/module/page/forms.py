@@ -27,7 +27,7 @@ class RedirectToWidget(ForeignKeyRawIdWidget):
             r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$',
             value)
 
-        if value:
+        if match:
             matches = match.groupdict()
             model = get_model(matches['app_label'], matches['module_name'])
             try:
