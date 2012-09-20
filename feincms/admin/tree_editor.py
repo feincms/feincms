@@ -314,13 +314,9 @@ class TreeEditor(ExtensionModelAdmin):
         # Weed out unchanged cells to keep the updates small. This assumes
         # that the order a possible get_descendents() returns does not change
         # before and after toggling this attribute. Unlikely, but still...
-        d = []
-        for a, b in zip(before_data, data):
-            if a != b:
-                d.append(b)
-
-        # TODO: Shorter: [ y for x,y in zip(a,b) if x!=y ]
-        return HttpResponse(json.dumps(d), content_type="application/json")
+        return HttpResponse(json.dumps(
+            [b for a, b in zip(before_data, data) if a != b]
+            ), content_type="application/json")
 
     def get_changelist(self, request, **kwargs):
         return ChangeList
