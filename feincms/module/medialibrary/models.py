@@ -215,11 +215,7 @@ MediaFileBase.register_filetypes(
 
 # ------------------------------------------------------------------------
 class MediaFile(MediaFileBase):
-    @classmethod
-    def register_extension(cls, register_fn):
-        from .admin import MediaFileAdmin
-
-        register_fn(cls, MediaFileAdmin)
+    pass
 
 @receiver(post_delete, sender=MediaFile)
 def _mediafile_post_delete(sender, instance, **kwargs):
