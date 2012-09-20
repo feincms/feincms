@@ -4,17 +4,41 @@
 
 from __future__ import absolute_import
 
+import re
+
 from django import forms
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.sites.models import Site
+from django.db.models.loading import get_model
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
+from feincms.utils import shorten_string
 
 from mptt.forms import MPTTAdminForm
+
+
+class RedirectToWidget(ForeignKeyRawIdWidget):
+    def label_for_value(self, value):
+        match = re.match(
+            r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$',
+            value)
+
+        if value:
+            matches = match.groupdict()
+            model = get_model(matches['app_label'], matches['module_name'])
+            try:
+                instance = model._default_manager.get(pk=int(matches['pk']))
+                return u'&nbsp;<strong>%s (%s)</strong>' % (instance,
+                        instance.get_absolute_url())
+
+            except model.DoesNotExist:
+                pass
+
+        return u''
 
 
 # ------------------------------------------------------------------------
@@ -88,7 +112,7 @@ class PageAdminForm(MPTTAdminForm):
             # Note: Using `parent` is not strictly correct, but we can be
             # sure that `parent` always points to another page instance,
             # and that's good enough for us.
-            self.fields['redirect_to'].widget = ForeignKeyRawIdWidget(
+            self.fields['redirect_to'].widget = RedirectToWidget(
                 self.page_model._meta.get_field('parent').rel,
                 modeladmin.admin_site)
 
@@ -157,6 +181,13 @@ class PageAdminForm(MPTTAdminForm):
         if active_pages.filter(_cached_url=new_url).count():
             self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
             del cleaned_data['active']
+
+        # Convert PK in redirect_to field to something nicer for the future
+        redirect_to = cleaned_data.get('redirect_to')
+        if redirect_to and re.match(r'^\d+$', redirect_to):
+            opts = self.page_model._meta
+            cleaned_data['redirect_to'] = '%s.%s:%s' % (
+                opts.app_label, opts.module_name, redirect_to)
 
         return cleaned_data
 

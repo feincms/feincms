@@ -8,6 +8,7 @@ from django.core.cache import cache as django_cache
 from django.conf import settings as django_settings
 from django.db import models
 from django.db.models import Q, signals
+from django.db.models.loading import get_model
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import commit_on_success
@@ -319,15 +320,29 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
         This might be overriden/extended by extension modules.
         """
 
-        if re.match(r'^\d+$', self.redirect_to):
-            # It might the primary key of a page
-            try:
-                page = self.__class__.objects.get(pk=int(self.redirect_to))
-                return page.get_absolute_url()
-            except (ValueError, TypeError):
-                pass
-            except (self.DoesNotExist):
-                return None
+        if not self.redirect_to:
+            return u''
+
+        # It might be an identifier for a different object
+        match = re.match(
+            r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$',
+            self.redirect_to)
+
+        # It's not, oh well.
+        if not match:
+            return self.redirect_to
+
+        matches = match.groupdict()
+        model = get_model(matches['app_label'], matches['module_name'])
+
+        if not model:
+            return self.redirect_to
+
+        try:
+            instance = model._default_manager.get(pk=int(matches['pk']))
+            return instance.get_absolute_url()
+        except models.ObjectDoesNotExist:
+            pass
 
         return self.redirect_to
 
