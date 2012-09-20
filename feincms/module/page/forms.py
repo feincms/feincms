@@ -89,7 +89,7 @@ class PageAdminForm(MPTTAdminForm):
             # sure that `parent` always points to another page instance,
             # and that's good enough for us.
             self.fields['redirect_to'].widget = ForeignKeyRawIdWidget(
-                Page._meta.get_field('parent').rel,
+                self.page_model._meta.get_field('parent').rel,
                 modeladmin.admin_site)
 
         if 'instance' in kwargs:
