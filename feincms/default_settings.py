@@ -69,6 +69,11 @@ FEINCMS_FRONTEND_EDITING = getattr(settings, 'FEINCMS_FRONTEND_EDITING',
 FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS = getattr(settings,
     'FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS', False)
 
+#: When enabled, the page module is automatically registered with Django's
+#: default admin site (this is activated by default).
+FEINCMS_USE_PAGE_ADMIN = getattr(settings,
+    'FEINCMS_USE_PAGE_ADMIN', True)
+
 # ------------------------------------------------------------------------
 # Various settings
 

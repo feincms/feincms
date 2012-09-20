@@ -4,19 +4,17 @@
 
 from __future__ import absolute_import
 
-from django.conf import settings
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import FieldDoesNotExist
 
-from feincms import ensure_completely_loaded
+from feincms import ensure_completely_loaded, settings
 from .models import Page
 from .modeladmins import PageAdmin
 
 # ------------------------------------------------------------------------
 
-# XXX move this setting to feincms.settings?
-if getattr(settings, 'FEINCMS_USE_PAGE_ADMIN', True):
+if settings.FEINCMS_USE_PAGE_ADMIN:
     ensure_completely_loaded()
     try:
         Page._meta.get_field('template_key')
