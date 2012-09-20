@@ -255,8 +255,6 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
         if self._cached_url == self._original_cached_url:
             return
 
-        # TODO: Does not find everything it should when ContentProxy content
-        # inheritance has been customized.
         pages = self.get_descendants().order_by('lft')
 
         for page in pages:

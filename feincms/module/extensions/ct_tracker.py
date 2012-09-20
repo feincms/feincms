@@ -122,7 +122,8 @@ def tree_post_save_handler(sender, instance, **kwargs):
     Clobber the _ct_inventory attribute of this object and all sub-objects
     on save.
     """
-
+    # TODO: Does not find everything it should when ContentProxy content
+    # inheritance has been customized.
     instance.get_descendants(include_self=True).update(_ct_inventory=None)
 
 # ------------------------------------------------------------------------
