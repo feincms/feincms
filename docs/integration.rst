@@ -239,7 +239,7 @@ of any template rendering calls:
     from news.models import Entry
 
     def entry_list(request):
-        # TODO add pagination here
+        # Pagination should probably be added here
         return 'news/entry_list.html', {'object_list': Entry.objects.all()}
 
     def entry_detail(request, slug):
