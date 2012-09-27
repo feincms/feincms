@@ -143,7 +143,7 @@ class Page(create_base_model(MPTTModel)):
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=True)
-    symbol = models.CharField(_('symbol'), max_length=20, blank=True, unique=True, editable=False,
+    symbol = models.CharField(_('symbol'), max_length=20, blank=True, null=True, unique=True, editable=False,
         help_text=_('A symbol is used to identify a page within the source code.'))
     override_url = models.CharField(_('override URL'), max_length=300, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
