@@ -83,8 +83,8 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             if not f.name.startswith('_') and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level') and \
                     not f.auto_created and not f.name in present_fields and f.editable:
                 self.unknown_fields.append(f.name)
-                if not f.editable:
-                    self.readonly_fields.append(f.name)
+            if not f.editable:
+                self.readonly_fields.append(f.name)
 
     in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 

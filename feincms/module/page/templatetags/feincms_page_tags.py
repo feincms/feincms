@@ -452,3 +452,24 @@ def siblings_along_path_to(page_list, page2):
     return ()
 
 # ------------------------------------------------------------------------
+@register.assignment_tag
+def get_page_by_symbol(symbol):
+    """
+    Fetches a page by a unique identifier (called symbol). This comes in handy
+    when you want to create an hyperlink to a page without hardcoding a URL,
+    but without knowing the definitive slug of the page.
+
+    First you set a symbol of a Page, for example, a news page. Then, to create
+    a hyperlink to the news page, use the template tag as follows:
+
+        {% get_page_by_symbol "news" as news_page %}
+        <h2><a href="{{ news_page.get_absolute_url }}">Latest news</a></h2>
+    """
+    try:
+        page = Page.objects.get(symbol=symbol)
+    except Page.DoesNotExist:
+        page = None
+
+    return page
+
+# ------------------------------------------------------------------------
