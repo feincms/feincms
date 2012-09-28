@@ -24,13 +24,16 @@ for this to work.
 Usage is as follows::
 
     from django.db import models
+    from mptt.fields import TreeForeignKey
+    from mptt.models import MPTTModel
 
-    class YourModel(models.Model):
+    class YourModel(MPTTModel):
         # model field definitions
 
-        class Meta:
-            ordering = ['tree_id', 'lft'] # The TreeEditor needs this ordering definition
+        parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
 
+        class Meta:
+            ordering = ['tree_id', 'lft']  # The TreeEditor needs this ordering definition
 
 And inside your ``admin.py`` file::
 
