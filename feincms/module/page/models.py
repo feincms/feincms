@@ -271,6 +271,13 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
             super(Page, page).save() # do not recurse
     save.alters_data = True
 
+    @commit_on_success
+    def delete(self, *args, **kwargs):
+        super(Page, self).delete(*args, **kwargs)
+        ck = self.path_to_cache_key(self._original_cached_url)
+        django_cache.delete(ck)
+    delete.alters_data = True
+
     @models.permalink
     def get_absolute_url(self):
         """
