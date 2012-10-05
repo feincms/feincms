@@ -398,10 +398,10 @@ need them. All of these must be specified in the ``APPLICATIONS`` argument to
 Letting 3rd party apps define navigation entries
 ------------------------------------------------
 
-Short answer: You need the ``navigation`` extension module. Activate it like
-this::
+Short answer: You need the ``feincms.module.page.extensions.navigation``
+extension module. Activate it like this::
 
-    Page.register_extensions('navigation')
+    Page.register_extensions('feincms.module.page.extensions.navigation')
 
 
 Please note however, that this call needs to come after all
