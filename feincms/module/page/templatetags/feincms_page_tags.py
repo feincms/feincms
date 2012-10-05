@@ -2,19 +2,21 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+import logging
 import warnings
 
 from django import template
 from django.conf import settings
-from django.db.models import Q
 from django.http import HttpRequest
 
-from feincms.module.page.models import Page, PageManager
+from feincms.module.page.models import Page
 from feincms.utils.templatetags import *
 from feincms.utils.templatetags import _parse_args
 
-register = template.Library()
+# ------------------------------------------------------------------------
+logger = logging.getLogger('feincms.templatetags.page')
 
+register = template.Library()
 
 # ------------------------------------------------------------------------
 @register.assignment_tag(takes_context=True)
@@ -436,6 +438,7 @@ def siblings_along_path_to(page_list, page2):
         {% endwith %}
 
     """
+
     if page_list:
         try:
             # Try to avoid hitting the database: If the current page is in_navigation,
@@ -461,8 +464,8 @@ def siblings_along_path_to(page_list, page2):
                                    a_page.level == top_level or
                                    any((_is_sibling_of(a_page, a) for a in ancestors))]
             return siblings
-        except (AttributeError, ValueError):
-            pass
+        except (AttributeError, ValueError), e:
+            logger.warn("siblings_along_path_to caught exception '%s'", e)
 
     return ()
 
