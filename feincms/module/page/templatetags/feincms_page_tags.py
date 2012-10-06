@@ -89,42 +89,42 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
             # Subset filtering; allow children of parent as well
             parents.add(parent.id)
 
-        def _filter(iterable):
+        def _parentactive_filter(iterable):
             for elem in iterable:
                 if elem.parent_id in parents:
                     yield elem
                 parents.add(elem.id)
 
-        queryset = _filter(queryset)
+        queryset = _parentactive_filter(queryset)
 
     if hasattr(feincms_page, 'navigation_extension'):
         # Filter out children of nodes which have a navigation extension
-
-        def _filter(iterable):
-            current_navextension = (0, 0)
+        def _navext_filter(iterable):
+            current_navextension_node = None
             for elem in iterable:
-                # print "ELEM", elem, elem.tree_id, elem.lft, elem.rght
-                elem_right = getattr(elem, mptt_opts.right_attr)
-                elem_tree  = getattr(elem, mptt_opts.tree_id_attr)
-
                 # Eliminate all subitems of last processed nav extension
-                if elem_tree == current_navextension[0] and elem_right < current_navextension[1]:
+                if current_navextension_node is not None and \
+                   current_navextension_node.is_ancestor_of(elem):
                     continue
 
                 yield elem
                 if getattr(elem, 'navigation_extension', None):
-                    current_navextension = (elem_tree, elem_right)
+                    current_navextension_node = elem
+                    try:
+                        for extended in elem.extended_navigation(depth=depth, request=context.get('request')):
+                            # Only return items from the extended navigation which
+                            # are inside the requested level+depth values. The
+                            # "-1" accounts for the differences in MPTT and
+                            # navigation level counting
+                            this_level = getattr(extended, mptt_opts.level_attr, 0)
+                            if this_level < level + depth - 1:
+                                yield extended
+                    except Exception, e:
+                        logger.warn("feincms_nav caught exception in navigation extension for page %d '%s'", current_navextension_node.id, e)
+                else:
+                    current_navextension_node = None
 
-                    for extended in elem.extended_navigation(depth=depth, request=context.get('request')):
-                        # Only return items from the extended navigation which
-                        # are inside the requested level+depth values. The
-                        # "-1" accounts for the differences in MPTT and
-                        # navigation level counting
-                        this_level = getattr(extended, mptt_opts.level_attr, 0)
-                        if this_level < level + depth - 1:
-                            yield extended
-
-        queryset = _filter(queryset)
+        queryset = _navext_filter(queryset)
 
     # Return a list, not a generator so that it can be consumed
     # several times in a template.
