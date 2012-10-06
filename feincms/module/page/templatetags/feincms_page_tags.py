@@ -3,6 +3,8 @@
 # ------------------------------------------------------------------------
 
 import logging
+import sys
+import traceback
 import warnings
 
 from django import template
@@ -17,6 +19,12 @@ from feincms.utils.templatetags import _parse_args
 logger = logging.getLogger('feincms.templatetags.page')
 
 register = template.Library()
+
+# ------------------------------------------------------------------------
+# TODO: Belongs in some utility module
+def format_exception(e):
+    top = traceback.extract_tb(sys.exc_info()[2])[-1]
+    return u"'%s' in %s line %d" % (e, top[0], top[1])
 
 # ------------------------------------------------------------------------
 @register.assignment_tag(takes_context=True)
@@ -120,7 +128,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
                             if this_level < level + depth - 1:
                                 yield extended
                     except Exception, e:
-                        logger.warn("feincms_nav caught exception in navigation extension for page %d '%s'", current_navextension_node.id, e)
+                        logger.warn("feincms_nav caught exception in navigation extension for page %d: %s", current_navextension_node.id, format_exception(e))
                 else:
                     current_navextension_node = None
 
@@ -459,7 +467,7 @@ def siblings_along_path_to(page_list, page2):
                                    any((_is_sibling_of(a_page, a) for a in ancestors))]
             return siblings
         except (AttributeError, ValueError), e:
-            logger.warn("siblings_along_path_to caught exception '%s'", e)
+            logger.warn("siblings_along_path_to caught exception: %s", format_exception(e))
 
     return ()
 
