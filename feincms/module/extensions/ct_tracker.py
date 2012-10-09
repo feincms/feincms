@@ -59,8 +59,10 @@ class TrackerContentProxy(ContentProxy):
                 super(TrackerContentProxy, self)._fetch_content_type_counts()
 
                 self.item._ct_inventory = self._to_inventory(self._cache['counts'])
-                self.item.__class__.objects.filter(id=self.item.id).update(
-                    _ct_inventory=self.item._ct_inventory)
+
+                this_page = self.item.__class__.objects.filter(id=self.item.id)
+                this_page.update(_ct_inventory=self.item._ct_inventory)
+                this_page[0].invalidate_cache()
 
                 # Run post save handler by hand
                 if hasattr(self.item, 'get_descendants'):

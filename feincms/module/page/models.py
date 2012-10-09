@@ -245,9 +245,8 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
         cached_page_urls[self.id] = self._cached_url
         super(Page, self).save(*args, **kwargs)
 
-        # Okay, we changed the URL -- remove the old stale entry from the cache
-        ck = self.path_to_cache_key(self._original_cached_url)
-        django_cache.delete(ck)
+        # Okay, we have changed the page -- remove the old stale entry from the cache
+        self.invalidate_cache()
 
         # If our cached URL changed we need to update all descendants to
         # reflect the changes. Since this is a very expensive operation
@@ -274,9 +273,13 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
     @commit_on_success
     def delete(self, *args, **kwargs):
         super(Page, self).delete(*args, **kwargs)
+        self.invalidate_cache()
+    delete.alters_data = True
+
+    # Remove the page from the url-to-page cache
+    def invalidate_cache(self):
         ck = self.path_to_cache_key(self._original_cached_url)
         django_cache.delete(ck)
-    delete.alters_data = True
 
     @models.permalink
     def get_absolute_url(self):
