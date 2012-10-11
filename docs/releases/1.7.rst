@@ -134,19 +134,6 @@ Removal of deprecated features
   ``admin/content/mediafile/init.html`` has been deleted.
 
 
-Nested ``ContentObjectMixin`` processing
-----------------------------------------
-
-FeinCMS now supports nested :py:class:`feincms.models.Base` subclasses
-on a page, i.e. a content type with a ``process`` method inside an elephantblog
-entry inside an application content. It's up to you to decide if this makes
-sense or not --
-
-Because of that, ``request._feincms_extra_context['extra_path']`` is now a
-list, where the last element is always the remainder of the URL which is
-relevant for the current content type.
-
-
 New deprecations
 ----------------
 

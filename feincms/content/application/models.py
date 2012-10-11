@@ -327,7 +327,7 @@ class ApplicationContent(models.Model):
                 appcontent_parameters=self.parameters
             )
         else:
-            path = request._feincms_extra_context['extra_path'][-1]
+            path = request._feincms_extra_context['extra_path']
 
         # Resolve the module holding the application urls.
         urlconf_path = self.app_config.get('urls', self.urlconf_path)
@@ -356,11 +356,7 @@ class ApplicationContent(models.Model):
                 appcontent_parameters=self.parameters
             )
 
-        # TODO actually determine the remaining part
-        request._feincms_extra_context['extra_path'].append('/')
         output = fn(request, *args, **kwargs)
-        request._feincms_extra_context['extra_path'] = (
-            request._feincms_extra_context['extra_path'][:-1])
 
         if isinstance(output, HttpResponse):
             if self.send_directly(request, output):
