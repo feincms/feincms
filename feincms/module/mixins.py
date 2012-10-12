@@ -126,7 +126,7 @@ class ContentObjectMixin(TemplateResponseMixin):
         also return a ``HttpResponse`` for shortcutting the rendering and
         returning that response immediately to the client.
         """
-        if self.object.request_processors is None:
+        if not getattr(self.object, 'request_processors', None):
             return
 
         for fn in reversed(self.object.request_processors.values()):
@@ -140,7 +140,7 @@ class ContentObjectMixin(TemplateResponseMixin):
         processors are called to modify the response, eg. for setting cache or
         expiration headers, keeping statistics, etc.
         """
-        if self.object.response_processors is None:
+        if not getattr(self.object, 'response_processors', None):
             return
 
         for fn in self.object.response_processors.values():
