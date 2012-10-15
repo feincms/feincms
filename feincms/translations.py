@@ -293,6 +293,7 @@ def admin_translationinline(model, inline_class=admin.StackedInline, **kwargs):
             )
     """
 
+    kwargs['extra'] = 1
     kwargs['max_num'] = len(settings.LANGUAGES)
     kwargs['model'] = model
     return type(model.__class__.__name__ + 'Inline', (inline_class,), kwargs)

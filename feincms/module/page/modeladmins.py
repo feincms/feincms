@@ -109,8 +109,28 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         return actions
 
     def add_view(self, request, **kwargs):
-        # Preserve GET parameters
-        kwargs['form_url'] = request.get_full_path()
+        kwargs['form_url'] = request.get_full_path() # Preserve GET parameters
+        if 'translation_of' in request.GET and 'language' in request.GET:
+            try:
+                original = self.model._tree_manager.get(
+                    pk=request.GET.get('translation_of'))
+            except (AttributeError, self.model.DoesNotExist):
+                pass
+            else:
+                language_code = request.GET['language']
+                language = dict(
+                    django_settings.LANGUAGES).get(language_code, '')
+                kwargs['extra_context'] = {
+                    'adding_translation': True,
+                    'title': _(
+                        'Add %(language)s Translation of "%(page)s"' % {
+                            'language': language,
+                            'page': original,
+                        }
+                    ),
+                    'language_name': language,
+                    'translation_of': original,
+                }
         return super(PageAdmin, self).add_view(request, **kwargs)
 
     def response_add(self, request, obj, *args, **kwargs):
