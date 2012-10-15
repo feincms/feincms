@@ -81,7 +81,7 @@ class Thumbnailer(object):
             except (NotImplementedError, AttributeError):
                 # storage does NOT support modified_time
                 generate = False
-            except OSError:
+            except (OSError, IOError):
                 # Someone might have delete the file
                 return u''
 
