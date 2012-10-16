@@ -24,6 +24,11 @@ from feincms.utils.managers import ActiveAwareContentManagerMixin
 
 from feincms.utils import path_to_cache_key
 
+
+REDIRECT_TO_RE = re.compile(
+    r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$')
+
+
 # ------------------------------------------------------------------------
 class PageManager(models.Manager, ActiveAwareContentManagerMixin):
     """
@@ -294,7 +299,10 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
         Return either ``redirect_to`` if it is set, or the URL of this page.
         """
 
-        return self.redirect_to or self._cached_url
+        # :-( maybe this could be cleaned up a bit?
+        if not self.redirect_to or REDIRECT_TO_RE.match(self.redirect_to):
+            return self._cached_url
+        return self.redirect_to
 
     def cache_key(self):
         """
@@ -331,9 +339,7 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
             return u''
 
         # It might be an identifier for a different object
-        match = re.match(
-            r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$',
-            self.redirect_to)
+        match = REDIRECT_TO_RE.match(self.redirect_to)
 
         # It's not, oh well.
         if not match:
