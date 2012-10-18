@@ -12,7 +12,7 @@
                 {% if adding_translation and forloop.first %}
                     <div>
                         <p>
-                            <input type="checkbox" name="_copy_content_from_original" checked="checked" /> <label for="_copy_content_from_original">{% trans "Copy content from the original" %} ("{{ translation_of }}", {% trans translation_of.get_language_display %})</label>
+                            <input type="checkbox" name="_copy_content_from_original" id="_copy_content_from_original" checked="checked" /> <label for="_copy_content_from_original">{% trans "Copy content from the original" %} ("{{ translation_of }}", {% trans translation_of.get_language_display %})</label>
                         </p>
                     </div>
                 {% else %}
