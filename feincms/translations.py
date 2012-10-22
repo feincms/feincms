@@ -261,6 +261,9 @@ def Translation(model):
                 editable=len(settings.LANGUAGES) > 1)
 
         class Meta:
+            unique_together = ('parent', 'language_code')
+            # (beware the above will not be inherited automatically if you
+            #  provide a Meta class within your translation subclass)
             abstract = True
 
         def short_language_code(self):

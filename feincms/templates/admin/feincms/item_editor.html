@@ -34,18 +34,6 @@
 {% endblock %}
 
 {% block form_top %}
-  {% if adding_translation %}
-    <div>
-        <p>
-          {% blocktrans %}
-            <strong>Note:</strong> if you save this new version
-            ({{ language_name }}) without adding any content, content from
-            the original page ("{{ translation_of }}") will be copied
-            automatically.
-          {% endblocktrans %}
-        </p>
-    </div>
-  {% endif %}
 {% with original.available_translations as translations %}
 {% for translation in translations %}
 {# look for something the translation extension's available_translations method might return #}
