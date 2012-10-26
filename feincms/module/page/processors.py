@@ -39,7 +39,10 @@ def frontendediting_request_processor(page, request):
         except ValueError:
             enable_fe = False
 
-        response.set_cookie('frontend_editing', enable_fe)
+        if enable_fe:
+            response.set_cookie('frontend_editing', enable_fe)
+        else:
+            response.delete_cookie('frontend_editing')
 
     # Redirect to cleanup URLs
     return response
