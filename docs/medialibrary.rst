@@ -21,13 +21,13 @@ create a content type for a media file as follows::
     from feincms.module.page.models import Page
     from feincms.content.medialibrary.v2 import MediaFileContent
 
-    Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
+    Page.create_content_type(MediaFileContent, POSITION_CHOICES=(
             ('default', _('default')),
             ('lightbox', _('lightbox')),
             ))
 
 
-``TYPE_CHOICES`` has nothing to do with file types -- it's about choosing
+``POSITION_CHOICES`` has nothing to do with file types -- it's about choosing
 the presentation type for a certain media file, f.e. whether the media file
 should be presented inline, in a lightbox, floated, or simply as a download
 link.

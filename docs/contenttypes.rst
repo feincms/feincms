@@ -352,7 +352,7 @@ methods per-filetype.  Add 'feincms.module.medialibrary' to INSTALLED_APPS.
 
 Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 
-* ``TYPE_CHOICES``: (mandatory)
+* ``POSITION_CHOICES``: (mandatory)
 
   A list of tuples for the type choice radio input fields.
 
@@ -361,7 +361,7 @@ Additional arguments for :func:`~feincms.models.Base.create_content_type`:
   with a lightbox or offered as downloads. The types should be specified as
   follows for this use case::
 
-     ..., TYPE_CHOICES=(('lightbox', _('lightbox')), ('download', _('as download'))),
+     ..., POSITION_CHOICES=(('lightbox', _('lightbox')), ('download', _('as download'))),
 
   The ``MediaFileContent`` tries loading the following templates in order for
   a particular image media file with type ``download``:
