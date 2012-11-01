@@ -185,7 +185,7 @@ class TranslatedObjectMixin(object):
         """Return the cache key used to cache this object's translations so we can purge on-demand"""
         if not language_code:
             language_code = translation.get_language()
-        return (('FEINCMS:%d:XLATION:' % settings.SITE_ID) +
+        return (('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
                 '-'.join(['%s' % s for s in
                         self._meta.db_table,
                         self.id,
