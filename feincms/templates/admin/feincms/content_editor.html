@@ -8,7 +8,17 @@
         {% for region in original.template.regions %}
         <div id="{{ region.key }}_body" class="panel">
             <div class="empty-machine-msg">
-                {% trans "Region empty" %}
+
+                {% if adding_translation and forloop.first %}
+                    <div>
+                        <p>
+                            <input type="checkbox" name="_copy_content_from_original" id="_copy_content_from_original" checked="checked" /> <label for="_copy_content_from_original">{% trans "Copy content from the original" %} ("{{ translation_of }}", {% trans translation_of.get_language_display %})</label>
+                        </p>
+                    </div>
+                {% else %}
+                    {% trans "Region empty" %}
+                {% endif %}
+
             </div>
             <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
                 {% if region.inherited %}
