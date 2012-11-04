@@ -183,7 +183,7 @@ Returning content from views
 Three different types of return values can be handled by the application
 content code:
 
-* Unicode data (i.e. the return value of ``render_to_string``)
+* Unicode data (e.g. the return value of ``render_to_string``)
 * ``HttpResponse`` instances
 * A tuple consisting of two elements: A template instance, template name or list
   and a context ``dict``. More on this later under
