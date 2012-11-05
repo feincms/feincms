@@ -99,7 +99,7 @@ def translations_request_processor_explicit(page, request):
 # ------------------------------------------------------------------------
 def translations_request_processor_standard(page, request):
     # If this page is just a redirect, don't do any language specific setup
-    if page.redirect_to:
+    if getattr(page, 'redirect_to', None):
         return
 
     if page.language == translation.get_language():
