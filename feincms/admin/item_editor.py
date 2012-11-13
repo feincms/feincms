@@ -61,8 +61,9 @@ class ItemEditor(admin.ModelAdmin):
 
         super(ItemEditor, self).__init__(model, admin_site)
 
-    def get_inline_instances(self, request):
-        inline_instances = super(ItemEditor, self).get_inline_instances(request)
+    def get_inline_instances(self, request, *args, **kwargs):
+        inline_instances = super(ItemEditor, self).get_inline_instances(request,
+            *args, **kwargs)
         self.append_feincms_inlines(inline_instances)
 
         return inline_instances
