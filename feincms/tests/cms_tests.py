@@ -32,10 +32,6 @@ class CMSBaseTest(TestCase):
         ExampleCMSBase.create_content_type(ContactFormContent)
         ExampleCMSBase.create_content_type(FileContent, regions=('region2',))
 
-        # no POSITION_CHOICES, should raise
-        self.assertRaises(ImproperlyConfigured,
-                          lambda: ExampleCMSBase.create_content_type(ImageContent))
-
         ExampleCMSBase.create_content_type(RawContent)
         ExampleCMSBase.create_content_type(RichTextContent)
 
