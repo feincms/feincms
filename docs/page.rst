@@ -51,7 +51,7 @@ by adding the following lines somewhere into your project, for example in a
         })
 
     Page.create_content_type(RichTextContent)
-    Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
+    Page.create_content_type(MediaFileContent, POSITION_CHOICES=(
         ('default', _('default')),
         ('lightbox', _('lightbox')),
         ))
