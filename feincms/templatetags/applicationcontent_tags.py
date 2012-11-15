@@ -58,6 +58,7 @@ class AppReverseNode(template.Node):
         except NoReverseMatch:
             if self.asvar is None:
                 raise
+            url = ''
 
         if self.asvar:
             context[self.asvar] = url
