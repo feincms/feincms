@@ -32,6 +32,7 @@ from feincms.content.richtext.models import RichTextContent
 from feincms.context_processors import add_page_if_missing
 from feincms.models import ContentProxy
 from feincms.module.medialibrary.models import Category, MediaFile
+from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
@@ -589,12 +590,56 @@ class PagesTestCase(TestCase):
         self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), u'')
 
         request = Empty()
-        request.COOKIES = {'frontend_editing': True}
+        request.COOKIES = {'frontend_editing': "True"}
 
-        self.assertTrue('class="fe_box"' in\
+        self.assertIn('class="fe_box"',
             page.content.main[0].fe_render(request=request))
 
-        self.assertFalse('class="fe_box"' in self.client.get(page.get_absolute_url() + '?frontend_editing=1').content)
+    def test_15_b_client_frontend_editing(self):
+        self.create_default_page_set()
+        page = Page.objects.get(pk=1)
+        self.create_pagecontent(page)
+
+        page.active = True
+        page.template_key = 'theother'
+        page.save()
+
+        # FEINCMS_FRONTEND_EDITING is False by default
+        response = self.client.get(page.get_absolute_url() +
+                '?frontend_editing=1',
+                follow=True)
+        self.assertNotIn('class="fe_box"', response.content)
+        self.assertNotIn('frontend_editing', self.client.cookies)
+
+        # manually register request processor
+        # override_settings(FEINCMS_FRONTEND_EDITING=True) wont work here
+        Page.register_request_processor(
+                processors.frontendediting_request_processor,
+                key='frontend_editing')
+        response = self.client.get(page.get_absolute_url() +
+                '?frontend_editing=1',
+                follow=True)
+        self.assertRedirects(response, page.get_absolute_url())
+        self.assertIn('class="fe_box"', response.content)
+        self.assertIn('frontend_editing', self.client.cookies)
+
+        # turn off edit on site
+        response = self.client.get(page.get_absolute_url() +
+                '?frontend_editing=0',
+                follow=True)
+        self.assertRedirects(response, page.get_absolute_url())
+        self.assertNotIn('class="fe_box"', response.content)
+
+        # anonymous user cannot front edit
+        self.client.logout()
+        response = self.client.get(page.get_absolute_url() +
+                '?frontend_editing=1',
+                follow=True)
+        self.assertRedirects(response, page.get_absolute_url())
+        self.assertNotIn('class="fe_box"', response.content)
+
+        # cleanup request processor
+        del Page.request_processors['frontend_editing']
 
     def test_16_template_tags(self):
         # Directly testing template tags doesn't make any sense since

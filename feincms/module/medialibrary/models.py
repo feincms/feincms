@@ -234,6 +234,7 @@ class MediaFileTranslation(Translation(MediaFile)):
     class Meta:
         verbose_name = _('media file translation')
         verbose_name_plural = _('media file translations')
+        unique_together = ('parent', 'language_code')
 
     def __unicode__(self):
         return self.caption

@@ -10,7 +10,7 @@ FeinCMS is primarily a system to work with lists of content blocks which
 you can assign to arbitrary other objects. You do not necessarily have to
 use it with a hierarchical page structure, but that's the most common use
 case of course. Being able to put content together in small manageable
-pieces is interesting for other uses too, i.e. for weblog entries where you
+pieces is interesting for other uses too, e.g. for weblog entries where you
 have rich text content interspersed with images, videos or maybe even galleries.
 
 

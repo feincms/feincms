@@ -24,6 +24,7 @@ from mptt.forms import MPTTAdminForm
 class RedirectToWidget(ForeignKeyRawIdWidget):
     def label_for_value(self, value):
         match = re.match(
+            # XXX this regex would be available as .models.REDIRECT_TO_RE
             r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$',
             value)
 

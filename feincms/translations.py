@@ -185,7 +185,7 @@ class TranslatedObjectMixin(object):
         """Return the cache key used to cache this object's translations so we can purge on-demand"""
         if not language_code:
             language_code = translation.get_language()
-        return (('FEINCMS:%d:XLATION:' % settings.SITE_ID) +
+        return (('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
                 '-'.join(['%s' % s for s in
                         self._meta.db_table,
                         self.id,
@@ -261,6 +261,9 @@ def Translation(model):
                 editable=len(settings.LANGUAGES) > 1)
 
         class Meta:
+            unique_together = ('parent', 'language_code')
+            # (beware the above will not be inherited automatically if you
+            #  provide a Meta class within your translation subclass)
             abstract = True
 
         def short_language_code(self):
@@ -293,6 +296,7 @@ def admin_translationinline(model, inline_class=admin.StackedInline, **kwargs):
             )
     """
 
+    kwargs['extra'] = 1
     kwargs['max_num'] = len(settings.LANGUAGES)
     kwargs['model'] = model
     return type(model.__class__.__name__ + 'Inline', (inline_class,), kwargs)

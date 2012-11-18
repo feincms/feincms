@@ -42,13 +42,16 @@ def granular_now(n=None):
     """
     if n is None:
         n = timezone.now()
-    return datetime(n.year, n.month, n.day, n.hour, (n.minute // 5) * 5)
+    return timezone.make_aware(datetime(n.year, n.month, n.day, n.hour,
+                                        (n.minute // 5) * 5), n.tzinfo)
 
 # ------------------------------------------------------------------------
 def register(cls, admin_cls):
-    cls.add_to_class('publication_date', models.DateTimeField(_('publication date'),
+    cls.add_to_class('publication_date',
+                                models.DateTimeField(_('publication date'),
         default=granular_now))
-    cls.add_to_class('publication_end_date', models.DateTimeField(_('publication end date'),
+    cls.add_to_class('publication_end_date',
+                                models.DateTimeField(_('publication end date'),
         blank=True, null=True,
         help_text=_('Leave empty if the entry should stay active forever.')))
     cls.add_to_class('latest_children', latest_children)
@@ -68,7 +71,8 @@ def register(cls, admin_cls):
     if hasattr(cls._default_manager, 'add_to_active_filters'):
         cls._default_manager.add_to_active_filters(
             Q(publication_date__lte=granular_now) &
-            (Q(publication_end_date__isnull=True) | Q(publication_end_date__gt=granular_now)),
+             (Q(publication_end_date__isnull=True) |
+              Q(publication_end_date__gt=granular_now)),
             key='datepublisher')
 
     def datepublisher_admin(self, page):
