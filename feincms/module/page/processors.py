@@ -24,9 +24,10 @@ def redirect_request_processor(page, request):
             return HttpResponseRedirect(target)
         raise Http404()
 
+
 def frontendediting_request_processor(page, request):
     """
-    Sets the frontend editing state in the session depending on the
+    Sets the frontend editing state in the cookie depending on the
     ``frontend_editing`` GET parameter and the user's permissions.
     """
     if not 'frontend_editing' in request.GET:
@@ -39,7 +40,10 @@ def frontendediting_request_processor(page, request):
         except ValueError:
             enable_fe = False
 
-        response.set_cookie('frontend_editing', enable_fe)
+        if enable_fe:
+            response.set_cookie('frontend_editing', enable_fe)
+        else:
+            response.delete_cookie('frontend_editing')
 
     # Redirect to cleanup URLs
     return response
