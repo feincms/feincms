@@ -95,11 +95,11 @@ class SectionContent(models.Model):
             try:
                 # Passes the rich text content as first argument because
                 # the passed callable has been converted into a bound method
-                self.richtext = self.cleanse(self.text)
+                self.richtext = self.cleanse(self.richtext)
             except TypeError:
                 # Call the original callable, does not pass the rich richtext
                 # content instance along
-                self.richtext = self.cleanse.im_func(self.text)
+                self.richtext = self.cleanse.im_func(self.richtext)
 
         super(SectionContent, self).save(*args, **kwargs)
     save.alters_data = True
