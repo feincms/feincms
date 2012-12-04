@@ -139,9 +139,8 @@ def register(cls, admin_cls):
     cls.add_to_class('_ct_inventory', JSONField(_('content types'), editable=False, blank=True, null=True))
     cls.content_proxy_class = TrackerContentProxy
 
+    pre_save.connect(single_pre_save_handler, sender=cls)
     if hasattr(cls, 'get_descendants'):
         post_save.connect(tree_post_save_handler, sender=cls)
-    else:
-        pre_save.connect(single_pre_save_handler, sender=cls)
 
 # ------------------------------------------------------------------------
