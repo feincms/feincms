@@ -13,6 +13,7 @@ from datetime import datetime
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.cache import patch_response_headers
 from django.utils.translation import ugettext_lazy as _
 
 # ------------------------------------------------------------------------
@@ -46,6 +47,20 @@ def granular_now(n=None):
                                         (n.minute // 5) * 5), n.tzinfo)
 
 # ------------------------------------------------------------------------
+def datepublisher_response_processor(page, request, response):
+    """
+    This response processor is automatically added when the datepublisher
+    extension is registered. It sets the response headers to match with
+    the publication end date of the page so that upstream caches and
+    the django caching middleware know when to expunge the copy.
+    """
+    expires = page.publication_end_date
+    if expires is not None:
+        now = datetime.now()
+        delta = int((expires - now).total_seconds())
+        patch_response_headers(response, delta)
+
+# ------------------------------------------------------------------------
 def register(cls, admin_cls):
     cls.add_to_class('publication_date',
                                 models.DateTimeField(_('publication date'),
@@ -74,6 +89,9 @@ def register(cls, admin_cls):
              (Q(publication_end_date__isnull=True) |
               Q(publication_end_date__gt=granular_now)),
             key='datepublisher')
+
+    # Processor to patch up response headers for expiry date
+    cls.register_response_processor(datepublisher_response_processor)
 
     def datepublisher_admin(self, page):
         return u'%s &ndash; %s' % (
