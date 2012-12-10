@@ -454,7 +454,9 @@ if(!Array.indexOf) {
 
                     input_element.checked = true;
 
-                    $('form').append('<input type="hidden" name="_continue" value="1" />').submit();
+                    $('#page_form').append('<input type="hidden" name="_continue" value="1" />');
+                    $('#page_form input[type=submit][name=_save]').click();
+
                 } else {
                     $("div#popup_bg").remove();
                     $(input_element).val($(input_element).data('original_value')); // Restore original value
