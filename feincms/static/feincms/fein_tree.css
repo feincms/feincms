@@ -52,3 +52,14 @@ div#drag_line div {
 tr.non-editable a:link, tr.non-editable a:visited, tr.non-editable td {
     color: #AAA;
 }
+
+
+tr.item_inactive {
+    color: red;
+    opacity: 0.7;
+}
+
+tr.item_inactive th a {
+    color: red;
+    opacity: 0.7;
+}

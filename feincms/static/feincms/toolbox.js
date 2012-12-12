@@ -58,20 +58,26 @@ $.ajaxSetup({
 
 /* OnClick handler to toggle a boolean field via AJAX */
 function inplace_toggle_boolean(item_id, attr) {
+    var deferred = $.Deferred();
+
     $.ajax({
       url: ".",
       type: "POST",
       dataType: "json",
       data: { '__cmd': 'toggle_boolean', 'item_id': item_id, 'attr': attr },
 
-      success: replace_elements,
+      success: function(data) {
+        console.log("--success--");
+            replace_elements(data);
+            deferred.resolve();
+      },
 
       error: function(xhr, status, err) {
           alert("Unable to toggle " + attr + ": " + xhr.responseText);
       }
     });
 
-    return false;
+    return deferred.promise();
 }
 
 

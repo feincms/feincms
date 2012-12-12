@@ -91,7 +91,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
         a = [
               '<input type="checkbox"',
               value and ' checked="checked"' or '',
-              ' onclick="return inplace_toggle_boolean(%d, \'%s\')"' % (item.pk, attr),
+              ' onclick="inplace_toggle_boolean(%d, \'%s\').then($.fn.recolorRows);"' % (item.pk, attr),
               ' />',
               text,
             ]
@@ -282,7 +282,7 @@ class TreeEditor(ExtensionModelAdmin):
 
         self._collect_editable_booleans()
 
-        if not self._ajax_editable_booleans.has_key(attr):
+        if not attr in self._ajax_editable_booleans:
             return HttpResponseBadRequest("not a valid attribute %s" % attr)
 
         try:
@@ -294,12 +294,14 @@ class TreeEditor(ExtensionModelAdmin):
             logging.warning("Denied AJAX request by %s to toggle boolean %s for object %s", request.user, attr, item_id)
             return HttpResponseForbidden("You do not have permission to access this object")
 
-        logging.info("Processing request by %s to toggle %s on %s", request.user, attr, obj)
+        new_state = not getattr(obj, attr)
+        logging.info("Processing request by %s to toggle %s on #%d %s to %s",
+                     request.user, attr, obj.pk, obj, "on" if new_state else "off")
 
         try:
             before_data = self._ajax_editable_booleans[attr](self, obj)
 
-            setattr(obj, attr, not getattr(obj, attr))
+            setattr(obj, attr, new_state)
             obj.save()
 
             self._refresh_changelist_caches() # ???: Perhaps better a post_save signal?
