@@ -67,7 +67,6 @@ function inplace_toggle_boolean(item_id, attr) {
       data: { '__cmd': 'toggle_boolean', 'item_id': item_id, 'attr': attr },
 
       success: function(data) {
-        console.log("--success--");
             replace_elements(data);
             deferred.resolve();
       },
