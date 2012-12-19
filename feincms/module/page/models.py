@@ -177,7 +177,7 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
     _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
 
-    cache_key_components = [ lambda p: django_settings.SITE_ID,
+    cache_key_components = [ lambda p: getattr(django_settings, 'SITE_ID', 0),
                              lambda p: p._django_content_type.id,
                              lambda p: p.id ]
 
