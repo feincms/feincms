@@ -172,7 +172,9 @@ class Extension(extensions.Extension):
         def get_original_translation(self, *args, **kwargs):
             if is_primary_language(self.language):
                 return self
-            return self.translation_of
+            if self.translation_of:
+                return self.translation_of
+            raise self.DoesNotExist
 
         @monkeypatch_property(cls)
         def original_translation(self):
