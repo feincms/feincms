@@ -42,7 +42,7 @@ class RSSContent(models.Model):
 
         self.rendered_content = render_to_string('content/rss/content.html', {
             'feed_title': self.title,
-            'feed_link': feed['feed']['link'],
+            'feed_link': feed['feed'].get('link'),
             'entries': entries,
             })
         self.last_updated = timezone.now()
