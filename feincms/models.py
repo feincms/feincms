@@ -706,6 +706,7 @@ def create_base_model(inherit_from=models.Model):
                     cls.feincms_item_editor_includes.setdefault(
                         key, set()).update(incls)
 
+            ensure_completely_loaded(force=True)
             return new_type
 
         @property
