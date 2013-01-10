@@ -729,6 +729,7 @@ def create_base_model(inherit_from=models.Model):
                 for key, includes in model.feincms_item_editor_includes.items():
                     cls.feincms_item_editor_includes.setdefault(key, set()).update(includes)
 
+            ensure_completely_loaded(force=True)
             return new_type
 
         @property
