@@ -23,7 +23,7 @@ settings = LazySettings()
 
 
 COMPLETELY_LOADED = False
-def ensure_completely_loaded():
+def ensure_completely_loaded(force=False):
     """
     This method ensures all models are completely loaded
 
@@ -36,7 +36,7 @@ def ensure_completely_loaded():
     """
 
     global COMPLETELY_LOADED
-    if COMPLETELY_LOADED:
+    if COMPLETELY_LOADED and not force:
         return True
 
     # Ensure meta information concerning related fields is up-to-date.
