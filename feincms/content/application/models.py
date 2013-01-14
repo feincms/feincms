@@ -46,7 +46,7 @@ def _empty_reverse_cache():
     _local.reverse_cache = {}
 
 
-def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, **vkwargs):
+def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, language=None, *vargs, **vkwargs):
     """
     Reverse URLs from application contents
 
@@ -108,7 +108,14 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, *vargs, 
             model_class = ApplicationContent._feincms_content_models[0]
 
         # TODO: Only active pages? What about multisite support?
-        contents = model_class.objects.filter(urlconf_path=urlconf).select_related('parent')
+                        
+        contents = model_class.objects.filter(urlconf_path=urlconf)
+        
+        # Helps select ApplicationContent for required language
+        if not language is None and 'translations' in Page._feincms_extensions:
+            contents = contents.filter(parent__language=language)
+
+        contents = contents.select_related('parent')
 
         if proximity_info:
             # find the closest match within the same subtree
