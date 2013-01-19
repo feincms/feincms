@@ -12,7 +12,9 @@ from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.views import main
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
+from django.http import (HttpResponse, HttpResponseBadRequest,
+    HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError)
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
 
@@ -221,9 +223,9 @@ class TreeEditor(admin.ModelAdmin):
                 item.pk, editable_class, 14+getattr(item, mptt_opts.level_attr)*18)
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):
-            r += item.short_title()
+            r += escape(item.short_title())
         else:
-            r += unicode(item)
+            r += escape(unicode(item))
 #        r += '</span>'
         return mark_safe(r)
     indented_short_title.short_description = _('title')
