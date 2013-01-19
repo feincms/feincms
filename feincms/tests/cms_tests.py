@@ -127,6 +127,9 @@ class CMSBaseTest(TestCase):
         class Attachment(models.Model):
             base = models.ForeignKey(ExampleCMSBase, related_name='test_related_name')
 
+        # See issue #323 on Github.
+        ExampleCMSBase._meta._fill_related_objects_cache()
+
         related_models = map(
             lambda x: x.model, ExampleCMSBase._meta.get_all_related_objects())
 
