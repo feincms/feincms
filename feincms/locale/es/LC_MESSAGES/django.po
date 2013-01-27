@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-08-16 18:17+0200\n"
-"PO-Revision-Date: 2012-06-15 08:25+0000\n"
+"PO-Revision-Date: 2013-01-21 14:56+0200\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: es\n"
@@ -70,14 +70,14 @@ msgid "actions"
 msgstr "acciones"
 
 #: admin/tree_editor.py:429
-#, fuzzy, python-format
+#, python-format
 msgid "Successfully deleted %s items."
-msgstr "¿Confirma la eliminación del elemento?"
+msgstr "%s elementos eliminados con éxito."
 
 #: admin/tree_editor.py:437
 #, python-format
 msgid "Delete selected %(verbose_name_plural)s"
-msgstr ""
+msgstr "Eliminar los/as %(verbose_name_plural)s seleccionados"
 
 #: content/application/models.py:272
 msgid "application content"
@@ -150,11 +150,11 @@ msgstr "imagen"
 
 #: content/image/models.py:46
 msgid "alternate text"
-msgstr ""
+msgstr "text alternativo"
 
 #: content/image/models.py:47
 msgid "Description of image"
-msgstr ""
+msgstr "Descripción de la imagen"
 
 #: content/image/models.py:48 module/medialibrary/models.py:235
 msgid "caption"
@@ -171,7 +171,7 @@ msgstr "posición"
 
 #: content/image/models.py:87
 msgid "format"
-msgstr ""
+msgstr "formato"
 
 #: content/medialibrary/models.py:48
 msgid "(no caption)"
@@ -337,7 +337,7 @@ msgstr "vídeos"
 
 #: contrib/tagging.py:117
 msgid "Tagging"
-msgstr ""
+msgstr "Etiquetado"
 
 #: module/blog/models.py:28
 msgid "published"
@@ -456,7 +456,7 @@ msgstr "traducciones"
 
 #: module/medialibrary/forms.py:26
 msgid "This would create a loop in the hierarchy"
-msgstr ""
+msgstr "Esto crearía un bucle en la jerarquía"
 
 #: module/medialibrary/forms.py:64
 #, python-format
@@ -464,36 +464,42 @@ msgid ""
 "Cannot overwrite with different file type (attempt to overwrite a "
 "%(old_ext)s with a %(new_ext)s)"
 msgstr ""
+"No se puede sobreescribir con un tipo de archivo diferente (intento "
+"de sobreescribir un %(old_ext)s con un %(new_ext)s)"
 
 #: module/medialibrary/modeladmins.py:57
 #, python-format
 msgid "Successfully added %(count)d media file to %(category)s."
 msgid_plural "Successfully added %(count)d media files to %(category)s."
 msgstr[0] ""
+"Se añadió con éxito %(count)d archivo de medios a la categoría "
+"%(category)s."
 msgstr[1] ""
+"Se añadieron con éxito %(count)d archivos de medios a la categoría "
+"%(category)s."
 
 #: module/medialibrary/modeladmins.py:75
 msgid "Add selected media files to category"
-msgstr ""
+msgstr "Añadir los archivos de medios seleccionados a la categoría"
 
 #: module/medialibrary/modeladmins.py:84
 #, python-format
 msgid "ZIP file exported as %s"
-msgstr ""
+msgstr "Archivo ZIP exportado como %s"
 
 #: module/medialibrary/modeladmins.py:86
 #, python-format
 msgid "ZIP file export failed: %s"
-msgstr ""
+msgstr "La exportación del archivo ZIP falló: %s"
 
 #: module/medialibrary/modeladmins.py:91
 msgid "Export selected media files as zip file"
-msgstr ""
+msgstr "Exportar los archivos de medios selccionados como un archivo ZIP"
 
 #: module/medialibrary/modeladmins.py:134
 #: templates/admin/feincms/page/page/item_editor.html:15
 msgid "Preview"
-msgstr "Pre-visualización"
+msgstr "Previsualización"
 
 #: module/medialibrary/modeladmins.py:139 module/medialibrary/models.py:88
 msgid "file size"
@@ -514,16 +520,16 @@ msgstr "información del archivo"
 #: module/medialibrary/modeladmins.py:196
 #, python-format
 msgid "%d files imported"
-msgstr ""
+msgstr "importados %d archivos"
 
 #: module/medialibrary/modeladmins.py:198
 #, python-format
 msgid "ZIP import failed: %s"
-msgstr ""
+msgstr "La importación del archivo ZIP falló: %s"
 
 #: module/medialibrary/modeladmins.py:200
 msgid "No input file given"
-msgstr ""
+msgstr "No se indicó un archivo de entrada"
 
 #: module/medialibrary/models.py:43
 msgid "parent"
@@ -575,7 +581,7 @@ msgstr "Texto rico"
 
 #: module/medialibrary/models.py:209
 msgid "Zip archive"
-msgstr ""
+msgstr "Archivo ZIP"
 
 #: module/medialibrary/models.py:210
 msgid "Microsoft Word"
@@ -599,11 +605,11 @@ msgstr "descripción"
 
 #: module/medialibrary/models.py:239
 msgid "media file translation"
-msgstr "traducción del archivo de media"
+msgstr "traducción del archivo de medios"
 
 #: module/medialibrary/models.py:240
 msgid "media file translations"
-msgstr "traducciones del archivo de media"
+msgstr "traducciones del archivo de medios"
 
 #: module/page/forms.py:118
 msgid "This URL is already taken by an active page."
@@ -611,11 +617,11 @@ msgstr "Esta URL ya está en uso en una página activa"
 
 #: module/page/forms.py:136
 msgid "This URL is already taken by another active page."
-msgstr "Esta URL ya está en uno por otra página activa"
+msgstr "Esta URL ya está en uso por otra página activa"
 
 #: module/page/modeladmins.py:41
 msgid "Other options"
-msgstr "otras opciones"
+msgstr "Otras opciones"
 
 #: module/page/modeladmins.py:89 module/page/models.py:145
 msgid "in navigation"
@@ -635,10 +641,12 @@ msgid ""
 "The content from the original translation has been copied to the newly "
 "created page."
 msgstr ""
+"El contenido de la traducción original se ha copiado en la página "
+"recién creada."
 
 #: module/page/modeladmins.py:144
 msgid "You don't have the necessary permissions to edit this object"
-msgstr ""
+msgstr "No dispone de los permisos necesarios para editar este objeto"
 
 #: module/page/modeladmins.py:159
 msgid "inherited"
@@ -666,8 +674,8 @@ msgid ""
 "the end if it is a local URL. This affects both the navigation and subpages' "
 "URLs."
 msgstr ""
-"URL efectivo. Debe contener una '/' cuando se trata de un URL local. Este "
-"campo afecta la navegación y los URLs de las sub-páginas."
+"URL efectivo. Debe contener una '/' al principio y al final al cuando se trata "
+"de un URL local. Este campo afecta a la navegación y a los URLs de las sub-páginas."
 
 #: module/page/models.py:148
 msgid "redirect to"
@@ -679,7 +687,7 @@ msgstr "URL de destino para redirecciones automáticas."
 
 #: module/page/models.py:150
 msgid "Cached URL"
-msgstr "URL en cache"
+msgstr "URL en caché"
 
 #: module/page/models.py:161
 msgid "page"
@@ -711,7 +719,7 @@ msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr ""
-"Selecciona el módulo que provee sub-páginas para esta pagina si necesitas "
+"Seleccione el módulo que provee sub-páginas para esta pagina si necesitas "
 "personalizar la navegación."
 
 #: module/page/extensions/navigation.py:115
@@ -720,7 +728,7 @@ msgstr "Extensión de navegación"
 
 #: module/page/extensions/relatedpages.py:13
 msgid "Select pages that should be listed as related content."
-msgstr "Selecciona las páginas que se mostrarán como contenido relacionado."
+msgstr "Seleccione las páginas que se mostrarán como contenido relacionado."
 
 #: module/page/extensions/relatedpages.py:20
 msgid "Related pages"
@@ -728,7 +736,7 @@ msgstr "Páginas relacionadas"
 
 #: module/page/extensions/sites.py:16
 msgid "Site"
-msgstr ""
+msgstr "Sitio"
 
 #: module/page/extensions/symlinks.py:15
 msgid "symlinked page"
@@ -764,7 +772,7 @@ msgstr "Títulos"
 #: templates/admin/filter.html:3
 #, python-format
 msgid " By %(filter_title)s "
-msgstr "Por %(filter_title)s"
+msgstr " Por %(filter_title)s"
 
 #: templates/admin/content/mediafile/init.html:9
 msgid "Search"
@@ -789,7 +797,7 @@ msgstr "Imposible de eliminar el elemento"
 #: templates/admin/feincms/_messages_js.html:6
 msgid "Cannot delete item, because it is parent of at least one other item."
 msgstr ""
-"Imposible de eliminar el elemento, porque es padre de al menos un elemento ."
+"Imposible eliminar el elemento, porque es padre de al menos otro elemento ."
 
 #: templates/admin/feincms/_messages_js.html:7
 msgid "Change template"
@@ -797,17 +805,17 @@ msgstr "Cambiar la plantilla"
 
 #: templates/admin/feincms/_messages_js.html:8
 msgid "Really change template? <br />All changes are saved."
-msgstr "¿Deas cambiar la plantilla?<br /> Todos los cambios se guardarán."
+msgstr "¿Deseas cambiar la plantilla?<br />Todos los cambios se guardarán."
 
 #: templates/admin/feincms/_messages_js.html:9
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Really change template? <br />All changes are saved and content from <strong>"
 "%%(source_regions)s</strong> is moved to <strong>%%(target_region)s</strong>."
 msgstr ""
 "¿Deseas cambiar la plantilla? <br/>Todos los cambios se guardarán y el "
-"contenido desde <strong>%(source_regions)s</strong> se moverá a <strong>"
-"%(target_region)s</strong>"
+"contenido desde <strong>%%(source_regions)s</strong> se moverá a <strong>"
+"%%(target_region)s</strong>."
 
 #: templates/admin/feincms/_messages_js.html:12
 msgid "Hide"
@@ -848,11 +856,11 @@ msgstr "Añadir nuevo elemento"
 #: templates/admin/feincms/content_inline.html:91
 #, python-format
 msgid "Add another %(verbose_name)s"
-msgstr ""
+msgstr "Añadir otro/a %(verbose_name)s"
 
 #: templates/admin/feincms/content_inline.html:94
 msgid "Remove"
-msgstr ""
+msgstr "Eliminar"
 
 #: templates/admin/feincms/fe_editor.html:40
 msgid "Save"
@@ -892,24 +900,24 @@ msgstr "Página inicial"
 #: templates/admin/feincms/recover_form.html:11
 #, python-format
 msgid "Recover deleted %(verbose_name)s"
-msgstr ""
+msgstr "Recuperar los/as %(verbose_name)s eliminados/as"
 
 #: templates/admin/feincms/recover_form.html:17
 msgid "Press the save button below to recover this version of the object."
-msgstr ""
+msgstr "Pulse el botón de guardar inferior para recuperar esta versión del objeto."
 
 #: templates/admin/feincms/revision_form.html:12
 msgid "History"
-msgstr ""
+msgstr "Historia"
 
 #: templates/admin/feincms/revision_form.html:13
 #, python-format
 msgid "Revert %(verbose_name)s"
-msgstr ""
+msgstr "Revertir %(verbose_name)s"
 
 #: templates/admin/feincms/revision_form.html:24
 msgid "Press the save button below to revert to this version of the object."
-msgstr ""
+msgstr "Pulse el botón de guardar inferior para revertir a esta versión del objeto."
 
 #: templates/admin/feincms/tree_editor.html:32
 msgid "Shortcuts"
@@ -933,36 +941,36 @@ msgstr "Editar en el sitio"
 
 #: templates/admin/feincms/page/page/item_editor.html:27
 msgid "Add"
-msgstr ""
+msgstr "Añadir"
 
 #: templates/admin/medialibrary/add_to_category.html:5
 #: templates/admin/medialibrary/add_to_category.html:9
 msgid "Add media files to category"
-msgstr ""
+msgstr "Añadir archivos de medios a la categoría"
 
 #: templates/admin/medialibrary/add_to_category.html:11
 msgid "Select category to apply:"
-msgstr ""
+msgstr "Seleccionar categoría que aplicar:"
 
 #: templates/admin/medialibrary/add_to_category.html:17
 msgid "The following media files will be added to the selected category:"
-msgstr ""
+msgstr "Los siguientes archivos de medios se añadirán a la categoría seleccionada:"
 
 #: templates/admin/medialibrary/add_to_category.html:22
 msgid "Add to category"
-msgstr ""
+msgstr "Añadir a la categoría"
 
 #: templates/admin/medialibrary/add_to_category.html:23
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:11
 msgid "Bulk upload a ZIP file:"
-msgstr "Sube un archivo ZIP:"
+msgstr "Subir varias archivos de medios en un archivo ZIP:"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:21
 msgid "Overwrite"
-msgstr ""
+msgstr "Sobreescribir"
 
 #: templates/admin/medialibrary/mediafile/change_list.html:24
 msgid "Send"
