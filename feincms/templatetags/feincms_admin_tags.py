@@ -13,6 +13,9 @@ def post_process_fieldsets(fieldset):
     Additionally, it ensures that dynamically added fields (i.e.
     ``ApplicationContent``'s ``admin_fields`` option) are shown.
     """
+    # abort if fieldset is customized
+    if fieldset.model_admin.fieldsets:
+        return fieldset
 
     fields_to_include = set(fieldset.form.fields.keys())
     for f in ('id', 'DELETE', 'ORDER'):
