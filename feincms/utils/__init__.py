@@ -15,7 +15,7 @@ from django.utils.importlib import import_module
 def get_object(path, fail_silently=False):
     # Return early if path isn't a string (might already be an callable or
     # a class or whatever)
-    if not isinstance(path, (str, unicode)):
+    if not isinstance(path, basestring):
         return path
 
     try:
