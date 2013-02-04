@@ -87,33 +87,41 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
         queryset = _filter(queryset)
 
-    if any((ext in feincms_page._feincms_extensions for ext in (
-            'navigation', 'feincms.module.page.extensions.navigation'))):
-        # Filter out children of nodes which have a navigation extension
-        extended_node_rght = [] # mptt node right value
+    try:
+        if any((ext in feincms_page._feincms_extensions for ext in (
+                'navigation', 'feincms.module.page.extensions.navigation'))):
+            # Filter out children of nodes which have a navigation extension
+            extended_node_rght = []  # mptt node right value
 
-        def _filter(iterable):
-            for elem in iterable:
-                if extended_node_rght:
-                    if getattr(elem, mptt_opts.right_attr) < extended_node_rght[-1]:
-                        # Still inside some navigation extension
-                        continue
+            def _filter(iterable):
+                for elem in iterable:
+                    if extended_node_rght:
+                        if getattr(elem, mptt_opts.right_attr) < extended_node_rght[-1]:
+                            # Still inside some navigation extension
+                            continue
+                        else:
+                            extended_node_rght.pop()
+
+                    if getattr(elem, 'navigation_extension', None):
+                        yield elem
+                        extended_node_rght.append(getattr(elem, mptt_opts.right_attr))
+
+                        for extended in elem.extended_navigation(depth=depth,
+                                request=context.get('request')):
+                            if getattr(extended, mptt_opts.level_attr, 0) < level + depth - 1:
+                                yield extended
+
                     else:
-                        extended_node_rght.pop()
+                        yield elem
 
-                if getattr(elem, 'navigation_extension', None):
-                    yield elem
-                    extended_node_rght.append(getattr(elem, mptt_opts.right_attr))
-
-                    for extended in elem.extended_navigation(depth=depth,
-                            request=context.get('request')):
-                        if getattr(extended, mptt_opts.level_attr, 0) < level + depth - 1:
-                            yield extended
-
-                else:
-                    yield elem
-
-        queryset = _filter(queryset)
+            queryset = _filter(queryset)
+    except AttributeError:
+        warnings.warn(
+            '''
+            The Page Object is missing the _feincms_extensions attribute.
+            Even if you dont need no extensions,
+            please add a Page.register_extensions() call.
+            ''', Warning, stacklevel=3)
 
     # Return a list, not a generator so that it can be consumed
     # several times in a template.
