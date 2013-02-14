@@ -729,10 +729,7 @@ def create_base_model(inherit_from=models.Model):
                 for key, includes in model.feincms_item_editor_includes.items():
                     cls.feincms_item_editor_includes.setdefault(key, set()).update(includes)
 
-            # since this content type is potentially being added after cls is
-            # loaded by Django, we will reload the cls's related objects cache.
-            # See issue #323.
-            cls._meta._fill_related_objects_cache()
+            ensure_completely_loaded(force=True)
             return new_type
 
         @property
