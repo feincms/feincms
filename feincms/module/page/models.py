@@ -160,7 +160,7 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 PageManager.add_to_active_filters(Q(active=True))
 
 # ------------------------------------------------------------------------
-class Page(create_base_model(MPTTModel), ContentModelMixin):
+class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     active = models.BooleanField(_('active'), default=True)
 
     # structure and navigation
@@ -183,8 +183,7 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
 
     class Meta:
         ordering = ['tree_id', 'lft']
-        verbose_name = _('page')
-        verbose_name_plural = _('pages')
+        abstract = True
 
     objects = PageManager()
 
@@ -199,7 +198,7 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
         if not self.pk:
             return False
 
-        pages = Page.objects.active().filter(tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght)
+        pages = self.__class__.objects.active().filter(tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght)
         return pages.count() > self.level
     is_active.short_description = _('is active')
 
@@ -224,7 +223,7 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
     short_title.short_description = _('title')
 
     def __init__(self, *args, **kwargs):
-        super(Page, self).__init__(*args, **kwargs)
+        super(BasePage, self).__init__(*args, **kwargs)
         # Cache a copy of the loaded _cached_url value so we can reliably
         # determine whether it has been changed in the save handler:
         self._original_cached_url = self._cached_url
@@ -248,7 +247,7 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
             self._cached_url = u'%s%s/' % (self.parent._cached_url, self.slug)
 
         cached_page_urls[self.id] = self._cached_url
-        super(Page, self).save(*args, **kwargs)
+        super(BasePage, self).save(*args, **kwargs)
 
         # Okay, we have changed the page -- remove the old stale entry from the cache
         self.invalidate_cache()
@@ -272,12 +271,12 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
                     page.slug)
 
             cached_page_urls[page.id] = page._cached_url
-            super(Page, page).save() # do not recurse
+            super(BasePage, page).save() # do not recurse
     save.alters_data = True
 
     @commit_on_success
     def delete(self, *args, **kwargs):
-        super(Page, self).delete(*args, **kwargs)
+        super(BasePage, self).delete(*args, **kwargs)
         self.invalidate_cache()
     delete.alters_data = True
 
@@ -362,9 +361,16 @@ class Page(create_base_model(MPTTModel), ContentModelMixin):
 
         return self.redirect_to
 
-    @staticmethod
-    def path_to_cache_key(path):
-        return path_to_cache_key(path.strip('/'), prefix="PAGE-FOR-URL")
+    @classmethod
+    def path_to_cache_key(cls, path):
+        prefix = "%s-FOR-URL" % cls.__name__.upper()
+        return path_to_cache_key(path.strip('/'), prefix=prefix)
+
+class Page(BasePage):
+    class Meta:
+        ordering = ['tree_id', 'lft']
+        verbose_name = _('page')
+        verbose_name_plural = _('pages')
 
 # ------------------------------------------------------------------------
 # Our default request processors
