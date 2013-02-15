@@ -30,7 +30,7 @@ REDIRECT_TO_RE = re.compile(
 
 
 # ------------------------------------------------------------------------
-class PageManager(models.Manager, ActiveAwareContentManagerMixin):
+class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
     """
     The page manager. Only adds new methods, does not modify standard Django
     manager behavior in any way.
@@ -156,6 +156,9 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return request._feincms_page
 
+# ------------------------------------------------------------------------
+class PageManager(BasePageManager):
+    pass
 
 PageManager.add_to_active_filters(Q(active=True))
 
@@ -366,27 +369,31 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         prefix = "%s-FOR-URL" % cls.__name__.upper()
         return path_to_cache_key(path.strip('/'), prefix=prefix)
 
+    @classmethod
+    def register_default_processors(cls, frontend_editing=False):
+        """
+        Register our default request processors for the out-of-the-box
+        Page experience.
+        """
+        cls.register_request_processor(processors.redirect_request_processor,
+                                       key='redirect')
+        cls.register_request_processor(processors.extra_context_request_processor,
+                                       key='extra_context')
+
+        if frontend_editing:
+            cls.register_request_processor(processors.frontendediting_request_processor,
+                                           key='frontend_editing')
+            cls.register_response_processor(processors.frontendediting_response_processor,
+                                            key='frontend_editing')
+
+# ------------------------------------------------------------------------
 class Page(BasePage):
     class Meta:
         ordering = ['tree_id', 'lft']
         verbose_name = _('page')
         verbose_name_plural = _('pages')
 
-# ------------------------------------------------------------------------
-# Our default request processors
-
-Page.register_request_processor(processors.redirect_request_processor,
-    key='redirect')
-Page.register_request_processor(processors.extra_context_request_processor,
-    key='extra_context')
-
-if settings.FEINCMS_FRONTEND_EDITING:
-    Page.register_request_processor(
-        processors.frontendediting_request_processor,
-        key='frontend_editing')
-    Page.register_response_processor(
-        processors.frontendediting_response_processor,
-        key='frontend_editing')
+Page.register_default_processors(frontend_editing=settings.FEINCMS_FRONTEND_EDITING)
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 

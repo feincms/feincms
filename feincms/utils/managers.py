@@ -11,19 +11,21 @@ class ActiveAwareContentManagerMixin(object):
 
     # A dict of filters which are used to determine whether a page is active or not.
     # Extended for example in the datepublisher extension (date-based publishing and
-    # un-publishing of pages)
-    active_filters = {}
+    # un-publishing of pages). This will be set in add_to_active_filters() below,
+    # so we won't share the same dict for derived managers, do not replace with {} here!
+    active_filters = None
 
     @classmethod
     def apply_active_filters(cls, queryset):
         """
         Apply all filters defined to the queryset passed and return the result.
         """
-        for filt in cls.active_filters.values():
-            if callable(filt):
-                queryset = filt(queryset)
-            else:
-                queryset = queryset.filter(filt)
+        if cls.active_filters is not None:
+            for filt in cls.active_filters.values() or ():
+                if callable(filt):
+                    queryset = filt(queryset)
+                else:
+                    queryset = queryset.filter(filt)
 
         return queryset
 
@@ -37,7 +39,7 @@ class ActiveAwareContentManagerMixin(object):
         If a filter with the given `key` already exists, the new filter
         replaces the old.
         """
-        if not cls.active_filters:
+        if cls.active_filters is None:
             cls.active_filters = {}
         if key is None:
             key = filter
