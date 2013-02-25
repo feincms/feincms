@@ -49,6 +49,7 @@ Contents
    installation
    page
    contenttypes
+   extensions
    admin
    integration
    medialibrary
