@@ -160,6 +160,17 @@ Notable features and improvements
   class anymore; hooks are provided to use your own models instead. Please
   refer to the source for additional information.
 
+* ``Page.redirect_to`` can also contain the primary key of a page now, which
+  means that the redirect target stays correct even if the page URL changes.
+
+* Before, page content was copied automatically when creating a translation
+  of an existing page. This behavior can be deactivated by unchecking a
+  checkbox now.
+
+* Work has begun to make the page forms, model admin classes and managers
+  work with an abstract page model so that it will be easier to work with
+  several page models in a single Django site.
+
 
 Bugfixes
 ========
@@ -179,6 +190,17 @@ Bugfixes
 
 * Various ``save`` and ``delete`` methods now come with ``alters_data=True``
   to prevent their use in templates.
+
+* Only one translation is permitted per language when using
+  :py:mod:`feincms.translations`.
+
+* FeinCMS can now be used without :py:mod:`django.contrib.sites`.
+
+* If the fieldset of a content inline has been customized, the fieldset is
+  not processed again to make sure that all form fields are actually shown.
+  If you use dynamically generated fields in a content inline such as the
+  application content does, you must not customize the fieldsets attribute
+  of the ``FeinCMSInline``.
 
 
 Compatibility with Django and other apps
