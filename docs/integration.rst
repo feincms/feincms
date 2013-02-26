@@ -5,9 +5,7 @@ Integrating 3rd party apps into your site
 =========================================
 
 With FeinCMS come a set of standard views which you might want to check
-out before starting to write your own. Included is a standard view for
-pages, and a set of generic view drop-in replacements which know about
-the CMS.
+out before starting to write your own.
 
 
 Default page handler
