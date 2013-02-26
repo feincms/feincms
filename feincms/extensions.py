@@ -45,7 +45,7 @@ class ExtensionsMixin(object):
 
             if isinstance(ext, basestring):
                 try:
-                    extension = get_object(path)
+                    extension = get_object(ext)
                 except (AttributeError, ImportError, ValueError):
                     if not extension:
                         raise ImproperlyConfigured(
