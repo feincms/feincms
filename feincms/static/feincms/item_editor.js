@@ -182,13 +182,12 @@ if(!Array.indexOf) {
         for(var i = 0; i < 2; i++){
             // Use Django's built-in inline spawing mechanism (Django 1.2+)
             // must use django.jQuery since the bound function lives there:
-            var returned = django.jQuery('#'+modvar+'_set-group').find(
+            django.jQuery('#'+modvar+'_set-group').find(
                 'div.add-row > a').triggerHandler('click');
-            if(returned==false) break; // correct return value
-        }
-        var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val(), 10);
-        if(new_form_count > old_form_count){
-            return $('#'+modvar+'_set-'+(new_form_count-1));
+            var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val(), 10);
+            if(new_form_count > old_form_count){
+                return $('#'+modvar+'_set-'+(new_form_count-1));
+            }
         }
     }
 
