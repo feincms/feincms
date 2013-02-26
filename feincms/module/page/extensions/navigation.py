@@ -99,7 +99,7 @@ def navigation_extension_choices():
 
 
 class Extension(extensions.Extension):
-    ident = 'navigation'
+    ident = 'navigation'  # TODO actually use this
 
     def handle_model(self):
         self.model.add_to_class('navigation_extension',
