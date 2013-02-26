@@ -30,10 +30,7 @@ def format_exception(e):
 @register.assignment_tag(takes_context=True)
 def feincms_nav(context, feincms_page, level=1, depth=1):
     """
-    New, simplified version of the ``{% feincms_navigation %}`` template tag.
-
-    Generally we don't like abbreviations too much, but the similarity with
-    the HTML5 <nav> tag was just too tempting.
+    Saves a list of pages into the given context variable.
     """
 
     if isinstance(feincms_page, HttpRequest):
