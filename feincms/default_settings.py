@@ -40,7 +40,7 @@ FEINCMS_RICHTEXT_INIT_TEMPLATE = getattr(settings,
     'admin/content/richtext/init_tinymce.html')
 FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(settings,
     'FEINCMS_RICHTEXT_INIT_CONTEXT', {
-        'TINYMCE_JS_URL': join(settings.MEDIA_URL, 'js/tiny_mce/tiny_mce.js'),
+        'TINYMCE_JS_URL': join(settings.STATIC_URL, 'js/tiny_mce/tiny_mce.js'),
         'TINYMCE_CONTENT_CSS_URL': None,
         'TINYMCE_LINK_LIST_URL': None
         })

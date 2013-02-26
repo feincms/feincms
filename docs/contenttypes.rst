@@ -408,7 +408,7 @@ a few styles activated. The necessary javascript files are not included,
 you need to put them in the right place on your own.
 
 By default, ``RichTextContent`` expects a TinyMCE activation script at
-``<MEDIA_URL>js/tiny_mce/tiny_mce.js``. This can be customized by overriding
+``<STATIC_URL>js/tiny_mce/tiny_mce.js``. This can be customized by overriding
 ``FEINCMS_RICHTEXT_INIT_TEMPLATE`` and ``FEINCMS_RICHTEXT_INIT_CONTEXT`` in
 your ``settings.py`` file.
 

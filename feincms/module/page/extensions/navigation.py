@@ -10,7 +10,6 @@ be they real Page instances or extended navigation entries.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from feincms import extensions
 from feincms.utils import get_object
 from feincms._internal import monkeypatch_method
 
@@ -98,31 +97,26 @@ def navigation_extension_choices():
         yield ('%s.%s' % (ext.__module__, ext.__name__), ext.name)
 
 
-class Extension(extensions.Extension):
-    ident = 'navigation'
-
-    def handle_model(self):
-        self.model.add_to_class('navigation_extension',
+def register(cls, admin_cls):
+    cls.add_to_class('navigation_extension',
             models.CharField(
                 _('navigation extension'),
                 choices=navigation_extension_choices(),
                 blank=True, null=True, max_length=200,
                 help_text=_('Select the module providing subpages for this page if you need to customize the navigation.')))
 
-        @monkeypatch_method(self.model)
-        def extended_navigation(self, **kwargs):
-            if not self.navigation_extension:
-                return self.children.in_navigation()
+    @monkeypatch_method(cls)
+    def extended_navigation(self, **kwargs):
+        if not self.navigation_extension:
+            return self.children.in_navigation()
 
-            cls = get_object(self.navigation_extension, fail_silently=True)
-            if not cls or not callable(cls):
-                return self.children.in_navigation()
+        cls = get_object(self.navigation_extension, fail_silently=True)
+        if not cls or not callable(cls):
+            return self.children.in_navigation()
 
-            return cls().children(self, **kwargs)
+        return cls().children(self, **kwargs)
 
-
-    def handle_modeladmin(self, modeladmin):
-        modeladmin.add_extension_options(_('Navigation extension'), {
-            'fields': ('navigation_extension',),
-            'classes': ('collapse',),
-            })
+    admin_cls.add_extension_options(_('Navigation extension'), {
+        'fields': ('navigation_extension',),
+        'classes': ('collapse',),
+        })

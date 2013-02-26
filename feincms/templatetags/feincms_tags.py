@@ -14,7 +14,7 @@ def _render_content(content, **kwargs):
     # Track current render level and abort if we nest too deep. Avoids
     # crashing in recursive page contents (eg. a page list that contains
     # itself or similar).
-    request = kwargs.get('request')
+    request = kwargs.get('request') or None
     if request is not None:
         level = getattr(request, 'feincms_render_level', 0)
         if level > 10:
