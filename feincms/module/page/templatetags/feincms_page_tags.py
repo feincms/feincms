@@ -140,57 +140,6 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
 
 
 # ------------------------------------------------------------------------
-class NavigationNode(SimpleAssignmentNodeWithVarAndArgs):
-    """
-    Return a list of pages to be used for the navigation
-
-    level: 1 = toplevel, 2 = sublevel, 3 = sub-sublevel
-    depth: 1 = only one level, 2 = subpages too
-    extended: run navigation extension on returned pages, not only on top-level node
-
-    If you set depth to something else than 1, you might want to look into
-    the tree_info template tag from the mptt_tags library.
-
-    Example::
-
-        {% feincms_navigation of feincms_page as sublevel level=2,depth=1 %}
-        {% for p in sublevel %}
-            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
-        {% endfor %}
-    """
-
-    def what(self, instance, args):
-        warnings.warn('feincms_navigation and feincms_navigation_extended have'
-            ' been deprecated and will be removed in FeinCMS v1.8. Start using'
-            ' the new, shiny and bug-free feincms_nav today!',
-            DeprecationWarning, stacklevel=3)
-
-        return feincms_nav(
-            self.render_context,
-            instance,
-            level=int(args.get('level', 1)),
-            depth=int(args.get('depth', 1)),
-            )
-register.tag('feincms_navigation',
-    do_simple_assignment_node_with_var_and_args_helper(NavigationNode))
-
-# ------------------------------------------------------------------------
-class ExtendedNavigationNode(NavigationNode):
-    def render(self, context):
-        self.render_context = context
-        try:
-            instance = self.in_var.resolve(context)
-        except template.VariableDoesNotExist:
-            context[self.var_name] = []
-            return ''
-
-        context[self.var_name] = self.what(instance, _parse_args(self.args, context))
-
-        return ''
-register.tag('feincms_navigation_extended',
-    do_simple_assignment_node_with_var_and_args_helper(ExtendedNavigationNode))
-
-# ------------------------------------------------------------------------
 class ParentLinkNode(SimpleNodeWithVarAndArgs):
     """
     {% feincms_parentlink of feincms_page level=1 %}

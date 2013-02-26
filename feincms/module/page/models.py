@@ -122,8 +122,7 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return self.in_navigation().filter(parent__isnull=True)
 
-    def for_request(self, request, raise404=False, best_match=False,
-            setup=False):
+    def for_request(self, request, raise404=False, best_match=False):
         """
         Return a page for the request
 
@@ -146,13 +145,6 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
             else:
                 request._feincms_page = self.page_for_path(path,
                     raise404=raise404)
-
-        if setup:
-            import warnings
-            warnings.warn(
-                'Calling for_request with setup=True does nothing anymore.'
-                ' The parameter will be removed in FeinCMS v1.8.',
-                DeprecationWarning, stacklevel=2)
 
         return request._feincms_page
 

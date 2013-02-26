@@ -23,7 +23,7 @@ which you can download using the Git_ version control system::
     $ git clone git://github.com/feincms/feincms.git
 
 Feincms, some content types or cleaning modules are dependent on the following apps, which are installed when using pip:
-lxml_, feedparser_, PIL_, django-mptt_ and BeautifulSoup_.
+feedparser_, Pillow_ and django-mptt_.
 
 However, django-tagging_ is not installed because the blog module that uses it is merely a proof of
 concept. If you are looking to implement a blog, check out elephantblog_.
@@ -37,10 +37,8 @@ TinyMCE_ works out of the box and is recommended.
 .. _Subversion: http://subversion.tigris.org/
 .. _django-mptt: http://github.com/django-mptt/django-mptt/
 .. _django-tagging: http://code.google.com/p/django-tagging/
-.. _lxml: http://codespeak.net/lxml/
 .. _feedparser: http://www.feedparser.org/
-.. _PIL: http://www.pythonware.com/products/pil/
-.. _BeautifulSoup: http://pypi.python.org/pypi/BeautifulSoup/3.2.1
+.. _Pillow: https://pypi.python.org/pypi/Pillow/
 .. _elephantblog: http://github.com/feincms/feincms-elephantblog
 .. _TinyMCE: http://www.tinymce.com/
 .. _CKEditor: http://ckeditor.com/

@@ -37,13 +37,6 @@ class ExtensionsMixin(object):
             cls._extensions = []
             cls._extensions_seen = []
 
-        here = cls.__module__.split('.')[:-1]
-        search_paths = [
-            '.'.join(here + ['extensions']),
-            '.'.join(here[:-1] + ['extensions']),
-            'feincms.module.extensions',
-            ]
-
         for ext in extensions:
             if ext in cls._extensions:
                 continue
@@ -51,33 +44,13 @@ class ExtensionsMixin(object):
             extension = None
 
             if isinstance(ext, basestring):
-                paths = [ext, '%s.register' % ext] + [
-                    '%s.%s.register' % (path, ext) for path in search_paths]
-
-                for idx, path in enumerate(paths):
-                    try:
-                        extension = get_object(path)
-
-                        if idx >= 2:
-                            warnings.warn(
-                                'Using short names for extensions has been'
-                                ' deprecated and will be removed in'
-                                ' FeinCMS v1.8. Please provide the full'
-                                ' python path to the extension'
-                                ' %s instead (%s).' % (
-                                    ext,
-                                    re.sub(r'\.register$', '', path),
-                                    ),
-                                DeprecationWarning, stacklevel=2)
-
-                        break
-                    except (AttributeError, ImportError, ValueError):
-                        pass
-
-            if not extension:
-                raise ImproperlyConfigured(
-                    '%s is not a valid extension for %s' % (
-                        ext, cls.__name__))
+                try:
+                    extension = get_object(path)
+                except (AttributeError, ImportError, ValueError):
+                    if not extension:
+                        raise ImproperlyConfigured(
+                            '%s is not a valid extension for %s' % (
+                                ext, cls.__name__))
 
             if hasattr(extension, 'Extension'):
                 extension = extension.Extension

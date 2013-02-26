@@ -1,0 +1,48 @@
+====================================
+FeinCMS 1.8 release notes (upcoming)
+====================================
+
+Welcome to FeinCMS 1.8!
+
+
+Major feature 1
+===============
+
+
+Backwards-incompatible changes
+==============================
+
+
+Removal of deprecated features
+------------------------------
+
+* The old media library content type module
+  :py:mod:`feincms.content.medialibrary.models` has been replaced with the
+  contents of :py:mod:`feincms.content.medialibrary.v2`. The model field
+  ``position`` has been renamed to ``type``, instead of ``POSITION_CHOICES``
+  you should use ``TYPE_CHOICES`` now. The code has been simplified and
+  hacks to imitate ``raw_id_fields`` have been replaced by working stock
+  code. The ``v2`` module will stay around for another release and will be
+  removed in FeinCMS v1.8. The now-unused template
+  ``admin/content/mediafile/init.html`` has been deleted.
+
+
+New deprecations
+----------------
+
+* ``Page.setup_request()`` does not do anything anymore and will be removed
+  in FeinCMS v1.8.
+
+
+Notable features and improvements
+=================================
+
+
+Bugfixes
+========
+
+
+Compatibility with Django and other apps
+========================================
+
+FeinCMS 1.8 requires Django 1.4 (or even Django 1.5?).

@@ -19,13 +19,6 @@ class ContentModelMixin(object):
     #: Collection of response processors
     response_processors = None
 
-    def setup_request(self, request):
-        import warnings
-        warnings.warn(
-            '%s.setup_request does nothing anymore, and will be removed in'
-            ' FeinCMS v1.8',
-            DeprecationWarning, stacklevel=2)
-
     @classmethod
     def register_request_processor(cls, fn, key=None):
         """
