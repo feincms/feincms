@@ -144,4 +144,4 @@ Bugfixes
 Compatibility with Django and other apps
 ========================================
 
-FeinCMS 1.7 requires Django 1.4.
+FeinCMS 1.7 requires Django 1.4 or better.
