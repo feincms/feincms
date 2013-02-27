@@ -209,9 +209,14 @@ class TreeEditor(admin.ModelAdmin):
         """
         mptt_opts = item._mptt_meta
         r = ''
-        if hasattr(item, 'get_absolute_url'):
+        try:
+            url = item.get_absolute_url()
+        except (AttributeError,):
+            url = None
+
+        if url:
             r = '<input type="hidden" class="medialibrary_file_path" value="%s" id="_refkey_%d" />' % (
-                        item.get_absolute_url(),
+                        url,
                         item.pk
                       )
 
