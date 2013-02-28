@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import
 
+import os
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.test import TestCase
@@ -47,7 +49,17 @@ class CMSBaseTest(TestCase):
     def test_02_rsscontent_creation(self):
         # this test resides in its own method because the required feedparser
         # module is not available everywhere
-        from feincms.content.rss.models import RSSContent
+
+        from feincms.content.rss.models import RSSContent, feedparser
+
+        # Monkey-patch feedparser.parse to work with a local RSS dump so that
+        # the tests run faster.
+        _orig_parse = feedparser.parse
+        def _new_parse(link):
+            return _orig_parse(
+                open(os.path.join(os.path.dirname(__file__), 'yahoo.rss')))
+        feedparser.parse = _new_parse
+
         type = ExampleCMSBase.create_content_type(RSSContent)
         obj = type()
 
