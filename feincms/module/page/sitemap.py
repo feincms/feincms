@@ -52,7 +52,7 @@ class PageSitemap(Sitemap):
         if callable(base_qs):
             base_qs = base_qs()
 
-        self.max_depth = base_qs.aggregate(Max('level'))['level__max']
+        self.max_depth = base_qs.aggregate(Max('level'))['level__max'] or 0
         if self.depth_cutoff > 0:
             self.max_depth = min(self.depth_cutoff, self.max_depth)
 

@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sitemaps',
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'feincms',
