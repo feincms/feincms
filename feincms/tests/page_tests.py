@@ -1392,3 +1392,17 @@ class PagesTestCase(TestCase):
         self.assertEquals(r.status_code, 404)
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
+
+    def test_36_sitemaps(self):
+        response = self.client.get('/sitemap.xml')
+        self.assertContains(response, '<urlset', status_code=200)
+
+        page = self.create_page()
+        response = self.client.get('/sitemap.xml')
+        self.assertNotContains(response, '<url>', status_code=200)
+
+        page.active = True
+        page.in_navigation = True
+        page.save()
+        response = self.client.get('/sitemap.xml')
+        self.assertContains(response, '<url>', status_code=200)
