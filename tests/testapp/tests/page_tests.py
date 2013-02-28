@@ -70,7 +70,7 @@ class PagesTestCase(TestCase):
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
 
-    def create_page(self, title='Test page', parent='', **kwargs):
+    def create_page_through_admin(self, title='Test page', parent='', **kwargs):
         dic = {
             'title': title,
             'slug': kwargs.get('slug', slugify(title)),
@@ -110,10 +110,30 @@ class PagesTestCase(TestCase):
         dic.update(kwargs)
         return self.client.post('/admin/page/page/add/', dic)
 
-    def create_default_page_set(self):
+    def create_default_page_set_through_admin(self):
         self.login()
-        self.create_page()
-        return self.create_page('Test child page', 1)
+        self.create_page_through_admin()
+        return self.create_page_through_admin('Test child page', 1)
+
+    def create_page(self, title='Test page', parent=None, **kwargs):
+        defaults = {
+            'template_key': 'base',
+            'site': self.site_1,
+            'in_navigation': False,
+            'active': False,
+            }
+        defaults.update(kwargs)
+        return Page.objects.create(
+            title=title,
+            slug=kwargs.get('slug', slugify(title)),
+            parent=parent,
+            **defaults)
+
+    def create_default_page_set(self):
+        self.create_page(
+            'Test child page',
+            parent=self.create_page(),
+            )
 
     def is_published(self, url, should_be=True):
         try:
@@ -135,23 +155,23 @@ class PagesTestCase(TestCase):
 
     def test_02_add_page(self):
         self.login()
-        self.assertRedirects(self.create_page(title='Test page ' * 10, slug='test-page'),
+        self.assertRedirects(self.create_page_through_admin(title='Test page ' * 10, slug='test-page'),
                              '/admin/page/page/')
         self.assertEqual(Page.objects.count(), 1)
         self.assertContains(self.client.get('/admin/page/page/'), u'…')
 
     def test_03_item_editor(self):
         self.login()
-        self.assertRedirects(self.create_page(_continue=1), '/admin/page/page/1/')
+        self.assertRedirects(self.create_page_through_admin(_continue=1), '/admin/page/page/1/')
         self.assertEqual(self.client.get('/admin/page/page/1/').status_code, 200)
         self.is_published('/admin/page/page/42/', should_be=False)
 
     def test_03_add_another(self):
         self.login()
-        self.assertRedirects(self.create_page(_addanother=1), '/admin/page/page/add/')
+        self.assertRedirects(self.create_page_through_admin(_addanother=1), '/admin/page/page/add/')
 
     def test_04_add_child(self):
-        response = self.create_default_page_set()
+        response = self.create_default_page_set_through_admin()
         self.assertRedirects(response, '/admin/page/page/')
         self.assertEqual(Page.objects.count(), 2)
 
@@ -207,6 +227,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(page4.get_absolute_url(), '/test-page/page4/')
         self.assertEqual(page5.get_absolute_url(), '/page5/')
 
+        self.login()
         self.client.post('/admin/page/page/', {
             '__cmd': 'move_node',
             'position': 'last-child',
@@ -226,6 +247,7 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
 
+        self.login()
         self.assertContains(self.client.post('/admin/page/page/', {
             '__cmd': 'toggle_boolean',
             'item_id': 1,
@@ -291,7 +313,7 @@ class PagesTestCase(TestCase):
         self.is_published(page.get_absolute_url(), should_be=True)
         self.is_published(page2.get_absolute_url(), should_be=True)
 
-    def create_pagecontent(self, page, **kwargs):
+    def create_page_through_admincontent(self, page, **kwargs):
         data = {
             'title': page.title,
             'slug': page.slug,
@@ -347,7 +369,8 @@ class PagesTestCase(TestCase):
         self.create_default_page_set()
 
         page = Page.objects.get(pk=1)
-        response = self.create_pagecontent(page)
+        self.login()
+        response = self.create_page_through_admincontent(page)
         self.assertRedirects(response, '/admin/page/page/')
         self.assertEqual(page.content.main[0].__class__.__name__, 'RawContent')
 
@@ -374,9 +397,10 @@ class PagesTestCase(TestCase):
 
     def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
+        self.login()
 
         page = Page.objects.get(pk=1)
-        self.create_pagecontent(page)
+        self.create_page_through_admincontent(page)
 
         category = Category.objects.create(title='Category', parent=None)
         category2 = Category.objects.create(title='Something', parent=category)
@@ -575,7 +599,8 @@ class PagesTestCase(TestCase):
     def test_15_frontend_editing(self):
         self.create_default_page_set()
         page = Page.objects.get(pk=1)
-        self.create_pagecontent(page)
+        self.login()
+        self.create_page_through_admincontent(page)
 
         # this should return a 404
         self.is_published('/admin/page/page/10|rawcontent|1/', should_be=False)
@@ -598,7 +623,8 @@ class PagesTestCase(TestCase):
     def test_15_b_client_frontend_editing(self):
         self.create_default_page_set()
         page = Page.objects.get(pk=1)
-        self.create_pagecontent(page)
+        self.login()
+        self.create_page_through_admincontent(page)
 
         page.active = True
         page.template_key = 'theother'
@@ -640,11 +666,6 @@ class PagesTestCase(TestCase):
 
         # cleanup request processor
         del Page.request_processors['frontend_editing']
-
-    def test_16_template_tags(self):
-        # Directly testing template tags doesn't make any sense since
-        # feincms_render_* do not use simple_tag anymore
-        pass
 
     def test_17_page_template_tags(self):
         self.create_default_page_set()
@@ -744,30 +765,30 @@ class PagesTestCase(TestCase):
 
         self.login()
 
-        self.create_page('Page 1') # 1
-        self.create_page('Page 1.1', 1)
-        self.create_page('Page 1.2', 1) # 3
-        self.create_page('Page 1.2.1', 3)
-        self.create_page('Page 1.2.2', 3)
-        self.create_page('Page 1.2.3', 3)
-        self.create_page('Page 1.3', 1)
+        self.create_page_through_admin('Page 1') # 1
+        self.create_page_through_admin('Page 1.1', 1)
+        self.create_page_through_admin('Page 1.2', 1) # 3
+        self.create_page_through_admin('Page 1.2.1', 3)
+        self.create_page_through_admin('Page 1.2.2', 3)
+        self.create_page_through_admin('Page 1.2.3', 3)
+        self.create_page_through_admin('Page 1.3', 1)
 
-        self.create_page('Page 2') # 8
-        self.create_page('Page 2.1', 8)
-        self.create_page('Page 2.2', 8)
-        self.create_page('Page 2.3', 8)
+        self.create_page_through_admin('Page 2') # 8
+        self.create_page_through_admin('Page 2.1', 8)
+        self.create_page_through_admin('Page 2.2', 8)
+        self.create_page_through_admin('Page 2.3', 8)
 
-        self.create_page('Page 3') # 12
-        self.create_page('Page 3.1', 12)
-        self.create_page('Page 3.2', 12)
-        self.create_page('Page 3.3', 12) # 15
-        self.create_page('Page 3.3.1', 15) # 16
-        self.create_page('Page 3.3.1.1', 16)
-        self.create_page('Page 3.3.2', 15)
+        self.create_page_through_admin('Page 3') # 12
+        self.create_page_through_admin('Page 3.1', 12)
+        self.create_page_through_admin('Page 3.2', 12)
+        self.create_page_through_admin('Page 3.3', 12) # 15
+        self.create_page_through_admin('Page 3.3.1', 15) # 16
+        self.create_page_through_admin('Page 3.3.1.1', 16)
+        self.create_page_through_admin('Page 3.3.2', 15)
 
-        self.create_page('Page 4') # 19
-        self.create_page('Page 4.1', 19)
-        self.create_page('Page 4.2', 19)
+        self.create_page_through_admin('Page 4') # 19
+        self.create_page_through_admin('Page 4.1', 19)
+        self.create_page_through_admin('Page 4.2', 19)
 
         """
         Creates the following structure:
@@ -986,7 +1007,8 @@ class PagesTestCase(TestCase):
     def test_21_copy_content(self):
         self.create_default_page_set()
         page = Page.objects.get(pk=1)
-        self.create_pagecontent(page)
+        self.login()
+        self.create_page_through_admincontent(page)
 
         page2 = Page.objects.get(pk=2)
         page2.copy_content_from(page)
@@ -1049,15 +1071,16 @@ class PagesTestCase(TestCase):
 
     def test_24_admin_redirects(self):
         self.create_default_page_set()
+        self.login()
         page = Page.objects.get(pk=1)
 
-        response = self.create_pagecontent(page, _continue=1)
+        response = self.create_page_through_admincontent(page, _continue=1)
         self.assertRedirects(response, '/admin/page/page/1/')
 
-        response = self.create_pagecontent(page, _addanother=1)
+        response = self.create_page_through_admincontent(page, _addanother=1)
         self.assertRedirects(response, '/admin/page/page/add/')
 
-        response = self.create_pagecontent(page)
+        response = self.create_page_through_admincontent(page)
         self.assertRedirects(response, '/admin/page/page/')
 
     def test_25_applicationcontent(self):
@@ -1155,11 +1178,13 @@ class PagesTestCase(TestCase):
         self.assertEqual(app_reverse('ac_module_root', 'whatever'), '/test-page/')
 
         # Ensure ApplicationContent's admin_fields support works properly
+        self.login()
         self.assertContains(self.client.get('/admin/page/page/%d/' % page.id),
             'exclusive_subpages')
 
     def test_26_page_form_initial(self):
         self.create_default_page_set()
+        self.login()
 
         self.assertEqual(self.client.get('/admin/page/page/add/?translation_of=1&lang=de').status_code, 200)
         self.assertEqual(self.client.get('/admin/page/page/add/?parent=1').status_code, 200)
@@ -1175,7 +1200,8 @@ class PagesTestCase(TestCase):
         page1.active = True
         page1.save()
 
-        self.assertContains(self.create_pagecontent(page2, active=True, override_url='/'),
+        self.login()
+        self.assertContains(self.create_page_through_admincontent(page2, active=True, override_url='/'),
             'already taken by')
 
     def test_28_applicationcontent_reverse(self):
@@ -1200,9 +1226,10 @@ class PagesTestCase(TestCase):
 
         # when specific applicationcontent exists more then once reverse should return url
         # for the one that has tree_id same as current feincms page
-        self.create_page(title='Home DE', language='de', active=True)
+        self.login()
+        self.create_page_through_admin(title='Home DE', language='de', active=True)
         page_de = Page.objects.get(title='Home DE')
-        self.create_page(title='Child 1 DE', language='de', parent=page_de.id, active=True)
+        self.create_page_through_admin(title='Child 1 DE', language='de', parent=page_de.id, active=True)
         page_de_1 = Page.objects.get(title='Child 1 DE')
         page_de_1.applicationcontent_set.create(
             region='main', ordering=0,
@@ -1220,6 +1247,7 @@ class PagesTestCase(TestCase):
 
     def test_29_medialibrary_admin(self):
         self.create_default_page_set()
+        self.login()
 
         page = Page.objects.get(pk=1)
 
@@ -1279,8 +1307,8 @@ class PagesTestCase(TestCase):
     def test_31_sites_framework_associating_with_single_site(self):
         self.login()
         site_2 = Site.objects.create(name='site 2', domain='2.example.com')
-        self.create_page('site 1 homepage', override_url='/', active=True)
-        self.create_page('site 2 homepage', override_url='/',
+        self.create_page_through_admin('site 1 homepage', override_url='/', active=True)
+        self.create_page_through_admin('site 2 homepage', override_url='/',
                 site=site_2.id, active=True)
         self.assertEqual(Page.objects.count(), 2)
         self.assertEqual(Page.objects.active().count(), 1)
@@ -1329,6 +1357,7 @@ class PagesTestCase(TestCase):
             ordering=0,
             text='Example content')
 
+        self.login()
         self.assertEquals(self.client.get(page.get_absolute_url()).status_code, 404)
         self.assertContains(self.client.get('%s_preview/%s/' % (page.get_absolute_url(), page.pk)),
             'Example content')
@@ -1342,7 +1371,8 @@ class PagesTestCase(TestCase):
 
         Page.objects.update(active=True)
 
-        self.create_page(title='redirect page', override_url='/', redirect_to=page.get_absolute_url(), active=True)
+        self.login()
+        self.create_page_through_admin(title='redirect page', override_url='/', redirect_to=page.get_absolute_url(), active=True)
 
         # / -> redirect to /something/
         r = self.client.get('/')
