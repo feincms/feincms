@@ -1244,9 +1244,12 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(MediaFile.objects.count(), 11, "Upload of media files with ZIP does not work")
 
+        dn = os.path.dirname
+        path = os.path.join(dn(dn(dn(dn(__file__)))),
+            'docs', 'images', 'tree_editor.png')
+
         self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
-            'file': open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                'docs', 'images', 'tree_editor.png')),
+            'file': open(path),
             'translations-TOTAL_FORMS': 0,
             'translations-INITIAL_FORMS': 0,
             'translations-MAX_NUM_FORMS': 10,
