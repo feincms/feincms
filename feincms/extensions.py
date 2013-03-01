@@ -51,8 +51,12 @@ class ExtensionsMixin(object):
             extension = None
 
             if isinstance(ext, basestring):
-                paths = [ext, '%s.register' % ext] + [
-                    '%s.%s.register' % (path, ext) for path in search_paths]
+                paths = [ext, '%s.register' % ext]
+                for path in search_paths:
+                    paths.extend([
+                        '%s.%s.register' % (path, ext),
+                        '%s.%s' % (path, ext),
+                        ])
 
                 for idx, path in enumerate(paths):
                     try:
