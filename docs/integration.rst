@@ -245,7 +245,7 @@ of any template rendering calls:
 
 ``urls.py``::
 
-    from django.conf.urls.defaults import patterns, include, url
+    from django.conf.urls import patterns, include, url
 
     urlpatterns = patterns('news.views',
         url(r'^$', 'entry_list', name='entry_list'),
