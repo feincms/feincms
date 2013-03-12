@@ -348,7 +348,7 @@ position. You should probably use the MediaFileContent though.
 
 Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 
-* ``POSITION_CHOICES`` (mandatory)
+* ``POSITION_CHOICES``
 
 * ``FORMAT_CHOICES``
 
