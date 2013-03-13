@@ -58,5 +58,15 @@ def ensure_completely_loaded(force=False):
             except AttributeError:
                 pass
 
+    # Calls to get_models(...) are cached by the arguments used in the call.
+    # This cache is normally cleared in loading.register_models(), but we
+    # somehow (how?) invalidate the get_models() cache, perhaps by calling it
+    # 'prematurely' above. So we clear the get_models cache again here. If we
+    # don't do this, Django 1.5 chokes on a model validation error (Django 1.4
+    # doesn't exhibit this problem). See Issue #323 on github.
+    # Current best guess at a root cause is changed model registration procedure
+    # in Django 1.5 due to swappable models.
+    loading.cache._get_models_cache.clear()
+
     COMPLETELY_LOADED = True
     return True
