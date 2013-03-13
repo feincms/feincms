@@ -182,13 +182,12 @@ if(!Array.indexOf) {
         for(var i = 0; i < 2; i++){
             // Use Django's built-in inline spawing mechanism (Django 1.2+)
             // must use django.jQuery since the bound function lives there:
-            var returned = django.jQuery('#'+modvar+'_set-group').find(
+            django.jQuery('#'+modvar+'_set-group').find(
                 'div.add-row > a').triggerHandler('click');
-            if(returned==false) break; // correct return value
-        }
-        var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val(), 10);
-        if(new_form_count > old_form_count){
-            return $('#'+modvar+'_set-'+(new_form_count-1));
+            var new_form_count = parseInt($('#id_'+modvar+'_set-TOTAL_FORMS').val(), 10);
+            if(new_form_count > old_form_count){
+                return $('#'+modvar+'_set-'+(new_form_count-1));
+            }
         }
     }
 
@@ -445,16 +444,21 @@ if(!Array.indexOf) {
             jConfirm(msg, CHANGE_TEMPLATE_MESSAGES[0], function(ret) {
                 if(ret) {
                     for(var i=0; i<not_in_new.length; i++) {
-                        var items = $('#'+not_in_new[i]+'_body div.order-machine').children();
-                        // FIXME: this moves all soon-to-be-homeless items
-                        // to the first region, but that region is quite likely
-                        // not in the new template.
-                        move_item(0, items);
+                        var body = $('#' + not_in_new[i] + '_body'),
+                            machine = body.find('.order-machine'),
+                            inputs = machine.find('input[name$=region]');
+
+                        inputs.val(new_regions[0]);
                     }
 
                     input_element.checked = true;
 
-                    $('form').append('<input type="hidden" name="_continue" value="1" />').submit();
+                    $('#page_form').append('<input type="hidden" name="_continue" value="1" />');
+                    /* Simulate a click on the save button instead of form.submit(), so
+                       that the submit handlers from FilteredSelectMultiple get
+                       invoked. See Issue #372 */
+                    $('#page_form input[type=submit][name=_save]').click();
+
                 } else {
                     $("div#popup_bg").remove();
                     $(input_element).val($(input_element).data('original_value')); // Restore original value

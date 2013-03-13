@@ -1,10 +1,10 @@
 // jQuery Alert Dialogs Plugin
 //
-// Version 1.0
+// Version 1.1
 //
 // Cory S.N. LaViska
 // A Beautiful Site (http://abeautifulsite.net/)
-// 29 December 2008
+// 14 May 2009
 //
 // Visit http://abeautifulsite.net/notebook/87 for more information
 //
@@ -17,9 +17,12 @@
 //
 //		1.00 - Released (29 December 2008)
 //
+//		1.01 - Fixed bug where unbinding would destroy all resize events
+//
 // License:
 //
-//		This plugin is licensed under the GNU General Public License: http://www.gnu.org/licenses/gpl.html
+// This plugin is dual-licensed under the GNU General Public License and the MIT License and
+// is copyright 2008 A Beautiful Site, LLC.
 //
 (function($) {
 
@@ -176,8 +179,7 @@
 						width: '100%',
 						height: $(document).height(),
 						background: $.alerts.overlayColor,
-						opacity: $.alerts.overlayOpacity,
-                        display: 'none'
+						opacity: $.alerts.overlayOpacity
 					});
 				break;
 				case 'hide':
@@ -206,12 +208,10 @@
 			if( $.alerts.repositionOnResize ) {
 				switch(status) {
 					case true:
-						$(window).bind('resize', function() {
-							$.alerts._reposition();
-						});
+						$(window).bind('resize', $.alerts._reposition);
 					break;
 					case false:
-						$(window).unbind('resize');
+						$(window).unbind('resize', $.alerts._reposition);
 					break;
 				}
 			}

@@ -24,13 +24,16 @@ for this to work.
 Usage is as follows::
 
     from django.db import models
+    from mptt.fields import TreeForeignKey
+    from mptt.models import MPTTModel
 
-    class YourModel(models.Model):
+    class YourModel(MPTTModel):
         # model field definitions
 
-        class Meta:
-            ordering = ['tree_id', 'lft'] # The TreeEditor needs this ordering definition
+        parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
 
+        class Meta:
+            ordering = ['tree_id', 'lft']  # The TreeEditor needs this ordering definition
 
 And inside your ``admin.py`` file::
 
@@ -95,7 +98,7 @@ The tabbed interface below is used to edit content and other properties of the
 edited object. A tab is shown for every region of the template or element,
 depending on whether templates are activated for the object in question [#f1]_.
 
-Here's an screenshot of a content editing pane. The media file content is
+Here's a screenshot of a content editing pane. The media file content is
 collapsed currently. New items can be added using the control bar at the bottom,
 and all content blocks can be reordered using drag and drop:
 
@@ -153,7 +156,7 @@ settings on the content type model itself:
 
 * ``feincms_item_editor_includes``:
 
-  If you need additional Javascript or CSS files or need to perform additional
+  If you need additional JavaScript or CSS files or need to perform additional
   initialization on your content type forms, you can specify template fragments
   which are included in predefined places into the item editor.
 
@@ -178,7 +181,7 @@ settings on the content type model itself:
   editors such as TinyMCE react badly to being dragged around - they are still
   visible, but the content disappears and nothing is clickable anymore. Because
   of this you might want to run routines before and after moving content types
-  around. This is achieved by adding your javascript functions to
+  around. This is achieved by adding your JavaScript functions to
   the ``contentblock_move_handlers.poorify`` array for handlers to be executed
   before moving and ``contentblock_move_handlers.richify`` for handlers to be
   executed after moving. Please note that the item editor executes all handlers

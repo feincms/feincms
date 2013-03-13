@@ -9,10 +9,7 @@
 
 from __future__ import absolute_import
 
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json  # Python 2.5
+import json
 import zipfile
 import os
 import time

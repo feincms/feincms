@@ -200,7 +200,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 MediaFileBase.register_filetypes(
         # Should we be using imghdr.what instead of extension guessing?
         ('image', _('Image'), lambda f: re.compile(r'\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?)$', re.IGNORECASE).search(f)),
-        ('video', _('Video'), lambda f: re.compile(r'\.(mov|m[14]v|mp4|avi|mpe?g|qt|ogv|wmv)$', re.IGNORECASE).search(f)),
+        ('video', _('Video'), lambda f: re.compile(r'\.(mov|m[14]v|mp4|avi|mpe?g|qt|ogv|wmv|flv)$', re.IGNORECASE).search(f)),
         ('audio', _('Audio'), lambda f: re.compile(r'\.(au|mp3|m4a|wma|oga|ram|wav)$', re.IGNORECASE).search(f)),
         ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
         ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
@@ -215,11 +215,7 @@ MediaFileBase.register_filetypes(
 
 # ------------------------------------------------------------------------
 class MediaFile(MediaFileBase):
-    @classmethod
-    def register_extension(cls, register_fn):
-        from .admin import MediaFileAdmin
-
-        register_fn(cls, MediaFileAdmin)
+    pass
 
 @receiver(post_delete, sender=MediaFile)
 def _mediafile_post_delete(sender, instance, **kwargs):
@@ -238,6 +234,7 @@ class MediaFileTranslation(Translation(MediaFile)):
     class Meta:
         verbose_name = _('media file translation')
         verbose_name_plural = _('media file translations')
+        unique_together = ('parent', 'language_code')
 
     def __unicode__(self):
         return self.caption

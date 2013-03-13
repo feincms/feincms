@@ -70,6 +70,7 @@ def assign_category(modeladmin, request, queryset):
     return render_to_response('admin/medialibrary/add_to_category.html', {
         'mediafiles': queryset,
         'category_form': form,
+        'opts': modeladmin.model._meta,
         }, context_instance=RequestContext(request))
 
 assign_category.short_description = _('Add selected media files to category')

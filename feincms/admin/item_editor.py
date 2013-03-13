@@ -17,6 +17,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.admin.options import InlineModelAdmin
 
 from feincms import settings, ensure_completely_loaded
+from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
 
 # ------------------------------------------------------------------------
@@ -46,7 +47,7 @@ class FeinCMSInline(InlineModelAdmin):
     template = 'admin/feincms/content_inline.html'
 
 # ------------------------------------------------------------------------
-class ItemEditor(admin.ModelAdmin):
+class ItemEditor(ExtensionModelAdmin):
     """
     The ``ItemEditor`` is a drop-in replacement for ``ModelAdmin`` with the
     speciality of knowing how to work with :class:`feincms.models.Base`
@@ -117,7 +118,7 @@ class ItemEditor(admin.ModelAdmin):
             model_cls = loading.get_model(self.model._meta.app_label, content_type)
             obj = model_cls.objects.get(parent=cms_id, id=content_id)
         except:
-            raise Http404
+            raise Http404()
 
         form_class_base = getattr(model_cls, 'feincms_item_editor_form', ItemEditorForm)
 

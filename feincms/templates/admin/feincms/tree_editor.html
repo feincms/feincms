@@ -1,13 +1,13 @@
 {% extends "admin/change_list.html" %}
-{% load adminmedia admin_list i18n %}
+{% load admin_list i18n %}
 
 {% block extrahead %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/style.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/fein_tree.css" />
 
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.22.custom.min.js"></script>
 <script type="text/javascript">
     var feincms = {
         {% if FEINCMS_JQUERY_NO_CONFLICT %}

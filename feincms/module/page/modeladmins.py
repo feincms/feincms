@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
@@ -17,7 +18,6 @@ from feincms.admin import item_editor, tree_editor
 
 # ------------------------------------------------------------------------
 from .forms import PageAdminForm
-from .models import Page
 
 # ------------------------------------------------------------------------
 class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
@@ -63,13 +63,14 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         else:   # assume called with "other" fields
             cls.fieldsets[1][1]['fields'].extend(f)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, model, admin_site):
         ensure_completely_loaded()
 
-        if len(Page._feincms_templates) > 4 and 'template_key' in self.radio_fields:
+        if len(model._feincms_templates) > 4 and \
+                'template_key' in self.radio_fields:
             del(self.radio_fields['template_key'])
 
-        super(PageAdmin, self).__init__(*args, **kwargs)
+        super(PageAdmin, self).__init__(model, admin_site)
 
         # The use of fieldsets makes only fields explicitly listed in there
         # actually appear in the admin form. However, extensions should not be
@@ -83,10 +84,14 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             if not f.name.startswith('_') and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level') and \
                     not f.auto_created and not f.name in present_fields and f.editable:
                 self.unknown_fields.append(f.name)
-                if not f.editable:
-                    self.readonly_fields.append(f.name)
+            if not f.editable:
+                self.readonly_fields.append(f.name)
 
     in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
+
+    def get_form(self, *args, **kwargs):
+        form = super(PageAdmin, self).get_form(*args, **kwargs)
+        return curry(form, modeladmin=self)
 
     def _actions_column(self, page):
         editable = getattr(page, 'feincms_editable', True)
@@ -104,8 +109,28 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         return actions
 
     def add_view(self, request, **kwargs):
-        # Preserve GET parameters
-        kwargs['form_url'] = request.get_full_path()
+        kwargs['form_url'] = request.get_full_path() # Preserve GET parameters
+        if 'translation_of' in request.GET and 'language' in request.GET:
+            try:
+                original = self.model._tree_manager.get(
+                    pk=request.GET.get('translation_of'))
+            except (AttributeError, self.model.DoesNotExist):
+                pass
+            else:
+                language_code = request.GET['language']
+                language = dict(
+                    django_settings.LANGUAGES).get(language_code, '')
+                kwargs['extra_context'] = {
+                    'adding_translation': True,
+                    'title': _(
+                        'Add %(language)s Translation of "%(page)s"' % {
+                            'language': language,
+                            'page': original,
+                        }
+                    ),
+                    'language_name': language,
+                    'translation_of': original,
+                }
         return super(PageAdmin, self).add_view(request, **kwargs)
 
     def response_add(self, request, obj, *args, **kwargs):
@@ -113,7 +138,8 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         if 'parent' in request.GET and '_addanother' in request.POST and response.status_code in (301, 302):
             # Preserve GET parameters if we are about to add another page
             response['Location'] += '?parent=%s' % request.GET['parent']
-        if 'translation_of' in request.GET:
+
+        if 'translation_of' in request.GET and '_copy_content_from_original' in request.POST:
             # Copy all contents
             for content_type in obj._feincms_content_types:
                 if content_type.objects.filter(parent=obj).exists():

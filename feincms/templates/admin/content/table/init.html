@@ -1,5 +1,5 @@
-{% load adminmedia i18n %}
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.json-1.3.js"></script>
+{% load i18n %}
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.json-2.4.min.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -120,8 +120,14 @@
         table.siblings('textarea').val($.toJSON(data));
     }
 
+    var tablecontent_added = {};
+
     contentblock_init_handlers.push(function(){
-        $('.order-machine textarea[name*=tablecontent]:visible').each(function(){
+        $('.order-machine textarea[name*=tablecontent]').each(function(){
+            if (tablecontent_added[this.id])
+                return;
+            tablecontent_added[this.id] = true;
+
             var textarea = $(this);
             var data = $.secureEvalJSON(textarea.val() || '[[""]]');
 

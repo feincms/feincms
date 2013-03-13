@@ -49,6 +49,7 @@ Contents
    installation
    page
    contenttypes
+   extensions
    admin
    integration
    medialibrary
@@ -91,6 +92,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/1.7
    releases/1.6
    releases/1.5
    releases/1.4

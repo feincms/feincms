@@ -1,0 +1,147 @@
+=========================
+FeinCMS 1.7 release notes
+=========================
+
+Welcome to FeinCMS 1.7!
+
+
+Extensions-mechanism refactor
+=============================
+
+The extensions mechanism has been refactored to remove the need to make models
+know about their related model admin classes. The new module
+:py:mod:`feincms.extensions` contains mixins and base classes - their purpose
+is as follows: :ref:`extensions`.
+
+
+View code refactor
+==================
+
+Made views, content type and request / response processors reusable.
+
+The legacy views at :py:mod:`feincms.views.legacy` were considered unhelpful
+and were removed.
+
+
+Backwards-incompatible changes
+==============================
+
+
+Page manager methods behavior
+-----------------------------
+
+Previously, the following page manager methods sometimes returned inactive
+objects or did not raise the appropriate (and asked for)
+:py:class:`~django.http.Http404` exception:
+
+- ``Page.objects.page_for_path``
+- ``Page.objects.best_match_for_path``
+- ``Page.objects.for_request``
+
+The reason for that was that only the page itself was tested for activity
+in the manager method, and none of its ancestors. The check whether all
+ancestors are active was only conducted later in a request processor. This
+request processor was registered by default and was always run when
+``Page.objects.for_request`` was called with ``setup=True``.
+
+However, request processors do not belong into the model layer. The necessity
+of running code belonging to a request-response cycle to get the correct answer
+from a manager method was undesirable. This has been rectified, those manager
+methods check the ancestry directly. The now redundant request processor
+``require_path_active_request_processor`` has been removed.
+
+
+Reversing application content URLs
+----------------------------------
+
+The support for monkey-patching applicationcontent-awareness into Django's
+:py:func:`django.core.urlresolvers.reverse` has been removed.
+
+
+Removal of deprecated features
+------------------------------
+
+* The old media library content type module
+  :py:mod:`feincms.content.medialibrary.models` has been replaced with the
+  contents of :py:mod:`feincms.content.medialibrary.v2`. The model field
+  ``position`` has been renamed to ``type``, instead of ``POSITION_CHOICES``
+  you should use ``TYPE_CHOICES`` now. The code has been simplified and
+  hacks to imitate ``raw_id_fields`` have been replaced by working stock
+  code. The ``v2`` module will stay around for another release and will be
+  removed in FeinCMS v1.8. The now-unused template
+  ``admin/content/mediafile/init.html`` has been deleted.
+
+
+New deprecations
+----------------
+
+* ``Page.setup_request()`` does not do anything anymore and will be removed
+  in FeinCMS v1.8.
+
+
+Notable features and improvements
+=================================
+
+* A lazy version of :py:func:`~feincms.content.application.models.app_reverse`
+  is now available,
+  :py:func:`~feincms.content.application.models.app_reverse_lazy`.
+
+* Because of the extensions refactor mentioned above, all
+  ``register_extension`` methods have been removed. Additionally, the model
+  admin classes are not imported inside the ``models.py`` files anymore.
+
+* The setting ``FEINCMS_USE_PAGE_ADMIN`` can be set to false to prevent
+  registration of the page model with the administration. This is especially
+  useful if you only want to reuse parts of the page module.
+
+* Various classes in :py:mod:`feincms.module.page` do not hardcode the page
+  class anymore; hooks are provided to use your own models instead. Please
+  refer to the source for additional information.
+
+* ``Page.redirect_to`` can also contain the primary key of a page now, which
+  means that the redirect target stays correct even if the page URL changes.
+
+* Before, page content was copied automatically when creating a translation
+  of an existing page. This behavior can be deactivated by unchecking a
+  checkbox now.
+
+* Work has begun to make the page forms, model admin classes and managers
+  work with an abstract page model so that it will be easier to work with
+  several page models in a single Django site.
+
+
+Bugfixes
+========
+
+* It should be possible to store FeinCMS models in a secondary database, as
+  long as the base model and all content types are stored in the same
+  database.
+
+* Changing templates in the item editor where the templates do not share
+  common regions does not result in orphaned content blocks anymore.
+
+* :py:func:`feincms.utils.get_object` knows how to import modules, not only
+  objects inside modules now.
+
+* The order and priority values for pages have been fixed when generating
+  sitemaps.
+
+* Various ``save`` and ``delete`` methods now come with ``alters_data=True``
+  to prevent their use in templates.
+
+* Only one translation is permitted per language when using
+  :py:mod:`feincms.translations`.
+
+* FeinCMS can now be used without :py:mod:`django.contrib.sites`.
+
+* If the fieldset of a content inline has been customized, the fieldset is
+  not processed again to make sure that all form fields are actually shown.
+  If you use dynamically generated fields in a content inline such as the
+  application content does, you must not customize the fieldsets attribute
+  of the ``FeinCMSInline``.
+
+
+Compatibility with Django and other apps
+========================================
+
+FeinCMS 1.7 requires Django 1.4 or better.

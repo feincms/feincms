@@ -330,17 +330,27 @@ Contact form content
 Simple contact form. Also serves as an example how forms might be used inside
 content types.
 
-
-Inline files and images
------------------------
+Inline files
+------------
 .. module:: feincms.content.file.models
 .. class:: FileContent()
+
+Simple content types holding just a file.
+You should probably use the MediaFileContent though.
+
+Inline images
+-------------
 .. module:: feincms.content.image.models
 .. class:: ImageContent()
 
-These are simple content types holding just a file or an image with a
+Simple content types holding just an image with a
 position. You should probably use the MediaFileContent though.
 
+Additional arguments for :func:`~feincms.models.Base.create_content_type`:
+
+* ``POSITION_CHOICES``
+
+* ``FORMAT_CHOICES``
 
 Media library integration
 -------------------------

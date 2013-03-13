@@ -69,6 +69,11 @@ FEINCMS_FRONTEND_EDITING = getattr(settings, 'FEINCMS_FRONTEND_EDITING',
 FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS = getattr(settings,
     'FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS', False)
 
+#: When enabled, the page module is automatically registered with Django's
+#: default admin site (this is activated by default).
+FEINCMS_USE_PAGE_ADMIN = getattr(settings,
+    'FEINCMS_USE_PAGE_ADMIN', True)
+
 # ------------------------------------------------------------------------
 # Various settings
 
@@ -103,14 +108,6 @@ FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE = getattr(settings,
 #: ``(html, errors, warnings)`` can be used:
 FEINCMS_TIDY_FUNCTION = getattr(settings, 'FEINCMS_TIDY_FUNCTION',
     'feincms.utils.html.tidy.tidy_html')
-
-# ------------------------------------------------------------------------
-#: Monkey-patch django.core.urlresvolers.reverse to be application-content aware?
-#: (The monkey patch is deprecated and should not be used anymore. Use the
-#: ``app_reverse`` function and the ``{% app_reverse %}`` template tag instead.)
-#: Support for this setting will be removed in FeinCMS 1.7.
-FEINCMS_REVERSE_MONKEY_PATCH = getattr(settings, 'FEINCMS_REVERSE_MONKEY_PATCH',
-    False)
 
 # ------------------------------------------------------------------------
 #: Makes the page handling mechanism try to find a cms page with that

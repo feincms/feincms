@@ -18,16 +18,19 @@ from feincms.content.video.models import VideoContent
 from .tests import ExampleCMSBase, Empty, ExampleCMSBase2
 
 # ------------------------------------------------------------------------
+class SubRawContent(RawContent):
+    title = models.CharField('title', max_length=100, blank=True)
+
+    class Meta:
+        abstract = True
+
+
 class CMSBaseTest(TestCase):
     def test_01_simple_content_type_creation(self):
         self.assertEqual(ExampleCMSBase.content_type_for(FileContent), None)
 
         ExampleCMSBase.create_content_type(ContactFormContent)
         ExampleCMSBase.create_content_type(FileContent, regions=('region2',))
-
-        # no POSITION_CHOICES, should raise
-        self.assertRaises(ImproperlyConfigured,
-                          lambda: ExampleCMSBase.create_content_type(ImageContent))
 
         ExampleCMSBase.create_content_type(RawContent)
         ExampleCMSBase.create_content_type(RichTextContent)
@@ -66,7 +69,7 @@ class CMSBaseTest(TestCase):
 
         from feincms.content.medialibrary.models import MediaFileContent
 
-        # no POSITION_CHOICES, should raise
+        # no TYPE_CHOICES, should raise
         self.assertRaises(ImproperlyConfigured,
                           lambda: ExampleCMSBase.create_content_type(MediaFileContent))
 
@@ -145,4 +148,16 @@ class CMSBaseTest(TestCase):
 
         self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
         self.assertTrue(hasattr(Attachment, 'anycontents'))
+
+    def test_10_content_type_subclasses(self):
+        """
+        See:
+        https://github.com/feincms/feincms/issues/339
+        """
+        ExampleCMSBase.create_content_type(SubRawContent)
+        ExampleCMSBase.create_content_type(RawContent)
+
+        ct = ExampleCMSBase.content_type_for(RawContent)
+        ct2 = ExampleCMSBase.content_type_for(SubRawContent)
+        self.assertNotEqual(ct, ct2)
 

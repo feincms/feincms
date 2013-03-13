@@ -8,8 +8,8 @@ from django.core.cache import cache as django_cache
 from django.conf import settings as django_settings
 from django.db import models
 from django.db.models import Q, signals
+from django.db.models.loading import get_model
 from django.http import Http404
-from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 from django.db.transaction import commit_on_success
 
@@ -18,13 +18,19 @@ from mptt.models import MPTTModel
 from feincms import settings
 from feincms.management.checker import check_database_schema
 from feincms.models import create_base_model
+from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
 from feincms.utils import path_to_cache_key
 
+
+REDIRECT_TO_RE = re.compile(
+    r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$')
+
+
 # ------------------------------------------------------------------------
-class PageManager(models.Manager, ActiveAwareContentManagerMixin):
+class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
     """
     The page manager. Only adds new methods, does not modify standard Django
     manager behavior in any way.
@@ -45,10 +51,17 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         stripped = path.strip('/')
 
         try:
-            return self.active().get(_cached_url=stripped and u'/%s/' % stripped or '/')
+            page = self.active().get(
+                _cached_url=u'/%s/' % stripped if stripped else '/')
+
+            if not page.are_ancestors_active():
+                raise self.model.DoesNotExist('Parents are inactive.')
+
+            return page
+
         except self.model.DoesNotExist:
             if raise404:
-                raise Http404
+                raise Http404()
             raise
 
     def best_match_for_path(self, path, raise404=False):
@@ -82,11 +95,16 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
                 select={'_url_length': 'LENGTH(_cached_url)'}).order_by('-_url_length')[0]
+
+            if not page.are_ancestors_active():
+                raise IndexError('Parents are inactive.')
+
             django_cache.set(ck, page)
             return page
+
         except IndexError:
             if raise404:
-                raise Http404
+                raise Http404()
 
         raise self.model.DoesNotExist
 
@@ -104,7 +122,8 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return self.in_navigation().filter(parent__isnull=True)
 
-    def for_request(self, request, raise404=False, best_match=False, setup=True):
+    def for_request(self, request, raise404=False, best_match=False,
+            setup=False):
         """
         Return a page for the request
 
@@ -122,19 +141,29 @@ class PageManager(models.Manager, ActiveAwareContentManagerMixin):
             path = request.path_info or request.path
 
             if best_match:
-                request._feincms_page = self.best_match_for_path(path, raise404=raise404)
+                request._feincms_page = self.best_match_for_path(path,
+                    raise404=raise404)
             else:
-                request._feincms_page = self.page_for_path(path, raise404=raise404)
+                request._feincms_page = self.page_for_path(path,
+                    raise404=raise404)
 
         if setup:
-            request._feincms_page.setup_request(request)
+            import warnings
+            warnings.warn(
+                'Calling for_request with setup=True does nothing anymore.'
+                ' The parameter will be removed in FeinCMS v1.8.',
+                DeprecationWarning, stacklevel=2)
+
         return request._feincms_page
 
+# ------------------------------------------------------------------------
+class PageManager(BasePageManager):
+    pass
 
 PageManager.add_to_active_filters(Q(active=True))
 
 # ------------------------------------------------------------------------
-class Page(create_base_model(MPTTModel)):
+class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     active = models.BooleanField(_('active'), default=True)
 
     # structure and navigation
@@ -143,23 +172,21 @@ class Page(create_base_model(MPTTModel)):
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=True)
-    override_url = models.CharField(_('override URL'), max_length=300, blank=True,
+    override_url = models.CharField(_('override URL'), max_length=255, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
-    redirect_to = models.CharField(_('redirect to'), max_length=300, blank=True,
-        help_text=_('Target URL for automatic redirects.'))
-    _cached_url = models.CharField(_('Cached URL'), max_length=300, blank=True,
+    redirect_to = models.CharField(_('redirect to'), max_length=255, blank=True,
+        help_text=_('Target URL for automatic redirects'
+            ' or the primary key of a page.'))
+    _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
 
-    request_processors = SortedDict()
-    response_processors = SortedDict()
-    cache_key_components = [ lambda p: django_settings.SITE_ID,
+    cache_key_components = [ lambda p: getattr(django_settings, 'SITE_ID', 0),
                              lambda p: p._django_content_type.id,
                              lambda p: p.id ]
 
     class Meta:
         ordering = ['tree_id', 'lft']
-        verbose_name = _('page')
-        verbose_name_plural = _('pages')
+        abstract = True
 
     objects = PageManager()
 
@@ -174,7 +201,7 @@ class Page(create_base_model(MPTTModel)):
         if not self.pk:
             return False
 
-        pages = Page.objects.active().filter(tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght)
+        pages = self.__class__.objects.active().filter(tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght)
         return pages.count() > self.level
     is_active.short_description = _('is active')
 
@@ -199,7 +226,7 @@ class Page(create_base_model(MPTTModel)):
     short_title.short_description = _('title')
 
     def __init__(self, *args, **kwargs):
-        super(Page, self).__init__(*args, **kwargs)
+        super(BasePage, self).__init__(*args, **kwargs)
         # Cache a copy of the loaded _cached_url value so we can reliably
         # determine whether it has been changed in the save handler:
         self._original_cached_url = self._cached_url
@@ -223,11 +250,10 @@ class Page(create_base_model(MPTTModel)):
             self._cached_url = u'%s%s/' % (self.parent._cached_url, self.slug)
 
         cached_page_urls[self.id] = self._cached_url
-        super(Page, self).save(*args, **kwargs)
+        super(BasePage, self).save(*args, **kwargs)
 
-        # Okay, we changed the URL -- remove the old stale entry from the cache
-        ck = self.path_to_cache_key(self._original_cached_url)
-        django_cache.delete(ck)
+        # Okay, we have changed the page -- remove the old stale entry from the cache
+        self.invalidate_cache()
 
         # If our cached URL changed we need to update all descendants to
         # reflect the changes. Since this is a very expensive operation
@@ -236,8 +262,6 @@ class Page(create_base_model(MPTTModel)):
         if self._cached_url == self._original_cached_url:
             return
 
-        # TODO: Does not find everything it should when ContentProxy content
-        # inheritance has been customized.
         pages = self.get_descendants().order_by('lft')
 
         for page in pages:
@@ -250,8 +274,19 @@ class Page(create_base_model(MPTTModel)):
                     page.slug)
 
             cached_page_urls[page.id] = page._cached_url
-            super(Page, page).save() # do not recurse
+            super(BasePage, page).save() # do not recurse
     save.alters_data = True
+
+    @commit_on_success
+    def delete(self, *args, **kwargs):
+        super(BasePage, self).delete(*args, **kwargs)
+        self.invalidate_cache()
+    delete.alters_data = True
+
+    # Remove the page from the url-to-page cache
+    def invalidate_cache(self):
+        ck = self.path_to_cache_key(self._original_cached_url)
+        django_cache.delete(ck)
 
     @models.permalink
     def get_absolute_url(self):
@@ -269,7 +304,10 @@ class Page(create_base_model(MPTTModel)):
         Return either ``redirect_to`` if it is set, or the URL of this page.
         """
 
-        return self.redirect_to or self._cached_url
+        # :-( maybe this could be cleaned up a bit?
+        if not self.redirect_to or REDIRECT_TO_RE.match(self.redirect_to):
+            return self._cached_url
+        return self.redirect_to
 
     def cache_key(self):
         """
@@ -297,109 +335,67 @@ class Page(create_base_model(MPTTModel)):
         """
         return None
 
-    def setup_request(self, request):
-        """
-        Before rendering a page, run all registered request processors. A request
-        processor may peruse and modify the page or the request. It can also return
-        a HttpResponse for shortcutting the page rendering and returning that response
-        immediately to the client.
-
-        ``setup_request`` stores responses returned by request processors and returns
-        those on every subsequent call to ``setup_request``. This means that
-        ``setup_request`` can be called repeatedly during the same request-response
-        cycle without harm - request processors are executed exactly once.
-        """
-
-        if hasattr(self, '_setup_request_result'):
-            return self._setup_request_result
-        else:
-            # Marker -- setup_request has been successfully run before
-            self._setup_request_result = None
-
-        if not hasattr(request, '_feincms_extra_context'):
-            request._feincms_extra_context = {}
-
-        request._feincms_extra_context.update({
-            'in_appcontent_subpage': False, # XXX This variable name isn't accurate anymore.
-                                            # We _are_ in a subpage, but it isn't necessarily
-                                            # an appcontent subpage.
-            'extra_path': '/',
-            })
-
-        url = self.get_absolute_url()
-        if request.path != url:
-            # extra_path must not end with a slash
-            request._feincms_extra_context.update({
-                'in_appcontent_subpage': True,
-                'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
-                    request.path),
-                })
-
-        for fn in reversed(self.request_processors.values()):
-            r = fn(self, request)
-            if r:
-                self._setup_request_result = r
-                break
-
-        return self._setup_request_result
-
-    def finalize_response(self, request, response):
-        """
-        After rendering a page to a response, the registered response processors are
-        called to modify the response, eg. for setting cache or expiration headers,
-        keeping statistics, etc.
-        """
-        for fn in self.response_processors.values():
-            fn(self, request, response)
-
     def get_redirect_to_target(self, request):
         """
         This might be overriden/extended by extension modules.
         """
+
+        if not self.redirect_to:
+            return u''
+
+        # It might be an identifier for a different object
+        match = REDIRECT_TO_RE.match(self.redirect_to)
+
+        # It's not, oh well.
+        if not match:
+            return self.redirect_to
+
+        matches = match.groupdict()
+        model = get_model(matches['app_label'], matches['module_name'])
+
+        if not model:
+            return self.redirect_to
+
+        try:
+            instance = model._default_manager.get(pk=int(matches['pk']))
+            return instance.get_absolute_url()
+        except models.ObjectDoesNotExist:
+            pass
+
         return self.redirect_to
 
     @classmethod
-    def register_request_processor(cls, fn, key=None):
-        """
-        Registers the passed callable as request processor. A request processor
-        always receives two arguments, the current page object and the request.
-        """
-        cls.request_processors[fn if key is None else key] = fn
+    def path_to_cache_key(cls, path):
+        prefix = "%s-FOR-URL" % cls.__name__.upper()
+        return path_to_cache_key(path.strip('/'), prefix=prefix)
 
     @classmethod
-    def register_response_processor(cls, fn, key=None):
+    def register_default_processors(cls, frontend_editing=False):
         """
-        Registers the passed callable as response processor. A response processor
-        always receives three arguments, the current page object, the request
-        and the response.
+        Register our default request processors for the out-of-the-box
+        Page experience.
         """
-        cls.response_processors[fn if key is None else key] = fn
+        cls.register_request_processor(processors.redirect_request_processor,
+                                       key='redirect')
+        cls.register_request_processor(processors.extra_context_request_processor,
+                                       key='extra_context')
 
-    @classmethod
-    def register_extension(cls, register_fn):
-        register_fn(cls, PageAdmin)
-
-    @staticmethod
-    def path_to_cache_key(path):
-        return path_to_cache_key(path.strip('/'), prefix="PAGE-FOR-URL")
+        if frontend_editing:
+            cls.register_request_processor(processors.frontendediting_request_processor,
+                                           key='frontend_editing')
+            cls.register_response_processor(processors.frontendediting_response_processor,
+                                            key='frontend_editing')
 
 # ------------------------------------------------------------------------
-# Our default request processors
+class Page(BasePage):
+    class Meta:
+        ordering = ['tree_id', 'lft']
+        verbose_name = _('page')
+        verbose_name_plural = _('pages')
 
-Page.register_request_processor(processors.require_path_active_request_processor,
-    key='path_active')
-Page.register_request_processor(processors.redirect_request_processor,
-    key='redirect')
-
-if settings.FEINCMS_FRONTEND_EDITING:
-    Page.register_request_processor(processors.frontendediting_request_processor,
-        key='frontend_editing')
+Page.register_default_processors(frontend_editing=settings.FEINCMS_FRONTEND_EDITING)
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
-
-# ------------------------------------------------------------------------
-# Down here as to avoid circular imports
-from .modeladmins import PageAdmin
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------

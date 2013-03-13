@@ -2,19 +2,29 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+import logging
+import sys
+import traceback
 import warnings
 
 from django import template
 from django.conf import settings
-from django.db.models import Q
 from django.http import HttpRequest
 
-from feincms.module.page.models import Page, PageManager
+from feincms.module.page.models import Page
 from feincms.utils.templatetags import *
 from feincms.utils.templatetags import _parse_args
 
+# ------------------------------------------------------------------------
+logger = logging.getLogger('feincms.templatetags.page')
+
 register = template.Library()
 
+# ------------------------------------------------------------------------
+# TODO: Belongs in some utility module
+def format_exception(e):
+    top = traceback.extract_tb(sys.exc_info()[2])[-1]
+    return u"'%s' in %s line %d" % (e, top[0], top[1])
 
 # ------------------------------------------------------------------------
 @register.assignment_tag(takes_context=True)
@@ -27,17 +37,24 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
     """
 
     if isinstance(feincms_page, HttpRequest):
-        feincms_page = Page.objects.for_request(feincms_page, best_match=True)
+        try:
+            # warning: explicit Page reference here
+            feincms_page = Page.objects.for_request(
+                feincms_page, best_match=True)
+        except Page.DoesNotExist:
+            return []
 
     mptt_opts = feincms_page._mptt_meta
 
     # mptt starts counting at zero
     mptt_level_range = [level - 1, level + depth - 1]
 
-    queryset = Page.objects.in_navigation().filter(**{
-        '%s__gte' % mptt_opts.level_attr: mptt_level_range[0],
-        '%s__lt' % mptt_opts.level_attr: mptt_level_range[1],
-        })
+    queryset = feincms_page.__class__._default_manager.in_navigation().filter(
+        **{
+            '%s__gte' % mptt_opts.level_attr: mptt_level_range[0],
+            '%s__lt' % mptt_opts.level_attr: mptt_level_range[1],
+        }
+    )
 
     page_level = getattr(feincms_page, mptt_opts.level_attr)
 
@@ -64,11 +81,12 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
             queryset = Page.objects.none()
 
         if parent:
-            # Special case for navigation extensions
             if getattr(parent, 'navigation_extension', None):
+                # Special case for navigation extensions
                 return list(parent.extended_navigation(depth=depth,
-                                    request=context.get('request')))
+                    request=context.get('request')))
 
+            # Apply descendant filter
             queryset &= parent.get_descendants()
 
     if depth > 1:
@@ -79,41 +97,42 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
             # Subset filtering; allow children of parent as well
             parents.add(parent.id)
 
-        def _filter(iterable):
+        def _parentactive_filter(iterable):
             for elem in iterable:
                 if elem.parent_id in parents:
                     yield elem
                 parents.add(elem.id)
 
-        queryset = _filter(queryset)
+        queryset = _parentactive_filter(queryset)
 
-    if any((ext in feincms_page._feincms_extensions for ext in (
-            'navigation', 'feincms.module.page.extensions.navigation'))):
+    if hasattr(feincms_page, 'navigation_extension'):
         # Filter out children of nodes which have a navigation extension
-        extended_node_rght = [] # mptt node right value
-
-        def _filter(iterable):
+        def _navext_filter(iterable):
+            current_navextension_node = None
             for elem in iterable:
-                if extended_node_rght:
-                    if getattr(elem, mptt_opts.right_attr) < extended_node_rght[-1]:
-                        # Still inside some navigation extension
-                        continue
-                    else:
-                        extended_node_rght.pop()
+                # Eliminate all subitems of last processed nav extension
+                if current_navextension_node is not None and \
+                   current_navextension_node.is_ancestor_of(elem):
+                    continue
 
+                yield elem
                 if getattr(elem, 'navigation_extension', None):
-                    yield elem
-                    extended_node_rght.append(getattr(elem, mptt_opts.right_attr))
-
-                    for extended in elem.extended_navigation(depth=depth,
-                            request=context.get('request')):
-                        if getattr(extended, mptt_opts.level_attr, 0) < level + depth - 1:
-                            yield extended
-
+                    current_navextension_node = elem
+                    try:
+                        for extended in elem.extended_navigation(depth=depth, request=context.get('request')):
+                            # Only return items from the extended navigation which
+                            # are inside the requested level+depth values. The
+                            # "-1" accounts for the differences in MPTT and
+                            # navigation level counting
+                            this_level = getattr(extended, mptt_opts.level_attr, 0)
+                            if this_level < level + depth - 1:
+                                yield extended
+                    except Exception, e:
+                        logger.warn("feincms_nav caught exception in navigation extension for page %d: %s", current_navextension_node.id, format_exception(e))
                 else:
-                    yield elem
+                    current_navextension_node = None
 
-        queryset = _filter(queryset)
+        queryset = _navext_filter(queryset)
 
     # Return a list, not a generator so that it can be consumed
     # several times in a template.
@@ -421,6 +440,7 @@ def siblings_along_path_to(page_list, page2):
         {% endwith %}
 
     """
+
     if page_list:
         try:
             # Try to avoid hitting the database: If the current page is in_navigation,
@@ -446,8 +466,8 @@ def siblings_along_path_to(page_list, page2):
                                    a_page.level == top_level or
                                    any((_is_sibling_of(a_page, a) for a in ancestors))]
             return siblings
-        except (AttributeError, ValueError):
-            pass
+        except (AttributeError, ValueError), e:
+            logger.warn("siblings_along_path_to caught exception: %s", format_exception(e))
 
     return ()
 

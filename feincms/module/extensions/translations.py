@@ -3,8 +3,8 @@
 # ------------------------------------------------------------------------
 
 """
-This extension adds a language field to every page. When calling setup_request,
-the page's language is activated.
+This extension adds a language field to every page. When calling the request
+processors the page's language is activated.
 Pages in secondary languages can be said to be a translation of a page in the
 primary language (the first language in settings.LANGUAGES), thereby enabling
 deeplinks between translated pages.
@@ -23,7 +23,7 @@ from django.http import HttpResponseRedirect
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-from feincms import settings
+from feincms import extensions, settings
 from feincms.translations import is_primary_language
 from feincms._internal import monkeypatch_method, monkeypatch_property
 
@@ -115,98 +115,106 @@ def get_current_language_code(request):
     return language_code
 
 # ------------------------------------------------------------------------
-def register(cls, admin_cls):
-    cls.add_to_class('language', models.CharField(_('language'), max_length=10,
-        choices=django_settings.LANGUAGES, default=django_settings.LANGUAGES[0][0]))
-    cls.add_to_class('translation_of', models.ForeignKey('self',
-        blank=True, null=True, verbose_name=_('translation of'),
-        related_name='translations',
-        limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
-        help_text=_('Leave this empty for entries in the primary language.')
-        ))
+class Extension(extensions.Extension):
+    def handle_model(self):
+        cls = self.model
 
-    if hasattr(cls, 'register_request_processor'):
-        if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
-            cls.register_request_processor(translations_request_processor_explicit,
-                key='translations')
-        else: # STANDARD
-            cls.register_request_processor(translations_request_processor_standard,
-                key='translations')
+        cls.add_to_class('language', models.CharField(_('language'), max_length=10,
+            choices=django_settings.LANGUAGES, default=django_settings.LANGUAGES[0][0]))
+        cls.add_to_class('translation_of', models.ForeignKey('self',
+            blank=True, null=True, verbose_name=_('translation of'),
+            related_name='translations',
+            limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
+            help_text=_('Leave this empty for entries in the primary language.')
+            ))
 
-    if hasattr(cls, 'get_redirect_to_target'):
+        if hasattr(cls, 'register_request_processor'):
+            if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
+                cls.register_request_processor(translations_request_processor_explicit,
+                    key='translations')
+            else: # STANDARD
+                cls.register_request_processor(translations_request_processor_standard,
+                    key='translations')
+
+        if hasattr(cls, 'get_redirect_to_target'):
+            original_get_redirect_to_target = cls.get_redirect_to_target
+            @monkeypatch_method(cls)
+            def get_redirect_to_target(self, request):
+                """
+                Find an acceptable redirect target. If this is a local link, then try
+                to find the page this redirect references and translate it according
+                to the user's language. This way, one can easily implement a localized
+                "/"-url to welcome page redirection.
+                """
+                target = original_get_redirect_to_target(self, request)
+                if target and target.find('//') == -1:  # Not an offsite link http://bla/blubb
+                    try:
+                        page = cls.objects.page_for_path(target)
+                        page = page.get_translation(get_current_language_code(request))
+                        target = page.get_absolute_url()
+                    except cls.DoesNotExist:
+                        pass
+                return target
+
         @monkeypatch_method(cls)
-        def get_redirect_to_target(self, request):
-            """
-            Find an acceptable redirect target. If this is a local link, then try
-            to find the page this redirect references and translate it according
-            to the user's language. This way, one can easily implement a localized
-            "/"-url to welcome page redirection.
-            """
-            target = self.redirect_to
-            if target and target.find('//') == -1: # Not an offsite link http://bla/blubb
-                try:
-                    page = cls.objects.page_for_path(target)
-                    page = page.get_translation(get_current_language_code(request))
-                    target = page.get_absolute_url()
-                except cls.DoesNotExist:
-                    pass
-            return target
-
-    @monkeypatch_method(cls)
-    def available_translations(self):
-        if not self.id: # New, unsaved pages have no translations
-            return []
-        if is_primary_language(self.language):
-            return self.translations.all()
-        elif self.translation_of:
-            return [self.translation_of] + list(self.translation_of.translations.exclude(
-                language=self.language))
-        else:
-            return []
-
-    @monkeypatch_method(cls)
-    def get_original_translation(self, *args, **kwargs):
-        if is_primary_language(self.language):
-            return self
-        return self.translation_of
-
-    @monkeypatch_property(cls)
-    def original_translation(self):
-        return self.get_original_translation()
-
-    @monkeypatch_method(cls)
-    def get_translation(self, language):
-        return self.original_translation.translations.get(language=language)
-
-    def available_translations_admin(self, page):
-        translations = dict((p.language, p.id) for p in page.available_translations())
-
-        links = []
-
-        for key, title in django_settings.LANGUAGES:
-            if key == page.language:
-                continue
-
-            if key in translations:
-                links.append(u'<a href="%s/" title="%s">%s</a>' % (
-                    translations[key], _('Edit translation'), key.upper()))
+        def available_translations(self):
+            if not self.id: # New, unsaved pages have no translations
+                return []
+            if is_primary_language(self.language):
+                return self.translations.all()
+            elif self.translation_of:
+                return [self.translation_of] + list(self.translation_of.translations.exclude(
+                    language=self.language))
             else:
-                links.append(u'<a style="color:#baa" href="add/?translation_of=%s&amp;language=%s" title="%s">%s</a>' % (
-                    page.id, key, _('Create translation'), key.upper()))
+                return []
 
-        return u' | '.join(links)
+        @monkeypatch_method(cls)
+        def get_original_translation(self, *args, **kwargs):
+            if is_primary_language(self.language):
+                return self
+            if self.translation_of:
+                return self.translation_of
+            raise self.DoesNotExist
 
-    available_translations_admin.allow_tags = True
-    available_translations_admin.short_description = _('translations')
-    admin_cls.available_translations_admin = available_translations_admin
+        @monkeypatch_property(cls)
+        def original_translation(self):
+            return self.get_original_translation()
 
-    if hasattr(admin_cls, 'add_extension_options'):
-        admin_cls.add_extension_options('language', 'translation_of')
+        @monkeypatch_method(cls)
+        def get_translation(self, language):
+            return self.original_translation.translations.get(language=language)
 
-    admin_cls.list_display.extend(['language', 'available_translations_admin'])
-    admin_cls.list_filter.extend(['language'])
+    def handle_modeladmin(self, modeladmin):
 
-    admin_cls.raw_id_fields.append('translation_of')
+        def available_translations_admin(self, page):
+            translations = dict((p.language, p.id) for p in page.available_translations())
+
+            links = []
+
+            for key, title in django_settings.LANGUAGES:
+                if key == page.language:
+                    continue
+
+                if key in translations:
+                    links.append(u'<a href="%s/" title="%s">%s</a>' % (
+                        translations[key], _('Edit translation'), key.upper()))
+                else:
+                    links.append(u'<a style="color:#baa" href="add/?translation_of=%s&amp;language=%s" title="%s">%s</a>' % (
+                        page.id, key, _('Create translation'), key.upper()))
+
+            return u' | '.join(links)
+
+        available_translations_admin.allow_tags = True
+        available_translations_admin.short_description = _('translations')
+        modeladmin.__class__.available_translations_admin = available_translations_admin
+
+        if hasattr(modeladmin, 'add_extension_options'):
+            modeladmin.add_extension_options('language', 'translation_of')
+
+        modeladmin.list_display.extend(['language', 'available_translations_admin'])
+        modeladmin.list_filter.extend(['language'])
+
+        modeladmin.raw_id_fields.append('translation_of')
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------

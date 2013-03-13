@@ -239,7 +239,7 @@ of any template rendering calls:
     from news.models import Entry
 
     def entry_list(request):
-        # TODO add pagination here
+        # Pagination should probably be added here
         return 'news/entry_list.html', {'object_list': Entry.objects.all()}
 
     def entry_detail(request, slug):
@@ -398,17 +398,18 @@ need them. All of these must be specified in the ``APPLICATIONS`` argument to
 Letting 3rd party apps define navigation entries
 ------------------------------------------------
 
-Short answer: You need the ``navigation`` extension module. Activate it like
-this::
+Short answer: You need the ``feincms.module.page.extensions.navigation``
+extension module. Activate it like this::
 
-    Page.register_extensions('navigation')
+    Page.register_extensions('feincms.module.page.extensions.navigation')
 
 
 Please note however, that this call needs to come after all
 ``NavigationExtension`` subclasses have been processed, because otherwise they
 will not be available for selection in the page administration! (Yes, this is
-lame and yes, this is going to change as soon as I find the time to whip up a
-better solution.)
+lame and yes, this is going to change as soon as we find a
+better solution. In the meantime, stick your subclass definition before
+the register_extensions call.)
 
 Because the use cases for extended navigations are so different, FeinCMS
 does not go to great lengths trying to cover them all. What it does though
@@ -446,4 +447,22 @@ You don't need to do anything else as long as you use the built-in
             for p in page.children.in_navigation():
                 yield p
 
-    Page.register_extensions('navigation')
+    Page.register_extensions('feincms.module.page.extensions.navigation')
+
+Note that the objects returned should at least try to mimic a real page so
+navigation template tags as ``siblings_along_path_to`` and friends continue
+to work, ie. at least the following attributes should exist:
+
+::
+
+    title     = '(whatever)'
+    url       = '(whatever)'
+
+    # Attributes that MPTT assumes to exist
+    parent_id = page.id
+    tree_id   = page.tree_id
+    level     = page.level+1
+    lft       = page.lft
+    rght      = page.rght
+
+

@@ -2,82 +2,36 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-"""
-Media library-based file inclusion tool. Can handle any type of media file,
-not only images.
-"""
-
-import warnings
-
-from django import forms
-from django.conf import settings
-from django.contrib.admin.widgets import AdminRadioSelect
-from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
+from django.contrib import admin
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.admin.item_editor import ItemEditorForm
-from feincms.module.medialibrary.models import MediaFile
-from feincms.module.medialibrary.thumbnail import admin_thumbnail
+from feincms.admin.item_editor import FeinCMSInline
+from feincms.module.medialibrary.fields import ContentWithMediaFile
 
 
-warnings.warn("The contents of feincms.content.medialibrary.models will be replaced"
-    " with feincms.content.medialibrary.v2 in FeinCMS v1.7. The old media file content"
-    " here interferes with Django's raw_id_fields and is generally messy.",
-    DeprecationWarning, stacklevel=2)
+class MediaFileContentInline(FeinCMSInline):
+    raw_id_fields = ('mediafile',)
+    radio_fields = {'type': admin.VERTICAL}
 
 
-class MediaFileWidget(forms.TextInput):
+class MediaFileContent(ContentWithMediaFile):
     """
-    TextInput widget, shows a link to the current value if there is one.
-    """
+    Rehashed, backwards-incompatible media file content which does not contain
+    the problems from v1 anymore.
 
-    def render(self, name, value, attrs=None):
-        inputfield = super(MediaFileWidget, self).render(name, value, attrs)
-        if value:
-            try:
-                mf = MediaFile.objects.get(pk=value)
-            except MediaFile.DoesNotExist:
-                return inputfield
-
-            try:
-                caption = mf.translation.caption
-            except (AttributeError, ObjectDoesNotExist):
-                caption = _('(no caption)')
-
-            image = admin_thumbnail(mf)
-            if image:
-                image = u'<img src="%(url)s" alt="" /><br />' % {'url': image}
-            else:
-                image = u''
-
-            return mark_safe(u"""
-                <div style="margin-left:10em">%(image)s
-                <a href="%(url)s" target="_blank">%(caption)s - %(url)s</a><br />
-                %(inputfield)s
-                </div>""" % {
-                    'image': image,
-                    'url': mf.file.url,
-                    'caption': caption,
-                    'inputfield': inputfield})
-
-        return inputfield
-
-
-# FeinCMS connector
-class MediaFileContent(models.Model):
-    """
     Create a media file content as follows::
 
-        Page.create_content_type(MediaFileContent, POSITION_CHOICES=(
+        from feincms.content.medialibrary.v2 import MediaFileContent
+        Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
             ('default', _('Default')),
             ('lightbox', _('Lightbox')),
             ('whatever', _('Whatever')),
             ))
 
-    For a media file of type 'image' and position 'lightbox', the following
+    For a media file of type 'image' and type 'lightbox', the following
     templates are tried in order:
 
     * content/mediafile/image_lightbox.html
@@ -88,9 +42,7 @@ class MediaFileContent(models.Model):
     The context contains ``content`` and ``request`` (if available).
     """
 
-    feincms_item_editor_includes = {
-        'head': ['admin/content/mediafile/init.html'],
-        }
+    feincms_item_editor_inline = MediaFileContentInline
 
     class Meta:
         abstract = True
@@ -98,45 +50,20 @@ class MediaFileContent(models.Model):
         verbose_name_plural = _('media files')
 
     @classmethod
-    def initialize_type(cls, POSITION_CHOICES=None, MEDIAFILE_CLASS=MediaFile):
-        warnings.warn('feincms.content.medialibrary.models.MediaFileContent is deprecated.'
-                ' Use feincms.content.medialibrary.v2.MediaFileContent instead.',
-            DeprecationWarning, stacklevel=2)
-        if 'feincms.module.medialibrary' not in settings.INSTALLED_APPS:
-            raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
+    def initialize_type(cls, TYPE_CHOICES=None):
+        if TYPE_CHOICES is None:
+            raise ImproperlyConfigured('You have to set TYPE_CHOICES when'
+                ' creating a %s' % cls.__name__)
 
-        if POSITION_CHOICES is None:
-            raise ImproperlyConfigured, 'You need to set POSITION_CHOICES when creating a %s' % cls.__name__
-
-        cls.add_to_class('mediafile', models.ForeignKey(MEDIAFILE_CLASS, verbose_name=_('media file'),
-            related_name='%s_%s_set' % (cls._meta.app_label, cls._meta.module_name)
-            ))
-
-        cls.add_to_class('position', models.CharField(_('position'),
-            max_length=10, choices=POSITION_CHOICES,
-            default=POSITION_CHOICES[0][0]))
-
-        class MediaFileContentAdminForm(ItemEditorForm):
-            mediafile = forms.ModelChoiceField(queryset=MEDIAFILE_CLASS.objects.all(),
-                widget=MediaFileWidget, label=_('media file'))
-            position = forms.ChoiceField(choices=POSITION_CHOICES,
-                initial=POSITION_CHOICES[0][0], label=_('position'),
-                widget=AdminRadioSelect(attrs={'class': 'radiolist'}))
-
-        cls.feincms_item_editor_form = MediaFileContentAdminForm
+        cls.add_to_class('type', models.CharField(_('type'),
+            max_length=20, choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0]))
 
     def render(self, **kwargs):
+        ctx = {'content': self}
+        ctx.update(kwargs)
         return render_to_string([
-            'content/mediafile/%s_%s.html' % (self.mediafile.type, self.position),
+            'content/mediafile/%s_%s.html' % (self.mediafile.type, self.type),
             'content/mediafile/%s.html' % self.mediafile.type,
-            'content/mediafile/%s.html' % self.position,
+            'content/mediafile/%s.html' % self.type,
             'content/mediafile/default.html',
-            ], { 'content': self }, context_instance=kwargs.get('context'))
-
-    @classmethod
-    def default_create_content_type(cls, cms_model):
-        return cms_model.create_content_type(cls, POSITION_CHOICES=(
-            ('block', _('block')),
-            ('left', _('left')),
-            ('right', _('right')),
-            ))
+            ], ctx, context_instance=kwargs.get('context'))

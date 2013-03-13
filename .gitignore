@@ -10,3 +10,5 @@
 /_build
 /build
 /dist
+tests/test.zip
+/docs/_build

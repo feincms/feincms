@@ -318,7 +318,7 @@ class PagesTestCase(TestCase):
             'mediafilecontent_set-MAX_NUM_FORMS': 10,
 
             'mediafilecontent_set-0-parent': 1,
-            'mediafilecontent_set-0-position': 'block',
+            'mediafilecontent_set-0-type': 'default',
 
             'imagecontent_set-TOTAL_FORMS': 1,
             'imagecontent_set-INITIAL_FORMS': 0,
@@ -389,7 +389,7 @@ class PagesTestCase(TestCase):
         page.mediafilecontent_set.create(
             mediafile=mediafile,
             region='main',
-            position='block',
+            type='default',
             ordering=1)
 
         self.assertEqual(unicode(mediafile), 'somefile.jpg')
@@ -914,13 +914,21 @@ class PagesTestCase(TestCase):
         page.active = True
         page.save()
 
-        self.assertEqual(page, Page.objects.page_for_path(page.get_absolute_url()))
-        self.assertEqual(page, Page.objects.best_match_for_path(page.get_absolute_url() + 'something/hello/'))
+        self.assertRaises(Page.DoesNotExist,
+            lambda: Page.objects.page_for_path(page.get_absolute_url()))
+        self.assertRaises(Page.DoesNotExist,
+            lambda: Page.objects.best_match_for_path(
+                page.get_absolute_url() + 'something/hello/'))
 
-        self.assertRaises(Http404, lambda: Page.objects.best_match_for_path('/blabla/blabla/', raise404=True))
-        self.assertRaises(Http404, lambda: Page.objects.page_for_path('/asdf/', raise404=True))
-        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
-        self.assertRaises(Page.DoesNotExist, lambda: Page.objects.page_for_path('/asdf/'))
+        self.assertRaises(Http404,
+            lambda: Page.objects.best_match_for_path(
+                '/blabla/blabla/', raise404=True))
+        self.assertRaises(Http404,
+            lambda: Page.objects.page_for_path('/asdf/', raise404=True))
+        self.assertRaises(Page.DoesNotExist,
+            lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
+        self.assertRaises(Page.DoesNotExist,
+            lambda: Page.objects.page_for_path('/asdf/'))
 
         request = Empty()
         request.path = request.path_info = page.get_absolute_url()
@@ -937,16 +945,24 @@ class PagesTestCase(TestCase):
         page.active = False
         page.save()
 
-        self.assertRaises(Http404, lambda: Page.objects.for_request(request, raise404=True))
+        self.assertRaises(Http404,
+            lambda: Page.objects.for_request(request, raise404=True))
 
         page.active = True
         page.save()
 
-        self.assertRaises(Http404, lambda: Page.objects.for_request(request, raise404=True))
+        self.assertRaises(Http404,
+            lambda: Page.objects.for_request(request, raise404=True))
 
         page.parent.active = True
         page.parent.save()
         self.assertEqual(page, Page.objects.for_request(request))
+
+        self.assertEqual(page,
+            Page.objects.page_for_path(page.get_absolute_url()))
+        self.assertEqual(page,
+            Page.objects.best_match_for_path(
+                page.get_absolute_url() + 'something/hello/'))
 
         old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
         request.path += 'hello/'
@@ -1233,7 +1249,7 @@ class PagesTestCase(TestCase):
         page.mediafilecontent_set.create(
             mediafile=mediafile,
             region='main',
-            position='block',
+            type='default',
             ordering=1)
 
         self.assertContains(self.client.get('/admin/medialibrary/mediafile/'), 'somefile.jpg')
@@ -1264,7 +1280,6 @@ class PagesTestCase(TestCase):
         stats = list(MediaFile.objects.values_list('type', flat=True))
         self.assertEqual(stats.count('image'), 12)
         self.assertEqual(stats.count('other'), 0)
-        # XXX: Test mediafile type detection some more?
 
     def test_30_context_processors(self):
         self.create_default_page_set()
@@ -1377,3 +1392,17 @@ class PagesTestCase(TestCase):
         self.assertEquals(r.status_code, 404)
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
+
+    def test_36_sitemaps(self):
+        response = self.client.get('/sitemap.xml')
+        self.assertContains(response, '<urlset', status_code=200)
+
+        page = self.create_page()
+        response = self.client.get('/sitemap.xml')
+        self.assertNotContains(response, '<url>', status_code=200)
+
+        page.active = True
+        page.in_navigation = True
+        page.save()
+        response = self.client.get('/sitemap.xml')
+        self.assertContains(response, '<url>', status_code=200)

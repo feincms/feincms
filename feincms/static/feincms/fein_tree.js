@@ -8,6 +8,12 @@ feincms.jQuery(function($){
     $.extend($.fn.recolorRows = function() {
         $('tr:visible:even', this).removeClass('row2').addClass('row1');
         $('tr:visible:odd', this).removeClass('row1').addClass('row2');
+
+        /* Mark inactive rows */
+        $('tr.item_inactive').removeClass('item_inactive');
+        $('div[id^=wrap_active_] input:checkbox:not(:checked)').parents('tr').addClass('item_inactive');
+        $('div[id^=wrap_active_] img').parents('tr').addClass('item_inactive');
+
     });
 
     function isExpandedNode(id) {

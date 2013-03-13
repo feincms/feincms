@@ -59,6 +59,8 @@ class TrackerContentProxy(ContentProxy):
                 super(TrackerContentProxy, self)._fetch_content_type_counts()
 
                 self.item._ct_inventory = self._to_inventory(self._cache['counts'])
+
+                self.item.invalidate_cache()
                 self.item.__class__.objects.filter(id=self.item.id).update(
                     _ct_inventory=self.item._ct_inventory)
 
@@ -122,7 +124,8 @@ def tree_post_save_handler(sender, instance, **kwargs):
     Clobber the _ct_inventory attribute of this object and all sub-objects
     on save.
     """
-
+    # TODO: Does not find everything it should when ContentProxy content
+    # inheritance has been customized.
     instance.get_descendants(include_self=True).update(_ct_inventory=None)
 
 # ------------------------------------------------------------------------
@@ -136,9 +139,8 @@ def register(cls, admin_cls):
     cls.add_to_class('_ct_inventory', JSONField(_('content types'), editable=False, blank=True, null=True))
     cls.content_proxy_class = TrackerContentProxy
 
+    pre_save.connect(single_pre_save_handler, sender=cls)
     if hasattr(cls, 'get_descendants'):
         post_save.connect(tree_post_save_handler, sender=cls)
-    else:
-        pre_save.connect(single_pre_save_handler, sender=cls)
 
 # ------------------------------------------------------------------------

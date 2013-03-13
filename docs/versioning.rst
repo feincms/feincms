@@ -30,7 +30,7 @@ FeinCMS' ``PageAdmin`` and from reversions ``VersionAdmin``::
     admin.site.register(Page, VersionedPageAdmin)
 
 The ``VersionedPageAdmin`` does not look like the ItemEditor -- it's
-just raw Django inlines, without any additional javascript. Patches are
+just raw Django inlines, without any additional JavaScript. Patches are
 welcome, but the basic functionality needed for versioning page content
 is there.
 

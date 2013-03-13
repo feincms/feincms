@@ -4,24 +4,56 @@
 
 from __future__ import absolute_import
 
+import re
+
 from django import forms
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.sites.models import Site
+from django.db.models.loading import get_model
 from django.forms.models import model_to_dict
 from django.forms.util import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-
-from .models import Page, PageManager
+from feincms.utils import shorten_string
 
 from mptt.forms import MPTTAdminForm
+
+
+class RedirectToWidget(ForeignKeyRawIdWidget):
+    def label_for_value(self, value):
+        match = re.match(
+            # XXX this regex would be available as .models.REDIRECT_TO_RE
+            r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$',
+            value)
+
+        if match:
+            matches = match.groupdict()
+            model = get_model(matches['app_label'], matches['module_name'])
+            try:
+                instance = model._default_manager.get(pk=int(matches['pk']))
+                return u'&nbsp;<strong>%s (%s)</strong>' % (instance,
+                        instance.get_absolute_url())
+
+            except model.DoesNotExist:
+                pass
+
+        return u''
 
 
 # ------------------------------------------------------------------------
 class PageAdminForm(MPTTAdminForm):
     never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
         'translation_of', '_content_title', '_page_title')
+
+    @property
+    def page_model(self):
+        return self._meta.model
+
+    @property
+    def page_manager(self):
+        return self.page_model._default_manager
 
     def __init__(self, *args, **kwargs):
         ensure_completely_loaded()
@@ -30,10 +62,11 @@ class PageAdminForm(MPTTAdminForm):
             if 'parent' in kwargs['initial']:
                 # Prefill a few form values from the parent page
                 try:
-                    page = Page.objects.get(pk=kwargs['initial']['parent'])
+                    page = self.page_manager.get(
+                        pk=kwargs['initial']['parent'])
                     data = model_to_dict(page)
 
-                    for field in PageManager.exclude_from_copy:
+                    for field in self.page_manager.exclude_from_copy:
                         if field in data:
                             del data[field]
 
@@ -44,13 +77,14 @@ class PageAdminForm(MPTTAdminForm):
 
                     data.update(kwargs['initial'])
                     kwargs['initial'] = data
-                except Page.DoesNotExist:
+                except self.page_model.DoesNotExist:
                     pass
 
             elif 'translation_of' in kwargs['initial']:
                 # Only if translation extension is active
                 try:
-                    page = Page.objects.get(pk=kwargs['initial']['translation_of'])
+                    page = self.page_manager.get(
+                        pk=kwargs['initial']['translation_of'])
                     original = page.original_translation
 
                     data = {
@@ -63,24 +97,37 @@ class PageAdminForm(MPTTAdminForm):
                     if original.parent:
                         try:
                             data['parent'] = original.parent.get_translation(kwargs['initial']['language']).id
-                        except Page.DoesNotExist:
+                        except self.page_model.DoesNotExist:
                             # ignore this -- the translation does not exist
                             pass
 
                     data.update(kwargs['initial'])
                     kwargs['initial'] = data
-                except (AttributeError, Page.DoesNotExist):
+                except (AttributeError, self.page_model.DoesNotExist):
                     pass
 
+        # Not required, only a nice-to-have for the `redirect_to` field
+        modeladmin = kwargs.pop('modeladmin', None)
         super(PageAdminForm, self).__init__(*args, **kwargs)
+        if modeladmin:
+            # Note: Using `parent` is not strictly correct, but we can be
+            # sure that `parent` always points to another page instance,
+            # and that's good enough for us.
+            self.fields['redirect_to'].widget = RedirectToWidget(
+                self.page_model._meta.get_field('parent').rel,
+                modeladmin.admin_site)
+
         if 'instance' in kwargs:
             choices = []
             for key, template in kwargs['instance'].TEMPLATE_CHOICES:
                 template = kwargs['instance']._feincms_templates[key]
                 if template.preview_image:
                     choices.append((template.key,
-                                    mark_safe(u'<img src="%s" alt="%s" /> %s' % (
-                                              template.preview_image, template.key, template.title))))
+                        mark_safe(u'<img src="%s" alt="%s" /> %s' % (
+                              template.preview_image,
+                              template.key,
+                              template.title,
+                              ))))
                 else:
                     choices.append((template.key, template.title))
 
@@ -96,7 +143,7 @@ class PageAdminForm(MPTTAdminForm):
         current_id = None
         # See the comment below on why we do not use Page.objects.active(),
         # at least for now.
-        active_pages = Page.objects.filter(active=True)
+        active_pages = self.page_manager.filter(active=True)
 
         if self.instance:
             current_id = self.instance.id
@@ -122,7 +169,7 @@ class PageAdminForm(MPTTAdminForm):
 
         if current_id:
             # We are editing an existing page
-            parent = Page.objects.get(pk=current_id).parent
+            parent = self.page_manager.get(pk=current_id).parent
         else:
             # The user tries to create a new page
             parent = cleaned_data['parent']
@@ -135,6 +182,13 @@ class PageAdminForm(MPTTAdminForm):
         if active_pages.filter(_cached_url=new_url).count():
             self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
             del cleaned_data['active']
+
+        # Convert PK in redirect_to field to something nicer for the future
+        redirect_to = cleaned_data.get('redirect_to')
+        if redirect_to and re.match(r'^\d+$', redirect_to):
+            opts = self.page_model._meta
+            cleaned_data['redirect_to'] = '%s.%s:%s' % (
+                opts.app_label, opts.module_name, redirect_to)
 
         return cleaned_data
 

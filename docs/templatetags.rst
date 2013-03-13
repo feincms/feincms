@@ -91,7 +91,7 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 
 .. function:: siblings_along_path_to:
 
-   This is a filter designed to work in close conjuction with the
+   This is a filter designed to work in close conjunction with the
    ``feincms_navigation`` template tag describe above to build a
    navigation tree following the path to the current page.
 

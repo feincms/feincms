@@ -17,13 +17,20 @@ class VideoContent(models.Model):
     """
 
     PORTALS = (
-        ('youtube', re.compile(r'youtube'), lambda url: {'v': re.search(r'([?&]v=|./././)([^#&]+)', url).group(2)}),
-        ('vimeo', re.compile(r'vimeo'), lambda url: {'id': re.search(r'/(\d+)', url).group(1)}),
-        ('sf', re.compile(r'sf\.tv'), lambda url: {'id': re.search(r'/([a-z0-9\-]+)', url).group(1)}),
+        ('youtube', re.compile(r'youtube'), lambda url: {
+            'v': re.search(r'([?&]v=|./././)([^#&]+)', url).group(2),
+            }),
+        ('vimeo', re.compile(r'vimeo'), lambda url: {
+            'id': re.search(r'/(\d+)', url).group(1),
+            }),
+        ('sf', re.compile(r'sf\.tv'), lambda url: {
+            'id': re.search(r'/([a-z0-9\-]+)', url).group(1),
+            }),
         )
 
     video = models.URLField(_('video link'),
-        help_text=_('This should be a link to a youtube or vimeo video, i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0'))
+        help_text=_('This should be a link to a youtube or vimeo video,'
+            ' i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0'))
 
     class Meta:
         abstract = True
@@ -31,14 +38,19 @@ class VideoContent(models.Model):
         verbose_name_plural = _('videos')
 
     def render(self, **kwargs):
-        context_instance = kwargs.get('context', None)
+        context_instance = kwargs.get('context')
 
         for portal, match, context_fn in self.PORTALS:
             if match.search(self.video):
+                try:
+                    ctx = context_fn(self.video)
+                except AttributeError:
+                    continue
+
                 return render_to_string([
                     'content/video/%s.html' % portal,
                     'content/video/unknown.html',
-                    ], dict(context_fn(self.video), content=self),
+                    ], dict(ctx, content=self),
                     context_instance=context_instance)
 
         return render_to_string('content/video/unknown.html', {

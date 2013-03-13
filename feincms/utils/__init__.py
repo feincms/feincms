@@ -18,14 +18,17 @@ def get_object(path, fail_silently=False):
     if not isinstance(path, (str, unicode)):
         return path
 
-    dot = path.rindex('.')
-    mod, fn = path[:dot], path[dot+1:]
-
     try:
-        return getattr(import_module(mod), fn)
-    except (AttributeError, ImportError):
-        if not fail_silently:
-            raise
+        return import_module(path)
+    except ImportError:
+        try:
+            dot = path.rindex('.')
+            mod, fn = path[:dot], path[dot+1:]
+
+            return getattr(import_module(mod), fn)
+        except (AttributeError, ImportError):
+            if not fail_silently:
+                raise
 
 # ------------------------------------------------------------------------
 def collect_dict_values(data):
@@ -83,7 +86,11 @@ def path_to_cache_key(path, max_length=200, prefix=""):
         m.update(path)
         path = m.hexdigest() + '-' + path[:max_length - 20]
 
-    cache_key = 'FEINCMS:%d:%s:%s' % (django_settings.SITE_ID, prefix, path)
+    cache_key = 'FEINCMS:%d:%s:%s' % (
+        getattr(django_settings, 'SITE_ID', 0),
+            prefix,
+            path,
+            )
     return cache_key
 
 # ------------------------------------------------------------------------
