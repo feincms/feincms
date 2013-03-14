@@ -1397,10 +1397,12 @@ class PagesTestCase(TestCase):
         response = self.client.get('/sitemap.xml')
         self.assertContains(response, '<urlset', status_code=200)
 
-        page = self.create_page()
+        self.login()
+        response = self.create_page()
         response = self.client.get('/sitemap.xml')
         self.assertNotContains(response, '<url>', status_code=200)
 
+        page = Page.objects.get()
         page.active = True
         page.in_navigation = True
         page.save()
