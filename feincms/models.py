@@ -512,7 +512,7 @@ def create_base_model(inherit_from=models.Model):
 
             # create content base type and save reference on CMS class
 
-            name = '%sContent' % cls.__name__
+            name = '_Internal%sContentTypeBase' % cls.__name__
             if hasattr(sys.modules[cls.__module__], name):
                 warnings.warn(
                     'The class %s.%s has the same name as the class that '
