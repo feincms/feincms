@@ -47,10 +47,8 @@ Page.create_content_type(ApplicationContent, APPLICATIONS=(
     ('whatever', 'Test Urls', {'urls': 'testapp.applicationcontent_urls'}),
     ))
 
+Entry.register_regions(('main', 'Main region'), ('another', 'Another region'))
 
-Entry.register_regions(
-    ('main', 'Main region'),
-    )
 Entry.create_content_type(RawContent)
 Entry.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),

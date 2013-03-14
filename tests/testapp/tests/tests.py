@@ -102,8 +102,6 @@ class BlogTestCase(TestCase):
         u.set_password('test')
         u.save()
 
-        Entry.register_regions(('main', 'Main region'), ('another', 'Another region'))
-
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
 
