@@ -5,6 +5,7 @@ All models defined here are abstract, which means no tables are created in
 the feincms\_ namespace.
 """
 
+import sys
 import operator
 import warnings
 
@@ -510,8 +511,18 @@ def create_base_model(inherit_from=models.Model):
                 }
 
             # create content base type and save reference on CMS class
-            cls._feincms_content_model = type('%sContent' % cls.__name__,
-                (models.Model,), attrs)
+
+            name = '_Internal%sContentTypeBase' % cls.__name__
+            if hasattr(sys.modules[cls.__module__], name):
+                warnings.warn(
+                    'The class %s.%s has the same name as the class that '
+                    'FeinCMS auto-generates based on %s.%s. To avoid database'
+                    'errors and import clashes, rename one of these classes.'
+                    % (cls.__module__, name, cls.__module__, cls.__name__),
+                RuntimeWarning)
+
+            cls._feincms_content_model = type(name, (models.Model,), attrs)
+
 
             # list of concrete content types
             cls._feincms_content_types = []
