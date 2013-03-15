@@ -14,6 +14,8 @@ class Handler(ContentView):
     def page_model(self):
         if not hasattr(self, '_page_model'):
             self._page_model = get_model(*self.page_model_path.split('.'))
+            if self._page_model is None:
+                raise ImportError("Can't import model \"%s\"" % self.page_model_path)
         return self._page_model
 
     def get_object(self):
