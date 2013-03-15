@@ -2,15 +2,15 @@
 
 <style type="text/css">
     span.cke_skin_kama { border: none !important; }
-    span.cke_wrapper { margin-left: 107px; }
+    div[id*='cke_id_'] { margin-left: 107px; }
 </style>
 
 <script type="text/javascript">
 		{% block config %}
     CKEDITOR.config.width = '787';
     CKEDITOR.config.height= '300';
-    CKEDITOR.config.toolbar_Full = [
-			{% block toolbar %}['Maximize','-','Format','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','NumberedList','BulletedList','-','Anchor', 'Link','Unlink','-','Source',],{% endblock %}
+    CKEDITOR.config.toolbar = [
+			{% block toolbar %}['Maximize','-','Format','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','NumberedList','BulletedList','-','Anchor', 'Link','Unlink','-','Source']{% endblock %}
     ];
 		{% endblock %}
 
