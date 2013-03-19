@@ -15,7 +15,7 @@ from django.utils.importlib import import_module
 def get_object(path, fail_silently=False):
     # Return early if path isn't a string (might already be an callable or
     # a class or whatever)
-    if not isinstance(path, (str, unicode)):
+    if not isinstance(path, basestring):
         return path
 
     try:
@@ -47,8 +47,8 @@ def copy_model_instance(obj, exclude=None):
     exclude = exclude or ()
     initial = dict([(f.name, getattr(obj, f.name))
                     for f in obj._meta.fields
-                    if not isinstance(f, AutoField) and \
-                       not f.name in exclude and \
+                    if not isinstance(f, AutoField) and
+                       not f.name in exclude and
                        not f in obj._meta.parents.values()])
     return obj.__class__(**initial)
 
