@@ -53,19 +53,34 @@ def copy_model_instance(obj, exclude=None):
     return obj.__class__(**initial)
 
 # ------------------------------------------------------------------------
-def shorten_string(str, max_length=50):
+def shorten_string(str, max_length=50, ellipsis=u' … '):
     """
     Shorten a string for display, truncate it intelligently when too long.
     Try to cut it in 2/3 + ellipsis + 1/3 of the original title. The first part
     also try to cut at white space instead of in mid-word.
+
+    >>> s = shorten_string("Der Wolf und die Grossmutter assen im Wald zu mittag", 15, ellipsis="_")
+    >>> s
+    'Der Wolf und_ag'
+    >>> len(s)
+    15
+
+    >>> s = shorten_string(u"Haenschen-Klein, ging allein, in den tiefen Wald hinein", 15)
+    >>> s
+    u'Haenschen \u2026 ein'
+    >>> len(s)
+    15
+
+    >>> shorten_string(u"Badgerbadgerbadgerbadgerbadger", 10, ellipsis="-")
+    u'Badger-ger'
     """
 
     if len(str) >= max_length:
         first_part = int(max_length * 0.6)
         next_space = str[first_part:(max_length / 2 - first_part)].find(' ')
-        if next_space >= 0:
+        if next_space >= 0 and first_part + next_space < max_length:
             first_part += next_space
-        return str[:first_part] + u' … ' + str[-(max_length - first_part):]
+        return str[:first_part] + ellipsis + str[-(max_length - first_part - len(ellipsis)):]
     return str
 
 # ------------------------------------------------------------------------
@@ -90,7 +105,7 @@ def path_to_cache_key(path, max_length=200, prefix=""):
         getattr(django_settings, 'SITE_ID', 0),
             prefix,
             path,
-            )
+    )
     return cache_key
 
 # ------------------------------------------------------------------------

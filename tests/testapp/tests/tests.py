@@ -33,6 +33,9 @@ class DocTest(TestCase):
     def test_medialibrary_doctests(self):
         doctest.testmod(feincms.module.medialibrary.models)
 
+    def test_utils(self):
+        doctest.testmod(feincms.utils)
+
 class ModelsTest(TestCase):
     def test_region(self):
         # Creation should not fail
