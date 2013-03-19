@@ -146,10 +146,20 @@ class ChangeList(main.ChangeList):
                 mptt_opts.left_attr + '__lte': lft,
                 mptt_opts.right_attr + '__gte': rght,
                 }
-                ) for lft, rght, tree_id in \
-                    self.query_set.values_list(mptt_opts.left_attr, mptt_opts.right_attr, mptt_opts.tree_id_attr)]
+                ) for lft, rght, tree_id in self.query_set.values_list(
+                    mptt_opts.left_attr,
+                    mptt_opts.right_attr,
+                    mptt_opts.tree_id_attr,
+                )]
             if clauses:
-                self.query_set = self.model._default_manager.filter(reduce(lambda p, q: p|q, clauses))
+                queryset = self.model._default_manager.filter(
+                    reduce(lambda p, q: p|q, clauses))
+
+                if hasattr(self, 'queryset'):
+                    self.queryset = queryset
+                else:
+                    # Django 1.5 and older
+                    self.query_set = queryset
 
         super(ChangeList, self).get_results(request)
 
