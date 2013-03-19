@@ -56,8 +56,8 @@ def copy_model_instance(obj, exclude=None):
 def shorten_string(str, max_length=50, ellipsis=u' … '):
     """
     Shorten a string for display, truncate it intelligently when too long.
-    Try to cut it in 2/3 + ellipsis + 1/3 of the original title. The first part
-    also try to cut at white space instead of in mid-word.
+    Try to cut it in 2/3 + ellipsis + 1/3 of the original title. Also try to
+    cut the first part off at a white space boundary instead of in mid-word.
 
     >>> s = shorten_string("Der Wolf und die Grossmutter assen im Wald zu mittag", 15, ellipsis="_")
     >>> s
@@ -78,7 +78,7 @@ def shorten_string(str, max_length=50, ellipsis=u' … '):
     if len(str) >= max_length:
         first_part = int(max_length * 0.6)
         next_space = str[first_part:(max_length / 2 - first_part)].find(' ')
-        if next_space >= 0 and first_part + next_space < max_length:
+        if next_space >= 0 and first_part + next_space + len(ellipsis) < max_length:
             first_part += next_space
         return str[:first_part] + ellipsis + str[-(max_length - first_part - len(ellipsis)):]
     return str
