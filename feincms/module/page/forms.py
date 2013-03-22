@@ -120,7 +120,7 @@ class PageAdminForm(MPTTAdminForm):
                 self.page_model._meta.get_field('parent').rel,
                 modeladmin.admin_site)
 
-        if 'instance' in kwargs:
+        if 'instance' in kwargs and 'template_key' in self.fields:
             choices = []
             for key, template in kwargs['instance'].TEMPLATE_CHOICES:
                 template = kwargs['instance']._feincms_templates[key]
