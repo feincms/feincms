@@ -64,6 +64,7 @@ class PageAdminForm(MPTTAdminForm):
                 try:
                     page = self.page_manager.get(
                         pk=kwargs['initial']['parent'])
+
                     data = model_to_dict(page)
 
                     for field in self.page_manager.exclude_from_copy:
@@ -76,6 +77,8 @@ class PageAdminForm(MPTTAdminForm):
                             del data[field]
 
                     data.update(kwargs['initial'])
+                    if page.template.child_template:
+                        data['template_key'] = page.template.child_template
                     kwargs['initial'] = data
                 except self.page_model.DoesNotExist:
                     pass
