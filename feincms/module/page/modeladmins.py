@@ -89,6 +89,13 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly = super(PageAdmin, self).get_readonly_fields(request, obj=obj)
+        if obj and obj.template and obj.template.singleton:
+            return tuple(readonly) + ('template_key',)
+        else:
+            return readonly
+
     def get_form(self, *args, **kwargs):
         form = super(PageAdmin, self).get_form(*args, **kwargs)
         return curry(form, modeladmin=self)
