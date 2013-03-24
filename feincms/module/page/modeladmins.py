@@ -14,6 +14,7 @@ from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
+from feincms import settings
 from feincms.admin import item_editor, tree_editor
 
 # ------------------------------------------------------------------------
@@ -91,10 +92,10 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     def get_readonly_fields(self, request, obj=None):
         readonly = super(PageAdmin, self).get_readonly_fields(request, obj=obj)
-        if obj and obj.template and obj.template.singleton:
-            return tuple(readonly) + ('template_key',)
-        else:
-            return readonly
+        if not settings.FEINCMS_SINGLETON_TEMPLATE_CHANGE_ALLOWED:
+            if obj and obj.template and obj.template.singleton:
+                return tuple(readonly) + ('template_key',)
+        return readonly
 
     def get_form(self, *args, **kwargs):
         form = super(PageAdmin, self).get_form(*args, **kwargs)
@@ -176,6 +177,12 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             from django.contrib import messages
             messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
         return HttpResponseRedirect(reverse('admin:page_page_changelist'))
+
+    def has_delete_permission(self, request, obj=None):
+        if not settings.FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED:
+            if obj and obj.template.singleton:
+                return False
+        return super(PageAdmin, self).has_delete_permission(request, obj=obj)
 
     def is_visible_admin(self, page):
         """

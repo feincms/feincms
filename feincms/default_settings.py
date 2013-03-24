@@ -131,3 +131,16 @@ FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE',
 FEINCMS_THUMBNAIL_DIR = getattr(settings, 'FEINCMS_THUMBNAIL_DIR', '_thumbs/')
 
 # ------------------------------------------------------------------------
+#: Prevent changing template within admin for pages which have been
+#: allocated a Template with singleton=True -- template field will become
+#: read-only for singleton pages.
+FEINCMS_SINGLETON_TEMPLATE_CHANGE_ALLOWED = getattr(
+    settings, 'FEINCMS_SINGLETON_TEMPLATE_CHANGE_ALLOWED', False)
+
+#: Prevent admin page deletion for pages which have been allocated a
+#: Template with singleton=True
+FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED = getattr(
+    settings, 'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED', False)
+
+# ------------------------------------------------------------------------
+

@@ -122,8 +122,14 @@ class PageAdminForm(MPTTAdminForm):
 
         if 'template_key' in self.fields:
             choices = []
-            for key, template in self.page_model.TEMPLATE_CHOICES:
+            for key, template_name in self.page_model.TEMPLATE_CHOICES:
                 template = self.page_model._feincms_templates[key]
+                pages_for_template = self.page_model._default_manager.filter(
+                    template_key=key)
+                pk = kwargs['instance'].pk if 'instance' in kwargs else None
+                other_pages_for_template = pages_for_template.exclude(pk=pk)
+                if template.singleton and other_pages_for_template.exists():
+                    continue # don't allow selection of singleton if in use
                 if template.preview_image:
                     choices.append((template.key,
                         mark_safe(u'<img src="%s" alt="%s" /> %s' % (
