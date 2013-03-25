@@ -192,7 +192,7 @@ class PageAdminForm(MPTTAdminForm):
             self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
             del cleaned_data['active']
 
-        if parent.template.enforce_leaf:
+        if parent and parent.template.enforce_leaf:
             self._errors['parent'] = ErrorList(
                 [_('This page does not allow attachment of child pages')])
             del cleaned_data['parent']
