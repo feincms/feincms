@@ -70,6 +70,7 @@ class Template(object):
         self.preview_image = preview_image
         self.singleton = kwargs.get('singleton', False)
         self.child_template = kwargs.get('child_template', None)
+        self.enforce_leaf = kwargs.get('enforce_leaf', False)
 
         def _make_region(data):
             if isinstance(data, Region):

@@ -192,6 +192,11 @@ class PageAdminForm(MPTTAdminForm):
             self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
             del cleaned_data['active']
 
+        if parent.template.enforce_leaf:
+            self._errors['parent'] = ErrorList(
+                [_('This page does not allow attachment of child pages')])
+            del cleaned_data['parent']
+
         # Convert PK in redirect_to field to something nicer for the future
         redirect_to = cleaned_data.get('redirect_to')
         if redirect_to and re.match(r'^\d+$', redirect_to):
