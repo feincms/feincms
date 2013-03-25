@@ -1,11 +1,12 @@
 from django.http import Http404
 from django.template import Template
 from django.utils.datastructures import SortedDict
+from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.generic.base import TemplateResponseMixin
 
 from feincms import settings
-
+from feincms.views.decorators import standalone
 
 class ContentModelMixin(object):
     """
@@ -211,3 +212,9 @@ class ContentView(ContentObjectMixin, generic.DetailView):
         self.kwargs = kwargs
         self.object = self.get_object()
         return self.handler(request, *args, **kwargs)
+
+
+class StandaloneView(generic.View):
+    @method_decorator(standalone)
+    def dispatch(self, request, *args, **kwargs):
+        return super(StandaloneView, self).dispatch(request, *args, **kwargs)

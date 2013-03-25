@@ -4,8 +4,6 @@ try:
 except ImportError:
     from django.utils.functional import wraps
 
-from feincms.module.page.models import Page
-
 
 def add_page_to_extra_context(view_func):
     """
@@ -14,6 +12,7 @@ def add_page_to_extra_context(view_func):
     """
 
     def inner(request, *args, **kwargs):
+        from feincms.module.page.models import Page
         import warnings
         warnings.warn("The `add_page_to_extra_context` view decorator has been"
             " deprecated, as have the function-based generic views in"
