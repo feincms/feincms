@@ -5,6 +5,9 @@
 import logging
 
 from django import template
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.db.models import get_model
 from django.template.loader import render_to_string
 
 register = template.Library()
@@ -85,3 +88,45 @@ def show_content_type_selection_widget(context, region):
         else:
             ungrouped.append(ct_info)
     return {'grouped': grouped, 'ungrouped': ungrouped}
+
+@register.simple_tag
+def feincms_singleton_url(template_key, cls='page.Page'):
+    """
+    {% feincms_singleton_url template_key %} -- return the URL of a FeinCMS
+    Base object which uses a Template with singleton=True.
+    """
+    try:
+        model = get_model(*cls.split('.'))
+        if not model:
+            raise ImproperlyConfigured(
+                u'{%% feincms_singleton_url %%}: cannot load model "%s"' % cls)
+        try:
+            assert model._feincms_templates[template_key].singleton
+        except AttributeError, e:
+            raise ImproperlyConfigured(
+                u'{%% feincms_singleton_url %%}: %r does not seem to be a '
+                r'valid FeinCMS base class (%r)' % (model, e)
+            )
+        except KeyError:
+            raise ImproperlyConfigured(
+                u'{%% feincms_singleton_url %r %%}: not a registered template '
+                r'for %r!' % (template_key, model)
+            )
+        except AssertionError:
+            raise ImproperlyConfigured(
+                u'{%% feincms_singleton_url %r %%}: not a singleton template '
+                r'for %r!' % (template_key, model)
+            )
+        try:
+            obj = model._default_manager.get(template_key=template_key)
+        except model.DoesNotExist:
+            raise # not yet created?
+        except model.MultipleObjectsReturned:
+            raise # hmm, not exactly a singleton...
+        else:
+            return obj.get_absolute_url()
+    except Exception:
+        if settings.DEBUG:
+            raise
+        else:
+            return '#broken-link'
