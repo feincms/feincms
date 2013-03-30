@@ -40,6 +40,21 @@ class ContentModelMixin(object):
             cls.response_processors = SortedDict()
         cls.response_processors[fn if key is None else key] = fn
 
+   # Implement admin_urlname templatetag protocol
+    @property
+    def app_label(self):
+        """
+        Implement the admin_urlname templatetag protocol, so one can easily
+        generate an admin link using ::
+
+            {% url page|admin_urlname:'change' page.id %}
+        """
+        return self._meta.app_label
+
+    @property
+    def module_name(self):
+        "See app_label"
+        return self.__class__.__name__.lower()
 
 class ContentObjectMixin(TemplateResponseMixin):
     """
