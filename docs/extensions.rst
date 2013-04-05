@@ -67,3 +67,11 @@ is as follows:
             modeladmin.add_extension_options(_('Fieldset title'), {
                 'fields': ('field1', 'field2'),
                 })
+
+
+.. note::
+
+  Only model and admin instances which inherit from
+  :class:`~feincms.extensions.ExtensionsMixin` and
+  :class:`~feincms.extensions.ExtensionModelAdmin` can be extended
+  this way.
