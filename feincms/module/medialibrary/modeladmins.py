@@ -23,6 +23,7 @@ from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
 from ...translations import admin_translationinline, lookup_translations
+from ...extensions import ExtensionModelAdmin
 
 from .models import Category, MediaFileTranslation
 from .forms import MediaCategoryAdminForm, MediaFileAdminForm
@@ -92,7 +93,7 @@ def save_as_zipfile(modeladmin, request, queryset):
 save_as_zipfile.short_description = _('Export selected media files as zip file')
 
 # ------------------------------------------------------------------------
-class MediaFileAdmin(admin.ModelAdmin):
+class MediaFileAdmin(ExtensionModelAdmin):
     form              = MediaFileAdminForm
 
     save_on_top       = True
