@@ -100,3 +100,31 @@ therefore the copyright can only be entered once, not once per language.
 
 The default image template ``content/mediafile/image.html`` demonstrates how
 the values of those fields can be retrieved and used.
+
+
+Using the media library in your own apps and content types
+==========================================================
+
+There are a few helpers that allow you to have a nice raw_id selector and
+thumbnail preview in your own apps and content types that have a ForeignKey to
+:class:`~feincms.module.medialibrary.models.MediaFile`.
+
+To have a thumbnail preview in your ModelAdmin and Inline class::
+
+  from feincms.module.medialibrary.fields import MediaFileForeignKey
+
+  class ImageForProject(models.Model):
+      project = models.ForeignKey(Project)
+      mediafile = MediaFileForeignKey(MediaFile, related_name='+',
+                                    limit_choices_to={'type': 'image'})
+
+
+For the maginfying-glass select widget in your content type inherit your inline
+from FeinCMSInline::
+
+  class MyContentInline(FeinCMSInline):
+      raw_id_fields = ('mediafile',)
+
+  class MyContent(models.Model):
+      feincms_item_editor_inline = MyContentInline
+
