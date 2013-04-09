@@ -665,6 +665,8 @@ def create_base_model(inherit_from=models.Model):
                 (model, feincms_content_base,),
                 attrs)
             cls._feincms_content_types.append(new_type)
+            # For consistency's sake, also install the new type in the module
+            setattr(sys.modules[cls.__module__], class_name, new_type)
 
             if hasattr(getattr(new_type, 'process', None), '__call__'):
                 cls._feincms_content_types_with_process.append(new_type)
