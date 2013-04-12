@@ -384,6 +384,7 @@ class Page(BasePage):
         ordering = ['tree_id', 'lft']
         verbose_name = _('page')
         verbose_name_plural = _('pages')
+        # not yet # permissions = (("edit_page", _("Can edit page metadata")),)
 
 Page.register_default_processors(frontend_editing=settings.FEINCMS_FRONTEND_EDITING)
 

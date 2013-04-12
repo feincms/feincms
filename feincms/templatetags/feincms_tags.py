@@ -73,9 +73,15 @@ def show_content_type_selection_widget(context, region):
     """
     {% show_content_type_selection_widget region %}
     """
+    user = context['request'].user
     grouped = {}
     ungrouped = []
     for ct in region._content_types:
+        # Skip cts that we shouldn't be adding anyway
+        perm = ct._meta.app_label + "." + ct._meta.get_add_permission()
+        if not user.has_perm(perm):
+            continue
+
         ct_info = (ct.__name__.lower(), ct._meta.verbose_name)
         if hasattr(ct, 'optgroup'):
             if ct.optgroup in grouped:

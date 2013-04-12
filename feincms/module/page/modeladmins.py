@@ -94,13 +94,13 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         return curry(form, modeladmin=self)
 
     def _actions_column(self, page):
-        editable = getattr(page, 'feincms_editable', True)
+        addable  = getattr(page, 'feincms_addable', True)
 
         preview_url = "../../r/%s/%s/" % (
                 ContentType.objects.get_for_model(self.model).id,
                 page.id)
         actions = super(PageAdmin, self)._actions_column(page)
-        if editable:
+        if addable:
             actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%sfeincms/img/icon_addlink.gif" alt="%s"></a>' % (
                 page.pk, _('Add child page'), django_settings.STATIC_URL, _('Add child page')))
         actions.insert(0, u'<a href="%s" title="%s"><img src="%sfeincms/img/selector-search.gif" alt="%s" /></a>' % (

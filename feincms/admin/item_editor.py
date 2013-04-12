@@ -68,22 +68,28 @@ class ItemEditor(ExtensionModelAdmin):
     def get_inline_instances(self, request, *args, **kwargs):
         inline_instances = super(ItemEditor, self).get_inline_instances(request,
             *args, **kwargs)
-        self.append_feincms_inlines(inline_instances)
-
+        self.append_feincms_inlines(inline_instances, request)
         return inline_instances
 
-    def append_feincms_inlines(self, inline_instances):
+    def append_feincms_inlines(self, inline_instances, request):
         """ Append generated FeinCMS content inlines to native django inlines. """
-        for inline_class in self.get_feincms_inlines(self.model):
+        for inline_class in self.get_feincms_inlines(self.model, request):
             inline_instance = inline_class(self.model, self.admin_site)
             inline_instances.append(inline_instance)
 
-    def get_feincms_inlines(self, model):
+    def can_add_content(self, request, content_type):
+        perm = content_type._meta.app_label + "." + content_type._meta.get_add_permission()
+        return request.user.has_perm(perm)
+
+    def get_feincms_inlines(self, model, request):
         """ Generate genuine django inlines for registered content types. """
         model._needs_content_types()
 
         inlines = []
         for content_type in model._feincms_content_types:
+            if not self.can_add_content(request, content_type):
+                continue
+
             attrs = {
                 '__module__': model.__module__,
                 'model': content_type,
@@ -101,11 +107,12 @@ class ItemEditor(ExtensionModelAdmin):
 
             else:
                 inline = FeinCMSInline
-                attrs['form'] = getattr(content_type,
-                    'feincms_item_editor_form', inline.form)
+                attrs['form'] = getattr(content_type, 'feincms_item_editor_form', inline.form)
 
             name = '%sFeinCMSInline' % content_type.__name__
-            inlines.append(type(name, (inline,), attrs))
+            # TODO: We generate a new class every time. Is that really wanted?
+            inline_class = type(name, (inline,), attrs)
+            inlines.append(inline_class)
         return inlines
 
     def _frontend_editing_view(self, request, cms_id, content_type, content_id):
@@ -150,8 +157,7 @@ class ItemEditor(ExtensionModelAdmin):
                 return render_to_response('admin/feincms/fe_editor_done.html', {
                     'content': obj.render(request=request),
                     'identifier': obj.fe_identifier(),
-                    'FEINCMS_JQUERY_NO_CONFLICT': \
-                        settings.FEINCMS_JQUERY_NO_CONFLICT,
+                    'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
                     }, context_instance=template.RequestContext(request))
         else:
             form = ModelForm(instance=obj, prefix=content_type)
@@ -169,12 +175,13 @@ class ItemEditor(ExtensionModelAdmin):
         return render_to_response('admin/feincms/fe_editor.html', context,
             context_instance=template.RequestContext(request))
 
-    def get_content_type_map(self):
+    def get_content_type_map(self, request):
         """ Prepare mapping of content types to their prettified names. """
         content_types = []
         for content_type in self.model._feincms_content_types:
-            content_name = content_type._meta.verbose_name
-            content_types.append((content_name, content_type.__name__.lower()))
+            if self.model == content_type._feincms_content_class:
+                content_name = content_type._meta.verbose_name
+                content_types.append((content_name, content_type.__name__.lower()))
         return content_types
 
     def get_extra_context(self, request):
@@ -185,7 +192,7 @@ class ItemEditor(ExtensionModelAdmin):
             'available_templates':
                 getattr(self.model, '_feincms_templates', ()),
             'has_parent_attribute': hasattr(self.model, 'parent'),
-            'content_types': self.get_content_type_map(),
+            'content_types': self.get_content_type_map(request),
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
 
@@ -198,6 +205,10 @@ class ItemEditor(ExtensionModelAdmin):
         return extra_context
 
     def add_view(self, request, **kwargs):
+        if not self.has_add_permission(request):
+            logger.warning("Denied adding %s to \"%s\" (no add permission)", self.model, request.user.username)
+            raise Http404
+
         context = {}
 
         # insert dummy object as 'original' so template code can grab defaults
@@ -217,6 +228,10 @@ class ItemEditor(ExtensionModelAdmin):
         return super(ItemEditor, self).add_view(request, **kwargs)
 
     def change_view(self, request, object_id, **kwargs):
+        if not self.has_change_permission(request):
+            logger.warning("Denied editing %s to \"%s\" (no edit permission)", self.model, request.user.username)
+            raise Http404
+
         # Recognize frontend editing requests
         # This is done here so that the developer does not need to add
         # additional entries to # urls.py or something...

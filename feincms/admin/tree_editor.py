@@ -164,16 +164,14 @@ class ChangeList(main.ChangeList):
 
         super(ChangeList, self).get_results(request)
 
+        # Pre-process permissions because we still have the request here,
+        # which is not passed in later stages in the tree editor
         for item in self.result_list:
-            if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
-                item.feincms_editable = self.model_admin.has_change_permission(request, item)
-            else:
-                item.feincms_editable = True
+            item.feincms_changeable = self.model_admin.has_change_permission(request, item)
+            item.feincms_addable    = (item.feincms_changeable and
+                                       self.model_admin.has_add_permission(request, item))
 
 # ------------------------------------------------------------------------
-# MARK: -
-# ------------------------------------------------------------------------
-
 class TreeEditor(ExtensionModelAdmin):
     """
     The ``TreeEditor`` modifies the standard Django administration change list
@@ -207,9 +205,12 @@ class TreeEditor(ExtensionModelAdmin):
             'admin/feincms/%s/tree_editor.html' % opts.app_label,
             'admin/feincms/tree_editor.html',
             ]
+        self.object_change_permission = opts.app_label + '.' + opts.get_change_permission()
+        self.object_add_permission    = opts.app_label + '.' + opts.get_add_permission()
+        self.object_delete_permission = opts.app_label + '.' + opts.get_delete_permission()
 
-    def editable(self, item):
-        return getattr(item, 'feincms_editable', True)
+    def changeable(self, item):
+        return getattr(item, 'feincms_changeable', True)
 
     def indented_short_title(self, item):
         """
@@ -229,12 +230,12 @@ class TreeEditor(ExtensionModelAdmin):
                         item.pk
                       )
 
-        editable_class = ''
-        if not getattr(item, 'feincms_editable', True):
-            editable_class = ' tree-item-not-editable'
+        changeable_class = ''
+        if not self.changeable(item):
+            changeable_class = ' tree-item-not-editable'
 
         r += '<span id="page_marker-%d" class="page_marker%s" style="width: %dpx;">&nbsp;</span>&nbsp;' % (
-                item.pk, editable_class, 14+getattr(item, mptt_opts.level_attr)*18)
+                item.pk, changeable_class, 14+getattr(item, mptt_opts.level_attr)*18)
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title'):
             r += escape(item.short_title())
@@ -368,16 +369,29 @@ class TreeEditor(ExtensionModelAdmin):
 
         return super(TreeEditor, self).changelist_view(request, extra_context, *args, **kwargs)
 
+    def has_add_permission(self, request, obj=None):
+        """
+        Implement a lookup for object level permissions. Basically the same as
+        ModelAdmin.has_add_permission, but also passes the obj parameter in.
+        """
+        perm = self.object_add_permission
+        if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
+            r = request.user.has_perm(perm, obj)
+        else:
+            r = request.user.has_perm(perm)
+
+        return r and super(TreeEditor, self).has_add_permission(request)
+
     def has_change_permission(self, request, obj=None):
         """
         Implement a lookup for object level permissions. Basically the same as
         ModelAdmin.has_change_permission, but also passes the obj parameter in.
         """
+        perm = self.object_change_permission
         if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
-            opts = self.opts
-            r = request.user.has_perm(opts.app_label + '.' + opts.get_change_permission(), obj)
+            r = request.user.has_perm(perm, obj)
         else:
-            r = True
+            r = request.user.has_perm(perm)
 
         return r and super(TreeEditor, self).has_change_permission(request, obj)
 
@@ -386,11 +400,11 @@ class TreeEditor(ExtensionModelAdmin):
         Implement a lookup for object level permissions. Basically the same as
         ModelAdmin.has_delete_permission, but also passes the obj parameter in.
         """
+        perm = self.object_delete_permission
         if settings.FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS:
-            opts = self.opts
-            r = request.user.has_perm(opts.app_label + '.' + opts.get_delete_permission(), obj)
+            r = request.user.has_perm(perm, obj)
         else:
-            r = True
+            r = request.user.has_perm(perm)
 
         return r and super(TreeEditor, self).has_delete_permission(request, obj)
 
@@ -403,6 +417,10 @@ class TreeEditor(ExtensionModelAdmin):
         cut_item = tree_manager.get(pk=request.POST.get('cut_item'))
         pasted_on = tree_manager.get(pk=request.POST.get('pasted_on'))
         position = request.POST.get('position')
+
+        if not self.has_change_permission(request, cut_item):
+            self.message_user(request, _('No permission'))
+            return HttpResponse('FAIL')
 
         if position in ('last-child', 'left', 'right'):
             try:
@@ -423,7 +441,9 @@ class TreeEditor(ExtensionModelAdmin):
         return HttpResponse('FAIL')
 
     def _actions_column(self, instance):
-        return ['<div class="drag_handle"></div>',]
+        if self.changeable(instance):
+            return ['<div class="drag_handle"></div>']
+        return []
 
     def actions_column(self, instance):
         return u' '.join(self._actions_column(instance))
@@ -433,13 +453,16 @@ class TreeEditor(ExtensionModelAdmin):
     def delete_selected_tree(self, modeladmin, request, queryset):
         """
         Deletes multiple instances and makes sure the MPTT fields get
-        recalculated properly.  (Because merely doing a bulk delete doesn't
+        recalculated properly. (Because merely doing a bulk delete doesn't
         trigger the post_delete hooks.)
         """
         n = 0
         for obj in queryset:
-            obj.delete()
-            n += 1
+            if self.has_delete_permission(request, obj):
+                obj.delete()
+                n += 1
+            else:
+                logger.warning("Denied delete request by \"%s\" for object #%s", request.user, obj.id)
         self.message_user(request, _("Successfully deleted %s items.") % n)
 
     def get_actions(self, request):
