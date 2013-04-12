@@ -5,8 +5,9 @@
 import re
 import copy
 
+import logging
+
 from django import forms, template
-from django.contrib import admin
 from django.db.models import loading
 from django.forms.models import modelform_factory
 from django.http import Http404
@@ -24,6 +25,8 @@ from feincms.signals import itemeditor_post_save_related
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
 FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
+
+logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------
 class ItemEditorForm(forms.ModelForm):

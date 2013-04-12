@@ -21,6 +21,7 @@ from mptt.forms import MPTTAdminForm
 from feincms import settings
 from feincms.extensions import ExtensionModelAdmin
 
+logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------
 def django_boolean_icon(field_val, alt_text=None, title=None):
@@ -294,8 +295,8 @@ class TreeEditor(ExtensionModelAdmin):
             return HttpResponseBadRequest("Malformed request")
 
         if not request.user.is_staff:
-            logging.warning("Denied AJAX request by non-staff %s to toggle boolean %s for object #%s", request.user, attr, item_id)
-            return HttpResponseForbidden("You do not have permission to access this object")
+            logger.warning("Denied AJAX request by non-staff \"%s\" to toggle boolean %s for object #%s", request.user, attr, item_id)
+            return HttpResponseForbidden(_("You do not have permission to modify this object"))
 
         self._collect_editable_booleans()
 
@@ -308,12 +309,12 @@ class TreeEditor(ExtensionModelAdmin):
             return HttpResponseNotFound("Object does not exist")
 
         if not self.has_change_permission(request, obj=obj):
-            logging.warning("Denied AJAX request by %s to toggle boolean %s for object %s", request.user, attr, item_id)
-            return HttpResponseForbidden("You do not have permission to access this object")
+            logger.warning("Denied AJAX request by \"%s\" to toggle boolean %s for object %s", request.user, attr, item_id)
+            return HttpResponseForbidden(_("You do not have permission to modify this object"))
 
         new_state = not getattr(obj, attr)
-        logging.info("Processing request by %s to toggle %s on #%d %s to %s",
-                     request.user, attr, obj.pk, obj, "on" if new_state else "off")
+        logger.info("Toggle %s on #%d %s to %s by \"%s\"",
+                     attr, obj.pk, obj, "on" if new_state else "off", request.user)
 
         try:
             before_data = self._ajax_editable_booleans[attr](self, obj)
@@ -327,7 +328,7 @@ class TreeEditor(ExtensionModelAdmin):
             data = self._ajax_editable_booleans[attr](self, obj)
 
         except Exception:
-            logging.exception("Unhandled exception while toggling %s on %s", attr, obj)
+            logger.exception("Unhandled exception while toggling %s on %s", attr, obj)
             return HttpResponseServerError("Unable to toggle %s on %s" % (attr, obj))
 
         # Weed out unchanged cells to keep the updates small. This assumes
@@ -418,7 +419,7 @@ class TreeEditor(ExtensionModelAdmin):
                 cut_item)
             return HttpResponse('OK')
 
-        self.message_user(request, ugettext('Did not understand moving instruction.'))
+        self.message_user(request, _('Did not understand moving instruction.'))
         return HttpResponse('FAIL')
 
     def _actions_column(self, instance):
