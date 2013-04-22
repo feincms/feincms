@@ -71,6 +71,7 @@ class Template(object):
         self.singleton = kwargs.get('singleton', False)
         self.child_template = kwargs.get('child_template', None)
         self.enforce_leaf = kwargs.get('enforce_leaf', False)
+        self.urlconf = kwargs.get('urlconf', None)
 
         def _make_region(data):
             if isinstance(data, Region):

@@ -71,8 +71,12 @@ FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS = getattr(settings,
 
 #: When enabled, the page module is automatically registered with Django's
 #: default admin site (this is activated by default).
-FEINCMS_USE_PAGE_ADMIN = getattr(settings,
-    'FEINCMS_USE_PAGE_ADMIN', True)
+FEINCMS_USE_PAGE_ADMIN = getattr(settings, 'FEINCMS_USE_PAGE_ADMIN', True)
+
+#: app_label.model_name as per django.db.models.get_model.
+#: defaults to page.Page
+FEINCMS_DEFAULT_PAGE_MODEL = getattr(
+    settings, 'FEINCMS_DEFAULT_PAGE_MODEL', 'page.Page')
 
 # ------------------------------------------------------------------------
 # Various settings

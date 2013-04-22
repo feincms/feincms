@@ -6,9 +6,10 @@ import logging
 
 from django import template
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from django.db.models import get_model
 from django.template.loader import render_to_string
+
+from feincms.utils import get_singleton, get_singleton_url
 
 register = template.Library()
 
@@ -91,63 +92,18 @@ def show_content_type_selection_widget(context, region):
 
 
 @register.assignment_tag
-def feincms_load_singleton(
-        template_key,
-        cls='page.Page',
-        tag_name='feincms_load_singleton'
-):
+def feincms_load_singleton(template_key, cls=None):
     """
     {% feincms_load_singleton template_key %} -- return a FeinCMS
     Base object which uses a Template with singleton=True.
     """
-    try:
-        model = get_model(*cls.split('.'))
-        if not model:
-            raise ImproperlyConfigured(
-                u'{%% %s %%}: cannot load model "%s"' % (tag_name, cls)
-            )
-        try:
-            assert model._feincms_templates[template_key].singleton
-        except AttributeError, e:
-            raise ImproperlyConfigured(
-                u'{%% %s %%}: %r does not seem to be a '
-                r'valid FeinCMS base class (%r)' % (tag_name, model, e)
-            )
-        except KeyError:
-            raise ImproperlyConfigured(
-                u'{%% %s %r %%}: not a registered template '
-                r'for %r!' % (tag_name, template_key, model)
-            )
-        except AssertionError:
-            raise ImproperlyConfigured(
-                u'{%% %s %r %%}: not a singleton template '
-                r'for %r!' % (tag_name, template_key, model)
-            )
-        try:
-            return model._default_manager.get(template_key=template_key)
-        except model.DoesNotExist:
-            raise # not yet created?
-        except model.MultipleObjectsReturned:
-            raise # hmm, not exactly a singleton...
-    except Exception:
-        if settings.DEBUG:
-            raise
-        else:
-            return None
+    return get_singleton(template_key, cls, raise_exception=settings.DEBUG)
 
 
 @register.simple_tag
-def feincms_singleton_url(template_key, cls='page.Page'):
+def feincms_singleton_url(template_key, cls=None):
     """
     {% feincms_singleton_url template_key %} -- return the URL of a FeinCMS
     Base object which uses a Template with singleton=True.
     """
-    try:
-        obj = feincms_load_singleton(
-            template_key, cls=cls, tag_name='feincms_singleton_url')
-        return obj.get_absolute_url()
-    except Exception:
-        if settings.DEBUG:
-            raise
-        else:
-            return '#broken-link'
+    return get_singleton_url(template_key, cls, raise_exception=settings.DEBUG)
