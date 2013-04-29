@@ -106,7 +106,9 @@ class Thumbnailer(object):
             buf = StringIO()
             if image.mode not in ('RGBA', 'RGB', 'L'):
                 image = image.convert('RGBA')
-            image.save(buf, format or 'jpeg', quality=80)
+            image.save(buf,
+                format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
+                quality=90)
             raw_data = buf.getvalue()
             buf.close()
 
@@ -166,7 +168,9 @@ class CropscaleThumbnailer(Thumbnailer):
         buf = StringIO()
         if image.mode not in ('RGBA', 'RGB', 'L'):
             image = image.convert('RGBA')
-        image.save(buf, format or 'jpeg', quality=100)
+        image.save(buf,
+            format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
+            quality=90)
         raw_data = buf.getvalue()
         buf.close()
         storage.save(miniature, ContentFile(raw_data))
