@@ -118,7 +118,7 @@ def get_singleton(template_key, cls=None, raise_exception=True):
             raise ImproperlyConfigured(
                 u'%r is not a registered template for %r!' % (
                     template_key,
-                    mode,
+                    model,
                 )
             )
         except AssertionError:
