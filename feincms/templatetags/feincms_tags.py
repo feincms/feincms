@@ -5,7 +5,11 @@
 import logging
 
 from django import template
+from django.conf import settings
+from django.db.models import get_model
 from django.template.loader import render_to_string
+
+from feincms.utils import get_singleton, get_singleton_url
 
 register = template.Library()
 
@@ -85,3 +89,21 @@ def show_content_type_selection_widget(context, region):
         else:
             ungrouped.append(ct_info)
     return {'grouped': grouped, 'ungrouped': ungrouped}
+
+
+@register.assignment_tag
+def feincms_load_singleton(template_key, cls=None):
+    """
+    {% feincms_load_singleton template_key %} -- return a FeinCMS
+    Base object which uses a Template with singleton=True.
+    """
+    return get_singleton(template_key, cls, raise_exception=settings.DEBUG)
+
+
+@register.simple_tag
+def feincms_singleton_url(template_key, cls=None):
+    """
+    {% feincms_singleton_url template_key %} -- return the URL of a FeinCMS
+    Base object which uses a Template with singleton=True.
+    """
+    return get_singleton_url(template_key, cls, raise_exception=settings.DEBUG)

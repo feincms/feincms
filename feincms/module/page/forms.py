@@ -64,6 +64,7 @@ class PageAdminForm(MPTTAdminForm):
                 try:
                     page = self.page_manager.get(
                         pk=kwargs['initial']['parent'])
+
                     data = model_to_dict(page)
 
                     for field in self.page_manager.exclude_from_copy:
@@ -76,6 +77,8 @@ class PageAdminForm(MPTTAdminForm):
                             del data[field]
 
                     data.update(kwargs['initial'])
+                    if page.template.child_template:
+                        data['template_key'] = page.template.child_template
                     kwargs['initial'] = data
                 except self.page_model.DoesNotExist:
                     pass
@@ -117,10 +120,16 @@ class PageAdminForm(MPTTAdminForm):
                 self.page_model._meta.get_field('parent').rel,
                 modeladmin.admin_site)
 
-        if 'instance' in kwargs:
+        if 'template_key' in self.fields:
             choices = []
-            for key, template in kwargs['instance'].TEMPLATE_CHOICES:
-                template = kwargs['instance']._feincms_templates[key]
+            for key, template_name in self.page_model.TEMPLATE_CHOICES:
+                template = self.page_model._feincms_templates[key]
+                pages_for_template = self.page_model._default_manager.filter(
+                    template_key=key)
+                pk = kwargs['instance'].pk if 'instance' in kwargs else None
+                other_pages_for_template = pages_for_template.exclude(pk=pk)
+                if template.singleton and other_pages_for_template.exists():
+                    continue # don't allow selection of singleton if in use
                 if template.preview_image:
                     choices.append((template.key,
                         mark_safe(u'<img src="%s" alt="%s" /> %s' % (
@@ -182,6 +191,11 @@ class PageAdminForm(MPTTAdminForm):
         if active_pages.filter(_cached_url=new_url).count():
             self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
             del cleaned_data['active']
+
+        if parent and parent.template.enforce_leaf:
+            self._errors['parent'] = ErrorList(
+                [_('This page does not allow attachment of child pages')])
+            del cleaned_data['parent']
 
         # Convert PK in redirect_to field to something nicer for the future
         redirect_to = cleaned_data.get('redirect_to')

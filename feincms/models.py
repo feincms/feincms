@@ -58,7 +58,7 @@ class Template(object):
     CMS object, most commonly a page.
     """
 
-    def __init__(self, title, path, regions, key=None, preview_image=None):
+    def __init__(self, title, path, regions, key=None, preview_image=None, **kwargs):
         # The key is what will be stored in the database. If key is undefined
         # use the template path as fallback.
         if not key:
@@ -68,6 +68,10 @@ class Template(object):
         self.title = title
         self.path = path
         self.preview_image = preview_image
+        self.singleton = kwargs.get('singleton', False)
+        self.child_template = kwargs.get('child_template', None)
+        self.enforce_leaf = kwargs.get('enforce_leaf', False)
+        self.urlconf = kwargs.get('urlconf', None)
 
         def _make_region(data):
             if isinstance(data, Region):
@@ -384,10 +388,11 @@ def create_base_model(inherit_from=models.Model):
 
                 cls.template = property(_template)
 
-            cls.TEMPLATE_CHOICES = field._choices = [(
-                template.key,
-                template.title,
-                ) for template in cls._feincms_templates.values()]
+            cls.TEMPLATE_CHOICES = field._choices = [
+                (template.key, template.title,)
+                for template in cls._feincms_templates.values()
+                #if not template.singleton
+            ]
             field.default = field.choices[0][0]
 
             # Build a set of all regions used anywhere

@@ -14,6 +14,7 @@ from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
+from feincms import settings
 from feincms.admin import item_editor, tree_editor
 
 # ------------------------------------------------------------------------
@@ -89,6 +90,13 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly = super(PageAdmin, self).get_readonly_fields(request, obj=obj)
+        if not settings.FEINCMS_SINGLETON_TEMPLATE_CHANGE_ALLOWED:
+            if obj and obj.template and obj.template.singleton:
+                return tuple(readonly) + ('template_key',)
+        return readonly
+
     def get_form(self, *args, **kwargs):
         form = super(PageAdmin, self).get_form(*args, **kwargs)
         return curry(form, modeladmin=self)
@@ -101,10 +109,29 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 page.id)
         actions = super(PageAdmin, self)._actions_column(page)
         if editable:
-            actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%sfeincms/img/icon_addlink.gif" alt="%s"></a>' % (
-                page.pk, _('Add child page'), django_settings.STATIC_URL, _('Add child page')))
-        actions.insert(0, u'<a href="%s" title="%s"><img src="%sfeincms/img/selector-search.gif" alt="%s" /></a>' % (
-            preview_url, _('View on site'), django_settings.STATIC_URL, _('View on site')))
+            if not page.template.enforce_leaf:
+                actions.insert(
+                    0,
+                    u'<a href="add/?parent=%s" title="%s">'
+                    u'<img src="%sfeincms/img/icon_addlink.gif" alt="%s" />'
+                    u'</a>' % (
+                        page.pk,
+                        _('Add child page'),
+                        django_settings.STATIC_URL,
+                        _('Add child page')
+                    )
+                )
+        actions.insert(
+            0,
+            u'<a href="%s" title="%s">'
+            u'<img src="%sfeincms/img/selector-search.gif" alt="%s" />'
+            u'</a>' % (
+                preview_url,
+                _('View on site'),
+                django_settings.STATIC_URL,
+                _('View on site')
+            )
+        )
 
         return actions
 
@@ -169,6 +196,12 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             from django.contrib import messages
             messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
         return HttpResponseRedirect(reverse('admin:page_page_changelist'))
+
+    def has_delete_permission(self, request, obj=None):
+        if not settings.FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED:
+            if obj and obj.template.singleton:
+                return False
+        return super(PageAdmin, self).has_delete_permission(request, obj=obj)
 
     def is_visible_admin(self, page):
         """

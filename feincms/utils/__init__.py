@@ -8,8 +8,12 @@ except ImportError:
     import md5
 
 from django.conf import settings as django_settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import AutoField
+from django.db.models import get_model
 from django.utils.importlib import import_module
+
+from feincms import settings
 
 # ------------------------------------------------------------------------
 def get_object(path, fail_silently=False):
@@ -94,3 +98,49 @@ def path_to_cache_key(path, max_length=200, prefix=""):
     return cache_key
 
 # ------------------------------------------------------------------------
+
+def get_singleton(template_key, cls=None, raise_exception=True):
+    cls = cls or settings.FEINCMS_DEFAULT_PAGE_MODEL
+    try:
+        model = get_model(*cls.split('.'))
+        if not model:
+            raise ImproperlyConfigured(u'Cannot load model "%s"' % cls)
+        try:
+            assert model._feincms_templates[template_key].singleton
+        except AttributeError, e:
+            raise ImproperlyConfigured(
+                u'%r does not seem to be a valid FeinCMS base class (%r)' % (
+                    model,
+                    e,
+                )
+            )
+        except KeyError:
+            raise ImproperlyConfigured(
+                u'%r is not a registered template for %r!' % (
+                    template_key,
+                    model,
+                )
+            )
+        except AssertionError:
+            raise ImproperlyConfigured(
+                u'%r is not a *singleton* template for %r!' % (
+                    template_key,
+                    model,
+                )
+            )
+        try:
+            return model._default_manager.get(template_key=template_key)
+        except model.DoesNotExist:
+            raise # not yet created?
+        except model.MultipleObjectsReturned:
+            raise # hmm, not exactly a singleton...
+    except Exception:
+        if raise_exception:
+            raise
+        else:
+            return None
+
+
+def get_singleton_url(template_key, cls=None, raise_exception=True):
+    obj = get_singleton(template_key, cls, raise_exception)
+    return obj.get_absolute_url() if obj else '#broken-link'
