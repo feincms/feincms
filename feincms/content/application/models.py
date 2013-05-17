@@ -49,7 +49,7 @@ def _empty_reverse_cache(*args, **kwargs):
     _local.reverse_cache = {}
 
 
-def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
+def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
         *vargs, **vkwargs):
     """
     Reverse URLs from application contents

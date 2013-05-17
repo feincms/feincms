@@ -123,8 +123,7 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return self.in_navigation().filter(parent__isnull=True)
 
-    def for_request(self, request, raise404=False, best_match=False,
-            setup=False):
+    def for_request(self, request, raise404=False, best_match=False):
         """
         Return a page for the request
 
@@ -148,13 +147,6 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
                 request._feincms_page = self.page_for_path(path,
                     raise404=raise404)
 
-        if setup:
-            import warnings
-            warnings.warn(
-                'Calling for_request with setup=True does nothing anymore.'
-                ' The parameter will be removed in FeinCMS v1.8.',
-                DeprecationWarning, stacklevel=2)
-
         return request._feincms_page
 
 # ------------------------------------------------------------------------
@@ -172,7 +164,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     slug = models.SlugField(_('slug'), max_length=150)
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
-    in_navigation = models.BooleanField(_('in navigation'), default=True)
+    in_navigation = models.BooleanField(_('in navigation'), default=False)
     override_url = models.CharField(_('override URL'), max_length=255, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
     redirect_to = models.CharField(_('redirect to'), max_length=255, blank=True,
@@ -404,6 +396,7 @@ class Page(BasePage):
         ordering = ['tree_id', 'lft']
         verbose_name = _('page')
         verbose_name_plural = _('pages')
+        # not yet # permissions = (("edit_page", _("Can edit page metadata")),)
 
 Page.register_default_processors(frontend_editing=settings.FEINCMS_FRONTEND_EDITING)
 

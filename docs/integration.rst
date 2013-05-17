@@ -5,9 +5,7 @@ Integrating 3rd party apps into your site
 =========================================
 
 With FeinCMS come a set of standard views which you might want to check
-out before starting to write your own. Included is a standard view for
-pages, and a set of generic view drop-in replacements which know about
-the CMS.
+out before starting to write your own.
 
 
 Default page handler
@@ -248,7 +246,7 @@ of any template rendering calls:
 
 ``urls.py``::
 
-    from django.conf.urls.defaults import patterns, include, url
+    from django.conf.urls import patterns, include, url
 
     urlpatterns = patterns('news.views',
         url(r'^$', 'entry_list', name='entry_list'),

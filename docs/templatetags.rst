@@ -85,19 +85,15 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
        {% endfor %}
 
-    This template tag has replaced ``feincms_navigation``, which used
-    a hand-grown parser and had several bugs which were hard to fix without
-    a complete rewrite.
-
 .. function:: siblings_along_path_to:
 
    This is a filter designed to work in close conjunction with the
-   ``feincms_navigation`` template tag describe above to build a
+   ``feincms_nav`` template tag describe above to build a
    navigation tree following the path to the current page.
 
    Example::
 
-        {% feincms_navigation of feincms_page as navitems level=1,depth=3 %}
+        {% feincms_nav feincms_page level=1 depth=3 as navitems %}
         {% with navitems|siblings_along_path_to:feincms_page as navtree %}
             {% recursetree navtree %}
                 * {{ node.short_title }} <br>
@@ -197,7 +193,7 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 
        {% load feincms_page_tags %}
 
-       {% feincms_navigation of feincms_page as main level=1 %}
+       {% feincms_nav feincms_page level=1 as main %}
        {% for entry in main %}
            <a {% if entry|is_equal_or_parent_of:feincms_page %}class="mark"{% endif %}
                href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>

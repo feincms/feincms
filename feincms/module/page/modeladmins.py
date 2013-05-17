@@ -102,13 +102,14 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         return curry(form, modeladmin=self)
 
     def _actions_column(self, page):
-        editable = getattr(page, 'feincms_editable', True)
+        addable  = getattr(page, 'feincms_addable', True)
 
         preview_url = "../../r/%s/%s/" % (
                 ContentType.objects.get_for_model(self.model).id,
                 page.id)
         actions = super(PageAdmin, self)._actions_column(page)
-        if editable:
+
+        if addable:
             if not page.template.enforce_leaf:
                 actions.insert(
                     0,
@@ -118,7 +119,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                         page.pk,
                         _('Add child page'),
                         django_settings.STATIC_URL,
-                        _('Add child page')
+                        _('Add child page'),
                     )
                 )
         actions.insert(
@@ -129,10 +130,9 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 preview_url,
                 _('View on site'),
                 django_settings.STATIC_URL,
-                _('View on site')
+                _('View on site'),
             )
         )
-
         return actions
 
     def add_view(self, request, **kwargs):

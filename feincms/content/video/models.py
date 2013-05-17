@@ -37,22 +37,32 @@ class VideoContent(models.Model):
         verbose_name = _('video')
         verbose_name_plural = _('videos')
 
-    def render(self, **kwargs):
-        context_instance = kwargs.get('context')
+    def get_context_dict(self):
+        "Extend this if you need more variables passed to template"
+        return {'content': self, 'portal': 'unknown'}
 
+    def get_templates(self, portal='unknown'):
+        "Extend/override this if you want to modify the templates used"
+        return [
+            'content/video/%s.html' % portal,
+            'content/video/unknown.html',
+            ]
+
+    def ctx_for_video(self, vurl):
+        "Get a context dict for a given video URL"
+        ctx = self.get_context_dict()
         for portal, match, context_fn in self.PORTALS:
-            if match.search(self.video):
+            if match.search(vurl):
                 try:
-                    ctx = context_fn(self.video)
+                    ctx.update(context_fn(vurl))
+                    ctx['portal'] = portal
+                    break
                 except AttributeError:
                     continue
+        return ctx
 
-                return render_to_string([
-                    'content/video/%s.html' % portal,
-                    'content/video/unknown.html',
-                    ], dict(ctx, content=self),
-                    context_instance=context_instance)
-
-        return render_to_string('content/video/unknown.html', {
-            'content': self,
-            }, context_instance=context_instance)
+    def render(self, **kwargs):
+        context_instance = kwargs.get('context')
+        ctx = self.ctx_for_video(self.video)
+        return render_to_string(self.get_templates(ctx['portal']),
+            ctx, context_instance=context_instance)

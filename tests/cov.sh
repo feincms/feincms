@@ -1,2 +1,3 @@
 #!/bin/sh
-coverage run --branch --include="*feincms*" ./manage.py test feincms
+coverage run --branch --include="*feincms*" ./manage.py test testapp
+coverage html

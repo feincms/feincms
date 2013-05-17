@@ -42,7 +42,7 @@ class SectionContent(models.Model):
         verbose_name_plural = _('sections')
 
     @classmethod
-    def initialize_type(cls, TYPE_CHOICES=None, cleanse=False):
+    def initialize_type(cls, TYPE_CHOICES=None, cleanse=None):
         if 'feincms.module.medialibrary' not in django_settings.INSTALLED_APPS:
             raise ImproperlyConfigured, 'You have to add \'feincms.module.medialibrary\' to your INSTALLED_APPS before creating a %s' % cls.__name__
 
@@ -54,23 +54,7 @@ class SectionContent(models.Model):
             default=TYPE_CHOICES[0][0]))
 
         if cleanse:
-            # If cleanse is True use default cleanse method
-            if cleanse == True:
-                import warnings
-                warnings.warn("Please pass a callable instead. cleanse=True is"
-                    " being deprecated in favor of explicitly specifying the"
-                    " cleansing function. To continue using the same"
-                    " functionality, pip install feincms-cleanse and pass"
-                    " cleanse=feincms_cleanse.cleanse_html to the"
-                    " create_content_type call."
-                    " Support for cleanse=True will be removed in FeinCMS v1.8.",
-                    DeprecationWarning, stacklevel=2)
-
-                from feincms.utils.html.cleanse import cleanse_html
-                cls.cleanse = cleanse_html
-            # Otherwise use passed callable
-            else:
-                cls.cleanse = cleanse
+            cls.cleanse = cleanse
 
     @classmethod
     def get_queryset(cls, filter_args):
@@ -91,7 +75,7 @@ class SectionContent(models.Model):
             ], {'content': self})
 
     def save(self, *args, **kwargs):
-        if getattr(self, 'cleanse', False):
+        if getattr(self, 'cleanse', None):
             try:
                 # Passes the rich text content as first argument because
                 # the passed callable has been converted into a bound method

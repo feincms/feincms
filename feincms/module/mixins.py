@@ -20,13 +20,6 @@ class ContentModelMixin(object):
     #: Collection of response processors
     response_processors = None
 
-    def setup_request(self, request):
-        import warnings
-        warnings.warn(
-            '%s.setup_request does nothing anymore, and will be removed in'
-            ' FeinCMS v1.8',
-            DeprecationWarning, stacklevel=2)
-
     @classmethod
     def register_request_processor(cls, fn, key=None):
         """
@@ -48,6 +41,21 @@ class ContentModelMixin(object):
             cls.response_processors = SortedDict()
         cls.response_processors[fn if key is None else key] = fn
 
+   # Implement admin_urlname templatetag protocol
+    @property
+    def app_label(self):
+        """
+        Implement the admin_urlname templatetag protocol, so one can easily
+        generate an admin link using ::
+
+            {% url page|admin_urlname:'change' page.id %}
+        """
+        return self._meta.app_label
+
+    @property
+    def module_name(self):
+        "See app_label"
+        return self.__class__.__name__.lower()
 
 class ContentObjectMixin(TemplateResponseMixin):
     """

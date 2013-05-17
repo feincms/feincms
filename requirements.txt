@@ -1,6 +1,4 @@
 Django>=1.4
 django-mptt>=0.4
-PIL
+Pillow
 feedparser>=5.1.2
-lxml
-BeautifulSoup>=3.1.2

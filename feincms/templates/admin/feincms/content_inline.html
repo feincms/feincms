@@ -10,6 +10,8 @@
     {% if inline_admin_formset.formset.can_delete and inline_admin_form.original %}<span class="delete">{{ inline_admin_form.deletion_field.field }} {{ inline_admin_form.deletion_field.label_tag }}</span>{% endif %}
   </h3>
   {% if inline_admin_form.form.non_field_errors %}{{ inline_admin_form.form.non_field_errors }}{% endif %}
+
+  {% block before-inline-fieldsets %}{% endblock %}
   {% for fieldset in inline_admin_form %}
     <fieldset class="module aligned {{ fieldset.classes }}">
         {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}

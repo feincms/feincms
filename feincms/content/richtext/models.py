@@ -64,8 +64,8 @@ class RichTextContent(models.Model):
     anything you want using ``FEINCMS_RICHTEXT_INIT_CONTEXT`` and
     ``FEINCMS_RICHTEXT_INIT_TEMPLATE``.
 
-    Optionally runs the HTML code through HTML cleaners if you specify
-    ``cleanse=True`` when calling ``create_content_type``.
+    Optionally runs the HTML code through HTML cleaners if you pass a callable
+    as ``cleanse`` when calling ``create_content_type``.
     """
 
     form = RichTextContentAdminForm
@@ -91,7 +91,7 @@ class RichTextContent(models.Model):
 
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?
-        if getattr(self, 'cleanse', False):
+        if getattr(self, 'cleanse', None):
             # Passes the rich text content as first argument because
             # the passed callable has been converted into a bound method
             self.text = self.cleanse(self.text)
@@ -100,30 +100,14 @@ class RichTextContent(models.Model):
     save.alters_data = True
 
     @classmethod
-    def initialize_type(cls, cleanse=False):
+    def initialize_type(cls, cleanse=None):
         def to_instance_method(func):
             def func_im(self, *args, **kwargs):
                 return func(*args, **kwargs)
             return func_im
 
         if cleanse:
-            # If cleanse is True use default cleanse method
-            if cleanse == True:
-                import warnings
-                warnings.warn("Please pass a callable instead. cleanse=True is"
-                    " being deprecated in favor of explicitly specifying the"
-                    " cleansing function. To continue using the same"
-                    " functionality, pip install feincms-cleanse and pass"
-                    " cleanse=feincms_cleanse.cleanse_html to the"
-                    " create_content_type call."
-                    " Support for cleanse=True will be removed in FeinCMS v1.8.",
-                    DeprecationWarning, stacklevel=2)
-
-                from feincms.utils.html.cleanse import cleanse_html
-                cls.cleanse = to_instance_method(cleanse_html)
-            # Otherwise use passed callable
-            else:
-                cls.cleanse = to_instance_method(cleanse)
+            cls.cleanse = to_instance_method(cleanse)
 
         # TODO: Move this into somewhere more generic:
         if settings.FEINCMS_TIDY_HTML:
