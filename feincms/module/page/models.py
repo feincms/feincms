@@ -297,6 +297,8 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     def invalidate_cache(self):
         ck = self.path_to_cache_key(self._original_cached_url)
         django_cache.delete(ck)
+        ck = self.path_to_cache_key(self._cached_url)
+        django_cache.delete(ck)
 
     @models.permalink
     def get_absolute_url(self):
