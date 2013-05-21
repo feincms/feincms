@@ -177,7 +177,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
         super(MediaFileBase, self).save(*args, **kwargs)
 
-        logger.info("Saved mediafile %d (%s, type %s, %d bytes)" % (self.id, self.file.name, self.type, self.file_size))
+        logger.info("Saved mediafile %d (%s, type %s, %d bytes)" % (self.id, self.file.name, self.type, self.file_size or 0))
 
         # User uploaded a new file. Try to get rid of the old file in
         # storage, to avoid having orphaned files hanging around.
