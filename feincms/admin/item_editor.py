@@ -8,6 +8,8 @@ import copy
 import logging
 
 from django import forms, template
+from django.contrib.admin.options import InlineModelAdmin
+from django.contrib.admin.util import unquote
 from django.db.models import loading
 from django.forms.models import modelform_factory
 from django.http import Http404
@@ -15,7 +17,6 @@ from django.shortcuts import render_to_response
 from django.utils.encoding import force_unicode
 from django.utils.functional import curry
 from django.utils.translation import ugettext as _
-from django.contrib.admin.options import InlineModelAdmin
 
 from feincms import settings, ensure_completely_loaded
 from feincms.extensions import ExtensionModelAdmin
@@ -206,7 +207,11 @@ class ItemEditor(ExtensionModelAdmin):
 
     def add_view(self, request, **kwargs):
         if not self.has_add_permission(request):
-            logger.warning("Denied adding %s to \"%s\" (no add permission)", self.model, request.user.username)
+            logger.warning(
+                "Denied adding %s to \"%s\" (no add permission)",
+                self.model,
+                request.user
+            )
             raise Http404
 
         context = {}
@@ -228,8 +233,13 @@ class ItemEditor(ExtensionModelAdmin):
         return super(ItemEditor, self).add_view(request, **kwargs)
 
     def change_view(self, request, object_id, **kwargs):
-        if not self.has_change_permission(request):
-            logger.warning("Denied editing %s to \"%s\" (no edit permission)", self.model, request.user.username)
+        obj = self.get_object(request, unquote(object_id))
+        if not self.has_change_permission(request, obj):
+            logger.warning(
+                "Denied editing %s to \"%s\" (no edit permission)",
+                self.model,
+                request.user
+            )
             raise Http404
 
         # Recognize frontend editing requests
