@@ -14,7 +14,7 @@
         {% get_comment_list for parent as comment_list %}
         {% for comment in comment_list %}
             <li class="comment-list-entry">
-            {% block comment-list-entry %}
+            {% block comment-list-entry %}{# TODO: get_username/etc below #}
                 {% blocktrans with comment.user.username as comment_username and comment.submit_date|date:"Y-m-d H:i" as comment_submit_date %}
                     {{ comment_username }} said on {{ comment_submit_date }}<br />
                 {% endblocktrans %}

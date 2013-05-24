@@ -206,7 +206,11 @@ class ItemEditor(ExtensionModelAdmin):
 
     def add_view(self, request, **kwargs):
         if not self.has_add_permission(request):
-            logger.warning("Denied adding %s to \"%s\" (no add permission)", self.model, request.user.username)
+            logger.warning(
+                "Denied adding %s to \"%s\" (no add permission)",
+                self.model,
+                request.user
+            )
             raise Http404
 
         context = {}
@@ -240,7 +244,11 @@ class ItemEditor(ExtensionModelAdmin):
 
     def change_view(self, request, object_id, **kwargs):
         if not self.has_change_permission(request):
-            logger.warning("Denied editing %s to \"%s\" (no edit permission)", self.model, request.user.username)
+            logger.warning(
+                "Denied editing %s to \"%s\" (no edit permission)",
+                self.model,
+                request.user
+            )
             raise Http404
 
         # Recognize frontend editing requests
