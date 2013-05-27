@@ -5,6 +5,7 @@
 import re
 
 from django.core.cache import cache as django_cache
+from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
 from django.db import models
 from django.db.models import Q, signals
@@ -271,6 +272,15 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
 
     @commit_on_success
     def delete(self, *args, **kwargs):
+        if not settings.FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED:
+            if self.template.singleton:
+                raise PermissionDenied(
+                    _(u'This %(page_class)s uses a singleton template, and '
+                      u'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False' % {
+                            'page_class': self._meta.verbose_name
+                      }
+                    )
+                )
         super(BasePage, self).delete(*args, **kwargs)
         self.invalidate_cache()
     delete.alters_data = True
@@ -278,6 +288,8 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     # Remove the page from the url-to-page cache
     def invalidate_cache(self):
         ck = self.path_to_cache_key(self._original_cached_url)
+        django_cache.delete(ck)
+        ck = self.path_to_cache_key(self._cached_url)
         django_cache.delete(ck)
 
     @models.permalink

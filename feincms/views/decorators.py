@@ -4,9 +4,6 @@ try:
 except ImportError:
     from django.utils.functional import wraps
 
-from feincms.module.page.models import Page
-
-
 def standalone(view_func):
     """
     Marks the view method as standalone view; this means that

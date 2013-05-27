@@ -71,8 +71,12 @@ FEINCMS_TREE_EDITOR_OBJECT_PERMISSIONS = getattr(settings,
 
 #: When enabled, the page module is automatically registered with Django's
 #: default admin site (this is activated by default).
-FEINCMS_USE_PAGE_ADMIN = getattr(settings,
-    'FEINCMS_USE_PAGE_ADMIN', True)
+FEINCMS_USE_PAGE_ADMIN = getattr(settings, 'FEINCMS_USE_PAGE_ADMIN', True)
+
+#: app_label.model_name as per django.db.models.get_model.
+#: defaults to page.Page
+FEINCMS_DEFAULT_PAGE_MODEL = getattr(
+    settings, 'FEINCMS_DEFAULT_PAGE_MODEL', 'page.Page')
 
 # ------------------------------------------------------------------------
 # Various settings
@@ -131,3 +135,16 @@ FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE',
 FEINCMS_THUMBNAIL_DIR = getattr(settings, 'FEINCMS_THUMBNAIL_DIR', '_thumbs/')
 
 # ------------------------------------------------------------------------
+#: Prevent changing template within admin for pages which have been
+#: allocated a Template with singleton=True -- template field will become
+#: read-only for singleton pages.
+FEINCMS_SINGLETON_TEMPLATE_CHANGE_ALLOWED = getattr(
+    settings, 'FEINCMS_SINGLETON_TEMPLATE_CHANGE_ALLOWED', False)
+
+#: Prevent admin page deletion for pages which have been allocated a
+#: Template with singleton=True
+FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED = getattr(
+    settings, 'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED', False)
+
+# ------------------------------------------------------------------------
+
