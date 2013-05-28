@@ -152,6 +152,13 @@ class PageAdminForm(MPTTAdminForm):
         if hasattr(Site, 'page_set') and 'site' in cleaned_data:
             active_pages = active_pages.filter(site=cleaned_data['site'])
 
+        # Convert PK in redirect_to field to something nicer for the future
+        redirect_to = cleaned_data.get('redirect_to')
+        if redirect_to and re.match(r'^\d+$', redirect_to):
+            opts = self.page_model._meta
+            cleaned_data['redirect_to'] = '%s.%s:%s' % (
+                opts.app_label, opts.module_name, redirect_to)
+
         if not cleaned_data['active']:
             # If the current item is inactive, we do not need to conduct
             # further validation. Note that we only check for the flag, not
@@ -182,13 +189,6 @@ class PageAdminForm(MPTTAdminForm):
         if active_pages.filter(_cached_url=new_url).count():
             self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
             del cleaned_data['active']
-
-        # Convert PK in redirect_to field to something nicer for the future
-        redirect_to = cleaned_data.get('redirect_to')
-        if redirect_to and re.match(r'^\d+$', redirect_to):
-            opts = self.page_model._meta
-            cleaned_data['redirect_to'] = '%s.%s:%s' % (
-                opts.app_label, opts.module_name, redirect_to)
 
         return cleaned_data
 
