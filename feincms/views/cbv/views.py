@@ -4,7 +4,6 @@ from django.http import Http404
 from feincms import settings
 from feincms.module.mixins import ContentView
 
-
 class Handler(ContentView):
 
     page_model_path = 'page.Page'

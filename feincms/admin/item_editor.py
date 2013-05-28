@@ -232,6 +232,17 @@ class ItemEditor(ExtensionModelAdmin):
         kwargs['extra_context'] = context
         return super(ItemEditor, self).add_view(request, **kwargs)
 
+    def render_change_form(self, request, context, **kwargs):
+        if kwargs.get('add'):
+            if request.method == 'GET' and 'adminform' in context:
+                if 'template_key' in context['adminform'].form.initial:
+                    context['original'].template_key = (
+                        context['adminform'].form.initial['template_key'])
+                # ensure that initially-selected template in form is also
+                # used to render the initial regions in the item editor
+        return super(
+            ItemEditor, self).render_change_form(request, context, **kwargs)
+
     def change_view(self, request, object_id, **kwargs):
         obj = self.get_object(request, unquote(object_id))
         if not self.has_change_permission(request, obj):

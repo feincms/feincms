@@ -198,6 +198,7 @@ are returned directly to the client under the following circumstances:
   returns ``True``)
 * The response was explicitly marked as ``standalone`` by the
   :func:`feincms.views.decorators.standalone` view decorator
+  (made easier by mixing-in :class:`feincms.module.mixins.StandaloneView`)
 * The mimetype of the response was not ``text/plain`` or ``text/html``
 
 Otherwise, the content of the response is unpacked and inserted into the
