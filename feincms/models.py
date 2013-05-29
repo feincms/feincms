@@ -391,7 +391,6 @@ def create_base_model(inherit_from=models.Model):
             cls.TEMPLATE_CHOICES = field._choices = [
                 (template.key, template.title,)
                 for template in cls._feincms_templates.values()
-                #if not template.singleton
             ]
             field.default = field.choices[0][0]
 
