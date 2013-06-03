@@ -37,6 +37,9 @@ New deprecations
 Notable features and improvements
 =================================
 
+* The template tags ``feincms_render_region`` and ``feincms_render_content``
+  do not require a request object anymore.
+
 
 Bugfixes
 ========

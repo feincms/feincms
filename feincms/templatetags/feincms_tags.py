@@ -42,7 +42,7 @@ def _render_content(content, **kwargs):
 
 
 @register.simple_tag(takes_context=True)
-def feincms_render_region(context, feincms_object, region, request):
+def feincms_render_region(context, feincms_object, region, request=None):
     """
     {% feincms_render_region feincms_page "main" request %}
     """
@@ -51,7 +51,7 @@ def feincms_render_region(context, feincms_object, region, request):
 
 
 @register.simple_tag(takes_context=True)
-def feincms_render_content(context, content, request):
+def feincms_render_content(context, content, request=None):
     """
     {% feincms_render_content content request %}
     """
