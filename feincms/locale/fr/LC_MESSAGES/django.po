@@ -207,11 +207,11 @@ msgstr "type"
 
 #: content/raw/models.py:18
 msgid "raw content"
-msgstr "contenu cru"
+msgstr "contenu brut"
 
 #: content/raw/models.py:19
 msgid "raw contents"
-msgstr "contenus crus"
+msgstr "contenus bruts"
 
 #: content/richtext/models.py:22
 msgid "HTML Tidy"
@@ -530,7 +530,7 @@ msgstr "parent"
 
 #: module/medialibrary/models.py:45 module/page/models.py:142
 msgid "slug"
-msgstr "télougou"
+msgstr "slug"
 
 #: module/medialibrary/models.py:49
 msgid "category"
@@ -755,11 +755,11 @@ msgstr "titre de la page"
 #: module/page/extensions/titles.py:16
 msgid "Page title for browser window. Same as title by default."
 msgstr ""
-"Titre de la page pour fenêtre de navigateur. Même que le titre par défaut."
+"Titre de la page pour fenêtre de navigateur. Identique au titre par défaut."
 
 #: module/page/extensions/titles.py:43
 msgid "Titles"
-msgstr ""
+msgstr "Titres"
 
 #: templates/admin/filter.html:3
 #, python-format
@@ -822,11 +822,11 @@ msgstr ""
 
 #: templates/admin/feincms/_messages_js.html:14
 msgid "After"
-msgstr ""
+msgstr "Après"
 
 #: templates/admin/feincms/_messages_js.html:15
 msgid "Before"
-msgstr ""
+msgstr "Avant"
 
 #: templates/admin/feincms/_messages_js.html:16
 msgid "Insert new:"
