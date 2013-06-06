@@ -161,7 +161,8 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
 
     # structure and navigation
     title = models.CharField(_('title'), max_length=200)
-    slug = models.SlugField(_('slug'), max_length=150)
+    slug = models.SlugField(_('slug'), max_length=150,
+                    help_text=_('This is used to build the URL for this page'))
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=False)
