@@ -123,7 +123,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 kwargs['extra_context'] = {
                     'adding_translation': True,
                     'title': _(
-                        'Add %(language)s Translation of "%(page)s"' % {
+                        u'Add %(language)s Translation of "%(page)s"' % {
                             'language': language,
                             'page': original,
                         }
