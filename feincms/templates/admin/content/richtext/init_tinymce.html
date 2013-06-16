@@ -7,6 +7,9 @@
 {% block tinymce_init %}
 	<script type="text/javascript">
 		{% block functions %}{% endblock %}
+    {% if TINYMCE_DOMAIN %}
+      document.domain = '{{ TINYMCE_DOMAIN }}';
+    {% endif %}
 
     tinyMCE.init({
         mode: "none",
