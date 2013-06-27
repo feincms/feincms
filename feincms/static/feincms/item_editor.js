@@ -376,18 +376,22 @@ if(!Array.indexOf) {
                 if (r==true) {
                     var in_database = item.find(".delete-field").length;
                     if(in_database==0){ // remove on client-side only
-                        // decrement TOTAL_FORMS:
                         var id = item.find(".item-content > div").attr('id');
-                        var modvar = id.replace(/_set-\d+$/, '');
-                        var count = $('#id_'+modvar+'_set-TOTAL_FORMS').val();
-                        // remove form:
-                        item.find(".item-content").remove();
 
-                        // could trigger django's deletion handler, which would
-                        // handle reindexing other inlines, etc, but seems to
-                        // cause errors, and is apparently unnecessary...
-                        // django.jQuery('#'+id).find('a.inline-deletelink')
-                        //   .triggerHandler('click');
+                        // poorify all contents
+                        items = item.parents('.order-machine').find('.order-item');
+                        items.each(function() {
+                          poorify_rich($(this));
+                        })
+
+                        // remove content
+                        django.jQuery('#'+id).find('a.inline-deletelink')
+                          .triggerHandler('click');
+
+                        // richify all contents again
+                        items.each(function() {
+                          richify_poor($(this));
+                        })
                     }
                     else{ // saved on server, don't remove form
                         set_item_field_value(item,"delete-field","checked");
