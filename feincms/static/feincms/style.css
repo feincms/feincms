@@ -325,3 +325,40 @@ div.order-machine div.inline-related > h3{
 
 /* various overrides */
 #id_redirect_to { width: 20em; } /* raw_id_fields act-a-like for redirect_to */
+
+
+/* django suit hacks */
+/*********************/
+
+#suit-center #main {
+    clear:none;
+}
+
+#suit-center .panel {
+    padding-top: 15px;
+}
+
+#suit-center .form-horizontal .inline-related fieldset {
+    margin-top: 10px;
+}
+
+#suit-center .panel h2 {
+    color: white;
+    font-size: 13px;
+    line-height: 12px;
+    margin-left: 0;
+    text-shadow: none;
+}
+
+#suit-center .item-delete {
+    margin: 3px 5px 0 0;
+}
+
+#suit-center .order-item .handle {
+    height: 36px;
+}
+
+#suit-center .order-machine .order-item {
+    margin-top: 10px;
+}
+
