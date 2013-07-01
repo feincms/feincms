@@ -651,6 +651,7 @@ def create_base_model(inherit_from=models.Model):
                 db_table = '%s_%s' % (cls._meta.db_table, class_name.lower())
                 verbose_name = model._meta.verbose_name
                 verbose_name_plural = model._meta.verbose_name_plural
+                permissions = model._meta.permissions
 
             attrs = {
                 # put the concrete content type into the
