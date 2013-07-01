@@ -8,12 +8,15 @@ import logging
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.views import main
+from django.contrib.admin.actions import delete_selected
+from django.db import router
 from django.db.models import Q
 from django.http import (HttpResponse, HttpResponseBadRequest,
     HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError)
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.encoding import force_unicode
 
 from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm
@@ -456,14 +459,28 @@ class TreeEditor(ExtensionModelAdmin):
         recalculated properly. (Because merely doing a bulk delete doesn't
         trigger the post_delete hooks.)
         """
-        n = 0
-        for obj in queryset:
-            if self.has_delete_permission(request, obj):
-                obj.delete()
-                n += 1
-            else:
-                logger.warning("Denied delete request by \"%s\" for object #%s", request.user, obj.id)
-        self.message_user(request, _("Successfully deleted %s items.") % n)
+        # If this is True, the confirmation page has been displayed
+        if request.POST.get('post'):
+            n = 0
+            for obj in queryset:
+                if self.has_delete_permission(request, obj):
+                    obj.delete()
+                    n += 1
+                    obj_display = force_unicode(obj)
+                    self.log_deletion(request, obj, obj_display)
+                else:
+                    logger.warning(
+                        "Denied delete request by \"%s\" for object #%s",
+                        request.user, obj.id)
+            self.message_user(request,
+                _("Successfully deleted %(count)d items.") % {
+                    "count": n
+                    })
+            # Return None to display the change list page again
+            return None
+        else:
+            # (ab)using the built-in action to display the confirmation page
+            return delete_selected(self, request, queryset)
 
     def get_actions(self, request):
         actions = super(TreeEditor, self).get_actions(request)
