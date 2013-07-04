@@ -160,14 +160,18 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     active = models.BooleanField(_('active'), default=True)
 
     # structure and navigation
-    title = models.CharField(_('title'), max_length=200)
+    title = models.CharField(_('title'), max_length=200, help_text=_(
+        'This title is also used for navigation menu items.'))
     slug = models.SlugField(_('slug'), max_length=150,
                     help_text=_('This is used to build the URL for this page'))
-    parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
+    parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True,
+                               null=True, related_name='children')
     parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=False)
     override_url = models.CharField(_('override URL'), max_length=255, blank=True,
-        help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
+        help_text=_('Override the target URL. Be sure to include slashes at the '
+                    'beginning and at the end if it is a local URL. This '
+                    'affects both the navigation and subpages\' URLs.'))
     redirect_to = models.CharField(_('redirect to'), max_length=255, blank=True,
         help_text=_('Target URL for automatic redirects'
             ' or the primary key of a page.'))
@@ -195,7 +199,8 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if not self.pk:
             return False
 
-        pages = self.__class__.objects.active().filter(tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght)
+        pages = self.__class__.objects.active().filter(tree_id=self.tree_id,
+                                        lft__lte=self.lft, rght__gte=self.rght)
         return pages.count() > self.level
     is_active.short_description = _('is active')
 
