@@ -39,7 +39,7 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
             (django_settings.STATIC_URL, BOOLEAN_MAPPING[field_val], alt_text, title))
 
 
-def _build_tree_structure(cls, manager=None):
+def _build_tree_structure(cls):
     """
     Build an in-memory representation of the item tree, trying to keep
     database accesses down to a minimum. The returned dictionary looks like
@@ -54,12 +54,8 @@ def _build_tree_structure(cls, manager=None):
     all_nodes = { }
 
     mptt_opts = cls._mptt_meta
-    
-    query = cls.objects
-    if manager:
-        query = manager
 
-    for p_id, parent_id in query.order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr).values_list("pk", "%s_id" % mptt_opts.parent_attr):
+    for p_id, parent_id in cls.objects.order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr).values_list("pk", "%s_id" % mptt_opts.parent_attr):
         all_nodes[p_id] = []
 
         if parent_id:
@@ -357,7 +353,7 @@ class TreeEditor(ExtensionModelAdmin):
 
         extra_context = extra_context or {}
         extra_context['tree_structure'] = mark_safe(json.dumps(
-                                                    _build_tree_structure(self.model, self.model._default_manager)))
+                                                    _build_tree_structure(self.model)))
 
         return super(TreeEditor, self).changelist_view(request, extra_context, *args, **kwargs)
 
