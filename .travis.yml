@@ -1,0 +1,13 @@
+language: python
+python:
+  - "2.7"
+  - "2.6"
+env:
+  - DJANGO_VERSION=1.4.0
+  - DJANGO_VERSION=1.5.0
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install:
+  - pip install -q Django==$DJANGO_VERSION django-mptt Pillow feedparser --use-mirrors
+  - python setup.py -q install
+# command to run tests, e.g. python setup.py test
+script: "cd tests && ./manage.py test testapp"
