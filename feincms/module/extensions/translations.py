@@ -116,6 +116,7 @@ def get_current_language_code(request):
 
 # ------------------------------------------------------------------------
 class Extension(extensions.Extension):
+
     def handle_model(self):
         cls = self.model
 
@@ -163,8 +164,11 @@ class Extension(extensions.Extension):
             if is_primary_language(self.language):
                 return self.translations.all()
             elif self.translation_of:
-                return [self.translation_of] + list(self.translation_of.translations.exclude(
-                    language=self.language))
+                # reuse prefetched queryset, do not filter it
+                res = [t for t in list(self.translation_of.translations.all())
+                       if t.language != self.language]
+                res.insert(0, self.translation_of)
+                return res
             else:
                 return []
 
@@ -185,6 +189,19 @@ class Extension(extensions.Extension):
             return self.original_translation.translations.get(language=language)
 
     def handle_modeladmin(self, modeladmin):
+
+        old_queryset = modeladmin.queryset
+
+        def queryset(request):
+            """
+            Extend default queryset to prefetch translations.
+            """
+            qs = old_queryset(request)
+            qs = qs.prefetch_related('translation_of__translations',
+                                     'translations')
+            return qs
+
+        modeladmin.queryset = queryset
 
         def available_translations_admin(self, page):
             translations = dict((p.language, p.id) for p in page.available_translations())
