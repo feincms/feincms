@@ -14,7 +14,7 @@ manage content with the :class:`~feincms.admin.item_editor.ItemEditor`.
 
 .. attribute:: Base.content
 
-   Beware not to name subclass field `content` as this will overshadow ContentProxy you will
+   Beware not to name subclass field `content` as this will overshadow `ContentProxy` and you will
    not be able to reference `ContentProxy`. 
 
 .. method:: Base.create_content_type(model, regions=None, [**kwargs])
