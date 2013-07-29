@@ -13,7 +13,7 @@ from django.db.models import signals
 from django.http import HttpResponse
 from django.utils.functional import curry as partial, lazy, wraps
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, get_language
 
 from feincms import settings
 from feincms.admin.item_editor import ItemEditorForm
@@ -149,10 +149,14 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
                     content = tree_contents[0]
         else:
             cache_key = 'none'
+            # try to get the right language form environment
             try:
-                content = contents[0]
-            except IndexError:
-                content = None
+                content = contents.get(parent__language=get_language())
+            except model_class.DoesNotExist:
+                try:
+                    content = contents[0]
+                except IndexError:
+                    content = None
 
         if content:
             if urlconf in model_class.ALL_APPS_CONFIG:
