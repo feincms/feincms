@@ -4,6 +4,7 @@ Third-party application inclusion support.
 
 from email.utils import parsedate
 from time import mktime
+from django.core.exceptions import FieldError
 import re
 
 from django.core import urlresolvers
@@ -152,7 +153,7 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
             # try to get the right language form environment
             try:
                 content = contents.get(parent__language=get_language())
-            except model_class.DoesNotExist:
+            except (model_class.DoesNotExist, FieldError):
                 try:
                     content = contents[0]
                 except IndexError:
