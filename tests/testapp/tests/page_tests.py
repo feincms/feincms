@@ -383,7 +383,7 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
         self.assertEqual(unicode(page2.content.main[0]),
-                         'main on Test page, ordering 0')
+                         u'RawContent<pk=1, parent=Page<pk=1, Test page>, region=main, ordering=0>')
 
         self.assertEqual(len(page2.content.main), 1)
         self.assertEqual(len(page2.content.sidebar), 0)
