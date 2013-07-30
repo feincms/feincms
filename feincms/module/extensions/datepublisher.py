@@ -57,7 +57,8 @@ def datepublisher_response_processor(page, request, response):
     expires = page.publication_end_date
     if expires is not None:
         now = datetime.now()
-        delta = int((expires - now).total_seconds())
+        delta = expires - now
+        delta = int(delta.days * 86400 + delta.seconds)
         patch_response_headers(response, delta)
 
 # ------------------------------------------------------------------------
