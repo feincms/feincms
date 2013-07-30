@@ -440,8 +440,10 @@ def create_base_model(inherit_from=models.Model):
                 ordering = ['ordering']
 
             def __unicode__(self):
-                return u'%s on %s, ordering %s' % (
-                    self.region, self.parent, self.ordering)
+                return u'%s<pk=%s, parent=%s<pk=%s, %s>, region=%s, ordering=%d>' % (
+                    self.__class__.__name__, self.pk,
+                    self.parent.__class__.__name__, self.parent.pk, self.parent,
+                    self.region, self.ordering)
 
             def render(self, **kwargs):
                 """
