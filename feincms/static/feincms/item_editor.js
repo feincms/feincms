@@ -416,6 +416,7 @@ if(!Array.indexOf) {
         function on_template_key_changed(){
             var input_element = this;
             var new_template = this.value;
+            var form_element = $(input_element).parents('form');
 
             if(current_template==new_template)
                 // Selected template did not change
@@ -453,7 +454,7 @@ if(!Array.indexOf) {
 
                     input_element.checked = true;
 
-                    $('#page_form').append('<input type="hidden" name="_continue" value="1" />');
+                    form_element.append('<input type="hidden" name="_continue" value="1" />');
                     /* Simulate a click on the save button instead of form.submit(), so
                        that the submit handlers from FilteredSelectMultiple get
                        invoked. See Issue #372 */
@@ -461,7 +462,7 @@ if(!Array.indexOf) {
 
                 } else {
                     $("div#popup_bg").remove();
-                    $(input_element).val($(input_element).data('original_value')); // Restore original value
+                    form_element.val($(input_element).data('original_value')); // Restore original value
                 }
             });
 
