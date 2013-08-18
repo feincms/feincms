@@ -1,0 +1,18 @@
+{% comment %}
+Include jquery, override this template if you want to use a cdn version 
+or load more plugins or whatnot
+{% endcomment %}
+
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.22.custom.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.alerts.js"></script>
+
+<script type="text/javascript">
+    var feincms = {
+        {% if FEINCMS_JQUERY_NO_CONFLICT %}
+        "jQuery": jQuery.noConflict(true)
+        {% else %}
+        "jQuery": jQuery
+        {% endif %}
+    };
+</script>

@@ -3,21 +3,10 @@
 
 {% block extrahead %}{{ block.super }}
 {% block feincms_jquery_ui %}
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.22.custom.min.js"></script>
+{% include "admin/feincms/load-jquery.include" %}
 {% endblock %}
 
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/style.css" />
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.alerts.js"></script>
-<script type="text/javascript">
-    var feincms = {
-        {% if FEINCMS_JQUERY_NO_CONFLICT %}
-        "jQuery": jQuery.noConflict(true)
-        {% else %}
-        "jQuery": jQuery
-        {% endif %}
-    };
-</script>
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/item_editor.js"></script>
 
 {% include "admin/feincms/_messages_js.html" %}

@@ -6,18 +6,11 @@
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/style.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/fein_tree.css" />
 
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.22.custom.min.js"></script>
+{% include "admin/feincms/load-jquery.include" %}
 <script type="text/javascript">
-    var feincms = {
-        {% if FEINCMS_JQUERY_NO_CONFLICT %}
-            "jQuery": jQuery.noConflict(true)
-        {% else %}
-            "jQuery": jQuery
-        {% endif %}
-        , "tree_structure": {{ tree_structure|default:"null" }}
-    };
+	feincms.tree_structure = {{ tree_structure|default:"null" }};
 </script>
+
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/ie_compat.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.cookie.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}feincms/toolbox.js"></script>
