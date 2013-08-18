@@ -1,0 +1,77 @@
+{% block tinymce_script %}
+	{% if TINYMCE_JS_URL %}
+		<script type="text/javascript" src="{{ TINYMCE_JS_URL }}"></script>
+	{% endif %}
+{% endblock %}
+
+{% block tinymce_init %}
+	<script type="text/javascript">
+		{% block functions %}{% endblock %}
+    {% if TINYMCE_DOMAIN %}
+      document.domain = '{{ TINYMCE_DOMAIN }}';
+    {% endif %}
+
+    (function($){
+        var tinymce_added = {};
+
+        function feincms_richtext_remove_tinymce(field) {
+            var id = field ? field.id : this.id;
+            if(tinymce_added[id]) {
+                tinyMCE.triggerSave();
+                tinyMCE.remove({selector: '#' + id});
+                tinymce_added[id] = false;
+            }
+        }
+
+        function feincms_richtext_add_tinymce(field) {
+            var tinymce_options = {
+{% block settings %}
+        theme: "advanced",
+        language: "en",
+        theme_advanced_toolbar_location: "top",
+        theme_advanced_toolbar_align: "left",
+        theme_advanced_statusbar_location: "bottom",
+        theme_advanced_buttons1: "{% block buttons1 %}fullscreen,|,formatselect,|,bold,italic,|,sub,sup,|,bullist,numlist,|,anchor,link,unlink,|,code{% endblock %}",
+        theme_advanced_buttons2: "{% block buttons2 %}{% endblock %}",
+        theme_advanced_buttons3: "{% block buttons3 %}{% endblock %}",
+        theme_advanced_path: false,
+        theme_advanced_blockformats: "{% block blockformats %}p,h2,h3{% endblock %}",
+        theme_advanced_resizing: true,
+        width: '680',
+        height: '300',
+        {% if TINYMCE_CONTENT_CSS_URL %}content_css: "{{ TINYMCE_CONTENT_CSS_URL }}",{% endif %}
+        {% if TINYMCE_LINK_LIST_URL %}external_link_list_url: "{{ TINYMCE_LINK_LIST_URL }}",{% endif %}
+        {% if TINYMCE_INIT_INSTANCE_CALLBACK %}init_instance_callback: "{{TINYMCE_INIT_INSTANCE_CALLBACK}}",{% endif %}
+        plugins: "{% block plugins %}fullscreen,paste{% endblock %}",
+        paste_auto_cleanup_on_paste: true,
+        relative_urls: false
+{% endblock %}
+
+            };
+
+            var id = field ? field.id : this.id;
+            if(!tinymce_added[id]) {
+                tinymce_options.selector = '#' + id;
+                tinyMCE.init(tinymce_options);
+                tinymce_added[id] = true;
+                }
+        }
+
+        var richtext_init_fn = function(){
+            $('{% block selectors %}.order-machine textarea.item-richtext, #frontend_editor textarea.item-richtext{% endblock %}').each(function(){
+                feincms_richtext_add_tinymce(this);
+            });
+        }
+
+			{% block enable %}
+        contentblock_init_handlers.push(richtext_init_fn);
+        contentblock_move_handlers.poorify.push(function(item) {
+            item.find('textarea.item-richtext').each(feincms_richtext_remove_tinymce);
+        });
+        contentblock_move_handlers.richify.push(function(item) {
+            item.find('textarea.item-richtext').each(feincms_richtext_add_tinymce);
+        });
+			{% endblock %}
+    })(feincms.jQuery);
+	</script>
+{% endblock %}
