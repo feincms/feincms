@@ -1,4 +1,4 @@
-Django>=1.4
+Django>=1.4.2
 django-mptt>=0.4
 PIL
 feedparser>=5.1.2
