@@ -131,3 +131,13 @@ FEINCMS_MEDIAFILE_OVERWRITE = getattr(settings, 'FEINCMS_MEDIAFILE_OVERWRITE',
 FEINCMS_THUMBNAIL_DIR = getattr(settings, 'FEINCMS_THUMBNAIL_DIR', '_thumbs/')
 
 # ------------------------------------------------------------------------
+
+FEINCMS_APPLICATIONCONTENT_RAISES_404 = getattr(settings,
+                                    'FEINCMS_APPLICATIONCONTENT_RAISES_404', False)
+#: If app_reverse cannot find the correct application content e.g. because the page
+#: in the specified language does not exist, it raises a NoReverseMatch. Set this to
+#: True to raise a 404.
+
+# ------------------------------------------------------------------------
+
+
