@@ -116,8 +116,14 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
             model_class = ApplicationContent._feincms_content_models[0]
 
         # TODO: Only active pages? What about multisite support?
-        contents = model_class.objects.filter(
-            urlconf_path=urlconf).select_related('parent')
+        # filter for current language
+        if hasattr(model_class.parent.field.rel.to, 'language'):
+            contents = model_class.objects.filter(
+                    parent__language=get_language(),
+                    urlconf_path=urlconf).select_related('parent')
+        else:
+            contents = model_class.objects.filter(
+                    urlconf_path=urlconf).select_related('parent')
 
         if proximity_info:
             # find the closest match within the same subtree
