@@ -85,7 +85,7 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
     cache_key_prefix = fn()
 
     app_cache_keys = {
-        'none': '%s:app_%s_none' % (cache_key_prefix, urlconf),
+        'none': '%s:app_%s_%s_none' % (cache_key_prefix, get_language(), urlconf),
         }
     proximity_info = getattr(_local, 'proximity_info', None)
     url_prefix = None
