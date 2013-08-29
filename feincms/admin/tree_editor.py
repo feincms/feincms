@@ -63,10 +63,13 @@ def _build_tree_structure(cls):
         all_nodes[p_id] = []
 
         if parent_id:
-            if not all_nodes.has_key(parent_id):
+            if parent_id not in all_nodes:
                 # This happens very rarely, but protect against parents that
-                # we have yet to iteratove over.
+                # we have yet to iteratove over. Happens with broken MPTT
+                # hierarchy.
                 all_nodes[parent_id] = []
+                logger.warn("Incorrect MPTT hierarchy for %s, node %d has left_attr < than one of its parents. Try rebuilding mptt data (use '%s._default_manager.rebuild()').", cls.__name__, p_id, cls.__name__)
+
             all_nodes[parent_id].append(p_id)
 
     return all_nodes
