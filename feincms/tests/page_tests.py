@@ -1408,3 +1408,58 @@ class PagesTestCase(TestCase):
         page.save()
         response = self.client.get('/sitemap.xml')
         self.assertContains(response, '<url>', status_code=200)
+
+
+    def test_37_contenttype_region(self):
+        class CT1(models.Model):
+            class Meta:
+                abstract = True
+
+        class CT2(models.Model):
+            class Meta:
+                abstract = True
+
+        Page.create_content_type(CT1, regions=('main',))
+        Page.create_content_type(CT2, regions=('sidebar',))
+
+        base_template = Page._feincms_templates['base']
+
+        main_region = base_template.regions_dict['main']
+        main_content_types = [t[0] for t in main_region.content_types]
+
+        sidebar_region = base_template.regions_dict['sidebar']
+        sidebar_content_types = [t[0] for t in sidebar_region.content_types]
+
+        self.assertIn('ct1', main_content_types)
+        self.assertIn('ct2', sidebar_content_types)
+
+        self.assertNotIn('ct1', sidebar_content_types)
+        self.assertNotIn('ct2', main_content_types)
+
+
+    def test_38_contenttype_template(self):
+        class CT3(models.Model):
+            class Meta:
+                abstract = True
+
+        class CT4(models.Model):
+            class Meta:
+                abstract = True
+
+        Page.create_content_type(CT3, templates=('base',))
+        Page.create_content_type(CT4, templates=('theother',))
+
+        base_template = Page._feincms_templates['base']
+        theother_template = Page._feincms_templates['theother']
+
+        base_main_region = base_template.regions_dict['main']
+        base_cts = [t[0] for t in base_main_region.content_types]
+
+        other_main_region = theother_template.regions_dict['main']
+        other_cts = [t[0] for t in other_main_region.content_types]
+
+        self.assertIn('ct3', base_cts)
+        self.assertIn('ct4', other_cts)
+
+        self.assertNotIn('ct3', other_cts)
+        self.assertNotIn('ct4', base_cts)

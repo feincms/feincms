@@ -558,8 +558,8 @@ def create_base_model(inherit_from=models.Model):
                 cls.feincms_item_editor_includes = {}
 
         @classmethod
-        def create_content_type(cls, model, regions=None, class_name=None,
-                **kwargs):
+        def create_content_type(cls, model, templates=None, regions=None,
+                class_name=None, **kwargs):
             """
             This is the method you'll use to create concrete content types.
 
@@ -572,6 +572,12 @@ def create_base_model(inherit_from=models.Model):
             you can pass a list/tuple of region keys as ``regions``. The
             content type will only appear in the corresponding tabs in the item
             editor.
+
+            Similar to regions it's also possible to filter a content type by
+            templates. By passing a list/tupel of template keys as
+            ``templates``, the content type will only appear where one of
+            the templates is used. Consider that this work only if you
+            registered any templates to the base model beforehand.
 
             If you use two content types with the same name in the same module,
             name clashes will happen and the content type created first will
@@ -676,9 +682,23 @@ def create_base_model(inherit_from=models.Model):
                 regions = set([region.key for region
                     in cls._feincms_all_regions])
 
-            for region in cls._feincms_all_regions:
-                if region.key in regions:
-                    region._content_types.append(new_type)
+            # filter only by regions if no templates are registered
+            if not hasattr(cls, '_feincms_templates'):
+                for region in cls._feincms_all_regions:
+                    if region.key in regions:
+                        region._content_types.append(new_type)
+
+            # if templates are used, filter content types by templates as well
+            if hasattr(cls, '_feincms_templates'):
+                if not templates:
+                    templates = set([template for template
+                        in cls._feincms_templates.keys()])
+
+                for template in cls._feincms_templates.values():
+                    if template.key in templates:
+                        for region in template.regions:
+                            if region.key in regions:
+                                region._content_types.append(new_type)
 
             # Add a list of CMS base types for which a concrete content type
             # has been created to the abstract content type. This is needed
