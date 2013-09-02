@@ -4,16 +4,18 @@ Third-party application inclusion support.
 
 from email.utils import parsedate
 from time import mktime
+from django.contrib.sites.models import Site
+from django.core.exceptions import FieldError
 import re
 
 from django.core import urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse, NoReverseMatch
 from django.db import models
 from django.db.models import signals
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils.functional import curry as partial, lazy, wraps
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, get_language
 
 from feincms import settings
 from feincms.admin.item_editor import ItemEditorForm
@@ -24,6 +26,9 @@ try:
     from threading import local
 except ImportError:
     from django.utils._threading_local import local
+    
+import logging
+logger = logging.getLogger('feincms.applicationcontent')
 
 # Used to store MPTT informations about the currently requested
 # page. The information will be used to find the best application
@@ -40,6 +45,9 @@ def retrieve_page_information(page, request=None):
     about the currently processed page so that we can make an optimal match
     when reversing app URLs when the same ApplicationContent has been added
     several times to the website."""
+    #if request:
+    #    logger.debug('Setting proximity_info: Page_id: %s, %s on thread: %s' % (
+    #                                            page.pk, request.path, _local))
     _local.proximity_info = (page.tree_id, page.lft, page.rght, page.level)
     _local.page_class = page.__class__
     _local.page_cache_key_fn = page.cache_key
@@ -84,9 +92,9 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
     cache_key_prefix = fn()
 
     app_cache_keys = {
-        'none': '%s:app_%s_none' % (cache_key_prefix, urlconf),
+        'none': '%s:app_%s_%s_none' % (cache_key_prefix, get_language(), urlconf),
         }
-    proximity_info = getattr(_local, 'proximity_info', None)
+    proximity_info = None
     url_prefix = None
 
     if proximity_info:
@@ -97,9 +105,11 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
                 cache_key_prefix, urlconf, proximity_info[0]),
             })
 
-    for key in ('all', 'tree', 'none'):
+    for key in ('none',):
         try:
             url_prefix = _local.reverse_cache[app_cache_keys[key]]
+            #logger.debug('Found url_prefix: %s, %s in cache %s' % (url_prefix,
+            #                        key, app_cache_keys[key] ))
             break
         except (AttributeError, KeyError):
             pass
@@ -114,9 +124,17 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
             # Take any
             model_class = ApplicationContent._feincms_content_models[0]
 
-        # TODO: Only active pages? What about multisite support?
-        contents = model_class.objects.filter(
-            urlconf_path=urlconf).select_related('parent')
+        filters = {'urlconf_path': urlconf }
+        page_fields = model_class.parent.field.rel.to._meta.get_all_field_names()
+        # filter for current language
+        if 'language' in page_fields:
+            filters['parent__language'] = get_language()
+
+        if 'site' in page_fields:
+            # assuming django.contrib.sites is installed in this case.
+            filters['parent__site'] = Site.objects.get_current()
+
+        contents = model_class.objects.filter(**filters).select_related('parent')
 
         if proximity_info:
             # find the closest match within the same subtree
@@ -176,6 +194,10 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
             kwargs=kwargs,
             prefix=url_prefix[1],
             *vargs, **vkwargs)
+
+    if settings.FEINCMS_APPLICATIONCONTENT_RAISES_404:
+        raise Http404("Unable to find ApplicationContent for %r" % urlconf)
+
     raise NoReverseMatch("Unable to find ApplicationContent for %r" % urlconf)
 
 
