@@ -151,15 +151,15 @@ class LegacyExtension(Extension):
         if self.fieldsets:
             modeladmin.fieldsets.extend(self.fieldsets)
         if self.filter_horizontal:
-            modeladmin.filter_horizontal.extend(self.filter_horizontal)
+            modeladmin.filter_horizontal += tuple(self.filter_horizontal)
         if self.filter_vertical:
-            modeladmin.filter_vertical.extend(self.filter_vertical)
+            modeladmin.filter_vertical += tuple(self.filter_vertical)
         if self.list_display:
             modeladmin.list_display.extend(self.list_display)
         if self.list_filter:
             modeladmin.list_filter.extend(self.list_filter)
         if self.raw_id_fields:
-            modeladmin.raw_id_fields.extend(self.raw_id_fields)
+            modeladmin.raw_id_fields += tuple(self.raw_id_fields)
         if self.search_fields:
             modeladmin.search_fields.extend(self.search_fields)
 
