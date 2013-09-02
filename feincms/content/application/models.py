@@ -26,6 +26,9 @@ try:
     from threading import local
 except ImportError:
     from django.utils._threading_local import local
+    
+import logging
+logger = logging.getLogger('feincms.applicationcontent')
 
 # Used to store MPTT informations about the currently requested
 # page. The information will be used to find the best application
@@ -42,6 +45,9 @@ def retrieve_page_information(page, request=None):
     about the currently processed page so that we can make an optimal match
     when reversing app URLs when the same ApplicationContent has been added
     several times to the website."""
+    #if request:
+    #    logger.debug('Setting proximity_info: Page_id: %s, %s on thread: %s' % (
+    #                                            page.pk, request.path, _local))
     _local.proximity_info = (page.tree_id, page.lft, page.rght, page.level)
     _local.page_class = page.__class__
     _local.page_cache_key_fn = page.cache_key
@@ -88,7 +94,7 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
     app_cache_keys = {
         'none': '%s:app_%s_%s_none' % (cache_key_prefix, get_language(), urlconf),
         }
-    proximity_info = getattr(_local, 'proximity_info', None)
+    proximity_info = None
     url_prefix = None
 
     if proximity_info:
@@ -99,9 +105,11 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
                 cache_key_prefix, urlconf, proximity_info[0]),
             })
 
-    for key in ('all', 'tree', 'none'):
+    for key in ('none',):
         try:
             url_prefix = _local.reverse_cache[app_cache_keys[key]]
+            #logger.debug('Found url_prefix: %s, %s in cache %s' % (url_prefix,
+            #                        key, app_cache_keys[key] ))
             break
         except (AttributeError, KeyError):
             pass
