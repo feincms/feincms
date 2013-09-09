@@ -159,7 +159,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 if d:
                     t += " %d&times;%d" % ( d[0], d[1] )
             except (IOError, ValueError), e:
-                t += " (%s)" % e.strerror
+                t += " (%s)" % e
         return t
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
