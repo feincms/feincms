@@ -90,12 +90,6 @@ Page.register_response_processor(processors.etag_response_processor)
 Page.register_response_processor(processors.debug_sql_queries_response_processor())
 
 
-Entry.register_extensions(
-    'feincms.module.extensions.seo',
-    'feincms.module.extensions.translations',
-    'feincms.module.extensions.seo',
-    'feincms.module.extensions.ct_tracker',
-    )
 class BlogTestCase(TestCase):
     def setUp(self):
         u = User(username='test', is_active=True, is_staff=True, is_superuser=True)

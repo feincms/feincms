@@ -48,6 +48,12 @@ Page.create_content_type(ApplicationContent, APPLICATIONS=(
     ))
 
 
+Entry.register_extensions(
+    'feincms.module.extensions.seo',
+    'feincms.module.extensions.translations',
+    'feincms.module.extensions.seo',
+    'feincms.module.extensions.ct_tracker',
+    )
 Entry.register_regions(
     ('main', 'Main region'),
     )
