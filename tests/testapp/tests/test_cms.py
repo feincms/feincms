@@ -17,7 +17,7 @@ from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
-from .tests import ExampleCMSBase, Empty, ExampleCMSBase2
+from .test_stuff import ExampleCMSBase, Empty, ExampleCMSBase2
 
 # ------------------------------------------------------------------------
 class SubRawContent(RawContent):
