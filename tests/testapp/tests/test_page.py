@@ -22,6 +22,7 @@ from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
 from django.utils import timezone
+from django.utils.encoding import force_text
 
 from feincms import settings as feincms_settings
 from feincms.content.application.models import _empty_reverse_cache, app_reverse
@@ -156,7 +157,7 @@ class PagesTestCase(TestCase):
     def is_published(self, url, should_be=True):
         try:
             self.client.get(url)
-        except TemplateDoesNotExist, e:
+        except TemplateDoesNotExist as e:
             if should_be:
                 if e.args != ('feincms_base.html',):
                     raise
@@ -207,7 +208,8 @@ class PagesTestCase(TestCase):
         page1.active = True
         page1.save()
 
-        self.assertEqual(len(self.client.get('/admin/page/page/').content.split('checked="checked"')), 4)
+        content = self.client.get('/admin/page/page/').content.decode('utf-8')
+        self.assertEqual(len(content.split('checked="checked"')), 4)
 
     def test_05_override_url(self):
         self.create_default_page_set()
@@ -400,7 +402,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
 
         self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
-        self.assertEqual(unicode(page2.content.main[0]),
+        self.assertEqual(force_text(page2.content.main[0]),
                          u'RawContent<pk=1, parent=Page<pk=1, Test page>, region=main, ordering=0>')
 
         self.assertEqual(len(page2.content.main), 1)
@@ -423,8 +425,8 @@ class PagesTestCase(TestCase):
         category = Category.objects.create(title='Category', parent=None)
         category2 = Category.objects.create(title='Something', parent=category)
 
-        self.assertEqual(unicode(category2), 'Category - Something')
-        self.assertEqual(unicode(category), 'Category')
+        self.assertEqual(force_text(category2), 'Category - Something')
+        self.assertEqual(force_text(category), 'Category')
 
         mediafile = MediaFile.objects.create(file='somefile.jpg')
         mediafile.categories = [category]
@@ -434,20 +436,20 @@ class PagesTestCase(TestCase):
             type='default',
             ordering=1)
 
-        self.assertEqual(unicode(mediafile), 'somefile.jpg')
+        self.assertEqual(force_text(mediafile), 'somefile.jpg')
 
         mediafile.translations.create(caption='something',
             language_code='%s-ha' % short_language_code())
         mediafile.purge_translation_cache()
 
-        self.assertTrue('something' in unicode(mediafile))
+        self.assertTrue('something' in force_text(mediafile))
 
         mf = page.content.main[1].mediafile
 
         self.assertEqual(mf.translation.caption, 'something')
         self.assertEqual(mf.translation.short_language_code(), short_language_code())
         self.assertNotEqual(mf.get_absolute_url(), '')
-        self.assertEqual(unicode(mf), 'something')
+        self.assertEqual(force_text(mf), 'something')
         self.assertTrue(mf.type == 'image')
 
         self.assertEqual(MediaFile.objects.only_language('de').count(), 0)
@@ -652,7 +654,7 @@ class PagesTestCase(TestCase):
         response = self.client.get(page.get_absolute_url() +
                 '?frontend_editing=1',
                 follow=True)
-        self.assertNotIn('class="fe_box"', response.content)
+        self.assertNotIn('class="fe_box"', response.content.decode('utf-8'))
         self.assertNotIn('frontend_editing', self.client.cookies)
 
         # manually register request processor
@@ -664,7 +666,7 @@ class PagesTestCase(TestCase):
                 '?frontend_editing=1',
                 follow=True)
         self.assertRedirects(response, page.get_absolute_url())
-        self.assertIn('class="fe_box"', response.content)
+        self.assertIn('class="fe_box"', response.content.decode('utf-8'))
         self.assertIn('frontend_editing', self.client.cookies)
 
         # turn off edit on site
@@ -672,7 +674,7 @@ class PagesTestCase(TestCase):
                 '?frontend_editing=0',
                 follow=True)
         self.assertRedirects(response, page.get_absolute_url())
-        self.assertNotIn('class="fe_box"', response.content)
+        self.assertNotIn('class="fe_box"', response.content.decode('utf-8'))
 
         # anonymous user cannot front edit
         self.client.logout()
@@ -680,7 +682,7 @@ class PagesTestCase(TestCase):
                 '?frontend_editing=1',
                 follow=True)
         self.assertRedirects(response, page.get_absolute_url())
-        self.assertNotIn('class="fe_box"', response.content)
+        self.assertNotIn('class="fe_box"', response.content.decode('utf-8'))
 
         # cleanup request processor
         del Page.request_processors['frontend_editing']
@@ -1017,7 +1019,7 @@ class PagesTestCase(TestCase):
         # page2 has been modified too, but its URL should not have changed
         try:
             self.assertRedirects(self.client.get('/blablabla/'), page1.get_absolute_url())
-        except TemplateDoesNotExist, e:
+        except TemplateDoesNotExist as e:
             # catch the error from rendering page1
             if e.args != ('feincms_base.html',):
                 raise
@@ -1060,8 +1062,8 @@ class PagesTestCase(TestCase):
             'content': 'Hell on earth.',
             })
 
-        self.assertEquals(len(mail.outbox), 1)
-        self.assertEquals(mail.outbox[0].subject, 'This is a test. Please calm down')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'This is a test. Please calm down')
 
     def test_23_navigation_extension(self):
         self.create_default_page_set()
@@ -1149,7 +1151,7 @@ class PagesTestCase(TestCase):
                 lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
 
         # This should not raise
-        self.assertEquals(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
+        self.assertEqual(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
 
         self.assertContains(self.client.get(page.get_absolute_url() + 'fragment/'),
                             '<span id="something">some things</span>')
@@ -1285,7 +1287,7 @@ class PagesTestCase(TestCase):
         zf.close()
 
         self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
-            'data': open('test.zip'),
+            'data': open('test.zip', 'rb'),
             }), '/admin/medialibrary/mediafile/')
 
         self.assertEqual(MediaFile.objects.count(), 11, "Upload of media files with ZIP does not work")
@@ -1295,7 +1297,7 @@ class PagesTestCase(TestCase):
             'docs', 'images', 'tree_editor.png')
 
         self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
-            'file': open(path),
+            'file': open(path, 'rb'),
             'translations-TOTAL_FORMS': 0,
             'translations-INITIAL_FORMS': 0,
             'translations-MAX_NUM_FORMS': 10,
@@ -1376,7 +1378,7 @@ class PagesTestCase(TestCase):
             text='Example content')
 
         self.login()
-        self.assertEquals(self.client.get(page.get_absolute_url()).status_code, 404)
+        self.assertEqual(self.client.get(page.get_absolute_url()).status_code, 404)
         self.assertContains(self.client.get('%s_preview/%s/' % (page.get_absolute_url(), page.pk)),
             'Example content')
 
@@ -1397,10 +1399,10 @@ class PagesTestCase(TestCase):
         self.assertRedirects(r, page.get_absolute_url())
         # /something/ should work
         r = self.client.get(page.override_url)
-        self.assertEquals(r.status_code, 200)
+        self.assertEqual(r.status_code, 200)
         # /foo not existant -> 404
         r = self.client.get('/foo/')
-        self.assertEquals(r.status_code, 404)
+        self.assertEqual(r.status_code, 404)
 
     def test_35_access_with_extra_path(self):
         self.login()
@@ -1410,7 +1412,7 @@ class PagesTestCase(TestCase):
         r = self.client.get('/')
         self.assertRedirects(r, '/somewhere/')
         r = self.client.get('/dingdong/')
-        self.assertEquals(r.status_code, 404)
+        self.assertEqual(r.status_code, 404)
 
         old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
@@ -1418,7 +1420,7 @@ class PagesTestCase(TestCase):
         r = self.client.get('/')
         self.assertRedirects(r, '/somewhere/')
         r = self.client.get('/dingdong/')
-        self.assertEquals(r.status_code, 404)
+        self.assertEqual(r.status_code, 404)
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
 

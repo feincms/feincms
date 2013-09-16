@@ -67,8 +67,8 @@ class TranslationTestCase(TestCase):
         page = Page()
         self.assertTrue(hasattr(page, 'language'))
         self.assertTrue(hasattr(page, 'translation_of'))
-        self.assertEquals(self.page_de.translation_of, self.page_en)
-        self.assertEquals(self.page_de.original_translation, self.page_en)
+        self.assertEqual(self.page_de.translation_of, self.page_en)
+        self.assertEqual(self.page_de.original_translation, self.page_en)
 
         # TODO:  add request tests
         # with translation.override('de'):

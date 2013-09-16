@@ -8,6 +8,7 @@ It does work, though.
 from django.db import models
 from django.db.models import signals
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin import item_editor
@@ -24,6 +25,7 @@ class EntryManager(models.Manager):
             )
 
 
+@python_2_unicode_compatible
 class Entry(Base):
     published = models.BooleanField(_('published'), default=False)
     title = models.CharField(_('title'), max_length=100,
@@ -41,7 +43,7 @@ class Entry(Base):
 
     objects = EntryManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
@@ -60,7 +62,7 @@ signals.post_syncdb.connect(check_database_schema(Entry, __name__), weak=False)
 
 class EntryAdmin(item_editor.ItemEditor):
     date_hierarchy = 'published_on'
-    list_display = ['__unicode__', 'published', 'published_on']
+    list_display = ['__str__', 'published', 'published_on']
     list_filter = ['published',]
     search_fields = ['title', 'slug']
     prepopulated_fields = {

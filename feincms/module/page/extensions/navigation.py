@@ -8,6 +8,7 @@ be they real Page instances or extended navigation entries.
 """
 
 from django.db import models
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
@@ -71,14 +72,13 @@ class PagePretender(object):
         return shorten_string(self.title)
 
 
-class NavigationExtension(object):
+class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
     """
     Base class for all navigation extensions.
 
     The name attribute is shown to the website administrator.
     """
 
-    __metaclass__ = TypeRegistryMetaClass
     name = _('navigation extension')
 
     def children(self, page, **kwargs):

@@ -124,7 +124,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
                             this_level = getattr(extended, mptt_opts.level_attr, 0)
                             if this_level < level + depth - 1:
                                 yield extended
-                    except Exception, e:
+                    except Exception as e:
                         logger.warn("feincms_nav caught exception in navigation extension for page %d: %s", current_navextension_node.id, format_exception(e))
                 else:
                     current_navextension_node = None
@@ -412,7 +412,7 @@ def siblings_along_path_to(page_list, page2):
                                    a_page.level == top_level or
                                    any((_is_sibling_of(a_page, a) for a in ancestors))]
             return siblings
-        except (AttributeError, ValueError), e:
+        except (AttributeError, ValueError) as e:
             logger.warn("siblings_along_path_to caught exception: %s", format_exception(e))
 
     return ()

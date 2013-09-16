@@ -5,6 +5,7 @@ All models defined here are abstract, which means no tables are created in
 the feincms\_ namespace.
 """
 
+from functools import reduce
 import sys
 import operator
 import warnings
@@ -18,7 +19,7 @@ from django.db.models.loading import get_model
 from django.forms.widgets import Media
 from django.template.loader import render_to_string
 from django.utils.datastructures import SortedDict
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
@@ -26,6 +27,7 @@ from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 
 
+@python_2_unicode_compatible
 class Region(object):
     """
     This class represents a region inside a template. Example regions might be
@@ -38,8 +40,8 @@ class Region(object):
         self.inherited = args and args[0] == 'inherited' or False
         self._content_types = []
 
-    def __unicode__(self):
-        return force_unicode(self.title)
+    def __str__(self):
+        return force_text(self.title)
 
     @property
     def content_types(self):
@@ -52,6 +54,7 @@ class Region(object):
                 for ct in self._content_types]
 
 
+@python_2_unicode_compatible
 class Template(object):
     """
     A template is a standard Django template which is used to render a
@@ -81,8 +84,8 @@ class Template(object):
         self.regions = [_make_region(row) for row in regions]
         self.regions_dict = dict((r.key, r) for r in self.regions)
 
-    def __unicode__(self):
-        return force_unicode(self.title)
+    def __str__(self):
+        return force_text(self.title)
 
 
 class ContentProxy(object):
@@ -227,7 +230,7 @@ class ContentProxy(object):
             self._cache['regions'] = dict((
                 region,
                 sorted(instances, key=lambda c: c.ordering),
-                ) for region, instances in contents.iteritems())
+                ) for region, instances in contents.items())
 
         return self._cache['regions']
 
@@ -295,6 +298,7 @@ def create_base_model(inherit_from=models.Model):
     extend :class:`django.db.models.Model`.
     """
 
+    @python_2_unicode_compatible
     class Base(inherit_from, ExtensionsMixin):
         """
         This is the base class for your CMS models. It knows how to create and
@@ -439,7 +443,7 @@ def create_base_model(inherit_from=models.Model):
                 app_label = cls._meta.app_label
                 ordering = ['ordering']
 
-            def __unicode__(self):
+            def __str__(self):
                 return u'%s<pk=%s, parent=%s<pk=%s, %s>, region=%s, ordering=%d>' % (
                     self.__class__.__name__, self.pk,
                     self.parent.__class__.__name__, self.parent.pk, self.parent,
@@ -505,7 +509,7 @@ def create_base_model(inherit_from=models.Model):
                 # from, therefore we ensure that the
                 # module is always known.
                 '__module__': cls.__module__,
-                '__unicode__': __unicode__,
+                '__str__': __str__,
                 'render': render,
                 'fe_render': fe_render,
                 'fe_identifier': fe_identifier,
@@ -527,7 +531,8 @@ def create_base_model(inherit_from=models.Model):
                     % (cls.__module__, name, cls.__module__, cls.__name__),
                 RuntimeWarning)
 
-            cls._feincms_content_model = type(name, (models.Model,), attrs)
+            cls._feincms_content_model = python_2_unicode_compatible(
+                type(name, (models.Model,), attrs))
 
 
             # list of concrete content types
@@ -816,6 +821,7 @@ def create_base_model(inherit_from=models.Model):
             reversion.register(cls, follow=follow)
 
     return Base
+
 
 # Legacy support
 Base = create_base_model()
