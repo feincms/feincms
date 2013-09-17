@@ -7,6 +7,7 @@ from __future__ import absolute_import
 from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -101,10 +102,10 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 page.id)
         actions = super(PageAdmin, self)._actions_column(page)
         if editable:
-            actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%sfeincms/img/icon_addlink.gif" alt="%s"></a>' % (
-                page.pk, _('Add child page'), django_settings.STATIC_URL, _('Add child page')))
-        actions.insert(0, u'<a href="%s" title="%s"><img src="%sfeincms/img/selector-search.gif" alt="%s" /></a>' % (
-            preview_url, _('View on site'), django_settings.STATIC_URL, _('View on site')))
+            actions.insert(0, u'<a href="add/?parent=%s" title="%s"><img src="%s" alt="%s"></a>' % (
+                page.pk, _('Add child page'), static('feincms/img/icon_addlink.gif'), _('Add child page')))
+        actions.insert(0, u'<a href="%s" title="%s"><img src="%s" alt="%s" /></a>' % (
+            preview_url, _('View on site'), static('feincms/img/selector-search.gif'), _('View on site')))
 
         return actions
 
