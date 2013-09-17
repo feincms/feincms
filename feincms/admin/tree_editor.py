@@ -5,9 +5,9 @@
 import json
 import logging
 
-from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.admin.views import main
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db.models import Q
 from django.http import (HttpResponse, HttpResponseBadRequest,
     HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError)
@@ -35,8 +35,9 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
         title = 'title="%s" ' % title
     else:
         title = ''
-    return mark_safe(u'<img src="%sfeincms/img/icon-%s.gif" alt="%s" %s/>' %
-            (django_settings.STATIC_URL, BOOLEAN_MAPPING[field_val], alt_text, title))
+    icon_url = static('feincms/img/icon-%s.gif' % BOOLEAN_MAPPING[field_val])
+    return mark_safe(u'<img src="%s" alt="%s" %s/>' %
+            (icon_url, alt_text, title))
 
 
 def _build_tree_structure(cls):

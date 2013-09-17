@@ -1,5 +1,6 @@
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-1.8.3.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery-ui-1.8.22.custom.min.js"></script>
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'feincms/jquery-1.8.3.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'feincms/jquery-ui-1.8.22.custom.min.js' %}"></script>
 <script type="text/javascript">
     var feincms = {
         {% if FEINCMS_JQUERY_NO_CONFLICT %}
