@@ -1,20 +1,20 @@
 {% extends "admin/change_list.html" %}
-{% load admin_list i18n %}
+{% load admin_list i18n staticfiles %}
 
 {% block extrahead %}
 {{ block.super }}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/style.css" />
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}feincms/fein_tree.css" />
+<link rel="stylesheet" type="text/css" href="{% static 'feincms/style.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'feincms/fein_tree.css' %}" />
 
 {% include "admin/feincms/load-jquery.include" %}
 <script type="text/javascript">
 	feincms.tree_structure = {{ tree_structure|default:"null" }};
 </script>
 
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/ie_compat.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/jquery.cookie.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/toolbox.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/fein_tree.js"></script>
+<script type="text/javascript" src="{% static 'feincms/ie_compat.js' %}"></script>
+<script type="text/javascript" src="{% static 'feincms/jquery.cookie.js' %}"></script>
+<script type="text/javascript" src="{% static 'feincms/toolbox.js' %}"></script>
+<script type="text/javascript" src="{% static 'feincms/fein_tree.js' %}"></script>
 
 {% endblock %}
 

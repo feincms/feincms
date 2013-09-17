@@ -1,11 +1,11 @@
 {% extends "admin/change_form.html" %}
-{% load i18n admin_modify %}
+{% load i18n admin_modify staticfiles %}
 
 
 {% block extrahead %}{{ block.super }}
 {% include "admin/feincms/load-jquery.include" %}
 
-<script type="text/javascript" src="{{ STATIC_URL }}feincms/item_editor.js"></script>
+<script type="text/javascript" src="{% static 'feincms/item_editor.js' %}"></script>
 
 {% include "admin/feincms/_messages_js.html" %}
 {% include "admin/feincms/_regions_js.html" %}
