@@ -51,7 +51,7 @@ def _empty_reverse_cache(*args, **kwargs):
     _local.reverse_cache = {}
 
 
-def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
+def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, language=None,
         *vargs, **vkwargs):
     """
     Reverse URLs from application contents
@@ -116,11 +116,11 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
             # Take any
             model_class = ApplicationContent._feincms_content_models[0]
 
-        filters = {'urlconf_path': urlconf }
+        filters = {'urlconf_path': urlconf}
         page_fields = model_class.parent.field.rel.to._meta.get_all_field_names()
-        # filter for current language
+        # filter for overridden or current language
         if 'language' in page_fields:
-            filters['parent__language'] = get_language()
+            filters['parent__language'] = language or get_language()
 
         if 'site' in page_fields:
             # assuming django.contrib.sites is installed in this case.
