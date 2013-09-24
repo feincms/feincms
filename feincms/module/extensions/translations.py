@@ -21,7 +21,7 @@ from django.conf import settings as django_settings
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, get_language
 
 from feincms import extensions, settings
 from feincms.translations import is_primary_language
@@ -183,6 +183,10 @@ class Extension(extensions.Extension):
         @monkeypatch_method(cls)
         def get_translation(self, language):
             return self.original_translation.translations.get(language=language)
+
+        # add the language to the cache key for app_reverse to work.
+        if hasattr(cls, 'cache_key_components'):
+            cls.cache_key_components.append(lambda page: get_language())
 
     def handle_modeladmin(self, modeladmin):
 
