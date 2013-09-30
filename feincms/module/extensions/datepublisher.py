@@ -94,15 +94,15 @@ def register(cls, admin_cls):
     # Processor to patch up response headers for expiry date
     cls.register_response_processor(datepublisher_response_processor)
 
-    def datepublisher_admin(self, page):
+    def datepublisher_admin(self):
         return u'%s &ndash; %s' % (
-            format_date(page.publication_date),
-            format_date(page.publication_end_date, '&infin;'),
+            format_date(self.publication_date),
+            format_date(self.publication_end_date, '&infin;'),
             )
     datepublisher_admin.allow_tags = True
     datepublisher_admin.short_description = _('visible from - to')
 
-    admin_cls.datepublisher_admin = datepublisher_admin
+    cls.datepublisher_admin = datepublisher_admin
     try:
         pos = admin_cls.list_display.index('is_visible_admin')
     except ValueError:
