@@ -24,7 +24,7 @@ def post_process_fieldsets(fieldset):
     def _filter_recursive(fields):
         ret = []
         for f in fields:
-            if hasattr(f, '__iter__'):
+            if isinstance(f, (list, tuple)):
                 # Several fields on one line
                 sub = _filter_recursive(f)
                 # Only add if there's at least one field left

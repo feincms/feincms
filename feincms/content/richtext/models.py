@@ -114,5 +114,5 @@ class RichTextContent(models.Model):
             # Make sure we can load the tidy function without dependency failures:
             try:
                 get_object(settings.FEINCMS_TIDY_FUNCTION)
-            except ImportError, e:
+            except ImportError as e:
                 raise ImproperlyConfigured("FEINCMS_TIDY_HTML is enabled but the HTML tidy function %s could not be imported: %s" % (settings.FEINCMS_TIDY_FUNCTION, e))

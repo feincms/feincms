@@ -150,7 +150,7 @@ Django's standard functionality::
        class Meta:
            ordering = ['-id']
 
-       def __unicode__(self):
+       def __str__(self):
            return self.title
 
        @app_models.permalink

@@ -12,6 +12,7 @@ from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
@@ -25,12 +26,13 @@ from . import logger
 class CategoryManager(models.Manager):
     """
     Simple manager which exists only to supply ``.select_related("parent")``
-    on querysets since we can't even __unicode__ efficiently without it.
+    on querysets since we can't even __str__ efficiently without it.
     """
     def get_query_set(self):
         return super(CategoryManager, self).get_query_set().select_related("parent")
 
 # ------------------------------------------------------------------------
+@python_2_unicode_compatible
 class Category(models.Model):
     """
     These categories are meant primarily for organizing media files in the
@@ -51,7 +53,7 @@ class Category(models.Model):
 
     objects = CategoryManager()
 
-    def __unicode__(self):
+    def __str__(self):
         if self.parent_id:
             return u'%s - %s' % (self.parent.title, self.title)
 
@@ -75,6 +77,7 @@ class Category(models.Model):
         return ' - '.join((f.title for f in self.path_list()))
 
 # ------------------------------------------------------------------------
+@python_2_unicode_compatible
 class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     """
     Abstract media file class. Includes the :class:`feincms.models.ExtensionsMixin`
@@ -126,7 +129,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         if self.file:
             self._original_file_name = self.file.name
 
-    def __unicode__(self):
+    def __str__(self):
         trans = None
 
         try:
@@ -137,7 +140,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             pass
 
         if trans:
-            trans = unicode(trans)
+            trans = u'%s' % trans
             if trans.strip():
                 return trans
         return os.path.basename(self.file.name)
@@ -172,7 +175,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         if self.file:
             try:
                 self.file_size = self.file.size
-            except (OSError, IOError, ValueError), e:
+            except (OSError, IOError, ValueError) as e:
                 logger.error("Unable to read file size for %s: %s" % (self, e))
 
         super(MediaFileBase, self).save(*args, **kwargs)
@@ -193,7 +196,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             name = self.file.name
         try:
             self.file.storage.delete(name)
-        except Exception, e:
+        except Exception as e:
             logger.warn("Cannot delete media file %s: %s" % (name, e))
 
 # ------------------------------------------------------------------------
@@ -223,6 +226,7 @@ def _mediafile_post_delete(sender, instance, **kwargs):
     logger.info("Deleted mediafile %d (%s)" % (instance.id, instance.file.name))
 
 # ------------------------------------------------------------------------
+@python_2_unicode_compatible
 class MediaFileTranslation(Translation(MediaFile)):
     """
     Translated media file caption and description.
@@ -236,7 +240,7 @@ class MediaFileTranslation(Translation(MediaFile)):
         verbose_name_plural = _('media file translations')
         unique_together = ('parent', 'language_code')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.caption
 
 #-------------------------------------------------------------------------

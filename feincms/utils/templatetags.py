@@ -41,7 +41,9 @@ def do_simple_node_with_var_and_args_helper(cls):
                 tag_name, of_, in_var_name = token.contents.split()
                 args = ''
             except ValueError:
-                raise template.TemplateSyntaxError, 'Invalid syntax for %s node: %s' % (cls.__name__, token.contents)
+                raise template.TemplateSyntaxError(
+                    'Invalid syntax for %s node: %s' % (
+                        cls.__name__, token.contents))
 
         return cls(tag_name, in_var_name, args)
 
@@ -71,7 +73,9 @@ def do_simple_assignment_node_with_var_and_args_helper(cls):
                 tag_name, of_, in_var_name, as_, var_name = token.contents.split()
                 args = ''
             except ValueError:
-                raise template.TemplateSyntaxError, 'Invalid syntax for %s node: %s' % (cls.__name__, token.contents)
+                raise template.TemplateSyntaxError(
+                    'Invalid syntax for %s node: %s' % (
+                        cls.__name__, token.contents))
 
         return cls(tag_name, in_var_name, var_name, args)
 

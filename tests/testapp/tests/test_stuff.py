@@ -6,6 +6,7 @@ import doctest
 
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.utils.encoding import force_text
 
 import feincms
 
@@ -16,7 +17,7 @@ from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
 from feincms.module.page import processors
 from feincms.module.page.models import Page
-from feincms.utils import collect_dict_values, get_object
+from feincms.utils import collect_dict_values, get_object, shorten_string
 
 # ------------------------------------------------------------------------
 class Empty(object):
@@ -33,8 +34,6 @@ class DocTest(TestCase):
     def test_medialibrary_doctests(self):
         doctest.testmod(feincms.module.medialibrary.models)
 
-    def test_utils(self):
-        doctest.testmod(feincms.utils)
 
 class ModelsTest(TestCase):
     def test_region(self):
@@ -48,7 +47,7 @@ class ModelsTest(TestCase):
 
         # I'm not sure whether this test tests anything at all
         self.assertEqual(r.key, t.regions[0].key)
-        self.assertEqual(unicode(r), 'region title')
+        self.assertEqual(force_text(r), 'region title')
 
 
 class UtilsTest(TestCase):
@@ -61,6 +60,26 @@ class UtilsTest(TestCase):
     def test_collect_dict_values(self):
         self.assertEqual({'a': [1, 2], 'b': [3]},
             collect_dict_values([('a', 1), ('a', 2), ('b', 3)]))
+
+    def test_shorten_string(self):
+        string = shorten_string(
+            u"Der Wolf und die Grossmutter assen im Wald zu mittag",
+            15, ellipsis=u"_")
+        self.assertEqual(string, u'Der Wolf und_ag')
+        self.assertEqual(len(string), 15)
+
+        string = shorten_string(
+            u"Haenschen-Klein, ging allein, in den tiefen Wald hinein",
+            15)
+        self.assertEqual(string, u'Haenschen \u2026 ein')
+        self.assertEqual(len(string), 15)
+
+        string = shorten_string(
+            u'Badgerbadgerbadgerbadgerbadger',
+            10, ellipsis=u'-')
+        self.assertEqual(string, u'Badger-ger')
+        self.assertEqual(len(string), 10)
+
 
 class ExampleCMSBase(Base):
     pass

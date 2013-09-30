@@ -7,6 +7,7 @@ import warnings
 
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
+from django.utils import six
 
 from feincms.utils import get_object
 
@@ -43,7 +44,7 @@ class ExtensionsMixin(object):
 
             extension = None
 
-            if isinstance(ext, basestring):
+            if isinstance(ext, six.string_types):
                 try:
                     extension = get_object(ext)
                 except (AttributeError, ImportError, ValueError):

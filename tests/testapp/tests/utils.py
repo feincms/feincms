@@ -31,7 +31,7 @@ def reset_page_db():
         cursor = connection.cursor()
         for sql in sql_list:
             cursor.execute(sql)
-    except Exception, e:
+    except Exception as e:
         transaction.rollback_unless_managed()
         raise CommandError("Error: database couldn't be reset: %s" % e)
     else:

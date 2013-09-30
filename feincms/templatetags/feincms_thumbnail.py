@@ -2,8 +2,9 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from io import BytesIO
 import re
-from cStringIO import StringIO
+
 # Try to import PIL in either of the two ways it can end up installed.
 try:
     from PIL import Image
@@ -14,10 +15,10 @@ except ImportError:
         # Django seems to silently swallow the ImportError under certain
         # circumstances. Raise a generic exception explaining why we are
         # unable to proceed.
-        raise Exception, 'FeinCMS requires PIL to be installed'
+        raise Exception('FeinCMS requires PIL to be installed')
 
 from django import template
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
@@ -27,6 +28,7 @@ from feincms import settings
 register = template.Library()
 
 
+@python_2_unicode_compatible
 class Thumbnailer(object):
     THUMBNAIL_SIZE_RE = re.compile(r'^(?P<w>\d+)x(?P<h>\d+)$')
     MARKER = '_thumb_'
@@ -39,7 +41,7 @@ class Thumbnailer(object):
     def url(self):
         return unicode(self)
 
-    def __unicode__(self):
+    def __str__(self):
         match = self.THUMBNAIL_SIZE_RE.match(self.size)
         if not (self.filename and match):
             return u''
@@ -56,7 +58,7 @@ class Thumbnailer(object):
         if hasattr(self.filename, 'name'):
             filename = self.filename.name
         else:
-            filename = force_unicode(self.filename)
+            filename = force_text(self.filename)
 
         # defining the filename and the miniature filename
         try:
@@ -96,14 +98,14 @@ class Thumbnailer(object):
 
     def generate(self, storage, original, size, miniature):
         try:
-            image = Image.open(StringIO(storage.open(original).read()))
+            image = Image.open(BytesIO(storage.open(original).read()))
 
             # defining the size
             w, h = int(size['w']), int(size['h'])
 
             format = image.format # Save format for the save() call later
             image.thumbnail([w, h], Image.ANTIALIAS)
-            buf = StringIO()
+            buf = BytesIO()
             if image.mode not in ('RGBA', 'RGB', 'L'):
                 image = image.convert('RGBA')
             image.save(buf,
@@ -129,7 +131,7 @@ class CropscaleThumbnailer(Thumbnailer):
 
     def generate(self, storage, original, size, miniature):
         try:
-            image = Image.open(StringIO(storage.open(original).read()))
+            image = Image.open(BytesIO(storage.open(original).read()))
         except:
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
@@ -165,7 +167,7 @@ class CropscaleThumbnailer(Thumbnailer):
         image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
         image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
 
-        buf = StringIO()
+        buf = BytesIO()
         if image.mode not in ('RGBA', 'RGB', 'L'):
             image = image.convert('RGBA')
         image.save(buf,

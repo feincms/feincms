@@ -51,7 +51,7 @@ All standard :class:`~django.contrib.admin.options.ModelAdmin` attributes such a
 :attr:`ModelAdmin.list_display`, :attr:`ModelAdmin.list_editable`,
 :attr:`ModelAdmin.list_filter` work as normally. The only exception to this
 rule is the column showing the tree structure (the second column in the image).
-There, we always show the value of :attr:`Model.__unicode__` currently.
+There, we always show the value of :attr:`Model.__str__` currently.
 
 
 AJAX checkboxes
@@ -83,7 +83,7 @@ Usage::
     mptt.register(Category)
 
     class CategoryAdmin(tree_editor.TreeEditor):
-        list_display = ('__unicode__', 'active_toggle')
+        list_display = ('__str__', 'active_toggle')
         active_toggle = tree_editor.ajax_editable_boolean('active', _('active'))
 
 

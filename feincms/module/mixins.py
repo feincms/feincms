@@ -138,7 +138,7 @@ class ContentObjectMixin(TemplateResponseMixin):
         if not getattr(self.object, 'request_processors', None):
             return
 
-        for fn in reversed(self.object.request_processors.values()):
+        for fn in reversed(list(self.object.request_processors.values())):
             r = fn(self.object, self.request)
             if r:
                 return r
@@ -176,7 +176,7 @@ class ContentObjectMixin(TemplateResponseMixin):
                     successful = r
                 elif r:
                     return r
-            except Http404, e:
+            except Http404 as e:
                 http404 = e
 
         if not successful:

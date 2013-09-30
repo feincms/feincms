@@ -18,6 +18,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.template.defaultfilters import filesizeformat
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
@@ -84,7 +85,7 @@ def save_as_zipfile(modeladmin, request, queryset):
     try:
         zip_name = export_zipfile(site, queryset)
         messages.info(request, _("ZIP file exported as %s") % zip_name)
-    except Exception, e:
+    except Exception as e:
         messages.error(request, _("ZIP file export failed: %s") % str(e))
         return
 
@@ -99,8 +100,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
     save_on_top       = True
     date_hierarchy    = 'created'
     inlines           = [admin_translationinline(MediaFileTranslation)]
-    list_display      = ['admin_thumbnail', '__unicode__', 'file_info', 'formatted_created']
-    list_display_links = ['__unicode__']
+    list_display      = ['admin_thumbnail', '__str__', 'file_info', 'formatted_created']
+    list_display_links = ['__str__']
     list_filter       = ['type', 'categories']
     list_per_page     = 25
     search_fields     = ['copyright', 'file', 'translations__caption']
@@ -158,7 +159,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 d = get_image_dimensions(obj.file.file)
                 if d:
                     t += " %d&times;%d" % ( d[0], d[1] )
-            except (IOError, ValueError), e:
+            except (IOError, ValueError) as e:
                 t += " (%s)" % e
         return t
     file_type.admin_order_field = 'type'
@@ -196,7 +197,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
             try:
                 count = import_zipfile(request.POST.get('category'), request.POST.get('overwrite', False), request.FILES['data'])
                 messages.info(request, _("%d files imported") % count)
-            except Exception, e:
+            except Exception as e:
                 messages.error(request, _("ZIP import failed: %s") % str(e))
         else:
             messages.error(request, _("No input file given"))

@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from django.core.management.color import color_style
 from django.db import connection
 
@@ -39,17 +41,17 @@ def check_database_schema(cls, module_name):
 
         style = color_style()
 
-        print style.ERROR('The following columns seem to be missing in the database table %s:' % cls._meta.db_table)
+        print(style.ERROR('The following columns seem to be missing in the database table %s:' % cls._meta.db_table))
         for field in missing_columns:
-            print u'%s:%s%s' % (
+            print(u'%s:%s%s' % (
                 style.SQL_KEYWORD(field.column),
                 ' ' * (25 - len(field.column)),
                 u'%s.%s' % (field.__class__.__module__, field.__class__.__name__),
-                )
+                ))
 
-        print style.NOTICE('\nPlease consult the output of `python manage.py sql %s` to'
+        print(style.NOTICE('\nPlease consult the output of `python manage.py sql %s` to'
             ' find out what the correct column types are. (Or use south, which is what'
             ' you should be doing anyway.)\n' % (
             cls._meta.app_label,
-            ))
+            )))
     return _fn

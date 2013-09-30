@@ -107,7 +107,7 @@ def lookup_translations(language_code=None):
         if not instance_dict:
             return
 
-        candidates = instance_dict.values()[0].translations.model._default_manager.all()
+        candidates = list(instance_dict.values())[0].translations.model._default_manager.all()
 
         if instance_dict:
             _process(candidates, instance_dict, lang_, 'iexact')
@@ -186,11 +186,11 @@ class TranslatedObjectMixin(object):
         if not language_code:
             language_code = translation.get_language()
         return (('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
-                '-'.join(['%s' % s for s in
+                '-'.join(['%s' % s for s in (
                         self._meta.db_table,
                         self.id,
                         language_code,
-                        ]))
+                        )]))
 
     def get_translation(self, language_code=None):
         if not language_code:
@@ -224,14 +224,14 @@ class TranslatedObjectMixin(object):
     def available_translations(self):
         return self.translations.values_list('language_code', flat=True)
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             translation = self.translation
         except ObjectDoesNotExist:
             return self.__class__.__name__
 
         if translation:
-            return unicode(translation)
+            return u'%s' % translation
 
         return self.__class__.__name__
 
