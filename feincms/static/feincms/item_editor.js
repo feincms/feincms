@@ -525,7 +525,7 @@ if(!Array.indexOf) {
         $(".order-machine").sortable({
             handle: '.handle',
             helper: function(event, ui){
-                var h2 = $("<h2>").html($(ui.item).find('span.modname').html());
+                var h2 = $("<h2>").html($(ui).find('span.modname').html());
                 return $("<fieldset>").addClass("helper module").append(h2);
             },
             placeholder: 'highlight',
