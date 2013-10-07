@@ -143,8 +143,9 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
                     ) | tree_contents.filter(
                         parent__lft__lte=proximity_info[2],
                         parent__lft__gte=proximity_info[1],
-                    )).extra({'level_diff':"abs(level-%d)" % proximity_info[3]}
-                        ).order_by('level_diff')[0]
+                    )).extra({
+                        'level_diff': "abs(100 + level - %d)" % proximity_info[3]
+                    }).order_by('level_diff')[0]
                 except IndexError:
                     content = tree_contents[0]
         else:
