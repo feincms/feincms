@@ -1,13 +1,8 @@
 """
 Third-party application inclusion support.
 """
-
-from email.utils import parsedate
-from time import mktime
 from django.contrib.sites.models import Site
 from django.core.exceptions import FieldError
-import re
-
 from django.core import urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse, NoReverseMatch
 from django.db import models
@@ -16,11 +11,15 @@ from django.http import HttpResponse, Http404
 from django.utils.functional import curry as partial, lazy, wraps
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, get_language
+from email.utils import parsedate
 
 from feincms import settings
 from feincms.admin.item_editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
 from feincms.utils import get_object
+
+from time import mktime
+import re
 
 try:
     from threading import local
@@ -51,8 +50,8 @@ def _empty_reverse_cache(*args, **kwargs):
     _local.reverse_cache = {}
 
 
-def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None, language=None,
-        *vargs, **vkwargs):
+def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
+                language=None, *vargs, **vkwargs):
     """
     Reverse URLs from application contents
 
