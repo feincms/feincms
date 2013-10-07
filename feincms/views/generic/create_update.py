@@ -1,7 +1,7 @@
-from django.views.generic import create_update
+from django.views.generic import CreateView, UpdateView, DeleteView
 from feincms.views.decorators import add_page_to_extra_context
 
 
-create_object = add_page_to_extra_context(create_update.create_object)
-update_object = add_page_to_extra_context(create_update.update_object)
-delete_object = add_page_to_extra_context(create_update.delete_object)
+create_object = add_page_to_extra_context(CreateView.as_view())
+update_object = add_page_to_extra_context(UpdateView.as_view())
+delete_object = add_page_to_extra_context(DeleteView.as_view())
