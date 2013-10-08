@@ -105,11 +105,11 @@ if(!Array.indexOf) {
         var mouseenter_timeout;
         var mouseleave_timeout;
         function hide_controls() {
-            item_controls.find("*").fadeOut(800);
+            item_controls.find("*").fadeOut(400);
             is_hidden = true;
         }
         function show_controls() {
-            item_controls.find("*").fadeIn(800);
+            item_controls.find("*").fadeIn(200);
             is_hidden = false;
         }
         item_controls.unbind('mouseleave'); // Unbind in case it's already been bound.
