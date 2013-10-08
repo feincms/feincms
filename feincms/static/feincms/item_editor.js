@@ -105,17 +105,17 @@ if(!Array.indexOf) {
         var mouseenter_timeout;
         var mouseleave_timeout;
         function hide_controls() {
-            item_controls.find("*").fadeOut(800);
+            item_controls.find("*").fadeOut(400);
             is_hidden = true;
         }
         function show_controls() {
-            item_controls.find("*").fadeIn(800);
+            item_controls.find("*").fadeIn(200);
             is_hidden = false;
         }
         item_controls.unbind('mouseleave'); // Unbind in case it's already been bound.
         item_controls.mouseleave(function() {
             clearTimeout(mouseenter_timeout);
-            mouseleave_timeout = setTimeout(hide_controls, 1000);
+            mouseleave_timeout = setTimeout(hide_controls, 200);
         });
         item_controls.unbind('mouseenter'); // Unbind in case it's already been bound.
         item_controls.mouseenter(function() {
