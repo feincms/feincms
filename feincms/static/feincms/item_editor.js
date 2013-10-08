@@ -115,7 +115,7 @@ if(!Array.indexOf) {
         item_controls.unbind('mouseleave'); // Unbind in case it's already been bound.
         item_controls.mouseleave(function() {
             clearTimeout(mouseenter_timeout);
-            mouseleave_timeout = setTimeout(hide_controls, 1000);
+            mouseleave_timeout = setTimeout(hide_controls, 200);
         });
         item_controls.unbind('mouseenter'); // Unbind in case it's already been bound.
         item_controls.mouseenter(function() {
