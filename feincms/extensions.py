@@ -4,6 +4,7 @@ Base types for extensions refactor
 
 import re
 import warnings
+from functools import wraps
 
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
@@ -202,3 +203,20 @@ class ExtensionModelAdmin(admin.ModelAdmin):
                 # Fall back to first fieldset if second does not exist
                 # XXX This is really messy.
                 self.fieldsets[0][1]['fields'].extend(f)
+
+
+def prefetch_modeladmin_get_queryset(modeladmin, *lookups):
+    """
+    Wraps default modeladmin ``get_queryset`` to prefetch related lookups.
+    """
+    def do_wrap(f):
+        @wraps(f)
+        def wrapper(request, *args, **kwargs):
+            qs = f(request, *args, **kwargs)
+            qs = qs.prefetch_related(*lookups)
+            return qs
+        return wrapper
+
+    # queryset is renamed to get_queryset in Django 1.6
+    fn = "get_queryset" if hasattr(modeladmin, "get_queryset") else "queryset"
+    setattr(modeladmin, fn, do_wrap(getattr(modeladmin, fn)))
