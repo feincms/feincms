@@ -5,8 +5,10 @@ FeinCMS 1.8 release notes (upcoming)
 Welcome to FeinCMS 1.8!
 
 
-Major feature 1
-===============
+Python 3.3 support
+==================
+
+The testsuite runs through on Python 3.3.
 
 
 Backwards-incompatible changes
