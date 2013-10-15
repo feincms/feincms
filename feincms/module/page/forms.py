@@ -6,7 +6,6 @@ from __future__ import absolute_import
 
 import re
 
-from django import forms
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.sites.models import Site
 from django.db.models.loading import get_model
@@ -16,7 +15,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms.utils import shorten_string
 
 from mptt.forms import MPTTAdminForm
 
@@ -129,14 +127,14 @@ class PageAdminForm(MPTTAdminForm):
                 pk = kwargs['instance'].pk if 'instance' in kwargs else None
                 other_pages_for_template = pages_for_template.exclude(pk=pk)
                 if template.singleton and other_pages_for_template.exists():
-                    continue # don't allow selection of singleton if in use
+                    continue  # don't allow selection of singleton if in use
                 if template.preview_image:
                     choices.append((template.key,
                         mark_safe(u'<img src="%s" alt="%s" /> %s' % (
-                              template.preview_image,
-                              template.key,
-                              template.title,
-                              ))))
+                            template.preview_image,
+                            template.key,
+                            template.title,
+                            ))))
                 else:
                     choices.append((template.key, template.title))
 

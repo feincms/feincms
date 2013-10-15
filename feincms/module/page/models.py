@@ -92,7 +92,8 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         if path:
             tokens = path.split('/')
-            paths += ['/%s/' % '/'.join(tokens[:i]) for i in range(1, len(tokens)+1)]
+            paths += ['/%s/' % '/'.join(tokens[:i])
+                for i in range(1, len(tokens) + 1)]
 
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
@@ -150,11 +151,12 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         return request._feincms_page
 
+
 # ------------------------------------------------------------------------
 class PageManager(BasePageManager):
     pass
-
 PageManager.add_to_active_filters(Q(active=True))
+
 
 # ------------------------------------------------------------------------
 @python_2_unicode_compatible
@@ -166,7 +168,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     slug = models.SlugField(_('slug'), max_length=150,
                     help_text=_('This is used to build the URL for this page'))
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True, null=True, related_name='children')
-    parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
+    parent.parent_filter = True  # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=False)
     override_url = models.CharField(_('override URL'), max_length=255, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the beginning and at the end if it is a local URL. This affects both the navigation and subpages\' URLs.'))
@@ -176,9 +178,10 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
 
-    cache_key_components = [ lambda p: getattr(django_settings, 'SITE_ID', 0),
-                             lambda p: p._django_content_type.id,
-                             lambda p: p.id ]
+    cache_key_components = [
+        lambda p: getattr(django_settings, 'SITE_ID', 0),
+        lambda p: p._django_content_type.id,
+        lambda p: p.id]
 
     class Meta:
         ordering = ['tree_id', 'lft']
@@ -270,20 +273,17 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                     page.slug)
 
             cached_page_urls[page.id] = page._cached_url
-            super(BasePage, page).save() # do not recurse
+            super(BasePage, page).save()  # do not recurse
     save.alters_data = True
 
     @commit_on_success
     def delete(self, *args, **kwargs):
         if not settings.FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED:
             if self.template.singleton:
-                raise PermissionDenied(
-                    _(u'This %(page_class)s uses a singleton template, and '
-                      u'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False' % {
-                            'page_class': self._meta.verbose_name
-                      }
-                    )
-                )
+                raise PermissionDenied(_(
+                    u'This %(page_class)s uses a singleton template, and '
+                    u'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False' % {
+                        'page_class': self._meta.verbose_name}))
         super(BasePage, self).delete(*args, **kwargs)
         self.invalidate_cache()
     delete.alters_data = True
@@ -392,6 +392,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                                            key='frontend_editing')
             cls.register_response_processor(processors.frontendediting_response_processor,
                                             key='frontend_editing')
+
 
 # ------------------------------------------------------------------------
 class Page(BasePage):

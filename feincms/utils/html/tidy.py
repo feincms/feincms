@@ -47,17 +47,15 @@ def tidy_html(html):
         tidy_f = tidylib.tidy_fragment
         doc_mode = False
 
-    html, messages = tidy_f(
-        html.strip(),
-        {
-            "char-encoding":               "utf8",
-            "clean":                        False,
-            "drop-empty-paras":             False,
-            "drop-font-tags":               True,
-            "drop-proprietary-attributes":  False,
-            "fix-backslash":                True,
-            "indent":                       True,
-            "output-xhtml":                 True,
+    html, messages = tidy_f(html.strip(), {
+        "char-encoding": "utf8",
+        "clean": False,
+        "drop-empty-paras": False,
+        "drop-font-tags": True,
+        "drop-proprietary-attributes": False,
+        "fix-backslash": True,
+        "indent": True,
+        "output-xhtml": True,
         }
     )
 

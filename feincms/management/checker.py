@@ -27,7 +27,7 @@ def check_database_schema(cls, module_name):
 
         cursor = connection.cursor()
 
-        existing_columns = [row[0] for row in \
+        existing_columns = [row[0] for row in
             connection.introspection.get_table_description(cursor, cls._meta.db_table)]
 
         missing_columns = []
@@ -51,7 +51,6 @@ def check_database_schema(cls, module_name):
 
         print(style.NOTICE('\nPlease consult the output of `python manage.py sql %s` to'
             ' find out what the correct column types are. (Or use south, which is what'
-            ' you should be doing anyway.)\n' % (
-            cls._meta.app_label,
-            )))
+            ' you should be doing anyway.)\n' % (cls._meta.app_label)))
+
     return _fn

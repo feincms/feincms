@@ -12,6 +12,7 @@ from django.core.management.base import NoArgsCommand
 
 from feincms.module.page.models import Page
 
+
 class Command(NoArgsCommand):
     help = "Run this manually to rebuild your mptt pointers. Only use in emergencies."
 

@@ -103,7 +103,7 @@ class Thumbnailer(object):
             # defining the size
             w, h = int(size['w']), int(size['h'])
 
-            format = image.format # Save format for the save() call later
+            format = image.format  # Save format for the save() call later
             image.thumbnail([w, h], Image.ANTIALIAS)
             buf = BytesIO()
             if image.mode not in ('RGBA', 'RGB', 'L'):
@@ -163,8 +163,12 @@ class CropscaleThumbnailer(Thumbnailer):
             x_offset = 0
             y_offset = int(float(src_height - crop_height) * y / 100)
 
-        format = image.format # Save format for the save() call later
-        image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
+        format = image.format  # Save format for the save() call later
+        image = image.crop((
+            x_offset,
+            y_offset,
+            x_offset + int(crop_width),
+            y_offset + int(crop_height)))
         image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
 
         buf = BytesIO()

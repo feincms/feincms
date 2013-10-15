@@ -120,7 +120,6 @@ class Extension(extensions.Extension):
 
             return cls().children(self, **kwargs)
 
-
     def handle_modeladmin(self, modeladmin):
         modeladmin.add_extension_options(_('Navigation extension'), {
             'fields': ('navigation_extension',),

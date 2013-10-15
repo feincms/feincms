@@ -58,6 +58,7 @@ class RichTextContentAdminForm(ItemEditorForm):
 
         return cleaned_data
 
+
 class RichTextContent(models.Model):
     """
     Rich text content. Uses TinyMCE by default, but can be configured to do
@@ -75,7 +76,7 @@ class RichTextContent(models.Model):
         lambda x: settings.FEINCMS_RICHTEXT_INIT_CONTEXT,
     )
     feincms_item_editor_includes = {
-        'head': [ settings.FEINCMS_RICHTEXT_INIT_TEMPLATE ],
+        'head': [settings.FEINCMS_RICHTEXT_INIT_TEMPLATE],
     }
 
     text = RichTextField(_('text'), blank=True)
@@ -87,7 +88,7 @@ class RichTextContent(models.Model):
 
     def render(self, **kwargs):
         return render_to_string('content/richtext/default.html',
-            { 'content': self }, context_instance=kwargs.get('context'))
+            {'content': self}, context_instance=kwargs.get('context'))
 
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?

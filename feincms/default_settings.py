@@ -148,4 +148,3 @@ FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED = getattr(
     settings, 'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED', False)
 
 # ------------------------------------------------------------------------
-

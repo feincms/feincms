@@ -11,6 +11,8 @@ def default_admin_thumbnail(mediafile, dimensions='100x100', **kwargs):
 
 
 _cached_thumbnailer = None
+
+
 def admin_thumbnail(mediafile, dimensions='100x100'):
     global _cached_thumbnailer
     if not _cached_thumbnailer:

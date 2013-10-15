@@ -5,7 +5,6 @@ instead.
 
 import os
 
-from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _

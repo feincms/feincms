@@ -6,10 +6,10 @@ import logging
 
 from django import template
 from django.conf import settings
-from django.db.models import get_model
 from django.template.loader import render_to_string
 
 from feincms.utils import get_singleton, get_singleton_url
+
 
 register = template.Library()
 
@@ -28,8 +28,8 @@ def _render_content(content, **kwargs):
             return
         setattr(request, 'feincms_render_level', level + 1)
 
-    if (request and request.COOKIES.get('frontend_editing', False) and\
-            hasattr(content, 'fe_render')):
+    if (request and request.COOKIES.get('frontend_editing', False)
+            and hasattr(content, 'fe_render')):
         r = content.fe_render(**kwargs)
     else:
         r = content.render(**kwargs)
@@ -71,6 +71,7 @@ def feincms_frontend_editing(cms_obj, request):
         return render_to_string('admin/feincms/fe_tools.html', context)
 
     return u''
+
 
 @register.inclusion_tag('admin/feincms/content_type_selection_widget.html', takes_context=True)
 def show_content_type_selection_widget(context, region):

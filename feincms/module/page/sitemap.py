@@ -7,6 +7,7 @@ from django.contrib.sitemaps import Sitemap
 
 from feincms.module.page.models import Page
 
+
 # ------------------------------------------------------------------------
 class PageSitemap(Sitemap):
     """
@@ -33,15 +34,15 @@ class PageSitemap(Sitemap):
         level, in_navigation and optionally modification_date.
         """
         super(PageSitemap, self).__init__(*args, **kwargs)
-        self.depth_cutoff        = max_depth
-        self.navigation_only     = navigation_only
-        self.changefreq          = changefreq
-        self.filter              = filter
+        self.depth_cutoff = max_depth
+        self.navigation_only = navigation_only
+        self.changefreq = changefreq
+        self.filter = filter
         self.extended_navigation = extended_navigation
         if queryset is not None:
-            self.queryset        = queryset
+            self.queryset = queryset
         else:
-            self.queryset        = Page.objects.active()
+            self.queryset = Page.objects.active()
 
     def items(self):
         """
@@ -62,9 +63,9 @@ class PageSitemap(Sitemap):
         if self.navigation_only:
             qs = qs.filter(in_navigation=True)
         if self.depth_cutoff > 0:
-            qs = qs.filter(level__lte=self.max_depth-1)
+            qs = qs.filter(level__lte=self.max_depth - 1)
 
-        pages = [ p for p in qs if p.is_active() ]
+        pages = [p for p in qs if p.is_active()]
 
         if self.extended_navigation:
             for idx, page in enumerate(pages):

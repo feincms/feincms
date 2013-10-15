@@ -11,6 +11,7 @@ from django.core.management.base import BaseCommand
 
 from feincms.content.rss.models import RSSContent
 
+
 class Command(BaseCommand):
     help = "Run this as a cronjob."
 

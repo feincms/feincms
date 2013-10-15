@@ -82,7 +82,7 @@ class TrackerContentProxy(ContentProxy):
                 dct = ContentType.objects.get_for_model(fct)
 
                 # Rely on non-negative primary keys
-                map[-dct.id] = idx # From-inventory map
+                map[-dct.id] = idx  # From-inventory map
                 map[idx] = dct.id  # To-inventory map
 
             _translation_map_cache[cls] = map
@@ -98,7 +98,7 @@ class TrackerContentProxy(ContentProxy):
 
         return dict((region, [
             (pk, map[-ct]) for pk, ct in items
-            ]) for region, items in inventory.items() if region!='_version_')
+            ]) for region, items in inventory.items() if region != '_version_')
 
     def _to_inventory(self, counts):
         map = self._translation_map()
@@ -108,6 +108,7 @@ class TrackerContentProxy(ContentProxy):
             ]) for region, items in counts.items())
         inventory['_version_'] = INVENTORY_VERSION
         return inventory
+
 
 # ------------------------------------------------------------------------
 def class_prepared_handler(sender, **kwargs):
@@ -119,6 +120,7 @@ def class_prepared_handler(sender, **kwargs):
     _translation_map_cache = {}
 class_prepared.connect(class_prepared_handler)
 
+
 # ------------------------------------------------------------------------
 def tree_post_save_handler(sender, instance, **kwargs):
     """
@@ -129,11 +131,13 @@ def tree_post_save_handler(sender, instance, **kwargs):
     # inheritance has been customized.
     instance.get_descendants(include_self=True).update(_ct_inventory=None)
 
+
 # ------------------------------------------------------------------------
 def single_pre_save_handler(sender, instance, **kwargs):
     """Clobber the _ct_inventory attribute of this object"""
 
     instance._ct_inventory = None
+
 
 # ------------------------------------------------------------------------
 def register(cls, admin_cls):

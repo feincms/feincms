@@ -158,7 +158,8 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
         for q in connection.queries:
             i += 1
             if verbose:
-                print >> file, "%d : [%s]\n%s\n" % ( i, q['time'], print_sql(q['sql']))
+                print >> file, "%d : [%s]\n%s\n" % (
+                    i, q['time'], print_sql(q['sql']))
             time += float(q['time'])
 
         print >> file, "--------------------------------------------------------------"

@@ -18,7 +18,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.template.defaultfilters import filesizeformat
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
@@ -30,14 +29,16 @@ from .models import Category, MediaFileTranslation
 from .forms import MediaCategoryAdminForm, MediaFileAdminForm
 from .thumbnail import admin_thumbnail
 
+
 # -----------------------------------------------------------------------
 class CategoryAdmin(admin.ModelAdmin):
     form = MediaCategoryAdminForm
-    list_display      = ['path']
-    list_filter       = ['parent']
-    list_per_page     = 25
-    search_fields     = ['title']
-    prepopulated_fields = { 'slug': ('title',), }
+    list_display = ['path']
+    list_filter = ['parent']
+    list_per_page = 25
+    search_fields = ['title']
+    prepopulated_fields = {'slug': ('title',)}
+
 
 #-------------------------------------------------------------------------
 def assign_category(modeladmin, request, queryset):
@@ -56,9 +57,10 @@ def assign_category(modeladmin, request, queryset):
                 category.mediafile_set.add(mediafile)
                 count += 1
 
-            message = ungettext('Successfully added %(count)d media file to %(category)s.',
-                                'Successfully added %(count)d media files to %(category)s.',
-                                count) % {'count':count, 'category':category}
+            message = ungettext(
+                'Successfully added %(count)d media file to %(category)s.',
+                'Successfully added %(count)d media files to %(category)s.',
+                count) % {'count': count, 'category': category}
             modeladmin.message_user(request, message)
             return HttpResponseRedirect(request.get_full_path())
     if 'cancel' in request.POST:
@@ -75,7 +77,9 @@ def assign_category(modeladmin, request, queryset):
         'opts': modeladmin.model._meta,
         }, context_instance=RequestContext(request))
 
+
 assign_category.short_description = _('Add selected media files to category')
+
 
 #-------------------------------------------------------------------------
 def save_as_zipfile(modeladmin, request, queryset):
@@ -91,25 +95,27 @@ def save_as_zipfile(modeladmin, request, queryset):
 
     return HttpResponseRedirect(os.path.join(django_settings.MEDIA_URL, zip_name))
 
+
 save_as_zipfile.short_description = _('Export selected media files as zip file')
+
 
 # ------------------------------------------------------------------------
 class MediaFileAdmin(ExtensionModelAdmin):
-    form              = MediaFileAdminForm
+    form = MediaFileAdminForm
 
-    save_on_top       = True
-    date_hierarchy    = 'created'
-    inlines           = [admin_translationinline(MediaFileTranslation)]
-    list_display      = ['admin_thumbnail', '__str__', 'file_info', 'formatted_created']
+    save_on_top = True
+    date_hierarchy = 'created'
+    inlines = [admin_translationinline(MediaFileTranslation)]
+    list_display = ['admin_thumbnail', '__str__', 'file_info', 'formatted_created']
     list_display_links = ['__str__']
-    list_filter       = ['type', 'categories']
-    list_per_page     = 25
-    search_fields     = ['copyright', 'file', 'translations__caption']
+    list_filter = ['type', 'categories']
+    list_per_page = 25
+    search_fields = ['copyright', 'file', 'translations__caption']
     filter_horizontal = ("categories",)
-    actions           = [assign_category, save_as_zipfile]
+    actions = [assign_category, save_as_zipfile]
 
     def get_urls(self):
-        from django.conf.urls import patterns, include, url
+        from django.conf.urls import patterns, url
 
         urls = super(MediaFileAdmin, self).get_urls()
         my_urls = patterns('',
@@ -132,7 +138,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
                     <img src="%(image)s" alt="" />
                 </a>""" % {
                     'url': obj.file.url,
-                    'image': image,})
+                    'image': image})
         return ''
     admin_thumbnail.short_description = _('Preview')
     admin_thumbnail.allow_tags = True
@@ -158,7 +164,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
             try:
                 d = get_image_dimensions(obj.file.file)
                 if d:
-                    t += " %d&times;%d" % ( d[0], d[1] )
+                    t += " %d&times;%d" % (d[0], d[1])
             except (IOError, ValueError) as e:
                 t += " (%s)" % e
         return t
@@ -176,13 +182,13 @@ class MediaFileAdmin(ExtensionModelAdmin):
         """
         from feincms.utils import shorten_string
         return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" id="_refkey_%d" /> %s <br />%s, %s' % (
-                obj.id,
-                obj.file.name,
-                obj.id,
-                shorten_string(os.path.basename(obj.file.name), max_length=40),
-                self.file_type(obj),
-                self.formatted_file_size(obj),
-                )
+            obj.id,
+            obj.file.name,
+            obj.id,
+            shorten_string(os.path.basename(obj.file.name), max_length=40),
+            self.file_type(obj),
+            self.formatted_file_size(obj),
+            )
     file_info.admin_order_field = 'file'
     file_info.short_description = _('file info')
     file_info.allow_tags = True

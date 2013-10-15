@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms._internal import monkeypatch_property
 
+
 def register(cls, admin_cls):
     cls.add_to_class('_content_title', models.TextField(_('content title'), blank=True,
         help_text=_('The first line is the main title, the following lines are subtitles.')))

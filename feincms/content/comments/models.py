@@ -19,6 +19,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
+
 # ------------------------------------------------------------------------
 class CommentsContent(models.Model):
     comments_enabled = models.BooleanField(_('enabled'), default=True, help_text=_('New comments may be added'))

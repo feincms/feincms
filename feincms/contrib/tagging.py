@@ -18,6 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 from tagging.fields import TagField
 from tagging import AlreadyRegistered
 
+
 # ------------------------------------------------------------------------
 def taglist_to_string(taglist):
     retval = ''
@@ -42,9 +43,11 @@ class MyModel(models.Model):
 
 """
 
+
 class TagSelectFormField(forms.MultipleChoiceField):
     def clean(self, value):
         return taglist_to_string(list(value))
+
 
 class TagSelectField(TagField):
     def __init__(self, filter_horizontal=False, *args, **kwargs):
@@ -65,8 +68,9 @@ class TagSelectField(TagField):
             return type(widget).render(widget, name, value, attrs, *args, **kwargs)
         widget.render = _render
         defaults['widget'] = widget
-        choices = [ (str(t), str(t)) for t in Tag.objects.all() ]
+        choices = [(str(t), str(t)) for t in Tag.objects.all()]
         return TagSelectFormField(choices=choices, required=not self.blank, **defaults)
+
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
@@ -79,6 +83,7 @@ def pre_save_handler(sender, instance, **kwargs):
 
     taglist = parse_tag_input(instance.tags)
     instance.tags = taglist_to_string(taglist)
+
 
 # ------------------------------------------------------------------------
 def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False, auto_add_admin_field=True):

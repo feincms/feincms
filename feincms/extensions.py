@@ -2,7 +2,6 @@
 Base types for extensions refactor
 """
 
-import re
 import warnings
 
 from django.contrib import admin

@@ -1,5 +1,6 @@
 from django import template
 
+
 register = template.Library()
 
 
@@ -24,7 +25,7 @@ class FragmentNode(template.Node):
             request._feincms_fragments[identifier] = rendered + old
         elif self.mode == 'replace':
             request._feincms_fragments[identifier] = rendered
-        else: # append
+        else:  # append
             request._feincms_fragments[identifier] = old + rendered
 
         return u''

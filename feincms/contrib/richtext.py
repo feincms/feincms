@@ -26,7 +26,7 @@ class RichTextField(models.TextField):
 try:
     from south.modelsinspector import add_introspection_rules
 
-    RichTextField_introspection_rule = ( (RichTextField,), [], {}, )
+    RichTextField_introspection_rule = ((RichTextField,), [], {},)
 
     add_introspection_rules(rules=[RichTextField_introspection_rule],
         patterns=["^feincms\.contrib\.richtext"])

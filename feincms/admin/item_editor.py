@@ -22,12 +22,14 @@ from feincms import settings, ensure_completely_loaded
 from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
 
+
 # ------------------------------------------------------------------------
 FRONTEND_EDITING_MATCHER = re.compile(r'(\d+)\|(\w+)\|(\d+)')
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
 FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 logger = logging.getLogger(__name__)
+
 
 # ------------------------------------------------------------------------
 class ItemEditorForm(forms.ModelForm):
@@ -39,6 +41,7 @@ class ItemEditorForm(forms.ModelForm):
     region = forms.CharField(widget=forms.HiddenInput())
     ordering = forms.IntegerField(widget=forms.HiddenInput())
 
+
 # ------------------------------------------------------------------------
 class FeinCMSInline(InlineModelAdmin):
     """
@@ -49,6 +52,7 @@ class FeinCMSInline(InlineModelAdmin):
     extra = 0
     fk_name = 'parent'
     template = 'admin/feincms/content_inline.html'
+
 
 # ------------------------------------------------------------------------
 class ItemEditor(ExtensionModelAdmin):

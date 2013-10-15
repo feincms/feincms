@@ -18,6 +18,7 @@ from django.utils.importlib import import_module
 
 from feincms import settings
 
+
 # ------------------------------------------------------------------------
 def get_object(path, fail_silently=False):
     # Return early if path isn't a string (might already be an callable or
@@ -30,12 +31,13 @@ def get_object(path, fail_silently=False):
     except ImportError:
         try:
             dot = path.rindex('.')
-            mod, fn = path[:dot], path[dot+1:]
+            mod, fn = path[:dot], path[dot + 1:]
 
             return getattr(import_module(mod), fn)
         except (AttributeError, ImportError):
             if not fail_silently:
                 raise
+
 
 # ------------------------------------------------------------------------
 def collect_dict_values(data):
@@ -43,6 +45,7 @@ def collect_dict_values(data):
     for key, value in data:
         dic.setdefault(key, []).append(value)
     return dic
+
 
 # ------------------------------------------------------------------------
 def copy_model_instance(obj, exclude=None):
@@ -52,12 +55,12 @@ def copy_model_instance(obj, exclude=None):
     """
 
     exclude = exclude or ()
-    initial = dict([(f.name, getattr(obj, f.name))
-                    for f in obj._meta.fields
-                    if not isinstance(f, AutoField) and
-                       not f.name in exclude and
-                       not f in obj._meta.parents.values()])
+    initial = dict(
+        (f.name, getattr(obj, f.name)) for f in obj._meta.fields
+        if not isinstance(f, AutoField) and not f.name in exclude
+        and not f in obj._meta.parents.values())
     return obj.__class__(**initial)
+
 
 # ------------------------------------------------------------------------
 def shorten_string(str, max_length=50, ellipsis=u' … '):
@@ -74,6 +77,7 @@ def shorten_string(str, max_length=50, ellipsis=u' … '):
             first_part += next_space
         return str[:first_part] + ellipsis + str[-(max_length - first_part - len(ellipsis)):]
     return str
+
 
 # ------------------------------------------------------------------------
 def path_to_cache_key(path, max_length=200, prefix=""):
@@ -100,8 +104,8 @@ def path_to_cache_key(path, max_length=200, prefix=""):
     )
     return cache_key
 
-# ------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------
 def get_singleton(template_key, cls=None, raise_exception=True):
     cls = cls or settings.FEINCMS_DEFAULT_PAGE_MODEL
     try:
@@ -134,9 +138,9 @@ def get_singleton(template_key, cls=None, raise_exception=True):
         try:
             return model._default_manager.get(template_key=template_key)
         except model.DoesNotExist:
-            raise # not yet created?
+            raise  # not yet created?
         except model.MultipleObjectsReturned:
-            raise # hmm, not exactly a singleton...
+            raise  # hmm, not exactly a singleton...
     except Exception:
         if raise_exception:
             raise

@@ -173,7 +173,7 @@ class ContentProxy(object):
         tmpl.append('GROUP BY region')
         tmpl = u' '.join(tmpl)
 
-        sql = ' UNION '.join([tmpl % (idx, cls._meta.db_table, pk)\
+        sql = ' UNION '.join([tmpl % (idx, cls._meta.db_table, pk)
             for idx, cls in enumerate(self.item._feincms_content_types)])
         sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
 
@@ -529,11 +529,10 @@ def create_base_model(inherit_from=models.Model):
                     'FeinCMS auto-generates based on %s.%s. To avoid database'
                     'errors and import clashes, rename one of these classes.'
                     % (cls.__module__, name, cls.__module__, cls.__name__),
-                RuntimeWarning)
+                    RuntimeWarning)
 
             cls._feincms_content_model = python_2_unicode_compatible(
                 type(name, (models.Model,), attrs))
-
 
             # list of concrete content types
             cls._feincms_content_types = []

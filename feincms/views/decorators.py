@@ -1,8 +1,7 @@
+from functools import wraps
+
 from django.http import HttpResponse
-try:
-    from functools import wraps
-except ImportError:
-    from django.utils.functional import wraps
+
 
 def standalone(view_func):
     """

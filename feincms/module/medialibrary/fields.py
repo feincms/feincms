@@ -4,8 +4,6 @@
 
 from __future__ import absolute_import
 
-from os.path import splitext
-
 from django.contrib.admin.widgets import AdminFileWidget
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db import models
@@ -18,7 +16,9 @@ from feincms.utils import shorten_string
 from .models import MediaFile
 from .thumbnail import admin_thumbnail
 
+
 __all__ = ('MediaFileForeignKey', 'ContentWithMediaFile')
+
 
 # ------------------------------------------------------------------------
 class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
@@ -61,6 +61,7 @@ class ContentWithMediaFile(models.Model):
 
     class Meta:
         abstract = True
+
 
 # ------------------------------------------------------------------------
 class AdminFileWithPreviewWidget(AdminFileWidget):

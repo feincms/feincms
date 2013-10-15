@@ -15,6 +15,7 @@ from . import logger
 from .models import Category, MediaFile
 from .fields import AdminFileWithPreviewWidget
 
+
 # ------------------------------------------------------------------------
 class MediaCategoryAdminForm(forms.ModelForm):
     class Meta:
@@ -27,15 +28,16 @@ class MediaCategoryAdminForm(forms.ModelForm):
 
         return data
 
-    def __init__(self,* args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(MediaCategoryAdminForm, self).__init__(*args, **kwargs)
         self.fields['parent'].queryset = self.fields['parent'].queryset.exclude(pk=self.instance.pk)
+
 
 # ------------------------------------------------------------------------
 class MediaFileAdminForm(forms.ModelForm):
     class Meta:
         model = MediaFile
-        widgets = { 'file': AdminFileWithPreviewWidget }
+        widgets = {'file': AdminFileWithPreviewWidget}
 
     def __init__(self, *args, **kwargs):
         super(MediaFileAdminForm, self).__init__(*args, **kwargs)
@@ -61,7 +63,8 @@ class MediaFileAdminForm(forms.ModelForm):
             old_base, old_ext = os.path.splitext(self.instance.file.name)
 
             if new_ext.lower() != old_ext.lower():
-                raise forms.ValidationError(_("Cannot overwrite with different file type (attempt to overwrite a %(old_ext)s with a %(new_ext)s)") % { 'old_ext': old_ext, 'new_ext': new_ext })
+                raise forms.ValidationError(
+                    _("Cannot overwrite with different file type (attempt to overwrite a %(old_ext)s with a %(new_ext)s)") % {'old_ext': old_ext, 'new_ext': new_ext})
 
             self.instance.original_name = self.instance.file.name
 

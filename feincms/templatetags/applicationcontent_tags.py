@@ -7,6 +7,7 @@ from django.utils.encoding import smart_str
 # backwards compatibility import
 from feincms.templatetags.fragment_tags import fragment, get_fragment, has_fragment
 
+
 register = template.Library()
 
 register.tag(fragment)
@@ -31,7 +32,7 @@ def feincms_render_region_appcontent(page, region, request):
     from feincms.content.application.models import ApplicationContent
     from feincms.templatetags.feincms_tags import _render_content
 
-    return u''.join(_render_content(content, request=request) for content in\
+    return u''.join(_render_content(content, request=request) for content in
         page.content.all_of_type(ApplicationContent) if content.region == region)
 
 

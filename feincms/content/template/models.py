@@ -85,4 +85,4 @@ class TemplateContent(models.Model):
 
             return result
 
-        return u'' # Fail?
+        return u''

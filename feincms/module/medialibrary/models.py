@@ -22,6 +22,7 @@ from feincms.translations import (TranslatedObjectMixin, Translation,
 
 from . import logger
 
+
 # ------------------------------------------------------------------------
 class CategoryManager(models.Manager):
     """
@@ -30,6 +31,7 @@ class CategoryManager(models.Manager):
     """
     def get_query_set(self):
         return super(CategoryManager, self).get_query_set().select_related("parent")
+
 
 # ------------------------------------------------------------------------
 @python_2_unicode_compatible
@@ -68,13 +70,14 @@ class Category(models.Model):
 
     def path_list(self):
         if self.parent is None:
-            return [ self ]
+            return [self]
         p = self.parent.path_list()
         p.append(self)
         return p
 
     def path(self):
         return ' - '.join((f.title for f in self.path_list()))
+
 
 # ------------------------------------------------------------------------
 @python_2_unicode_compatible
@@ -88,7 +91,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
     created = models.DateTimeField(_('created'), editable=False, default=timezone.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
-    file_size  = models.IntegerField(_("file size"), blank=True, null=True, editable=False)
+    file_size = models.IntegerField(_("file size"), blank=True, null=True, editable=False)
 
     categories = models.ManyToManyField(Category, verbose_name=_('categories'),
                                         blank=True, null=True)
@@ -102,8 +105,8 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
     objects = TranslatedObjectManager()
 
-    filetypes = [ ]
-    filetypes_dict = { }
+    filetypes = []
+    filetypes_dict = {}
 
     @classmethod
     def reconfigure(cls, upload_to=None, storage=None):
@@ -120,7 +123,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     @classmethod
     def register_filetypes(cls, *types):
         cls.filetypes[0:0] = types
-        choices = [ t[0:2] for t in cls.filetypes ]
+        choices = [t[0:2] for t in cls.filetypes]
         cls.filetypes_dict = dict(choices)
         cls._meta.get_field('type').choices[:] = choices
 
@@ -199,6 +202,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         except Exception as e:
             logger.warn("Cannot delete media file %s: %s" % (name, e))
 
+
 # ------------------------------------------------------------------------
 MediaFileBase.register_filetypes(
         # Should we be using imghdr.what instead of extension guessing?
@@ -213,17 +217,20 @@ MediaFileBase.register_filetypes(
         ('doc', _('Microsoft Word'), lambda f: re.compile(r'\.docx?$', re.IGNORECASE).search(f)),
         ('xls', _('Microsoft Excel'), lambda f: re.compile(r'\.xlsx?$', re.IGNORECASE).search(f)),
         ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(r'\.pptx?$', re.IGNORECASE).search(f)),
-        ('other', _('Binary'), lambda f: True), # Must be last
+        ('other', _('Binary'), lambda f: True),  # Must be last
     )
+
 
 # ------------------------------------------------------------------------
 class MediaFile(MediaFileBase):
     pass
 
+
 @receiver(post_delete, sender=MediaFile)
 def _mediafile_post_delete(sender, instance, **kwargs):
     instance.delete_mediafile()
     logger.info("Deleted mediafile %d (%s)" % (instance.id, instance.file.name))
+
 
 # ------------------------------------------------------------------------
 @python_2_unicode_compatible
@@ -243,5 +250,4 @@ class MediaFileTranslation(Translation(MediaFile)):
     def __str__(self):
         return self.caption
 
-#-------------------------------------------------------------------------
 #-------------------------------------------------------------------------

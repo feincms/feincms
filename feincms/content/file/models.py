@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
 
+
 class FileContent(models.Model):
     # You should probably use
     # `feincms.content.medialibrary.models.MediaFileContent` instead.
@@ -30,4 +31,3 @@ class FileContent(models.Model):
             'content/file/%s.html' % self.region,
             'content/file/default.html',
             ], {'content': self}, context_instance=kwargs.get('context'))
-

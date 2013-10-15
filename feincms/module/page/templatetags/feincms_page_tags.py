@@ -5,26 +5,29 @@
 import logging
 import sys
 import traceback
-import warnings
 
 from django import template
 from django.conf import settings
 from django.http import HttpRequest
 
 from feincms.module.page.models import Page
-from feincms.utils.templatetags import *
-from feincms.utils.templatetags import _parse_args
+from feincms.utils.templatetags import (SimpleNodeWithVarAndArgs,
+    do_simple_node_with_var_and_args_helper,
+    SimpleAssignmentNodeWithVarAndArgs,
+    do_simple_assignment_node_with_var_and_args_helper)
 
-# ------------------------------------------------------------------------
+
 logger = logging.getLogger('feincms.templatetags.page')
 
 register = template.Library()
+
 
 # ------------------------------------------------------------------------
 # TODO: Belongs in some utility module
 def format_exception(e):
     top = traceback.extract_tb(sys.exc_info()[2])[-1]
     return u"'%s' in %s line %d" % (e, top[0], top[1])
+
 
 # ------------------------------------------------------------------------
 @register.assignment_tag(takes_context=True)
@@ -156,6 +159,7 @@ class ParentLinkNode(SimpleNodeWithVarAndArgs):
             return '#'
 register.tag('feincms_parentlink', do_simple_node_with_var_and_args_helper(ParentLinkNode))
 
+
 # ------------------------------------------------------------------------
 class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
     """
@@ -206,14 +210,15 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
             # hardcoded paths... bleh
             if key in translations:
-                links.append((key, name, translations[key].get_absolute_url()+trailing_path))
+                links.append((key, name,
+                    translations[key].get_absolute_url() + trailing_path))
             elif not only_existing:
                 links.append((key, name, None))
 
         return links
 register.tag('feincms_languagelinks', do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode))
 
-# ------------------------------------------------------------------------
+
 # ------------------------------------------------------------------------
 def _translate_page_into(page, language, default=None):
     """
@@ -234,6 +239,7 @@ def _translate_page_into(page, language, default=None):
     if hasattr(default, '__call__'):
         return default(page=page)
     return default
+
 
 # ------------------------------------------------------------------------
 class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
@@ -269,19 +275,22 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
         return _translate_page_into(page, language, default=default)
 register.tag('feincms_translatedpage', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
 
+
 # ------------------------------------------------------------------------
 class TranslatedPageNodeOrBase(TranslatedPageNode):
     def what(self, page, args):
         return super(TranslatedPageNodeOrBase, self).what(page, args, default=getattr(page, 'get_original_translation', page))
 register.tag('feincms_translatedpage_or_base', do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNodeOrBase))
 
+
 # ------------------------------------------------------------------------
 @register.filter
 def feincms_translated_or_base(pages, language=None):
     if not hasattr(pages, '__iter__'):
-        pages = [ pages ]
+        pages = [pages]
     for page in pages:
         yield _translate_page_into(page, language, default=page.get_original_translation)
+
 
 # ------------------------------------------------------------------------
 @register.inclusion_tag("breadcrumbs.html")
@@ -309,9 +318,11 @@ def feincms_breadcrumbs(page, include_self=True):
 
     return {"trail": bc}
 
+
 # ------------------------------------------------------------------------
 def _is_parent_of(page1, page2):
     return page1.tree_id == page2.tree_id and page1.lft < page2.lft and page1.rght > page2.rght
+
 
 @register.filter
 def is_parent_of(page1, page2):
@@ -328,9 +339,11 @@ def is_parent_of(page1, page2):
     except AttributeError:
         return False
 
+
 # ------------------------------------------------------------------------
 def _is_equal_or_parent_of(page1, page2):
     return page1.tree_id == page2.tree_id and page1.lft <= page2.lft and page1.rght >= page2.rght
+
 
 @register.filter
 def is_equal_or_parent_of(page1, page2):
@@ -349,9 +362,11 @@ def is_equal_or_parent_of(page1, page2):
     except AttributeError:
         return False
 
+
 # ------------------------------------------------------------------------
 def _is_sibling_of(page1, page2):
     return page1.parent_id == page2.parent_id
+
 
 @register.filter
 def is_sibling_of(page1, page2):
@@ -367,6 +382,7 @@ def is_sibling_of(page1, page2):
         return _is_sibling_of(page1, page2)
     except AttributeError:
         return False
+
 
 # ------------------------------------------------------------------------
 @register.filter
@@ -397,7 +413,7 @@ def siblings_along_path_to(page_list, page2):
             # feincms_nav). We'll cope with the fall-out of that assumption
             # when it happens...
             ancestors = [a_page for a_page in page_list
-                                    if _is_equal_or_parent_of(a_page, page2)]
+                if _is_equal_or_parent_of(a_page, page2)]
             top_level = min((a_page.level for a_page in page_list))
 
             if not ancestors:
@@ -407,10 +423,12 @@ def siblings_along_path_to(page_list, page2):
                 p = Page(title="dummy", tree_id=-1, parent_id=None, in_navigation=False)
                 ancestors = (p,)
 
-            siblings  = [a_page for a_page in page_list
-                                if a_page.parent_id == page2.id or
-                                   a_page.level == top_level or
-                                   any((_is_sibling_of(a_page, a) for a in ancestors))]
+            siblings = [
+                a_page for a_page in page_list
+                if a_page.parent_id == page2.id
+                or a_page.level == top_level
+                or any((_is_sibling_of(a_page, a) for a in ancestors))]
+
             return siblings
         except (AttributeError, ValueError) as e:
             logger.warn("siblings_along_path_to caught exception: %s", format_exception(e))

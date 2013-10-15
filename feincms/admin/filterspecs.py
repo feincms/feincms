@@ -9,6 +9,8 @@ from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
+from feincms.utils import shorten_string
+
 
 class ParentFieldListFilter(ChoicesFieldListFilter):
     """
@@ -20,8 +22,6 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
     """
 
     def __init__(self, f, request, params, model, model_admin, field_path=None):
-        from feincms.utils import shorten_string
-
         super(ParentFieldListFilter, self).__init__(f, request, params, model, model_admin, field_path)
 
         parent_ids = model.objects.exclude(parent=None).values_list("parent__id", flat=True).order_by("parent__id").distinct()
@@ -30,20 +30,21 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
 
     def choices(self, cl):
         yield {
-            'selected':     self.lookup_val is None,
+            'selected': self.lookup_val is None,
             'query_string': cl.get_query_string({}, [self.lookup_kwarg]),
-            'display':      _('All')
+            'display': _('All')
         }
 
         for pk, title in self.lookup_choices:
             yield {
-                'selected':     pk == int(self.lookup_val or '0'),
+                'selected': pk == int(self.lookup_val or '0'),
                 'query_string': cl.get_query_string({self.lookup_kwarg: pk}),
-                'display':      mark_safe(smart_unicode(title))
+                'display': mark_safe(smart_unicode(title))
             }
 
     def title(self):
         return _('Parent')
+
 
 class CategoryFieldListFilter(ChoicesFieldListFilter):
     """
@@ -65,16 +66,16 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
 
     def choices(self, cl):
         yield {
-            'selected':     self.lookup_val is None,
+            'selected': self.lookup_val is None,
             'query_string': cl.get_query_string({}, [self.lookup_kwarg]),
-            'display':      _('All')
+            'display': _('All')
         }
 
         for pk, title in self.lookup_choices:
             yield {
-                'selected':     pk == int(self.lookup_val or '0'),
+                'selected': pk == int(self.lookup_val or '0'),
                 'query_string': cl.get_query_string({self.lookup_kwarg: pk}),
-                'display':      mark_safe(smart_unicode(title))
+                'display': mark_safe(smart_unicode(title))
             }
 
     def title(self):
