@@ -63,7 +63,13 @@ def datepublisher_response_processor(page, request, response):
     if expires is not None:
         now = datetime.now()
         delta = expires - now
-        delta = int(delta.days * 86400 + delta.seconds)
+
+        try:
+            delta = int(delta.days * 86400 + delta.seconds)
+        except Exception:
+            # This happens once every four years (or so)
+            delta = int(delta.days * 86400 + delta.seconds - 7200)
+
         patch_response_headers(response, delta)
 
 
