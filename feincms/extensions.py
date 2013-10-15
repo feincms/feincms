@@ -95,6 +95,13 @@ class Extension(object):
         pass
 
 
+def _ensure_list(cls, attribute):
+    if cls is None:
+        return
+    value = getattr(cls, attribute, ()) or ()
+    setattr(cls, attribute, list(value))
+
+
 class LegacyExtension(Extension):
     """
     Wrapper for legacy extensions
@@ -119,18 +126,25 @@ class LegacyExtension(Extension):
 
     def handle_modeladmin(self, modeladmin):
         if self.fieldsets:
+            _ensure_list(modeladmin, 'fieldsets')
             modeladmin.fieldsets.extend(self.fieldsets)
         if self.filter_horizontal:
+            _ensure_list(modeladmin, 'filter_horizontal')
             modeladmin.filter_horizontal.extend(self.filter_horizontal)
         if self.filter_vertical:
+            _ensure_list(modeladmin, 'filter_vertical')
             modeladmin.filter_vertical.extend(self.filter_vertical)
         if self.list_display:
+            _ensure_list(modeladmin, 'list_display')
             modeladmin.list_display.extend(self.list_display)
         if self.list_filter:
+            _ensure_list(modeladmin, 'list_filter')
             modeladmin.list_filter.extend(self.list_filter)
         if self.raw_id_fields:
+            _ensure_list(modeladmin, 'raw_id_fields')
             modeladmin.raw_id_fields.extend(self.raw_id_fields)
         if self.search_fields:
+            _ensure_list(modeladmin, 'search_fields')
             modeladmin.search_fields.extend(self.search_fields)
 
         if self.extension_options:
