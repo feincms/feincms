@@ -12,6 +12,12 @@ Major feature 1
 Backwards-incompatible changes
 ==============================
 
+* The template naming and order used in the section content has been changed
+  to be more similar to the media library. The naming is now
+  ``<mediafile type>_<section content type>``, additionally the media file type
+  is considered more important for template resolution than the section content
+  type.
+
 
 Removal of deprecated features
 ------------------------------

@@ -71,9 +71,9 @@ class SectionContent(models.Model):
             mediafile_type = 'nomedia'
 
         return render_to_string([
-            'content/section/%s_%s.html' % (self.type, mediafile_type),
-            'content/section/%s.html' % self.type,
+            'content/section/%s_%s.html' % (mediafile_type, self.type),
             'content/section/%s.html' % mediafile_type,
+            'content/section/%s.html' % self.type,
             'content/section/default.html',
             ], {'content': self})
 
