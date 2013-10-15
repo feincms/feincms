@@ -1,0 +1,65 @@
+{% block tinymce_script %}
+	{% if TINYMCE_JS_URL %}
+		<script type="text/javascript" src="{{ TINYMCE_JS_URL }}"></script>
+	{% endif %}
+{% endblock %}
+
+{% block tinymce_init %}
+	<script type="text/javascript">
+		{% block functions %}{% endblock %}
+    {% if TINYMCE_DOMAIN %}
+      document.domain = '{{ TINYMCE_DOMAIN }}';
+    {% endif %}
+
+    (function($){
+        var tinymce_added = {};
+
+        function feincms_richtext_remove_tinymce(field) {
+            var id = field ? field.id : this.id;
+            if(tinymce_added[id]) {
+                tinyMCE.triggerSave();
+                tinyMCE.remove({selector: '#' + id});
+                tinymce_added[id] = false;
+            }
+        }
+
+        function feincms_richtext_add_tinymce(field) {
+            var tinymce_options = {
+{% block settings %}
+                height: '300',
+                {% if TINYMCE_CONTENT_CSS_URL %}content_css: "{{ TINYMCE_CONTENT_CSS_URL }}",{% endif %}
+                {% if TINYMCE_LINK_LIST_URL %}link_list: "{{ TINYMCE_LINK_LIST_URL }}",{% endif %}
+                plugins: "{% block plugins %}fullscreen paste link{% endblock %}",
+                paste_auto_cleanup_on_paste: true,
+                relative_urls: false,
+                invalid_elements: 'script',
+                statusbar: false
+{% endblock %}
+            };
+
+            var id = field ? field.id : this.id;
+            if(!tinymce_added[id]) {
+                tinymce_options.selector = '#' + id;
+                tinyMCE.init(tinymce_options);
+                tinymce_added[id] = true;
+                }
+        }
+
+        var richtext_init_fn = function(){
+            $('{% block selectors %}.order-machine textarea.item-richtext, #frontend_editor textarea.item-richtext{% endblock %}').each(function(){
+                feincms_richtext_add_tinymce(this);
+            });
+        }
+
+			{% block enable %}
+        contentblock_init_handlers.push(richtext_init_fn);
+        contentblock_move_handlers.poorify.push(function(item) {
+            item.find('textarea.item-richtext').each(feincms_richtext_remove_tinymce);
+        });
+        contentblock_move_handlers.richify.push(function(item) {
+            item.find('textarea.item-richtext').each(feincms_richtext_add_tinymce);
+        });
+			{% endblock %}
+    })(feincms.jQuery);
+	</script>
+{% endblock %}
