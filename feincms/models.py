@@ -298,7 +298,6 @@ def create_base_model(inherit_from=models.Model):
     extend :class:`django.db.models.Model`.
     """
 
-    @python_2_unicode_compatible
     class Base(inherit_from, ExtensionsMixin):
         """
         This is the base class for your CMS models. It knows how to create and
