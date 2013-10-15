@@ -305,25 +305,29 @@ exactly like ``register_request_processor`` above. It behaves in the same way.
 WYSIWYG Editors
 ===============
 
-TinyMCE is configured by default to only allow for minimal formatting. This has proven
+TinyMCE 3 is configured by default to only allow for minimal formatting. This has proven
 to be the best compromise between letting the client format text without destroying the
-page design concept. You can customize the TinyMCE settings by creating your own 
+page design concept. You can customize the TinyMCE settings by creating your own
 init_richtext.html that inherits from `admin/content/richtext/init_tinymce.html`.
 You can even set your own CSS and linklist files like so::
-	
+
 	FEINCMS_RICHTEXT_INIT_CONTEXT = {
 		'TINYMCE_JS_URL': STATIC_URL + 'your_custom_path/tiny_mce.js',
 		'TINYMCE_CONTENT_CSS_URL': None,  # add your css path here
 		'TINYMCE_LINK_LIST_URL': None  # add your linklist.js path here
 	}
 
-FeinCMS is set up to use TinyMCE_ but you can use CKEditor_ instead if you prefer 
+FeinCMS is set up to use TinyMCE_ 3 but you can use CKEditor_ instead if you prefer
 that one. Change the following settings::
 
 	FEINCMS_RICHTEXT_INIT_TEMPLATE = 'admin/content/richtext/init_ckeditor.html'
 	FEINCMS_RICHTEXT_INIT_CONTEXT = {
 		'CKEDITOR_JS_URL': STATIC_URL + 'path_to_your/ckeditor.js',
 	}
+
+Alternatively, you can also use TinyMCE_ 4 by changing the following setting::
+
+    FEINCMS_RICHTEXT_INIT_TEMPLATE = 'admin/content/richtext/init_tinymce4.html'
 
 .. _TinyMCE: http://www.tinymce.com/
 .. _CKEditor: http://ckeditor.com/
