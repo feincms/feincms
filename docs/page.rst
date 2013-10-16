@@ -268,7 +268,7 @@ simple user access check can be implemented like this::
 
     def authenticated_request_processor(page, request):
         if not request.user.is_authenticated():
-            return HttpResponseForbidden()
+            return django.views.defaults.permission_denied()
 
     Page.register_request_processor(authenticated_request_processor)
 
