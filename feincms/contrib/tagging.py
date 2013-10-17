@@ -86,7 +86,7 @@ def pre_save_handler(sender, instance, **kwargs):
 
 
 # ------------------------------------------------------------------------
-def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False, auto_add_admin_field=True):
+def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False, auto_add_admin_field=True, admin_list_display=True):
     """
     tag_model accepts a number of named parameters:
 
@@ -115,7 +115,8 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
         return
 
     if admin_cls:
-        admin_cls.list_display.append(field_name)
+        if admin_list_display:
+            admin_cls.list_display.append(field_name)
         admin_cls.list_filter.append(field_name)
 
         if auto_add_admin_field and hasattr(admin_cls, 'add_extension_options'):
