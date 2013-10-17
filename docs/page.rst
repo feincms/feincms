@@ -262,13 +262,15 @@ request as parameters and returns either None (or nothing) or a HttpResponse.
 All registered request processors are run before the page is actually rendered.
 If the request processor indeed returns a :class:`HttpResponse`, further rendering of
 the page is cut short and this response is returned immediately to the client.
+It is also possible to raise an exception which will be handled like all exceptions
+are handled in Django views.
 
 This allows for various actions dependent on page and request, for example a
 simple user access check can be implemented like this::
 
     def authenticated_request_processor(page, request):
         if not request.user.is_authenticated():
-            return HttpResponseForbidden()
+            raise django.core.exceptions.PermissionDenied
 
     Page.register_request_processor(authenticated_request_processor)
 
