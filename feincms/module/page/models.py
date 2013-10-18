@@ -13,7 +13,6 @@ from django.db.models.loading import get_model
 from django.http import Http404
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from django.db.transaction import commit_on_success
 
 from mptt.models import MPTTModel
 
@@ -235,7 +234,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         # determine whether it has been changed in the save handler:
         self._original_cached_url = self._cached_url
 
-    @commit_on_success
     def save(self, *args, **kwargs):
         """
         Overridden save method which updates the ``_cached_url`` attribute of
@@ -281,7 +279,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             super(BasePage, page).save()  # do not recurse
     save.alters_data = True
 
-    @commit_on_success
     def delete(self, *args, **kwargs):
         if not settings.FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED:
             if self.template.singleton:
