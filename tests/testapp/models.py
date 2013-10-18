@@ -75,7 +75,7 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=reverse('testapp.blog_urls/blog_entry_details', kwargs={'object_id': entry.id}),
+                url=reverse('testapp.blog_urls/blog_entry_detail', kwargs={'object_id': entry.id}),
                 )
 
 Page.register_extensions(

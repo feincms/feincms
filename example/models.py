@@ -69,7 +69,7 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=app_reverse('blog_entry_details', 'blog_urls', kwargs={'pk': entry.id}),
+                url=app_reverse('blog_entry_detail', 'blog_urls', kwargs={'pk': entry.id}),
                 level=page.level + 1,
                 )
 
