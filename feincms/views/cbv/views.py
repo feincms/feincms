@@ -18,8 +18,11 @@ class Handler(ContentView):
         return self._page_model
 
     def get_object(self):
+        path = None
+        if self.args:
+            path = self.args[0]
         return self.page_model._default_manager.for_request(
-            self.request, raise404=True, best_match=True)
+            self.request, raise404=True, best_match=True, path=path)
 
     def dispatch(self, request, *args, **kwargs):
         try:
