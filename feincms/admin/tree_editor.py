@@ -151,21 +151,21 @@ class ChangeList(main.ChangeList):
 
     def get_query_set(self, *args, **kwargs):
         mptt_opts = self.model._mptt_meta
-        return super(ChangeList, self).get_query_set(*args, **kwargs).order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr)
+        return super(ChangeList, self).get_query_set(*args, **kwargs).\
+            order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr)
 
     def get_results(self, request):
         mptt_opts = self.model._mptt_meta
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            clauses = [Q(**{
-                mptt_opts.tree_id_attr: tree_id,
-                mptt_opts.left_attr + '__lte': lft,
-                mptt_opts.right_attr + '__gte': rght,
-                }
-                ) for lft, rght, tree_id in self.query_set.values_list(
-                    mptt_opts.left_attr,
-                    mptt_opts.right_attr,
-                    mptt_opts.tree_id_attr,
-                )]
+            clauses = [Q(**{mptt_opts.tree_id_attr: tree_id,
+                            mptt_opts.left_attr + '__lte': lft,
+                            mptt_opts.right_attr + '__gte': rght,
+                            })
+                    for lft, rght, tree_id in self.query_set.values_list(
+                        mptt_opts.left_attr,
+                        mptt_opts.right_attr,
+                        mptt_opts.tree_id_attr,
+                    )]
             # We could optimise a bit here by explicitely filtering out
             # any clauses that are for parents of nodes included in the
             # queryset anyway. (ie: drop all clauses that refer to a node
