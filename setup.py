@@ -24,13 +24,13 @@ setup(
     package_data={
         '': ['*.html', '*.txt'],
         'feincms': [
-            'locale/*/*/*',
-            'static/feincms/*',
-            'static/feincms/*/*',
-            'templates/*',
-            'templates/*/*',
-            'templates/*/*/*',
-            'templates/*/*/*/*',
+            'locale/*/*/*.*',
+            'static/feincms/*.*',
+            'static/feincms/*/*.*',
+            'templates/*.*',
+            'templates/*/*.*',
+            'templates/*/*/*.*',
+            'templates/*/*/*/*.*',
         ],
     },
     install_requires=[
