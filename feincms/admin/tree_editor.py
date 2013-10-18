@@ -166,8 +166,16 @@ class ChangeList(main.ChangeList):
                     mptt_opts.right_attr,
                     mptt_opts.tree_id_attr,
                 )]
+            # We could optimise a bit here by explicitely filtering out
+            # any clauses that are for parents of nodes included in the
+            # queryset anyway. (ie: drop all clauses that refer to a node
+            # that is a parent to another node)
+
             if clauses:
-                queryset = self.model._default_manager.filter(
+                # Note: Django ORM is smart enough to drop additional
+                # clauses if the initial query set is unfiltered. This
+                # is good.
+                queryset = self.query_set | self.model._default_manager.filter(
                     reduce(lambda p, q: p | q, clauses))
 
                 if hasattr(self, 'queryset'):
