@@ -45,7 +45,7 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
             (icon_url, alt_text, title))
 
 
-def _build_tree_structure(cls):
+def _build_tree_structure(queryset):
     """
     Build an in-memory representation of the item tree, trying to keep
     database accesses down to a minimum. The returned dictionary looks like
@@ -59,9 +59,14 @@ def _build_tree_structure(cls):
     """
     all_nodes = {}
 
-    mptt_opts = cls._mptt_meta
-
-    for p_id, parent_id in cls._default_manager.order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr).values_list("pk", "%s_id" % mptt_opts.parent_attr):
+    mptt_opts = queryset.model._mptt_meta
+    items = queryset.order_by(
+        mptt_opts.tree_id_attr,
+        mptt_opts.left_attr)
+    values_list = items.values_list(
+        "pk",
+        "%s_id" % mptt_opts.parent_attr)
+    for p_id, parent_id in values_list:
         all_nodes[p_id] = []
 
         if parent_id:
@@ -382,8 +387,9 @@ class TreeEditor(ExtensionModelAdmin):
         self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
+        queryset = self.queryset(request)
         extra_context['tree_structure'] = mark_safe(json.dumps(
-                                                    _build_tree_structure(self.model)))
+                                                    _build_tree_structure(queryset)))
 
         return super(TreeEditor, self).changelist_view(request, extra_context, *args, **kwargs)
 
@@ -432,8 +438,9 @@ class TreeEditor(ExtensionModelAdmin):
         else:
             tree_manager = self.model._tree_manager
 
-        cut_item = tree_manager.get(pk=request.POST.get('cut_item'))
-        pasted_on = tree_manager.get(pk=request.POST.get('pasted_on'))
+        queryset = self.queryset(request)
+        cut_item = queryset.get(pk=request.POST.get('cut_item'))
+        pasted_on = queryset.get(pk=request.POST.get('pasted_on'))
         position = request.POST.get('position')
 
         if not self.has_change_permission(request, cut_item):
@@ -446,10 +453,6 @@ class TreeEditor(ExtensionModelAdmin):
             except InvalidMove as e:
                 self.message_user(request, u'%s' % e)
                 return HttpResponse('FAIL')
-
-            # Ensure that model save has been run
-            cut_item = self.model.objects.get(pk=cut_item.pk)
-            cut_item.save()
 
             self.message_user(request, ugettext('%s has been moved to a new position.') %
                 cut_item)
