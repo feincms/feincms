@@ -1,22 +1,44 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
 import os
-import setuplib
+from setuptools import setup, find_packages
 
-packages, package_data = setuplib.find_packages('feincms')
 
-setup(name='FeinCMS',
+def read(filename):
+    return open(os.path.join(os.path.dirname(__file__), filename)).read()
+
+
+setup(
+    name='FeinCMS',
     version=__import__('feincms').__version__,
     description='Django-based Page CMS and CMS building toolkit.',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+    long_description=read('README.rst'),
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
     url='http://github.com/feincms/feincms/',
     license='BSD License',
     platforms=['OS Independent'],
-    packages=packages,
-    package_data=package_data,
+    packages=find_packages(
+        exclude=['tests', 'example'],
+    ),
+    package_data={
+        '': ['*.html', '*.txt'],
+        'feincms': [
+            'locale/*/*/*',
+            'static/feincms/*',
+            'static/feincms/*/*',
+            'templates/*',
+            'templates/*/*',
+            'templates/*/*/*',
+            'templates/*/*/*/*',
+        ],
+    },
+    install_requires=[
+        'Django>=1.4.2',
+        'django-mptt>=0.6.0',
+        'Pillow>=2.0.0',
+        'feedparser>=5.0.0',
+    ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
@@ -29,4 +51,5 @@ setup(name='FeinCMS',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
+    zip_safe=False,
 )

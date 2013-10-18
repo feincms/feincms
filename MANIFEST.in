@@ -2,8 +2,6 @@ include AUTHORS
 include LICENSE
 include MANIFEST.in
 include README.rst
-include requirements.txt
-include setuplib.py
 recursive-include feincms/static *
 recursive-include feincms/locale *
 recursive-include feincms/templates *
