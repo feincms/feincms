@@ -75,7 +75,11 @@ def _build_tree_structure(queryset):
                 # we have yet to iteratove over. Happens with broken MPTT
                 # hierarchy.
                 all_nodes[parent_id] = []
-                logger.warn("Incorrect MPTT hierarchy for %s, node %d has left_attr < than one of its parents. Try rebuilding mptt data (use '%s._default_manager.rebuild()').", cls.__name__, p_id, cls.__name__)
+                logger.warn(
+                    "Incorrect MPTT hierarchy for %s, node %d has left_attr"
+                    " < than one of its parents. Try rebuilding mptt data (use"
+                    " '%s._default_manager.rebuild()').",
+                    queryset.model.__name__, p_id, queryset.model.__name__)
 
             all_nodes[parent_id].append(p_id)
 
