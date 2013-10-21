@@ -5,10 +5,24 @@ FeinCMS 1.8 release notes (upcoming)
 Welcome to FeinCMS 1.8!
 
 
-Python 3.3 support
-==================
+Preliminary Python 3.3 support
+==============================
 
 The testsuite runs through on Python 3.3.
+
+
+Singleton templates
+===================
+
+TODO document this.
+
+
+Dependencies are automatically installed
+========================================
+
+Now that distribute and setuptools have merged, ``setup.py`` has been
+converted to use setuptools again which means that all dependencies
+of FeinCMS should be installed automatically.
 
 
 Backwards-incompatible changes
@@ -24,6 +38,25 @@ Backwards-incompatible changes
 Removal of deprecated features
 ------------------------------
 
+* The module ``feincms.admin.editor`` has been removed. Import the classes
+  from ``feincms.admin.item_editor`` or ``feincms.admin.tree_editor`` directly.
+
+* The HTML cleansing module :mod:`feincms.utils.html.cleanse` has been removed.
+  Use the standalone package
+  `feincms-cleanse <http://pypi.python.org/pypi/feincms-cleanse>`_ instead.
+
+* Registering extensions using shorthand notation is not possible anymore.
+  Always use the full python path to the extension module.
+
+* The two navigation template tags ``feincms_navigation`` and
+  ``feincms_navigation_extended`` have been removed. The improved
+  ``feincms_nav`` tag has been introduced with FeinCMS v1.6.
+
+* The function-based generic views in :mod:`feincms.views.generic` have been
+  removed. The decorator function
+  :func:`feincms.views.decorators.add_page_to_extra_context` is therefore
+  obsolete and has also been removed.
+
 * The old media library content type module
   :py:mod:`feincms.content.medialibrary.models` has been replaced with the
   contents of :py:mod:`feincms.content.medialibrary.v2`. The model field
@@ -33,6 +66,9 @@ Removal of deprecated features
   code. The ``v2`` module will stay around for another release and will be
   removed in FeinCMS v1.8. The now-unused template
   ``admin/content/mediafile/init.html`` has been deleted.
+
+* ``Page.setup_request()`` has been removed because it has not been doing
+  anything for some time now.
 
 
 New deprecations
@@ -46,11 +82,24 @@ Notable features and improvements
 =================================
 
 * The template tags ``feincms_render_region`` and ``feincms_render_content``
-  do not require a request object anymore.
+  do not require a request object anymore. If you omit the ``request``
+  parameter, the request will not be passed to the ``render()`` methods.
+
+* The code is mostly `flake8 <https://pypi.python.org/pypi/flake8>`_ clean.
+
+* The new management command ``medialibrary_orphans`` can be used to find
+  files which aren't referenced in the media library anymore.
+
+* The test suite has been moved into its own top-level module.
 
 
 Bugfixes
 ========
+
+* The item and tree editor finally take Django permissions into account.
+
+* The datepublisher response processor should not crash during daylight
+  savings time changes anymore.
 
 
 Compatibility with Django and other apps
