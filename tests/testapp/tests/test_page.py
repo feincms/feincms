@@ -25,7 +25,8 @@ from django.utils import timezone
 from django.utils.encoding import force_text
 
 from feincms import settings as feincms_settings
-from feincms.content.application.models import _empty_reverse_cache, app_reverse
+from feincms.content.application.models import (app_reverse,
+    new_app_reverse_cache_generation)
 from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
@@ -1125,7 +1126,7 @@ class PagesTestCase(TestCase):
             self.assertNumQueries(0,
                 lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
 
-            _empty_reverse_cache()
+            new_app_reverse_cache_generation()
 
             self.assertNumQueries(1,
                 lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
@@ -1226,8 +1227,8 @@ class PagesTestCase(TestCase):
         self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
                          page.get_absolute_url())
 
-        # when specific applicationcontent exists more then once reverse should return url
-        # for the one that has tree_id same as current feincms page
+        # when specific applicationcontent exists more then once reverse should
+        # return the URL of the first (ordered by primary key) page.
         self.login()
         self.create_page_through_admin(title='Home DE', language='de', active=True)
         page_de = Page.objects.get(title='Home DE')
@@ -1236,12 +1237,17 @@ class PagesTestCase(TestCase):
         page_de_1.applicationcontent_set.create(
             region='main', ordering=0,
             urlconf_path='testapp.applicationcontent_urls')
-        _empty_reverse_cache()
+
+        page.active = False
+        page.save()
 
         settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
         self.client.get(page_de_1.get_absolute_url())
         self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
                          page_de_1.get_absolute_url())
+
+        page.active = True
+        page.save()
 
         self.client.get(page1.get_absolute_url())
         self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
