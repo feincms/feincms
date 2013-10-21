@@ -170,7 +170,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                     help_text=_('This is used to build the URL for this page'))
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True,
                                null=True, related_name='children')
-    parent.parent_filter = True # Custom list_filter - see admin/filterspecs.py
+    parent.parent_filter = True  # Custom list_filter - see admin/filterspecs.py
     in_navigation = models.BooleanField(_('in navigation'), default=False)
     override_url = models.CharField(_('override URL'), max_length=255, blank=True,
         help_text=_('Override the target URL. Be sure to include slashes at the '
