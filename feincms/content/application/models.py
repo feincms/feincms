@@ -18,6 +18,7 @@ from django.utils.translation import get_language, ugettext_lazy as _
 
 from feincms.admin.item_editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
+from feincms.translations import short_language_code
 from feincms.utils import get_object
 
 
@@ -348,11 +349,27 @@ class ApplicationContent(models.Model):
             applicationcontent_class = cls._feincms_content_models[0]
             page_class = applicationcontent_class.parent.field.rel.to
 
+            filters = {
+                'parent__in': page_class.objects.active(),
+                'urlconf_path': urlconf_path,
+                }
+
+            contents = applicationcontent_class.objects.filter(
+                **filters).order_by('pk').select_related('parent')
+
+            if len(contents) > 1:
+                try:
+                    current = short_language_code(get_language())
+                    contents = [
+                        content for content in contents if
+                        short_language_code(content.parent.language) == current]
+                    value = contents[0]
+
+                except (AttributeError, IndexError):
+                    pass
+
             try:
-                value = applicationcontent_class.objects.filter(
-                    parent__in=page_class.objects.active(),
-                    urlconf_path=urlconf_path,
-                    ).order_by('pk').select_related('parent')[0]
+                value = contents[0]
             except IndexError:
                 value = None
 
