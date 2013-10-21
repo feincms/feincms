@@ -69,7 +69,7 @@ will be issued for at least two releases.
 
       Page.register_extensions(
           'feincms.module.page.extensions.navigation',
-          'feincmc.module.extensions.ct_tracker',
+          'feincms.module.extensions.ct_tracker',
           )
 
 * ``feincms_navigation`` and ``feincms_navigation_extended`` will be removed.
