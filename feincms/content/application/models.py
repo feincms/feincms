@@ -303,11 +303,13 @@ class ApplicationContent(models.Model):
         cls.feincms_item_editor_form = ApplicationContentItemEditorForm
 
         # Make sure the patched reverse() method has all information it needs
-        cls.parent.field.rel.to.register_request_processor(
-            retrieve_page_information)
+        page_class = cls.parent.field.rel.to
+        page_class.register_request_processor(retrieve_page_information)
 
         signals.post_save.connect(_empty_reverse_cache, sender=cls)
         signals.post_delete.connect(_empty_reverse_cache, sender=cls)
+        signals.post_save.connect(_empty_reverse_cache, sender=page_class)
+        signals.post_delete.connect(_empty_reverse_cache, sender=page_class)
 
     def __init__(self, *args, **kwargs):
         super(ApplicationContent, self).__init__(*args, **kwargs)
