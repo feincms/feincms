@@ -1,4 +1,0 @@
-Django>=1.4.2
-django-mptt>=0.4
-Pillow
-feedparser>=5.1.2
