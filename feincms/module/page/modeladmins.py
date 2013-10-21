@@ -151,12 +151,10 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                     django_settings.LANGUAGES).get(language_code, '')
                 kwargs['extra_context'] = {
                     'adding_translation': True,
-                    'title': _(
-                        u'Add %(language)s Translation of "%(page)s"' % {
-                            'language': language,
-                            'page': original,
-                        }
-                    ),
+                    'title': _('Add %(language)s translation of "%(page)s"') % {
+                        'language': language,
+                        'page': original,
+                        },
                     'language_name': language,
                     'translation_of': original,
                 }
