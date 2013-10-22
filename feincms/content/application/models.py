@@ -360,10 +360,10 @@ class ApplicationContent(models.Model):
             if len(contents) > 1:
                 try:
                     current = short_language_code(get_language())
-                    contents = [
+                    value = [
                         content for content in contents if
-                        short_language_code(content.parent.language) == current]
-                    value = contents[0]
+                        short_language_code(content.parent.language) == current
+                        ][0]
 
                 except (AttributeError, IndexError):
                     pass
