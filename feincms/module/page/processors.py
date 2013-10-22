@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import re
 import sys
 
@@ -152,18 +154,18 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
             pass
 
         if verbose:
-            print >> file, "--------------------------------------------------------------"
+            print("--------------------------------------------------------------", file=file)
         time = 0.0
         i = 0
         for q in connection.queries:
             i += 1
             if verbose:
-                print >> file, "%d : [%s]\n%s\n" % (
-                    i, q['time'], print_sql(q['sql']))
+                print("%d : [%s]\n%s\n" % (
+                    i, q['time'], print_sql(q['sql'])), file=file)
             time += float(q['time'])
 
-        print >> file, "--------------------------------------------------------------"
-        print >> file, "Total: %d queries, %.3f ms" % (i, time)
-        print >> file, "--------------------------------------------------------------"
+        print("--------------------------------------------------------------", file=file)
+        print("Total: %d queries, %.3f ms" % (i, time), file=file)
+        print("--------------------------------------------------------------", file=file)
 
     return processor

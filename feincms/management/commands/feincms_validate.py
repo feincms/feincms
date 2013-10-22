@@ -7,6 +7,7 @@
 
 ``feincms_validate`` checks your models for common pitfalls.
 """
+from __future__ import print_function
 
 from django.core.management.base import NoArgsCommand
 from django.core.management.color import color_style
@@ -21,7 +22,7 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         self.style = color_style()
 
-        print "Running Django's own validation:"
+        print("Running Django's own validation:")
         self.validate(display_num_errors=True)
 
         for model in loading.get_models():
@@ -38,7 +39,7 @@ class Command(NoArgsCommand):
         """
 
         if not hasattr(model, 'template'):
-            print self.style.NOTICE('%s has no template attribute; did you forget register_templates or register_regions?' % model)
+            print(self.style.NOTICE('%s has no template attribute; did you forget register_templates or register_regions?' % model))
 
     def validate_content_type(self, model):
         """
@@ -47,4 +48,4 @@ class Command(NoArgsCommand):
 
         for base in model.__bases__:
             if not base._meta.abstract:
-                print self.style.NOTICE('One of %s bases, %s, is not abstract' % (model, base))
+                print(self.style.NOTICE('One of %s bases, %s, is not abstract' % (model, base)))
