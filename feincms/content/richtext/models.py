@@ -65,8 +65,11 @@ class RichTextContent(models.Model):
     anything you want using ``FEINCMS_RICHTEXT_INIT_CONTEXT`` and
     ``FEINCMS_RICHTEXT_INIT_TEMPLATE``.
 
-    Optionally runs the HTML code through HTML cleaners if you pass a callable
-    as ``cleanse`` when calling ``create_content_type``.
+    If you are using TinyMCE 4.x then ``FEINCMS_RICHTEXT_INIT_TEMPLATE``
+    needs to be set to ``admin/content/richtext/init_tinymce4.html``.
+
+    Optionally runs the HTML code through HTML cleaners if you specify
+    ``cleanse=True`` when calling ``create_content_type``.
     """
 
     form = RichTextContentAdminForm
