@@ -22,6 +22,13 @@ from feincms.translations import short_language_code
 from feincms.utils import get_object
 
 
+def new_app_reverse_cache_generation(*args, **kwargs):
+    """Does not really empty the cache; instead it adds a random element to the
+    cache key generation which guarantees that the cache does not yet contain
+    values for all newly generated keys"""
+    cache.set('app_reverse_cache_generation', str(SystemRandom().random()))
+
+
 def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
         *vargs, **vkwargs):
     """
@@ -48,25 +55,33 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
     appconfig = extra_context.get('app_config', {})
     urlconf = appconfig.get('urlconf_path', urlconf)
 
-    # vargs and vkwargs are used to send through additional parameters which
-    # are uninteresting to us (such as current_app)
+    cache_generation = cache.get('app_reverse_cache_generation')
+    if cache_generation is None:
+        new_app_reverse_cache_generation()
+        cache_generation = cache.get('app_reverse_cache_generation')
 
-    applicationcontent_class = ApplicationContent._feincms_content_models[0]
-    content = applicationcontent_class.closest_match(urlconf)
-    url_prefix = None
+    cache_key = '%s-%s-%s' % (urlconf, get_language(), cache_generation)
+    url_prefix = cache.get(cache_key)
 
-    if content:
-        if urlconf in applicationcontent_class.ALL_APPS_CONFIG:
-            # We have an overridden URLconf
-            urlconf = applicationcontent_class.ALL_APPS_CONFIG[urlconf]['config'].get(
-                'urls', urlconf)
+    if url_prefix is None:
+        appcontent_class = ApplicationContent._feincms_content_models[0]
+        content = appcontent_class.closest_match(urlconf)
 
-        prefix = content.parent.get_absolute_url()
-        prefix += '/' if prefix[-1] != '/' else ''
+        if content is not None:
+            if urlconf in appcontent_class.ALL_APPS_CONFIG:
+                # We have an overridden URLconf
+                app_config = appcontent_class.ALL_APPS_CONFIG[urlconf]
+                urlconf = app_config['config'].get('urls', urlconf)
 
-        url_prefix = (urlconf, prefix)
+            prefix = content.parent.get_absolute_url()
+            prefix += '/' if prefix[-1] != '/' else ''
+
+            url_prefix = (urlconf, prefix)
+            cache.set(cache_key, url_prefix)
 
     if url_prefix:
+        # vargs and vkwargs are used to send through additional parameters
+        # which are uninteresting to us (such as current_app)
         return reverse(viewname,
             url_prefix[0],
             args=args,
@@ -337,49 +352,27 @@ class ApplicationContent(models.Model):
 
     @classmethod
     def closest_match(cls, urlconf_path):
-        cache_generation = cache.get('app_reverse_cache_generation')
-        if cache_generation is None:
-            new_app_reverse_cache_generation()
-            cache_generation = cache.get('app_reverse_cache_generation')
+        page_class = cls.parent.field.rel.to
 
-        cache_key = '%s-%s-%s' % (urlconf_path, get_language(), cache_generation)
-        value = cache.get(cache_key)
+        contents = cls.objects.filter(
+            parent__in=page_class.objects.active(),
+            urlconf_path=urlconf_path,
+            ).order_by('pk').select_related('parent')
 
-        if value is None:
-            applicationcontent_class = cls._feincms_content_models[0]
-            page_class = applicationcontent_class.parent.field.rel.to
-
-            filters = {
-                'parent__in': page_class.objects.active(),
-                'urlconf_path': urlconf_path,
-                }
-
-            contents = applicationcontent_class.objects.filter(
-                **filters).order_by('pk').select_related('parent')
-
-            if len(contents) > 1:
-                try:
-                    current = short_language_code(get_language())
-                    value = [
-                        content for content in contents if
-                        short_language_code(content.parent.language) == current
-                        ][0]
-
-                except (AttributeError, IndexError):
-                    pass
-
+        if len(contents) > 1:
             try:
-                value = contents[0]
-            except IndexError:
+                current = short_language_code(get_language())
+                return [
+                    content for content in contents if
+                    short_language_code(content.parent.language) == current
+                    ][0]
+
+            except (AttributeError, IndexError):
                 pass
 
-            cache.set(cache_key, value)
+        try:
+            return contents[0]
+        except IndexError:
+            pass
 
-        return value
-
-
-def new_app_reverse_cache_generation(*args, **kwargs):
-    """Does not really empty the cache; instead it adds a random element to the
-    cache key generation which guarantees that the cache does not yet contain
-    values for all newly generated keys"""
-    cache.set('app_reverse_cache_generation', str(SystemRandom().random()))
+        return None
