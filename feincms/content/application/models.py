@@ -371,7 +371,7 @@ class ApplicationContent(models.Model):
             try:
                 value = contents[0]
             except IndexError:
-                value = None
+                pass
 
             cache.set(cache_key, value)
 
