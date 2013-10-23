@@ -3,6 +3,8 @@
 import re
 import tidylib
 
+from feincms.utils.compat import text_type, unichr
+
 # Based on http://stackoverflow.com/questions/92438/stripping-non-printable-characters-from-a-string-in-python
 #
 # We omit chars 9-13 (tab, newline, vertical tab, form feed, return) and 32
@@ -24,7 +26,7 @@ def tidy_html(html):
     Input must be unicode.
     Output will be valid XHTML.
     """
-    if not isinstance(html, unicode):
+    if not isinstance(html, text_type):
         raise ValueError("tidyhtml must be called with a Unicode string!")
 
     errors = list()

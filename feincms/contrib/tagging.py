@@ -18,6 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 from tagging.fields import TagField
 from tagging import AlreadyRegistered
 
+from feincms.utils.compat import text_type
 
 # ------------------------------------------------------------------------
 def taglist_to_string(taglist):
@@ -68,7 +69,7 @@ class TagSelectField(TagField):
             return type(widget).render(widget, name, value, attrs, *args, **kwargs)
         widget.render = _render
         defaults['widget'] = widget
-        choices = [(str(t), str(t)) for t in Tag.objects.all()]
+        choices = [(text_type(t), text_type(t)) for t in Tag.objects.all()]
         return TagSelectFormField(choices=choices, required=not self.blank, **defaults)
 
 

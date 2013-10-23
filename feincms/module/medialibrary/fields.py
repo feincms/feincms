@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
 from feincms.utils import shorten_string
+from feincms.utils.compat import text_type
 from .models import MediaFile
 from .thumbnail import admin_thumbnail
 
@@ -30,7 +31,7 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
         try:
             obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
             label = [u'&nbsp;<strong>%s</strong>' % escape(
-                shorten_string(unicode(obj)))]
+                shorten_string(text_type(obj)))]
             image = admin_thumbnail(obj)
 
             if image:

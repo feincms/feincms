@@ -23,6 +23,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
 from feincms import settings
+from feincms.utils.compat import text_type
 
 
 register = template.Library()
@@ -39,7 +40,7 @@ class Thumbnailer(object):
 
     @property
     def url(self):
-        return unicode(self)
+        return text_type(self)
 
     def __str__(self):
         match = self.THUMBNAIL_SIZE_RE.match(self.size)
