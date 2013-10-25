@@ -468,7 +468,7 @@ if(!Array.indexOf) {
                     /* Simulate a click on the save button instead of form.submit(), so
                        that the submit handlers from FilteredSelectMultiple get
                        invoked. See Issue #372 */
-                    $('#page_form input[type=submit][name=_save]').click();
+                    form_element.find('input[type=submit][name=_save]').click();
 
                 } else {
                     $("div#popup_bg").remove();
