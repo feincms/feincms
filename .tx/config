@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+type = PO
+
+[feincms.djangopo]
+file_filter = feincms/locale/<lang>/LC_MESSAGES/django.po
+source_file = feincms/locale/en/LC_MESSAGES/django.po
+source_lang = en
