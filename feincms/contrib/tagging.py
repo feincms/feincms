@@ -13,6 +13,7 @@ from __future__ import absolute_import
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models.signals import pre_save
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from tagging.fields import TagField
@@ -68,7 +69,7 @@ class TagSelectField(TagField):
             return type(widget).render(widget, name, value, attrs, *args, **kwargs)
         widget.render = _render
         defaults['widget'] = widget
-        choices = [(str(t), str(t)) for t in Tag.objects.all()]
+        choices = [(six.text_type(t), six.text_type(t)) for t in Tag.objects.all()]
         return TagSelectFormField(choices=choices, required=not self.blank, **defaults)
 
 

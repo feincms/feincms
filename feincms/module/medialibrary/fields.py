@@ -7,6 +7,7 @@ from __future__ import absolute_import
 from django.contrib.admin.widgets import AdminFileWidget
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db import models
+from django.utils import six
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -30,7 +31,7 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
         try:
             obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
             label = [u'&nbsp;<strong>%s</strong>' % escape(
-                shorten_string(unicode(obj)))]
+                shorten_string(six.text_type(obj)))]
             image = admin_thumbnail(obj)
 
             if image:

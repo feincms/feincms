@@ -21,6 +21,7 @@ from django import template
 from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.utils import six
 
 from feincms import settings
 
@@ -39,7 +40,7 @@ class Thumbnailer(object):
 
     @property
     def url(self):
-        return unicode(self)
+        return six.text_type(self)
 
     def __str__(self):
         match = self.THUMBNAIL_SIZE_RE.match(self.size)

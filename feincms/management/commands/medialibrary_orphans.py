@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 
 from django.core.management.base import NoArgsCommand
@@ -17,4 +19,4 @@ class Command(NoArgsCommand):
             for f in files:
                 full = os.path.join(base[6:], f)
                 if force_text(full) not in mediafiles:
-                    print os.path.join(base, f)
+                    print(os.path.join(base, f))
