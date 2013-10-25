@@ -5,12 +5,12 @@
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
 from django.contrib.admin.filters import FieldListFilter, ChoicesFieldListFilter
+from django.utils import six
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
 from feincms.utils import shorten_string
-from feincms.utils.compat import text_type
 
 
 class ParentFieldListFilter(ChoicesFieldListFilter):
@@ -59,7 +59,7 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
 
         # Restrict results to categories which are actually in use:
         self.lookup_choices = [
-            (i.pk, text_type(i)) for i in f.related.parent_model.objects.exclude(**{
+            (i.pk, six.text_type(i)) for i in f.related.parent_model.objects.exclude(**{
                 f.related.var_name: None
             })
         ]

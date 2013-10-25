@@ -3,7 +3,16 @@
 import re
 import tidylib
 
-from feincms.utils.compat import text_type, unichr
+from django.utils import six
+
+
+try:
+    # Python 2
+    unichr
+except NameError:
+    # Python 3
+    unichr = chr
+
 
 # Based on http://stackoverflow.com/questions/92438/stripping-non-printable-characters-from-a-string-in-python
 #
@@ -26,7 +35,7 @@ def tidy_html(html):
     Input must be unicode.
     Output will be valid XHTML.
     """
-    if not isinstance(html, text_type):
+    if not isinstance(html, six.text_type):
         raise ValueError("tidyhtml must be called with a Unicode string!")
 
     errors = list()
