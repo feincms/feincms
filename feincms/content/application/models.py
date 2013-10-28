@@ -30,6 +30,11 @@ def new_app_reverse_cache_generation(*args, **kwargs):
     cache.set('app_reverse_cache_generation', str(SystemRandom().random()))
 
 
+# Set the app_reverse_cache_generation value once per startup (at least).
+# This protects us against offline modifications of the database.
+new_app_reverse_cache_generation()
+
+
 def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
         *vargs, **vkwargs):
     """
@@ -58,6 +63,7 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
 
     cache_generation = cache.get('app_reverse_cache_generation')
     if cache_generation is None:
+        # This might never happen. Still, better be safe than sorry.
         new_app_reverse_cache_generation()
         cache_generation = cache.get('app_reverse_cache_generation')
 
