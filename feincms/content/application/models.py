@@ -23,7 +23,7 @@ from feincms.translations import short_language_code
 from feincms.utils import get_object
 
 
-def new_app_reverse_cache_generation(*args, **kwargs):
+def cycle_app_reverse_cache(*args, **kwargs):
     """Does not really empty the cache; instead it adds a random element to the
     cache key generation which guarantees that the cache does not yet contain
     values for all newly generated keys"""
@@ -32,7 +32,7 @@ def new_app_reverse_cache_generation(*args, **kwargs):
 
 # Set the app_reverse_cache_generation value once per startup (at least).
 # This protects us against offline modifications of the database.
-new_app_reverse_cache_generation()
+cycle_app_reverse_cache()
 
 
 def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
@@ -64,7 +64,7 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
     cache_generation = cache.get('app_reverse_cache_generation')
     if cache_generation is None:
         # This might never happen. Still, better be safe than sorry.
-        new_app_reverse_cache_generation()
+        cycle_app_reverse_cache()
         cache_generation = cache.get('app_reverse_cache_generation')
 
     cache_key = '%s-%s-%s-%s' % (
@@ -231,10 +231,10 @@ class ApplicationContent(models.Model):
         # Clobber the app_reverse cache when saving application contents
         # and/or pages
         page_class = cls.parent.field.rel.to
-        signals.post_save.connect(new_app_reverse_cache_generation, sender=cls)
-        signals.post_delete.connect(new_app_reverse_cache_generation, sender=cls)
-        signals.post_save.connect(new_app_reverse_cache_generation, sender=page_class)
-        signals.post_delete.connect(new_app_reverse_cache_generation, sender=page_class)
+        signals.post_save.connect(cycle_app_reverse_cache, sender=cls)
+        signals.post_delete.connect(cycle_app_reverse_cache, sender=cls)
+        signals.post_save.connect(cycle_app_reverse_cache, sender=page_class)
+        signals.post_delete.connect(cycle_app_reverse_cache, sender=page_class)
 
     def __init__(self, *args, **kwargs):
         super(ApplicationContent, self).__init__(*args, **kwargs)

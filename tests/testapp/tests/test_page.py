@@ -26,7 +26,7 @@ from django.utils.encoding import force_text
 
 from feincms import settings as feincms_settings
 from feincms.content.application.models import (app_reverse,
-    new_app_reverse_cache_generation)
+    cycle_app_reverse_cache)
 from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
@@ -1126,7 +1126,7 @@ class PagesTestCase(TestCase):
             self.assertNumQueries(0,
                 lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
 
-            new_app_reverse_cache_generation()
+            cycle_app_reverse_cache()
 
             self.assertNumQueries(1,
                 lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
