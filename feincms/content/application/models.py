@@ -1,24 +1,25 @@
 """
 Third-party application inclusion support.
 """
-
-from email.utils import parsedate
-from time import mktime
-import re
-
+from django.contrib.sites.models import Site
+from django.core.exceptions import FieldError
 from django.core import urlresolvers
 from django.core.urlresolvers import Resolver404, resolve, reverse, NoReverseMatch
 from django.db import models
 from django.db.models import signals
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils.functional import curry as partial, lazy, wraps
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, get_language
+from email.utils import parsedate
 
 from feincms import settings
 from feincms.admin.item_editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
 from feincms.utils import get_object
+
+from time import mktime
+import re
 
 try:
     from threading import local
@@ -50,7 +51,7 @@ def _empty_reverse_cache(*args, **kwargs):
 
 
 def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
-        *vargs, **vkwargs):
+                language=None, *vargs, **vkwargs):
     """
     Reverse URLs from application contents
 
@@ -114,9 +115,17 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
             # Take any
             model_class = ApplicationContent._feincms_content_models[0]
 
-        # TODO: Only active pages? What about multisite support?
-        contents = model_class.objects.filter(
-            urlconf_path=urlconf).select_related('parent')
+        filters = {'urlconf_path': urlconf}
+        page_fields = model_class.parent.field.rel.to._meta.get_all_field_names()
+        # filter for overridden or current language
+        if 'language' in page_fields:
+            filters['parent__language'] = language or get_language()
+
+        if 'site' in page_fields:
+            # assuming django.contrib.sites is installed in this case.
+            filters['parent__site'] = Site.objects.get_current()
+
+        contents = model_class.objects.filter(**filters).select_related('parent')
 
         if proximity_info:
             # find the closest match within the same subtree
@@ -177,6 +186,10 @@ def app_reverse(viewname, urlconf, args=None, kwargs=None, prefix=None,
             kwargs=kwargs,
             prefix=url_prefix[1],
             *vargs, **vkwargs)
+
+    if settings.FEINCMS_APPLICATIONCONTENT_RAISES_404:
+        raise Http404("Unable to find ApplicationContent for %r" % urlconf)
+
     raise NoReverseMatch("Unable to find ApplicationContent for %r" % urlconf)
 
 

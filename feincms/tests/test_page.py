@@ -37,7 +37,7 @@ from feincms.module.page.models import Page
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
 
-from .tests import Empty
+from .test_stuff import Empty
 
 # ------------------------------------------------------------------------
 
