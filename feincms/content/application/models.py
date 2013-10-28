@@ -7,6 +7,7 @@ from time import mktime
 from random import SystemRandom
 import re
 
+from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import Resolver404, resolve, reverse, NoReverseMatch
 from django.db import models
@@ -60,7 +61,12 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
         new_app_reverse_cache_generation()
         cache_generation = cache.get('app_reverse_cache_generation')
 
-    cache_key = '%s-%s-%s' % (urlconf, get_language(), cache_generation)
+    cache_key = '%s-%s-%s-%s' % (
+        urlconf,
+        get_language(),
+        getattr(settings, 'SITE_ID', 0),
+        cache_generation)
+
     url_prefix = cache.get(cache_key)
 
     if url_prefix is None:
