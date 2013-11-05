@@ -155,8 +155,11 @@ class ChangeList(main.ChangeList):
 
     def get_query_set(self, *args, **kwargs):
         mptt_opts = self.model._mptt_meta
-        return super(ChangeList, self).get_query_set(*args, **kwargs).\
+        qs = super(ChangeList, self).get_query_set(*args, **kwargs).\
             order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr)
+        # Force has_filters, so that the expand/collapse in sidebar is visible
+        self.has_filters = True
+        return qs
 
     def get_results(self, request):
         mptt_opts = self.model._mptt_meta
