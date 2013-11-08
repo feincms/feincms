@@ -513,7 +513,7 @@ if(!Array.indexOf) {
                     elem.find(".region-choice-field").val());
                 if (REGION_MAP[region_id] != undefined) {
                     var content_type = elem.attr("id").substr(
-                        0, elem.attr("id").indexOf("_"));
+                        0, elem.attr("id").lastIndexOf("_"));
                     var item = create_new_item_from_form(
                         elem, CONTENT_NAMES[content_type], content_type);
                     add_fieldset(region_id, item, {where:'append'});
