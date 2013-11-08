@@ -115,3 +115,10 @@ rewinding policies are described below.
 * ``pu`` or feature branches are used for short-lived projects. These
   branches aren't guaranteed to stay around and are not meant to be
   deployed into production environments.
+
+
+Travis CI
+=========
+
+.. image:: https://travis-ci.org/feincms/feincms.png?branch=next   :target: https://travis-ci.org/feincms/feincms
+.. image:: https://travis-ci.org/feincms/feincms.png?branch=master   :target: https://travis-ci.org/feincms/feincms
