@@ -314,6 +314,17 @@ Storing the URL in a context variable is supported too::
     {% load applicationcontent_tags %}
     {% app_reverse "mymodel_detail" "myapp.urls" arg1 arg2 as url %}
 
+Inside the app (in this case, inside the views defined in ``myapp.urls``),
+you can also pass the current request instance instead of the URLconf
+name.
+
+If an application has been added several times to the same page tree,
+``app_reverse`` tries to find the best match. The logic is contained inside
+``ApplicationContent.closest_match``, and can be overridden by subclassing
+the application content type. The default implementation only takes the current
+language into account, which is mostly helpful when you're using the
+translations page extension.
+
 
 Additional customization possibilities
 --------------------------------------
