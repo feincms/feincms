@@ -120,5 +120,5 @@ rewinding policies are described below.
 Travis CI
 =========
 
-.. image:: https://travis-ci.org/feincms/feincms.png?branch=next   :target: https://travis-ci.org/feincms/feincms
-.. image:: https://travis-ci.org/feincms/feincms.png?branch=master   :target: https://travis-ci.org/feincms/feincms
+.. image:: https://travis-ci.org/feincms/feincms.png?branch=next
+.. image:: https://travis-ci.org/feincms/feincms.png?branch=master
