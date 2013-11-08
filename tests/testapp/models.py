@@ -81,6 +81,16 @@ class BlogEntriesNavigationExtension(NavigationExtension):
 Page.register_extensions(
     'feincms.module.page.extensions.navigation',
     'feincms.module.page.extensions.sites',
+    'feincms.module.extensions.translations',
+    'feincms.module.extensions.datepublisher',
+    'feincms.module.extensions.translations',
+    'feincms.module.extensions.ct_tracker',
+    'feincms.module.extensions.seo',
+    'feincms.module.extensions.changedate',
+    'feincms.module.extensions.seo',  # duplicate
+    'feincms.module.page.extensions.navigation',
+    'feincms.module.page.extensions.symlinks',
+    'feincms.module.page.extensions.titles',
     )
 
 

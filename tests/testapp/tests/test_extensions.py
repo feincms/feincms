@@ -9,17 +9,7 @@ from django.contrib.sites.models import Site
 from feincms.module.page.models import Page
 
 
-from .utils import reset_page_db
-
-
-
 class TranslationTestCase(TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        Page.register_extensions('feincms.module.extensions.translations',)
-        reset_page_db()
-
     def setUp(self):
         Page.register_templates({
             'key': 'base',
