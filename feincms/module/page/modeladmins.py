@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import
 
+import warnings
+
 from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
@@ -87,6 +89,12 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                     and not f.name in present_fields
                     and f.editable):
                 self.fieldsets[1][1]['fields'].append(f.name)
+                warnings.warn(
+                    'Automatically adding %r to %r.fieldsets. This behavior'
+                    ' is deprecated. Use add_extension_options yourself if'
+                    ' you want fields to appear in the page'
+                    ' administration.' % (f.name, self),
+                    DeprecationWarning)
             if not f.editable:
                 self.readonly_fields.append(f.name)
 

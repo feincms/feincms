@@ -84,6 +84,16 @@ Removal of deprecated features
   anything for some time now.
 
 
+New deprecations
+================
+
+* Page extensions should start explicitly adding their fields to the
+  administration interface using ``modeladmin.add_extension_options``.
+  FeinCMS v1.8 will warn about fields collected automatically, the next
+  release will not add unknown fields to the administration interface
+  anymore.
+
+
 Notable features and improvements
 =================================
 

@@ -85,3 +85,12 @@ will be issued for at least two releases.
   removed.
 
 * ``Page.setup_request()`` does not do anything anymore and will be removed.
+
+
+1.9
+===
+
+* Fields added through page extensions which haven't been explicitly added
+  to the page model admin using ``modeladmin.add_extension_options`` will
+  disappear from the admin interface. The automatic collection of fields
+  will be removed.
