@@ -93,7 +93,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                     'Automatically adding %r to %r.fieldsets. This behavior'
                     ' is deprecated. Use add_extension_options yourself if'
                     ' you want fields to appear in the page'
-                    ' administration.' % (f.name, self),
+                    ' administration.' % (f.name, self.__class__),
                     DeprecationWarning)
             if not f.editable:
                 self.readonly_fields.append(f.name)

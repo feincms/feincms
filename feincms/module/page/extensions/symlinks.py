@@ -6,23 +6,31 @@ all content from the linked page.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from feincms import extensions
 from feincms._internal import monkeypatch_property
 
 
-def register(cls, admin_cls):
-    cls.add_to_class('symlinked_page', models.ForeignKey('self', blank=True, null=True,
-        related_name='%(app_label)s_%(class)s_symlinks',
-        verbose_name=_('symlinked page'),
-        help_text=_('All content is inherited from this page if given.')))
+class Extension(extensions.Extension):
+    def handle_model(self):
+        self.model.add_to_class('symlinked_page', models.ForeignKey(
+            'self',
+            blank=True,
+            null=True,
+            related_name='%(app_label)s_%(class)s_symlinks',
+            verbose_name=_('symlinked page'),
+            help_text=_('All content is inherited from this page if given.')))
 
-    @monkeypatch_property(cls)
-    def content(self):
-        if not hasattr(self, '_content_proxy'):
-            if self.symlinked_page:
-                self._content_proxy = self.content_proxy_class(self.symlinked_page)
-            else:
-                self._content_proxy = self.content_proxy_class(self)
+        @monkeypatch_property(self.model)
+        def content(self):
+            if not hasattr(self, '_content_proxy'):
+                if self.symlinked_page:
+                    self._content_proxy = self.content_proxy_class(
+                        self.symlinked_page)
+                else:
+                    self._content_proxy = self.content_proxy_class(self)
 
-        return self._content_proxy
+            return self._content_proxy
 
-    admin_cls.raw_id_fields.append('symlinked_page')
+    def handle_modeladmin(self, modeladmin):
+        modeladmin.raw_id_fields.append('symlinked_page')
+        modeladmin.add_extension_options('symlinked_page')
