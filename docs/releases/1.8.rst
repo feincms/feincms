@@ -107,6 +107,10 @@ Bugfixes
 * The datepublisher response processor should not crash during daylight
   savings time changes anymore.
 
+* The undocumented attribute ``PageAdmin.unknown_fields`` has been removed
+  because it was modified at class level and not instance level which made
+  reuse harder than necessary.
+
 
 Compatibility with Django and other apps
 ========================================
