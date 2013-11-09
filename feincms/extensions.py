@@ -74,7 +74,12 @@ class ExtensionsMixin(object):
             if hasattr(extension, 'handle_model'):
                 cls._extensions.append(extension(cls))
             else:
-                cls._extensions.append(LegacyExtension(cls, extension=extension))
+                warning.warn(
+                    '%r is a extension in legacy format.'
+                    ' Support for legacy extensions will be removed in'
+                    ' FeinCMS v1.9. Convert your extensions to'
+                    ' feincms.extensions.Extension now.' % extension,
+                    DeprecationWarning)
 
 
 class Extension(object):

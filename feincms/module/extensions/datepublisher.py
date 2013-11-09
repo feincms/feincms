@@ -16,6 +16,8 @@ from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.translation import ugettext_lazy as _
 
+from feincms import extensions
+
 
 # ------------------------------------------------------------------------
 def format_date(d, if_none=''):
@@ -74,55 +76,58 @@ def datepublisher_response_processor(page, request, response):
 
 
 # ------------------------------------------------------------------------
-def register(cls, admin_cls):
-    cls.add_to_class('publication_date',
-        models.DateTimeField(_('publication date'), default=granular_now))
-    cls.add_to_class('publication_end_date',
-        models.DateTimeField(_('publication end date'),
-            blank=True, null=True,
-            help_text=_('Leave empty if the entry should stay active forever.')))
-    cls.add_to_class('latest_children', latest_children)
+class Extension(extensions.Extension):
+    def handle_model(self):
+        self.model.add_to_class('publication_date',
+            models.DateTimeField(_('publication date'), default=granular_now))
+        self.model.add_to_class('publication_end_date',
+            models.DateTimeField(_('publication end date'),
+                blank=True, null=True,
+                help_text=_('Leave empty if the entry should stay active forever.')))
+        self.model.add_to_class('latest_children', latest_children)
 
-    # Patch in rounding the pub and pub_end dates on save
-    orig_save = cls.save
+        # Patch in rounding the pub and pub_end dates on save
+        orig_save = self.model.save
 
-    def granular_save(obj, *args, **kwargs):
-        if obj.publication_date:
-            obj.publication_date = granular_now(obj.publication_date)
-        if obj.publication_end_date:
-            obj.publication_end_date = granular_now(obj.publication_end_date)
-        orig_save(obj, *args, **kwargs)
-    cls.save = granular_save
+        def granular_save(obj, *args, **kwargs):
+            if obj.publication_date:
+                obj.publication_date = granular_now(obj.publication_date)
+            if obj.publication_end_date:
+                obj.publication_end_date = granular_now(obj.publication_end_date)
+            orig_save(obj, *args, **kwargs)
+        self.model.save = granular_save
 
-    # Append publication date active check
-    if hasattr(cls._default_manager, 'add_to_active_filters'):
-        cls._default_manager.add_to_active_filters(
-            Q(publication_date__lte=granular_now) &
-             (Q(publication_end_date__isnull=True) |
-              Q(publication_end_date__gt=granular_now)),
-            key='datepublisher')
+        # Append publication date active check
+        if hasattr(self.model._default_manager, 'add_to_active_filters'):
+            self.model._default_manager.add_to_active_filters(
+                Q(publication_date__lte=granular_now) &
+                 (Q(publication_end_date__isnull=True) |
+                  Q(publication_end_date__gt=granular_now)),
+                key='datepublisher')
 
-    # Processor to patch up response headers for expiry date
-    cls.register_response_processor(datepublisher_response_processor)
+        # Processor to patch up response headers for expiry date
+        self.model.register_response_processor(datepublisher_response_processor)
 
-    def datepublisher_admin(self):
-        return u'%s &ndash; %s' % (
-            format_date(self.publication_date),
-            format_date(self.publication_end_date, '&infin;'),
-            )
-    datepublisher_admin.allow_tags = True
-    datepublisher_admin.short_description = _('visible from - to')
+    def handle_modeladmin(self, modeladmin):
+        def datepublisher_admin(self, obj):
+            return u'%s &ndash; %s' % (
+                format_date(obj.publication_date),
+                format_date(obj.publication_end_date, '&infin;'),
+                )
+        datepublisher_admin.allow_tags = True
+        datepublisher_admin.short_description = _('visible from - to')
 
-    cls.datepublisher_admin = datepublisher_admin
-    try:
-        pos = admin_cls.list_display.index('is_visible_admin')
-    except ValueError:
-        pos = len(admin_cls.list_display)
+        modeladmin.__class__.datepublisher_admin = datepublisher_admin
 
-    admin_cls.list_display.insert(pos + 1, 'datepublisher_admin')
+        try:
+            pos = modeladmin.list_display.index('is_visible_admin')
+        except ValueError:
+            pos = len(modeladmin.list_display)
 
-    admin_cls.add_extension_options(_('Date-based publishing'), {
-                'fields': ['publication_date', 'publication_end_date'],
-        })
+        modeladmin.list_display.insert(pos + 1, 'datepublisher_admin')
+
+        modeladmin.add_extension_options(_('Date-based publishing'), {
+            'fields': ['publication_date', 'publication_end_date'],
+            })
 
 # ------------------------------------------------------------------------
