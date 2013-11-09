@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 import os
 import re
 
-
 from django import forms, template
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
@@ -23,6 +22,8 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase
 from django.utils import timezone
 from django.utils.encoding import force_text
+
+from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
 from feincms.content.application.models import (app_reverse,
@@ -1427,3 +1428,17 @@ class PagesTestCase(TestCase):
         page.save()
         response = self.client.get('/sitemap.xml')
         self.assertContains(response, '<url>', status_code=200)
+
+    def test_37_invalid_parent(self):
+        self.create_default_page_set()
+
+        page1, page2 = list(Page.objects.order_by('id'))
+
+        page1.parent = page1
+        self.assertRaises(InvalidMove, page1.save)
+
+        self.create_page('Page 3', parent=page2)
+        page1, page2, page3 = list(Page.objects.order_by('id'))
+
+        page1.parent = page3
+        self.assertRaises(InvalidMove, page1.save)
