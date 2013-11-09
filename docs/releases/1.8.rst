@@ -22,7 +22,10 @@ The testsuite runs through on Python 3.3.
 Singleton templates
 ===================
 
-TODO document this.
+Templates can be defined to be singletons, which means that those templates
+can only occur once on a whole site. The page module additionally allows
+specifying that singleton templates must not have any children, and also
+that the page cannot be deleted.
 
 
 Dependencies are automatically installed
