@@ -30,8 +30,6 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     form = PageAdminForm
 
-    # the fieldsets config here is used for the add_view, it has no effect
-    # for the change_view which is completely customized anyway
     unknown_fields = ['template_key', 'parent', 'override_url', 'redirect_to']
     fieldset_insertion_index = 2
     fieldsets = [
