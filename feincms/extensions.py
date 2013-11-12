@@ -2,7 +2,6 @@
 Base types for extensions refactor
 """
 
-import warnings
 from functools import wraps
 
 from django.contrib import admin
@@ -13,15 +12,6 @@ from feincms.utils import get_object
 
 
 class ExtensionsMixin(object):
-    @property
-    def _feincms_extensions(self):
-        warnings.warn(
-            'Start using _extensions instead of _feincms_extensions'
-            ' today!',
-            DeprecationWarning, stacklevel=2)
-
-        return set(self._extensions)
-
     @classmethod
     def register_extensions(cls, *extensions):
         """

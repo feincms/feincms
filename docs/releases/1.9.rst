@@ -25,6 +25,10 @@ Removal of deprecated features
   ``modeladmin.add_extension_options`` if you want extension fields to
   appear.
 
+* The ``_feincms_extensions`` property on the page model (and on all models
+  inheriting ``ExtensionsMixin`` has been removed. It has been deprecated
+  since FeinCMS v1.7.
+
 
 New deprecations
 ================

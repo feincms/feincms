@@ -4,8 +4,6 @@
 
 from __future__ import absolute_import
 
-import warnings
-
 from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
