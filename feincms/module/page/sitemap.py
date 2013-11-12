@@ -8,6 +8,7 @@ from django.contrib.sitemaps import Sitemap
 
 from feincms import settings
 
+
 # ------------------------------------------------------------------------
 class PageSitemap(Sitemap):
     """
