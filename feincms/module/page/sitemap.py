@@ -2,10 +2,11 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from django.conf import settings
 from django.db.models import Max
 from django.db.models import get_model
 from django.contrib.sitemaps import Sitemap
+
+from feincms import settings
 
 # ------------------------------------------------------------------------
 class PageSitemap(Sitemap):
