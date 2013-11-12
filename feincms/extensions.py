@@ -80,6 +80,7 @@ class ExtensionsMixin(object):
                     ' FeinCMS v1.9. Convert your extensions to'
                     ' feincms.extensions.Extension now.' % extension,
                     DeprecationWarning)
+                cls._extensions.append(LegacyExtension(cls, extension=extension))
 
 
 class Extension(object):
