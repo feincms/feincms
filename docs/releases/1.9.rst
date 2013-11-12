@@ -20,15 +20,15 @@ Removal of deprecated features
   The support for ``register(cls, admin_cls)``-style functions has been
   removed.
 
+* Unknown page model fields (for example those added through page extensions)
+  aren't added to the administration interface anymore. Use
+  ``modeladmin.add_extension_options`` if you want extension fields to
+  appear.
+
 
 New deprecations
 ================
 
-* Page extensions should start explicitly adding their fields to the
-  administration interface using ``modeladmin.add_extension_options``.
-  FeinCMS v1.8 will warn about fields collected automatically, the next
-  release will not add unknown fields to the administration interface
-  anymore.
 
 
 Notable features and improvements
