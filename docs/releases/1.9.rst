@@ -16,6 +16,10 @@ Backwards-incompatible changes
 Removal of deprecated features
 ------------------------------
 
+* All extensions should inherit from ``feincms.extensions.Extension``.
+  The support for ``register(cls, admin_cls)``-style functions has been
+  removed.
+
 
 New deprecations
 ================
@@ -25,10 +29,6 @@ New deprecations
   FeinCMS v1.8 will warn about fields collected automatically, the next
   release will not add unknown fields to the administration interface
   anymore.
-
-* All extensions should inherit from ``feincms.extensions.Extension``.
-  Support for ``register(cls, admin_cls)``-style functions will be removed
-  in FeinCMS v1.9.
 
 
 Notable features and improvements
