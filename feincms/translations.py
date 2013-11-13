@@ -35,6 +35,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django.utils import translation
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.utils import queryset_transform
@@ -157,6 +158,7 @@ class TranslatedObjectManager(queryset_transform.TransformManager):
         return self.filter(translations__language_code=language)
 
 
+@python_2_unicode_compatible
 class TranslatedObjectMixin(object):
     """
     Mixin with helper methods.
