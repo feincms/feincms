@@ -10,7 +10,7 @@ from django import template
 from django.conf import settings
 from django.http import HttpRequest
 
-from feincms.module.page.models import Page
+from feincms.module.page.models import BasePage, Page
 from feincms.utils.templatetags import (SimpleNodeWithVarAndArgs,
     do_simple_node_with_var_and_args_helper,
     SimpleAssignmentNodeWithVarAndArgs,
@@ -306,7 +306,7 @@ def feincms_breadcrumbs(page, include_self=True):
         {% feincms_breadcrumbs feincms_page %}
     """
 
-    if not page or not isinstance(page, Page):
+    if not page or not isinstance(page, BasePage):
         raise ValueError("feincms_breadcrumbs must be called with a valid Page object")
 
     ancs = page.get_ancestors()
