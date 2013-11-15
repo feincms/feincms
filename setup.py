@@ -31,6 +31,7 @@ setup(
             'templates/*/*.*',
             'templates/*/*/*.*',
             'templates/*/*/*/*.*',
+            'templates/*/*/*/*/*.*',
         ],
     },
     install_requires=[
