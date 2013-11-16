@@ -98,3 +98,6 @@ will be issued for at least two releases.
 * All extensions should inherit from ``feincms.extensions.Extension``.
   Support for ``register(cls, admin_cls)``-style functions will be removed
   in FeinCMS v1.9.
+
+* The ``_feincms_extensions`` attribute on the page model and on models
+  inheriting ``ExtensionsMixin`` is gone.

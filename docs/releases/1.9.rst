@@ -1,0 +1,50 @@
+====================================
+FeinCMS 1.9 release notes (upcoming)
+====================================
+
+Welcome to FeinCMS 1.9!
+
+
+Major feature 1
+===============
+
+
+Backwards-incompatible changes
+==============================
+
+
+Removal of deprecated features
+------------------------------
+
+* All extensions should inherit from ``feincms.extensions.Extension``.
+  The support for ``register(cls, admin_cls)``-style functions has been
+  removed.
+
+* Unknown page model fields (for example those added through page extensions)
+  aren't added to the administration interface anymore. Use
+  ``modeladmin.add_extension_options`` if you want extension fields to
+  appear.
+
+* The ``_feincms_extensions`` property on the page model (and on all models
+  inheriting ``ExtensionsMixin`` has been removed. It has been deprecated
+  since FeinCMS v1.7.
+
+
+New deprecations
+================
+
+
+
+Notable features and improvements
+=================================
+
+
+Bugfixes
+========
+
+
+Compatibility with Django and other apps
+========================================
+
+FeinCMS 1.8 requires Django 1.4 or better. The testsuite is successfully run
+against Django 1.4, 1.5, 1.6 and the upcoming 1.7.

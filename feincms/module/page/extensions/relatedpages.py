@@ -20,7 +20,7 @@ class Extension(extensions.Extension):
 
     def handle_modeladmin(self, modeladmin):
         modeladmin.filter_horizontal = list(
-            getattr(admin_cls, 'filter_horizontal', ()))
+            getattr(modeladmin, 'filter_horizontal', ()))
         modeladmin.filter_horizontal.append('related_pages')
 
         modeladmin.add_extension_options(_('Related pages'), {

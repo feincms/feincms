@@ -4,8 +4,6 @@
 
 from __future__ import absolute_import
 
-import warnings
-
 from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
@@ -73,30 +71,6 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             del(self.radio_fields['template_key'])
 
         super(PageAdmin, self).__init__(model, admin_site)
-
-        # The use of fieldsets makes only fields explicitly listed in there
-        # actually appear in the admin form. However, extensions should not be
-        # aware that there is a fieldsets structure and even less modify it;
-        # we therefore enumerate all of the model's field and forcibly add them
-        # to the last section in the admin. That way, nobody is left behind.
-        from django.contrib.admin.util import flatten_fieldsets
-        present_fields = flatten_fieldsets(self.fieldsets)
-
-        for f in self.model._meta.fields:
-            if (not f.name.startswith('_')
-                    and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level')
-                    and not f.auto_created
-                    and not f.name in present_fields
-                    and f.editable):
-                self.fieldsets[1][1]['fields'].append(f.name)
-                warnings.warn(
-                    'Automatically adding %r to %r.fieldsets. This behavior'
-                    ' is deprecated. Use add_extension_options yourself if'
-                    ' you want fields to appear in the page'
-                    ' administration.' % (f.name, self.__class__),
-                    DeprecationWarning)
-            if not f.editable:
-                self.readonly_fields.append(f.name)
 
     in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
 

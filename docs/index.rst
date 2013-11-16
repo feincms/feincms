@@ -92,6 +92,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/1.9
    releases/1.8
    releases/1.7
    releases/1.6
