@@ -3,7 +3,7 @@ This is a dummy module used to test the ApplicationContent
 """
 
 from django import template
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 from django.http import HttpResponse, HttpResponseRedirect
 
 from feincms.views.decorators import standalone

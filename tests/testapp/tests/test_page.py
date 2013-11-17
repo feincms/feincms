@@ -13,7 +13,6 @@ from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.sites.models import Site
 from django.http import Http404, HttpResponseBadRequest
@@ -42,8 +41,8 @@ from feincms.translations import short_language_code
 
 from .test_stuff import Empty
 
-# ------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------
 class PagesTestCase(TestCase):
     def setUp(self):
         u = User(username='test', is_active=True, is_staff=True, is_superuser=True)
@@ -769,28 +768,28 @@ class PagesTestCase(TestCase):
 
         self.login()
 
-        self.create_page_through_admin('Page 1') # 1
+        self.create_page_through_admin('Page 1')  # 1
         self.create_page_through_admin('Page 1.1', 1)
-        self.create_page_through_admin('Page 1.2', 1) # 3
+        self.create_page_through_admin('Page 1.2', 1)  # 3
         self.create_page_through_admin('Page 1.2.1', 3)
         self.create_page_through_admin('Page 1.2.2', 3)
         self.create_page_through_admin('Page 1.2.3', 3)
         self.create_page_through_admin('Page 1.3', 1)
 
-        self.create_page_through_admin('Page 2') # 8
+        self.create_page_through_admin('Page 2')  # 8
         self.create_page_through_admin('Page 2.1', 8)
         self.create_page_through_admin('Page 2.2', 8)
         self.create_page_through_admin('Page 2.3', 8)
 
-        self.create_page_through_admin('Page 3') # 12
+        self.create_page_through_admin('Page 3')  # 12
         self.create_page_through_admin('Page 3.1', 12)
         self.create_page_through_admin('Page 3.2', 12)
-        self.create_page_through_admin('Page 3.3', 12) # 15
-        self.create_page_through_admin('Page 3.3.1', 15) # 16
+        self.create_page_through_admin('Page 3.3', 12)  # 15
+        self.create_page_through_admin('Page 3.3.1', 15)  # 16
         self.create_page_through_admin('Page 3.3.1.1', 16)
         self.create_page_through_admin('Page 3.3.2', 15)
 
-        self.create_page_through_admin('Page 4') # 19
+        self.create_page_through_admin('Page 4')  # 19
         self.create_page_through_admin('Page 4.1', 19)
         self.create_page_through_admin('Page 4.2', 19)
 
@@ -1148,7 +1147,8 @@ class PagesTestCase(TestCase):
 
         response = self.client.get(page.get_absolute_url() + 'response/')
         self.assertContains(response, 'Anything')
-        self.assertContains(response, '<h2>Main content</h2>') # Ensure response has been wrapped
+        # Ensure response has been wrapped
+        self.assertContains(response, '<h2>Main content</h2>')
 
         # Test standalone behavior
         self.assertEqual(
@@ -1221,8 +1221,6 @@ class PagesTestCase(TestCase):
         page.applicationcontent_set.create(
             region='main', ordering=0,
             urlconf_path='testapp.applicationcontent_urls')
-
-        from feincms.content.application.models import app_reverse, reverse
 
         # test app_reverse
         self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),

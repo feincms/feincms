@@ -33,6 +33,7 @@ Page.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),
     ))
 
+
 def get_admin_fields(form, *args, **kwargs):
     return {
         'exclusive_subpages': forms.BooleanField(
@@ -42,6 +43,7 @@ def get_admin_fields(form, *args, **kwargs):
             help_text=_('Exclude everything other than the application\'s content when rendering subpages.'),
             ),
     }
+
 
 Page.create_content_type(ApplicationContent, APPLICATIONS=(
     ('blog_urls', 'Blog', {
