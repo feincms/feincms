@@ -3,7 +3,7 @@
 document.write('<style type="text/css">#result_list { display: none }</style>');
 
 
-feincms.jQuery(function($){
+django.jQuery(function($){
     // recolor tree after expand/collapse
     $.extend($.fn.recolorRows = function() {
         $('tr:visible:even', this).removeClass('row2').addClass('row1');
