@@ -87,7 +87,8 @@ class CommentsContent(models.Model):
             'content/comments/%s.html' % parent_type,
             'content/comments/default-site.html',
             'content/comments/default.html',
-            ], RequestContext(request, {
+            ],
+            RequestContext(request, {
                 'content': self,
                 'feincms_page': self.parent,
                 'parent': comment_page,

@@ -115,8 +115,8 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         addable = getattr(page, 'feincms_addable', True)
 
         preview_url = "../../r/%s/%s/" % (
-                ContentType.objects.get_for_model(self.model).id,
-                page.id)
+            ContentType.objects.get_for_model(self.model).id,
+            page.id)
         actions = super(PageAdmin, self)._actions_column(page)
 
         if addable:

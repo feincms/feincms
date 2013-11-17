@@ -52,22 +52,22 @@ class PagesTestCase(TestCase):
         self.site_1 = Site.objects.all()[0]
 
         Page.register_templates({
-                'key': 'base',
-                'title': 'Standard template',
-                'path': 'feincms_base.html',
-                'regions': (
-                    ('main', 'Main content area'),
-                    ('sidebar', 'Sidebar', 'inherited'),
-                    ),
-                }, {
-                'key': 'theother',
-                'title': 'This actually exists',
-                'path': 'base.html',
-                'regions': (
-                    ('main', 'Main content area'),
-                    ('sidebar', 'Sidebar', 'inherited'),
-                    ),
-                })
+            'key': 'base',
+            'title': 'Standard template',
+            'path': 'feincms_base.html',
+            'regions': (
+                ('main', 'Main content area'),
+                ('sidebar', 'Sidebar', 'inherited'),
+                ),
+            }, {
+            'key': 'theother',
+            'title': 'This actually exists',
+            'path': 'base.html',
+            'regions': (
+                ('main', 'Main content area'),
+                ('sidebar', 'Sidebar', 'inherited'),
+                ),
+            })
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
@@ -643,11 +643,11 @@ class PagesTestCase(TestCase):
         # manually register request processor
         # override_settings(FEINCMS_FRONTEND_EDITING=True) wont work here
         Page.register_request_processor(
-                processors.frontendediting_request_processor,
-                key='frontend_editing')
+            processors.frontendediting_request_processor,
+            key='frontend_editing')
         response = self.client.get(page.get_absolute_url() +
-                '?frontend_editing=1',
-                follow=True)
+            '?frontend_editing=1',
+            follow=True)
         self.assertRedirects(response, page.get_absolute_url())
         self.assertIn('class="fe_box"', response.content.decode('utf-8'))
         self.assertIn('frontend_editing', self.client.cookies)
