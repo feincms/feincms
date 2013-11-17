@@ -99,8 +99,8 @@ def path_to_cache_key(path, max_length=200, prefix=""):
 
     cache_key = 'FEINCMS:%d:%s:%s' % (
         getattr(django_settings, 'SITE_ID', 0),
-            prefix,
-            path,
+        prefix,
+        path,
     )
     return cache_key
 

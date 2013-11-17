@@ -7,7 +7,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from feincms.module.page.sitemap import PageSitemap
 
 
-sitemaps = {'pages' : PageSitemap}
+sitemaps = {'pages': PageSitemap}
 
 admin.autodiscover()
 

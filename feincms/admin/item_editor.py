@@ -194,8 +194,8 @@ class ItemEditor(ExtensionModelAdmin):
 
         extra_context = {
             'model': self.model,
-            'available_templates':
-                getattr(self.model, '_feincms_templates', ()),
+            'available_templates': getattr(
+                self.model, '_feincms_templates', ()),
             'has_parent_attribute': hasattr(self.model, 'parent'),
             'content_types': self.get_content_type_map(request),
             'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,

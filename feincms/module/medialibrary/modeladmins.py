@@ -137,8 +137,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 <a href="%(url)s" target="_blank">
                     <img src="%(image)s" alt="" />
                 </a>""" % {
-                    'url': obj.file.url,
-                    'image': image})
+                'url': obj.file.url,
+                'image': image})
         return ''
     admin_thumbnail.short_description = _('Preview')
     admin_thumbnail.allow_tags = True

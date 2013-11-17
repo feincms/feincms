@@ -12,12 +12,12 @@ from django.test import TestCase
 
 from feincms.content.contactform.models import ContactFormContent
 from feincms.content.file.models import FileContent
-from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
 from .test_stuff import ExampleCMSBase, Empty, ExampleCMSBase2
+
 
 # ------------------------------------------------------------------------
 class SubRawContent(RawContent):
@@ -55,6 +55,7 @@ class CMSBaseTest(TestCase):
         # Monkey-patch feedparser.parse to work with a local RSS dump so that
         # the tests run faster.
         _orig_parse = feedparser.parse
+
         def _new_parse(link):
             return _orig_parse(open(
                 os.path.join(os.path.dirname(__file__), 'yahoo.rss'), 'rb'))
@@ -154,9 +155,11 @@ class CMSBaseTest(TestCase):
 
         class AnyContent(models.Model):
             attachment = models.ForeignKey(Attachment, related_name='anycontents')
+
             class Meta:
                 abstract = True
-        ct = ExampleCMSBase.create_content_type(AnyContent)
+
+        ExampleCMSBase.create_content_type(AnyContent)
 
         self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
         self.assertTrue(hasattr(Attachment, 'anycontents'))
@@ -172,4 +175,3 @@ class CMSBaseTest(TestCase):
         ct = ExampleCMSBase.content_type_for(RawContent)
         ct2 = ExampleCMSBase.content_type_for(SubRawContent)
         self.assertNotEqual(ct, ct2)
-
