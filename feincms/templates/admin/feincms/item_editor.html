@@ -17,7 +17,7 @@
 {% for inc in model.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
 
 <script type="text/javascript">
-    feincms.jQuery(document).ready(function($){
+    django.jQuery(document).ready(function($){
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
     });
 </script>
@@ -36,7 +36,7 @@
     {% if forloop.last %}
       </div>
       <script type="text/javascript">
-        feincms.jQuery(function($){
+        django.jQuery(function($){
             $('#id_language').parent().prepend($('#available_translations'));
         });
       </script>
@@ -51,7 +51,7 @@
     {% include "admin/feincms/content_editor.html" %}
   </div>
   <script type="text/javascript">
-    feincms.jQuery(function($){
+    django.jQuery(function($){
       $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
     });
   </script>
