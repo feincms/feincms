@@ -1,4 +1,5 @@
 {% load url from future %}
+{% load feincms_admin_tags %}
 <script type="text/javascript">
 /*
 type: content type identifier (required)
@@ -8,6 +9,7 @@ after: callback, receives new fieldset as argument
 keep: keep entry in content type dropdown (defaults to false)
 */
 {% url "admin:medialibrary_mediafile_changelist" as media_library_url %}
+{% is_popup_var as popup_var %}
 var CONTENT_TYPE_BUTTONS = [
     {
         type: 'richtextcontent',
@@ -28,7 +30,7 @@ var CONTENT_TYPE_BUTTONS = [
         type: 'mediafilecontent',
         keep: true,
         cssclass: 'imagecontent',
-        raw_id_picker: '{{ media_library_url }}?type__exact=image&pop=1'
+        raw_id_picker: '{{ media_library_url }}?type__exact=image&{{ popup_var }}'
     }, {
         type: 'gallerycontent',
         keep: true
@@ -36,7 +38,7 @@ var CONTENT_TYPE_BUTTONS = [
         type: 'mediafilecontent',
         keep: true,
         cssclass: 'pdfcontent',
-        raw_id_picker: '{{ media_library_url }}?type__exact=pdf&pop=1'
+        raw_id_picker: '{{ media_library_url }}?type__exact=pdf&{{ popup_var }}'
 {% endif %}
     }, {
         type: 'oembedcontent',
@@ -46,7 +48,7 @@ var CONTENT_TYPE_BUTTONS = [
         type: 'mediafilecontent',
         keep: true,
         cssclass: 'audiocontent',
-        raw_id_picker: '{{ media_library_url }}?type__exact=audio&pop=1'
+        raw_id_picker: '{{ media_library_url }}?type__exact=audio&{{ popup_var }}'
 {% endif %}
     }
 ];
