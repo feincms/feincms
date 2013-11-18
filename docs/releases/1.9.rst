@@ -38,6 +38,10 @@ New deprecations
 Notable features and improvements
 =================================
 
+* The bundled versions of jQuery and jQuery UI have been updated to 1.9.1
+  and 1.10.3 respectively. Custom confirmation boxes have been removed
+  and standard ones are used instead now.
+
 
 Bugfixes
 ========
