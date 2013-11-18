@@ -374,46 +374,41 @@ if(!Array.indexOf) {
             update_item_controls(new_fieldset, ACTIVE_REGION);
         });
 
-        $("h2 img.item-delete").live('click', function(){
-            var popup_bg = '<div class="popup_bg"></div>';
-            $("body").append(popup_bg);
+        $(document.body).on('click', 'h2 img.item-delete', function() {
             var item = $(this).parents(".order-item");
-            jConfirm(DELETE_MESSAGES[0], DELETE_MESSAGES[1], function(r) {
-                if (r==true) {
-                    var in_database = item.find(".delete-field").length;
-                    if(in_database==0){ // remove on client-side only
-                        var id = item.find(".item-content > div").attr('id');
+            if (confirm(DELETE_MESSAGES[0])) {
+                var in_database = item.find(".delete-field").length;
+                if(in_database==0){ // remove on client-side only
+                    var id = item.find(".item-content > div").attr('id');
 
-                        // poorify all contents
-                        items = item.parents('.order-machine').find('.order-item');
-                        items.each(function() {
-                          poorify_rich($(this));
-                        })
+                    // poorify all contents
+                    items = item.parents('.order-machine').find('.order-item');
+                    items.each(function() {
+                      poorify_rich($(this));
+                    })
 
-                        // remove content
-                        django.jQuery('#'+id).find('a.inline-deletelink')
-                          .triggerHandler('click');
+                    // remove content
+                    django.jQuery('#'+id).find('a.inline-deletelink')
+                      .triggerHandler('click');
 
-                        // richify all contents again
-                        items.each(function() {
-                          richify_poor($(this));
-                        })
-                    }
-                    else{ // saved on server, don't remove form
-                        set_item_field_value(item,"delete-field","checked");
-                    }
-                    item.fadeOut(200, function() {
-                      var region_item = $("#"+REGION_MAP[ACTIVE_REGION]+"_body");
-                      if (region_item.children("div.order-machine").children(":visible").length == 0) {
-                          region_item.children("div.empty-machine-msg").show();
-                      }
-                    });
+                    // richify all contents again
+                    items.each(function() {
+                      richify_poor($(this));
+                    })
                 }
-                $(".popup_bg").remove();
-            });
+                else{ // saved on server, don't remove form
+                    set_item_field_value(item,"delete-field","checked");
+                }
+                item.fadeOut(200, function() {
+                  var region_item = $("#"+REGION_MAP[ACTIVE_REGION]+"_body");
+                  if (region_item.children("div.order-machine").children(":visible").length == 0) {
+                      region_item.children("div.empty-machine-msg").show();
+                  }
+                });
+            }
         });
 
-        $('h2 span.collapse').live('click', function(){
+        $(document.body).on('click', 'h2 span.collapse', function() {
             var node = this;
             $(this.parentNode.parentNode).children('.item-content').slideToggle(function(){
                 $(node).text(feincms_gettext($(this).is(':visible') ? 'Hide' : 'Show'));
@@ -440,9 +435,6 @@ if(!Array.indexOf) {
                 if(new_regions.indexOf(current_regions[i])==-1)
                     not_in_new.push(current_regions[i]);
 
-            var popup_bg = '<div id="popup_bg"></div>';
-            $("body").append(popup_bg);
-
             var msg = CHANGE_TEMPLATE_MESSAGES[1];
 
             if(not_in_new.length) {
@@ -452,29 +444,26 @@ if(!Array.indexOf) {
                 }, true);
             }
 
-            jConfirm(msg, CHANGE_TEMPLATE_MESSAGES[0], function(ret) {
-                if(ret) {
-                    for(var i=0; i<not_in_new.length; i++) {
-                        var body = $('#' + not_in_new[i] + '_body'),
-                            machine = body.find('.order-machine'),
-                            inputs = machine.find('input[name$=region]');
+            if (confirm(msg)) {
+                for(var i=0; i<not_in_new.length; i++) {
+                    var body = $('#' + not_in_new[i] + '_body'),
+                        machine = body.find('.order-machine'),
+                        inputs = machine.find('input[name$=region]');
 
-                        inputs.val(new_regions[0]);
-                    }
-
-                    input_element.checked = true;
-
-                    form_element.append('<input type="hidden" name="_continue" value="1" />');
-                    /* Simulate a click on the save button instead of form.submit(), so
-                       that the submit handlers from FilteredSelectMultiple get
-                       invoked. See Issue #372 */
-                    form_element.find('input[type=submit][name=_save]').click();
-
-                } else {
-                    $("div#popup_bg").remove();
-                    form_element.val($(input_element).data('original_value')); // Restore original value
+                    inputs.val(new_regions[0]);
                 }
-            });
+
+                input_element.checked = true;
+
+                form_element.append('<input type="hidden" name="_continue" value="1" />');
+                /* Simulate a click on the save button instead of form.submit(), so
+                   that the submit handlers from FilteredSelectMultiple get
+                   invoked. See Issue #372 */
+                form_element.find('input[type=submit][name=_save]').click();
+            } else {
+                // Restore original value
+                form_element.val($(input_element).data('original_value'));
+            }
 
             return false;
         }
