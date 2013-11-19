@@ -337,24 +337,37 @@ if(!Array.indexOf) {
         });
     }
 
+    function create_tabbed(_tab_selector, _main_selector, _switch_cb) {
+        var tab_selector = _tab_selector,
+            main_selector = _main_selector,
+            switch_cb = _switch_cb;
+
+        $(tab_selector + " > .navi_tab").click(function() {
+            var elem = $(this);
+            $(tab_selector + " > .navi_tab").removeClass("tab_active");
+            elem.addClass("tab_active");
+            $(main_selector + " > div:visible, " + main_selector + " > fieldset:visible").hide();
+
+            var tab_str = elem.attr("id").substr(0, elem.attr("id").length-4);
+            $('#'+tab_str+'_body').show();
+
+            if(switch_cb) {
+                switch_cb(tab_str);
+            }
+        });
+
+    }
+
     // global variable holding the current template key
     var current_template;
 
     $(document).ready(function($){
         hide_form_rows_with_hidden_widgets();
 
-        $("#main_wrapper > .navi_tab").click(function(){
-            var elem = $(this);
-            $("#main_wrapper > .navi_tab").removeClass("tab_active");
-            elem.addClass("tab_active");
-            $("#main > div:visible, #main > fieldset:visible").hide();
-
-            var tab_str = elem.attr("id").substr(0, elem.attr("id").length-4);
-            $('#'+tab_str+'_body').show();
+        create_tabbed('#main_wrapper', '#main', function(tab_str){
             ACTIVE_REGION = REGION_MAP.indexOf(tab_str);
-
             // make it possible to open current tab on page reload
-            window.location.replace('#tab_'+tab_str);
+            window.location.replace('#tab_'+tab_str);            
         });
 
         // save content type selects for later use
