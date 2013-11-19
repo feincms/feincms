@@ -3,6 +3,7 @@ from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from feincms import extensions
 from feincms.module.page.models import PageManager
 
 
@@ -10,12 +11,15 @@ def current_site(queryset):
     return queryset.filter(site=Site.objects.get_current())
 
 
-def register(cls, admin_cls):
-    cls.add_to_class('site',
-        models.ForeignKey(Site, verbose_name=_('Site'),
-            default=settings.SITE_ID))
+class Extension(extensions.Extension):
+    def handle_model(self):
+        self.model.add_to_class('site',
+            models.ForeignKey(Site, verbose_name=_('Site'),
+                default=settings.SITE_ID))
 
-    PageManager.add_to_active_filters(current_site, key='current_site')
+        PageManager.add_to_active_filters(current_site, key='current_site')
 
-    admin_cls.list_display.extend(['site'])
-    admin_cls.list_filter.extend(['site'])
+    def handle_modeladmin(self, modeladmin):
+        modeladmin.list_display.extend(['site'])
+        modeladmin.list_filter.extend(['site'])
+        modeladmin.add_extension_options('site')

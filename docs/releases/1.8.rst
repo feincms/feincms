@@ -1,8 +1,16 @@
-====================================
-FeinCMS 1.8 release notes (upcoming)
-====================================
+=========================
+FeinCMS 1.8 release notes
+=========================
 
 Welcome to FeinCMS 1.8!
+
+
+FeinCMS finally got continuous integration
+==========================================
+
+Have a look at the status page here:
+
+`Travis CI <https://travis-ci.org/feincms/feincms>`_
 
 
 Preliminary Python 3.3 support
@@ -14,7 +22,10 @@ The testsuite runs through on Python 3.3.
 Singleton templates
 ===================
 
-TODO document this.
+Templates can be defined to be singletons, which means that those templates
+can only occur once on a whole site. The page module additionally allows
+specifying that singleton templates must not have any children, and also
+that the page cannot be deleted.
 
 
 Dependencies are automatically installed
@@ -33,6 +44,11 @@ Backwards-incompatible changes
   ``<mediafile type>_<section content type>``, additionally the media file type
   is considered more important for template resolution than the section content
   type.
+
+* The mechanism for finding the best application content match has been
+  massively simplified and also made customizable. The default implementation
+  of ``ApplicationContent.closest_match`` now only takes the current language
+  into account.
 
 
 Removal of deprecated features
@@ -72,10 +88,17 @@ Removal of deprecated features
 
 
 New deprecations
-----------------
+================
 
-* ``Page.setup_request()`` does not do anything anymore and will be removed
-  in FeinCMS v1.8.
+* Page extensions should start explicitly adding their fields to the
+  administration interface using ``modeladmin.add_extension_options``.
+  FeinCMS v1.8 will warn about fields collected automatically, the next
+  release will not add unknown fields to the administration interface
+  anymore.
+
+* All extensions should inherit from ``feincms.extensions.Extension``.
+  Support for ``register(cls, admin_cls)``-style functions will be removed
+  in FeinCMS v1.9.
 
 
 Notable features and improvements
@@ -101,8 +124,13 @@ Bugfixes
 * The datepublisher response processor should not crash during daylight
   savings time changes anymore.
 
+* The undocumented attribute ``PageAdmin.unknown_fields`` has been removed
+  because it was modified at class level and not instance level which made
+  reuse harder than necessary.
+
 
 Compatibility with Django and other apps
 ========================================
 
-FeinCMS 1.8 requires Django 1.4 (or even Django 1.5?).
+FeinCMS 1.8 requires Django 1.4 or better. The testsuite is successfully run
+against Django 1.4, 1.5, 1.6 and the upcoming 1.7.

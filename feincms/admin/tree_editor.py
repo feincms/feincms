@@ -469,13 +469,14 @@ class TreeEditor(ExtensionModelAdmin):
                 self.message_user(request, u'%s' % e)
                 return HttpResponse('FAIL')
 
-            # Ensure that model save method has been run (required to
+            # Ensure that model save methods have been run (required to
             # update Page._cached_url values, might also be helpful for other
             # models inheriting MPTTModel)
-            cut_item = queryset.get(pk=cut_item.pk)
-            cut_item.save()
+            for item in queryset.filter(id__in=(cut_item.pk, pasted_on.pk)):
+                item.save()
 
-            self.message_user(request, ugettext('%s has been moved to a new position.') %
+            self.message_user(request,
+                ugettext('%s has been moved to a new position.') %
                 cut_item)
             return HttpResponse('OK')
 

@@ -21,6 +21,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import class_prepared, post_save, pre_save
 from django.utils.translation import ugettext_lazy as _
 
+from feincms import extensions
 from feincms.contrib.fields import JSONField
 from feincms.models import ContentProxy
 
@@ -140,12 +141,14 @@ def single_pre_save_handler(sender, instance, **kwargs):
 
 
 # ------------------------------------------------------------------------
-def register(cls, admin_cls):
-    cls.add_to_class('_ct_inventory', JSONField(_('content types'), editable=False, blank=True, null=True))
-    cls.content_proxy_class = TrackerContentProxy
+class Extension(extensions.Extension):
+    def handle_model(self):
+        self.model.add_to_class('_ct_inventory', JSONField(
+            _('content types'), editable=False, blank=True, null=True))
+        self.model.content_proxy_class = TrackerContentProxy
 
-    pre_save.connect(single_pre_save_handler, sender=cls)
-    if hasattr(cls, 'get_descendants'):
-        post_save.connect(tree_post_save_handler, sender=cls)
+        pre_save.connect(single_pre_save_handler, sender=self.model)
+        if hasattr(self.model, 'get_descendants'):
+            post_save.connect(tree_post_save_handler, sender=self.model)
 
 # ------------------------------------------------------------------------

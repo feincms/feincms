@@ -1,4 +1,4 @@
-VERSION = (1, 8, 0, 'pre')
+VERSION = (1, 8, 0)
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -74,5 +74,6 @@ def ensure_completely_loaded(force=False):
     # See Issue #323 on github.
     loading.cache._get_models_cache.clear()
 
-    COMPLETELY_LOADED = True
+    if loading.app_cache_ready():
+        COMPLETELY_LOADED = True
     return True

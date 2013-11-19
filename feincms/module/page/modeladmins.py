@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import
 
+import warnings
+
 from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
@@ -30,9 +32,6 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     form = PageAdminForm
 
-    # the fieldsets config here is used for the add_view, it has no effect
-    # for the change_view which is completely customized anyway
-    unknown_fields = ['template_key', 'parent', 'override_url', 'redirect_to']
     fieldset_insertion_index = 2
     fieldsets = [
         (None, {
@@ -43,7 +42,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         }),
         (_('Other options'), {
             'classes': ['collapse'],
-            'fields': unknown_fields,
+            'fields': ['template_key', 'parent', 'override_url', 'redirect_to'],
         }),
         # <-- insertion point, extensions appear here, see insertion_index above
         item_editor.FEINCMS_CONTENT_FIELDSET,
@@ -84,9 +83,18 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         present_fields = flatten_fieldsets(self.fieldsets)
 
         for f in self.model._meta.fields:
-            if not f.name.startswith('_') and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level') and \
-                    not f.auto_created and not f.name in present_fields and f.editable:
-                self.unknown_fields.append(f.name)
+            if (not f.name.startswith('_')
+                    and not f.name in ('id', 'lft', 'rght', 'tree_id', 'level')
+                    and not f.auto_created
+                    and not f.name in present_fields
+                    and f.editable):
+                self.fieldsets[1][1]['fields'].append(f.name)
+                warnings.warn(
+                    'Automatically adding %r to %r.fieldsets. This behavior'
+                    ' is deprecated. Use add_extension_options yourself if'
+                    ' you want fields to appear in the page'
+                    ' administration.' % (f.name, self.__class__),
+                    DeprecationWarning)
             if not f.editable:
                 self.readonly_fields.append(f.name)
 
