@@ -9,6 +9,13 @@ Major feature 1
 ===============
 
 
+Extensions in the item editor
+=============================
+
+Extension fieldsets are now presented using a tabbed interface in the item
+editor as well to raise their visibility.
+
+
 Backwards-incompatible changes
 ==============================
 
