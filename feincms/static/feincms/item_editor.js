@@ -342,7 +342,7 @@ if(!Array.indexOf) {
             main_selector = _main_selector,
             switch_cb = _switch_cb;
 
-        $(tab_selector + " > .navi_tab").click(function() {
+        $(tab_selector + " > .navi_tab").on('click', function() {
             var elem = $(this);
             $(tab_selector + " > .navi_tab").removeClass("tab_active");
             elem.addClass("tab_active");
@@ -355,7 +355,6 @@ if(!Array.indexOf) {
                 switch_cb(tab_str);
             }
         });
-
     }
 
     // global variable holding the current template key
@@ -369,6 +368,37 @@ if(!Array.indexOf) {
             // make it possible to open current tab on page reload
             window.location.replace('#tab_'+tab_str);            
         });
+
+        /* Rearrange the options fieldsets so we can wrap them into a tab bar */
+        var options_fieldsets = $('fieldset.collapse');
+        options_fieldsets.wrapAll('<fieldset class="module aligned"><div id="extension_options_wrapper" /></fieldset>');
+        var option_wrapper = $('#extension_options_wrapper');
+        var panels = [];
+
+        options_fieldsets.each(function(idx, elem) {
+            var option_title = $('h2', $(elem)).text();
+            var c = $(elem).children('div');
+            var id_base = 'extension_option_'+ idx;
+
+            $(elem).remove();
+
+            var paren = option_title.indexOf(' (');
+            if(paren > 0)
+                option_title = option_title.substr(0, paren);
+
+            option_wrapper.append('<div class="navi_tab" id="'+ id_base +'_tab">' +
+                                   option_title +
+                                   '</div>');
+            var panel = $('<div style="clear: both; display: none" id="' + id_base + '_body"></div>');
+            panel.html(c);
+            panels.push(panel);
+        });
+
+        option_wrapper.append('<div id="extension_options" />');
+        $('#extension_options').html(panels);
+
+        create_tabbed('#extension_options_wrapper', '#extension_options');
+        /* Done morphing extension options into tabs */
 
         // save content type selects for later use
         save_content_type_selects();
