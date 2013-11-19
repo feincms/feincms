@@ -35,6 +35,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django.utils import translation
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.utils import queryset_transform
@@ -157,6 +158,7 @@ class TranslatedObjectManager(queryset_transform.TransformManager):
         return self.filter(translations__language_code=language)
 
 
+@python_2_unicode_compatible
 class TranslatedObjectMixin(object):
     """
     Mixin with helper methods.
@@ -186,10 +188,10 @@ class TranslatedObjectMixin(object):
             language_code = translation.get_language()
         return (('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
                 '-'.join(['%s' % s for s in (
-                        self._meta.db_table,
-                        self.id,
-                        language_code,
-                        )]))
+                    self._meta.db_table,
+                    self.id,
+                    language_code,
+                    )]))
 
     def get_translation(self, language_code=None):
         if not language_code:

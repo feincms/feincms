@@ -19,6 +19,7 @@ from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.utils import collect_dict_values, get_object, shorten_string
 
+
 # ------------------------------------------------------------------------
 class Empty(object):
     """
@@ -26,6 +27,7 @@ class Empty(object):
     """
 
     pass
+
 
 class DocTest(TestCase):
     def test_translation_short_language_code(self):

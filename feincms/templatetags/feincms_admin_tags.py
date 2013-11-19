@@ -1,3 +1,4 @@
+import django
 from django import template
 
 
@@ -43,3 +44,19 @@ def post_process_fieldsets(fieldset):
 
     fieldset.fields = new_fields
     return fieldset
+
+
+@register.assignment_tag
+def is_popup_var():
+    """
+    Django 1.6 requires _popup=1 for raw id field popups, earlier versions
+    require pop=1.
+
+    The explicit version check is a bit ugly, but works well.
+
+    (Wrong parameters aren't simply ignored by django.contrib.admin, the
+    change list actively errors out by redirecting to ?e=1)
+    """
+    if django.VERSION < (1, 6):
+        return 'pop=1'
+    return '_popup=1'

@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 from django.views import generic
 
 from feincms.module.blog.models import Entry

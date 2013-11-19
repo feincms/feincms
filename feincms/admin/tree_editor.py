@@ -269,9 +269,9 @@ class TreeEditor(ExtensionModelAdmin):
         r += (
             '<span id="page_marker-%d" class="page_marker%s"'
             ' style="width: %dpx;">&nbsp;</span>&nbsp;') % (
-                item.pk,
-                changeable_class,
-                14 + getattr(item, mptt_opts.level_attr) * 18)
+            item.pk,
+            changeable_class,
+            14 + getattr(item, mptt_opts.level_attr) * 18)
 
 #        r += '<span tabindex="0">'
         if hasattr(item, 'short_title') and callable(item.short_title):

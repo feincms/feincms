@@ -5,7 +5,7 @@
 (function () {
     // load jQuery if not yet present
     if (typeof(feincms) == "undefined") {
-        var jquery_url = "{% static 'feincms/jquery-1.8.3.min.js' %}";
+        var jquery_url = "{% static 'feincms/jquery-1.9.1.min.js' %}";
         document.write(unescape('%3Cscript src="' + jquery_url + '" type="text/javascript"%3E%3C/script%3E'));
     }
 })();
@@ -21,8 +21,8 @@
     };
 </script>
 
-<script src="{% static 'feincms//frontend_editing.js' %}" type="text/javascript" charset="utf-8"></script>
-<link rel="stylesheet" href="{% static 'feincms//frontend_editing.css' %}" type="text/css" media="screen" charset="utf-8">
+<script src="{% static 'feincms/frontend_editing.js' %}" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="{% static 'feincms/frontend_editing.css' %}" type="text/css" media="screen" charset="utf-8">
 
 <div id="fe_controls">
     <a href="?frontend_editing=0">{% trans "Stop Editing" %}</a>

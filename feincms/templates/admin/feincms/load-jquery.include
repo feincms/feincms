@@ -1,12 +1,11 @@
 {% load staticfiles %}
 {% comment %}
-Include jquery, override this template if you want to use a cdn version 
+Include jquery, override this template if you want to use a cdn version
 or load more plugins or whatnot
 {% endcomment %}
 
-<script type="text/javascript" src="{% static 'feincms/jquery-1.8.3.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'feincms/jquery-ui-1.8.22.custom.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'feincms/jquery.alerts.js' %}"></script>
+<script type="text/javascript" src="{% static 'feincms/jquery-1.9.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'feincms/jquery-ui-1.10.3.custom.min.js' %}"></script>
 
 <script type="text/javascript">
     var feincms = {
