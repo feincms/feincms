@@ -95,7 +95,9 @@ class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
 
 def navigation_extension_choices():
     for ext in NavigationExtension.types:
-        yield ('%s.%s' % (ext.__module__, ext.__name__), ext.name)
+        if (issubclass(ext, NavigationExtension)
+                and not ext is NavigationExtension):
+            yield ('%s.%s' % (ext.__module__, ext.__name__), ext.name)
 
 
 class Extension(extensions.Extension):
