@@ -34,7 +34,10 @@ class ExtensionsMixin(object):
 
             extension = None
 
-            if isinstance(ext, six.string_types):
+            if issubclass(ext, Extension):
+                extension = ext
+
+            elif isinstance(ext, six.string_types):
                 try:
                     extension = get_object(ext)
                 except (AttributeError, ImportError, ValueError):
