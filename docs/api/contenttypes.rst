@@ -71,13 +71,6 @@ SectionContent
    :members:
    :noindex:
 
-TableContent
-------------
-
-.. automodule:: feincms.content.table.models
-   :members:
-   :noindex:
-
 TemplateContent
 ---------------
 

@@ -23,6 +23,10 @@ Backwards-incompatible changes
 Removal of deprecated features
 ------------------------------
 
+* The table content type has been removed. It has open bugs for more than two
+  years which weren't fixed, and now that we've moved on to newer versions of
+  jQuery, the table content didn't even load.
+
 * All extensions should inherit from ``feincms.extensions.Extension``.
   The support for ``register(cls, admin_cls)``-style functions has been
   removed.
