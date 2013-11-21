@@ -4,8 +4,12 @@ from django.template import TemplateSyntaxError
 from django.template.defaulttags import kwarg_re
 from django.utils.encoding import smart_str
 
+from feincms.content.application.models import (ApplicationContent,
+    app_reverse as do_app_reverse)
+from feincms.templatetags.feincms_tags import _render_content
 # backwards compatibility import
-from feincms.templatetags.fragment_tags import fragment, get_fragment, has_fragment
+from feincms.templatetags.fragment_tags import (fragment, get_fragment,
+    has_fragment)
 
 
 register = template.Library()
@@ -29,9 +33,6 @@ def feincms_render_region_appcontent(page, region, request):
             {% feincms_render_region_appcontent feincms_page "main" request %}
         {% endif %}
     """
-    from feincms.content.application.models import ApplicationContent
-    from feincms.templatetags.feincms_tags import _render_content
-
     return u''.join(_render_content(content, request=request) for content in
         page.content.all_of_type(ApplicationContent) if content.region == region)
 
@@ -45,8 +46,6 @@ class AppReverseNode(template.Node):
         self.asvar = asvar
 
     def render(self, context):
-        from feincms.content.application.models import app_reverse
-
         args = [arg.resolve(context) for arg in self.args]
         kwargs = dict([(smart_str(k, 'ascii'), v.resolve(context))
                        for k, v in self.kwargs.items()])
@@ -54,7 +53,7 @@ class AppReverseNode(template.Node):
         urlconf = self.urlconf.resolve(context)
 
         try:
-            url = app_reverse(view_name, urlconf, args=args, kwargs=kwargs,
+            url = do_app_reverse(view_name, urlconf, args=args, kwargs=kwargs,
                 current_app=context.current_app)
         except NoReverseMatch:
             if self.asvar is None:

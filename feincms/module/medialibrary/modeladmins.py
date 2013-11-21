@@ -22,12 +22,14 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
-from ...translations import admin_translationinline, lookup_translations
-from ...extensions import ExtensionModelAdmin
+from feincms.extensions import ExtensionModelAdmin
+from feincms.translations import admin_translationinline, lookup_translations
+from feincms.utils import shorten_string
 
 from .models import Category, MediaFileTranslation
 from .forms import MediaCategoryAdminForm, MediaFileAdminForm
 from .thumbnail import admin_thumbnail
+from .zip import import_zipfile
 
 
 # -----------------------------------------------------------------------
@@ -180,7 +182,6 @@ class MediaFileAdmin(ExtensionModelAdmin):
         the file name later on, this can be used to access the file name from
         JS, like for example a TinyMCE connector shim.
         """
-        from feincms.utils import shorten_string
         return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" id="_refkey_%d" /> %s <br />%s, %s' % (
             obj.id,
             obj.file.name,
@@ -197,8 +198,6 @@ class MediaFileAdmin(ExtensionModelAdmin):
     @csrf_protect
     @permission_required('medialibrary.add_mediafile')
     def bulk_upload(request):
-        from .zip import import_zipfile
-
         if request.method == 'POST' and 'data' in request.FILES:
             try:
                 count = import_zipfile(request.POST.get('category'), request.POST.get('overwrite', False), request.FILES['data'])

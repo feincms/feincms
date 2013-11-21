@@ -2,10 +2,10 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-import re
 import copy
-
 import logging
+import re
+import warnings
 
 from django import forms, template
 from django.contrib.admin.options import InlineModelAdmin
@@ -21,6 +21,7 @@ from django.utils.translation import ugettext as _
 from feincms import settings, ensure_completely_loaded
 from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
+from feincms.templatetags.feincms_admin_tags import is_popup_var
 
 
 # ------------------------------------------------------------------------
@@ -105,7 +106,6 @@ class ItemEditor(ExtensionModelAdmin):
                 attrs['form'] = inline.form
 
                 if hasattr(content_type, 'feincms_item_editor_form'):
-                    import warnings
                     warnings.warn(
                         'feincms_item_editor_form on %s is ignored because feincms_item_editor_inline is set too' % content_type,
                         RuntimeWarning)
@@ -191,8 +191,6 @@ class ItemEditor(ExtensionModelAdmin):
 
     def get_extra_context(self, request):
         """ Return extra context parameters for add/change views. """
-
-        from feincms.templatetags.feincms_admin_tags import is_popup_var
 
         extra_context = {
             'model': self.model,

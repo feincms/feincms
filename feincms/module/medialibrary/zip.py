@@ -14,8 +14,9 @@ import zipfile
 import os
 import time
 
-from django.template.defaultfilters import slugify
 from django.conf import settings as django_settings
+from django.core.files.base import ContentFile
+from django.template.defaultfilters import slugify
 from django.utils import timezone
 
 from .models import Category, MediaFile, MediaFileTranslation
@@ -67,8 +68,6 @@ def import_zipfile(category_id, overwrite, data):
     count = 0
     for zi in z.infolist():
         if not zi.filename.endswith('/'):
-            from django.core.files.base import ContentFile
-
             bname = os.path.basename(zi.filename)
             if bname and not bname.startswith(".") and "." in bname:
                 fname, ext = os.path.splitext(bname)

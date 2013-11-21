@@ -13,11 +13,14 @@ Embed a comment list and comment form anywhere. Uses the standard
 """
 
 from django.contrib import comments
+from django.contrib.comments.views.comments import post_comment
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+
+from feincms.admin.item_editor import ItemEditorForm
 
 
 # ------------------------------------------------------------------------
@@ -31,8 +34,6 @@ class CommentsContent(models.Model):
 
     @classmethod
     def initialize_type(cls):
-        from feincms.admin.item_editor import ItemEditorForm
-
         class CommentContentAdminForm(ItemEditorForm):
             def __init__(self, *args, **kwargs):
                 super(CommentContentAdminForm, self).__init__(*args, **kwargs)
@@ -65,14 +66,14 @@ class CommentsContent(models.Model):
         f = None
         if self.comments_enabled and request.POST:
 
-            # I guess the drawback is that this page can't handle any other types of posts
-            # just the comments for right now, but if we just post to the current path
-            # and handle it this way .. at least it works for now.
+            # I guess the drawback is that this page can't handle any other
+            # types of posts just the comments for right now, but if we just
+            # post to the current path and handle it this way .. at least it
+            # works for now.
 
             #extra = request._feincms_extra_context.get('page_extra_path', ())
             #if len(extra) > 0 and extra[0] == u"post-comment":
 
-            from django.contrib.comments.views.comments import post_comment
             r = post_comment(request, next=comment_page.get_absolute_url())
 
             if isinstance(r, HttpResponseRedirect):

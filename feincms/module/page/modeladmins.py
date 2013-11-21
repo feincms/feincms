@@ -9,6 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib import admin
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.utils.functional import curry
@@ -175,7 +176,6 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         try:
             return super(PageAdmin, self).change_view(request, object_id, **kwargs)
         except PermissionDenied:
-            from django.contrib import messages
             messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
         return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 

@@ -23,7 +23,7 @@ from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
-from feincms.utils import path_to_cache_key
+from feincms.utils import path_to_cache_key, shorten_string
 
 
 REDIRECT_TO_RE = re.compile(
@@ -219,7 +219,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         """
         Title shortened for display.
         """
-        from feincms.utils import shorten_string
         return shorten_string(self.title)
     short_title.admin_order_field = 'title'
     short_title.short_description = _('title')

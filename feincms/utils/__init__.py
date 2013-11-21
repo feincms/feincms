@@ -14,6 +14,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import AutoField
 from django.db.models import get_model
 from django.utils import six
+from django.utils.encoding import iri_to_uri
 from django.utils.importlib import import_module
 
 from feincms import settings
@@ -87,7 +88,6 @@ def path_to_cache_key(path, max_length=200, prefix=""):
     max key size, so if too long, hash it and use that instead.
     """
 
-    from django.utils.encoding import iri_to_uri
     path = iri_to_uri(path)
 
     # logic below borrowed from http://richwklein.com/2009/08/04/improving-django-cache-part-ii/

@@ -16,8 +16,10 @@ from django.db.models.signals import pre_save
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
-from tagging.fields import TagField
 from tagging import AlreadyRegistered
+from tagging.fields import TagField
+from tagging.models import Tag
+from tagging.utils import parse_tag_input
 
 
 # ------------------------------------------------------------------------
@@ -56,9 +58,6 @@ class TagSelectField(TagField):
         self.filter_horizontal = filter_horizontal
 
     def formfield(self, **defaults):
-        from tagging.models import Tag
-        from tagging.utils import parse_tag_input
-
         if self.filter_horizontal:
             widget = FilteredSelectMultiple(self.verbose_name, is_stacked=False)
         else:
@@ -80,8 +79,6 @@ def pre_save_handler(sender, instance, **kwargs):
     Intercept attempts to save and sort the tag field alphabetically, so
     we won't have different permutations in the filter list.
     """
-    from tagging.utils import parse_tag_input
-
     taglist = parse_tag_input(instance.tags)
     instance.tags = taglist_to_string(taglist)
 

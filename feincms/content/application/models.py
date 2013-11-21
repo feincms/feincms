@@ -14,6 +14,7 @@ from django.db import models
 from django.db.models import signals
 from django.http import HttpResponse
 from django.utils.functional import curry as partial, lazy, wraps
+from django.utils.http import http_date
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language, ugettext_lazy as _
 
@@ -338,7 +339,6 @@ class ApplicationContent(models.Model):
         Combine all headers that were set by the different content types
         We are interested in Cache-Control, Last-Modified, Expires
         """
-        from django.utils.http import http_date
 
         # Ideally, for the Cache-Control header, we'd want to do some
         # intelligent combining, but that's hard. Let's just collect and unique
