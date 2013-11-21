@@ -1,14 +1,3 @@
-if(!Array.indexOf) {
-    Array.prototype.indexOf = function(obj) {
-        for(var i=0; i<this.length; i++) {
-            if(this[i]==obj) {
-                return i;
-            }
-        }
-        return -1;
-    };
-}
-
 (function($){
     // Patch up urlify maps to generate nicer slugs in german
     if(typeof(Downcoder) != "undefined"){
@@ -620,7 +609,7 @@ if(!Array.indexOf) {
         }
     });
 
-    $(window).load(function(){init_contentblocks();});
+    $(window).load(init_contentblocks);
 
     // externally accessible helpers
     window.ItemEditor = {
