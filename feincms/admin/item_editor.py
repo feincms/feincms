@@ -192,6 +192,8 @@ class ItemEditor(ExtensionModelAdmin):
     def get_extra_context(self, request):
         """ Return extra context parameters for add/change views. """
 
+        from feincms.templatetags.feincms_admin_tags import is_popup_var
+
         extra_context = {
             'model': self.model,
             'available_templates': getattr(
@@ -202,6 +204,7 @@ class ItemEditor(ExtensionModelAdmin):
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
 
             'FEINCMS_FRONTEND_EDITING': settings.FEINCMS_FRONTEND_EDITING,
+            'FEINCMS_POPUP_VAR': is_popup_var(),
             }
 
         for processor in self.model.feincms_item_editor_context_processors:
