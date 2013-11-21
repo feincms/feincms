@@ -451,18 +451,6 @@ Section content
 Combined rich text editor, title and media file.
 
 
-Table content
--------------
-.. module:: feincms.content.table.models
-.. class:: TableContent()
-
-The default configuration of the rich text editor does not include table
-controls. Because of this, you can use this content type to provide HTML
-table editing support. The data is stored in JSON format, additional
-formatters can be easily written which produce the definitive HTML
-representation of the table.
-
-
 Template content
 ----------------
 .. module:: feincms.content.template.models
