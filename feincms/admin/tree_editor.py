@@ -109,12 +109,12 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
     else:
         value = getattr(item, attr)
         a = [
-            '<input type="checkbox"',
-            value and ' checked="checked"' or '',
-            ' onclick="inplace_toggle_boolean(%d, \'%s\').then($.fn.recolorRows);"' % (item.pk, attr),
-            ' />',
-            text,
-            ]
+            '<input type="checkbox" data-inplace data-inplace-id="%s"'
+            ' data-inplace-attribute="%s" %s>' % (
+                item.pk,
+                attr,
+                'checked="checked"' if value else '',
+                )]
 
     a.insert(0, '<div id="wrap_%s_%d">' % (attr, item.pk))
     a.append('</div>')
