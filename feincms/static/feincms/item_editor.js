@@ -342,6 +342,8 @@ if(!Array.indexOf) {
             main_selector = _main_selector,
             switch_cb = _switch_cb;
 
+        $(tab_selector).addClass('clearfix');
+
         $(tab_selector + " > .navi_tab").on('click', function() {
             var elem = $(this);
             $(tab_selector + " > .navi_tab").removeClass("tab_active");
@@ -366,12 +368,12 @@ if(!Array.indexOf) {
         create_tabbed('#main_wrapper', '#main', function(tab_str){
             ACTIVE_REGION = REGION_MAP.indexOf(tab_str);
             // make it possible to open current tab on page reload
-            window.location.replace('#tab_'+tab_str);            
+            window.location.replace('#tab_'+tab_str);
         });
 
         /* Rearrange the options fieldsets so we can wrap them into a tab bar */
         var options_fieldsets = $('fieldset.collapse');
-        options_fieldsets.wrapAll('<fieldset class="module aligned"><div id="extension_options_wrapper" /></fieldset>');
+        options_fieldsets.wrapAll('<div id="extension_options_wrapper" />');
         var option_wrapper = $('#extension_options_wrapper');
         var panels = [];
 
@@ -389,7 +391,7 @@ if(!Array.indexOf) {
             option_wrapper.append('<div class="navi_tab" id="'+ id_base +'_tab">' +
                                    option_title +
                                    '</div>');
-            var panel = $('<div style="clear: both; display: none" id="' + id_base + '_body"></div>');
+            var panel = $('<fieldset class="module aligned" style="clear: both; display: none" id="' + id_base + '_body"></fieldset>');
             panel.html(c);
             panels.push(panel);
         });

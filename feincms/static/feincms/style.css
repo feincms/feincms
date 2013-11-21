@@ -99,6 +99,10 @@ select {
     margin: 10px 0 30px 0;
 }
 
+.clearfix { *zoom:1; }
+.clearfix:before, .clearfix:after { content: " "; display: table; }
+.clearfix:after { clear: both; }
+
 textarea {
     width: 580px;
     margin-top:5px;
