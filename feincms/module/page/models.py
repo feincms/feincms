@@ -182,11 +182,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
 
-    cache_key_components = [
-        lambda p: getattr(django_settings, 'SITE_ID', 0),
-        lambda p: p._django_content_type.id,
-        lambda p: p.id]
-
     class Meta:
         ordering = ['tree_id', 'lft']
         abstract = True
@@ -319,10 +314,19 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             return self._cached_url
         return self.redirect_to
 
+    cache_key_components = [
+        lambda p: getattr(django_settings, 'SITE_ID', 0),
+        lambda p: p._django_content_type.id,
+        lambda p: p.id,
+        ]
+
     def cache_key(self):
         """
         Return a string that may be used as cache key for the current page.
         The cache_key is unique for each content type and content instance.
+
+        This function is here purely for your convenience. FeinCMS itself
+        does not use it in any way.
         """
         return '-'.join(str(fn(self)) for fn in self.cache_key_components)
 
