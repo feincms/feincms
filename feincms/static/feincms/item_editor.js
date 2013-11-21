@@ -345,7 +345,7 @@ if(!Array.indexOf) {
         $(tab_selector).addClass('clearfix');
 
         $(tab_selector + " > .navi_tab").on('click', function() {
-            var elem = $(this)
+            var elem = $(this),
                 tab_str = elem.attr("id").substr(0, elem.attr("id").length-4);
 
             if (elem.hasClass('tab_active') && tab_str.indexOf('extension_option') != -1) {
