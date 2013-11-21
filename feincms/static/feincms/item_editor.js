@@ -345,16 +345,23 @@ if(!Array.indexOf) {
         $(tab_selector).addClass('clearfix');
 
         $(tab_selector + " > .navi_tab").on('click', function() {
-            var elem = $(this);
-            $(tab_selector + " > .navi_tab").removeClass("tab_active");
-            elem.addClass("tab_active");
-            $(main_selector + " > div:visible, " + main_selector + " > fieldset:visible").hide();
+            var elem = $(this)
+                tab_str = elem.attr("id").substr(0, elem.attr("id").length-4);
 
-            var tab_str = elem.attr("id").substr(0, elem.attr("id").length-4);
-            $('#'+tab_str+'_body').show();
+            if (elem.hasClass('tab_active') && tab_str.indexOf('extension_option') != -1) {
+                elem.removeClass('tab_active');
+                $('#' + tab_str + '_body').hide();
+            } else {
 
-            if(switch_cb) {
-                switch_cb(tab_str);
+                $(tab_selector + " > .navi_tab").removeClass("tab_active");
+                elem.addClass("tab_active");
+                $(main_selector + " > div:visible, " + main_selector + " > fieldset:visible").hide();
+
+                $('#'+tab_str+'_body').show();
+
+                if(switch_cb) {
+                    switch_cb(tab_str);
+                }
             }
         });
     }
