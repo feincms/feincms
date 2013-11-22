@@ -56,7 +56,8 @@ class TemplateContent(models.Model):
         cls.template_loaders = [find_template_loader(loader)
             for loader in TEMPLATE_LOADERS if loader]
 
-        cls.add_to_class('filename', models.CharField(_('template'), max_length=100,
+        cls.add_to_class('filename', models.CharField(
+            _('template'), max_length=100,
             choices=TemplateChoices(cls.template_loaders)))
 
     def render(self, **kwargs):

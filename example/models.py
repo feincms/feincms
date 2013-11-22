@@ -12,7 +12,8 @@ from feincms.content.raw.models import RawContent
 from feincms.content.image.models import ImageContent
 from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.application.models import ApplicationContent
-from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
+from feincms.module.page.extensions.navigation import (NavigationExtension,
+    PagePretender)
 from feincms.content.application.models import app_reverse
 
 
@@ -40,7 +41,8 @@ def get_admin_fields(form, *args, **kwargs):
             label=capfirst(_('exclusive subpages')),
             required=False,
             initial=form.instance.parameters.get('exclusive_subpages', False),
-            help_text=_('Exclude everything other than the application\'s content when rendering subpages.'),
+            help_text=_('Exclude everything other than the application\'s'
+                ' content when rendering subpages.'),
             ),
     }
 
@@ -74,7 +76,8 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=app_reverse('blog_entry_detail', 'blog_urls', kwargs={'pk': entry.id}),
+                url=app_reverse(
+                    'blog_entry_detail', 'blog_urls', kwargs={'pk': entry.id}),
                 level=page.level + 1,
                 )
 
@@ -88,7 +91,8 @@ Page.register_extensions(
 class Category(MPTTModel):
     name = models.CharField(max_length=20)
     slug = models.SlugField()
-    parent = models.ForeignKey('self', blank=True, null=True, related_name='children')
+    parent = models.ForeignKey('self', blank=True, null=True,
+        related_name='children')
 
     class Meta:
         ordering = ['tree_id', 'lft']
@@ -100,5 +104,6 @@ class Category(MPTTModel):
 
 
 # add m2m field to entry so it shows up in entry admin
-Entry.add_to_class('categories', models.ManyToManyField(Category, blank=True, null=True))
+Entry.add_to_class('categories', models.ManyToManyField(Category,
+    blank=True, null=True))
 EntryAdmin.list_filter += ('categories',)

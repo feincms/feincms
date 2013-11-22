@@ -30,7 +30,8 @@ class CategoryManager(models.Manager):
     on querysets since we can't even __str__ efficiently without it.
     """
     def get_query_set(self):
-        return super(CategoryManager, self).get_query_set().select_related("parent")
+        return super(CategoryManager, self).get_query_set().select_related(
+            "parent")
 
 
 # ------------------------------------------------------------------------
@@ -83,15 +84,20 @@ class Category(models.Model):
 @python_2_unicode_compatible
 class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     """
-    Abstract media file class. Includes the :class:`feincms.models.ExtensionsMixin`
-    because of the (handy) extension mechanism.
+    Abstract media file class. Includes the
+    :class:`feincms.models.ExtensionsMixin` because of the (handy) extension
+    mechanism.
     """
 
-    file = models.FileField(_('file'), max_length=255, upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO)
-    type = models.CharField(_('file type'), max_length=12, editable=False, choices=())
-    created = models.DateTimeField(_('created'), editable=False, default=timezone.now)
+    file = models.FileField(_('file'), max_length=255,
+        upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO)
+    type = models.CharField(_('file type'), max_length=12, editable=False,
+        choices=())
+    created = models.DateTimeField(_('created'), editable=False,
+        default=timezone.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
-    file_size = models.IntegerField(_("file size"), blank=True, null=True, editable=False)
+    file_size = models.IntegerField(_("file size"), blank=True, null=True,
+        editable=False)
 
     categories = models.ManyToManyField(Category, verbose_name=_('categories'),
                                         blank=True, null=True)
@@ -183,7 +189,8 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
         super(MediaFileBase, self).save(*args, **kwargs)
 
-        logger.info("Saved mediafile %d (%s, type %s, %d bytes)" % (self.id, self.file.name, self.type, self.file_size or 0))
+        logger.info("Saved mediafile %d (%s, type %s, %d bytes)" % (
+            self.id, self.file.name, self.type, self.file_size or 0))
 
         # User uploaded a new file. Try to get rid of the old file in
         # storage, to avoid having orphaned files hanging around.
@@ -206,17 +213,24 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 # ------------------------------------------------------------------------
 MediaFileBase.register_filetypes(
     # Should we be using imghdr.what instead of extension guessing?
-    ('image', _('Image'), lambda f: re.compile(r'\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?)$', re.IGNORECASE).search(f)),
-    ('video', _('Video'), lambda f: re.compile(r'\.(mov|m[14]v|mp4|avi|mpe?g|qt|ogv|wmv|flv)$', re.IGNORECASE).search(f)),
-    ('audio', _('Audio'), lambda f: re.compile(r'\.(au|mp3|m4a|wma|oga|ram|wav)$', re.IGNORECASE).search(f)),
+    ('image', _('Image'), lambda f: re.compile(
+        r'\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?)$', re.IGNORECASE).search(f)),
+    ('video', _('Video'), lambda f: re.compile(
+        r'\.(mov|m[14]v|mp4|avi|mpe?g|qt|ogv|wmv|flv)$',
+        re.IGNORECASE).search(f)),
+    ('audio', _('Audio'), lambda f: re.compile(
+        r'\.(au|mp3|m4a|wma|oga|ram|wav)$', re.IGNORECASE).search(f)),
     ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
     ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
     ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
     ('rtf', _('Rich Text'), lambda f: f.lower().endswith('.rtf')),
     ('zip', _('Zip archive'), lambda f: f.lower().endswith('.zip')),
-    ('doc', _('Microsoft Word'), lambda f: re.compile(r'\.docx?$', re.IGNORECASE).search(f)),
-    ('xls', _('Microsoft Excel'), lambda f: re.compile(r'\.xlsx?$', re.IGNORECASE).search(f)),
-    ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(r'\.pptx?$', re.IGNORECASE).search(f)),
+    ('doc', _('Microsoft Word'), lambda f: re.compile(
+        r'\.docx?$', re.IGNORECASE).search(f)),
+    ('xls', _('Microsoft Excel'), lambda f: re.compile(
+        r'\.xlsx?$', re.IGNORECASE).search(f)),
+    ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(
+        r'\.pptx?$', re.IGNORECASE).search(f)),
     ('other', _('Binary'), lambda f: True),  # Must be last
     )
 
@@ -229,7 +243,8 @@ class MediaFile(MediaFileBase):
 @receiver(post_delete, sender=MediaFile)
 def _mediafile_post_delete(sender, instance, **kwargs):
     instance.delete_mediafile()
-    logger.info("Deleted mediafile %d (%s)" % (instance.id, instance.file.name))
+    logger.info("Deleted mediafile %d (%s)" % (
+        instance.id, instance.file.name))
 
 
 # ------------------------------------------------------------------------

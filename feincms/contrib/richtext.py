@@ -20,7 +20,8 @@ class RichTextField(models.TextField):
     rich text instead of plain text in the item editor.
     """
     def formfield(self, form_class=RichTextFormField, **kwargs):
-        return super(RichTextField, self).formfield(form_class=form_class, **kwargs)
+        return super(RichTextField, self).formfield(
+            form_class=form_class, **kwargs)
 
 
 try:

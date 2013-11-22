@@ -25,7 +25,8 @@ from feincms.admin.item_editor import ItemEditorForm
 
 # ------------------------------------------------------------------------
 class CommentsContent(models.Model):
-    comments_enabled = models.BooleanField(_('enabled'), default=True, help_text=_('New comments may be added'))
+    comments_enabled = models.BooleanField(_('enabled'), default=True,
+        help_text=_('New comments may be added'))
 
     class Meta:
         abstract = True
@@ -43,14 +44,19 @@ class CommentsContent(models.Model):
                     r = f.help_text
                     r += u'<hr />'
                     comments_model = comments.get_model()
-                    for c in comments_model.objects.for_model(parent.parent).order_by('-submit_date'):
-                        r += '<div class="form-row" style="margin-left: 60px"># %(pk)d <a href="/admin/%(app)s/%(model)s/%(pk)d/">%(comment)s</a> - %(is_public)s</div>' % \
-                            {
-                                'pk': c.id,
-                                'comment': c.comment[:80],
-                                'is_public': c.is_public and _('public') or _('not public'),
-                                'app': comments_model._meta.app_label,
-                                'model': comments_model._meta.module_name
+                    for c in comments_model.objects.for_model(
+                            parent.parent).order_by('-submit_date'):
+                        r += (
+                            '<div class="form-row" style="margin-left: 60px">'
+                            '# %(pk)d <a href="/admin/%(app)s/%(model)s/%(pk)'
+                            'd/">%(comment)s</a> - %(is_public)s</div>') % {
+                            'pk': c.id,
+                            'comment': c.comment[:80],
+                            'is_public': (
+                                _('public') if c.is_public
+                                else _('not public')),
+                            'app': comments_model._meta.app_label,
+                            'model': comments_model._meta.module_name,
                             }
                     f.help_text = r
 
@@ -60,7 +66,8 @@ class CommentsContent(models.Model):
         parent_type = self.parent.__class__.__name__.lower()
 
         comment_page = self.parent
-        if hasattr(comment_page, 'original_translation') and comment_page.original_translation:
+        if (hasattr(comment_page, 'original_translation')
+                and comment_page.original_translation):
             comment_page = comment_page.original_translation
 
         f = None

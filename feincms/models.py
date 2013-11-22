@@ -61,7 +61,8 @@ class Template(object):
     CMS object, most commonly a page.
     """
 
-    def __init__(self, title, path, regions, key=None, preview_image=None, **kwargs):
+    def __init__(self, title, path, regions, key=None, preview_image=None,
+            **kwargs):
         # The key is what will be stored in the database. If key is undefined
         # use the template path as fallback.
         if not key:
@@ -443,10 +444,16 @@ def create_base_model(inherit_from=models.Model):
                 ordering = ['ordering']
 
             def __str__(self):
-                return u'%s<pk=%s, parent=%s<pk=%s, %s>, region=%s, ordering=%d>' % (
-                    self.__class__.__name__, self.pk,
-                    self.parent.__class__.__name__, self.parent.pk, self.parent,
-                    self.region, self.ordering)
+                return (
+                    u'%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
+                    u' ordering=%d>') % (
+                    self.__class__.__name__,
+                    self.pk,
+                    self.parent.__class__.__name__,
+                    self.parent.pk,
+                    self.parent,
+                    self.region,
+                    self.ordering)
 
             def render(self, **kwargs):
                 """

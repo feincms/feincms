@@ -29,13 +29,16 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
     def label_for_value(self, value):
         key = self.rel.get_related_field().name
         try:
-            obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
+            obj = self.rel.to._default_manager.using(self.db).get(
+                **{key: value})
             label = [u'&nbsp;<strong>%s</strong>' % escape(
                 shorten_string(six.text_type(obj)))]
             image = admin_thumbnail(obj)
 
             if image:
-                label.append(u'<br /><img src="%s" alt="" style="margin:1em 0 0 10em" />' % image)
+                label.append(
+                    u'<br /><img src="%s" alt="" style="margin:1em 0 0 10em"'
+                    u'/>' % image)
 
             return u''.join(label)
         except (ValueError, self.rel.to.DoesNotExist):
@@ -44,11 +47,13 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
 
 class MediaFileForeignKey(models.ForeignKey):
     """
-    Drop-in replacement for Django's ``models.ForeignKey`` which automatically adds a
-    thumbnail of media files if the media file foreign key is shown using ``raw_id_fields``.
+    Drop-in replacement for Django's ``models.ForeignKey`` which automatically
+    adds a thumbnail of media files if the media file foreign key is shown
+    using ``raw_id_fields``.
     """
     def formfield(self, **kwargs):
-        if 'widget' in kwargs and isinstance(kwargs['widget'], ForeignKeyRawIdWidget):
+        if 'widget' in kwargs and isinstance(
+                kwargs['widget'], ForeignKeyRawIdWidget):
             kwargs['widget'] = MediaFileForeignKeyRawIdWidget(kwargs['widget'])
         return super(MediaFileForeignKey, self).formfield(**kwargs)
 
@@ -71,12 +76,16 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
     tries to render a small thumbnail besides the input field.
     """
     def render(self, name, value, attrs=None):
-        r = super(AdminFileWithPreviewWidget, self).render(name, value, attrs=attrs)
+        r = super(AdminFileWithPreviewWidget, self).render(
+            name, value, attrs=attrs)
 
         if value and getattr(value, 'instance', None):
             image = admin_thumbnail(value.instance)
             if image:
-                r = mark_safe((u'<img src="%s" alt="" style="float: left; padding-right: 8px; border-right: 1px solid #ccc; margin-right: 8px">' % image) + r)
+                r = mark_safe((
+                    u'<img src="%s" alt="" style="float: left; padding-right:'
+                    u'8px; border-right: 1px solid #ccc; margin-right: 8px"'
+                    u'>' % image) + r)
 
         return r
 

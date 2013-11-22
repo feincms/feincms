@@ -34,32 +34,35 @@ _translation_map_cache = {}
 class TrackerContentProxy(ContentProxy):
     def _fetch_content_type_counts(self):
         """
-        If an object with an empty _ct_inventory is encountered, compute all the
-        content types currently used on that object and save the list in the
-        object itself. Further requests for that object can then access that
-        information and find out which content types are used without resorting
-        to multiple selects on different ct tables.
+        If an object with an empty _ct_inventory is encountered, compute all
+        the content types currently used on that object and save the list in
+        the object itself. Further requests for that object can then access
+        that information and find out which content types are used without
+        resorting to multiple selects on different ct tables.
 
         It is therefore important that even an "empty" object does not have an
         empty _ct_inventory.
         """
 
         if 'counts' not in self._cache:
-            if self.item._ct_inventory and \
-                    self.item._ct_inventory.get('_version_', -1) == INVENTORY_VERSION:
+            if (self.item._ct_inventory
+                    and self.item._ct_inventory.get('_version_', -1)
+                    == INVENTORY_VERSION):
 
                 try:
-                    self._cache['counts'] = self._from_inventory(self.item._ct_inventory)
+                    self._cache['counts'] = self._from_inventory(
+                        self.item._ct_inventory)
                 except KeyError:
-                    # It's possible that the inventory does not fit together with the
-                    # current models anymore, f.e. because a content type has been
-                    # removed.
+                    # It's possible that the inventory does not fit together
+                    # with the current models anymore, f.e. because a content
+                    # type has been removed.
                     pass
 
             if 'counts' not in self._cache:
                 super(TrackerContentProxy, self)._fetch_content_type_counts()
 
-                self.item._ct_inventory = self._to_inventory(self._cache['counts'])
+                self.item._ct_inventory = self._to_inventory(
+                    self._cache['counts'])
 
                 if hasattr(self.item, 'invalidate_cache'):
                     self.item.invalidate_cache()
@@ -68,16 +71,17 @@ class TrackerContentProxy(ContentProxy):
 
                 # Run post save handler by hand
                 if hasattr(self.item, 'get_descendants'):
-                    self.item.get_descendants(include_self=False).update(_ct_inventory=None)
+                    self.item.get_descendants(include_self=False).update(
+                        _ct_inventory=None)
         return self._cache['counts']
 
     def _translation_map(self):
         cls = self.item.__class__
         if not cls in _translation_map_cache:
             # Prime translation map and cache it in the class. This needs to be
-            # done late as opposed to at class definition time as not all information
-            # is ready, especially when we are doing a "syncdb" the ContentType table
-            # does not yet exist
+            # done late as opposed to at class definition time as not all
+            # information is ready, especially when we are doing a "syncdb" the
+            # ContentType table does not yet exist
             map = {}
             for idx, fct in enumerate(self.item._feincms_content_types):
                 dct = ContentType.objects.get_for_model(fct)

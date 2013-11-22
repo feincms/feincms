@@ -15,7 +15,8 @@ class Extension(extensions.Extension):
             blank=True,
             null=True,
             related_name='%(app_label)s_%(class)s_related',
-            help_text=_('Select pages that should be listed as related content.')))
+            help_text=_(
+                'Select pages that should be listed as related content.')))
 
     def handle_modeladmin(self, modeladmin):
         modeladmin.filter_horizontal = list(

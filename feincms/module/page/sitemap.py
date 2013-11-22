@@ -15,7 +15,9 @@ class PageSitemap(Sitemap):
     The PageSitemap can be used to automatically generate sitemap.xml files
     for submission to index engines. See http://www.sitemaps.org/ for details.
     """
-    def __init__(self, navigation_only=False, max_depth=0, changefreq=None, queryset=None, filter=None, extended_navigation=False, page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL, *args, **kwargs):
+    def __init__(self, navigation_only=False, max_depth=0, changefreq=None,
+            queryset=None, filter=None, extended_navigation=False,
+            page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL, *args, **kwargs):
         """
         The PageSitemap accepts the following parameters for customisation
         of the resulting sitemap.xml output:
@@ -76,8 +78,12 @@ class PageSitemap(Sitemap):
                 if getattr(page, 'navigation_extension', None):
                     cnt = 0
                     for p in page.extended_navigation():
-                        depth_too_deep = self.depth_cutoff > 0 and p.level > self.depth_cutoff
-                        not_in_nav = self.navigation_only and not p.in_navigation
+                        depth_too_deep = (
+                            self.depth_cutoff > 0
+                            and p.level > self.depth_cutoff)
+                        not_in_nav = (
+                            self.navigation_only
+                            and not p.in_navigation)
                         if depth_too_deep or not_in_nav:
                             continue
                         cnt += 1

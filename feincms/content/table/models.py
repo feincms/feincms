@@ -91,8 +91,10 @@ class TableContent(models.Model):
 
     def save(self, *args, **kwargs):
         # XXX ugly, but otherwise the decoder raises exceptions
-        self.data = self.data.replace('\r', '\\r').replace('\n', '\\n').replace('\t', '\\t')
-        self.html = self.data and self.FORMATTERS[self.type](json.loads(self.data)) or u''
+        self.data = self.data.replace(
+            '\r', '\\r').replace('\n', '\\n').replace('\t', '\\t')
+        self.html = self.data and self.FORMATTERS[self.type](
+            json.loads(self.data)) or u''
 
         super(TableContent, self).save(*args, **kwargs)
     save.alters_data = True

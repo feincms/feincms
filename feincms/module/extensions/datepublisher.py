@@ -1,7 +1,7 @@
 """
 Allows setting a date range for when the page is active. Modifies the active()
-manager method so that only pages inside the given range are used in the default
-views and the template tags.
+manager method so that only pages inside the given range are used in the
+default views and the template tags.
 
 Depends on the page class having a "active_filters" list that will be used by
 the page's manager to determine which entries are to be considered active.
@@ -22,8 +22,8 @@ from feincms import extensions
 # ------------------------------------------------------------------------
 def format_date(d, if_none=''):
     """
-    Format a date in a nice human readable way: Omit the year if it's the current
-    year. Also return a default value if no date is passed in.
+    Format a date in a nice human readable way: Omit the year if it's the
+    current year. Also return a default value if no date is passed in.
     """
 
     if d is None:
@@ -83,7 +83,8 @@ class Extension(extensions.Extension):
         self.model.add_to_class('publication_end_date',
             models.DateTimeField(_('publication end date'),
                 blank=True, null=True,
-                help_text=_('Leave empty if the entry should stay active forever.')))
+                help_text=_(
+                    'Leave empty if the entry should stay active forever.')))
         self.model.add_to_class('latest_children', latest_children)
 
         # Patch in rounding the pub and pub_end dates on save
@@ -93,7 +94,8 @@ class Extension(extensions.Extension):
             if obj.publication_date:
                 obj.publication_date = granular_now(obj.publication_date)
             if obj.publication_end_date:
-                obj.publication_end_date = granular_now(obj.publication_end_date)
+                obj.publication_end_date = granular_now(
+                    obj.publication_end_date)
             orig_save(obj, *args, **kwargs)
         self.model.save = granular_save
 
@@ -106,7 +108,8 @@ class Extension(extensions.Extension):
                 key='datepublisher')
 
         # Processor to patch up response headers for expiry date
-        self.model.register_response_processor(datepublisher_response_processor)
+        self.model.register_response_processor(
+            datepublisher_response_processor)
 
     def handle_modeladmin(self, modeladmin):
         def datepublisher_admin(self, obj):

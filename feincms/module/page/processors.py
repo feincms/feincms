@@ -109,7 +109,8 @@ def etag_request_processor(page, request):
     # the net effect is that we will be getting a DummyResponse from
     # the handler if processing is to continue and a non-DummyResponse
     # (should be a "304 not modified") if the etag matches.
-    rsp = condition(etag_func=etagger, last_modified_func=lastmodifier)(dummy_response_handler)(request, page)
+    rsp = condition(etag_func=etagger, last_modified_func=lastmodifier)(
+        dummy_response_handler)(request, page)
 
     # If dummy then don't do anything, if a real response, return and
     # thus shortcut the request processing.
@@ -130,8 +131,9 @@ def etag_response_processor(page, request, response):
 
 def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
     """
-    Attaches a handler which prints the query count (and optionally all individual queries
-    which have been executed) on the console. Does nothing if ``DEBUG = False``.
+    Attaches a handler which prints the query count (and optionally all
+    individual queries which have been executed) on the console. Does nothing
+    if ``DEBUG = False``.
 
     Example::
 
@@ -149,12 +151,13 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
         print_sql = lambda x: x
         try:
             import sqlparse
-            print_sql = lambda x: sqlparse.format(x, reindent=True, keyword_case='upper')
+            print_sql = lambda x: sqlparse.format(
+                x, reindent=True, keyword_case='upper')
         except:
             pass
 
         if verbose:
-            print("--------------------------------------------------------------", file=file)
+            print("-" * 60, file=file)
         time = 0.0
         i = 0
         for q in connection.queries:
@@ -164,8 +167,8 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
                     i, q['time'], print_sql(q['sql'])), file=file)
             time += float(q['time'])
 
-        print("--------------------------------------------------------------", file=file)
+        print("-" * 60, file=file)
         print("Total: %d queries, %.3f ms" % (i, time), file=file)
-        print("--------------------------------------------------------------", file=file)
+        print("-" * 60, file=file)
 
     return processor

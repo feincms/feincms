@@ -14,8 +14,8 @@ Usage example::
         body = models.TextField()
 
 
-Print the titles of all news entries either in the current language (if available)
-or in any other language::
+Print the titles of all news entries either in the current language (if
+available) or in any other language::
 
     for news in News.objects.all():
         print news.translation.title
@@ -50,7 +50,8 @@ class _NoTranslation(object):
 
 def short_language_code(code=None):
     """
-    Extract the short language code from its argument (or return the default language code).
+    Extract the short language code from its argument (or return the default
+    language code).
 
     >>> short_language_code('de')
     'de'
@@ -70,8 +71,9 @@ def short_language_code(code=None):
 
 def is_primary_language(language=None):
     """
-    Returns true if current or passed language is the primary language for this site.
-    (The primary language is defined as the first language in settings.LANGUAGES.)
+    Returns true if current or passed language is the primary language for this
+    site.  (The primary language is defined as the first language in
+    settings.LANGUAGES.)
     """
 
     if not language:
@@ -92,7 +94,8 @@ def lookup_translations(language_code=None):
 
         instance_dict = {}
 
-        # Don't do anything for those who already have a cached translation available
+        # Don't do anything for those who already have a cached translation
+        # available
         for instance in qs:
             trans = cache.get(instance.get_translation_cache_key(lang_))
             if trans:
@@ -107,14 +110,18 @@ def lookup_translations(language_code=None):
         if not instance_dict:
             return
 
-        candidates = list(instance_dict.values())[0].translations.model._default_manager.all()
+        candidates = list(
+            instance_dict.values()
+            )[0].translations.model._default_manager.all()
 
         if instance_dict:
             _process(candidates, instance_dict, lang_, 'iexact')
         if instance_dict:
-            _process(candidates, instance_dict, settings.LANGUAGE_CODE, 'istartswith')
+            _process(candidates, instance_dict, settings.LANGUAGE_CODE,
+                'istartswith')
         if instance_dict:
-            for candidate in candidates.filter(parent__pk__in=instance_dict.keys()):
+            for candidate in candidates.filter(
+                    parent__pk__in=instance_dict.keys()):
                 if candidate.parent_id in instance_dict:
                     _found(instance_dict, candidate)
 
@@ -174,7 +181,8 @@ class TranslatedObjectMixin(object):
             try:
                 return queryset.filter(
                     Q(language_code__istartswith=settings.LANGUAGE_CODE)
-                    | Q(language_code__istartswith=short_language_code(settings.LANGUAGE_CODE))
+                    | Q(language_code__istartswith=short_language_code(
+                        settings.LANGUAGE_CODE))
                     ).order_by('-language_code')[0]
             except IndexError:
                 try:
@@ -183,7 +191,8 @@ class TranslatedObjectMixin(object):
                     raise queryset.model.DoesNotExist
 
     def get_translation_cache_key(self, language_code=None):
-        """Return the cache key used to cache this object's translations so we can purge on-demand"""
+        """Return the cache key used to cache this object's translations so we
+        can purge on-demand"""
         if not language_code:
             language_code = translation.get_language()
         return (('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
@@ -203,7 +212,8 @@ class TranslatedObjectMixin(object):
 
         if trans is None:
             try:
-                trans = self._get_translation_object(self.translations.all(), language_code)
+                trans = self._get_translation_object(
+                    self.translations.all(), language_code)
             except ObjectDoesNotExist:
                 trans = _NoTranslation
             cache.set(key, trans)

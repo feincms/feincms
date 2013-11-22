@@ -14,7 +14,7 @@ except NameError:
     unichr = chr
 
 
-# Based on http://stackoverflow.com/questions/92438/stripping-non-printable-characters-from-a-string-in-python
+# Based on http://stackoverflow.com/questions/92438/
 #
 # We omit chars 9-13 (tab, newline, vertical tab, form feed, return) and 32
 # (space) to avoid clogging our reports with warnings about common,
@@ -77,7 +77,8 @@ def tidy_html(html):
     for msg in messages:
         if not doc_mode and "Warning: missing <!DOCTYPE> declaration" in msg:
             continue
-        if not doc_mode and "Warning: inserting missing 'title' element" in msg:
+        if (not doc_mode
+                and "Warning: inserting missing 'title' element" in msg):
             continue
         if not doc_mode and "Warning: inserting implicit <body>" in msg:
             continue

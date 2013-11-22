@@ -38,7 +38,8 @@ Prints:
     Winter comes to Ogglesbrook [<sledging>, <snow>, <winter>, <skating>]
     Summer now [<skating>, <sunny>]
 
-But only executes two SQL queries - one to fetch the items, and one to fetch ALL of the tags for those items.
+But only executes two SQL queries - one to fetch the items, and one to fetch
+ALL of the tags for those items.
 
 Since the transformer function can transform an evaluated QuerySet, it
 doesn't need to make extra database calls at all - it should work for things
@@ -54,8 +55,8 @@ LICENSE
 Copyright (c) 2010, Simon Willison.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
     1. Redistributions of source code must retain the above copyright notice,
        this list of conditions and the following disclaimer.

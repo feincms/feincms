@@ -41,13 +41,16 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         }),
         (_('Other options'), {
             'classes': ['collapse'],
-            'fields': ['template_key', 'parent', 'override_url', 'redirect_to'],
+            'fields': ['template_key', 'parent', 'override_url',
+                'redirect_to'],
         }),
-        # <-- insertion point, extensions appear here, see insertion_index above
+        # <-- insertion point, extensions appear here, see insertion_index
+        # above
         item_editor.FEINCMS_CONTENT_FIELDSET,
         ]
     readonly_fields = []
-    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
+    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle',
+        'template']
     list_filter = ['active', 'in_navigation', 'template_key', 'parent']
     search_fields = ['title', 'slug']
     prepopulated_fields = {'slug': ('title',)}
@@ -73,7 +76,8 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
         super(PageAdmin, self).__init__(model, admin_site)
 
-    in_navigation_toggle = tree_editor.ajax_editable_boolean('in_navigation', _('in navigation'))
+    in_navigation_toggle = tree_editor.ajax_editable_boolean(
+        'in_navigation', _('in navigation'))
 
     def get_readonly_fields(self, request, obj=None):
         readonly = super(PageAdmin, self).get_readonly_fields(request, obj=obj)
@@ -134,7 +138,8 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                     django_settings.LANGUAGES).get(language_code, '')
                 kwargs['extra_context'] = {
                     'adding_translation': True,
-                    'title': _('Add %(language)s translation of "%(page)s"') % {
+                    'title': _(
+                        'Add %(language)s translation of "%(page)s"') % {
                         'language': language,
                         'page': original,
                         },
@@ -144,12 +149,16 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         return super(PageAdmin, self).add_view(request, **kwargs)
 
     def response_add(self, request, obj, *args, **kwargs):
-        response = super(PageAdmin, self).response_add(request, obj, *args, **kwargs)
-        if 'parent' in request.GET and '_addanother' in request.POST and response.status_code in (301, 302):
+        response = super(PageAdmin, self).response_add(
+            request, obj, *args, **kwargs)
+        if ('parent' in request.GET
+                and '_addanother' in request.POST
+                and response.status_code in (301, 302)):
             # Preserve GET parameters if we are about to add another page
             response['Location'] += '?parent=%s' % request.GET['parent']
 
-        if 'translation_of' in request.GET and '_copy_content_from_original' in request.POST:
+        if ('translation_of' in request.GET
+                and '_copy_content_from_original' in request.POST):
             # Copy all contents
             for content_type in obj._feincms_content_types:
                 if content_type.objects.filter(parent=obj).exists():
@@ -158,25 +167,32 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                     return response
 
             try:
-                original = self.model._tree_manager.get(pk=request.GET.get('translation_of'))
+                original = self.model._tree_manager.get(
+                    pk=request.GET.get('translation_of'))
                 original = original.original_translation
                 obj.copy_content_from(original)
                 obj.save()
 
-                self.message_user(request, _('The content from the original translation has been copied to the newly created page.'))
+                self.message_user(request, _(
+                    'The content from the original translation has been copied'
+                    ' to the newly created page.'))
             except (AttributeError, self.model.DoesNotExist):
                 pass
 
         return response
 
     def _refresh_changelist_caches(self, *args, **kwargs):
-        self._visible_pages = list(self.model.objects.active().values_list('id', flat=True))
+        self._visible_pages = list(
+            self.model.objects.active().values_list('id', flat=True))
 
     def change_view(self, request, object_id, **kwargs):
         try:
-            return super(PageAdmin, self).change_view(request, object_id, **kwargs)
+            return super(PageAdmin, self).change_view(
+                request, object_id, **kwargs)
         except PermissionDenied:
-            messages.add_message(request, messages.ERROR, _("You don't have the necessary permissions to edit this object"))
+            messages.add_message(request, messages.ERROR, _(
+                "You don't have the necessary permissions to edit this object"
+                ))
         return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 
     def has_delete_permission(self, request, obj=None):
@@ -198,11 +214,14 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
                 self._visible_pages.remove(page.id)
-            return tree_editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('inherited'))
+            return tree_editor.ajax_editable_boolean_cell(
+                page, 'active', override=False, text=_('inherited'))
 
         if page.active and not page.id in self._visible_pages:
-            # is active but should not be shown, so visibility limited by extension: show a "not active"
-            return tree_editor.ajax_editable_boolean_cell(page, 'active', override=False, text=_('extensions'))
+            # is active but should not be shown, so visibility limited by
+            # extension: show a "not active"
+            return tree_editor.ajax_editable_boolean_cell(
+                page, 'active', override=False, text=_('extensions'))
 
         return tree_editor.ajax_editable_boolean_cell(page, 'active')
     is_visible_admin.allow_tags = True

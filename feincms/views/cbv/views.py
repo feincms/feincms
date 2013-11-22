@@ -14,7 +14,8 @@ class Handler(ContentView):
         if not hasattr(self, '_page_model'):
             self._page_model = get_model(*self.page_model_path.split('.'))
             if self._page_model is None:
-                raise ImportError("Can't import model \"%s\"" % self.page_model_path)
+                raise ImportError(
+                    "Can't import model \"%s\"" % self.page_model_path)
         return self._page_model
 
     def get_object(self):
@@ -32,7 +33,8 @@ class Handler(ContentView):
                 try:
                     request.original_path_info = request.path_info
                     request.path_info = settings.FEINCMS_CMS_404_PAGE
-                    response = super(Handler, self).dispatch(request, *args, **kwargs)
+                    response = super(Handler, self).dispatch(
+                        request, *args, **kwargs)
                     response.status_code = 404
                     return response
                 except Http404:

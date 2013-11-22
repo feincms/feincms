@@ -10,8 +10,8 @@ class VideoContent(models.Model):
     Copy-paste a URL to youtube or vimeo into the text box, this content type
     will automatically generate the necessary embed code.
 
-    Other portals aren't supported currently, but would be easy to add if anyone
-    would take up the baton.
+    Other portals aren't supported currently, but would be easy to add if
+    anyone would take up the baton.
 
     You should probably use feincms-oembed.
     """

@@ -15,7 +15,8 @@ def check_database_schema(cls, module_name):
     Please note that you have to connect the return value using strong
     references. Here's an example how to do this::
 
-        signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
+        signals.post_syncdb.connect(
+            check_database_schema(Page, __name__), weak=False)
 
     (Yes, this is a weak attempt at a substitute for South until we find
     a way to make South work with FeinCMS' dynamic model creation.)
@@ -28,7 +29,8 @@ def check_database_schema(cls, module_name):
         cursor = connection.cursor()
 
         existing_columns = [row[0] for row in
-            connection.introspection.get_table_description(cursor, cls._meta.db_table)]
+            connection.introspection.get_table_description(
+                cursor, cls._meta.db_table)]
 
         missing_columns = []
 
@@ -41,16 +43,22 @@ def check_database_schema(cls, module_name):
 
         style = color_style()
 
-        print(style.ERROR('The following columns seem to be missing in the database table %s:' % cls._meta.db_table))
+        print(style.ERROR(
+            'The following columns seem to be missing in the database table'
+            ' %s:' % cls._meta.db_table))
+
         for field in missing_columns:
             print(u'%s:%s%s' % (
                 style.SQL_KEYWORD(field.column),
                 ' ' * (25 - len(field.column)),
-                u'%s.%s' % (field.__class__.__module__, field.__class__.__name__),
+                u'%s.%s' % (
+                    field.__class__.__module__, field.__class__.__name__),
                 ))
 
-        print(style.NOTICE('\nPlease consult the output of `python manage.py sql %s` to'
-            ' find out what the correct column types are. (Or use south, which is what'
-            ' you should be doing anyway.)\n' % (cls._meta.app_label)))
+        print(style.NOTICE(
+            '\nPlease consult the output of `python manage.py sql %s` to'
+            ' find out what the correct column types are. (Or use south,'
+            ' which is what you should be doing anyway.)\n' % (
+                cls._meta.app_label)))
 
     return _fn
