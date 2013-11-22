@@ -234,13 +234,17 @@ class TreeEditor(ExtensionModelAdmin):
 
         opts = self.model._meta
         self.change_list_template = [
-            'admin/feincms/%s/%s/tree_editor.html' % (opts.app_label, opts.object_name.lower()),
+            'admin/feincms/%s/%s/tree_editor.html' % (
+                opts.app_label, opts.object_name.lower()),
             'admin/feincms/%s/tree_editor.html' % opts.app_label,
             'admin/feincms/tree_editor.html',
             ]
-        self.object_change_permission = opts.app_label + '.' + opts.get_change_permission()
-        self.object_add_permission = opts.app_label + '.' + opts.get_add_permission()
-        self.object_delete_permission = opts.app_label + '.' + opts.get_delete_permission()
+        self.object_change_permission =\
+            opts.app_label + '.' + opts.get_change_permission()
+        self.object_add_permission =\
+            opts.app_label + '.' + opts.get_add_permission()
+        self.object_delete_permission =\
+            opts.app_label + '.' + opts.get_delete_permission()
 
     def changeable(self, item):
         return getattr(item, 'feincms_changeable', True)
@@ -308,7 +312,8 @@ class TreeEditor(ExtensionModelAdmin):
                     result_func = item.editable_boolean_result
                 else:
                     def _fn(attr):
-                        return lambda self, instance: [ajax_editable_boolean_cell(instance, attr)]
+                        return lambda self, instance: [
+                            ajax_editable_boolean_cell(instance, attr)]
                     result_func = _fn(attr)
                 self._ajax_editable_booleans[attr] = result_func
 
@@ -317,7 +322,8 @@ class TreeEditor(ExtensionModelAdmin):
         Refresh information used to show the changelist tree structure such as
         inherited active/inactive states etc.
 
-        XXX: This is somewhat hacky, but since it's an internal method, so be it.
+        XXX: This is somewhat hacky, but since it's an internal method, so be
+        it.
         """
 
         pass
@@ -333,8 +339,11 @@ class TreeEditor(ExtensionModelAdmin):
             return HttpResponseBadRequest("Malformed request")
 
         if not request.user.is_staff:
-            logger.warning("Denied AJAX request by non-staff \"%s\" to toggle boolean %s for object #%s", request.user, attr, item_id)
-            return HttpResponseForbidden(_("You do not have permission to modify this object"))
+            logger.warning(
+                "Denied AJAX request by non-staff \"%s\" to toggle boolean"
+                " %s for object #%s", request.user, attr, item_id)
+            return HttpResponseForbidden(
+                _("You do not have permission to modify this object"))
 
         self._collect_editable_booleans()
 
@@ -347,8 +356,11 @@ class TreeEditor(ExtensionModelAdmin):
             return HttpResponseNotFound("Object does not exist")
 
         if not self.has_change_permission(request, obj=obj):
-            logger.warning("Denied AJAX request by \"%s\" to toggle boolean %s for object %s", request.user, attr, item_id)
-            return HttpResponseForbidden(_("You do not have permission to modify this object"))
+            logger.warning(
+                "Denied AJAX request by \"%s\" to toggle boolean %s for"
+                " object %s", request.user, attr, item_id)
+            return HttpResponseForbidden(
+                _("You do not have permission to modify this object"))
 
         new_state = not getattr(obj, attr)
         logger.info("Toggle %s on #%d %s to %s by \"%s\"",
@@ -367,8 +379,10 @@ class TreeEditor(ExtensionModelAdmin):
             data = self._ajax_editable_booleans[attr](self, obj)
 
         except Exception:
-            logger.exception("Unhandled exception while toggling %s on %s", attr, obj)
-            return HttpResponseServerError("Unable to toggle %s on %s" % (attr, obj))
+            logger.exception(
+                "Unhandled exception while toggling %s on %s", attr, obj)
+            return HttpResponseServerError(
+                "Unable to toggle %s on %s" % (attr, obj))
 
         # Weed out unchanged cells to keep the updates small. This assumes
         # that the order a possible get_descendents() returns does not change
@@ -396,17 +410,18 @@ class TreeEditor(ExtensionModelAdmin):
                 return self._toggle_boolean(request)
             elif cmd == 'move_node':
                 return self._move_node(request)
-            else:
-                return HttpResponseBadRequest('Oops. AJAX request not understood.')
+
+            return HttpResponseBadRequest('Oops. AJAX request not understood.')
 
         self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
         queryset = self.queryset(request)
-        extra_context['tree_structure'] = mark_safe(json.dumps(
-                                                    _build_tree_structure(queryset)))
+        extra_context['tree_structure'] = mark_safe(
+            json.dumps(_build_tree_structure(queryset)))
 
-        return super(TreeEditor, self).changelist_view(request, extra_context, *args, **kwargs)
+        return super(TreeEditor, self).changelist_view(
+            request, extra_context, *args, **kwargs)
 
     def has_add_permission(self, request, obj=None):
         """
@@ -432,7 +447,8 @@ class TreeEditor(ExtensionModelAdmin):
         else:
             r = request.user.has_perm(perm)
 
-        return r and super(TreeEditor, self).has_change_permission(request, obj)
+        return r and super(TreeEditor, self).has_change_permission(
+            request, obj)
 
     def has_delete_permission(self, request, obj=None):
         """
@@ -445,7 +461,8 @@ class TreeEditor(ExtensionModelAdmin):
         else:
             r = request.user.has_perm(perm)
 
-        return r and super(TreeEditor, self).has_delete_permission(request, obj)
+        return r and super(TreeEditor, self).has_delete_permission(
+            request, obj)
 
     def _move_node(self, request):
         if hasattr(self.model.objects, 'move_node'):
