@@ -45,7 +45,8 @@ from .test_stuff import Empty
 # ------------------------------------------------------------------------
 class PagesTestCase(TestCase):
     def setUp(self):
-        u = User(username='test', is_active=True, is_staff=True, is_superuser=True)
+        u = User(username='test', is_active=True, is_staff=True,
+            is_superuser=True)
         u.set_password('test')
         u.save()
 
@@ -72,7 +73,8 @@ class PagesTestCase(TestCase):
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
 
-    def create_page_through_admin(self, title='Test page', parent='', **kwargs):
+    def create_page_through_admin(self, title='Test page', parent='',
+            **kwargs):
         dic = {
             'title': title,
             'slug': kwargs.get('slug', slugify(title)),
@@ -150,27 +152,37 @@ class PagesTestCase(TestCase):
 
     def test_01_tree_editor(self):
         self.login()
-        self.assertEqual(self.client.get('/admin/page/page/').status_code, 200)
+        self.assertEqual(
+            self.client.get('/admin/page/page/').status_code, 200)
 
-        self.assertRedirects(self.client.get('/admin/page/page/?anything=anything'),
-                             '/admin/page/page/?e=1')
+        self.assertRedirects(
+            self.client.get('/admin/page/page/?anything=anything'),
+            '/admin/page/page/?e=1')
 
     def test_02_add_page(self):
         self.login()
-        self.assertRedirects(self.create_page_through_admin(title='Test page ' * 10, slug='test-page'),
-                             '/admin/page/page/')
+        self.assertRedirects(
+            self.create_page_through_admin(
+                title='Test page ' * 10,
+                slug='test-page'),
+            '/admin/page/page/')
         self.assertEqual(Page.objects.count(), 1)
         self.assertContains(self.client.get('/admin/page/page/'), u'…')
 
     def test_03_item_editor(self):
         self.login()
-        self.assertRedirects(self.create_page_through_admin(_continue=1), '/admin/page/page/1/')
-        self.assertEqual(self.client.get('/admin/page/page/1/').status_code, 200)
+        self.assertRedirects(
+            self.create_page_through_admin(_continue=1),
+            '/admin/page/page/1/')
+        self.assertEqual(
+            self.client.get('/admin/page/page/1/').status_code, 200)
         self.is_published('/admin/page/page/42/', should_be=False)
 
     def test_03_add_another(self):
         self.login()
-        self.assertRedirects(self.create_page_through_admin(_addanother=1), '/admin/page/page/add/')
+        self.assertRedirects(
+            self.create_page_through_admin(_addanother=1),
+            '/admin/page/page/add/')
 
     def test_04_add_child(self):
         response = self.create_default_page_set_through_admin()
@@ -178,7 +190,8 @@ class PagesTestCase(TestCase):
         self.assertEqual(Page.objects.count(), 2)
 
         page = Page.objects.get(pk=2)
-        self.assertEqual(page.get_absolute_url(), '/test-page/test-child-page/')
+        self.assertEqual(
+            page.get_absolute_url(), '/test-page/test-child-page/')
 
         page.active = True
         page.in_navigation = True
@@ -202,14 +215,14 @@ class PagesTestCase(TestCase):
         page.save()
 
         page2 = Page.objects.get(pk=2)
-        self.assertEqual(page2.get_absolute_url(), '/something/test-child-page/')
+        self.assertEqual(
+            page2.get_absolute_url(), '/something/test-child-page/')
 
         page.override_url = '/'
         page.save()
         page2 = Page.objects.get(pk=2)
         self.assertEqual(page2.get_absolute_url(), '/test-child-page/')
 
-        # This goes through feincms.views.base.handler instead of the applicationcontent handler
         self.is_published('/', False)
         page.active = True
         page.template_key = 'theother'
@@ -226,7 +239,8 @@ class PagesTestCase(TestCase):
         page4 = Page.objects.create(title='page4', slug='page4', parent=page1)
         page5 = Page.objects.create(title='page5', slug='page5', parent=None)
 
-        self.assertEqual(page3.get_absolute_url(), '/test-page/test-child-page/page3/')
+        self.assertEqual(
+            page3.get_absolute_url(), '/test-page/test-child-page/page3/')
         self.assertEqual(page4.get_absolute_url(), '/test-page/page4/')
         self.assertEqual(page5.get_absolute_url(), '/page5/')
 
@@ -270,7 +284,8 @@ class PagesTestCase(TestCase):
             '__cmd': 'toggle_boolean',
             'item_id': 1,
             'attr': 'notexists',
-            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'), HttpResponseBadRequest))
+            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
+            HttpResponseBadRequest))
 
     def test_07_tree_editor_invalid_ajax(self):
         self.login()
@@ -384,9 +399,12 @@ class PagesTestCase(TestCase):
         # other content methods
         self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
 
-        self.assertEqual(page2.content.main[0].__class__.__name__, 'RawContent')
-        self.assertEqual(force_text(page2.content.main[0]),
-                         u'RawContent<pk=1, parent=Page<pk=1, Test page>, region=main, ordering=0>')
+        self.assertEqual(
+            page2.content.main[0].__class__.__name__, 'RawContent')
+        self.assertEqual(
+            force_text(page2.content.main[0]),
+            u'RawContent<pk=1, parent=Page<pk=1, Test page>, region=main,'
+            u' ordering=0>')
 
         self.assertEqual(len(page2.content.main), 1)
         self.assertEqual(len(page2.content.sidebar), 0)
@@ -430,32 +448,43 @@ class PagesTestCase(TestCase):
         mf = page.content.main[1].mediafile
 
         self.assertEqual(mf.translation.caption, 'something')
-        self.assertEqual(mf.translation.short_language_code(), short_language_code())
+        self.assertEqual(
+            mf.translation.short_language_code(), short_language_code())
         self.assertNotEqual(mf.get_absolute_url(), '')
         self.assertEqual(force_text(mf), 'something')
         self.assertTrue(mf.type == 'image')
 
         self.assertEqual(MediaFile.objects.only_language('de').count(), 0)
         self.assertEqual(MediaFile.objects.only_language('en').count(), 0)
-        self.assertEqual(MediaFile.objects.only_language('%s-ha' % short_language_code()).count(),
-                         1)
+        self.assertEqual(
+            MediaFile.objects.only_language(
+                '%s-ha' % short_language_code()).count(),
+            1)
 
-        self.assertTrue('%s-ha' % short_language_code() in mf.available_translations)
+        self.assertTrue(
+            '%s-ha' % short_language_code() in mf.available_translations)
 
         # this should not raise
         self.client.get('/admin/page/page/1/')
 
-        #self.assertTrue('alt="something"' in page.content.main[1].render()) Since it isn't an image
+        # self.assertTrue('alt="something"' in page.content.main[1].render())
+        # Since it isn't an image
 
-        page.imagecontent_set.create(image='somefile.jpg', region='main', position='default', ordering=2)
-        page.filecontent_set.create(file='somefile.jpg', title='thetitle', region='main', ordering=3)
+        page.imagecontent_set.create(
+            image='somefile.jpg', region='main', position='default',
+            ordering=2)
+        page.filecontent_set.create(
+            file='somefile.jpg', title='thetitle', region='main', ordering=3)
 
         # Reload page, reset _ct_inventory
         page = Page.objects.get(pk=page.pk)
         page._ct_inventory = None
 
         self.assertTrue('somefile.jpg' in page.content.main[2].render())
-        self.assertTrue(re.search('<a .*href="somefile\.jpg">.*thetitle.*</a>', page.content.main[3].render(), re.MULTILINE + re.DOTALL) is not None)
+        self.assertTrue(re.search(
+            '<a .*href="somefile\.jpg">.*thetitle.*</a>',
+            page.content.main[3].render(),
+            re.MULTILINE + re.DOTALL) is not None)
 
         page.mediafilecontent_set.update(mediafile=3)
         # this should not raise
@@ -464,8 +493,9 @@ class PagesTestCase(TestCase):
         field = MediaFile._meta.get_field('file')
         old = (field.upload_to, field.storage, field.generate_filename)
         from django.core.files.storage import FileSystemStorage
-        MediaFile.reconfigure(upload_to=lambda: 'anywhere',
-                              storage=FileSystemStorage(location='/wha/', base_url='/whe/'))
+        MediaFile.reconfigure(
+            upload_to=lambda: 'anywhere',
+            storage=FileSystemStorage(location='/wha/', base_url='/whe/'))
         mediafile = MediaFile.objects.get(pk=1)
         self.assertEqual(mediafile.file.url, '/whe/somefile.jpg')
 
@@ -549,11 +579,14 @@ class PagesTestCase(TestCase):
         page2.content_proxy_class = ContentProxy
 
         if hasattr(self, 'assertNumQueries'):
-        # 4 queries: Two to get the content types of page and page2, one to
-            # fetch all ancestor PKs of page2 and one to materialize the RawContent
-            # instances belonging to page's sidebar and page2's main.
-            self.assertNumQueries(4, lambda: [page2.content.main, page2.content.sidebar])
-            self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
+            # 4 queries: Two to get the content types of page and page2, one to
+            # fetch all ancestor PKs of page2 and one to materialize the
+            # RawContent instances belonging to page's sidebar and page2's
+            # main.
+            self.assertNumQueries(
+                4, lambda: [page2.content.main, page2.content.sidebar])
+            self.assertNumQueries(
+                0, lambda: page2.content.sidebar[0].render())
 
         self.assertEqual(u''.join(c.render() for c in page2.content.main),
             'Something elseWhatever')
@@ -568,14 +601,16 @@ class PagesTestCase(TestCase):
 
         if hasattr(self, 'assertNumQueries'):
             # 5 queries: Two to get the content types of page and page2, one to
-            # fetch all ancestor PKs of page2 and one to materialize the RawContent
-            # instances belonging to page's sidebar and page2's main and a few
-            # queries to update the pages _ct_inventory attributes:
+            # fetch all ancestor PKs of page2 and one to materialize the
+            # RawContent instances belonging to page's sidebar and page2's main
+            # and a few queries to update the pages _ct_inventory attributes:
             # - one update to update page2
-            # - one update to clobber the _ct_inventory attribute of all descendants
-            #   of page2
-            self.assertNumQueries(5, lambda: [page2.content.main, page2.content.sidebar])
-            self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
+            # - one update to clobber the _ct_inventory attribute of all
+            #   descendants of page2
+            self.assertNumQueries(
+                5, lambda: [page2.content.main, page2.content.sidebar])
+            self.assertNumQueries(
+                0, lambda: page2.content.sidebar[0].render())
 
         self.assertEqual(page2.content.sidebar[0].render(), 'Something')
 
@@ -583,7 +618,8 @@ class PagesTestCase(TestCase):
         page2 = Page.objects.get(pk=2)
 
         if hasattr(self, 'assertNumQueries'):
-            self.assertNumQueries(1, lambda: [page2.content.main, page2.content.sidebar])
+            self.assertNumQueries(
+                1, lambda: [page2.content.main, page2.content.sidebar])
 
         self.assertNotEqual(page2._ct_inventory, {})
 
@@ -591,7 +627,8 @@ class PagesTestCase(TestCase):
         # only create the content type to test the item editor
         # customization hooks
         tmp = Page._feincms_content_types[:]
-        type = Page.create_content_type(RichTextContent, regions=('notexists',))
+        type = Page.create_content_type(
+            RichTextContent, regions=('notexists',))
         Page._feincms_content_types = tmp
 
         from django.utils.safestring import SafeData
@@ -609,7 +646,9 @@ class PagesTestCase(TestCase):
         self.is_published('/admin/page/page/10|rawcontent|1/', should_be=False)
         self.is_published('/admin/page/page/1|rawcontent|10/', should_be=False)
 
-        self.assertEqual(self.client.get('/admin/page/page/1|rawcontent|1/').status_code, 200)
+        self.assertEqual(
+            self.client.get('/admin/page/page/1|rawcontent|1/').status_code,
+            200)
         self.assertEqual(self.client.post('/admin/page/page/1|rawcontent|1/', {
             'rawcontent-text': 'blablabla',
             }).status_code, 200)
@@ -697,68 +736,148 @@ class PagesTestCase(TestCase):
 
         context = template.Context({'feincms_page': page2, 'page3': page3})
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_parentlink of feincms_page level=1 %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}{% feincms_parentlink of feincms_page'
+            ' level=1 %}')
         self.assertEqual(t.render(context), '/test-page/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for feincms_page as links %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(context), 'en:/test-page/,de:/test-page/test-child-page/')
+        t = template.Template(
+            '{% load feincms_page_tags %}{% feincms_languagelinks for'
+            ' feincms_page as links %}{% for key, name, link in links %}'
+            '{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}'
+            '{% endfor %}')
+        self.assertEqual(
+            t.render(context),
+            'en:/test-page/,de:/test-page/test-child-page/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for page3 as links %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(context), 'en:/test-page/test-child-page/page3/,de:None')
+        t = template.Template(
+            '{% load feincms_page_tags %}{% feincms_languagelinks for page3'
+            ' as links %}{% for key, name, link in links %}{{ key }}:'
+            '{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(
+            t.render(context),
+            'en:/test-page/test-child-page/page3/,de:None')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for page3 as links existing %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(context), 'en:/test-page/test-child-page/page3/')
+        t = template.Template(
+            '{% load feincms_page_tags %}{% feincms_languagelinks for page3'
+            ' as links existing %}{% for key, name, link in links %}{{ key }}:'
+            '{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(
+            t.render(context),
+            'en:/test-page/test-child-page/page3/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_languagelinks for feincms_page as links excludecurrent=1 %}{% for key, name, link in links %}{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}{% feincms_languagelinks for'
+            ' feincms_page as links excludecurrent=1 %}'
+            '{% for key, name, link in links %}{{ key }}:{{ link }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
         self.assertEqual(t.render(context), 'en:/test-page/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_nav feincms_page level=1 as nav %}'
+            '{% for p in nav %}{{ p.get_absolute_url }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
         self.assertEqual(t.render(context), '')
 
-        # XXX should the other template tags not respect the in_navigation setting too?
+        # XXX should the other template tags not respect the in_navigation
+        # setting too?
         page1.active = True
         page1.in_navigation = True
         page1.save()
 
         self.assertEqual(t.render(context), '/test-page/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_nav feincms_page level=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_nav feincms_page level=2 as nav %}'
+            '{% for p in nav %}{{ p.get_absolute_url }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
         self.assertEqual(t.render(context), '/test-page/test-child-page/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_nav request level=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_nav request level=2 as nav %}'
+            '{% for p in nav %}{{ p.get_absolute_url }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
+
         from django.http import HttpRequest
         request = HttpRequest()
         request.path = '/test-page/'
-        self.assertEqual(t.render(template.Context({'request': request})), '/test-page/test-child-page/')
+        self.assertEqual(
+            t.render(template.Context({'request': request})),
+            '/test-page/test-child-page/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_nav feincms_page level=99 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_nav feincms_page level=99 as nav %}'
+            '{% for p in nav %}{{ p.get_absolute_url }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
         self.assertEqual(t.render(context), '')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_breadcrumbs feincms_page %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_breadcrumbs feincms_page %}')
         rendered = t.render(context)
         self.assertTrue("Test child page" in rendered)
-        self.assertTrue('href="/test-page/">Test page</a>' in rendered, msg="The parent page should be a breadcrumb link")
-        self.assertTrue('href="/test-page/test-child-page/"' not in rendered, msg="The current page should not be a link in the breadcrumbs")
+        self.assertTrue('href="/test-page/">Test page</a>' in rendered,
+            msg="The parent page should be a breadcrumb link")
+        self.assertTrue('href="/test-page/test-child-page/"' not in rendered,
+            msg="The current page should not be a link in the breadcrumbs")
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_nav feincms_page level=2 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(context), '/test-page/test-child-page/,/test-page/test-child-page/page3/')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_nav feincms_page level=2 depth=2 as nav %}'
+            '{% for p in nav %}{{ p.get_absolute_url }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(
+            t.render(context),
+            '/test-page/test-child-page/,/test-page/test-child-page/page3/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(context), '/test-page/,/test-page/test-child-page/')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_nav feincms_page level=1 depth=2 as nav %}'
+            '{% for p in nav %}{{ p.get_absolute_url }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(
+            t.render(context),
+            '/test-page/,/test-page/test-child-page/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=3 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(context), '/test-page/,/test-page/test-child-page/,/test-page/test-child-page/page3/')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_nav feincms_page level=1 depth=3 as nav %}'
+            '{% for p in nav %}{{ p.get_absolute_url }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(
+            t.render(context),
+            '/test-page/,/test-page/test-child-page/,/test-page/test-child'
+            '-page/page3/')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_nav feincms_page level=3 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}')
-        self.assertEqual(t.render(context), '/test-page/test-child-page/page3/')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_nav feincms_page level=3 depth=2 as nav %}'
+            '{% for p in nav %}{{ p.get_absolute_url }}'
+            '{% if not forloop.last %},{% endif %}{% endfor %}')
+        self.assertEqual(
+            t.render(context), '/test-page/test-child-page/page3/')
 
-        t = template.Template('{% load feincms_page_tags %}{% if feincms_page|is_parent_of:page3 %}yes{% endif %}|{% if page3|is_parent_of:feincms_page %}yes{% endif %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% if feincms_page|is_parent_of:page3 %}yes{% endif %}|'
+            '{% if page3|is_parent_of:feincms_page %}yes{% endif %}')
         self.assertEqual(t.render(context), 'yes|')
 
-        t = template.Template('{% load feincms_page_tags %}{% if feincms_page|is_equal_or_parent_of:page3 %}yes{% endif %}|{% if page3|is_equal_or_parent_of:feincms_page %}yes{% endif %}')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% if feincms_page|is_equal_or_parent_of:page3 %}yes{% endif %}|'
+            '{% if page3|is_equal_or_parent_of:feincms_page %}yes{% endif %}')
         self.assertEqual(t.render(context), 'yes|')
 
-        t = template.Template('{% load feincms_page_tags %}{% feincms_translatedpage for feincms_page as t1 language=de %}{% feincms_translatedpage for feincms_page as t2 %}{{ t1.id }}|{{ t2.id }}')
+        t = template.Template(
+            '{% load feincms_page_tags %}'
+            '{% feincms_translatedpage for feincms_page as t1 language=de %}'
+            '{% feincms_translatedpage for feincms_page as t2 %}'
+            '{{ t1.id }}|{{ t2.id }}')
         self.assertEqual(t.render(context), '2|1')
 
     def test_17_feincms_nav(self):
@@ -820,27 +939,49 @@ class PagesTestCase(TestCase):
         tests = [
             (
                 {'feincms_page': Page.objects.get(pk=1)},
-                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
-                '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-3/page-31/,/page-3/page-32/,/page-3/page-33/',
+                '{% load feincms_page_tags %}'
+                '{% feincms_nav feincms_page level=1 depth=2 as nav %}'
+                '{% for p in nav %}{{ p.get_absolute_url }}'
+                '{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/'
+                ',/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-'
+                '3/page-31/,/page-3/page-32/,/page-3/page-33/',
             ),
             (
                 {'feincms_page': Page.objects.get(pk=14)},
-                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=2 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
-                '/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/page-33/page-331/,/page-3/page-33/page-332/',
+                '{% load feincms_page_tags %}'
+                '{% feincms_nav feincms_page level=2 depth=2 as nav %}'
+                '{% for p in nav %}{{ p.get_absolute_url }}'
+                '{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/'
+                'page-33/page-331/,/page-3/page-33/page-332/',
             ),
             (
                 {'feincms_page': Page.objects.get(pk=14)},
-                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=2 depth=3 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
-                '/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/page-33/page-331/,/page-3/page-33/page-331/page-3311/,/page-3/page-33/page-332/',
+                '{% load feincms_page_tags %}'
+                '{% feincms_nav feincms_page level=2 depth=3 as nav %}'
+                '{% for p in nav %}{{ p.get_absolute_url }}'
+                '{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/'
+                'page-33/page-331/,/page-3/page-33/page-331/page-3311/,/page'
+                '-3/page-33/page-332/',
             ),
             (
                 {'feincms_page': Page.objects.get(pk=19)},
-                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=2 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
-                '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-3/page-31/,/page-3/page-32/,/page-3/page-33/',
+                '{% load feincms_page_tags %}'
+                '{% feincms_nav feincms_page level=1 depth=2 as nav %}'
+                '{% for p in nav %}{{ p.get_absolute_url }}'
+                '{% if not forloop.last %},{% endif %}{% endfor %}',
+                '/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13'
+                '/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/pag'
+                'e-3/page-31/,/page-3/page-32/,/page-3/page-33/',
             ),
             (
                 {'feincms_page': Page.objects.get(pk=1)},
-                '{% load feincms_page_tags %}{% feincms_nav feincms_page level=3 depth=1 as nav %}{% for p in nav %}{{ p.get_absolute_url }}{% if not forloop.last %},{% endif %}{% endfor %}',
+                '{% load feincms_page_tags %}'
+                '{% feincms_nav feincms_page level=3 depth=1 as nav %}'
+                '{% for p in nav %}{{ p.get_absolute_url }}'
+                '{% if not forloop.last %},{% endif %}{% endfor %}',
                 '',
             ),
         ]
@@ -855,7 +996,8 @@ class PagesTestCase(TestCase):
         # which does only have direct children, because it does not collect
         # pages further down the tree.
         page = Page.objects.get(pk=8)
-        page.navigation_extension = 'testapp.navigation_extensions.PassthroughExtension'
+        page.navigation_extension =\
+            'testapp.navigation_extensions.PassthroughExtension'
         page.save()
 
         for c, t, r in tests:
@@ -865,27 +1007,53 @@ class PagesTestCase(TestCase):
 
         # Now check that disabling a page also disables it in Navigation:
         p = Page.objects.get(pk=15)
-        tmpl = '{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=3 as nav %}{% for p in nav %}{{ p.pk }}{% if not forloop.last %},{% endif %}{% endfor %}'
+        tmpl = '''{% load feincms_page_tags %}
+{% feincms_nav feincms_page level=1 depth=3 as nav %}
+{% for p in nav %}{{ p.pk }}{% if not forloop.last %},{% endif %}{% endfor %}
+'''
 
-        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
-        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',), "Original navigation")
+        data = template.Template(tmpl).render(
+            template.Context({'feincms_page': p})
+        ).strip(),
+        self.assertEqual(
+            data,
+            (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',),
+            "Original navigation")
 
         p.active = False
         p.save()
-        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
-        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14',), "Navigation after disabling intermediate page")
+        data = template.Template(tmpl).render(
+            template.Context({'feincms_page': p})
+        ).strip(),
+        self.assertEqual(
+            data,
+            (u'1,2,3,4,6,7,8,10,11,12,13,14',),
+            "Navigation after disabling intermediate page")
 
         # Same test with feincms_nav
-        tmpl = '{% load feincms_page_tags %}{% feincms_nav feincms_page level=1 depth=3 as nav %}{% for p in nav %}{{ p.pk }}{% if not forloop.last %},{% endif %}{% endfor %}'
+        tmpl = '''{% load feincms_page_tags %}
+{% feincms_nav feincms_page level=1 depth=3 as nav %}
+{% for p in nav %}{{ p.pk }}{% if not forloop.last %},{% endif %}{% endfor %}
+'''
 
-        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
-        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14',), "Navigation after disabling intermediate page")
+        data = template.Template(tmpl).render(
+            template.Context({'feincms_page': p})
+        ).strip(),
+        self.assertEqual(
+            data,
+            (u'1,2,3,4,6,7,8,10,11,12,13,14',),
+            "Navigation after disabling intermediate page")
 
         p.active = True
         p.save()
 
-        data = template.Template(tmpl).render(template.Context({'feincms_page': p})),
-        self.assertEqual(data, (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',), "Original navigation")
+        data = template.Template(tmpl).render(
+            template.Context({'feincms_page': p})
+        ).strip(),
+        self.assertEqual(
+            data,
+            (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',),
+            "Original navigation")
 
     def test_18_default_render_method(self):
         """
@@ -900,7 +1068,8 @@ class PagesTestCase(TestCase):
             def render_main(self):
                 return u'Hello'
 
-        # do not register this model in the internal FeinCMS bookkeeping structures
+        # do not register this model in the internal FeinCMS bookkeeping
+        # structures
         tmp = Page._feincms_content_types[:]
         type = Page.create_content_type(Something, regions=('notexists',))
         Page._feincms_content_types = tmp
@@ -974,7 +1143,8 @@ class PagesTestCase(TestCase):
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
         self.assertEqual(self.client.get(request.path).status_code, 200)
-        self.assertEqual(page, Page.objects.for_request(request, best_match=True))
+        self.assertEqual(
+            page, Page.objects.for_request(request, best_match=True))
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
 
@@ -1001,7 +1171,8 @@ class PagesTestCase(TestCase):
 
         # page2 has been modified too, but its URL should not have changed
         try:
-            self.assertRedirects(self.client.get('/blablabla/'), page1.get_absolute_url())
+            self.assertRedirects(
+                self.client.get('/blablabla/'), page1.get_absolute_url())
         except TemplateDoesNotExist as e:
             # catch the error from rendering page1
             if e.args != ('feincms_base.html',):
@@ -1024,8 +1195,9 @@ class PagesTestCase(TestCase):
         page.template_key = 'theother'
         page.save()
 
-        page.contactformcontent_set.create(email='mail@example.com', subject='bla',
-                                           region='main', ordering=0)
+        page.contactformcontent_set.create(
+            email='mail@example.com', subject='bla',
+            region='main', ordering=0)
 
         request = Empty()
         request.method = 'GET'
@@ -1046,7 +1218,8 @@ class PagesTestCase(TestCase):
             })
 
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, 'This is a test. Please calm down')
+        self.assertEqual(
+            mail.outbox[0].subject, 'This is a test. Please calm down')
 
     def test_23_navigation_extension(self):
         self.create_default_page_set()
@@ -1055,7 +1228,8 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(len(page.extended_navigation()), 0)
 
-        page.navigation_extension = 'testapp.navigation_extensions.PassthroughExtension'
+        page.navigation_extension =\
+            'testapp.navigation_extensions.PassthroughExtension'
 
         page2 = Page.objects.get(pk=2)
         page2.active = True
@@ -1064,13 +1238,16 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(list(page.extended_navigation()), [page2])
 
-        page.navigation_extension = 'testapp.navigation_extensions.ThisExtensionDoesNotExist'
+        page.navigation_extension =\
+            'testapp.navigation_extensions.ThisExtensionDoesNotExist'
 
         self.assertEqual(len(page.extended_navigation()), 1)
 
-        page.navigation_extension = 'testapp.navigation_extensions.PretenderExtension'
+        page.navigation_extension =\
+            'testapp.navigation_extensions.PretenderExtension'
 
-        self.assertEqual(page.extended_navigation()[0].get_absolute_url(), '/asdsa/')
+        self.assertEqual(
+            page.extended_navigation()[0].get_absolute_url(), '/asdsa/')
 
     def test_24_admin_redirects(self):
         self.create_default_page_set()
@@ -1098,51 +1275,66 @@ class PagesTestCase(TestCase):
         page.template_key = 'theother'
         page.save()
 
-        # Should not be published because the page has no application contents and should
-        # therefore not catch anything below it.
+        # Should not be published because the page has no application contents
+        # and should therefore not catch anything below it.
         self.is_published(page1.get_absolute_url() + 'anything/', False)
 
         page.applicationcontent_set.create(
             region='main', ordering=0,
             urlconf_path='testapp.applicationcontent_urls')
 
-        self.assertContains(self.client.get(page.get_absolute_url()),
-                            'module_root')
-        self.assertContains(self.client.get(page.get_absolute_url() + 'args_test/abc/def/'),
-                            'abc-def')
-        self.assertContains(self.client.get(page.get_absolute_url() + 'kwargs_test/abc/def/'),
-                            'def-abc')
+        self.assertContains(
+            self.client.get(page.get_absolute_url()),
+            'module_root')
+        self.assertContains(
+            self.client.get(page.get_absolute_url() + 'args_test/abc/def/'),
+            'abc-def')
+        self.assertContains(
+            self.client.get(page.get_absolute_url() + 'kwargs_test/abc/def/'),
+            'def-abc')
 
-        response = self.client.get(page.get_absolute_url() + 'full_reverse_test/')
+        response = self.client.get(
+            page.get_absolute_url() + 'full_reverse_test/')
         self.assertContains(response, 'home:/test-page/test-child-page/')
-        self.assertContains(response, 'args:/test-page/test-child-page/args_test/xy/zzy/')
+        self.assertContains(response,
+            'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
         self.assertContains(response, 'homeas:/test-page/test-child-page/')
 
-        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
+        self.assertEqual(
+            app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
             '/test-page/test-child-page/')
 
         if hasattr(self, 'assertNumQueries'):
             self.assertNumQueries(0,
-                lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
+                lambda: app_reverse(
+                    'ac_module_root', 'testapp.applicationcontent_urls'))
 
             cycle_app_reverse_cache()
 
             self.assertNumQueries(1,
-                lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
+                lambda: app_reverse(
+                    'ac_module_root', 'testapp.applicationcontent_urls'))
             self.assertNumQueries(0,
-                lambda: app_reverse('ac_module_root', 'testapp.applicationcontent_urls'))
+                lambda: app_reverse(
+                    'ac_module_root', 'testapp.applicationcontent_urls'))
 
         # This should not raise
-        self.assertEqual(self.client.get(page.get_absolute_url() + 'notexists/').status_code, 404)
+        self.assertEqual(
+            self.client.get(
+                page.get_absolute_url() + 'notexists/'
+            ).status_code, 404)
 
-        self.assertContains(self.client.get(page.get_absolute_url() + 'fragment/'),
-                            '<span id="something">some things</span>')
+        self.assertContains(
+            self.client.get(page.get_absolute_url() + 'fragment/'),
+            '<span id="something">some things</span>')
 
-        self.assertRedirects(self.client.get(page.get_absolute_url() + 'redirect/'),
-                             page.get_absolute_url())
+        self.assertRedirects(
+            self.client.get(page.get_absolute_url() + 'redirect/'),
+            page.get_absolute_url())
 
-        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
+        self.assertEqual(
+            app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
             page.get_absolute_url())
 
         response = self.client.get(page.get_absolute_url() + 'response/')
@@ -1154,7 +1346,8 @@ class PagesTestCase(TestCase):
         self.assertEqual(
             self.client.get(page.get_absolute_url() + 'response/',
                 HTTP_X_REQUESTED_WITH='XMLHttpRequest').content,
-            self.client.get(page.get_absolute_url() + 'response_decorated/').content)
+            self.client.get(
+                page.get_absolute_url() + 'response_decorated/').content)
 
         # Test reversing of URLs (with overridden urls too)
         page.applicationcontent_set.create(
@@ -1166,20 +1359,31 @@ class PagesTestCase(TestCase):
             ordering=0,
             urlconf_path='whatever')
 
-        response = self.client.get(page.get_absolute_url() + 'alias_reverse_test/')
+        response = self.client.get(
+            page.get_absolute_url() + 'alias_reverse_test/')
         self.assertContains(response, 'home:/test-page/')
         self.assertContains(response, 'args:/test-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
 
-        self.assertEqual(app_reverse('blog_entry_list', 'testapp.blog_urls'), '/test-page/test-child-page/')
-        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
+        self.assertEqual(
+            app_reverse('blog_entry_list', 'testapp.blog_urls'),
             '/test-page/test-child-page/')
-        self.assertEqual(app_reverse('ac_module_root', 'whatever'), '/test-page/')
+        self.assertEqual(
+            app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
+            '/test-page/test-child-page/')
+        self.assertEqual(
+            app_reverse('ac_module_root', 'whatever'),
+            '/test-page/')
 
-        page.applicationcontent_set.get(urlconf_path='testapp.applicationcontent_urls').delete()
+        page.applicationcontent_set.get(
+            urlconf_path='testapp.applicationcontent_urls').delete()
 
-        self.assertEqual(app_reverse('blog_entry_list', 'testapp.blog_urls'), '/test-page/test-child-page/')
-        self.assertEqual(app_reverse('ac_module_root', 'whatever'), '/test-page/')
+        self.assertEqual(
+            app_reverse('blog_entry_list', 'testapp.blog_urls'),
+            '/test-page/test-child-page/')
+        self.assertEqual(
+            app_reverse('ac_module_root', 'whatever'),
+            '/test-page/')
 
         # Ensure ApplicationContent's admin_fields support works properly
         self.login()
@@ -1190,9 +1394,15 @@ class PagesTestCase(TestCase):
         self.create_default_page_set()
         self.login()
 
-        self.assertEqual(self.client.get('/admin/page/page/add/?translation_of=1&lang=de').status_code, 200)
-        self.assertEqual(self.client.get('/admin/page/page/add/?parent=1').status_code, 200)
-        self.assertEqual(self.client.get('/admin/page/page/add/?parent=2').status_code, 200)
+        self.assertEqual(self.client.get(
+            '/admin/page/page/add/?translation_of=1&lang=de'
+        ).status_code, 200)
+        self.assertEqual(self.client.get(
+            '/admin/page/page/add/?parent=1'
+        ).status_code, 200)
+        self.assertEqual(self.client.get(
+            '/admin/page/page/add/?parent=2'
+        ).status_code, 200)
 
     def test_27_cached_url_clash(self):
         self.create_default_page_set()
@@ -1205,7 +1415,9 @@ class PagesTestCase(TestCase):
         page1.save()
 
         self.login()
-        self.assertContains(self.create_page_through_admincontent(page2, active=True, override_url='/'),
+        self.assertContains(
+            self.create_page_through_admincontent(
+                page2, active=True, override_url='/'),
             'already taken by')
 
     def test_28_applicationcontent_reverse(self):
@@ -1223,15 +1435,18 @@ class PagesTestCase(TestCase):
             urlconf_path='testapp.applicationcontent_urls')
 
         # test app_reverse
-        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
-                         page.get_absolute_url())
+        self.assertEqual(
+            app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
+            page.get_absolute_url())
 
         # when specific applicationcontent exists more then once reverse should
         # return the URL of the first (ordered by primary key) page.
         self.login()
-        self.create_page_through_admin(title='Home DE', language='de', active=True)
+        self.create_page_through_admin(
+            title='Home DE', language='de', active=True)
         page_de = Page.objects.get(title='Home DE')
-        self.create_page_through_admin(title='Child 1 DE', language='de', parent=page_de.id, active=True)
+        self.create_page_through_admin(
+            title='Child 1 DE', language='de', parent=page_de.id, active=True)
         page_de_1 = Page.objects.get(title='Child 1 DE')
         page_de_1.applicationcontent_set.create(
             region='main', ordering=0,
@@ -1240,17 +1455,21 @@ class PagesTestCase(TestCase):
         page.active = False
         page.save()
 
-        settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
+        settings.TEMPLATE_DIRS = (
+            os.path.join(os.path.dirname(__file__), 'templates'),
+            )
         self.client.get(page_de_1.get_absolute_url())
-        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
-                         page_de_1.get_absolute_url())
+        self.assertEqual(
+            app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
+            page_de_1.get_absolute_url())
 
         page.active = True
         page.save()
 
         self.client.get(page1.get_absolute_url())
-        self.assertEqual(app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
-                      page.get_absolute_url())
+        self.assertEqual(
+            app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
+            page.get_absolute_url())
 
     def test_29_medialibrary_admin(self):
         self.create_default_page_set()
@@ -1265,7 +1484,9 @@ class PagesTestCase(TestCase):
             type='default',
             ordering=1)
 
-        self.assertContains(self.client.get('/admin/medialibrary/mediafile/'), 'somefile.jpg')
+        self.assertContains(
+            self.client.get('/admin/medialibrary/mediafile/'),
+            'somefile.jpg')
 
         import zipfile
         zf = zipfile.ZipFile('test.zip', 'w')
@@ -1273,22 +1494,26 @@ class PagesTestCase(TestCase):
             zf.writestr('test%d.jpg' % i, 'test%d' % i)
         zf.close()
 
-        self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
-            'data': open('test.zip', 'rb'),
-            }), '/admin/medialibrary/mediafile/')
+        response = self.client.post(
+            '/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
+                'data': open('test.zip', 'rb'),
+            })
+        self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
-        self.assertEqual(MediaFile.objects.count(), 11, "Upload of media files with ZIP does not work")
+        self.assertEqual(MediaFile.objects.count(), 11,
+            "Upload of media files with ZIP does not work")
 
         dn = os.path.dirname
         path = os.path.join(dn(dn(dn(dn(__file__)))),
             'docs', 'images', 'tree_editor.png')
 
-        self.assertRedirects(self.client.post('/admin/medialibrary/mediafile/add/', {
+        response = self.client.post('/admin/medialibrary/mediafile/add/', {
             'file': open(path, 'rb'),
             'translations-TOTAL_FORMS': 0,
             'translations-INITIAL_FORMS': 0,
             'translations-MAX_NUM_FORMS': 10,
-            }), '/admin/medialibrary/mediafile/')
+            })
+        self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
         self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),
             '100x100.png" alt="" />')
@@ -1314,7 +1539,8 @@ class PagesTestCase(TestCase):
     def test_31_sites_framework_associating_with_single_site(self):
         self.login()
         site_2 = Site.objects.create(name='site 2', domain='2.example.com')
-        self.create_page_through_admin('site 1 homepage', override_url='/', active=True)
+        self.create_page_through_admin(
+            'site 1 homepage', override_url='/', active=True)
         self.create_page_through_admin('site 2 homepage', override_url='/',
                 site=site_2.id, active=True)
         self.assertEqual(Page.objects.count(), 2)
@@ -1332,8 +1558,8 @@ class PagesTestCase(TestCase):
         page.template_key = 'theother'
         page.save()
 
-        # Should not be published because the page has no application contents and should
-        # therefore not catch anything below it.
+        # Should not be published because the page has no application contents
+        # and should therefore not catch anything below it.
         self.is_published(page1.get_absolute_url() + 'anything/', False)
 
         page.applicationcontent_set.create(
@@ -1365,8 +1591,13 @@ class PagesTestCase(TestCase):
             text='Example content')
 
         self.login()
-        self.assertEqual(self.client.get(page.get_absolute_url()).status_code, 404)
-        self.assertContains(self.client.get('%s_preview/%s/' % (page.get_absolute_url(), page.pk)),
+        self.assertEqual(
+            self.client.get(page.get_absolute_url()).status_code, 404)
+        self.assertContains(
+            self.client.get('%s_preview/%s/' % (
+                page.get_absolute_url(),
+                page.pk),
+            ),
             'Example content')
 
     def test_34_access(self):
@@ -1379,7 +1610,11 @@ class PagesTestCase(TestCase):
         Page.objects.update(active=True)
 
         self.login()
-        self.create_page_through_admin(title='redirect page', override_url='/', redirect_to=page.get_absolute_url(), active=True)
+        self.create_page_through_admin(
+            title='redirect page',
+            override_url='/',
+            redirect_to=page.get_absolute_url(),
+            active=True)
 
         # / -> redirect to /something/
         r = self.client.get('/')
@@ -1393,7 +1628,11 @@ class PagesTestCase(TestCase):
 
     def test_35_access_with_extra_path(self):
         self.login()
-        self.create_page(title='redirect again', override_url='/', redirect_to='/somewhere/', active=True)
+        self.create_page(
+            title='redirect again',
+            override_url='/',
+            redirect_to='/somewhere/',
+            active=True)
         self.create_page(title='somewhere', active=True)
 
         r = self.client.get('/')

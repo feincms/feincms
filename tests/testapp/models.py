@@ -10,7 +10,8 @@ from feincms.content.raw.models import RawContent
 from feincms.content.image.models import ImageContent
 from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.application.models import ApplicationContent
-from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
+from feincms.module.page.extensions.navigation import (NavigationExtension,
+    PagePretender)
 from feincms.content.application.models import reverse
 
 from mptt.models import MPTTModel
@@ -40,7 +41,9 @@ def get_admin_fields(form, *args, **kwargs):
             label=capfirst(_('exclusive subpages')),
             required=False,
             initial=form.instance.parameters.get('exclusive_subpages', False),
-            help_text=_('Exclude everything other than the application\'s content when rendering subpages.'),
+            help_text=_(
+                'Exclude everything other than the application\'s content'
+                ' when rendering subpages.'),
             ),
     }
 
@@ -77,7 +80,8 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=reverse('testapp.blog_urls/blog_entry_detail', kwargs={'object_id': entry.id}),
+                url=reverse('testapp.blog_urls/blog_entry_detail',
+                    kwargs={'object_id': entry.id}),
                 )
 
 Page.register_extensions(
