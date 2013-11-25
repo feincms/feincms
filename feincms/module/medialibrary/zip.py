@@ -14,8 +14,9 @@ import zipfile
 import os
 import time
 
-from django.template.defaultfilters import slugify
 from django.conf import settings as django_settings
+from django.core.files.base import ContentFile
+from django.template.defaultfilters import slugify
 from django.utils import timezone
 
 from .models import Category, MediaFile, MediaFileTranslation
@@ -51,12 +52,16 @@ def import_zipfile(category_id, overwrite, data):
     except:
         pass
 
-     # If meta information, do we need to create any categories?
+    # If meta information, do we need to create any categories?
     # Also build translation map for category ids.
     category_id_map = {}
     if is_export_file:
-        for cat in sorted(info.get('categories', []), key=lambda k: k.get('level', 999)):
-            new_cat, created = Category.objects.get_or_create(slug=cat['slug'], title=cat['title'])
+        for cat in sorted(
+                info.get('categories', []),
+                key=lambda k: k.get('level', 999)):
+            new_cat, created = Category.objects.get_or_create(
+                slug=cat['slug'],
+                title=cat['title'])
             category_id_map[cat['id']] = new_cat
             if created and cat.get('parent', 0):
                 parent_cat = category_id_map.get(cat.get('parent', 0), None)
@@ -67,8 +72,6 @@ def import_zipfile(category_id, overwrite, data):
     count = 0
     for zi in z.infolist():
         if not zi.filename.endswith('/'):
-            from django.core.files.base import ContentFile
-
             bname = os.path.basename(zi.filename)
             if bname and not bname.startswith(".") and "." in bname:
                 fname, ext = os.path.splitext(bname)
@@ -93,7 +96,10 @@ def import_zipfile(category_id, overwrite, data):
                 if overwrite:
                     mf.file.field.upload_to = wanted_dir
                 mf.copyright = info.get('copyright', '')
-                mf.file.save(target_fname, ContentFile(z.read(zi.filename)), save=False)
+                mf.file.save(
+                    target_fname,
+                    ContentFile(z.read(zi.filename)),
+                    save=False)
                 mf.save()
 
                 found_metadata = False
@@ -101,13 +107,17 @@ def import_zipfile(category_id, overwrite, data):
                     try:
                         for tr in info['translations']:
                             found_metadata = True
-                            mt, mt_created = MediaFileTranslation.objects.get_or_create(parent=mf, language_code=tr['lang'])
+                            mt, mt_created =\
+                                MediaFileTranslation.objects.get_or_create(
+                                    parent=mf, language_code=tr['lang'])
                             mt.caption = tr['caption']
                             mt.description = tr.get('description', None)
                             mt.save()
 
                         # Add categories
-                        mf.categories = (category_id_map[cat_id] for cat_id in info.get('categories', []))
+                        mf.categories = (
+                            category_id_map[cat_id]
+                            for cat_id in info.get('categories', []))
                     except Exception:
                         pass
 
@@ -128,7 +138,8 @@ def import_zipfile(category_id, overwrite, data):
 # ------------------------------------------------------------------------
 def export_zipfile(site, queryset):
     now = timezone.now()
-    zip_name = "export_%s_%04d%02d%02d.zip" % (slugify(site.domain), now.year, now.month, now.day)
+    zip_name = "export_%s_%04d%02d%02d.zip" % (
+        slugify(site.domain), now.year, now.month, now.day)
 
     zip_data = open(os.path.join(django_settings.MEDIA_ROOT, zip_name), "w")
     zip_file = zipfile.ZipFile(zip_data, 'w', allowZip64=True)
@@ -166,7 +177,13 @@ def export_zipfile(site, queryset):
         with open(mf.file.path, "r") as file_data:
             zip_info = zipfile.ZipInfo(
                 filename=mf.file.name,
-                date_time=(ctime.tm_year, ctime.tm_mon, ctime.tm_mday, ctime.tm_hour, ctime.tm_min, ctime.tm_sec))
+                date_time=(
+                    ctime.tm_year,
+                    ctime.tm_mon,
+                    ctime.tm_mday,
+                    ctime.tm_hour,
+                    ctime.tm_min,
+                    ctime.tm_sec))
             zip_info.comment = info
             zip_file.writestr(zip_info, file_data.read())
 

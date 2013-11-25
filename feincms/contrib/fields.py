@@ -44,7 +44,8 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
             try:
                 return json.loads(value)
             except ValueError:
-                logging.getLogger("feincms.contrib.fields").exception("Unable to deserialize store JSONField data: %s", value)
+                logging.getLogger("feincms.contrib.fields").exception(
+                    "Unable to deserialize store JSONField data: %s", value)
                 return {}
         else:
             assert value is None
@@ -55,7 +56,8 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
         return self._flatten_value(value)
 
     def value_to_string(self, obj):
-        """Extract our value from the passed object and return it in string form"""
+        """Extract our value from the passed object and return it in string
+        form"""
 
         if hasattr(obj, self.attname):
             value = getattr(obj, self.attname)

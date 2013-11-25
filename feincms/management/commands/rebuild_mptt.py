@@ -15,7 +15,9 @@ from feincms.module.page.models import Page
 
 
 class Command(NoArgsCommand):
-    help = "Run this manually to rebuild your mptt pointers. Only use in emergencies."
+    help = (
+        "Run this manually to rebuild your mptt pointers. Only use in"
+        " emergencies.")
 
     def handle_noargs(self, **options):
         print("Rebuilding MPTT pointers for Page")

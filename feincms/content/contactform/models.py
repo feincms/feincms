@@ -1,8 +1,8 @@
 """
-Simple contact form for FeinCMS. The default form class has name, email, subject
-and content fields, content being the only one which is not required. You can
-provide your own comment form by passing an additional ``form=YourClass``
-argument to the ``create_content_type`` call.
+Simple contact form for FeinCMS. The default form class has name, email,
+subject and content fields, content being the only one which is not required.
+You can provide your own comment form by passing an additional
+``form=YourClass`` argument to the ``create_content_type`` call.
 """
 
 from django import forms
@@ -41,7 +41,8 @@ class ContactFormContent(models.Model):
 
     def process(self, request, **kwargs):
         if request.GET.get('_cf_thanks'):
-            self.rendered_output = render_to_string('content/contactform/thanks.html',
+            self.rendered_output = render_to_string(
+                'content/contactform/thanks.html',
                 context_instance=RequestContext(request))
             return
 
@@ -67,9 +68,10 @@ class ContactFormContent(models.Model):
 
             form = self.form(initial=initial)
 
-        self.rendered_output = render_to_string('content/contactform/form.html', {
-            'content': self,
-            'form': form,
+        self.rendered_output = render_to_string(
+            'content/contactform/form.html', {
+                'content': self,
+                'form': form,
             }, context_instance=RequestContext(request))
 
     def render(self, **kwargs):

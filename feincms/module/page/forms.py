@@ -97,7 +97,9 @@ class PageAdminForm(MPTTAdminForm):
 
                     if original.parent:
                         try:
-                            data['parent'] = original.parent.get_translation(kwargs['initial']['language']).id
+                            data['parent'] = original.parent.get_translation(
+                                kwargs['initial']['language']
+                                ).id
                         except self.page_model.DoesNotExist:
                             # ignore this -- the translation does not exist
                             pass
@@ -175,8 +177,10 @@ class PageAdminForm(MPTTAdminForm):
             return cleaned_data
 
         if cleaned_data['override_url']:
-            if active_pages.filter(_cached_url=cleaned_data['override_url']).count():
-                self._errors['override_url'] = ErrorList([_('This URL is already taken by an active page.')])
+            if active_pages.filter(
+                    _cached_url=cleaned_data['override_url']).count():
+                self._errors['override_url'] = ErrorList([
+                    _('This URL is already taken by an active page.')])
                 del cleaned_data['override_url']
 
             return cleaned_data
@@ -194,7 +198,8 @@ class PageAdminForm(MPTTAdminForm):
             new_url = '/%s/' % cleaned_data['slug']
 
         if active_pages.filter(_cached_url=new_url).count():
-            self._errors['active'] = ErrorList([_('This URL is already taken by another active page.')])
+            self._errors['active'] = ErrorList([
+                _('This URL is already taken by another active page.')])
             del cleaned_data['active']
 
         if parent and parent.template.enforce_leaf:

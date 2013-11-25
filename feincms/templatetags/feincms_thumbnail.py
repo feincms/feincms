@@ -80,7 +80,9 @@ class Thumbnailer(object):
             generate = True
         else:
             try:
-                generate = storage.modified_time(miniature) < storage.modified_time(filename)
+                generate = (
+                    storage.modified_time(miniature)
+                    < storage.modified_time(filename))
             except (NotImplementedError, AttributeError):
                 # storage does NOT support modified_time
                 generate = False
@@ -127,7 +129,8 @@ class Thumbnailer(object):
 
 
 class CropscaleThumbnailer(Thumbnailer):
-    THUMBNAIL_SIZE_RE = re.compile(r'^(?P<w>\d+)x(?P<h>\d+)(-(?P<x>\d+)x(?P<y>\d+))?$')
+    THUMBNAIL_SIZE_RE = re.compile(
+        r'^(?P<w>\d+)x(?P<h>\d+)(-(?P<x>\d+)x(?P<y>\d+))?$')
     MARKER = '_cropscale_'
 
     def generate(self, storage, original, size, miniature):

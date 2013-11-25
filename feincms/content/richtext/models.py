@@ -28,9 +28,10 @@ class RichTextContentAdminForm(ItemEditorForm):
         cleaned_data = super(RichTextContentAdminForm, self).clean()
 
         if settings.FEINCMS_TIDY_HTML:
-            text, errors, warnings = get_object(settings.FEINCMS_TIDY_FUNCTION)(cleaned_data['text'])
+            text, errors, warnings = get_object(
+                settings.FEINCMS_TIDY_FUNCTION)(cleaned_data['text'])
 
-            # Ick, but we need to be able to update text and seen_tidy_warnings:
+            # Ick, but we need to be able to update text and seen_tidy_warnings
             self.data = self.data.copy()
 
             # We always replace the HTML with the tidied version:
@@ -39,21 +40,29 @@ class RichTextContentAdminForm(ItemEditorForm):
 
             if settings.FEINCMS_TIDY_SHOW_WARNINGS and (errors or warnings):
                 if settings.FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE:
-                    # Convert the ignore input from hidden to Checkbox so the user can change it:
-                    self.fields['seen_tidy_warnings'].widget = forms.CheckboxInput()
+                    # Convert the ignore input from hidden to Checkbox so the
+                    # user can change it:
+                    self.fields['seen_tidy_warnings'].widget =\
+                        forms.CheckboxInput()
 
-                if errors or not (settings.FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE and cleaned_data['seen_tidy_warnings']):
-                    self._errors["text"] = ErrorList([mark_safe(
-                        _("HTML validation produced %(count)d warnings. Please review the updated content below before continuing: %(messages)s") % {
-                            "count": len(warnings) + len(errors),
-                            "messages": '<ul><li>%s</li></ul>' % "</li><li>".join(map(escape, errors + warnings))
+                if errors or not (
+                        settings.FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE
+                        and cleaned_data['seen_tidy_warnings']):
+                    self._errors["text"] = ErrorList([mark_safe(_(
+                        "HTML validation produced %(count)d warnings."
+                        " Please review the updated content below before"
+                        " continuing: %(messages)s") % {
+                        "count": len(warnings) + len(errors),
+                        "messages": '<ul><li>%s</li></ul>' % (
+                            "</li><li>".join(map(escape, errors + warnings))),
                         }
                     )])
 
                 # If we're allowed to ignore warnings and we don't have any
                 # errors we'll set our hidden form field to allow the user to
                 # ignore warnings on the next submit:
-                if not errors and settings.FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE:
+                if (not errors
+                        and settings.FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE):
                     self.data["%s-seen_tidy_warnings" % self.prefix] = True
 
         return cleaned_data
@@ -115,8 +124,12 @@ class RichTextContent(models.Model):
 
         # TODO: Move this into somewhere more generic:
         if settings.FEINCMS_TIDY_HTML:
-            # Make sure we can load the tidy function without dependency failures:
+            # Make sure we can load the tidy function without dependency
+            # failures:
             try:
                 get_object(settings.FEINCMS_TIDY_FUNCTION)
             except ImportError as e:
-                raise ImproperlyConfigured("FEINCMS_TIDY_HTML is enabled but the HTML tidy function %s could not be imported: %s" % (settings.FEINCMS_TIDY_FUNCTION, e))
+                raise ImproperlyConfigured(
+                    "FEINCMS_TIDY_HTML is enabled but the HTML tidy function"
+                    " %s could not be imported: %s" % (
+                        settings.FEINCMS_TIDY_FUNCTION, e))

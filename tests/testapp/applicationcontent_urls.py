@@ -2,9 +2,9 @@
 This is a dummy module used to test the ApplicationContent
 """
 
-from django import template
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 from django.http import HttpResponse, HttpResponseRedirect
+from django.template.loader import render_to_string
 
 from feincms.views.decorators import standalone
 
@@ -18,18 +18,15 @@ def args_test(request, kwarg1, kwarg2):
 
 
 def full_reverse_test(request):
-    t = template.Template('{% load applicationcontent_tags %}{% load url from future %}home:{% app_reverse "ac_module_root" "testapp.applicationcontent_urls" %} args:{% app_reverse "ac_args_test" "testapp.applicationcontent_urls" "xy" "zzy" %} base:{% url "feincms_handler" "test" %} homeas:{% app_reverse "ac_module_root" "testapp.applicationcontent_urls" as reversed %}{{ reversed }}')
-    return t.render(template.Context())
+    return render_to_string('full_reverse_test.html', {})
 
 
 def alias_reverse_test(request):
-    t = template.Template('{% load applicationcontent_tags %}{% load url from future %}home:{% app_reverse "ac_module_root" "whatever" %} args:{% app_reverse "ac_args_test" "whatever" "xy" "zzy" %} base:{% url "feincms_handler" "test" %}')
-    return t.render(template.Context())
+    return render_to_string('alias_reverse_test.html', {})
 
 
 def fragment(request):
-    t = template.Template('{% load applicationcontent_tags %}{% fragment request "something" %}some things{% endfragment %}')
-    return t.render(template.Context({'request': request}))
+    return render_to_string('fragment.html', {'request': request})
 
 
 def redirect(request):
@@ -41,12 +38,7 @@ def response(request):
 
 
 def inheritance20(request):
-    return template.Template('''
-            {% extends "base.html" %}
-            some content outside
-            {% block content %}a content {{ from_appcontent }}{% endblock %}
-            {% block sidebar %}b content {{ block.super }}{% block bla %}{% endblock %}{% endblock %}
-            '''), {'from_appcontent': 42}
+    return 'inheritance20.html', {'from_appcontent': 42}
 
 
 urlpatterns = patterns('',

@@ -64,7 +64,8 @@ def feincms_frontend_editing(cms_obj, request):
     {% feincms_frontend_editing feincms_page request %}
     """
 
-    if hasattr(request, 'COOKIES') and request.COOKIES.get('frontend_editing') == 'True':
+    if (hasattr(request, 'COOKIES')
+            and request.COOKIES.get('frontend_editing') == 'True'):
         context = template.RequestContext(request, {
             "feincms_page": cms_obj,
             })
@@ -73,7 +74,8 @@ def feincms_frontend_editing(cms_obj, request):
     return u''
 
 
-@register.inclusion_tag('admin/feincms/content_type_selection_widget.html', takes_context=True)
+@register.inclusion_tag('admin/feincms/content_type_selection_widget.html',
+    takes_context=True)
 def show_content_type_selection_widget(context, region):
     """
     {% show_content_type_selection_widget region %}

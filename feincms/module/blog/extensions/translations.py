@@ -24,7 +24,8 @@ class Extension(extensions.Extension):
             blank=True, null=True, verbose_name=_('translation of'),
             related_name='translations',
             limit_choices_to={'language': primary_language},
-            help_text=_('Leave this empty for entries in the primary language.')
+            help_text=_(
+                'Leave this empty for entries in the primary language.')
             ))
 
         def available_translations(self):
@@ -48,7 +49,8 @@ class Extension(extensions.Extension):
                 ) for page in translations)
 
         available_translations_admin.allow_tags = True
-        available_translations_admin.short_description = _('available translations')
+        available_translations_admin.short_description =\
+            _('available translations')
         self.model.available_translations_admin = available_translations_admin
 
     def handle_modeladmin(self, modeladmin):

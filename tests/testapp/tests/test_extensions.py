@@ -1,10 +1,10 @@
 # coding: utf-8
+
 from __future__ import absolute_import
 
-from django.template.defaultfilters import slugify
-from django.test.utils import override_settings
-from django.test import TestCase
 from django.contrib.sites.models import Site
+from django.template.defaultfilters import slugify
+from django.test import TestCase
 
 from feincms.module.page.models import Page
 
@@ -31,7 +31,6 @@ class TranslationTestCase(TestCase):
         de.parent.save()
         self.page_de = de.parent
         self.page_en = en.parent
-
 
     def create_page(self, title='Test page', parent=None, **kwargs):
         defaults = {

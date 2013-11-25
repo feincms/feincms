@@ -35,8 +35,8 @@ class PagePretender(object):
     navigation tree.
 
     For use as fake navigation page, you should at least define the following
-    parameters on creation: title, url, level. If using the translation extension,
-    also add language.
+    parameters on creation: title, url, level. If using the translation
+    extension, also add language.
     """
     pk = None
 
@@ -83,11 +83,12 @@ class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
 
     def children(self, page, **kwargs):
         """
-        This is the method which must be overridden in every navigation extension.
+        This is the method which must be overridden in every navigation
+        extension.
 
-        It receives the page the extension is attached to, the depth up to which
-        the navigation should be resolved, and the current request object if it
-        is available.
+        It receives the page the extension is attached to, the depth up to
+        which the navigation should be resolved, and the current request object
+        if it is available.
         """
 
         raise NotImplementedError
@@ -95,7 +96,9 @@ class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
 
 def navigation_extension_choices():
     for ext in NavigationExtension.types:
-        yield ('%s.%s' % (ext.__module__, ext.__name__), ext.name)
+        if (issubclass(ext, NavigationExtension)
+                and not ext is NavigationExtension):
+            yield ('%s.%s' % (ext.__module__, ext.__name__), ext.name)
 
 
 class Extension(extensions.Extension):
@@ -107,7 +110,9 @@ class Extension(extensions.Extension):
                 _('navigation extension'),
                 choices=navigation_extension_choices(),
                 blank=True, null=True, max_length=200,
-                help_text=_('Select the module providing subpages for this page if you need to customize the navigation.')))
+                help_text=_(
+                    'Select the module providing subpages for this page if'
+                    ' you need to customize the navigation.')))
 
         @monkeypatch_method(self.model)
         def extended_navigation(self, **kwargs):

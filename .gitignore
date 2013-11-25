@@ -14,5 +14,5 @@ tests/test.zip
 /docs/_build
 /tests/.tox
 /tests/.coverage
-/tests/venv
 /tests/htmlcov
+venv

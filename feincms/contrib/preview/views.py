@@ -1,7 +1,6 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from feincms.module.page.models import Page
 from feincms.views.cbv.views import Handler
 
 
@@ -17,7 +16,7 @@ class PreviewHandler(Handler):
     def get_object(self):
         """Get the page by the id in the url here instead."""
 
-        page = get_object_or_404(Page, pk=self.args[1])
+        page = get_object_or_404(self.page_model, pk=self.args[1])
 
         # Remove _preview/42/ from URL, the rest of the handler code should not
         # know that anything about previewing. Handler.prepare will still raise
@@ -29,6 +28,8 @@ class PreviewHandler(Handler):
     def handler(self, request, *args, **kwargs):
         if not request.user.is_staff:
             raise Http404('Not found (not allowed)')
-        response = super(PreviewHandler, self).handler(request, *args, **kwargs)
-        response['Cache-Control'] = 'no-cache, must-revalidate, no-store, private'
+        response = super(PreviewHandler, self).handler(
+            request, *args, **kwargs)
+        response['Cache-Control'] =\
+            'no-cache, must-revalidate, no-store, private'
         return response

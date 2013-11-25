@@ -1,4 +1,5 @@
-from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
+from feincms.module.page.extensions.navigation import (NavigationExtension,
+    PagePretender)
 
 
 class PassthroughExtension(NavigationExtension):

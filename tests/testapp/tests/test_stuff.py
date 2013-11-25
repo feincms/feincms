@@ -19,6 +19,7 @@ from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.utils import collect_dict_values, get_object, shorten_string
 
+
 # ------------------------------------------------------------------------
 class Empty(object):
     """
@@ -26,6 +27,7 @@ class Empty(object):
     """
 
     pass
+
 
 class DocTest(TestCase):
     def test_translation_short_language_code(self):
@@ -52,8 +54,10 @@ class ModelsTest(TestCase):
 
 class UtilsTest(TestCase):
     def test_get_object(self):
-        self.assertRaises(AttributeError, lambda: get_object('feincms.does_not_exist'))
-        self.assertRaises(ImportError, lambda: get_object('feincms.does_not_exist.fn'))
+        self.assertRaises(
+            AttributeError, lambda: get_object('feincms.does_not_exist'))
+        self.assertRaises(
+            ImportError, lambda: get_object('feincms.does_not_exist.fn'))
 
         self.assertEqual(get_object, get_object('feincms.utils.get_object'))
 
@@ -84,7 +88,9 @@ class UtilsTest(TestCase):
 class ExampleCMSBase(Base):
     pass
 
-ExampleCMSBase.register_regions(('region', 'region title'), ('region2', 'region2 title'))
+ExampleCMSBase.register_regions(
+    ('region', 'region title'),
+    ('region2', 'region2 title'))
 
 
 class ExampleCMSBase2(Base):
@@ -97,12 +103,14 @@ Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
 Page.register_request_processor(processors.etag_request_processor)
 Page.register_response_processor(processors.etag_response_processor)
-Page.register_response_processor(processors.debug_sql_queries_response_processor())
+Page.register_response_processor(
+    processors.debug_sql_queries_response_processor())
 
 
 class BlogTestCase(TestCase):
     def setUp(self):
-        u = User(username='test', is_active=True, is_staff=True, is_superuser=True)
+        u = User(username='test', is_active=True, is_staff=True,
+            is_superuser=True)
         u.set_password('test')
         u.save()
 
@@ -143,8 +151,10 @@ class BlogTestCase(TestCase):
         self.create_entry()
 
         self.login()
-        self.assertEqual(self.client.get('/admin/blog/entry/').status_code, 200)
-        self.assertEqual(self.client.get('/admin/blog/entry/1/').status_code, 200)
+        self.assertEqual(
+            self.client.get('/admin/blog/entry/').status_code, 200)
+        self.assertEqual(
+            self.client.get('/admin/blog/entry/1/').status_code, 200)
 
     def test_02_translations(self):
         self.create_entries()
@@ -158,5 +168,7 @@ class BlogTestCase(TestCase):
     def test_03_admin(self):
         self.login()
         self.create_entries()
-        self.assertEqual(self.client.get('/admin/blog/entry/').status_code, 200)
-        self.assertEqual(self.client.get('/admin/blog/entry/1/').status_code, 200)
+        self.assertEqual(
+            self.client.get('/admin/blog/entry/').status_code, 200)
+        self.assertEqual(
+            self.client.get('/admin/blog/entry/1/').status_code, 200)

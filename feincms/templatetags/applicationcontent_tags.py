@@ -4,8 +4,12 @@ from django.template import TemplateSyntaxError
 from django.template.defaulttags import kwarg_re
 from django.utils.encoding import smart_str
 
+from feincms.content.application.models import (ApplicationContent,
+    app_reverse as do_app_reverse)
+from feincms.templatetags.feincms_tags import _render_content
 # backwards compatibility import
-from feincms.templatetags.fragment_tags import fragment, get_fragment, has_fragment
+from feincms.templatetags.fragment_tags import (fragment, get_fragment,
+    has_fragment)
 
 
 register = template.Library()
@@ -29,11 +33,10 @@ def feincms_render_region_appcontent(page, region, request):
             {% feincms_render_region_appcontent feincms_page "main" request %}
         {% endif %}
     """
-    from feincms.content.application.models import ApplicationContent
-    from feincms.templatetags.feincms_tags import _render_content
-
-    return u''.join(_render_content(content, request=request) for content in
-        page.content.all_of_type(ApplicationContent) if content.region == region)
+    return u''.join(
+        _render_content(content, request=request)
+        for content in page.content.all_of_type(ApplicationContent)
+        if content.region == region)
 
 
 class AppReverseNode(template.Node):
@@ -45,8 +48,6 @@ class AppReverseNode(template.Node):
         self.asvar = asvar
 
     def render(self, context):
-        from feincms.content.application.models import app_reverse
-
         args = [arg.resolve(context) for arg in self.args]
         kwargs = dict([(smart_str(k, 'ascii'), v.resolve(context))
                        for k, v in self.kwargs.items()])
@@ -54,7 +55,7 @@ class AppReverseNode(template.Node):
         urlconf = self.urlconf.resolve(context)
 
         try:
-            url = app_reverse(view_name, urlconf, args=args, kwargs=kwargs,
+            url = do_app_reverse(view_name, urlconf, args=args, kwargs=kwargs,
                 current_app=context.current_app)
         except NoReverseMatch:
             if self.asvar is None:
@@ -81,12 +82,12 @@ def app_reverse(parser, token):
         or
 
         {% load applicationcontent_tags %}
-        {% app_reverse "mymodel_detail" "myapp.urls" name1=value1 name2=value2 %}
+        {% app_reverse "mymodel_detail" "myapp.urls" name1=value1 %}
 
     The first argument is a path to a view. The second argument is the URLconf
-    under which this app is known to the ApplicationContent. The second argument
-    may also be a request object if you want to reverse an URL belonging to the
-    current application content.
+    under which this app is known to the ApplicationContent. The second
+    argument may also be a request object if you want to reverse an URL
+    belonging to the current application content.
 
     Other arguments are space-separated values that will be filled in place of
     positional and keyword arguments in the URL. Don't mix positional and
@@ -115,7 +116,8 @@ def app_reverse(parser, token):
         for bit in bits:
             match = kwarg_re.match(bit)
             if not match:
-                raise TemplateSyntaxError("Malformed arguments to app_reverse tag")
+                raise TemplateSyntaxError(
+                    "Malformed arguments to app_reverse tag")
             name, value = match.groups()
             if name:
                 kwargs[name] = parser.compile_filter(value)

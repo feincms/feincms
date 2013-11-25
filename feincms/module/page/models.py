@@ -23,7 +23,7 @@ from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
-from feincms.utils import path_to_cache_key
+from feincms.utils import path_to_cache_key, shorten_string
 
 
 REDIRECT_TO_RE = re.compile(
@@ -38,7 +38,8 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
     """
 
     # The fields which should be excluded when creating a copy.
-    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
+    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level',
+        'redirect_to']
 
     def page_for_path(self, path, raise404=False):
         """
@@ -96,7 +97,8 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
 
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
-                select={'_url_length': 'LENGTH(_cached_url)'}).order_by('-_url_length')[0]
+                select={'_url_length': 'LENGTH(_cached_url)'}
+                ).order_by('-_url_length')[0]
 
             if not page.are_ancestors_active():
                 raise IndexError('Parents are inactive.')
@@ -170,22 +172,20 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                     help_text=_('This is used to build the URL for this page'))
     parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True,
                                null=True, related_name='children')
-    parent.parent_filter = True  # Custom list_filter - see admin/filterspecs.py
+    # Custom list_filter - see admin/filterspecs.py
+    parent.parent_filter = True
     in_navigation = models.BooleanField(_('in navigation'), default=False)
-    override_url = models.CharField(_('override URL'), max_length=255, blank=True,
-        help_text=_('Override the target URL. Be sure to include slashes at the '
-                    'beginning and at the end if it is a local URL. This '
-                    'affects both the navigation and subpages\' URLs.'))
-    redirect_to = models.CharField(_('redirect to'), max_length=255, blank=True,
+    override_url = models.CharField(_('override URL'), max_length=255,
+        blank=True, help_text=_(
+            'Override the target URL. Be sure to include slashes at the '
+            'beginning and at the end if it is a local URL. This '
+            'affects both the navigation and subpages\' URLs.'))
+    redirect_to = models.CharField(_('redirect to'), max_length=255,
+        blank=True,
         help_text=_('Target URL for automatic redirects'
             ' or the primary key of a page.'))
     _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
-
-    cache_key_components = [
-        lambda p: getattr(django_settings, 'SITE_ID', 0),
-        lambda p: p._django_content_type.id,
-        lambda p: p.id]
 
     class Meta:
         ordering = ['tree_id', 'lft']
@@ -224,7 +224,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         """
         Title shortened for display.
         """
-        from feincms.utils import shorten_string
         return shorten_string(self.title)
     short_title.admin_order_field = 'title'
     short_title.short_description = _('title')
@@ -255,7 +254,8 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         cached_page_urls[self.id] = self._cached_url
         super(BasePage, self).save(*args, **kwargs)
 
-        # Okay, we have changed the page -- remove the old stale entry from the cache
+        # Okay, we have changed the page -- remove the old stale entry from the
+        # cache
         self.invalidate_cache()
 
         # If our cached URL changed we need to update all descendants to
@@ -319,10 +319,19 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             return self._cached_url
         return self.redirect_to
 
+    cache_key_components = [
+        lambda p: getattr(django_settings, 'SITE_ID', 0),
+        lambda p: p._django_content_type.id,
+        lambda p: p.id,
+        ]
+
     def cache_key(self):
         """
         Return a string that may be used as cache key for the current page.
         The cache_key is unique for each content type and content instance.
+
+        This function is here purely for your convenience. FeinCMS itself
+        does not use it in any way.
         """
         return '-'.join(str(fn(self)) for fn in self.cache_key_components)
 
@@ -385,16 +394,18 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         Register our default request processors for the out-of-the-box
         Page experience.
         """
-        cls.register_request_processor(processors.redirect_request_processor,
-                                       key='redirect')
-        cls.register_request_processor(processors.extra_context_request_processor,
-                                       key='extra_context')
+        cls.register_request_processor(
+            processors.redirect_request_processor, key='redirect')
+        cls.register_request_processor(
+            processors.extra_context_request_processor, key='extra_context')
 
         if frontend_editing:
-            cls.register_request_processor(processors.frontendediting_request_processor,
-                                           key='frontend_editing')
-            cls.register_response_processor(processors.frontendediting_response_processor,
-                                            key='frontend_editing')
+            cls.register_request_processor(
+                processors.frontendediting_request_processor,
+                key='frontend_editing')
+            cls.register_response_processor(
+                processors.frontendediting_response_processor,
+                key='frontend_editing')
 
 
 # ------------------------------------------------------------------------
@@ -405,7 +416,8 @@ class Page(BasePage):
         verbose_name_plural = _('pages')
         # not yet # permissions = (("edit_page", _("Can edit page metadata")),)
 
-Page.register_default_processors(frontend_editing=settings.FEINCMS_FRONTEND_EDITING)
+Page.register_default_processors(
+    frontend_editing=settings.FEINCMS_FRONTEND_EDITING)
 
 signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
 

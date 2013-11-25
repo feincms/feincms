@@ -35,10 +35,10 @@ def dt_to_utc_timestamp(dt):
 
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('creation_date',
-            models.DateTimeField(_('creation date'), null=True, editable=False))
-        self.model.add_to_class('modification_date',
-            models.DateTimeField(_('modification date'), null=True, editable=False))
+        self.model.add_to_class('creation_date', models.DateTimeField(
+            _('creation date'), null=True, editable=False))
+        self.model.add_to_class('modification_date', models.DateTimeField(
+            _('modification date'), null=True, editable=False))
 
         if hasattr(self.model, 'cache_key_components'):
             self.model.cache_key_components.append(

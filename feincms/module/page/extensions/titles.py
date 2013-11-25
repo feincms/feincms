@@ -1,7 +1,7 @@
 """
-Sometimes, a single title is not enough, you'd like subtitles, and maybe differing
-titles in the navigation and in the <title>-tag.
-This extension lets you do that.
+Sometimes, a single title is not enough, you'd like subtitles, and maybe
+differing titles in the navigation and in the <title>-tag.  This extension lets
+you do that.
 """
 
 from django.db import models

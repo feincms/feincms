@@ -22,12 +22,14 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
-from ...translations import admin_translationinline, lookup_translations
-from ...extensions import ExtensionModelAdmin
+from feincms.extensions import ExtensionModelAdmin
+from feincms.translations import admin_translationinline, lookup_translations
+from feincms.utils import shorten_string
 
 from .models import Category, MediaFileTranslation
 from .forms import MediaCategoryAdminForm, MediaFileAdminForm
 from .thumbnail import admin_thumbnail
+from .zip import import_zipfile
 
 
 # -----------------------------------------------------------------------
@@ -68,7 +70,8 @@ def assign_category(modeladmin, request, queryset):
 
     if not form:
         form = AddCategoryForm(initial={
-            '_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME),
+            '_selected_action': request.POST.getlist(
+                admin.ACTION_CHECKBOX_NAME),
             })
 
     return render_to_response('admin/medialibrary/add_to_category.html', {
@@ -93,10 +96,12 @@ def save_as_zipfile(modeladmin, request, queryset):
         messages.error(request, _("ZIP file export failed: %s") % str(e))
         return
 
-    return HttpResponseRedirect(os.path.join(django_settings.MEDIA_URL, zip_name))
+    return HttpResponseRedirect(
+        os.path.join(django_settings.MEDIA_URL, zip_name))
 
 
-save_as_zipfile.short_description = _('Export selected media files as zip file')
+save_as_zipfile.short_description = _(
+    'Export selected media files as zip file')
 
 
 # ------------------------------------------------------------------------
@@ -106,7 +111,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
     save_on_top = True
     date_hierarchy = 'created'
     inlines = [admin_translationinline(MediaFileTranslation)]
-    list_display = ['admin_thumbnail', '__str__', 'file_info', 'formatted_created']
+    list_display = ['admin_thumbnail', '__str__', 'file_info',
+        'formatted_created']
     list_display_links = ['__str__']
     list_filter = ['type', 'categories']
     list_per_page = 25
@@ -119,7 +125,9 @@ class MediaFileAdmin(ExtensionModelAdmin):
 
         urls = super(MediaFileAdmin, self).get_urls()
         my_urls = patterns('',
-            url(r'^mediafile-bulk-upload/$', self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {}, name='mediafile_bulk_upload')
+            url(r'^mediafile-bulk-upload/$',
+                self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {},
+                name='mediafile_bulk_upload'),
             )
 
         return my_urls + urls
@@ -128,7 +136,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
         if extra_context is None:
             extra_context = {}
         extra_context['categories'] = Category.objects.order_by('title')
-        return super(MediaFileAdmin, self).changelist_view(request, extra_context=extra_context)
+        return super(MediaFileAdmin, self).changelist_view(
+            request, extra_context=extra_context)
 
     def admin_thumbnail(self, obj):
         image = admin_thumbnail(obj)
@@ -137,8 +146,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 <a href="%(url)s" target="_blank">
                     <img src="%(image)s" alt="" />
                 </a>""" % {
-                    'url': obj.file.url,
-                    'image': image})
+                'url': obj.file.url,
+                'image': image})
         return ''
     admin_thumbnail.short_description = _('Preview')
     admin_thumbnail.allow_tags = True
@@ -156,7 +165,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
     def file_type(self, obj):
         t = obj.filetypes_dict[obj.type]
         if obj.type == 'image':
-            # get_image_dimensions is expensive / slow if the storage is not local filesystem (indicated by availability the path property)
+            # get_image_dimensions is expensive / slow if the storage is not
+            # local filesystem (indicated by availability the path property)
             try:
                 obj.file.path
             except NotImplementedError:
@@ -180,8 +190,11 @@ class MediaFileAdmin(ExtensionModelAdmin):
         the file name later on, this can be used to access the file name from
         JS, like for example a TinyMCE connector shim.
         """
-        from feincms.utils import shorten_string
-        return u'<input type="hidden" class="medialibrary_file_path" name="_media_path_%d" value="%s" id="_refkey_%d" /> %s <br />%s, %s' % (
+        return (
+            u'<input type="hidden" class="medialibrary_file_path"'
+            u' name="_media_path_%d" value="%s" id="_refkey_%d" />'
+            u' %s <br />%s, %s'
+            ) % (
             obj.id,
             obj.file.name,
             obj.id,
@@ -197,24 +210,28 @@ class MediaFileAdmin(ExtensionModelAdmin):
     @csrf_protect
     @permission_required('medialibrary.add_mediafile')
     def bulk_upload(request):
-        from .zip import import_zipfile
-
         if request.method == 'POST' and 'data' in request.FILES:
             try:
-                count = import_zipfile(request.POST.get('category'), request.POST.get('overwrite', False), request.FILES['data'])
+                count = import_zipfile(
+                    request.POST.get('category'),
+                    request.POST.get('overwrite', False),
+                    request.FILES['data'])
                 messages.info(request, _("%d files imported") % count)
             except Exception as e:
-                messages.error(request, _("ZIP import failed: %s") % str(e))
+                messages.error(request, _("ZIP import failed: %s") % e)
         else:
             messages.error(request, _("No input file given"))
 
-        return HttpResponseRedirect(reverse('admin:medialibrary_mediafile_changelist'))
+        return HttpResponseRedirect(
+            reverse('admin:medialibrary_mediafile_changelist'))
 
     def queryset(self, request):
-        return super(MediaFileAdmin, self).queryset(request).transform(lookup_translations())
+        return super(MediaFileAdmin, self).queryset(request).transform(
+            lookup_translations())
 
     def save_model(self, request, obj, form, change):
         obj.purge_translation_cache()
-        return super(MediaFileAdmin, self).save_model(request, obj, form, change)
+        return super(MediaFileAdmin, self).save_model(
+            request, obj, form, change)
 
 # ------------------------------------------------------------------------

@@ -34,12 +34,14 @@ class Command(NoArgsCommand):
 
     def validate_base_model(self, model):
         """
-        Validate a subclass of ``feincms.models.Base`` or anything else created
-        by ``feincms.models.create_base_model``
+        Validate a subclass of ``feincms.models.Base`` or anything else
+        created by ``feincms.models.create_base_model``
         """
 
         if not hasattr(model, 'template'):
-            print(self.style.NOTICE('%s has no template attribute; did you forget register_templates or register_regions?' % model))
+            print(self.style.NOTICE(
+                '%s has no template attribute; did you forget'
+                ' register_templates or register_regions?' % model))
 
     def validate_content_type(self, model):
         """
@@ -48,4 +50,5 @@ class Command(NoArgsCommand):
 
         for base in model.__bases__:
             if not base._meta.abstract:
-                print(self.style.NOTICE('One of %s bases, %s, is not abstract' % (model, base)))
+                print(self.style.NOTICE(
+                    'One of %s bases, %s, is not abstract' % (model, base)))

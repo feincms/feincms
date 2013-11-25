@@ -43,7 +43,9 @@ def fragment(parser, token):
 
     or::
 
-        {% fragment request "title" (prepend|replace|append) %} content ... {% endfragment %}
+        {% fragment request "title" (prepend|replace|append) %}
+        content ...
+        {% endfragment %}
     """
 
     nodelist = parser.parse(('endfragment'),)

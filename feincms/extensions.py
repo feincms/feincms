@@ -3,6 +3,7 @@ Base types for extensions refactor
 """
 
 from functools import wraps
+import inspect
 
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
@@ -34,7 +35,10 @@ class ExtensionsMixin(object):
 
             extension = None
 
-            if isinstance(ext, six.string_types):
+            if inspect.isclass(ext) and issubclass(ext, Extension):
+                extension = ext
+
+            elif isinstance(ext, six.string_types):
                 try:
                     extension = get_object(ext)
                 except (AttributeError, ImportError, ValueError):

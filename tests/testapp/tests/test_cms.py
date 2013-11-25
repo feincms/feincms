@@ -12,12 +12,12 @@ from django.test import TestCase
 
 from feincms.content.contactform.models import ContactFormContent
 from feincms.content.file.models import FileContent
-from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
 from .test_stuff import ExampleCMSBase, Empty, ExampleCMSBase2
+
 
 # ------------------------------------------------------------------------
 class SubRawContent(RawContent):
@@ -37,14 +37,19 @@ class CMSBaseTest(TestCase):
         ExampleCMSBase.create_content_type(RawContent)
         ExampleCMSBase.create_content_type(RichTextContent)
 
-        # test creating a cotent with arguments, but no initialize_type classmethod
-        ExampleCMSBase.create_content_type(VideoContent, arbitrary_arg='arbitrary_value')
+        # test creating a cotent with arguments, but no initialize_type
+        # classmethod
+        ExampleCMSBase.create_content_type(VideoContent,
+            arbitrary_arg='arbitrary_value')
 
-        # content_type_for should return None if it does not have a subclass registered
+        # content_type_for should return None if it does not have a subclass
+        # registered
         self.assertEqual(ExampleCMSBase.content_type_for(Empty), None)
 
-        self.assertTrue('filecontent' not in dict(ExampleCMSBase.template.regions[0].content_types).keys())
-        self.assertTrue('filecontent' in dict(ExampleCMSBase.template.regions[1].content_types).keys())
+        self.assertTrue('filecontent' not in dict(
+            ExampleCMSBase.template.regions[0].content_types).keys())
+        self.assertTrue('filecontent' in dict(
+            ExampleCMSBase.template.regions[1].content_types).keys())
 
     def test_02_rsscontent_creation(self):
         # this test resides in its own method because the required feedparser
@@ -55,6 +60,7 @@ class CMSBaseTest(TestCase):
         # Monkey-patch feedparser.parse to work with a local RSS dump so that
         # the tests run faster.
         _orig_parse = feedparser.parse
+
         def _new_parse(link):
             return _orig_parse(open(
                 os.path.join(os.path.dirname(__file__), 'yahoo.rss'), 'rb'))
@@ -83,10 +89,11 @@ class CMSBaseTest(TestCase):
 
         # no TYPE_CHOICES, should raise
         self.assertRaises(ImproperlyConfigured,
-                          lambda: ExampleCMSBase.create_content_type(MediaFileContent))
+            lambda: ExampleCMSBase.create_content_type(MediaFileContent))
 
     def test_05_non_abstract_content_type(self):
-        # Should not be able to create a content type from a non-abstract base type
+        # Should not be able to create a content type from a non-abstract base
+        # type
         class TestContentType(models.Model):
             pass
 
@@ -126,9 +133,11 @@ class CMSBaseTest(TestCase):
         ct = ExampleCMSBase.content_type_for(RawContent)
         self.assertEqual(ct._meta.db_table, 'tests_examplecmsbase_rawcontent')
 
-        ExampleCMSBase2.create_content_type(RawContent, class_name='RawContent2')
+        ExampleCMSBase2.create_content_type(RawContent,
+            class_name='RawContent2')
         ct2 = ExampleCMSBase2.content_type_for(RawContent)
-        self.assertEqual(ct2._meta.db_table, 'tests_examplecmsbase2_rawcontent2')
+        self.assertEqual(ct2._meta.db_table,
+            'tests_examplecmsbase2_rawcontent2')
 
     def test_09_related_objects_cache(self):
         """
@@ -140,7 +149,8 @@ class CMSBaseTest(TestCase):
         related models have been defined.
         """
         class Attachment(models.Model):
-            base = models.ForeignKey(ExampleCMSBase, related_name='test_related_name')
+            base = models.ForeignKey(ExampleCMSBase,
+                related_name='test_related_name')
 
         # See issue #323 on Github.
         ExampleCMSBase._meta._fill_related_objects_cache()
@@ -153,10 +163,13 @@ class CMSBaseTest(TestCase):
         #self.assertFalse(hasattr(Attachment, 'anycontents'))
 
         class AnyContent(models.Model):
-            attachment = models.ForeignKey(Attachment, related_name='anycontents')
+            attachment = models.ForeignKey(Attachment,
+                related_name='anycontents')
+
             class Meta:
                 abstract = True
-        ct = ExampleCMSBase.create_content_type(AnyContent)
+
+        ExampleCMSBase.create_content_type(AnyContent)
 
         self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
         self.assertTrue(hasattr(Attachment, 'anycontents'))
@@ -172,4 +185,3 @@ class CMSBaseTest(TestCase):
         ct = ExampleCMSBase.content_type_for(RawContent)
         ct2 = ExampleCMSBase.content_type_for(SubRawContent)
         self.assertNotEqual(ct, ct2)
-

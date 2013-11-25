@@ -1,20 +1,70 @@
-
-/* Suppress initial rendering of result list, but only if we can show it with JS later on */
+// Suppress initial rendering of result list, but only if we can show it with
+// JS later on.
 document.write('<style type="text/css">#result_list { display: none }</style>');
 
+// https://docs.djangoproject.com/en/1.4/ref/contrib/csrf/
+feincms.jQuery.ajaxSetup({
+    crossDomain: false,  // obviates need for sameOrigin test
+    beforeSend: function(xhr, settings) {
+        if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type))) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+        }
+    }
+});
 
 feincms.jQuery(function($){
     // recolor tree after expand/collapse
     $.extend($.fn.recolorRows = function() {
-        $('tr:visible:even', this).removeClass('row2').addClass('row1');
-        $('tr:visible:odd', this).removeClass('row1').addClass('row2');
+        $('tr:visible:even', this).removeClass('row1').addClass('row2');
+        $('tr:visible:odd', this).removeClass('row2').addClass('row1');
 
         /* Mark inactive rows */
         $('tr.item_inactive').removeClass('item_inactive');
         $('div[id^=wrap_active_] input:checkbox:not(:checked)').parents('tr').addClass('item_inactive');
         $('div[id^=wrap_active_] img').parents('tr').addClass('item_inactive');
-
     });
+
+    $(document.body).on('click', '[data-inplace]', function() {
+        var elem = $(this),
+            id = elem.data('inplace-id'),
+            attr = elem.data('inplace-attribute');
+
+        $.ajax({
+            url: ".",
+            type: "POST",
+            dataType: "json",
+            data: {
+                '__cmd': 'toggle_boolean',
+                'item_id': id,
+                'attr': attr
+            },
+            success: function(data) {
+                $.each(data, function(i, html) {
+                    var r_id = $(html).attr('id');
+                    $('#' + r_id).replaceWith(html);
+                });
+                $('#result_list tbody').recolorRows();
+            },
+
+            error: function(xhr, status, err) {
+                alert("Unable to toggle " + attr + ": " + xhr.responseText);
+            }
+        });
+    });
+
+
+    /* Extract an object id (numeric) from a DOM id. Assumes that a "-" is used
+       as delimiter. Returns either the id found or 0 if something went wrong.
+
+           extractItemId('foo_bar_baz-327') -> 327
+     */
+    function extractItemId(elem_id) {
+        var i = elem_id.indexOf('-');
+        if(i >= 0)
+            return parseInt(elem_id.slice(i+1), 10);
+
+        return 0;
+    }
 
     function isExpandedNode(id) {
         return feincms.collapsed_nodes.indexOf(id) == -1;
@@ -66,7 +116,7 @@ feincms.jQuery(function($){
     $.extend($.fn.feinTree = function() {
         $('tr', this).each(function(i, el) {
             // adds 'children' class to all parents
-            var pageId = extract_item_id($('.page_marker', el).attr('id'));
+            var pageId = extractItemId($('.page_marker', el).attr('id'));
             $(el).attr('id', 'item-' + pageId);
             if (feincms.tree_structure[pageId].length) {
                     $('.page_marker', el).addClass('children');
@@ -79,10 +129,10 @@ feincms.jQuery(function($){
         });
 
         $('div.drag_handle').bind('mousedown', function(event) {
-            BEFORE = 0;
-            AFTER = 1;
-            CHILD = 2;
-            CHILD_PAD = 20;
+            var BEFORE = 0;
+            var AFTER = 1;
+            var CHILD = 2;
+            var CHILD_PAD = 20;
             var originalRow = $(event.target).closest('tr');
             var rowHeight = originalRow.height();
             var childEdge = $(event.target).offset().left + $(event.target).width();
@@ -176,8 +226,8 @@ feincms.jQuery(function($){
 
             $("body").bind('mouseup', function(event) {
                 if(moveTo.relativeTo) {
-                    var cutItem = extract_item_id(originalRow.find('.page_marker').attr('id'));
-                    var pastedOn = extract_item_id(moveTo.relativeTo.find('.page_marker').attr('id'));
+                    var cutItem = extractItemId(originalRow.find('.page_marker').attr('id'));
+                    var pastedOn = extractItemId(moveTo.relativeTo.find('.page_marker').attr('id'));
                     // get out early if items are the same
                     if(cutItem != pastedOn) {
                         var isParent = (moveTo.relativeTo.next().attr('rel') > moveTo.relativeTo.attr('rel'));
@@ -239,7 +289,7 @@ feincms.jQuery(function($){
         if(!item.hasClass('children'))
             return;
 
-        var itemId = extract_item_id(item.attr('id'));
+        var itemId = extractItemId(item.attr('id'));
 
         if(!isExpandedNode(itemId)) {
             item.removeClass('closed');
@@ -279,7 +329,7 @@ feincms.jQuery(function($){
             $('tbody tr', rlist).each(function(i, el) {
                 var marker = $('.page_marker', el);
                 if(marker.hasClass('children')) {
-                    var itemId = extract_item_id(marker.attr('id'));
+                    var itemId = extractItemId(marker.attr('id'));
                     doToggle(itemId, false);
                     marker.addClass('closed');
                     markNodeAsCollapsed(itemId);
@@ -300,7 +350,7 @@ feincms.jQuery(function($){
             $('tbody tr', rlist).each(function(i, el) {
                 var marker = $('span.page_marker', el);
                 if(marker.hasClass('children')) {
-                    var itemId = extract_item_id($('span.page_marker', el).attr('id'));
+                    var itemId = extractItemId($('span.page_marker', el).attr('id'));
                     doToggle(itemId, true);
                     marker.removeClass('closed');
                     markNodeAsExpanded(itemId);
@@ -338,7 +388,7 @@ feincms.jQuery(function($){
                 expandOrCollapseNode($(this).find('.page_marker'));
                 break;
             case 13: // return
-                where_to = extract_item_id($('span', this).attr('id'));
+                where_to = extractItemId($('span', this).attr('id'));
                 document.location = document.location.pathname + where_to + '/'
                 break;
             default:
@@ -347,7 +397,7 @@ feincms.jQuery(function($){
     }
 
     // fire!
-    rlist = $("#result_list");
+    var rlist = $("#result_list");
     if($('tbody tr', rlist).length > 1) {
         rlist.hide();
         $('tbody', rlist).feinTree();

@@ -32,8 +32,10 @@ class Entry(Base):
         help_text=_('This is used for the generated navigation too.'))
     slug = models.SlugField()
 
-    published_on = models.DateTimeField(_('published on'), blank=True, null=True,
-        help_text=_('Will be set automatically once you tick the `published` checkbox above.'))
+    published_on = models.DateTimeField(_('published on'),
+        blank=True, null=True,
+        help_text=_('Will be set automatically once you tick the `published`'
+            ' checkbox above.'))
 
     class Meta:
         get_latest_by = 'published_on'

@@ -16,8 +16,10 @@ from django.db.models.signals import pre_save
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
-from tagging.fields import TagField
 from tagging import AlreadyRegistered
+from tagging.fields import TagField
+from tagging.models import Tag
+from tagging.utils import parse_tag_input
 
 
 # ------------------------------------------------------------------------
@@ -56,21 +58,23 @@ class TagSelectField(TagField):
         self.filter_horizontal = filter_horizontal
 
     def formfield(self, **defaults):
-        from tagging.models import Tag
-        from tagging.utils import parse_tag_input
-
         if self.filter_horizontal:
-            widget = FilteredSelectMultiple(self.verbose_name, is_stacked=False)
+            widget = FilteredSelectMultiple(
+                self.verbose_name, is_stacked=False)
         else:
             widget = forms.SelectMultiple()
 
         def _render(name, value, attrs=None, *args, **kwargs):
             value = parse_tag_input(value)
-            return type(widget).render(widget, name, value, attrs, *args, **kwargs)
+            return type(widget).render(widget, name, value, attrs,
+                *args, **kwargs)
         widget.render = _render
         defaults['widget'] = widget
-        choices = [(six.text_type(t), six.text_type(t)) for t in Tag.objects.all()]
-        return TagSelectFormField(choices=choices, required=not self.blank, **defaults)
+        choices = [(
+            six.text_type(t),
+            six.text_type(t)) for t in Tag.objects.all()]
+        return TagSelectFormField(
+            choices=choices, required=not self.blank, **defaults)
 
 
 # ------------------------------------------------------------------------
@@ -80,14 +84,14 @@ def pre_save_handler(sender, instance, **kwargs):
     Intercept attempts to save and sort the tag field alphabetically, so
     we won't have different permutations in the filter list.
     """
-    from tagging.utils import parse_tag_input
-
     taglist = parse_tag_input(instance.tags)
     instance.tags = taglist_to_string(taglist)
 
 
 # ------------------------------------------------------------------------
-def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_field=False, auto_add_admin_field=True, admin_list_display=True):
+def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False,
+        select_field=False, auto_add_admin_field=True,
+        admin_list_display=True):
     """
     tag_model accepts a number of named parameters:
 
@@ -107,9 +111,12 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
     """
     from tagging import register as tagging_register
 
-    cls.add_to_class(field_name, (select_field and TagSelectField or TagField)(field_name.capitalize(), blank=True))
+    cls.add_to_class(field_name, (
+        TagSelectField if select_field else TagField
+        )(field_name.capitalize(), blank=True))
     # use another name for the tag descriptor
-    # See http://code.google.com/p/django-tagging/issues/detail?id=95 for the reason why
+    # See http://code.google.com/p/django-tagging/issues/detail?id=95 for the
+    # reason why
     try:
         tagging_register(cls, tag_descriptor_attr='tagging_' + field_name)
     except AlreadyRegistered:
@@ -120,7 +127,8 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False, select_fi
             admin_cls.list_display.append(field_name)
         admin_cls.list_filter.append(field_name)
 
-        if auto_add_admin_field and hasattr(admin_cls, 'add_extension_options'):
+        if auto_add_admin_field and hasattr(
+                admin_cls, 'add_extension_options'):
             admin_cls.add_extension_options(_('Tagging'), {
                 'fields': (field_name,)
             })

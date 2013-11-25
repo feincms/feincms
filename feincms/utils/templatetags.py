@@ -71,10 +71,12 @@ class SimpleNodeWithVarAndArgs(template.Node):
 def do_simple_assignment_node_with_var_and_args_helper(cls):
     def _func(parser, token):
         try:
-            tag_name, of_, in_var_name, as_, var_name, args = token.contents.split()
+            tag_name, of_, in_var_name, as_, var_name, args =\
+                token.contents.split()
         except ValueError:
             try:
-                tag_name, of_, in_var_name, as_, var_name = token.contents.split()
+                tag_name, of_, in_var_name, as_, var_name =\
+                    token.contents.split()
                 args = ''
             except ValueError:
                 raise template.TemplateSyntaxError(
@@ -101,6 +103,7 @@ class SimpleAssignmentNodeWithVarAndArgs(template.Node):
             context[self.var_name] = []
             return ''
 
-        context[self.var_name] = self.what(instance, _parse_args(self.args, context))
+        context[self.var_name] = self.what(
+            instance, _parse_args(self.args, context))
 
         return ''

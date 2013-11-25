@@ -9,10 +9,11 @@ class ActiveAwareContentManagerMixin(object):
     should either adopt this mixin or implement a similar interface.
     """
 
-    # A dict of filters which are used to determine whether a page is active or not.
-    # Extended for example in the datepublisher extension (date-based publishing and
-    # un-publishing of pages). This will be set in add_to_active_filters() below,
-    # so we won't share the same dict for derived managers, do not replace with {} here!
+    # A dict of filters which are used to determine whether a page is active or
+    # not.  Extended for example in the datepublisher extension (date-based
+    # publishing and un-publishing of pages). This will be set in
+    # add_to_active_filters() below, so we won't share the same dict for
+    # derived managers, do not replace with {} here!
     active_filters = None
 
     @classmethod
