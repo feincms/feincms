@@ -374,9 +374,10 @@ def create_base_model(inherit_from=models.Model):
             try:
                 field = cls._meta.get_field_by_name('template_key')[0]
             except (FieldDoesNotExist, IndexError):
-                cls.add_to_class('template_key',
+                cls.add_to_class(
+                    'template_key',
                     models.CharField(_('template'), max_length=255, choices=())
-                    )
+                )
                 field = cls._meta.get_field_by_name('template_key')[0]
 
                 def _template(self):
