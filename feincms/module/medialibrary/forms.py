@@ -71,7 +71,7 @@ class MediaFileAdminForm(forms.ModelForm):
                 raise forms.ValidationError(_(
                     "Cannot overwrite with different file type (attempt to"
                     " overwrite a %(old_ext)s with a %(new_ext)s)"
-                    ) % {'old_ext': old_ext, 'new_ext': new_ext})
+                ) % {'old_ext': old_ext, 'new_ext': new_ext})
 
             self.instance.original_name = self.instance.file.name
 

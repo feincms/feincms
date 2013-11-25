@@ -232,7 +232,7 @@ MediaFileBase.register_filetypes(
     ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(
         r'\.pptx?$', re.IGNORECASE).search(f)),
     ('other', _('Binary'), lambda f: True),  # Must be last
-    )
+)
 
 
 # ------------------------------------------------------------------------

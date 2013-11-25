@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 DEFAULT_TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    )
+)
 
 
 class TemplateChoices(object):

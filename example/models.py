@@ -24,15 +24,15 @@ Page.register_templates({
     'regions': (
         ('main', 'Main region'),
         ('sidebar', 'Sidebar', 'inherited'),
-        ),
-    })
+    ),
+})
 Page.create_content_type(RawContent)
 Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
     ('default', 'Default position'),
-    ))
+))
 Page.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),
-    ))
+))
 
 
 def get_admin_fields(form, *args, **kwargs):
@@ -43,7 +43,7 @@ def get_admin_fields(form, *args, **kwargs):
             initial=form.instance.parameters.get('exclusive_subpages', False),
             help_text=_('Exclude everything other than the application\'s'
                 ' content when rendering subpages.'),
-            ),
+        ),
     }
 
 
@@ -51,17 +51,17 @@ Page.create_content_type(ApplicationContent, APPLICATIONS=(
     ('blog_urls', 'Blog', {
         'admin_fields': get_admin_fields,
         'urls': 'example.blog_urls',
-        }),
-    ))
+    }),
+))
 
 
 Entry.register_regions(
     ('main', 'Main region'),
-    )
+)
 Entry.create_content_type(RawContent)
 Entry.create_content_type(ImageContent, POSITION_CHOICES=(
     ('default', 'Default position'),
-    ))
+))
 
 
 class BlogEntriesNavigationExtension(NavigationExtension):
@@ -79,12 +79,12 @@ class BlogEntriesNavigationExtension(NavigationExtension):
                 url=app_reverse(
                     'blog_entry_detail', 'blog_urls', kwargs={'pk': entry.id}),
                 level=page.level + 1,
-                )
+            )
 
 Page.register_extensions(
     'feincms.module.page.extensions.navigation',
     'feincms.module.page.extensions.sites',
-    )
+)
 
 
 @python_2_unicode_compatible

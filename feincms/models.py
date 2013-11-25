@@ -106,7 +106,7 @@ class ContentProxy(object):
         self.db = item._state.db
         self._cache = {
             'cts': {},
-            }
+        }
 
     def _inherit_from(self):
         """
@@ -163,7 +163,7 @@ class ContentProxy(object):
     def _fetch_content_type_count_helper(self, pk, regions=None):
         tmpl = [
             'SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s'
-            ]
+        ]
         args = []
 
         if regions:
@@ -199,7 +199,7 @@ class ContentProxy(object):
                 counts_by_type.setdefault(
                     self.item._feincms_content_types[ct_idx],
                     [],
-                    ).append((region, pk))
+                ).append((region, pk))
 
         # Resolve abstract to concrete content types
         content_types = (cls for cls in self.item._feincms_content_types
@@ -228,10 +228,12 @@ class ContentProxy(object):
                 for instance in content_list:
                     contents.setdefault(instance.region, []).append(instance)
 
-            self._cache['regions'] = dict((
-                region,
-                sorted(instances, key=lambda c: c.ordering),
-                ) for region, instances in contents.items())
+            self._cache['regions'] = dict(
+                (
+                    region,
+                    sorted(instances, key=lambda c: c.ordering),
+                ) for region, instances in contents.items()
+            )
 
         return self._cache['regions']
 
@@ -485,7 +487,7 @@ def create_base_model(inherit_from=models.Model):
                         return render_to_string('admin/feincms/fe_box.html', {
                             'content': self.render(**kwargs),
                             'identifier': self.fe_identifier(),
-                            })
+                        })
 
                 return self.render(**kwargs)
 
@@ -503,7 +505,7 @@ def create_base_model(inherit_from=models.Model):
                     self.__class__.__name__.lower(),
                     self.parent_id,
                     self.id,
-                    )
+                )
 
             def get_queryset(cls, filter_args):
                 return cls.objects.select_related().filter(filter_args)
@@ -525,7 +527,7 @@ def create_base_model(inherit_from=models.Model):
                 'parent': models.ForeignKey(cls, related_name='%(class)s_set'),
                 'region': models.CharField(max_length=255),
                 'ordering': models.IntegerField(_('ordering'), default=0),
-                }
+            }
 
             # create content base type and save reference on CMS class
 
@@ -676,12 +678,13 @@ def create_base_model(inherit_from=models.Model):
                 # the blog and the page module).
                 '__module__': cls.__module__,
                 'Meta': Meta,
-                }
+            }
 
             new_type = type(
                 class_name,
                 (model, feincms_content_base,),
-                attrs)
+                attrs,
+            )
             cls._feincms_content_types.append(new_type)
             # For consistency's sake, also install the new type in the module
             setattr(sys.modules[cls.__module__], class_name, new_type)

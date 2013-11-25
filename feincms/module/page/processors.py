@@ -28,15 +28,18 @@ def extra_context_request_processor(page, request):
         # XXX This variable name isn't accurate anymore.
         'in_appcontent_subpage': False,
         'extra_path': '/',
-        })
+    })
 
     url = page.get_absolute_url()
     if request.path != url:
         request._feincms_extra_context.update({
             'in_appcontent_subpage': True,
-            'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
-                request.path),
-            })
+            'extra_path': re.sub(
+                '^' + re.escape(url.rstrip('/')),
+                '',
+                request.path,
+            ),
+        })
 
 
 def frontendediting_request_processor(page, request):

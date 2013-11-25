@@ -68,7 +68,7 @@ def feincms_frontend_editing(cms_obj, request):
             and request.COOKIES.get('frontend_editing') == 'True'):
         context = template.RequestContext(request, {
             "feincms_page": cms_obj,
-            })
+        })
         return render_to_string('admin/feincms/fe_tools.html', context)
 
     return u''

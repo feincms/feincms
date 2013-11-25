@@ -59,16 +59,16 @@ class PagesTestCase(TestCase):
             'regions': (
                 ('main', 'Main content area'),
                 ('sidebar', 'Sidebar', 'inherited'),
-                ),
-            }, {
+            ),
+        }, {
             'key': 'theother',
             'title': 'This actually exists',
             'path': 'base.html',
             'regions': (
                 ('main', 'Main content area'),
                 ('sidebar', 'Sidebar', 'inherited'),
-                ),
-            })
+            ),
+        })
 
     def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
@@ -110,7 +110,7 @@ class PagesTestCase(TestCase):
             'applicationcontent_set-TOTAL_FORMS': 0,
             'applicationcontent_set-INITIAL_FORMS': 0,
             'applicationcontent_set-MAX_NUM_FORMS': 10,
-            }
+        }
         dic.update(kwargs)
         return self.client.post('/admin/page/page/add/', dic)
 
@@ -125,7 +125,7 @@ class PagesTestCase(TestCase):
             'site': self.site_1,
             'in_navigation': False,
             'active': False,
-            }
+        }
         defaults.update(kwargs)
         return Page.objects.create(
             title=title,
@@ -137,7 +137,7 @@ class PagesTestCase(TestCase):
         self.create_page(
             'Test child page',
             parent=self.create_page(),
-            )
+        )
 
     def is_published(self, url, should_be=True):
         try:
@@ -250,7 +250,7 @@ class PagesTestCase(TestCase):
             'position': 'last-child',
             'cut_item': '1',
             'pasted_on': '5',
-            }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertEqual(Page.objects.get(pk=1).get_absolute_url(),
                          '/page5/test-page/')
@@ -265,32 +265,36 @@ class PagesTestCase(TestCase):
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
 
         self.login()
-        self.assertContains(self.client.post('/admin/page/page/', {
-            '__cmd': 'toggle_boolean',
-            'item_id': 1,
-            'attr': 'in_navigation',
+        self.assertContains(
+            self.client.post('/admin/page/page/', {
+                '__cmd': 'toggle_boolean',
+                'item_id': 1,
+                'attr': 'in_navigation',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
             r'checked=\"checked\"')
         self.assertEqual(Page.objects.get(pk=1).in_navigation, True)
-        self.assertNotContains(self.client.post('/admin/page/page/', {
-            '__cmd': 'toggle_boolean',
-            'item_id': 1,
-            'attr': 'in_navigation',
+        self.assertNotContains(
+            self.client.post('/admin/page/page/', {
+                '__cmd': 'toggle_boolean',
+                'item_id': 1,
+                'attr': 'in_navigation',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
             'checked="checked"')
         self.assertEqual(Page.objects.get(pk=1).in_navigation, False)
 
-        self.assertTrue(isinstance(self.client.post('/admin/page/page/', {
-            '__cmd': 'toggle_boolean',
-            'item_id': 1,
-            'attr': 'notexists',
+        self.assertTrue(isinstance(
+            self.client.post('/admin/page/page/', {
+                '__cmd': 'toggle_boolean',
+                'item_id': 1,
+                'attr': 'notexists',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
             HttpResponseBadRequest))
 
     def test_07_tree_editor_invalid_ajax(self):
         self.login()
-        self.assertContains(self.client.post('/admin/page/page/', {
-            '__cmd': 'notexists',
+        self.assertContains(
+            self.client.post('/admin/page/page/', {
+                '__cmd': 'notexists',
             }, HTTP_X_REQUESTED_WITH='XMLHttpRequest'),
             'Oops. AJAX request not understood.',
             status_code=400)
@@ -378,7 +382,7 @@ class PagesTestCase(TestCase):
             'applicationcontent_set-TOTAL_FORMS': 1,
             'applicationcontent_set-INITIAL_FORMS': 0,
             'applicationcontent_set-MAX_NUM_FORMS': 10,
-            }
+        }
         data.update(kwargs)
 
         return self.client.post('/admin/page/page/%s/' % page.pk, data)
@@ -651,7 +655,7 @@ class PagesTestCase(TestCase):
             200)
         self.assertEqual(self.client.post('/admin/page/page/1|rawcontent|1/', {
             'rawcontent-text': 'blablabla',
-            }).status_code, 200)
+        }).status_code, 200)
 
         self.assertEqual(page.content.main[0].render(), 'blablabla')
         self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), u'')
@@ -673,9 +677,9 @@ class PagesTestCase(TestCase):
         page.save()
 
         # FEINCMS_FRONTEND_EDITING is False by default
-        response = self.client.get(page.get_absolute_url() +
-                '?frontend_editing=1',
-                follow=True)
+        response = self.client.get(
+            page.get_absolute_url() + '?frontend_editing=1',
+            follow=True)
         self.assertNotIn('class="fe_box"', response.content.decode('utf-8'))
         self.assertNotIn('frontend_editing', self.client.cookies)
 
@@ -700,9 +704,9 @@ class PagesTestCase(TestCase):
 
         # anonymous user cannot front edit
         self.client.logout()
-        response = self.client.get(page.get_absolute_url() +
-                '?frontend_editing=1',
-                follow=True)
+        response = self.client.get(
+            page.get_absolute_url() + '?frontend_editing=1',
+            follow=True)
         self.assertRedirects(response, page.get_absolute_url())
         self.assertNotIn('class="fe_box"', response.content.decode('utf-8'))
 
@@ -721,14 +725,15 @@ class PagesTestCase(TestCase):
         page2.in_navigation = True
         page2.save()
 
-        page3 = Page.objects.create(parent=page2,
-                                    title='page3',
-                                    slug='page3',
-                                    language='en',
-                                    active=True,
-                                    in_navigation=True,
-                                    publication_date=datetime(2001, 1, 1),
-                                    )
+        page3 = Page.objects.create(
+            parent=page2,
+            title='page3',
+            slug='page3',
+            language='en',
+            active=True,
+            in_navigation=True,
+            publication_date=datetime(2001, 1, 1),
+        )
 
         # reload these two, their mptt attributes have changed
         page1 = Page.objects.get(pk=1)
@@ -1215,7 +1220,7 @@ class PagesTestCase(TestCase):
             'email': 'another@example.com',
             'subject': 'This is a test. Please calm down',
             'content': 'Hell on earth.',
-            })
+        })
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(
@@ -1457,7 +1462,7 @@ class PagesTestCase(TestCase):
 
         settings.TEMPLATE_DIRS = (
             os.path.join(os.path.dirname(__file__), 'templates'),
-            )
+        )
         self.client.get(page_de_1.get_absolute_url())
         self.assertEqual(
             app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
@@ -1512,7 +1517,7 @@ class PagesTestCase(TestCase):
             'translations-TOTAL_FORMS': 0,
             'translations-INITIAL_FORMS': 0,
             'translations-MAX_NUM_FORMS': 10,
-            })
+        })
         self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
         self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),

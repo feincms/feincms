@@ -9,6 +9,6 @@ def add_page_if_missing(request):
     try:
         return {
             'feincms_page': Page.objects.for_request(request, best_match=True),
-            }
+        }
     except Page.DoesNotExist:
         return {}

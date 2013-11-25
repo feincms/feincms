@@ -103,7 +103,7 @@ class ItemEditor(ExtensionModelAdmin):
             attrs = {
                 '__module__': model.__module__,
                 'model': content_type,
-                }
+            }
 
             if hasattr(content_type, 'feincms_item_editor_inline'):
                 inline = content_type.feincms_item_editor_inline
@@ -176,7 +176,7 @@ class ItemEditor(ExtensionModelAdmin):
                         'identifier': obj.fe_identifier(),
                         'FEINCMS_JQUERY_NO_CONFLICT':
                         settings.FEINCMS_JQUERY_NO_CONFLICT,
-                        }, context_instance=template.RequestContext(request))
+                    }, context_instance=template.RequestContext(request))
         else:
             form = ModelForm(instance=obj, prefix=content_type)
 
@@ -188,7 +188,7 @@ class ItemEditor(ExtensionModelAdmin):
             'form': form,
             'is_popup': True,
             'media': self.media,
-            })
+        })
 
         return render_to_response('admin/feincms/fe_editor.html', context,
             context_instance=template.RequestContext(request))
@@ -217,7 +217,7 @@ class ItemEditor(ExtensionModelAdmin):
 
             'FEINCMS_FRONTEND_EDITING': settings.FEINCMS_FRONTEND_EDITING,
             'FEINCMS_POPUP_VAR': is_popup_var(),
-            }
+        }
 
         for processor in self.model.feincms_item_editor_context_processors:
             extra_context.update(processor(request))
@@ -317,7 +317,7 @@ class ItemEditor(ExtensionModelAdmin):
                 opts.app_label, opts.object_name.lower()),
             'admin/feincms/%s/item_editor.html' % opts.app_label,
             'admin/feincms/item_editor.html',
-            ]
+        ]
 
     def get_fieldsets(self, request, obj=None):
         """

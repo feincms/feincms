@@ -53,6 +53,11 @@ Notable features and improvements
   and 1.10.3 respectively. Custom confirmation boxes have been removed
   and standard ones are used instead now.
 
+* The diff between 1.8 and 1.9 is large -- most of it because of coding style
+  cleanups. `flake8 <https://pypi.python.org/pypi/flake8>`_ runs should not
+  show any warnings. The only error code we'll ignore for some time is
+  ``E128``.
+
 
 Bugfixes
 ========

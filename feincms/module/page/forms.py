@@ -93,13 +93,13 @@ class PageAdminForm(MPTTAdminForm):
                         'template_key': original.template_key,
                         'active': original.active,
                         'in_navigation': original.in_navigation,
-                        }
+                    }
 
                     if original.parent:
                         try:
                             data['parent'] = original.parent.get_translation(
                                 kwargs['initial']['language']
-                                ).id
+                            ).id
                         except self.page_model.DoesNotExist:
                             # ignore this -- the translation does not exist
                             pass
@@ -131,12 +131,14 @@ class PageAdminForm(MPTTAdminForm):
                 if template.singleton and other_pages_for_template.exists():
                     continue  # don't allow selection of singleton if in use
                 if template.preview_image:
-                    choices.append((template.key,
+                    choices.append((
+                        template.key,
                         mark_safe(u'<img src="%s" alt="%s" /> %s' % (
                             template.preview_image,
                             template.key,
                             template.title,
-                            ))))
+                        ))
+                    ))
                 else:
                     choices.append((template.key, template.title))
 

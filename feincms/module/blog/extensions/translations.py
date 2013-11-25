@@ -17,16 +17,26 @@ class Extension(extensions.Extension):
     def handle_model(self):
         primary_language = settings.LANGUAGES[0][0]
 
-        self.model.add_to_class('language', models.CharField(
-            _('language'), max_length=10,
-            choices=settings.LANGUAGES))
-        self.model.add_to_class('translation_of', models.ForeignKey('self',
-            blank=True, null=True, verbose_name=_('translation of'),
-            related_name='translations',
-            limit_choices_to={'language': primary_language},
-            help_text=_(
-                'Leave this empty for entries in the primary language.')
-            ))
+        self.model.add_to_class(
+            'language',
+            models.CharField(
+                _('language'),
+                max_length=10,
+                choices=settings.LANGUAGES,
+            )
+        )
+        self.model.add_to_class(
+            'translation_of',
+            models.ForeignKey(
+                'self',
+                blank=True, null=True,
+                verbose_name=_('translation of'),
+                related_name='translations',
+                limit_choices_to={'language': primary_language},
+                help_text=_(
+                    'Leave this empty for entries in the primary language.'),
+            )
+        )
 
         def available_translations(self):
             if self.language == primary_language:
@@ -45,8 +55,10 @@ class Extension(extensions.Extension):
 
             return u', '.join(
                 u'<a href="%s/">%s</a>' % (
-                    page.id, page.language.upper()
-                ) for page in translations)
+                    page.id,
+                    page.language.upper()
+                ) for page in translations
+            )
 
         available_translations_admin.allow_tags = True
         available_translations_admin.short_description =\

@@ -113,7 +113,7 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False,
 
     cls.add_to_class(field_name, (
         TagSelectField if select_field else TagField
-        )(field_name.capitalize(), blank=True))
+    )(field_name.capitalize(), blank=True))
     # use another name for the tag descriptor
     # See http://code.google.com/p/django-tagging/issues/detail?id=95 for the
     # reason why

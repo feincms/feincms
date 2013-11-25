@@ -66,4 +66,4 @@ class MediaFileContent(ContentWithMediaFile):
             'content/mediafile/%s.html' % self.mediafile.type,
             'content/mediafile/%s.html' % self.type,
             'content/mediafile/default.html',
-            ], ctx, context_instance=kwargs.get('context'))
+        ], ctx, context_instance=kwargs.get('context'))

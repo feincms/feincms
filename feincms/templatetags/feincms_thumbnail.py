@@ -74,7 +74,7 @@ class Thumbnailer(object):
             self.size,
             '.',
             format,
-            ])
+        ])
 
         if not storage.exists(miniature):
             generate = True
@@ -111,7 +111,8 @@ class Thumbnailer(object):
             buf = BytesIO()
             if image.mode not in ('RGBA', 'RGB', 'L'):
                 image = image.convert('RGBA')
-            image.save(buf,
+            image.save(
+                buf,
                 format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
                 quality=90)
             raw_data = buf.getvalue()

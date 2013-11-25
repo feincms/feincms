@@ -37,7 +37,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             'fields': [
                 ('title', 'slug'),
                 ('active', 'in_navigation'),
-                ],
+            ],
         }),
         (_('Other options'), {
             'classes': ['collapse'],
@@ -47,7 +47,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         # <-- insertion point, extensions appear here, see insertion_index
         # above
         item_editor.FEINCMS_CONTENT_FIELDSET,
-        ]
+    ]
     readonly_fields = []
     list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle',
         'template']
@@ -142,7 +142,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                         'Add %(language)s translation of "%(page)s"') % {
                         'language': language,
                         'page': original,
-                        },
+                    },
                     'language_name': language,
                     'translation_of': original,
                 }
@@ -190,9 +190,14 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             return super(PageAdmin, self).change_view(
                 request, object_id, **kwargs)
         except PermissionDenied:
-            messages.add_message(request, messages.ERROR, _(
-                "You don't have the necessary permissions to edit this object"
-                ))
+            messages.add_message(
+                request,
+                messages.ERROR,
+                _(
+                    "You don't have the necessary permissions to edit this"
+                    " object"
+                )
+            )
         return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 
     def has_delete_permission(self, request, obj=None):

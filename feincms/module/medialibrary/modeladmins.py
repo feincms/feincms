@@ -72,13 +72,13 @@ def assign_category(modeladmin, request, queryset):
         form = AddCategoryForm(initial={
             '_selected_action': request.POST.getlist(
                 admin.ACTION_CHECKBOX_NAME),
-            })
+        })
 
     return render_to_response('admin/medialibrary/add_to_category.html', {
         'mediafiles': queryset,
         'category_form': form,
         'opts': modeladmin.model._meta,
-        }, context_instance=RequestContext(request))
+    }, context_instance=RequestContext(request))
 
 
 assign_category.short_description = _('Add selected media files to category')
@@ -125,10 +125,12 @@ class MediaFileAdmin(ExtensionModelAdmin):
 
         urls = super(MediaFileAdmin, self).get_urls()
         my_urls = patterns('',
-            url(r'^mediafile-bulk-upload/$',
+            url(
+                r'^mediafile-bulk-upload/$',
                 self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {},
-                name='mediafile_bulk_upload'),
-            )
+                name='mediafile_bulk_upload',
+            ),
+        )
 
         return my_urls + urls
 
@@ -147,7 +149,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
                     <img src="%(image)s" alt="" />
                 </a>""" % {
                 'url': obj.file.url,
-                'image': image})
+                'image': image}
+            )
         return ''
     admin_thumbnail.short_description = _('Preview')
     admin_thumbnail.allow_tags = True
@@ -194,14 +197,14 @@ class MediaFileAdmin(ExtensionModelAdmin):
             u'<input type="hidden" class="medialibrary_file_path"'
             u' name="_media_path_%d" value="%s" id="_refkey_%d" />'
             u' %s <br />%s, %s'
-            ) % (
+        ) % (
             obj.id,
             obj.file.name,
             obj.id,
             shorten_string(os.path.basename(obj.file.name), max_length=40),
             self.file_type(obj),
             self.formatted_file_size(obj),
-            )
+        )
     file_info.admin_order_field = 'file'
     file_info.short_description = _('file info')
     file_info.allow_tags = True

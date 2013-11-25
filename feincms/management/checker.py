@@ -53,7 +53,7 @@ def check_database_schema(cls, module_name):
                 ' ' * (25 - len(field.column)),
                 u'%s.%s' % (
                     field.__class__.__module__, field.__class__.__name__),
-                ))
+            ))
 
         print(style.NOTICE(
             '\nPlease consult the output of `python manage.py sql %s` to'

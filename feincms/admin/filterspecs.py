@@ -36,7 +36,7 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
         self.lookup_choices = [(
             pk,
             "%s%s" % ("&nbsp;" * level, shorten_string(title, max_length=25)),
-            ) for pk, title, level in parents]
+        ) for pk, title, level in parents]
 
     def choices(self, cl):
         yield {

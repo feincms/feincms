@@ -22,7 +22,7 @@ class EntryManager(models.Manager):
             published=True,
             published_on__isnull=False,
             published_on__lte=timezone.now(),
-            )
+        )
 
 
 @python_2_unicode_compatible
@@ -69,6 +69,6 @@ class EntryAdmin(item_editor.ItemEditor):
     search_fields = ['title', 'slug']
     prepopulated_fields = {
         'slug': ('title',),
-        }
+    }
 
     raw_id_fields = []

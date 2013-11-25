@@ -42,10 +42,14 @@ class ModelsTest(TestCase):
         # Creation should not fail
 
         r = Region('region', 'region title')
-        t = Template('base template', 'base.html', (
-            ('region', 'region title'),
-            Region('region2', 'region2 title'),
-            ))
+        t = Template(
+            'base template',
+            'base.html',
+            (
+                ('region', 'region title'),
+                Region('region2', 'region2 title'),
+            ),
+        )
 
         # I'm not sure whether this test tests anything at all
         self.assertEqual(r.key, t.regions[0].key)
@@ -96,8 +100,9 @@ ExampleCMSBase.register_regions(
 class ExampleCMSBase2(Base):
         pass
 
-ExampleCMSBase2.register_regions(('region', 'region title'),
-        ('region2', 'region2 title'))
+ExampleCMSBase2.register_regions(
+    ('region', 'region title'),
+    ('region2', 'region2 title'))
 
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)

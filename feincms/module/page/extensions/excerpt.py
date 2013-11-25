@@ -20,4 +20,4 @@ class Extension(extensions.Extension):
         modeladmin.add_extension_options(_('Excerpt'), {
             'fields': ('excerpt',),
             'classes': ('collapse',),
-            })
+        })

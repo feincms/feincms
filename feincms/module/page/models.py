@@ -98,7 +98,7 @@ class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
                 select={'_url_length': 'LENGTH(_cached_url)'}
-                ).order_by('-_url_length')[0]
+            ).order_by('-_url_length')[0]
 
             if not page.are_ancestors_active():
                 raise IndexError('Parents are inactive.')
@@ -323,7 +323,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         lambda p: getattr(django_settings, 'SITE_ID', 0),
         lambda p: p._django_content_type.id,
         lambda p: p.id,
-        ]
+    ]
 
     def cache_key(self):
         """

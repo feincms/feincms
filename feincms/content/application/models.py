@@ -370,7 +370,7 @@ class ApplicationContent(models.Model):
         contents = cls.objects.filter(
             parent__in=page_class.objects.active(),
             urlconf_path=urlconf_path,
-            ).order_by('pk').select_related('parent')
+        ).order_by('pk').select_related('parent')
 
         if len(contents) > 1:
             try:
@@ -378,7 +378,7 @@ class ApplicationContent(models.Model):
                 return [
                     content for content in contents if
                     short_language_code(content.parent.language) == current
-                    ][0]
+                ][0]
 
             except (AttributeError, IndexError):
                 pass

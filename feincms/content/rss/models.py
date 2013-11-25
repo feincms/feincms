@@ -44,11 +44,14 @@ class RSSContent(models.Model):
                 entry.updated = time.strftime(date_format,
                     entry.updated_parsed)
 
-        self.rendered_content = render_to_string('content/rss/content.html', {
-            'feed_title': self.title,
-            'feed_link': feed['feed'].get('link'),
-            'entries': entries,
-            })
+        self.rendered_content = render_to_string(
+            'content/rss/content.html',
+            {
+                'feed_title': self.title,
+                'feed_link': feed['feed'].get('link'),
+                'entries': entries,
+            },
+        )
         self.last_updated = timezone.now()
 
         if save:

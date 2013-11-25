@@ -56,4 +56,4 @@ class Extension(extensions.Extension):
         modeladmin.add_extension_options(_('Titles'), {
             'fields': ('_content_title', '_page_title'),
             'classes': ('collapse',),
-            })
+        })

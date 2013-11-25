@@ -105,7 +105,8 @@ class Extension(extensions.Extension):
     ident = 'navigation'  # TODO actually use this
 
     def handle_model(self):
-        self.model.add_to_class('navigation_extension',
+        self.model.add_to_class(
+            'navigation_extension',
             models.CharField(
                 _('navigation extension'),
                 choices=navigation_extension_choices(),
@@ -129,4 +130,4 @@ class Extension(extensions.Extension):
         modeladmin.add_extension_options(_('Navigation extension'), {
             'fields': ('navigation_extension',),
             'classes': ('collapse',),
-            })
+        })

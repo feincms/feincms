@@ -114,7 +114,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
                 item.pk,
                 attr,
                 'checked="checked"' if value else '',
-                )]
+            )]
 
     a.insert(0, '<div id="wrap_%s_%d">' % (attr, item.pk))
     a.append('</div>')
@@ -239,7 +239,7 @@ class TreeEditor(ExtensionModelAdmin):
                 opts.app_label, opts.object_name.lower()),
             'admin/feincms/%s/tree_editor.html' % opts.app_label,
             'admin/feincms/tree_editor.html',
-            ]
+        ]
         self.object_change_permission =\
             opts.app_label + '.' + opts.get_change_permission()
         self.object_add_permission =\
@@ -388,9 +388,9 @@ class TreeEditor(ExtensionModelAdmin):
         # Weed out unchanged cells to keep the updates small. This assumes
         # that the order a possible get_descendents() returns does not change
         # before and after toggling this attribute. Unlikely, but still...
-        return HttpResponse(json.dumps(
-            [b for a, b in zip(before_data, data) if a != b]
-            ), content_type="application/json")
+        return HttpResponse(
+            json.dumps([b for a, b in zip(before_data, data) if a != b]),
+            content_type="application/json")
 
     def get_changelist(self, request, **kwargs):
         return ChangeList
@@ -531,9 +531,7 @@ class TreeEditor(ExtensionModelAdmin):
                         "Denied delete request by \"%s\" for object #%s",
                         request.user, obj.id)
             self.message_user(request,
-                _("Successfully deleted %(count)d items.") % {
-                    "count": n
-                    })
+                _("Successfully deleted %(count)d items.") % {"count": n})
             # Return None to display the change list page again
             return None
         else:

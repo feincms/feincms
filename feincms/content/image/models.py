@@ -60,7 +60,8 @@ class ImageContent(models.Model):
         return render_to_string(
             templates,
             {'content': self},
-            context_instance=kwargs.get('context'))
+            context_instance=kwargs.get('context'),
+        )
 
     def get_image(self):
         type, separator, size = getattr(self, 'format', '').partition(':')
@@ -69,7 +70,7 @@ class ImageContent(models.Model):
 
         thumbnailer = {
             'cropscale': feincms_thumbnail.CropscaleThumbnailer,
-            }.get(type, feincms_thumbnail.Thumbnailer)
+        }.get(type, feincms_thumbnail.Thumbnailer)
         return thumbnailer(self.image, size)
 
     @classmethod
@@ -80,7 +81,7 @@ class ImageContent(models.Model):
                 max_length=10,
                 choices=POSITION_CHOICES,
                 default=POSITION_CHOICES[0][0]
-                ).contribute_to_class(cls, 'position')
+            ).contribute_to_class(cls, 'position')
 
         if FORMAT_CHOICES:
             models.CharField(
@@ -88,4 +89,4 @@ class ImageContent(models.Model):
                 max_length=64,
                 choices=FORMAT_CHOICES,
                 default=FORMAT_CHOICES[0][0]
-                ).contribute_to_class(cls, 'format')
+            ).contribute_to_class(cls, 'format')

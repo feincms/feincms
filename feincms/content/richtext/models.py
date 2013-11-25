@@ -48,13 +48,16 @@ class RichTextContentAdminForm(ItemEditorForm):
                 if errors or not (
                         settings.FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE
                         and cleaned_data['seen_tidy_warnings']):
-                    self._errors["text"] = ErrorList([mark_safe(_(
-                        "HTML validation produced %(count)d warnings."
-                        " Please review the updated content below before"
-                        " continuing: %(messages)s") % {
-                        "count": len(warnings) + len(errors),
-                        "messages": '<ul><li>%s</li></ul>' % (
-                            "</li><li>".join(map(escape, errors + warnings))),
+                    self._errors["text"] = ErrorList([mark_safe(
+                        _(
+                            "HTML validation produced %(count)d warnings."
+                            " Please review the updated content below before"
+                            " continuing: %(messages)s"
+                        ) % {
+                            "count": len(warnings) + len(errors),
+                            "messages": '<ul><li>%s</li></ul>' % (
+                                "</li><li>".join(
+                                    map(escape, errors + warnings))),
                         }
                     )])
 
