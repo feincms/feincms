@@ -14,7 +14,7 @@ from django.http import Http404
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from mptt.models import MPTTModel
+from mptt.models import MPTTModel, TreeManager
 
 from feincms import settings
 from feincms.management.checker import check_database_schema
@@ -31,7 +31,7 @@ REDIRECT_TO_RE = re.compile(
 
 
 # ------------------------------------------------------------------------
-class BasePageManager(models.Manager, ActiveAwareContentManagerMixin):
+class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
     """
     The page manager. Only adds new methods, does not modify standard Django
     manager behavior in any way.
