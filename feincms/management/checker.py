@@ -28,9 +28,11 @@ def check_database_schema(cls, module_name):
 
         cursor = connection.cursor()
 
-        existing_columns = [row[0] for row in
-            connection.introspection.get_table_description(
-                cursor, cls._meta.db_table)]
+        existing_columns = [
+            row[0]
+            for row in connection.introspection.get_table_description(
+                cursor, cls._meta.db_table)
+        ]
 
         missing_columns = []
 

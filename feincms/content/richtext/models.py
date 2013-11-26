@@ -102,8 +102,10 @@ class RichTextContent(models.Model):
         verbose_name_plural = _('rich texts')
 
     def render(self, **kwargs):
-        return render_to_string('content/richtext/default.html',
-            {'content': self}, context_instance=kwargs.get('context'))
+        return render_to_string(
+            'content/richtext/default.html',
+            {'content': self},
+            context_instance=kwargs.get('context'))
 
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?

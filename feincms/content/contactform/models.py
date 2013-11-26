@@ -19,7 +19,8 @@ class ContactForm(forms.Form):
     email = forms.EmailField(label=_('email'))
     subject = forms.CharField(label=_('subject'))
 
-    content = forms.CharField(widget=forms.Textarea, required=False,
+    content = forms.CharField(
+        widget=forms.Textarea, required=False,
         label=_('content'))
 
 

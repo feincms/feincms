@@ -32,7 +32,8 @@ class SectionContent(models.Model):
 
     title = models.CharField(_('title'), max_length=200, blank=True)
     richtext = RichTextField(_('text'), blank=True)
-    mediafile = MediaFileForeignKey(MediaFile, verbose_name=_('media file'),
+    mediafile = MediaFileForeignKey(
+        MediaFile, verbose_name=_('media file'),
         related_name='+', blank=True, null=True)
 
     class Meta:
@@ -52,9 +53,11 @@ class SectionContent(models.Model):
                 'You need to set TYPE_CHOICES when creating a'
                 ' %s' % cls.__name__)
 
-        cls.add_to_class('type', models.CharField(_('type'),
+        cls.add_to_class('type', models.CharField(
+            _('type'),
             max_length=10, choices=TYPE_CHOICES,
-            default=TYPE_CHOICES[0][0]))
+            default=TYPE_CHOICES[0][0]
+        ))
 
         if cleanse:
             cls.cleanse = cleanse

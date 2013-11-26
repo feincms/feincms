@@ -9,8 +9,8 @@ import re
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.urlresolvers import (Resolver404, resolve, reverse,
-    NoReverseMatch)
+from django.core.urlresolvers import (
+    Resolver404, resolve, reverse, NoReverseMatch)
 from django.db import models
 from django.db.models import signals
 from django.http import HttpResponse
@@ -38,7 +38,7 @@ cycle_app_reverse_cache()
 
 
 def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
-        *vargs, **vkwargs):
+                *vargs, **vkwargs):
     """
     Reverse URLs from application contents
 
@@ -96,7 +96,8 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
     if url_prefix:
         # vargs and vkwargs are used to send through additional parameters
         # which are uninteresting to us (such as current_app)
-        return reverse(viewname,
+        return reverse(
+            viewname,
             url_prefix[0],
             args=args,
             kwargs=kwargs,
@@ -171,7 +172,8 @@ class ApplicationContent(models.Model):
                 "config": app_conf
             }
 
-        cls.add_to_class('urlconf_path',
+        cls.add_to_class(
+            'urlconf_path',
             models.CharField(_('application'), max_length=100, choices=[
                 (c['urls'], c['name']) for c in cls.ALL_APPS_CONFIG.values()])
         )
@@ -218,8 +220,9 @@ class ApplicationContent(models.Model):
                 m = super(ApplicationContentItemEditorForm, self).save(
                     commit=False, *args, **kwargs)
 
-                m.parameters = dict((k, self.cleaned_data[k]) for k
-                    in self.custom_fields if k in self.cleaned_data)
+                m.parameters = dict(
+                    (k, self.cleaned_data[k])
+                    for k in self.custom_fields if k in self.cleaned_data)
 
                 if commit:
                     m.save(**kwargs)
@@ -274,8 +277,11 @@ class ApplicationContent(models.Model):
 
         # Save the application configuration for reuse elsewhere
         request._feincms_extra_context.update({
-            'app_config': dict(self.app_config,
-                urlconf_path=self.urlconf_path)})
+            'app_config': dict(
+                self.app_config,
+                urlconf_path=self.urlconf_path,
+            ),
+        })
 
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:

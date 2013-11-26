@@ -25,7 +25,8 @@ from feincms.admin.item_editor import ItemEditorForm
 
 # ------------------------------------------------------------------------
 class CommentsContent(models.Model):
-    comments_enabled = models.BooleanField(_('enabled'), default=True,
+    comments_enabled = models.BooleanField(
+        _('enabled'), default=True,
         help_text=_('New comments may be added'))
 
     class Meta:

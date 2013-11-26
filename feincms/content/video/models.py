@@ -28,8 +28,10 @@ class VideoContent(models.Model):
         }),
     )
 
-    video = models.URLField(_('video link'),
-        help_text=_('This should be a link to a youtube or vimeo video,'
+    video = models.URLField(
+        _('video link'),
+        help_text=_(
+            'This should be a link to a youtube or vimeo video,'
             ' i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0'))
 
     class Meta:
@@ -64,5 +66,7 @@ class VideoContent(models.Model):
     def render(self, **kwargs):
         context_instance = kwargs.get('context')
         ctx = self.ctx_for_video(self.video)
-        return render_to_string(self.get_templates(ctx['portal']),
-            ctx, context_instance=context_instance)
+        return render_to_string(
+            self.get_templates(ctx['portal']),
+            ctx,
+            context_instance=context_instance)

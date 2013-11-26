@@ -66,8 +66,8 @@ class TagSelectField(TagField):
 
         def _render(name, value, attrs=None, *args, **kwargs):
             value = parse_tag_input(value)
-            return type(widget).render(widget, name, value, attrs,
-                *args, **kwargs)
+            return type(widget).render(
+                widget, name, value, attrs, *args, **kwargs)
         widget.render = _render
         defaults['widget'] = widget
         choices = [(
@@ -90,8 +90,8 @@ def pre_save_handler(sender, instance, **kwargs):
 
 # ------------------------------------------------------------------------
 def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False,
-        select_field=False, auto_add_admin_field=True,
-        admin_list_display=True):
+              select_field=False, auto_add_admin_field=True,
+              admin_list_display=True):
     """
     tag_model accepts a number of named parameters:
 
