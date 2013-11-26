@@ -8,9 +8,11 @@ import traceback
 
 from django import template
 from django.conf import settings
+from django.db.models.loading import get_model
 from django.http import HttpRequest
 
-from feincms.module.page.models import BasePage, Page
+from feincms import settings as feincms_settings
+from feincms.module.page.models import BasePage
 from feincms.utils.templatetags import (SimpleNodeWithVarAndArgs,
     do_simple_node_with_var_and_args_helper,
     SimpleAssignmentNodeWithVarAndArgs,
@@ -20,6 +22,10 @@ from feincms.utils.templatetags import (SimpleNodeWithVarAndArgs,
 logger = logging.getLogger('feincms.templatetags.page')
 
 register = template.Library()
+
+
+def _get_page_model():
+    return get_model(*feincms_settings.FEINCMS_DEFAULT_PAGE_MODEL.split('.'))
 
 
 # ------------------------------------------------------------------------
@@ -36,12 +42,13 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
     Saves a list of pages into the given context variable.
     """
 
+    page_class = _get_page_model()
+
     if isinstance(feincms_page, HttpRequest):
         try:
-            # warning: explicit Page reference here
-            feincms_page = Page.objects.for_request(
+            feincms_page = page_class.objects.for_request(
                 feincms_page, best_match=True)
-        except Page.DoesNotExist:
+        except page_class.DoesNotExist:
             return []
 
     mptt_opts = feincms_page._mptt_meta
@@ -78,7 +85,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
             # (or even deeper in the tree). If we would continue processing,
             # this would result in pages from different subtrees being
             # returned directly adjacent to each other.
-            queryset = Page.objects.none()
+            queryset = page_class.objects.none()
 
         if parent:
             if getattr(parent, 'navigation_extension', None):
@@ -451,7 +458,9 @@ def siblings_along_path_to(page_list, page2):
                 # Happens when we sit on a page outside the navigation tree so
                 # fake an active root page to avoid a get_ancestors() db call
                 # which would only give us a non-navigation root page anyway.
-                p = Page(
+                page_class = _get_page_model()
+
+                p = page_class(
                     title="dummy",
                     tree_id=-1,
                     parent_id=None,
