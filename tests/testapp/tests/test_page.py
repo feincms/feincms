@@ -25,8 +25,8 @@ from django.utils.encoding import force_text
 from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
-from feincms.content.application.models import (app_reverse,
-    cycle_app_reverse_cache)
+from feincms.content.application.models import (
+    app_reverse, cycle_app_reverse_cache)
 from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
@@ -45,7 +45,10 @@ from .test_stuff import Empty
 # ------------------------------------------------------------------------
 class PagesTestCase(TestCase):
     def setUp(self):
-        u = User(username='test', is_active=True, is_staff=True,
+        u = User(
+            username='test',
+            is_active=True,
+            is_staff=True,
             is_superuser=True)
         u.set_password('test')
         u.save()
@@ -74,7 +77,7 @@ class PagesTestCase(TestCase):
         self.assertTrue(self.client.login(username='test', password='test'))
 
     def create_page_through_admin(self, title='Test page', parent='',
-            **kwargs):
+                                  **kwargs):
         dic = {
             'title': title,
             'slug': kwargs.get('slug', slugify(title)),
@@ -443,8 +446,8 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(force_text(mediafile), 'somefile.jpg')
 
-        mediafile.translations.create(caption='something',
-            language_code='%s-ha' % short_language_code())
+        mediafile.translations.create(
+            caption='something', language_code='%s-ha' % short_language_code())
         mediafile.purge_translation_cache()
 
         self.assertTrue('something' in force_text(mediafile))
@@ -592,7 +595,8 @@ class PagesTestCase(TestCase):
             self.assertNumQueries(
                 0, lambda: page2.content.sidebar[0].render())
 
-        self.assertEqual(u''.join(c.render() for c in page2.content.main),
+        self.assertEqual(
+            u''.join(c.render() for c in page2.content.main),
             'Something elseWhatever')
         self.assertEqual(page2.content.sidebar[0].render(), 'Something')
 
@@ -663,8 +667,8 @@ class PagesTestCase(TestCase):
         request = Empty()
         request.COOKIES = {'frontend_editing': "True"}
 
-        self.assertIn('class="fe_box"',
-            page.content.main[0].fe_render(request=request))
+        self.assertIn(
+            'class="fe_box"', page.content.main[0].fe_render(request=request))
 
     def test_15_b_client_frontend_editing(self):
         self.create_default_page_set()
@@ -688,17 +692,17 @@ class PagesTestCase(TestCase):
         Page.register_request_processor(
             processors.frontendediting_request_processor,
             key='frontend_editing')
-        response = self.client.get(page.get_absolute_url() +
-            '?frontend_editing=1',
+        response = self.client.get(
+            page.get_absolute_url() + '?frontend_editing=1',
             follow=True)
         self.assertRedirects(response, page.get_absolute_url())
         self.assertIn('class="fe_box"', response.content.decode('utf-8'))
         self.assertIn('frontend_editing', self.client.cookies)
 
         # turn off edit on site
-        response = self.client.get(page.get_absolute_url() +
-                '?frontend_editing=0',
-                follow=True)
+        response = self.client.get(
+            page.get_absolute_url() + '?frontend_editing=0',
+            follow=True)
         self.assertRedirects(response, page.get_absolute_url())
         self.assertNotIn('class="fe_box"', response.content.decode('utf-8'))
 
@@ -825,9 +829,11 @@ class PagesTestCase(TestCase):
             '{% feincms_breadcrumbs feincms_page %}')
         rendered = t.render(context)
         self.assertTrue("Test child page" in rendered)
-        self.assertTrue('href="/test-page/">Test page</a>' in rendered,
+        self.assertTrue(
+            'href="/test-page/">Test page</a>' in rendered,
             msg="The parent page should be a breadcrumb link")
-        self.assertTrue('href="/test-page/test-child-page/"' not in rendered,
+        self.assertTrue(
+            'href="/test-page/test-child-page/"' not in rendered,
             msg="The current page should not be a link in the breadcrumbs")
 
         t = template.Template(
@@ -1090,20 +1096,26 @@ class PagesTestCase(TestCase):
         page.active = True
         page.save()
 
-        self.assertRaises(Page.DoesNotExist,
+        self.assertRaises(
+            Page.DoesNotExist,
             lambda: Page.objects.page_for_path(page.get_absolute_url()))
-        self.assertRaises(Page.DoesNotExist,
+        self.assertRaises(
+            Page.DoesNotExist,
             lambda: Page.objects.best_match_for_path(
                 page.get_absolute_url() + 'something/hello/'))
 
-        self.assertRaises(Http404,
+        self.assertRaises(
+            Http404,
             lambda: Page.objects.best_match_for_path(
                 '/blabla/blabla/', raise404=True))
-        self.assertRaises(Http404,
+        self.assertRaises(
+            Http404,
             lambda: Page.objects.page_for_path('/asdf/', raise404=True))
-        self.assertRaises(Page.DoesNotExist,
+        self.assertRaises(
+            Page.DoesNotExist,
             lambda: Page.objects.best_match_for_path('/blabla/blabla/'))
-        self.assertRaises(Page.DoesNotExist,
+        self.assertRaises(
+            Page.DoesNotExist,
             lambda: Page.objects.page_for_path('/asdf/'))
 
         request = Empty()
@@ -1121,22 +1133,25 @@ class PagesTestCase(TestCase):
         page.active = False
         page.save()
 
-        self.assertRaises(Http404,
+        self.assertRaises(
+            Http404,
             lambda: Page.objects.for_request(request, raise404=True))
 
         page.active = True
         page.save()
 
-        self.assertRaises(Http404,
+        self.assertRaises(
+            Http404,
             lambda: Page.objects.for_request(request, raise404=True))
 
         page.parent.active = True
         page.parent.save()
         self.assertEqual(page, Page.objects.for_request(request))
 
-        self.assertEqual(page,
-            Page.objects.page_for_path(page.get_absolute_url()))
-        self.assertEqual(page,
+        self.assertEqual(
+            page, Page.objects.page_for_path(page.get_absolute_url()))
+        self.assertEqual(
+            page,
             Page.objects.best_match_for_path(
                 page.get_absolute_url() + 'something/hello/'))
 
@@ -1177,7 +1192,8 @@ class PagesTestCase(TestCase):
         # page2 has been modified too, but its URL should not have changed
         try:
             self.assertRedirects(
-                self.client.get('/blablabla/'), page1.get_absolute_url())
+                self.client.get('/blablabla/'),
+                page1.get_absolute_url())
         except TemplateDoesNotExist as e:
             # catch the error from rendering page1
             if e.args != ('feincms_base.html',):
@@ -1301,7 +1317,8 @@ class PagesTestCase(TestCase):
         response = self.client.get(
             page.get_absolute_url() + 'full_reverse_test/')
         self.assertContains(response, 'home:/test-page/test-child-page/')
-        self.assertContains(response,
+        self.assertContains(
+            response,
             'args:/test-page/test-child-page/args_test/xy/zzy/')
         self.assertContains(response, 'base:/test/')
         self.assertContains(response, 'homeas:/test-page/test-child-page/')
@@ -1311,16 +1328,19 @@ class PagesTestCase(TestCase):
             '/test-page/test-child-page/')
 
         if hasattr(self, 'assertNumQueries'):
-            self.assertNumQueries(0,
+            self.assertNumQueries(
+                0,
                 lambda: app_reverse(
                     'ac_module_root', 'testapp.applicationcontent_urls'))
 
             cycle_app_reverse_cache()
 
-            self.assertNumQueries(1,
+            self.assertNumQueries(
+                1,
                 lambda: app_reverse(
                     'ac_module_root', 'testapp.applicationcontent_urls'))
-            self.assertNumQueries(0,
+            self.assertNumQueries(
+                0,
                 lambda: app_reverse(
                     'ac_module_root', 'testapp.applicationcontent_urls'))
 
@@ -1349,7 +1369,8 @@ class PagesTestCase(TestCase):
 
         # Test standalone behavior
         self.assertEqual(
-            self.client.get(page.get_absolute_url() + 'response/',
+            self.client.get(
+                page.get_absolute_url() + 'response/',
                 HTTP_X_REQUESTED_WITH='XMLHttpRequest').content,
             self.client.get(
                 page.get_absolute_url() + 'response_decorated/').content)
@@ -1392,7 +1413,8 @@ class PagesTestCase(TestCase):
 
         # Ensure ApplicationContent's admin_fields support works properly
         self.login()
-        self.assertContains(self.client.get('/admin/page/page/%d/' % page.id),
+        self.assertContains(
+            self.client.get('/admin/page/page/%d/' % page.id),
             'exclusive_subpages')
 
     def test_26_page_form_initial(self):
@@ -1505,12 +1527,14 @@ class PagesTestCase(TestCase):
             })
         self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
-        self.assertEqual(MediaFile.objects.count(), 11,
+        self.assertEqual(
+            MediaFile.objects.count(),
+            11,
             "Upload of media files with ZIP does not work")
 
         dn = os.path.dirname
-        path = os.path.join(dn(dn(dn(dn(__file__)))),
-            'docs', 'images', 'tree_editor.png')
+        path = os.path.join(
+            dn(dn(dn(dn(__file__)))), 'docs', 'images', 'tree_editor.png')
 
         response = self.client.post('/admin/medialibrary/mediafile/add/', {
             'file': open(path, 'rb'),
@@ -1520,7 +1544,8 @@ class PagesTestCase(TestCase):
         })
         self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
-        self.assertContains(self.client.get('/admin/medialibrary/mediafile/'),
+        self.assertContains(
+            self.client.get('/admin/medialibrary/mediafile/'),
             '100x100.png" alt="" />')
 
         stats = list(MediaFile.objects.values_list('type', flat=True))
@@ -1546,8 +1571,8 @@ class PagesTestCase(TestCase):
         site_2 = Site.objects.create(name='site 2', domain='2.example.com')
         self.create_page_through_admin(
             'site 1 homepage', override_url='/', active=True)
-        self.create_page_through_admin('site 2 homepage', override_url='/',
-                site=site_2.id, active=True)
+        self.create_page_through_admin(
+            'site 2 homepage', override_url='/', site=site_2.id, active=True)
         self.assertEqual(Page.objects.count(), 2)
         self.assertEqual(Page.objects.active().count(), 1)
 
