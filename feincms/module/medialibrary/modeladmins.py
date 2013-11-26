@@ -111,8 +111,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
     save_on_top = True
     date_hierarchy = 'created'
     inlines = [admin_translationinline(MediaFileTranslation)]
-    list_display = ['admin_thumbnail', '__str__', 'file_info',
-        'formatted_created']
+    list_display = [
+        'admin_thumbnail', '__str__', 'file_info', 'formatted_created']
     list_display_links = ['__str__']
     list_filter = ['type', 'categories']
     list_per_page = 25
@@ -124,10 +124,12 @@ class MediaFileAdmin(ExtensionModelAdmin):
         from django.conf.urls import patterns, url
 
         urls = super(MediaFileAdmin, self).get_urls()
-        my_urls = patterns('',
+        my_urls = patterns(
+            '',
             url(
                 r'^mediafile-bulk-upload/$',
-                self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {},
+                self.admin_site.admin_view(MediaFileAdmin.bulk_upload),
+                {},
                 name='mediafile_bulk_upload',
             ),
         )

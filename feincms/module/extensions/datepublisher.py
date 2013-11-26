@@ -49,8 +49,9 @@ def granular_now(n=None):
     """
     if n is None:
         n = timezone.now()
-    return timezone.make_aware(datetime(n.year, n.month, n.day, n.hour,
-                                        (n.minute // 5) * 5), n.tzinfo)
+    return timezone.make_aware(
+        datetime(n.year, n.month, n.day, n.hour, (n.minute // 5) * 5),
+        n.tzinfo)
 
 
 # ------------------------------------------------------------------------
@@ -78,10 +79,13 @@ def datepublisher_response_processor(page, request, response):
 # ------------------------------------------------------------------------
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('publication_date',
+        self.model.add_to_class(
+            'publication_date',
             models.DateTimeField(_('publication date'), default=granular_now))
-        self.model.add_to_class('publication_end_date',
-            models.DateTimeField(_('publication end date'),
+        self.model.add_to_class(
+            'publication_end_date',
+            models.DateTimeField(
+                _('publication end date'),
                 blank=True, null=True,
                 help_text=_(
                     'Leave empty if the entry should stay active forever.')))

@@ -16,8 +16,9 @@ class PageSitemap(Sitemap):
     for submission to index engines. See http://www.sitemaps.org/ for details.
     """
     def __init__(self, navigation_only=False, max_depth=0, changefreq=None,
-            queryset=None, filter=None, extended_navigation=False,
-            page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL, *args, **kwargs):
+                 queryset=None, filter=None, extended_navigation=False,
+                 page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL,
+                 *args, **kwargs):
         """
         The PageSitemap accepts the following parameters for customisation
         of the resulting sitemap.xml output:

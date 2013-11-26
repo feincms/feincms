@@ -62,8 +62,8 @@ class ContentWithMediaFile(models.Model):
     class feincms_item_editor_inline(FeinCMSInline):
         raw_id_fields = ('mediafile',)
 
-    mediafile = MediaFileForeignKey(MediaFile, verbose_name=_('media file'),
-        related_name='+')
+    mediafile = MediaFileForeignKey(
+        MediaFile, verbose_name=_('media file'), related_name='+')
 
     class Meta:
         abstract = True
@@ -93,7 +93,8 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
 
 try:
     from south.modelsinspector import add_introspection_rules
-    add_introspection_rules(rules=[((MediaFileForeignKey,), [], {},)],
+    add_introspection_rules(
+        rules=[((MediaFileForeignKey,), [], {},)],
         patterns=["^feincms\.module\.medialibrary\.fields"])
 except ImportError:
     pass

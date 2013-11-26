@@ -132,13 +132,17 @@ class Extension(extensions.Extension):
     def handle_model(self):
         cls = self.model
 
-        cls.add_to_class('language', models.CharField(_('language'),
-            max_length=10,
-            choices=django_settings.LANGUAGES,
-            default=django_settings.LANGUAGES[0][0]))
+        cls.add_to_class(
+            'language',
+            models.CharField(
+                _('language'),
+                max_length=10,
+                choices=django_settings.LANGUAGES,
+                default=django_settings.LANGUAGES[0][0]))
         cls.add_to_class(
             'translation_of',
-            models.ForeignKey('self',
+            models.ForeignKey(
+                'self',
                 blank=True, null=True, verbose_name=_('translation of'),
                 related_name='translations',
                 limit_choices_to={'language': django_settings.LANGUAGES[0][0]},

@@ -16,14 +16,16 @@ class Extension(extensions.Extension):
         self.model.add_to_class('_content_title', models.TextField(
             _('content title'),
             blank=True,
-            help_text=_('The first line is the main title, the following'
+            help_text=_(
+                'The first line is the main title, the following'
                 ' lines are subtitles.')))
 
         self.model.add_to_class('_page_title', models.CharField(
             _('page title'),
             max_length=69,
             blank=True,
-            help_text=_('Page title for browser window. Same as title by'
+            help_text=_(
+                'Page title for browser window. Same as title by'
                 'default. Must not be longer than 70 characters.')))
 
         @monkeypatch_property(self.model)

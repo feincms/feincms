@@ -31,8 +31,8 @@ class RedirectToWidget(ForeignKeyRawIdWidget):
             model = get_model(matches['app_label'], matches['module_name'])
             try:
                 instance = model._default_manager.get(pk=int(matches['pk']))
-                return u'&nbsp;<strong>%s (%s)</strong>' % (instance,
-                        instance.get_absolute_url())
+                return u'&nbsp;<strong>%s (%s)</strong>' % (
+                    instance, instance.get_absolute_url())
 
             except model.DoesNotExist:
                 pass
@@ -42,7 +42,8 @@ class RedirectToWidget(ForeignKeyRawIdWidget):
 
 # ------------------------------------------------------------------------
 class PageAdminForm(MPTTAdminForm):
-    never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
+    never_copy_fields = (
+        'title', 'slug', 'parent', 'active', 'override_url',
         'translation_of', '_content_title', '_page_title')
 
     @property

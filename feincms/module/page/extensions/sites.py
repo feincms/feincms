@@ -13,9 +13,10 @@ def current_site(queryset):
 
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('site',
-            models.ForeignKey(Site, verbose_name=_('Site'),
-                default=settings.SITE_ID))
+        self.model.add_to_class(
+            'site',
+            models.ForeignKey(
+                Site, verbose_name=_('Site'), default=settings.SITE_ID))
 
         PageManager.add_to_active_filters(current_site, key='current_site')
 

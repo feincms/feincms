@@ -41,16 +41,16 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         }),
         (_('Other options'), {
             'classes': ['collapse'],
-            'fields': ['template_key', 'parent', 'override_url',
-                'redirect_to'],
+            'fields': [
+                'template_key', 'parent', 'override_url', 'redirect_to'],
         }),
         # <-- insertion point, extensions appear here, see insertion_index
         # above
         item_editor.FEINCMS_CONTENT_FIELDSET,
     ]
     readonly_fields = []
-    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle',
-        'template']
+    list_display = [
+        'short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
     list_filter = ['active', 'in_navigation', 'template_key', 'parent']
     search_fields = ['title', 'slug']
     prepopulated_fields = {'slug': ('title',)}

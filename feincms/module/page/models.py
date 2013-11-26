@@ -38,8 +38,8 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
     """
 
     # The fields which should be excluded when creating a copy.
-    exclude_from_copy = ['id', 'tree_id', 'lft', 'rght', 'level',
-        'redirect_to']
+    exclude_from_copy = [
+        'id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
 
     def page_for_path(self, path, raise404=False):
         """
@@ -92,7 +92,8 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
 
         if path:
             tokens = path.split('/')
-            paths += ['/%s/' % '/'.join(tokens[:i])
+            paths += [
+                '/%s/' % '/'.join(tokens[:i])
                 for i in range(1, len(tokens) + 1)]
 
         try:
@@ -127,7 +128,7 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
         return self.in_navigation().filter(parent__isnull=True)
 
     def for_request(self, request, raise404=False, best_match=False,
-            path=None):
+                    path=None):
         """
         Return a page for the request
 
@@ -145,11 +146,11 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
             path = path or request.path_info or request.path
 
             if best_match:
-                request._feincms_page = self.best_match_for_path(path,
-                    raise404=raise404)
+                request._feincms_page = self.best_match_for_path(
+                    path, raise404=raise404)
             else:
-                request._feincms_page = self.page_for_path(path,
-                    raise404=raise404)
+                request._feincms_page = self.page_for_path(
+                    path, raise404=raise404)
 
         return request._feincms_page
 
@@ -168,23 +169,29 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     # structure and navigation
     title = models.CharField(_('title'), max_length=200, help_text=_(
         'This title is also used for navigation menu items.'))
-    slug = models.SlugField(_('slug'), max_length=150,
-                    help_text=_('This is used to build the URL for this page'))
-    parent = models.ForeignKey('self', verbose_name=_('Parent'), blank=True,
-                               null=True, related_name='children')
+    slug = models.SlugField(
+        _('slug'), max_length=150,
+        help_text=_('This is used to build the URL for this page'))
+    parent = models.ForeignKey(
+        'self', verbose_name=_('Parent'), blank=True,
+        null=True, related_name='children')
     # Custom list_filter - see admin/filterspecs.py
     parent.parent_filter = True
     in_navigation = models.BooleanField(_('in navigation'), default=False)
-    override_url = models.CharField(_('override URL'), max_length=255,
+    override_url = models.CharField(
+        _('override URL'), max_length=255,
         blank=True, help_text=_(
             'Override the target URL. Be sure to include slashes at the '
             'beginning and at the end if it is a local URL. This '
             'affects both the navigation and subpages\' URLs.'))
-    redirect_to = models.CharField(_('redirect to'), max_length=255,
+    redirect_to = models.CharField(
+        _('redirect to'), max_length=255,
         blank=True,
-        help_text=_('Target URL for automatic redirects'
+        help_text=_(
+            'Target URL for automatic redirects'
             ' or the primary key of a page.'))
-    _cached_url = models.CharField(_('Cached URL'), max_length=255, blank=True,
+    _cached_url = models.CharField(
+        _('Cached URL'), max_length=255, blank=True,
         editable=False, default='', db_index=True)
 
     class Meta:
@@ -204,8 +211,10 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if not self.pk:
             return False
 
-        pages = self.__class__.objects.active().filter(tree_id=self.tree_id,
-                                        lft__lte=self.lft, rght__gte=self.rght)
+        pages = self.__class__.objects.active().filter(
+            tree_id=self.tree_id,
+            lft__lte=self.lft,
+            rght__gte=self.rght)
         return pages.count() > self.level
     is_active.short_description = _('is active')
 
