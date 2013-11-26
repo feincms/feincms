@@ -19,6 +19,8 @@ from feincms._internal import monkeypatch_method
 class TypeRegistryMetaClass(type):
     """
     You can access the list of subclasses as <BaseClass>.types
+
+    TODO use NavigationExtension.__subclasses__() instead?
     """
 
     def __init__(cls, name, bases, attrs):
