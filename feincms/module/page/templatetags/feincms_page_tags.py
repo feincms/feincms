@@ -12,7 +12,8 @@ from django.db.models.loading import get_model
 from django.http import HttpRequest
 
 from feincms import settings as feincms_settings
-from feincms.utils.templatetags import (SimpleNodeWithVarAndArgs,
+from feincms.utils.templatetags import (
+    SimpleNodeWithVarAndArgs,
     do_simple_node_with_var_and_args_helper,
     SimpleAssignmentNodeWithVarAndArgs,
     do_simple_assignment_node_with_var_and_args_helper)
@@ -89,8 +90,8 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
         if parent:
             if getattr(parent, 'navigation_extension', None):
                 # Special case for navigation extensions
-                return list(parent.extended_navigation(depth=depth,
-                    request=context.get('request')))
+                return list(parent.extended_navigation(
+                    depth=depth, request=context.get('request')))
 
             # Apply descendant filter
             queryset &= parent.get_descendants()
@@ -168,7 +169,9 @@ class ParentLinkNode(SimpleNodeWithVarAndArgs):
             return page.get_ancestors()[level - 1].get_absolute_url()
         except IndexError:
             return '#'
-register.tag('feincms_parentlink',
+
+register.tag(
+    'feincms_parentlink',
     do_simple_node_with_var_and_args_helper(ParentLinkNode))
 
 
@@ -226,13 +229,17 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
             # hardcoded paths... bleh
             if key in translations:
-                links.append((key, name,
+                links.append((
+                    key,
+                    name,
                     translations[key].get_absolute_url() + trailing_path))
             elif not only_existing:
                 links.append((key, name, None))
 
         return links
-register.tag('feincms_languagelinks',
+
+register.tag(
+    'feincms_languagelinks',
     do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode))
 
 
@@ -295,7 +302,9 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
                     language = settings.LANGUAGES[0][0]
 
         return _translate_page_into(page, language, default=default)
-register.tag('feincms_translatedpage',
+
+register.tag(
+    'feincms_translatedpage',
     do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
 
 
@@ -305,7 +314,9 @@ class TranslatedPageNodeOrBase(TranslatedPageNode):
         return super(TranslatedPageNodeOrBase, self).what(
             page, args,
             default=getattr(page, 'get_original_translation', page))
-register.tag('feincms_translatedpage_or_base',
+
+register.tag(
+    'feincms_translatedpage_or_base',
     do_simple_assignment_node_with_var_and_args_helper(
         TranslatedPageNodeOrBase))
 
@@ -347,7 +358,8 @@ def feincms_breadcrumbs(page, include_self=True):
 
 # ------------------------------------------------------------------------
 def _is_parent_of(page1, page2):
-    return (page1.tree_id == page2.tree_id
+    return (
+        page1.tree_id == page2.tree_id
         and page1.lft < page2.lft
         and page1.rght > page2.rght)
 
@@ -370,7 +382,8 @@ def is_parent_of(page1, page2):
 
 # ------------------------------------------------------------------------
 def _is_equal_or_parent_of(page1, page2):
-    return (page1.tree_id == page2.tree_id
+    return (
+        page1.tree_id == page2.tree_id
         and page1.lft <= page2.lft
         and page1.rght >= page2.rght)
 
@@ -445,7 +458,8 @@ def siblings_along_path_to(page_list, page2):
             # NOTE: This assumes that the input list actually is complete (ie.
             # comes from feincms_nav). We'll cope with the fall-out of that
             # assumption when it happens...
-            ancestors = [a_page for a_page in page_list
+            ancestors = [
+                a_page for a_page in page_list
                 if _is_equal_or_parent_of(a_page, page2)]
             top_level = min((a_page.level for a_page in page_list))
 
@@ -470,7 +484,8 @@ def siblings_along_path_to(page_list, page2):
 
             return siblings
         except (AttributeError, ValueError) as e:
-            logger.warn("siblings_along_path_to caught exception: %s",
+            logger.warn(
+                "siblings_along_path_to caught exception: %s",
                 format_exception(e))
 
     return ()
