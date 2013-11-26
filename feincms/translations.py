@@ -117,8 +117,12 @@ def lookup_translations(language_code=None):
         if instance_dict:
             _process(candidates, instance_dict, lang_, 'iexact')
         if instance_dict:
-            _process(candidates, instance_dict, settings.LANGUAGE_CODE,
-                'istartswith')
+            _process(
+                candidates,
+                instance_dict,
+                settings.LANGUAGE_CODE,
+                'istartswith',
+            )
         if instance_dict:
             for candidate in candidates.filter(
                     parent__pk__in=instance_dict.keys()):
@@ -272,9 +276,10 @@ def Translation(model):
 
     class Inner(models.Model):
         parent = models.ForeignKey(model, related_name='translations')
-        language_code = models.CharField(_('language'), max_length=10,
-                choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
-                editable=len(settings.LANGUAGES) > 1)
+        language_code = models.CharField(
+            _('language'), max_length=10,
+            choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
+            editable=len(settings.LANGUAGES) > 1)
 
         class Meta:
             unique_together = ('parent', 'language_code')

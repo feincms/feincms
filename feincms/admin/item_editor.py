@@ -127,7 +127,7 @@ class ItemEditor(ExtensionModelAdmin):
         return inlines
 
     def _frontend_editing_view(self, request, cms_id, content_type,
-            content_id):
+                               content_id):
         """
         This view is used strictly for frontend editing -- it is not used
         inside the standard administration interface.
@@ -146,7 +146,8 @@ class ItemEditor(ExtensionModelAdmin):
         form_class_base = getattr(
             model_cls, 'feincms_item_editor_form', ItemEditorForm)
 
-        ModelForm = modelform_factory(model_cls,
+        ModelForm = modelform_factory(
+            model_cls,
             exclude=('parent', 'region', 'ordering'),
             form=form_class_base,
             formfield_callback=curry(
@@ -190,7 +191,9 @@ class ItemEditor(ExtensionModelAdmin):
             'media': self.media,
         })
 
-        return render_to_response('admin/feincms/fe_editor.html', context,
+        return render_to_response(
+            'admin/feincms/fe_editor.html',
+            context,
             context_instance=template.RequestContext(request))
 
     def get_content_type_map(self, request):
@@ -340,7 +343,7 @@ class ItemEditor(ExtensionModelAdmin):
     recover_form_template = "admin/feincms/recover_form.html"
 
     def render_revision_form(self, request, obj, version, context,
-            revert=False, recover=False):
+                             revert=False, recover=False):
         context.update(self.get_extra_context(request))
         return super(ItemEditor, self).render_revision_form(
             request, obj, version, context, revert, recover)

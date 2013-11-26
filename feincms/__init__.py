@@ -11,8 +11,9 @@ class LazySettings(object):
             if not key.startswith('FEINCMS_'):
                 continue
 
-            setattr(self, key, getattr(django_settings, key,
-                getattr(default_settings, key)))
+            value = getattr(default_settings, key)
+            value = getattr(django_settings, key, value)
+            setattr(self, key, value)
 
     def __getattr__(self, attr):
         self._load_settings()
@@ -52,7 +53,8 @@ def ensure_completely_loaded(force=False):
     # don't miss out.
     from django.db.models import loading
     for model in loading.get_models():
-        for cache_name in ('_field_cache', '_field_name_cache', '_m2m_cache',
+        for cache_name in (
+                '_field_cache', '_field_name_cache', '_m2m_cache',
                 '_related_objects_cache', '_related_many_to_many_cache',
                 '_name_map'):
             try:
