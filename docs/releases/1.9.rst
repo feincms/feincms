@@ -5,10 +5,6 @@ FeinCMS 1.9 release notes (upcoming)
 Welcome to FeinCMS 1.9!
 
 
-Major feature 1
-===============
-
-
 Extensions in the item editor
 =============================
 
@@ -56,6 +52,8 @@ Notable features and improvements
 * The diff between 1.8 and 1.9 is large -- most of it because of coding style
   cleanups. `flake8 <https://pypi.python.org/pypi/flake8>`_ runs should not
   show any warnings.
+
+* Extension classes can be passed directly to ``register_extensions()`` now.
 
 
 Bugfixes
