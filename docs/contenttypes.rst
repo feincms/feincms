@@ -461,9 +461,9 @@ This content type scans all template directories for templates below
 ``content/template/`` and allows the user to select one of these templates
 which are then rendered using the Django template language.
 
-Note that some file extensions are automatically filtered so they won't
-appear in the list, namely anything that matches *.~ and *.tmp will be
-ignored.
+Note that some file extensions are automatically filtered so they will not
+appear in the list, namely any filenames ending with ``.~`` or ``.tmp`` will
+be ignored.
 
 Also note that a template content is not sandboxed or specially rendered.
 Whatever a django template can do a TemplateContent snippet can do too,

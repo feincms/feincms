@@ -62,30 +62,6 @@ Contents
    deprecation
 
 
-API Documentation
-=================
-
-.. toctree::
-   :maxdepth: 3
-
-
-   api/core
-   api/admin
-   api/page
-   api/medialibrary
-   api/blog
-   api/contenttypes
-   api/contextprocessors
-   api/contrib
-   api/settings
-   api/shortcuts
-   api/templatetags
-   api/translations
-   api/utils
-   api/views
-   api/commands
-
-
 Releases
 ========
 
