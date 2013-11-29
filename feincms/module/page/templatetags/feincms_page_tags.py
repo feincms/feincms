@@ -491,8 +491,8 @@ def siblings_along_path_to(page_list, page2):
 
     return ()
 
-# ------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------
 @register.assignment_tag(takes_context=True)
 def page_is_active(context, page, feincms_page=None, path=None):
     """
