@@ -20,8 +20,10 @@ feincms.jQuery(function($){
 
         /* Mark inactive rows */
         $('tr.item_inactive').removeClass('item_inactive');
-        $('div[id^=wrap_active_] input:checkbox:not(:checked)').parents('tr').addClass('item_inactive');
-        $('div[id^=wrap_active_] img').parents('tr').addClass('item_inactive');
+        var in_wrap_active = $('div[id^=wrap_active_]');
+        var in_wrap_input = $('input', in_wrap_active);
+        $(':checkbox:not(:checked)', in_wrap_input).parents('tr').addClass('item_inactive');
+        $('img', in_wrap_active).parents('tr').addClass('item_inactive');
     });
 
     $(document.body).on('click', '[data-inplace]', function() {
@@ -303,13 +305,12 @@ feincms.jQuery(function($){
         storeCollapsedNodes(feincms.collapsed_nodes);
 
         doToggle(itemId, show);
-
-        $('#result_list tbody').recolorRows();
     }
 
     $.extend($.fn.feinTreeToggleItem = function() {
         $(this).click(function(event){
             expandOrCollapseNode($(this));
+            $('#result_list tbody').recolorRows();
             if(event.stopPropagation) {
                 event.stopPropagation();
             } else {
@@ -423,7 +424,7 @@ feincms.jQuery(function($){
             $('#collapse_entire_tree').click();
         } else {
             for(var i=0; i<storedNodes.length; i++) {
-                $('#page_marker-' + storedNodes[i]).click();
+                expandOrCollapseNode($('#page_marker-' + storedNodes[i]));
             }
         }
     }
