@@ -10,7 +10,8 @@ from django.contrib.admin.views import main
 from django.contrib.admin.actions import delete_selected
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db.models import Q
-from django.http import (HttpResponse, HttpResponseBadRequest,
+from django.http import (
+    HttpResponse, HttpResponseBadRequest,
     HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError)
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -41,8 +42,8 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
     else:
         title = ''
     icon_url = static('feincms/img/icon-%s.gif' % BOOLEAN_MAPPING[field_val])
-    return mark_safe(u'<img src="%s" alt="%s" %s/>' %
-            (icon_url, alt_text, title))
+    return mark_safe(
+        u'<img src="%s" alt="%s" %s/>' % (icon_url, alt_text, title))
 
 
 def _build_tree_structure(queryset):
@@ -114,7 +115,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
                 item.pk,
                 attr,
                 'checked="checked"' if value else '',
-                )]
+            )]
 
     a.insert(0, '<div id="wrap_%s_%d">' % (attr, item.pk))
     a.append('</div>')
@@ -164,15 +165,17 @@ class ChangeList(main.ChangeList):
     def get_results(self, request):
         mptt_opts = self.model._mptt_meta
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            clauses = [Q(**{mptt_opts.tree_id_attr: tree_id,
-                            mptt_opts.left_attr + '__lte': lft,
-                            mptt_opts.right_attr + '__gte': rght,
-                            })
-                    for lft, rght, tree_id in self.query_set.values_list(
-                        mptt_opts.left_attr,
-                        mptt_opts.right_attr,
-                        mptt_opts.tree_id_attr,
-                    )]
+            clauses = [
+                Q(**{
+                    mptt_opts.tree_id_attr: tree_id,
+                    mptt_opts.left_attr + '__lte': lft,
+                    mptt_opts.right_attr + '__gte': rght,
+                }) for lft, rght, tree_id in self.query_set.values_list(
+                    mptt_opts.left_attr,
+                    mptt_opts.right_attr,
+                    mptt_opts.tree_id_attr,
+                )
+            ]
             # We could optimise a bit here by explicitely filtering out
             # any clauses that are for parents of nodes included in the
             # queryset anyway. (ie: drop all clauses that refer to a node
@@ -239,7 +242,7 @@ class TreeEditor(ExtensionModelAdmin):
                 opts.app_label, opts.object_name.lower()),
             'admin/feincms/%s/tree_editor.html' % opts.app_label,
             'admin/feincms/tree_editor.html',
-            ]
+        ]
         self.object_change_permission =\
             opts.app_label + '.' + opts.get_change_permission()
         self.object_add_permission =\
@@ -364,7 +367,8 @@ class TreeEditor(ExtensionModelAdmin):
                 _("You do not have permission to modify this object"))
 
         new_state = not getattr(obj, attr)
-        logger.info("Toggle %s on #%d %s to %s by \"%s\"",
+        logger.info(
+            "Toggle %s on #%d %s to %s by \"%s\"",
             attr, obj.pk, obj, "on" if new_state else "off", request.user)
 
         try:
@@ -388,9 +392,9 @@ class TreeEditor(ExtensionModelAdmin):
         # Weed out unchanged cells to keep the updates small. This assumes
         # that the order a possible get_descendents() returns does not change
         # before and after toggling this attribute. Unlikely, but still...
-        return HttpResponse(json.dumps(
-            [b for a, b in zip(before_data, data) if a != b]
-            ), content_type="application/json")
+        return HttpResponse(
+            json.dumps([b for a, b in zip(before_data, data) if a != b]),
+            content_type="application/json")
 
     def get_changelist(self, request, **kwargs):
         return ChangeList
@@ -493,9 +497,9 @@ class TreeEditor(ExtensionModelAdmin):
             for item in queryset.filter(id__in=(cut_item.pk, pasted_on.pk)):
                 item.save()
 
-            self.message_user(request,
-                ugettext('%s has been moved to a new position.') %
-                cut_item)
+            self.message_user(
+                request,
+                ugettext('%s has been moved to a new position.') % cut_item)
             return HttpResponse('OK')
 
         self.message_user(request, _('Did not understand moving instruction.'))
@@ -530,10 +534,9 @@ class TreeEditor(ExtensionModelAdmin):
                     logger.warning(
                         "Denied delete request by \"%s\" for object #%s",
                         request.user, obj.id)
-            self.message_user(request,
-                _("Successfully deleted %(count)d items.") % {
-                    "count": n
-                    })
+            self.message_user(
+                request,
+                _("Successfully deleted %(count)d items.") % {"count": n})
             # Return None to display the change list page again
             return None
         else:

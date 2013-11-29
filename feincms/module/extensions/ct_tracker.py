@@ -103,14 +103,17 @@ class TrackerContentProxy(ContentProxy):
 
         return dict((region, [
             (pk, map[-ct]) for pk, ct in items
-            ]) for region, items in inventory.items() if region != '_version_')
+        ]) for region, items in inventory.items() if region != '_version_')
 
     def _to_inventory(self, counts):
         map = self._translation_map()
 
-        inventory = dict((region, [
-            (pk, map[ct]) for pk, ct in items
-            ]) for region, items in counts.items())
+        inventory = dict(
+            (
+                region,
+                [(pk, map[ct]) for pk, ct in items],
+            ) for region, items in counts.items()
+        )
         inventory['_version_'] = INVENTORY_VERSION
         return inventory
 

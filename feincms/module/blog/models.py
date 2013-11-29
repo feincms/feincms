@@ -22,19 +22,21 @@ class EntryManager(models.Manager):
             published=True,
             published_on__isnull=False,
             published_on__lte=timezone.now(),
-            )
+        )
 
 
 @python_2_unicode_compatible
 class Entry(Base):
     published = models.BooleanField(_('published'), default=False)
-    title = models.CharField(_('title'), max_length=100,
+    title = models.CharField(
+        _('title'), max_length=100,
         help_text=_('This is used for the generated navigation too.'))
     slug = models.SlugField()
 
-    published_on = models.DateTimeField(_('published on'),
-        blank=True, null=True,
-        help_text=_('Will be set automatically once you tick the `published`'
+    published_on = models.DateTimeField(
+        _('published on'), blank=True, null=True,
+        help_text=_(
+            'Will be set automatically once you tick the `published`'
             ' checkbox above.'))
 
     class Meta:
@@ -69,6 +71,6 @@ class EntryAdmin(item_editor.ItemEditor):
     search_fields = ['title', 'slug']
     prepopulated_fields = {
         'slug': ('title',),
-        }
+    }
 
     raw_id_fields = []

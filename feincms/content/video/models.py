@@ -19,17 +19,19 @@ class VideoContent(models.Model):
     PORTALS = (
         ('youtube', re.compile(r'youtube'), lambda url: {
             'v': re.search(r'([?&]v=|./././)([^#&]+)', url).group(2),
-            }),
+        }),
         ('vimeo', re.compile(r'vimeo'), lambda url: {
             'id': re.search(r'/(\d+)', url).group(1),
-            }),
+        }),
         ('sf', re.compile(r'sf\.tv'), lambda url: {
             'id': re.search(r'/([a-z0-9\-]+)', url).group(1),
-            }),
-        )
+        }),
+    )
 
-    video = models.URLField(_('video link'),
-        help_text=_('This should be a link to a youtube or vimeo video,'
+    video = models.URLField(
+        _('video link'),
+        help_text=_(
+            'This should be a link to a youtube or vimeo video,'
             ' i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0'))
 
     class Meta:
@@ -46,7 +48,7 @@ class VideoContent(models.Model):
         return [
             'content/video/%s.html' % portal,
             'content/video/unknown.html',
-            ]
+        ]
 
     def ctx_for_video(self, vurl):
         "Get a context dict for a given video URL"
@@ -64,5 +66,7 @@ class VideoContent(models.Model):
     def render(self, **kwargs):
         context_instance = kwargs.get('context')
         ctx = self.ctx_for_video(self.video)
-        return render_to_string(self.get_templates(ctx['portal']),
-            ctx, context_instance=context_instance)
+        return render_to_string(
+            self.get_templates(ctx['portal']),
+            ctx,
+            context_instance=context_instance)

@@ -66,8 +66,8 @@ class TagSelectField(TagField):
 
         def _render(name, value, attrs=None, *args, **kwargs):
             value = parse_tag_input(value)
-            return type(widget).render(widget, name, value, attrs,
-                *args, **kwargs)
+            return type(widget).render(
+                widget, name, value, attrs, *args, **kwargs)
         widget.render = _render
         defaults['widget'] = widget
         choices = [(
@@ -90,8 +90,8 @@ def pre_save_handler(sender, instance, **kwargs):
 
 # ------------------------------------------------------------------------
 def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False,
-        select_field=False, auto_add_admin_field=True,
-        admin_list_display=True):
+              select_field=False, auto_add_admin_field=True,
+              admin_list_display=True):
     """
     tag_model accepts a number of named parameters:
 
@@ -113,7 +113,7 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False,
 
     cls.add_to_class(field_name, (
         TagSelectField if select_field else TagField
-        )(field_name.capitalize(), blank=True))
+    )(field_name.capitalize(), blank=True))
     # use another name for the tag descriptor
     # See http://code.google.com/p/django-tagging/issues/detail?id=95 for the
     # reason why

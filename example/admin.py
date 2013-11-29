@@ -10,6 +10,6 @@ class CategoryAdmin(tree_editor.TreeEditor):
     list_filter = ('parent',)
     prepopulated_fields = {
         'slug': ('name',),
-        }
+    }
 
 admin.site.register(Category, CategoryAdmin)

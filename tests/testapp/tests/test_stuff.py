@@ -42,10 +42,14 @@ class ModelsTest(TestCase):
         # Creation should not fail
 
         r = Region('region', 'region title')
-        t = Template('base template', 'base.html', (
-            ('region', 'region title'),
-            Region('region2', 'region2 title'),
-            ))
+        t = Template(
+            'base template',
+            'base.html',
+            (
+                ('region', 'region title'),
+                Region('region2', 'region2 title'),
+            ),
+        )
 
         # I'm not sure whether this test tests anything at all
         self.assertEqual(r.key, t.regions[0].key)
@@ -62,7 +66,8 @@ class UtilsTest(TestCase):
         self.assertEqual(get_object, get_object('feincms.utils.get_object'))
 
     def test_collect_dict_values(self):
-        self.assertEqual({'a': [1, 2], 'b': [3]},
+        self.assertEqual(
+            {'a': [1, 2], 'b': [3]},
             collect_dict_values([('a', 1), ('a', 2), ('b', 3)]))
 
     def test_shorten_string(self):
@@ -96,8 +101,9 @@ ExampleCMSBase.register_regions(
 class ExampleCMSBase2(Base):
         pass
 
-ExampleCMSBase2.register_regions(('region', 'region title'),
-        ('region2', 'region2 title'))
+ExampleCMSBase2.register_regions(
+    ('region', 'region title'),
+    ('region2', 'region2 title'))
 
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
@@ -109,7 +115,10 @@ Page.register_response_processor(
 
 class BlogTestCase(TestCase):
     def setUp(self):
-        u = User(username='test', is_active=True, is_staff=True,
+        u = User(
+            username='test',
+            is_active=True,
+            is_staff=True,
             is_superuser=True)
         u.set_password('test')
         u.save()

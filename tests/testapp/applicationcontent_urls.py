@@ -41,7 +41,8 @@ def inheritance20(request):
     return 'inheritance20.html', {'from_appcontent': 42}
 
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^$', module_root, name='ac_module_root'),
     url(r'^args_test/([^/]+)/([^/]+)/$', args_test, name='ac_args_test'),
     url(r'^kwargs_test/(?P<kwarg2>[^/]+)/(?P<kwarg1>[^/]+)/$', args_test),

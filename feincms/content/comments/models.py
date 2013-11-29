@@ -25,7 +25,8 @@ from feincms.admin.item_editor import ItemEditorForm
 
 # ------------------------------------------------------------------------
 class CommentsContent(models.Model):
-    comments_enabled = models.BooleanField(_('enabled'), default=True,
+    comments_enabled = models.BooleanField(
+        _('enabled'), default=True,
         help_text=_('New comments may be added'))
 
     class Meta:
@@ -57,7 +58,7 @@ class CommentsContent(models.Model):
                                 else _('not public')),
                             'app': comments_model._meta.app_label,
                             'model': comments_model._meta.module_name,
-                            }
+                        }
                     f.help_text = r
 
         cls.feincms_item_editor_form = CommentContentAdminForm
@@ -91,17 +92,19 @@ class CommentsContent(models.Model):
         if f is None:
             f = comments.get_form()(comment_page)
 
-        self.rendered_output = render_to_string([
-            'content/comments/%s.html' % parent_type,
-            'content/comments/default-site.html',
-            'content/comments/default.html',
+        self.rendered_output = render_to_string(
+            [
+                'content/comments/%s.html' % parent_type,
+                'content/comments/default-site.html',
+                'content/comments/default.html',
             ],
             RequestContext(request, {
                 'content': self,
                 'feincms_page': self.parent,
                 'parent': comment_page,
                 'form': f,
-                }))
+            }),
+        )
 
     def render(self, **kwargs):
         return getattr(self, 'rendered_output', u'')

@@ -27,4 +27,4 @@ class Extension(extensions.Extension):
         modeladmin.add_extension_options(_('Search engine optimization'), {
             'fields': ('meta_keywords', 'meta_description'),
             'classes': ('collapse',),
-            })
+        })

@@ -19,4 +19,4 @@ class Extension(extensions.Extension):
         modeladmin.add_extension_options(_('Featured'), {
             'fields': ('featured',),
             'classes': ('collapse',),
-            })
+        })

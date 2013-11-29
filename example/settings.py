@@ -89,6 +89,7 @@ FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS = True
 
 from feincms.content.application.models import app_reverse
 ABSOLUTE_URL_OVERRIDES = {
-    'blog.entry': lambda entry: app_reverse('blog_entry_detail', 'blog_urls',
+    'blog.entry': lambda entry: app_reverse(
+        'blog_entry_detail', 'blog_urls',
         args=(entry.id,)),
 }

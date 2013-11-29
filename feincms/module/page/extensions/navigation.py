@@ -19,6 +19,8 @@ from feincms._internal import monkeypatch_method
 class TypeRegistryMetaClass(type):
     """
     You can access the list of subclasses as <BaseClass>.types
+
+    TODO use NavigationExtension.__subclasses__() instead?
     """
 
     def __init__(cls, name, bases, attrs):
@@ -105,7 +107,8 @@ class Extension(extensions.Extension):
     ident = 'navigation'  # TODO actually use this
 
     def handle_model(self):
-        self.model.add_to_class('navigation_extension',
+        self.model.add_to_class(
+            'navigation_extension',
             models.CharField(
                 _('navigation extension'),
                 choices=navigation_extension_choices(),
@@ -129,4 +132,4 @@ class Extension(extensions.Extension):
         modeladmin.add_extension_options(_('Navigation extension'), {
             'fields': ('navigation_extension',),
             'classes': ('collapse',),
-            })
+        })

@@ -26,4 +26,4 @@ class Extension(extensions.Extension):
         modeladmin.add_extension_options(_('Related pages'), {
             'fields': ('related_pages',),
             'classes': ('collapse',),
-            })
+        })

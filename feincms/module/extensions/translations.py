@@ -132,17 +132,24 @@ class Extension(extensions.Extension):
     def handle_model(self):
         cls = self.model
 
-        cls.add_to_class('language', models.CharField(_('language'),
-            max_length=10,
-            choices=django_settings.LANGUAGES,
-            default=django_settings.LANGUAGES[0][0]))
-        cls.add_to_class('translation_of', models.ForeignKey('self',
-            blank=True, null=True, verbose_name=_('translation of'),
-            related_name='translations',
-            limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
-            help_text=_(
-                'Leave this empty for entries in the primary language.')
-            ))
+        cls.add_to_class(
+            'language',
+            models.CharField(
+                _('language'),
+                max_length=10,
+                choices=django_settings.LANGUAGES,
+                default=django_settings.LANGUAGES[0][0]))
+        cls.add_to_class(
+            'translation_of',
+            models.ForeignKey(
+                'self',
+                blank=True, null=True, verbose_name=_('translation of'),
+                related_name='translations',
+                limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
+                help_text=_(
+                    'Leave this empty for entries in the primary language.'),
+            )
+        )
 
         if hasattr(cls, 'register_request_processor'):
             if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
@@ -235,7 +242,9 @@ class Extension(extensions.Extension):
                             page.id,
                             key,
                             _('Create translation'),
-                            key.upper()))
+                            key.upper()
+                        )
+                    )
 
             return u' | '.join(links)
 

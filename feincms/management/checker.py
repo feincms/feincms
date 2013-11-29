@@ -28,9 +28,11 @@ def check_database_schema(cls, module_name):
 
         cursor = connection.cursor()
 
-        existing_columns = [row[0] for row in
-            connection.introspection.get_table_description(
-                cursor, cls._meta.db_table)]
+        existing_columns = [
+            row[0]
+            for row in connection.introspection.get_table_description(
+                cursor, cls._meta.db_table)
+        ]
 
         missing_columns = []
 
@@ -53,7 +55,7 @@ def check_database_schema(cls, module_name):
                 ' ' * (25 - len(field.column)),
                 u'%s.%s' % (
                     field.__class__.__module__, field.__class__.__name__),
-                ))
+            ))
 
         print(style.NOTICE(
             '\nPlease consult the output of `python manage.py sql %s` to'

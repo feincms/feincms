@@ -112,13 +112,17 @@ def lookup_translations(language_code=None):
 
         candidates = list(
             instance_dict.values()
-            )[0].translations.model._default_manager.all()
+        )[0].translations.model._default_manager.all()
 
         if instance_dict:
             _process(candidates, instance_dict, lang_, 'iexact')
         if instance_dict:
-            _process(candidates, instance_dict, settings.LANGUAGE_CODE,
-                'istartswith')
+            _process(
+                candidates,
+                instance_dict,
+                settings.LANGUAGE_CODE,
+                'istartswith',
+            )
         if instance_dict:
             for candidate in candidates.filter(
                     parent__pk__in=instance_dict.keys()):
@@ -137,12 +141,13 @@ def lookup_translations(language_code=None):
         del instance_dict[candidate.parent_id]
 
     def _process(candidates, instance_dict, lang_, op_):
-        for candidate in candidates.filter(
-                Q(parent__pk__in=instance_dict.keys()),
-                Q(**{'language_code__' + op_: lang_})
-                | Q(**{'language_code__' + op_: short_language_code(lang_)})
-                ).order_by('-language_code'):
+        candidates = candidates.filter(
+            Q(parent__pk__in=instance_dict.keys()),
+            Q(**{'language_code__' + op_: lang_})
+            | Q(**{'language_code__' + op_: short_language_code(lang_)})
+        ).order_by('-language_code')
 
+        for candidate in candidates:
             # The candidate's parent might already have a translation by now
             if candidate.parent_id in instance_dict:
                 _found(instance_dict, candidate)
@@ -176,14 +181,14 @@ class TranslatedObjectMixin(object):
             return queryset.filter(
                 Q(language_code__iexact=language_code)
                 | Q(language_code__iexact=short_language_code(language_code))
-                ).order_by('-language_code')[0]
+            ).order_by('-language_code')[0]
         except IndexError:
             try:
                 return queryset.filter(
                     Q(language_code__istartswith=settings.LANGUAGE_CODE)
                     | Q(language_code__istartswith=short_language_code(
                         settings.LANGUAGE_CODE))
-                    ).order_by('-language_code')[0]
+                ).order_by('-language_code')[0]
             except IndexError:
                 try:
                     return queryset.all()[0]
@@ -195,12 +200,16 @@ class TranslatedObjectMixin(object):
         can purge on-demand"""
         if not language_code:
             language_code = translation.get_language()
-        return (('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
-                '-'.join(['%s' % s for s in (
+        return (
+            ('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0))
+            + '-'.join(
+                ['%s' % s for s in (
                     self._meta.db_table,
                     self.id,
                     language_code,
-                    )]))
+                )]
+            )
+        )
 
     def get_translation(self, language_code=None):
         if not language_code:
@@ -267,9 +276,10 @@ def Translation(model):
 
     class Inner(models.Model):
         parent = models.ForeignKey(model, related_name='translations')
-        language_code = models.CharField(_('language'), max_length=10,
-                choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
-                editable=len(settings.LANGUAGES) > 1)
+        language_code = models.CharField(
+            _('language'), max_length=10,
+            choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
+            editable=len(settings.LANGUAGES) > 1)
 
         class Meta:
             unique_together = ('parent', 'language_code')

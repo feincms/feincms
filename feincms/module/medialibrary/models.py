@@ -17,8 +17,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
 from feincms.models import ExtensionsMixin
-from feincms.translations import (TranslatedObjectMixin, Translation,
-    TranslatedObjectManager)
+from feincms.translations import (
+    TranslatedObjectMixin, Translation, TranslatedObjectManager)
 
 from . import logger
 
@@ -43,7 +43,8 @@ class Category(models.Model):
     """
 
     title = models.CharField(_('title'), max_length=200)
-    parent = models.ForeignKey('self', blank=True, null=True,
+    parent = models.ForeignKey(
+        'self', blank=True, null=True,
         related_name='children', limit_choices_to={'parent__isnull': True},
         verbose_name=_('parent'))
 
@@ -89,18 +90,20 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     mechanism.
     """
 
-    file = models.FileField(_('file'), max_length=255,
+    file = models.FileField(
+        _('file'), max_length=255,
         upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO)
-    type = models.CharField(_('file type'), max_length=12, editable=False,
+    type = models.CharField(
+        _('file type'), max_length=12, editable=False,
         choices=())
-    created = models.DateTimeField(_('created'), editable=False,
-        default=timezone.now)
+    created = models.DateTimeField(
+        _('created'), editable=False, default=timezone.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
-    file_size = models.IntegerField(_("file size"), blank=True, null=True,
-        editable=False)
+    file_size = models.IntegerField(
+        _("file size"), blank=True, null=True, editable=False)
 
-    categories = models.ManyToManyField(Category, verbose_name=_('categories'),
-                                        blank=True, null=True)
+    categories = models.ManyToManyField(
+        Category, verbose_name=_('categories'), blank=True, null=True)
     categories.category_filter = True
 
     class Meta:
@@ -232,7 +235,7 @@ MediaFileBase.register_filetypes(
     ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(
         r'\.pptx?$', re.IGNORECASE).search(f)),
     ('other', _('Binary'), lambda f: True),  # Must be last
-    )
+)
 
 
 # ------------------------------------------------------------------------

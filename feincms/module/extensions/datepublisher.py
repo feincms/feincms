@@ -49,8 +49,9 @@ def granular_now(n=None):
     """
     if n is None:
         n = timezone.now()
-    return timezone.make_aware(datetime(n.year, n.month, n.day, n.hour,
-                                        (n.minute // 5) * 5), n.tzinfo)
+    return timezone.make_aware(
+        datetime(n.year, n.month, n.day, n.hour, (n.minute // 5) * 5),
+        n.tzinfo)
 
 
 # ------------------------------------------------------------------------
@@ -78,10 +79,13 @@ def datepublisher_response_processor(page, request, response):
 # ------------------------------------------------------------------------
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('publication_date',
+        self.model.add_to_class(
+            'publication_date',
             models.DateTimeField(_('publication date'), default=granular_now))
-        self.model.add_to_class('publication_end_date',
-            models.DateTimeField(_('publication end date'),
+        self.model.add_to_class(
+            'publication_end_date',
+            models.DateTimeField(
+                _('publication end date'),
                 blank=True, null=True,
                 help_text=_(
                     'Leave empty if the entry should stay active forever.')))
@@ -105,7 +109,8 @@ class Extension(extensions.Extension):
                 Q(publication_date__lte=granular_now) &
                  (Q(publication_end_date__isnull=True) |
                   Q(publication_end_date__gt=granular_now)),
-                key='datepublisher')
+                key='datepublisher',
+            )
 
         # Processor to patch up response headers for expiry date
         self.model.register_response_processor(
@@ -116,7 +121,7 @@ class Extension(extensions.Extension):
             return u'%s &ndash; %s' % (
                 format_date(obj.publication_date),
                 format_date(obj.publication_end_date, '&infin;'),
-                )
+            )
         datepublisher_admin.allow_tags = True
         datepublisher_admin.short_description = _('visible from - to')
 
@@ -131,6 +136,6 @@ class Extension(extensions.Extension):
 
         modeladmin.add_extension_options(_('Date-based publishing'), {
             'fields': ['publication_date', 'publication_end_date'],
-            })
+        })
 
 # ------------------------------------------------------------------------

@@ -46,7 +46,8 @@ def feincms_render_region(context, feincms_object, region, request=None):
     """
     {% feincms_render_region feincms_page "main" request %}
     """
-    return u''.join(_render_content(content, request=request, context=context)
+    return u''.join(
+        _render_content(content, request=request, context=context)
         for content in getattr(feincms_object.content, region))
 
 
@@ -68,14 +69,14 @@ def feincms_frontend_editing(cms_obj, request):
             and request.COOKIES.get('frontend_editing') == 'True'):
         context = template.RequestContext(request, {
             "feincms_page": cms_obj,
-            })
+        })
         return render_to_string('admin/feincms/fe_tools.html', context)
 
     return u''
 
 
 @register.inclusion_tag('admin/feincms/content_type_selection_widget.html',
-    takes_context=True)
+                        takes_context=True)
 def show_content_type_selection_widget(context, region):
     """
     {% show_content_type_selection_widget region %}

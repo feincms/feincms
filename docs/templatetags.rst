@@ -199,6 +199,31 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
                href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
        {% endfor %}
 
+.. function:: page_is_active:
+
+   The advantage of ``page_is_active`` compared to the previous tags is that
+   it also nows how to handle page pretenders. If ``entry`` is a page
+   pretender, the template tag returns ``True`` if the current path starts
+   with the page pretender's path. If ``entry`` is a regular page, the logic
+   is the same as in ``is_equal_or_parent_of``.
+
+   ::
+
+       {% load feincms_page_tags %}
+       {% feincms_nav feincms_page level=1 as main %}
+       {% for entry in main %}
+           {% page_is_active entry as is_active %}
+           <a {% if is_active %}class="mark"{% endif %}
+               href="{{ entry.get_absolute_url }}">{{ entry.title }}</a>
+       {% endfor %}
+
+   The values of ``feincms_page`` (the current page) and the current path
+   are pulled out of the context variables ``feincms_page`` and ``request``.
+   They can also be overriden if you so require::
+
+       {% page_is_active entry feincms_page=something path=request.path %}
+
+
 Application content template tags
 =================================
 

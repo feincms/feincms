@@ -192,12 +192,11 @@ class ContentObjectMixin(TemplateResponseMixin):
                     and extra_context.get('extra_path', '/') != '/'
                     # XXX Already inside application content.  I'm not sure
                     # whether this fix is really correct...
-                    and not extra_context.get('app_config')
-                    ):
+                    and not extra_context.get('app_config')):
                 raise Http404('Not found (extra_path %r on %r)' % (
                     extra_context.get('extra_path', '/'),
                     self.object,
-                    ))
+                ))
 
     def finalize_content_types(self, response):
         """

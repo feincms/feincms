@@ -451,18 +451,6 @@ Section content
 Combined rich text editor, title and media file.
 
 
-Table content
--------------
-.. module:: feincms.content.table.models
-.. class:: TableContent()
-
-The default configuration of the rich text editor does not include table
-controls. Because of this, you can use this content type to provide HTML
-table editing support. The data is stored in JSON format, additional
-formatters can be easily written which produce the definitive HTML
-representation of the table.
-
-
 Template content
 ----------------
 .. module:: feincms.content.template.models
@@ -473,9 +461,9 @@ This content type scans all template directories for templates below
 ``content/template/`` and allows the user to select one of these templates
 which are then rendered using the Django template language.
 
-Note that some file extensions are automatically filtered so they won't
-appear in the list, namely anything that matches *.~ and *.tmp will be
-ignored.
+Note that some file extensions are automatically filtered so they will not
+appear in the list, namely any filenames ending with ``.~`` or ``.tmp`` will
+be ignored.
 
 Also note that a template content is not sandboxed or specially rendered.
 Whatever a django template can do a TemplateContent snippet can do too,

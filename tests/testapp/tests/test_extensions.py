@@ -38,7 +38,7 @@ class TranslationTestCase(TestCase):
             'site': self.site_1,
             'in_navigation': False,
             'active': False,
-            }
+        }
         defaults.update(kwargs)
         return Page.objects.create(
             title=title,

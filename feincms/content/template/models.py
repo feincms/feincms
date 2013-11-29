@@ -1,15 +1,15 @@
 import os
 
 from django.db import models
-from django.template.loader import (Context, Template, TemplateDoesNotExist,
-    find_template_loader)
+from django.template.loader import (
+    Context, Template, TemplateDoesNotExist, find_template_loader)
 from django.utils.translation import ugettext_lazy as _
 
 
 DEFAULT_TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    )
+)
 
 
 class TemplateChoices(object):
@@ -53,7 +53,8 @@ class TemplateContent(models.Model):
 
     @classmethod
     def initialize_type(cls, TEMPLATE_LOADERS=DEFAULT_TEMPLATE_LOADERS):
-        cls.template_loaders = [find_template_loader(loader)
+        cls.template_loaders = [
+            find_template_loader(loader)
             for loader in TEMPLATE_LOADERS if loader]
 
         cls.add_to_class('filename', models.CharField(
