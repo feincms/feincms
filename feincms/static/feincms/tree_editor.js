@@ -387,6 +387,7 @@ feincms.jQuery(function($){
             case 37: // left
             case 39: // right
                 expandOrCollapseNode($(this).find('.page_marker'));
+                $('#result_list tbody').recolorRows();
                 break;
             case 13: // return
                 where_to = extractItemId($('span', this).attr('id'));
