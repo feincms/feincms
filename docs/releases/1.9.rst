@@ -12,6 +12,26 @@ Extension fieldsets are now presented using a tabbed interface in the item
 editor as well to raise their visibility.
 
 
+A better way to mark pages as active in the navigation
+======================================================
+
+The new template tag ``{% page_is_active %}`` knows how to handle regular
+pages and also page pretenders from navigation extensions.
+
+The following template snippet shows the recommended method of marking
+pages as active::
+
+    {% feincms_nav feincms_page level=1 as toplevel %}
+    <ul>
+    {% for page in toplevel %}
+        {% page_is_active page as is_active %}
+        <li {% if is_active %}class="active"{% endif %}>
+            <a href="{{ page.get_navigation_url }}">{{ page.title }}</a>
+        <li>
+    {% endfor %}
+    </ul>
+
+
 Backwards-incompatible changes
 ==============================
 
