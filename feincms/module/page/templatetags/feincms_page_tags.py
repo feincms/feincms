@@ -12,6 +12,7 @@ from django.db.models.loading import get_model
 from django.http import HttpRequest
 
 from feincms import settings as feincms_settings
+from feincms.module.page.extensions.navigation import PagePretender
 from feincms.utils.templatetags import (
     SimpleNodeWithVarAndArgs,
     do_simple_node_with_var_and_args_helper,
@@ -491,3 +492,28 @@ def siblings_along_path_to(page_list, page2):
     return ()
 
 # ------------------------------------------------------------------------
+
+@register.assignment_tag(takes_context=True)
+def page_is_active(context, page, feincms_page=None, path=None):
+    """
+    Usage example::
+
+        {% feincms_nav feincms_page level=1 as toplevel %}
+        <ul>
+        {% for page in toplevel %}
+            {% page_is_active page as is_active %}
+            <li {% if is_active %}class="active"{% endif %}>
+                <a href="{{ page.get_navigation_url }}">{{ page.title }}</a>
+            <li>
+        {% endfor %}
+        </ul>
+    """
+    if isinstance(page, PagePretender):
+        if path is None:
+            path = context['request'].path_info
+        return page.get_absolute_url().startswith(path)
+
+    else:
+        if feincms_page is None:
+            feincms_page = context['feincms_page']
+        return _is_equal_or_parent_of(page, feincms_page)
