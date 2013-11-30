@@ -73,7 +73,7 @@ def translation_set_language(request, select_language):
             request.session['django_language'] = select_language
     elif request.method == 'GET' and not fallback:
         # No session is active. We need to set a cookie for the language
-        # so that it persists when the user changes his location to somewhere
+        # so that it persists when users change their location to somewhere
         # not under the control of the CMS.
         # Only do this when request method is GET (mainly, do not abort
         # POST requests)
@@ -97,7 +97,7 @@ def translations_request_processor_explicit(page, request):
     if 'set_language' in request.GET:
         desired_language = request.GET['set_language']
     # ...or the user already has explicitely set a language, bail out and
-    # don't change it for him behind her back
+    # don't change it for them behind their back
     elif user_has_language_set(request):
         return
 
