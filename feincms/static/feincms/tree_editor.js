@@ -307,21 +307,6 @@ feincms.jQuery(function($){
         doToggle(itemId, show);
     }
 
-    $.extend($.fn.feinTreeToggleItem = function() {
-        $(this).click(function(event){
-            expandOrCollapseNode($(this));
-            $('#result_list tbody').recolorRows();
-            if(event.stopPropagation) {
-                event.stopPropagation();
-            } else {
-                event.cancelBubble = true;
-            }
-
-            return false;
-        });
-        return this;
-    });
-
     // bind the collapse all children event
     $.extend($.fn.bindCollapseTreeEvent = function() {
         $(this).click(function() {
@@ -399,11 +384,22 @@ feincms.jQuery(function($){
     }
 
     // fire!
-    var rlist = $("#result_list");
+    var rlist = $("#result_list"),
+        rlist_tbody = rlist.find('tbody');
+
     if($('tbody tr', rlist).length > 1) {
         rlist.hide();
-        $('tbody', rlist).feinTree();
-        $('span.page_marker', rlist).feinTreeToggleItem();
+        rlist_tbody.feinTree();
+
+        rlist.on('click', 'span.page_marker', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            expandOrCollapseNode($(this));
+
+            rlist_tbody.recolorRows();
+        });
+
         $('#collapse_entire_tree').bindCollapseTreeEvent();
         $('#open_entire_tree').bindOpenTreeEvent();
 
