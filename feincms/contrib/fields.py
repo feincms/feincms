@@ -9,7 +9,9 @@ from django.utils import six
 
 class JSONFormField(forms.fields.CharField):
     def clean(self, value, *args, **kwargs):
-        if value:
+        # It seems that sometimes we receive dict objects here, not only
+        # strings. Partial form validation maybe?
+        if value and not isinstance(value, dict):
             try:
                 # Run the value through JSON so we can normalize formatting
                 # and at least learn about malformed data:
