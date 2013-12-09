@@ -43,9 +43,3 @@ class Command(NoArgsCommand):
                         )
 
                 print(parents)
-
-                        #for i5 in range(5):
-                            #parents[4] = Page.objects.create(
-                                #title='Page %s.%s.%s.%s.%s' % (i1, i2, i3, i4, i5),
-                                #parent=parents[3],
-                            #)
