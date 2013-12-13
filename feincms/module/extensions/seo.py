@@ -22,7 +22,10 @@ class Extension(extensions.Extension):
                         'Text longer than 140 characters is truncated.')))
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.search_fields.extend(['meta_keywords', 'meta_description'])
+        modeladmin.extend_list(
+            'search_fields',
+            ['meta_keywords', 'meta_description'],
+        )
 
         modeladmin.add_extension_options(_('Search engine optimization'), {
             'fields': ('meta_keywords', 'meta_description'),

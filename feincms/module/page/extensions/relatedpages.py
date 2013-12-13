@@ -19,9 +19,7 @@ class Extension(extensions.Extension):
                 'Select pages that should be listed as related content.')))
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.filter_horizontal = list(
-            getattr(modeladmin, 'filter_horizontal', ()))
-        modeladmin.filter_horizontal.append('related_pages')
+        modeladmin.extend_list('filter_horizontal', ['related_pages'])
 
         modeladmin.add_extension_options(_('Related pages'), {
             'fields': ('related_pages',),

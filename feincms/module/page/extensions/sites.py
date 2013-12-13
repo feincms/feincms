@@ -21,6 +21,6 @@ class Extension(extensions.Extension):
         PageManager.add_to_active_filters(current_site, key='current_site')
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.list_display.extend(['site'])
-        modeladmin.list_filter.extend(['site'])
+        modeladmin.extend_list('list_display', ['site'])
+        modeladmin.extend_list('list_filter', ['site'])
         modeladmin.add_extension_options('site')

@@ -32,5 +32,5 @@ class Extension(extensions.Extension):
             return self._content_proxy
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.raw_id_fields.append('symlinked_page')
+        modeladmin.extend_list('raw_id_fields', ['symlinked_page'])
         modeladmin.add_extension_options('symlinked_page')

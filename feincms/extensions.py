@@ -124,6 +124,11 @@ class ExtensionModelAdmin(admin.ModelAdmin):
                 # XXX This is really messy.
                 self.fieldsets[0][1]['fields'].extend(f)
 
+    def extend_list(self, attribute, iterable):
+        extended = list(getattr(self, attribute, ()))
+        extended.extend(iterable)
+        setattr(self, attribute, extended)
+
 
 def prefetch_modeladmin_get_queryset(modeladmin, *lookups):
     """

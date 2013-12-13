@@ -256,10 +256,11 @@ class Extension(extensions.Extension):
         if hasattr(modeladmin, 'add_extension_options'):
             modeladmin.add_extension_options('language', 'translation_of')
 
-        modeladmin.list_display.extend(
-            ['language', 'available_translations_admin'])
-        modeladmin.list_filter.extend(['language'])
-
-        modeladmin.raw_id_fields.append('translation_of')
+        modeladmin.extend_list(
+            'list_display',
+            ['language', 'available_translations_admin'],
+        )
+        modeladmin.extend_list('list_filter', ['language'])
+        modeladmin.extend_list('raw_id_fields', ['translation_of'])
 
 # ------------------------------------------------------------------------
