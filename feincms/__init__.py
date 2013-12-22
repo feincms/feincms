@@ -74,7 +74,8 @@ def ensure_completely_loaded(force=False):
     # get_models cache again here. If we don't do this, Django 1.5 chokes on
     # a model validation error (Django 1.4 doesn't exhibit this problem).
     # See Issue #323 on github.
-    loading.cache._get_models_cache.clear()
+    if hasattr(loading, 'cache'):
+        loading.cache._get_models_cache.clear()
 
     if loading.app_cache_ready():
         COMPLETELY_LOADED = True
