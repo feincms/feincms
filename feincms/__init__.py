@@ -79,6 +79,11 @@ def ensure_completely_loaded(force=False):
     if hasattr(loading, 'cache'):
         loading.cache._get_models_cache.clear()
 
-    if loading.app_cache_ready():
-        COMPLETELY_LOADED = True
+    if hasattr(loading.app_cache_ready, '__call__'):
+        if loading.app_cache_ready():
+            COMPLETELY_LOADED = True
+    else:
+        # TODO Django 1.7 offers us better ways of handling this, maybe.
+        if loading.app_cache_ready:
+            COMPLETELY_LOADED = True
     return True

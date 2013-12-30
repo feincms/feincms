@@ -154,6 +154,11 @@ class CMSBaseTest(TestCase):
         objects added after the last content type time missed the boat. Now we
         delete the cache so hopefully _fill_*_cache* won't be called until all
         related models have been defined.
+
+        TODO that's a dumb test, we should try being less dynamic instead of
+        supporting all types of ad-hoc definitions of models etc.
+
+        It also fails on Django 1.7 since the introduction of django.apps
         """
         class Attachment(models.Model):
             base = models.ForeignKey(
