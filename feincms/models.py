@@ -652,8 +652,14 @@ def create_base_model(inherit_from=models.Model):
             # Next name clash test. Happens when the same content type is
             # created for two Base subclasses living in the same Django
             # application (github issues #73 and #150)
-            other_model = get_model(cls._meta.app_label, class_name)
-            if other_model:
+            try:
+                other_model = get_model(cls._meta.app_label, class_name)
+                if other_model is None:
+                    # Django 1.6 and earlier
+                    raise LookupError
+            except LookupError:
+                pass
+            else:
                 warnings.warn(
                     'It seems that the content type %s exists twice in %s.'
                     ' Use the class_name argument to create_content_type to'
