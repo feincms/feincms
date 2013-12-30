@@ -102,9 +102,9 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             if not page.template.enforce_leaf:
                 actions.insert(
                     0,
-                    u'<a href="add/?parent=%s" title="%s">'
-                    u'<img src="%s" alt="%s" />'
-                    u'</a>' % (
+                    '<a href="add/?parent=%s" title="%s">'
+                    '<img src="%s" alt="%s" />'
+                    '</a>' % (
                         page.pk,
                         _('Add child page'),
                         static('feincms/img/icon_addlink.gif'),
@@ -113,9 +113,9 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 )
         actions.insert(
             0,
-            u'<a href="%s" title="%s">'
-            u'<img src="%s" alt="%s" />'
-            u'</a>' % (
+            '<a href="%s" title="%s">'
+            '<img src="%s" alt="%s" />'
+            '</a>' % (
                 preview_url,
                 _('View on site'),
                 static('feincms/img/selector-search.gif'),

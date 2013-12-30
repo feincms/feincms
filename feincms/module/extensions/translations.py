@@ -81,7 +81,7 @@ def translation_set_language(request, select_language):
         # POST requests)
         response = HttpResponseRedirect(request.get_full_path())
         response.set_cookie(
-            django_settings.LANGUAGE_COOKIE_NAME, select_language)
+            str(django_settings.LANGUAGE_COOKIE_NAME), select_language)
         return response
 
 
@@ -235,12 +235,12 @@ class Extension(extensions.Extension):
                     continue
 
                 if key in translations:
-                    links.append(u'<a href="%s/" title="%s">%s</a>' % (
+                    links.append('<a href="%s/" title="%s">%s</a>' % (
                         translations[key], _('Edit translation'), key.upper()))
                 else:
                     links.append(
-                        u'<a style="color:#baa" href="add/?translation_of='
-                        u'%s&amp;language=%s" title="%s">%s</a>' % (
+                        '<a style="color:#baa" href="add/?translation_of='
+                        '%s&amp;language=%s" title="%s">%s</a>' % (
                             page.id,
                             key,
                             _('Create translation'),
@@ -248,7 +248,7 @@ class Extension(extensions.Extension):
                         )
                     )
 
-            return u' | '.join(links)
+            return ' | '.join(links)
 
         available_translations_admin.allow_tags = True
         available_translations_admin.short_description = _('translations')

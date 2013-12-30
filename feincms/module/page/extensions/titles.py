@@ -54,7 +54,7 @@ class Extension(extensions.Extension):
 
         @monkeypatch_property(self.model)
         def content_subtitle(self):
-            return u'\n'.join(self._content_title.splitlines()[1:])
+            return '\n'.join(self._content_title.splitlines()[1:])
 
     def handle_modeladmin(self, modeladmin):
         modeladmin.add_extension_options(_('Titles'), {

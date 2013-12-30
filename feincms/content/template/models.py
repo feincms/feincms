@@ -89,4 +89,4 @@ class TemplateContent(models.Model):
 
             return result
 
-        return u''
+        return ''

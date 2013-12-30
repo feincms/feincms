@@ -336,7 +336,7 @@ class ApplicationContent(models.Model):
                 or mimetype not in ('text/html', 'text/plain'))
 
     def render(self, **kwargs):
-        return getattr(self, 'rendered_result', u'')
+        return getattr(self, 'rendered_result', '')
 
     def finalize(self, request, response):
         headers = getattr(self, 'rendered_headers', None)

@@ -35,7 +35,7 @@ def feincms_render_region_appcontent(page, region, request):
             {% feincms_render_region_appcontent feincms_page "main" request %}
         {% endif %}
     """
-    return u''.join(
+    return ''.join(
         _render_content(content, request=request)
         for content in page.content.all_of_type(ApplicationContent)
         if content.region == region)
@@ -68,7 +68,7 @@ class AppReverseNode(template.Node):
 
         if self.asvar:
             context[self.asvar] = url
-            return u''
+            return ''
         else:
             return url
 

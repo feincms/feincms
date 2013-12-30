@@ -80,4 +80,4 @@ class ContactFormContent(models.Model):
             context_instance=RequestContext(request))
 
     def render(self, **kwargs):
-        return getattr(self, 'rendered_output', u'')
+        return getattr(self, 'rendered_output', '')

@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import, unicode_literals
+
 import doctest
 
 from django.contrib.auth.models import User
@@ -72,21 +74,21 @@ class UtilsTest(TestCase):
 
     def test_shorten_string(self):
         string = shorten_string(
-            u"Der Wolf und die Grossmutter assen im Wald zu mittag",
-            15, ellipsis=u"_")
-        self.assertEqual(string, u'Der Wolf und_ag')
+            "Der Wolf und die Grossmutter assen im Wald zu mittag",
+            15, ellipsis="_")
+        self.assertEqual(string, 'Der Wolf und_ag')
         self.assertEqual(len(string), 15)
 
         string = shorten_string(
-            u"Haenschen-Klein, ging allein, in den tiefen Wald hinein",
+            "Haenschen-Klein, ging allein, in den tiefen Wald hinein",
             15)
-        self.assertEqual(string, u'Haenschen \u2026 ein')
+        self.assertEqual(string, 'Haenschen \u2026 ein')
         self.assertEqual(len(string), 15)
 
         string = shorten_string(
-            u'Badgerbadgerbadgerbadgerbadger',
-            10, ellipsis=u'-')
-        self.assertEqual(string, u'Badger-ger')
+            'Badgerbadgerbadgerbadgerbadger',
+            10, ellipsis='-')
+        self.assertEqual(string, 'Badger-ger')
         self.assertEqual(len(string), 10)
 
 

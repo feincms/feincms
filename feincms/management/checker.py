@@ -50,10 +50,10 @@ def check_database_schema(cls, module_name):
             ' %s:' % cls._meta.db_table))
 
         for field in missing_columns:
-            print(u'%s:%s%s' % (
+            print('%s:%s%s' % (
                 style.SQL_KEYWORD(field.column),
                 ' ' * (25 - len(field.column)),
-                u'%s.%s' % (
+                '%s.%s' % (
                     field.__class__.__module__, field.__class__.__name__),
             ))
 

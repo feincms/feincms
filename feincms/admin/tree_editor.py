@@ -45,7 +45,7 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
         title = ''
     icon_url = static('feincms/img/icon-%s.gif' % BOOLEAN_MAPPING[field_val])
     return mark_safe(
-        u'<img src="%s" alt="%s" %s/>' % (icon_url, alt_text, title))
+        '<img src="%s" alt="%s" %s/>' % (icon_url, alt_text, title))
 
 
 def _build_tree_structure(queryset):
@@ -105,7 +105,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
     (useful for "disabled and you can't change it" situations).
     """
     if text:
-        text = u'&nbsp;(%s)' % text
+        text = '&nbsp;(%s)' % text
 
     if override is not None:
         a = [django_boolean_icon(override, text), text]
@@ -121,7 +121,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
 
     a.insert(0, '<div id="wrap_%s_%d">' % (attr, item.pk))
     a.append('</div>')
-    return u''.join(a)
+    return ''.join(a)
 
 
 # ------------------------------------------------------------------------
@@ -287,7 +287,7 @@ class TreeEditor(ExtensionModelAdmin):
         if hasattr(item, 'short_title') and callable(item.short_title):
             r += escape(item.short_title())
         else:
-            r += escape(u'%s' % item)
+            r += escape('%s' % item)
 #        r += '</span>'
         return mark_safe(r)
     indented_short_title.short_description = _('title')
@@ -490,7 +490,7 @@ class TreeEditor(ExtensionModelAdmin):
             try:
                 tree_manager.move_node(cut_item, pasted_on, position)
             except InvalidMove as e:
-                self.message_user(request, u'%s' % e)
+                self.message_user(request, '%s' % e)
                 return HttpResponse('FAIL')
 
             # Ensure that model save methods have been run (required to
@@ -513,7 +513,7 @@ class TreeEditor(ExtensionModelAdmin):
         return []
 
     def actions_column(self, instance):
-        return u' '.join(self._actions_column(instance))
+        return ' '.join(self._actions_column(instance))
     actions_column.allow_tags = True
     actions_column.short_description = _('actions')
 

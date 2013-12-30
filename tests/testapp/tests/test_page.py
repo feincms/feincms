@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from datetime import datetime, timedelta
 import os
@@ -170,7 +170,7 @@ class PagesTestCase(TestCase):
                 slug='test-page'),
             '/admin/page/page/')
         self.assertEqual(Page.objects.count(), 1)
-        self.assertContains(self.client.get('/admin/page/page/'), u'…')
+        self.assertContains(self.client.get('/admin/page/page/'), '…')
 
     def test_03_item_editor(self):
         self.login()
@@ -410,8 +410,8 @@ class PagesTestCase(TestCase):
             page2.content.main[0].__class__.__name__, 'RawContent')
         self.assertEqual(
             force_text(page2.content.main[0]),
-            u'RawContent<pk=1, parent=Page<pk=1, Test page>, region=main,'
-            u' ordering=0>')
+            'RawContent<pk=1, parent=Page<pk=1, Test page>, region=main,'
+            ' ordering=0>')
 
         self.assertEqual(len(page2.content.main), 1)
         self.assertEqual(len(page2.content.sidebar), 0)
@@ -596,7 +596,7 @@ class PagesTestCase(TestCase):
                 0, lambda: page2.content.sidebar[0].render())
 
         self.assertEqual(
-            u''.join(c.render() for c in page2.content.main),
+            ''.join(c.render() for c in page2.content.main),
             'Something elseWhatever')
         self.assertEqual(page2.content.sidebar[0].render(), 'Something')
 
@@ -662,7 +662,7 @@ class PagesTestCase(TestCase):
         }).status_code, 200)
 
         self.assertEqual(page.content.main[0].render(), 'blablabla')
-        self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), u'')
+        self.assertEqual(feincms_tags.feincms_frontend_editing(page, {}), '')
 
         request = Empty()
         request.COOKIES = {'frontend_editing': "True"}
@@ -1028,7 +1028,7 @@ class PagesTestCase(TestCase):
         ).strip(),
         self.assertEqual(
             data,
-            (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',),
+            ('1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',),
             "Original navigation")
 
         p.active = False
@@ -1038,7 +1038,7 @@ class PagesTestCase(TestCase):
         ).strip(),
         self.assertEqual(
             data,
-            (u'1,2,3,4,6,7,8,10,11,12,13,14',),
+            ('1,2,3,4,6,7,8,10,11,12,13,14',),
             "Navigation after disabling intermediate page")
 
         # Same test with feincms_nav
@@ -1052,7 +1052,7 @@ class PagesTestCase(TestCase):
         ).strip(),
         self.assertEqual(
             data,
-            (u'1,2,3,4,6,7,8,10,11,12,13,14',),
+            ('1,2,3,4,6,7,8,10,11,12,13,14',),
             "Navigation after disabling intermediate page")
 
         p.active = True
@@ -1063,7 +1063,7 @@ class PagesTestCase(TestCase):
         ).strip(),
         self.assertEqual(
             data,
-            (u'1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',),
+            ('1,2,3,4,6,7,8,10,11,12,13,14,15,16,18',),
             "Original navigation")
 
     def test_18_default_render_method(self):
@@ -1077,7 +1077,7 @@ class PagesTestCase(TestCase):
                 abstract = True
 
             def render_main(self):
-                return u'Hello'
+                return 'Hello'
 
         # do not register this model in the internal FeinCMS bookkeeping
         # structures

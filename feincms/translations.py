@@ -55,9 +55,9 @@ def short_language_code(code=None):
     Extract the short language code from its argument (or return the default
     language code).
 
-    >>> short_language_code('de')
+    >>> str(short_language_code('de'))
     'de'
-    >>> short_language_code('de-at')
+    >>> str(short_language_code('de-at'))
     'de'
     >>> short_language_code() == short_language_code(settings.LANGUAGE_CODE)
     True
@@ -253,7 +253,7 @@ class TranslatedObjectMixin(object):
             return self.__class__.__name__
 
         if translation:
-            return u'%s' % translation
+            return '%s' % translation
 
         return self.__class__.__name__
 

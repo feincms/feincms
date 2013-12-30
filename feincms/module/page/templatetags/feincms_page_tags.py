@@ -35,7 +35,7 @@ def _get_page_model():
 # TODO: Belongs in some utility module
 def format_exception(e):
     top = traceback.extract_tb(sys.exc_info()[2])[-1]
-    return u"'%s' in %s line %d" % (e, top[0], top[1])
+    return "'%s' in %s line %d" % (e, top[0], top[1])
 
 
 # ------------------------------------------------------------------------
@@ -214,7 +214,7 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
         # Preserve the trailing path when switching languages if extra_path
         # exists (this is mostly the case when we are working inside an
         # ApplicationContent-managed page subtree)
-        trailing_path = u''
+        trailing_path = ''
         request = args.get('request', None)
         if request:
             # Trailing path without first slash

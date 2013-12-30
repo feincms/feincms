@@ -120,7 +120,7 @@ class Extension(extensions.Extension):
 
     def handle_modeladmin(self, modeladmin):
         def datepublisher_admin(self, obj):
-            return u'%s &ndash; %s' % (
+            return '%s &ndash; %s' % (
                 format_date(obj.publication_date),
                 format_date(obj.publication_end_date, '&infin;'),
             )

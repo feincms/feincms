@@ -88,7 +88,7 @@ class ItemEditor(ExtensionModelAdmin):
             inline_instances.append(inline_instance)
 
     def can_add_content(self, request, content_type):
-        perm = u'.'.join((
+        perm = '.'.join((
             content_type._meta.app_label,
             content_type._meta.get_add_permission()))
         return request.user.has_perm(perm)

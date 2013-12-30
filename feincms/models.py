@@ -176,7 +176,7 @@ class ContentProxy(object):
             args.extend(regions * len(self.item._feincms_content_types))
 
         tmpl.append('GROUP BY region')
-        tmpl = u' '.join(tmpl)
+        tmpl = ' '.join(tmpl)
 
         sql = ' UNION '.join([
             tmpl % (idx, cls._meta.db_table, pk)
@@ -457,8 +457,8 @@ def create_base_model(inherit_from=models.Model):
 
             def __str__(self):
                 return (
-                    u'%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
-                    u' ordering=%d>') % (
+                    '%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
+                    ' ordering=%d>') % (
                     self.__class__.__name__,
                     self.pk,
                     self.parent.__class__.__name__,
@@ -508,7 +508,7 @@ def create_base_model(inherit_from=models.Model):
                 content.)
                 """
 
-                return u'%s-%s-%s-%s-%s' % (
+                return '%s-%s-%s-%s-%s' % (
                     cls._meta.app_label,
                     cls._meta.module_name,
                     self.__class__.__name__.lower(),
@@ -691,7 +691,7 @@ def create_base_model(inherit_from=models.Model):
             }
 
             new_type = type(
-                class_name,
+                str(class_name),
                 (model, feincms_content_base,),
                 attrs,
             )

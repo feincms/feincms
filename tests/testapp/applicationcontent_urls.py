@@ -2,6 +2,8 @@
 This is a dummy module used to test the ApplicationContent
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf.urls import patterns, url
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
@@ -14,7 +16,7 @@ def module_root(request):
 
 
 def args_test(request, kwarg1, kwarg2):
-    return HttpResponse(u'%s-%s' % (kwarg1, kwarg2))
+    return HttpResponse('%s-%s' % (kwarg1, kwarg2))
 
 
 def full_reverse_test(request):

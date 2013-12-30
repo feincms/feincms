@@ -55,8 +55,8 @@ class Extension(extensions.Extension):
         def available_translations_admin(self):
             translations = self.available_translations()
 
-            return u', '.join(
-                u'<a href="%s/">%s</a>' % (
+            return ', '.join(
+                '<a href="%s/">%s</a>' % (
                     page.id,
                     page.language.upper()
                 ) for page in translations
