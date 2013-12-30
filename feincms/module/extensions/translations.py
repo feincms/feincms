@@ -15,6 +15,8 @@ will be activated per user or session even for non-FeinCMS managed views such
 as Django's administration tool.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 # ------------------------------------------------------------------------
 import logging
 

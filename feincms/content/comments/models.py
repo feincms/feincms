@@ -12,6 +12,8 @@ Embed a comment list and comment form anywhere. Uses the standard
 ``django.contrib.comments`` application.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib import comments
 from django.contrib.comments.views.comments import post_comment
 from django.db import models

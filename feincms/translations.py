@@ -28,6 +28,8 @@ Print all the titles of all news entries which have an english translation::
         print news.translation.title
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings
 from django.contrib import admin
 from django.core.cache import cache
@@ -320,4 +322,5 @@ def admin_translationinline(model, inline_class=admin.StackedInline, **kwargs):
     kwargs['extra'] = 1
     kwargs['max_num'] = len(settings.LANGUAGES)
     kwargs['model'] = model
-    return type(model.__class__.__name__ + 'Inline', (inline_class,), kwargs)
+    return type(
+        str(model.__class__.__name__ + 'Inline'), (inline_class,), kwargs)

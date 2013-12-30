@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import, unicode_literals
+
 import copy
 import logging
 import re
@@ -122,7 +124,7 @@ class ItemEditor(ExtensionModelAdmin):
 
             name = '%sFeinCMSInline' % content_type.__name__
             # TODO: We generate a new class every time. Is that really wanted?
-            inline_class = type(name, (inline,), attrs)
+            inline_class = type(str(name), (inline,), attrs)
             inlines.append(inline_class)
         return inlines
 

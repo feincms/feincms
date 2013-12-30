@@ -6,6 +6,8 @@ blog entry in the primary language (the first language in settings.LANGUAGES),
 thereby enabling deeplinks between translated blog entries.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _

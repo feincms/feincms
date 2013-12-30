@@ -4,6 +4,8 @@ differing titles in the navigation and in the <title>-tag.  This extension lets
 you do that.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 

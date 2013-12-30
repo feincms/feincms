@@ -7,6 +7,8 @@ which processes, modifies or adds subnavigation entries. The bundled
 be they real Page instances or extended navigation entries.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _

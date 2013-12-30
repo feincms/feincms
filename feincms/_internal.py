@@ -4,6 +4,8 @@ These are internal helpers. Do not rely on their presence.
 http://mail.python.org/pipermail/python-dev/2008-January/076194.html
 """
 
+from __future__ import absolute_import, unicode_literals
+
 
 def monkeypatch_method(cls):
     """

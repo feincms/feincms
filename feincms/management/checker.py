@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.core.management.color import color_style
 from django.db import connection

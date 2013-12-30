@@ -5,6 +5,8 @@ All models defined here are abstract, which means no tables are created in
 the feincms\_ namespace.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from functools import reduce
 import sys
 import operator
@@ -548,7 +550,7 @@ def create_base_model(inherit_from=models.Model):
                     RuntimeWarning)
 
             cls._feincms_content_model = python_2_unicode_compatible(
-                type(name, (models.Model,), attrs))
+                type(str(name), (models.Model,), attrs))
 
             # list of concrete content types
             cls._feincms_content_types = []

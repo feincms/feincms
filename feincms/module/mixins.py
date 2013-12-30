@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django.http import Http404
 from django.template import Template
 from django.utils.datastructures import SortedDict

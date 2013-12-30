@@ -2,6 +2,8 @@
 Base types for extensions refactor
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from functools import wraps
 import inspect
 
