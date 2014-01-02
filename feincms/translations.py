@@ -28,6 +28,8 @@ Print all the titles of all news entries which have an english translation::
         print news.translation.title
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings
 from django.contrib import admin
 from django.core.cache import cache
@@ -53,9 +55,9 @@ def short_language_code(code=None):
     Extract the short language code from its argument (or return the default
     language code).
 
-    >>> short_language_code('de')
+    >>> str(short_language_code('de'))
     'de'
-    >>> short_language_code('de-at')
+    >>> str(short_language_code('de-at'))
     'de'
     >>> short_language_code() == short_language_code(settings.LANGUAGE_CODE)
     True
@@ -251,7 +253,7 @@ class TranslatedObjectMixin(object):
             return self.__class__.__name__
 
         if translation:
-            return u'%s' % translation
+            return '%s' % translation
 
         return self.__class__.__name__
 
@@ -320,4 +322,5 @@ def admin_translationinline(model, inline_class=admin.StackedInline, **kwargs):
     kwargs['extra'] = 1
     kwargs['max_num'] = len(settings.LANGUAGES)
     kwargs['model'] = model
-    return type(model.__class__.__name__ + 'Inline', (inline_class,), kwargs)
+    return type(
+        str(model.__class__.__name__ + 'Inline'), (inline_class,), kwargs)

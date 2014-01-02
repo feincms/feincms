@@ -6,6 +6,8 @@ blog entry in the primary language (the first language in settings.LANGUAGES),
 thereby enabling deeplinks between translated blog entries.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -53,8 +55,8 @@ class Extension(extensions.Extension):
         def available_translations_admin(self):
             translations = self.available_translations()
 
-            return u', '.join(
-                u'<a href="%s/">%s</a>' % (
+            return ', '.join(
+                '<a href="%s/">%s</a>' % (
                     page.id,
                     page.language.upper()
                 ) for page in translations

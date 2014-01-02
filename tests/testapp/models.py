@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django import forms
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -131,6 +133,6 @@ class Category(MPTTModel):
 
 # add m2m field to entry so it shows up in entry admin
 Entry.add_to_class(
-    'categories',
+    str('categories'),
     models.ManyToManyField(Category, blank=True, null=True))
 EntryAdmin.list_filter += ('categories',)

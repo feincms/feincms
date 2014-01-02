@@ -5,6 +5,8 @@ You can provide your own comment form by passing an additional
 ``form=YourClass`` argument to the ``create_content_type`` call.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django import forms
 from django.core.mail import send_mail
 from django.db import models
@@ -78,4 +80,4 @@ class ContactFormContent(models.Model):
             context_instance=RequestContext(request))
 
     def render(self, **kwargs):
-        return getattr(self, 'rendered_output', u'')
+        return getattr(self, 'rendered_output', '')

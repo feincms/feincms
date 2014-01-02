@@ -17,6 +17,8 @@ types present in each page at run time, save the current state at
 saving time, thus saving at least one DB query on page delivery.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import class_prepared, post_save, pre_save
 from django.utils.translation import ugettext_lazy as _

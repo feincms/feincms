@@ -12,6 +12,8 @@ Embed a comment list and comment form anywhere. Uses the standard
 ``django.contrib.comments`` application.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib import comments
 from django.contrib.comments.views.comments import post_comment
 from django.db import models
@@ -43,7 +45,7 @@ class CommentsContent(models.Model):
                 if parent is not None:
                     f = self.fields['comments_enabled']
                     r = f.help_text
-                    r += u'<hr />'
+                    r += '<hr />'
                     comments_model = comments.get_model()
                     for c in comments_model.objects.for_model(
                             parent.parent).order_by('-submit_date'):
@@ -80,7 +82,7 @@ class CommentsContent(models.Model):
             # works for now.
 
             #extra = request._feincms_extra_context.get('page_extra_path', ())
-            #if len(extra) > 0 and extra[0] == u"post-comment":
+            #if len(extra) > 0 and extra[0] == "post-comment":
 
             r = post_comment(request, next=comment_page.get_absolute_url())
 
@@ -107,4 +109,4 @@ class CommentsContent(models.Model):
         )
 
     def render(self, **kwargs):
-        return getattr(self, 'rendered_output', u'')
+        return getattr(self, 'rendered_output', '')

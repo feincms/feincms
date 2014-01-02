@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django import template
 
 
@@ -19,7 +21,7 @@ class FragmentNode(template.Node):
         if not hasattr(request, '_feincms_fragments'):
             request._feincms_fragments = {}
 
-        old = request._feincms_fragments.get(identifier, u'')
+        old = request._feincms_fragments.get(identifier, '')
 
         if self.mode == 'prepend':
             request._feincms_fragments[identifier] = rendered + old
@@ -28,7 +30,7 @@ class FragmentNode(template.Node):
         else:  # append
             request._feincms_fragments[identifier] = old + rendered
 
-        return u''
+        return ''
 
 
 @register.tag
@@ -67,11 +69,11 @@ class GetFragmentNode(template.Node):
         try:
             value = request._feincms_fragments[fragment]
         except (AttributeError, KeyError):
-            value = u''
+            value = ''
 
         if self.as_var:
             context[self.as_var] = value
-            return u''
+            return ''
         return value
 
 

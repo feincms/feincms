@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import os
 import re
@@ -59,7 +59,7 @@ class Category(models.Model):
 
     def __str__(self):
         if self.parent_id:
-            return u'%s - %s' % (self.parent.title, self.title)
+            return '%s - %s' % (self.parent.title, self.title)
 
         return self.title
 
@@ -152,7 +152,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             pass
 
         if trans:
-            trans = u'%s' % trans
+            trans = '%s' % trans
             if trans.strip():
                 return trans
         return os.path.basename(self.file.name)
@@ -163,15 +163,15 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     def determine_file_type(self, name):
         """
         >>> t = MediaFileBase()
-        >>> t.determine_file_type('foobar.jpg')
+        >>> str(t.determine_file_type('foobar.jpg'))
         'image'
-        >>> t.determine_file_type('foobar.PDF')
+        >>> str(t.determine_file_type('foobar.PDF'))
         'pdf'
-        >>> t.determine_file_type('foobar.jpg.pdf')
+        >>> str(t.determine_file_type('foobar.jpg.pdf'))
         'pdf'
-        >>> t.determine_file_type('foobar.jgp')
+        >>> str(t.determine_file_type('foobar.jgp'))
         'other'
-        >>> t.determine_file_type('foobar-jpg')
+        >>> str(t.determine_file_type('foobar-jpg'))
         'other'
         """
         for type_key, type_name, type_test in self.filetypes:

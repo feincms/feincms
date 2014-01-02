@@ -5,6 +5,8 @@ All models defined here are abstract, which means no tables are created in
 the feincms\_ namespace.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from functools import reduce
 import sys
 import operator
@@ -174,7 +176,7 @@ class ContentProxy(object):
             args.extend(regions * len(self.item._feincms_content_types))
 
         tmpl.append('GROUP BY region')
-        tmpl = u' '.join(tmpl)
+        tmpl = ' '.join(tmpl)
 
         sql = ' UNION '.join([
             tmpl % (idx, cls._meta.db_table, pk)
@@ -455,8 +457,8 @@ def create_base_model(inherit_from=models.Model):
 
             def __str__(self):
                 return (
-                    u'%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
-                    u' ordering=%d>') % (
+                    '%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
+                    ' ordering=%d>') % (
                     self.__class__.__name__,
                     self.pk,
                     self.parent.__class__.__name__,
@@ -506,7 +508,7 @@ def create_base_model(inherit_from=models.Model):
                 content.)
                 """
 
-                return u'%s-%s-%s-%s-%s' % (
+                return '%s-%s-%s-%s-%s' % (
                     cls._meta.app_label,
                     cls._meta.module_name,
                     self.__class__.__name__.lower(),
@@ -548,7 +550,7 @@ def create_base_model(inherit_from=models.Model):
                     RuntimeWarning)
 
             cls._feincms_content_model = python_2_unicode_compatible(
-                type(name, (models.Model,), attrs))
+                type(str(name), (models.Model,), attrs))
 
             # list of concrete content types
             cls._feincms_content_types = []
@@ -650,8 +652,14 @@ def create_base_model(inherit_from=models.Model):
             # Next name clash test. Happens when the same content type is
             # created for two Base subclasses living in the same Django
             # application (github issues #73 and #150)
-            other_model = get_model(cls._meta.app_label, class_name)
-            if other_model:
+            try:
+                other_model = get_model(cls._meta.app_label, class_name)
+                if other_model is None:
+                    # Django 1.6 and earlier
+                    raise LookupError
+            except LookupError:
+                pass
+            else:
                 warnings.warn(
                     'It seems that the content type %s exists twice in %s.'
                     ' Use the class_name argument to create_content_type to'
@@ -689,7 +697,7 @@ def create_base_model(inherit_from=models.Model):
             }
 
             new_type = type(
-                class_name,
+                str(class_name),
                 (model, feincms_content_base,),
                 attrs,
             )

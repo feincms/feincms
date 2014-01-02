@@ -2,6 +2,8 @@
 Third-party application inclusion support.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from email.utils import parsedate
 from time import mktime
 from random import SystemRandom
@@ -334,7 +336,7 @@ class ApplicationContent(models.Model):
                 or mimetype not in ('text/html', 'text/plain'))
 
     def render(self, **kwargs):
-        return getattr(self, 'rendered_result', u'')
+        return getattr(self, 'rendered_result', '')
 
     def finalize(self, request, response):
         headers = getattr(self, 'rendered_headers', None)

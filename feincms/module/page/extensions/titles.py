@@ -4,6 +4,8 @@ differing titles in the navigation and in the <title>-tag.  This extension lets
 you do that.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -52,7 +54,7 @@ class Extension(extensions.Extension):
 
         @monkeypatch_property(self.model)
         def content_subtitle(self):
-            return u'\n'.join(self._content_title.splitlines()[1:])
+            return '\n'.join(self._content_title.splitlines()[1:])
 
     def handle_modeladmin(self, modeladmin):
         modeladmin.add_extension_options(_('Titles'), {

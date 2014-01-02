@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import os
 
@@ -146,7 +146,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
     def admin_thumbnail(self, obj):
         image = admin_thumbnail(obj)
         if image:
-            return mark_safe(u"""
+            return mark_safe("""
                 <a href="%(url)s" target="_blank">
                     <img src="%(image)s" alt="" />
                 </a>""" % {
@@ -196,9 +196,9 @@ class MediaFileAdmin(ExtensionModelAdmin):
         JS, like for example a TinyMCE connector shim.
         """
         return (
-            u'<input type="hidden" class="medialibrary_file_path"'
-            u' name="_media_path_%d" value="%s" id="_refkey_%d" />'
-            u' %s <br />%s, %s'
+            '<input type="hidden" class="medialibrary_file_path"'
+            ' name="_media_path_%d" value="%s" id="_refkey_%d" />'
+            ' %s <br />%s, %s'
         ) % (
             obj.id,
             obj.file.name,

@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re
 
@@ -31,13 +31,13 @@ class RedirectToWidget(ForeignKeyRawIdWidget):
             model = get_model(matches['app_label'], matches['module_name'])
             try:
                 instance = model._default_manager.get(pk=int(matches['pk']))
-                return u'&nbsp;<strong>%s (%s)</strong>' % (
+                return '&nbsp;<strong>%s (%s)</strong>' % (
                     instance, instance.get_absolute_url())
 
             except model.DoesNotExist:
                 pass
 
-        return u''
+        return ''
 
 
 # ------------------------------------------------------------------------
@@ -134,7 +134,7 @@ class PageAdminForm(MPTTAdminForm):
                 if template.preview_image:
                     choices.append((
                         template.key,
-                        mark_safe(u'<img src="%s" alt="%s" /> %s' % (
+                        mark_safe('<img src="%s" alt="%s" /> %s' % (
                             template.preview_image,
                             template.key,
                             template.title,

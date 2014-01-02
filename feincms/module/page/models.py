@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import, unicode_literals
+
 import re
 
 from django.core.cache import cache as django_cache
@@ -54,7 +56,7 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
 
         try:
             page = self.active().get(
-                _cached_url=u'/%s/' % stripped if stripped else '/')
+                _cached_url='/%s/' % stripped if stripped else '/')
 
             if not page.are_ancestors_active():
                 raise self.model.DoesNotExist('Parents are inactive.')
@@ -256,9 +258,9 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if self.override_url:
             self._cached_url = self.override_url
         elif self.is_root_node():
-            self._cached_url = u'/%s/' % self.slug
+            self._cached_url = '/%s/' % self.slug
         else:
-            self._cached_url = u'%s%s/' % (self.parent._cached_url, self.slug)
+            self._cached_url = '%s%s/' % (self.parent._cached_url, self.slug)
 
         cached_page_urls[self.id] = self._cached_url
         super(BasePage, self).save(*args, **kwargs)
@@ -281,7 +283,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                 page._cached_url = page.override_url
             else:
                 # cannot be root node by definition
-                page._cached_url = u'%s%s/' % (
+                page._cached_url = '%s%s/' % (
                     cached_page_urls[page.parent_id],
                     page.slug)
 
@@ -293,8 +295,8 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if not settings.FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED:
             if self.template.singleton:
                 raise PermissionDenied(_(
-                    u'This %(page_class)s uses a singleton template, and '
-                    u'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False' % {
+                    'This %(page_class)s uses a singleton template, and '
+                    'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False' % {
                         'page_class': self._meta.verbose_name}))
         super(BasePage, self).delete(*args, **kwargs)
         self.invalidate_cache()
@@ -369,7 +371,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         """
 
         if not self.redirect_to:
-            return u''
+            return ''
 
         # It might be an identifier for a different object
         match = REDIRECT_TO_RE.match(self.redirect_to)

@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 import re
 import sys
@@ -58,9 +58,9 @@ def frontendediting_request_processor(page, request):
             enable_fe = False
 
         if enable_fe:
-            response.set_cookie('frontend_editing', enable_fe)
+            response.set_cookie(str('frontend_editing'), enable_fe)
         else:
-            response.delete_cookie('frontend_editing')
+            response.delete_cookie(str('frontend_editing'))
 
     # Redirect to cleanup URLs
     return response

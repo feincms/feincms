@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.core.management.color import color_style
 from django.db import connection
@@ -50,10 +50,10 @@ def check_database_schema(cls, module_name):
             ' %s:' % cls._meta.db_table))
 
         for field in missing_columns:
-            print(u'%s:%s%s' % (
+            print('%s:%s%s' % (
                 style.SQL_KEYWORD(field.column),
                 ' ' * (25 - len(field.column)),
-                u'%s.%s' % (
+                '%s.%s' % (
                     field.__class__.__module__, field.__class__.__name__),
             ))
 

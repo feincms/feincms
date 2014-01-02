@@ -4,6 +4,8 @@
 # Authors: Marinho Brandao <marinho at gmail.com>
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib.admin.filters import (
     FieldListFilter, ChoicesFieldListFilter)
 from django.utils import six

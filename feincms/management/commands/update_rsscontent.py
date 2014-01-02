@@ -7,6 +7,8 @@ content type is used -- the content type itself does not update the
 feed by itself.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.core.management.base import BaseCommand
 
 from feincms.content.rss.models import RSSContent
