@@ -39,7 +39,10 @@ by adding the following lines somewhere into your project, for example in a
     from feincms.content.richtext.models import RichTextContent
     from feincms.content.medialibrary.models import MediaFileContent
 
-    Page.register_extensions('datepublisher', 'translations') # Example set of extensions
+    Page.register_extensions(
+    	'feincms.module.extensions.datepublisher', 
+    	'feincms.module.extensions.translations'
+    	) # Example set of extensions
 
     Page.register_templates({
         'title': _('Standard template'),
