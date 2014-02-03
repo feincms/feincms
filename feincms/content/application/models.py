@@ -269,7 +269,7 @@ class ApplicationContent(models.Model):
         try:
             fn, args, kwargs = resolve(path, urlconf_path)
         except (ValueError, Resolver404):
-            raise Resolver404('Not found (resolving %r in %r failed)' % (
+            raise Resolver404(str('Not found (resolving %r in %r failed)') % (
                 path, urlconf_path))
 
         # Variables from the ApplicationContent parameters are added to request

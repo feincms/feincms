@@ -195,7 +195,7 @@ class ContentObjectMixin(TemplateResponseMixin):
                     # XXX Already inside application content.  I'm not sure
                     # whether this fix is really correct...
                     and not extra_context.get('app_config')):
-                raise Http404('Not found (extra_path %r on %r)' % (
+                raise Http404(str('Not found (extra_path %r on %r)') % (
                     extra_context.get('extra_path', '/'),
                     self.object,
                 ))
