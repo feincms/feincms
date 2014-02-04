@@ -211,9 +211,8 @@ class ApplicationContent(models.Model):
                             get_fields(self, *args, **kwargs))
 
                     for k, v in self.custom_fields.items():
+                        v.initial = self.instance.parameters.get(k)
                         self.fields[k] = v
-                        if k in self.instance.parameters:
-                            self.fields[k].initial = self.instance.parameters[k]
 
             def save(self, commit=True, *args, **kwargs):
                 # Django ModelForms return the model instance from save. We'll
