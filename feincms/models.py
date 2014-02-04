@@ -194,7 +194,7 @@ class ContentProxy(object):
 
         return _c
 
-    def _popuplate_content_type_caches(self, types):
+    def _populate_content_type_caches(self, types):
         """
         Populate internal caches for all content types passed
         """
@@ -230,7 +230,7 @@ class ContentProxy(object):
         """
 
         if 'regions' not in self._cache:
-            self._popuplate_content_type_caches(
+            self._populate_content_type_caches(
                 self.item._feincms_content_types)
             contents = {}
             for cls, content_list in self._cache['cts'].items():
@@ -260,7 +260,7 @@ class ContentProxy(object):
         content_list = []
         if not hasattr(type_or_tuple, '__iter__'):
             type_or_tuple = (type_or_tuple,)
-        self._popuplate_content_type_caches(type_or_tuple)
+        self._populate_content_type_caches(type_or_tuple)
 
         for type, contents in self._cache['cts'].items():
             if any(issubclass(type, t) for t in type_or_tuple):
