@@ -211,6 +211,7 @@ class ApplicationContent(models.Model):
                             get_fields(self, *args, **kwargs))
 
                     for k, v in self.custom_fields.items():
+                        v.initial = self.instance.parameters.get(k)
                         self.fields[k] = v
 
             def save(self, commit=True, *args, **kwargs):

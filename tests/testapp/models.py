@@ -53,6 +53,7 @@ def get_admin_fields(form, *args, **kwargs):
                 'Exclude everything other than the application\'s content'
                 ' when rendering subpages.'),
         ),
+        'custom_field': forms.CharField(),
     }
 
 
