@@ -431,6 +431,25 @@ Additional arguments for :func:`~feincms.models.Base.create_content_type`:
   which are not explicitly whitelisted. The default is ``False``.
 
 
+Other rich text libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Other rich text widgets can be wired up for the RichTextContent.
+You would have to write two functions: One which is called when 
+rich text editing functionality is added ("richify"), and another 
+one which is called when functionality is removed ("poorify"). 
+The second is necessary because rich text editors do not like 
+being dragged; when dragging a rich text content type, it is first 
+poorified and then richified again as soon as the content type has 
+been dropped into its final position.
+
+To perform those operations
+  * Add a function adding the new rich text editor to
+    ``contentblock_init_handlers`` and to ``contentblock_move_handlers.richify``
+  * Add a function removing the rich text editor to 
+    ``contentblock_move_handlers.poorify``
+
+
 RSS feeds
 ---------
 .. module:: feincms.content.rss.models
