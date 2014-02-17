@@ -224,6 +224,13 @@ class ContentProxy(object):
                 else:
                     self._cache['cts'][cls] = []
 
+        # share this content proxy object between all content items
+        # so that each can use obj.parent.content to determine its
+        # relationship to its siblings, etc.
+        for cls, objects in self._cache['cts'].items():
+            for obj in objects:
+                setattr(obj.parent, '_content_proxy', self)
+
     def _fetch_regions(self):
         """
         Fetches all content types and group content types into regions
