@@ -2,6 +2,8 @@
 Add a many-to-many relationship field to relate this page to other pages.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -19,11 +21,9 @@ class Extension(extensions.Extension):
                 'Select pages that should be listed as related content.')))
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.filter_horizontal = list(
-            getattr(modeladmin, 'filter_horizontal', ()))
-        modeladmin.filter_horizontal.append('related_pages')
+        modeladmin.extend_list('filter_horizontal', ['related_pages'])
 
         modeladmin.add_extension_options(_('Related pages'), {
             'fields': ('related_pages',),
             'classes': ('collapse',),
-            })
+        })

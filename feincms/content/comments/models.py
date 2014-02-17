@@ -12,6 +12,8 @@ Embed a comment list and comment form anywhere. Uses the standard
 ``django.contrib.comments`` application.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib import comments
 from django.contrib.comments.views.comments import post_comment
 from django.db import models
@@ -25,7 +27,8 @@ from feincms.admin.item_editor import ItemEditorForm
 
 # ------------------------------------------------------------------------
 class CommentsContent(models.Model):
-    comments_enabled = models.BooleanField(_('enabled'), default=True,
+    comments_enabled = models.BooleanField(
+        _('enabled'), default=True,
         help_text=_('New comments may be added'))
 
     class Meta:
@@ -42,7 +45,7 @@ class CommentsContent(models.Model):
                 if parent is not None:
                     f = self.fields['comments_enabled']
                     r = f.help_text
-                    r += u'<hr />'
+                    r += '<hr />'
                     comments_model = comments.get_model()
                     for c in comments_model.objects.for_model(
                             parent.parent).order_by('-submit_date'):
@@ -57,7 +60,7 @@ class CommentsContent(models.Model):
                                 else _('not public')),
                             'app': comments_model._meta.app_label,
                             'model': comments_model._meta.module_name,
-                            }
+                        }
                     f.help_text = r
 
         cls.feincms_item_editor_form = CommentContentAdminForm
@@ -79,7 +82,7 @@ class CommentsContent(models.Model):
             # works for now.
 
             #extra = request._feincms_extra_context.get('page_extra_path', ())
-            #if len(extra) > 0 and extra[0] == u"post-comment":
+            #if len(extra) > 0 and extra[0] == "post-comment":
 
             r = post_comment(request, next=comment_page.get_absolute_url())
 
@@ -91,17 +94,19 @@ class CommentsContent(models.Model):
         if f is None:
             f = comments.get_form()(comment_page)
 
-        self.rendered_output = render_to_string([
-            'content/comments/%s.html' % parent_type,
-            'content/comments/default-site.html',
-            'content/comments/default.html',
+        self.rendered_output = render_to_string(
+            [
+                'content/comments/%s.html' % parent_type,
+                'content/comments/default-site.html',
+                'content/comments/default.html',
             ],
             RequestContext(request, {
                 'content': self,
                 'feincms_page': self.parent,
                 'parent': comment_page,
                 'form': f,
-                }))
+            }),
+        )
 
     def render(self, **kwargs):
-        return getattr(self, 'rendered_output', u'')
+        return getattr(self, 'rendered_output', '')

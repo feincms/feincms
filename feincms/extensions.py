@@ -2,6 +2,8 @@
 Base types for extensions refactor
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from functools import wraps
 import inspect
 
@@ -123,6 +125,11 @@ class ExtensionModelAdmin(admin.ModelAdmin):
                 # Fall back to first fieldset if second does not exist
                 # XXX This is really messy.
                 self.fieldsets[0][1]['fields'].extend(f)
+
+    def extend_list(self, attribute, iterable):
+        extended = list(getattr(self, attribute, ()))
+        extended.extend(iterable)
+        setattr(self, attribute, extended)
 
 
 def prefetch_modeladmin_get_queryset(modeladmin, *lookups):

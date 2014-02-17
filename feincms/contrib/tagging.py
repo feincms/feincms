@@ -8,7 +8,7 @@
 #    tagging.tag_model(Page)
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
@@ -66,8 +66,8 @@ class TagSelectField(TagField):
 
         def _render(name, value, attrs=None, *args, **kwargs):
             value = parse_tag_input(value)
-            return type(widget).render(widget, name, value, attrs,
-                *args, **kwargs)
+            return type(widget).render(
+                widget, name, value, attrs, *args, **kwargs)
         widget.render = _render
         defaults['widget'] = widget
         choices = [(
@@ -90,8 +90,8 @@ def pre_save_handler(sender, instance, **kwargs):
 
 # ------------------------------------------------------------------------
 def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False,
-        select_field=False, auto_add_admin_field=True,
-        admin_list_display=True):
+              select_field=False, auto_add_admin_field=True,
+              admin_list_display=True):
     """
     tag_model accepts a number of named parameters:
 
@@ -102,7 +102,7 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False,
     sort_tags   Boolean, defaults to False. If set to True, a pre_save
                 handler will be inserted to sort the tag field alphabetically.
                 This is useful in case you want a canonical representation
-                for a tag collection, as when you're presenting a list of
+                for a tag collection, as when yo're presenting a list of
                 tag combinations (e.g. in an admin filter list).
     select_field If True, show a multi select instead of the standard
                 CharField for tag entry.
@@ -113,7 +113,7 @@ def tag_model(cls, admin_cls=None, field_name='tags', sort_tags=False,
 
     cls.add_to_class(field_name, (
         TagSelectField if select_field else TagField
-        )(field_name.capitalize(), blank=True))
+    )(field_name.capitalize(), blank=True))
     # use another name for the tag descriptor
     # See http://code.google.com/p/django-tagging/issues/detail?id=95 for the
     # reason why

@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 import re
 import sys
@@ -28,15 +28,18 @@ def extra_context_request_processor(page, request):
         # XXX This variable name isn't accurate anymore.
         'in_appcontent_subpage': False,
         'extra_path': '/',
-        })
+    })
 
     url = page.get_absolute_url()
     if request.path != url:
         request._feincms_extra_context.update({
             'in_appcontent_subpage': True,
-            'extra_path': re.sub('^' + re.escape(url.rstrip('/')), '',
-                request.path),
-            })
+            'extra_path': re.sub(
+                '^' + re.escape(url.rstrip('/')),
+                '',
+                request.path,
+            ),
+        })
 
 
 def frontendediting_request_processor(page, request):
@@ -55,9 +58,9 @@ def frontendediting_request_processor(page, request):
             enable_fe = False
 
         if enable_fe:
-            response.set_cookie('frontend_editing', enable_fe)
+            response.set_cookie(str('frontend_editing'), enable_fe)
         else:
-            response.delete_cookie('frontend_editing')
+            response.delete_cookie(str('frontend_editing'))
 
     # Redirect to cleanup URLs
     return response

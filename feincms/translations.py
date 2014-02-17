@@ -28,6 +28,8 @@ Print all the titles of all news entries which have an english translation::
         print news.translation.title
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings
 from django.contrib import admin
 from django.core.cache import cache
@@ -53,9 +55,9 @@ def short_language_code(code=None):
     Extract the short language code from its argument (or return the default
     language code).
 
-    >>> short_language_code('de')
+    >>> str(short_language_code('de'))
     'de'
-    >>> short_language_code('de-at')
+    >>> str(short_language_code('de-at'))
     'de'
     >>> short_language_code() == short_language_code(settings.LANGUAGE_CODE)
     True
@@ -112,13 +114,17 @@ def lookup_translations(language_code=None):
 
         candidates = list(
             instance_dict.values()
-            )[0].translations.model._default_manager.all()
+        )[0].translations.model._default_manager.all()
 
         if instance_dict:
             _process(candidates, instance_dict, lang_, 'iexact')
         if instance_dict:
-            _process(candidates, instance_dict, settings.LANGUAGE_CODE,
-                'istartswith')
+            _process(
+                candidates,
+                instance_dict,
+                settings.LANGUAGE_CODE,
+                'istartswith',
+            )
         if instance_dict:
             for candidate in candidates.filter(
                     parent__pk__in=instance_dict.keys()):
@@ -137,12 +143,13 @@ def lookup_translations(language_code=None):
         del instance_dict[candidate.parent_id]
 
     def _process(candidates, instance_dict, lang_, op_):
-        for candidate in candidates.filter(
-                Q(parent__pk__in=instance_dict.keys()),
-                Q(**{'language_code__' + op_: lang_})
-                | Q(**{'language_code__' + op_: short_language_code(lang_)})
-                ).order_by('-language_code'):
+        candidates = candidates.filter(
+            Q(parent__pk__in=instance_dict.keys()),
+            Q(**{'language_code__' + op_: lang_})
+            | Q(**{'language_code__' + op_: short_language_code(lang_)})
+        ).order_by('-language_code')
 
+        for candidate in candidates:
             # The candidate's parent might already have a translation by now
             if candidate.parent_id in instance_dict:
                 _found(instance_dict, candidate)
@@ -176,14 +183,14 @@ class TranslatedObjectMixin(object):
             return queryset.filter(
                 Q(language_code__iexact=language_code)
                 | Q(language_code__iexact=short_language_code(language_code))
-                ).order_by('-language_code')[0]
+            ).order_by('-language_code')[0]
         except IndexError:
             try:
                 return queryset.filter(
                     Q(language_code__istartswith=settings.LANGUAGE_CODE)
                     | Q(language_code__istartswith=short_language_code(
                         settings.LANGUAGE_CODE))
-                    ).order_by('-language_code')[0]
+                ).order_by('-language_code')[0]
             except IndexError:
                 try:
                     return queryset.all()[0]
@@ -195,12 +202,16 @@ class TranslatedObjectMixin(object):
         can purge on-demand"""
         if not language_code:
             language_code = translation.get_language()
-        return (('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
-                '-'.join(['%s' % s for s in (
+        return (
+            ('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0))
+            + '-'.join(
+                ['%s' % s for s in (
                     self._meta.db_table,
                     self.id,
                     language_code,
-                    )]))
+                )]
+            )
+        )
 
     def get_translation(self, language_code=None):
         if not language_code:
@@ -242,7 +253,7 @@ class TranslatedObjectMixin(object):
             return self.__class__.__name__
 
         if translation:
-            return u'%s' % translation
+            return '%s' % translation
 
         return self.__class__.__name__
 
@@ -267,9 +278,10 @@ def Translation(model):
 
     class Inner(models.Model):
         parent = models.ForeignKey(model, related_name='translations')
-        language_code = models.CharField(_('language'), max_length=10,
-                choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
-                editable=len(settings.LANGUAGES) > 1)
+        language_code = models.CharField(
+            _('language'), max_length=10,
+            choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
+            editable=len(settings.LANGUAGES) > 1)
 
         class Meta:
             unique_together = ('parent', 'language_code')
@@ -310,4 +322,5 @@ def admin_translationinline(model, inline_class=admin.StackedInline, **kwargs):
     kwargs['extra'] = 1
     kwargs['max_num'] = len(settings.LANGUAGES)
     kwargs['model'] = model
-    return type(model.__class__.__name__ + 'Inline', (inline_class,), kwargs)
+    return type(
+        str(model.__class__.__name__ + 'Inline'), (inline_class,), kwargs)

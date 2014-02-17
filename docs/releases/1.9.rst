@@ -1,12 +1,8 @@
-====================================
-FeinCMS 1.9 release notes (upcoming)
-====================================
+=========================
+FeinCMS 1.9 release notes
+=========================
 
 Welcome to FeinCMS 1.9!
-
-
-Major feature 1
-===============
 
 
 Extensions in the item editor
@@ -16,12 +12,36 @@ Extension fieldsets are now presented using a tabbed interface in the item
 editor as well to raise their visibility.
 
 
+A better way to mark pages as active in the navigation
+======================================================
+
+The new template tag ``{% page_is_active %}`` knows how to handle regular
+pages and also page pretenders from navigation extensions.
+
+The following template snippet shows the recommended method of marking
+pages as active::
+
+    {% feincms_nav feincms_page level=1 as toplevel %}
+    <ul>
+    {% for page in toplevel %}
+        {% page_is_active page as is_active %}
+        <li {% if is_active %}class="active"{% endif %}>
+            <a href="{{ page.get_navigation_url }}">{{ page.title }}</a>
+        <li>
+    {% endfor %}
+    </ul>
+
+
 Backwards-incompatible changes
 ==============================
 
 
 Removal of deprecated features
 ------------------------------
+
+* The table content type has been removed. It has open bugs for more than two
+  years which weren't fixed, and now that we've moved on to newer versions of
+  jQuery, the table content didn't even load.
 
 * All extensions should inherit from ``feincms.extensions.Extension``.
   The support for ``register(cls, admin_cls)``-style functions has been
@@ -48,6 +68,12 @@ Notable features and improvements
 * The bundled versions of jQuery and jQuery UI have been updated to 1.9.1
   and 1.10.3 respectively. Custom confirmation boxes have been removed
   and standard ones are used instead now.
+
+* The diff between 1.8 and 1.9 is large -- most of it because of coding style
+  cleanups. `flake8 <https://pypi.python.org/pypi/flake8>`_ runs should not
+  show any warnings.
+
+* Extension classes can be passed directly to ``register_extensions()`` now.
 
 
 Bugfixes

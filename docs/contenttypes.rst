@@ -431,6 +431,25 @@ Additional arguments for :func:`~feincms.models.Base.create_content_type`:
   which are not explicitly whitelisted. The default is ``False``.
 
 
+Other rich text libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Other rich text widgets can be wired up for the RichTextContent.
+You would have to write two functions: One which is called when 
+rich text editing functionality is added ("richify"), and another 
+one which is called when functionality is removed ("poorify"). 
+The second is necessary because rich text editors do not like 
+being dragged; when dragging a rich text content type, it is first 
+poorified and then richified again as soon as the content type has 
+been dropped into its final position.
+
+To perform those operations
+  * Add a function adding the new rich text editor to
+    ``contentblock_init_handlers`` and to ``contentblock_move_handlers.richify``
+  * Add a function removing the rich text editor to 
+    ``contentblock_move_handlers.poorify``
+
+
 RSS feeds
 ---------
 .. module:: feincms.content.rss.models
@@ -451,18 +470,6 @@ Section content
 Combined rich text editor, title and media file.
 
 
-Table content
--------------
-.. module:: feincms.content.table.models
-.. class:: TableContent()
-
-The default configuration of the rich text editor does not include table
-controls. Because of this, you can use this content type to provide HTML
-table editing support. The data is stored in JSON format, additional
-formatters can be easily written which produce the definitive HTML
-representation of the table.
-
-
 Template content
 ----------------
 .. module:: feincms.content.template.models
@@ -473,9 +480,9 @@ This content type scans all template directories for templates below
 ``content/template/`` and allows the user to select one of these templates
 which are then rendered using the Django template language.
 
-Note that some file extensions are automatically filtered so they won't
-appear in the list, namely anything that matches *.~ and *.tmp will be
-ignored.
+Note that some file extensions are automatically filtered so they will not
+appear in the list, namely any filenames ending with ``.~`` or ``.tmp`` will
+be ignored.
 
 Also note that a template content is not sandboxed or specially rendered.
 Whatever a django template can do a TemplateContent snippet can do too,

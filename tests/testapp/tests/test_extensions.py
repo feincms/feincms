@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
@@ -24,7 +24,7 @@ class TranslationTestCase(TestCase):
 
         # create a bunch of pages
         en = self.create_default_page_set(language='en')
-        de = self.create_default_page_set(language='de', title=u'Testseite')
+        de = self.create_default_page_set(language='de', title='Testseite')
         de.translation_of = en
         de.save()
         de.parent.translation_of = en.parent
@@ -38,7 +38,7 @@ class TranslationTestCase(TestCase):
             'site': self.site_1,
             'in_navigation': False,
             'active': False,
-            }
+        }
         defaults.update(kwargs)
         return Page.objects.create(
             title=title,

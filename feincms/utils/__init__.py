@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import division
+from __future__ import absolute_import, division, unicode_literals
 
 try:
     from hashlib import md5
@@ -64,7 +64,7 @@ def copy_model_instance(obj, exclude=None):
 
 
 # ------------------------------------------------------------------------
-def shorten_string(str, max_length=50, ellipsis=u' … '):
+def shorten_string(str, max_length=50, ellipsis=' … '):
     """
     Shorten a string for display, truncate it intelligently when too long.
     Try to cut it in 2/3 + ellipsis + 1/3 of the original title. Also try to
@@ -116,26 +116,26 @@ def get_singleton(template_key, cls=None, raise_exception=True):
     try:
         model = get_model(*cls.split('.'))
         if not model:
-            raise ImproperlyConfigured(u'Cannot load model "%s"' % cls)
+            raise ImproperlyConfigured('Cannot load model "%s"' % cls)
         try:
             assert model._feincms_templates[template_key].singleton
         except AttributeError as e:
             raise ImproperlyConfigured(
-                u'%r does not seem to be a valid FeinCMS base class (%r)' % (
+                '%r does not seem to be a valid FeinCMS base class (%r)' % (
                     model,
                     e,
                 )
             )
         except KeyError:
             raise ImproperlyConfigured(
-                u'%r is not a registered template for %r!' % (
+                '%r is not a registered template for %r!' % (
                     template_key,
                     model,
                 )
             )
         except AssertionError:
             raise ImproperlyConfigured(
-                u'%r is not a *singleton* template for %r!' % (
+                '%r is not a *singleton* template for %r!' % (
                     template_key,
                     model,
                 )

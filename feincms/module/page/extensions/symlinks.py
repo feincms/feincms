@@ -3,6 +3,8 @@ This introduces a new page type, which has no content of its own but inherits
 all content from the linked page.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -32,5 +34,5 @@ class Extension(extensions.Extension):
             return self._content_proxy
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.raw_id_fields.append('symlinked_page')
+        modeladmin.extend_list('raw_id_fields', ['symlinked_page'])
         modeladmin.add_extension_options('symlinked_page')

@@ -5,6 +5,8 @@ All models defined here are abstract, which means no tables are created in
 the feincms\_ namespace.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from functools import reduce
 import sys
 import operator
@@ -50,8 +52,10 @@ class Region(object):
         of (content type key, beautified content type name) tuples
         """
 
-        return [(ct.__name__.lower(), ct._meta.verbose_name)
-                for ct in self._content_types]
+        return [
+            (ct.__name__.lower(), ct._meta.verbose_name)
+            for ct in self._content_types
+        ]
 
 
 @python_2_unicode_compatible
@@ -62,7 +66,7 @@ class Template(object):
     """
 
     def __init__(self, title, path, regions, key=None, preview_image=None,
-            **kwargs):
+                 **kwargs):
         # The key is what will be stored in the database. If key is undefined
         # use the template path as fallback.
         if not key:
@@ -106,7 +110,7 @@ class ContentProxy(object):
         self.db = item._state.db
         self._cache = {
             'cts': {},
-            }
+        }
 
     def _inherit_from(self):
         """
@@ -163,7 +167,7 @@ class ContentProxy(object):
     def _fetch_content_type_count_helper(self, pk, regions=None):
         tmpl = [
             'SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s'
-            ]
+        ]
         args = []
 
         if regions:
@@ -172,10 +176,12 @@ class ContentProxy(object):
             args.extend(regions * len(self.item._feincms_content_types))
 
         tmpl.append('GROUP BY region')
-        tmpl = u' '.join(tmpl)
+        tmpl = ' '.join(tmpl)
 
-        sql = ' UNION '.join([tmpl % (idx, cls._meta.db_table, pk)
-            for idx, cls in enumerate(self.item._feincms_content_types)])
+        sql = ' UNION '.join([
+            tmpl % (idx, cls._meta.db_table, pk)
+            for idx, cls in enumerate(self.item._feincms_content_types)
+        ])
         sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
 
         cursor = connections[self.db].cursor()
@@ -188,7 +194,7 @@ class ContentProxy(object):
 
         return _c
 
-    def _popuplate_content_type_caches(self, types):
+    def _populate_content_type_caches(self, types):
         """
         Populate internal caches for all content types passed
         """
@@ -199,19 +205,22 @@ class ContentProxy(object):
                 counts_by_type.setdefault(
                     self.item._feincms_content_types[ct_idx],
                     [],
-                    ).append((region, pk))
+                ).append((region, pk))
 
         # Resolve abstract to concrete content types
-        content_types = (cls for cls in self.item._feincms_content_types
-                 if issubclass(cls, tuple(types)))
+        content_types = (
+            cls for cls in self.item._feincms_content_types
+            if issubclass(cls, tuple(types))
+        )
 
         for cls in content_types:
             counts = counts_by_type.get(cls)
             if cls not in self._cache['cts']:
                 if counts:
-                    self._cache['cts'][cls] = list(cls.get_queryset(
-                        reduce(operator.or_, (
-                            Q(region=r[0], parent=r[1]) for r in counts))))
+                    self._cache['cts'][cls] = list(cls.get_queryset(reduce(
+                        operator.or_,
+                        (Q(region=r[0], parent=r[1]) for r in counts)
+                    )))
                 else:
                     self._cache['cts'][cls] = []
 
@@ -221,17 +230,19 @@ class ContentProxy(object):
         """
 
         if 'regions' not in self._cache:
-            self._popuplate_content_type_caches(
+            self._populate_content_type_caches(
                 self.item._feincms_content_types)
             contents = {}
             for cls, content_list in self._cache['cts'].items():
                 for instance in content_list:
                     contents.setdefault(instance.region, []).append(instance)
 
-            self._cache['regions'] = dict((
-                region,
-                sorted(instances, key=lambda c: c.ordering),
-                ) for region, instances in contents.items())
+            self._cache['regions'] = dict(
+                (
+                    region,
+                    sorted(instances, key=lambda c: c.ordering),
+                ) for region, instances in contents.items()
+            )
 
         return self._cache['regions']
 
@@ -249,7 +260,7 @@ class ContentProxy(object):
         content_list = []
         if not hasattr(type_or_tuple, '__iter__'):
             type_or_tuple = (type_or_tuple,)
-        self._popuplate_content_type_caches(type_or_tuple)
+        self._populate_content_type_caches(type_or_tuple)
 
         for type, contents in self._cache['cts'].items():
             if any(issubclass(type, t) for t in type_or_tuple):
@@ -374,9 +385,10 @@ def create_base_model(inherit_from=models.Model):
             try:
                 field = cls._meta.get_field_by_name('template_key')[0]
             except (FieldDoesNotExist, IndexError):
-                cls.add_to_class('template_key',
+                cls.add_to_class(
+                    'template_key',
                     models.CharField(_('template'), max_length=255, choices=())
-                    )
+                )
                 field = cls._meta.get_field_by_name('template_key')[0]
 
                 def _template(self):
@@ -445,8 +457,8 @@ def create_base_model(inherit_from=models.Model):
 
             def __str__(self):
                 return (
-                    u'%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
-                    u' ordering=%d>') % (
+                    '%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
+                    ' ordering=%d>') % (
                     self.__class__.__name__,
                     self.pk,
                     self.parent.__class__.__name__,
@@ -484,7 +496,7 @@ def create_base_model(inherit_from=models.Model):
                         return render_to_string('admin/feincms/fe_box.html', {
                             'content': self.render(**kwargs),
                             'identifier': self.fe_identifier(),
-                            })
+                        })
 
                 return self.render(**kwargs)
 
@@ -496,13 +508,13 @@ def create_base_model(inherit_from=models.Model):
                 content.)
                 """
 
-                return u'%s-%s-%s-%s-%s' % (
+                return '%s-%s-%s-%s-%s' % (
                     cls._meta.app_label,
                     cls._meta.module_name,
                     self.__class__.__name__.lower(),
                     self.parent_id,
                     self.id,
-                    )
+                )
 
             def get_queryset(cls, filter_args):
                 return cls.objects.select_related().filter(filter_args)
@@ -524,7 +536,7 @@ def create_base_model(inherit_from=models.Model):
                 'parent': models.ForeignKey(cls, related_name='%(class)s_set'),
                 'region': models.CharField(max_length=255),
                 'ordering': models.IntegerField(_('ordering'), default=0),
-                }
+            }
 
             # create content base type and save reference on CMS class
 
@@ -538,7 +550,7 @@ def create_base_model(inherit_from=models.Model):
                     RuntimeWarning)
 
             cls._feincms_content_model = python_2_unicode_compatible(
-                type(name, (models.Model,), attrs))
+                type(str(name), (models.Model,), attrs))
 
             # list of concrete content types
             cls._feincms_content_types = []
@@ -575,7 +587,7 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def create_content_type(cls, model, regions=None, class_name=None,
-                **kwargs):
+                                **kwargs):
             """
             This is the method you'll use to create concrete content types.
 
@@ -640,8 +652,14 @@ def create_base_model(inherit_from=models.Model):
             # Next name clash test. Happens when the same content type is
             # created for two Base subclasses living in the same Django
             # application (github issues #73 and #150)
-            other_model = get_model(cls._meta.app_label, class_name)
-            if other_model:
+            try:
+                other_model = get_model(cls._meta.app_label, class_name)
+                if other_model is None:
+                    # Django 1.6 and earlier
+                    raise LookupError
+            except LookupError:
+                pass
+            else:
                 warnings.warn(
                     'It seems that the content type %s exists twice in %s.'
                     ' Use the class_name argument to create_content_type to'
@@ -651,7 +669,8 @@ def create_base_model(inherit_from=models.Model):
                     RuntimeWarning)
 
             if not model._meta.abstract:
-                raise ImproperlyConfigured('Cannot create content type from'
+                raise ImproperlyConfigured(
+                    'Cannot create content type from'
                     ' non-abstract model (yet).')
 
             if not hasattr(cls, '_feincms_content_model'):
@@ -675,12 +694,13 @@ def create_base_model(inherit_from=models.Model):
                 # the blog and the page module).
                 '__module__': cls.__module__,
                 'Meta': Meta,
-                }
+            }
 
             new_type = type(
-                class_name,
+                str(class_name),
                 (model, feincms_content_base,),
-                attrs)
+                attrs,
+            )
             cls._feincms_content_types.append(new_type)
             # For consistency's sake, also install the new type in the module
             setattr(sys.modules[cls.__module__], class_name, new_type)
@@ -692,8 +712,8 @@ def create_base_model(inherit_from=models.Model):
 
             # content types can be limited to a subset of regions
             if not regions:
-                regions = set([region.key for region
-                    in cls._feincms_all_regions])
+                regions = set([
+                    region.key for region in cls._feincms_all_regions])
 
             for region in cls._feincms_all_regions:
                 if region.key in regions:
@@ -772,7 +792,8 @@ def create_base_model(inherit_from=models.Model):
             # helper which can be used to ensure that either register_regions
             # or register_templates has been executed before proceeding
             if not hasattr(cls, 'template'):
-                raise ImproperlyConfigured('You need to register at least one'
+                raise ImproperlyConfigured(
+                    'You need to register at least one'
                     ' template or one region on %s.' % cls.__name__)
 
         @classmethod
@@ -781,9 +802,11 @@ def create_base_model(inherit_from=models.Model):
 
             # Check whether any content types have been created for this base
             # class
-            if (not hasattr(cls, '_feincms_content_types')
+            if (
+                    not hasattr(cls, '_feincms_content_types')
                     or not cls._feincms_content_types):
-                raise ImproperlyConfigured('You need to create at least one'
+                raise ImproperlyConfigured(
+                    'You need to create at least one'
                     ' content type for the %s model.' % cls.__name__)
 
         def copy_content_from(self, obj):
@@ -795,8 +818,8 @@ def create_base_model(inherit_from=models.Model):
 
             for cls in self._feincms_content_types:
                 for content in cls.objects.filter(parent=obj):
-                    new = copy_model_instance(content,
-                        exclude=('id', 'parent'))
+                    new = copy_model_instance(
+                        content, exclude=('id', 'parent'))
                     new.parent = self
                     new.save()
 

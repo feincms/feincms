@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
@@ -37,20 +37,20 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             'fields': [
                 ('title', 'slug'),
                 ('active', 'in_navigation'),
-                ],
+            ],
         }),
         (_('Other options'), {
             'classes': ['collapse'],
-            'fields': ['template_key', 'parent', 'override_url',
-                'redirect_to'],
+            'fields': [
+                'template_key', 'parent', 'override_url', 'redirect_to'],
         }),
         # <-- insertion point, extensions appear here, see insertion_index
         # above
         item_editor.FEINCMS_CONTENT_FIELDSET,
-        ]
+    ]
     readonly_fields = []
-    list_display = ['short_title', 'is_visible_admin', 'in_navigation_toggle',
-        'template']
+    list_display = [
+        'short_title', 'is_visible_admin', 'in_navigation_toggle', 'template']
     list_filter = ['active', 'in_navigation', 'template_key', 'parent']
     search_fields = ['title', 'slug']
     prepopulated_fields = {'slug': ('title',)}
@@ -102,9 +102,9 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             if not page.template.enforce_leaf:
                 actions.insert(
                     0,
-                    u'<a href="add/?parent=%s" title="%s">'
-                    u'<img src="%s" alt="%s" />'
-                    u'</a>' % (
+                    '<a href="add/?parent=%s" title="%s">'
+                    '<img src="%s" alt="%s" />'
+                    '</a>' % (
                         page.pk,
                         _('Add child page'),
                         static('feincms/img/icon_addlink.gif'),
@@ -113,9 +113,9 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 )
         actions.insert(
             0,
-            u'<a href="%s" title="%s">'
-            u'<img src="%s" alt="%s" />'
-            u'</a>' % (
+            '<a href="%s" title="%s">'
+            '<img src="%s" alt="%s" />'
+            '</a>' % (
                 preview_url,
                 _('View on site'),
                 static('feincms/img/selector-search.gif'),
@@ -142,7 +142,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                         'Add %(language)s translation of "%(page)s"') % {
                         'language': language,
                         'page': original,
-                        },
+                    },
                     'language_name': language,
                     'translation_of': original,
                 }
@@ -190,9 +190,14 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             return super(PageAdmin, self).change_view(
                 request, object_id, **kwargs)
         except PermissionDenied:
-            messages.add_message(request, messages.ERROR, _(
-                "You don't have the necessary permissions to edit this object"
-                ))
+            messages.add_message(
+                request,
+                messages.ERROR,
+                _(
+                    "You don't have the necessary permissions to edit this"
+                    " object"
+                )
+            )
         return HttpResponseRedirect(reverse('admin:page_page_changelist'))
 
     def has_delete_permission(self, request, obj=None):

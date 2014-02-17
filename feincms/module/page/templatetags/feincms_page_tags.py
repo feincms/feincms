@@ -2,16 +2,21 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import, unicode_literals
+
 import logging
 import sys
 import traceback
 
 from django import template
 from django.conf import settings
+from django.db.models.loading import get_model
 from django.http import HttpRequest
 
-from feincms.module.page.models import BasePage, Page
-from feincms.utils.templatetags import (SimpleNodeWithVarAndArgs,
+from feincms import settings as feincms_settings
+from feincms.module.page.extensions.navigation import PagePretender
+from feincms.utils.templatetags import (
+    SimpleNodeWithVarAndArgs,
     do_simple_node_with_var_and_args_helper,
     SimpleAssignmentNodeWithVarAndArgs,
     do_simple_assignment_node_with_var_and_args_helper)
@@ -22,11 +27,15 @@ logger = logging.getLogger('feincms.templatetags.page')
 register = template.Library()
 
 
+def _get_page_model():
+    return get_model(*feincms_settings.FEINCMS_DEFAULT_PAGE_MODEL.split('.'))
+
+
 # ------------------------------------------------------------------------
 # TODO: Belongs in some utility module
 def format_exception(e):
     top = traceback.extract_tb(sys.exc_info()[2])[-1]
-    return u"'%s' in %s line %d" % (e, top[0], top[1])
+    return "'%s' in %s line %d" % (e, top[0], top[1])
 
 
 # ------------------------------------------------------------------------
@@ -36,12 +45,13 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
     Saves a list of pages into the given context variable.
     """
 
+    page_class = _get_page_model()
+
     if isinstance(feincms_page, HttpRequest):
         try:
-            # warning: explicit Page reference here
-            feincms_page = Page.objects.for_request(
+            feincms_page = page_class.objects.for_request(
                 feincms_page, best_match=True)
-        except Page.DoesNotExist:
+        except page_class.DoesNotExist:
             return []
 
     mptt_opts = feincms_page._mptt_meta
@@ -78,13 +88,13 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
             # (or even deeper in the tree). If we would continue processing,
             # this would result in pages from different subtrees being
             # returned directly adjacent to each other.
-            queryset = Page.objects.none()
+            queryset = page_class.objects.none()
 
         if parent:
             if getattr(parent, 'navigation_extension', None):
                 # Special case for navigation extensions
-                return list(parent.extended_navigation(depth=depth,
-                    request=context.get('request')))
+                return list(parent.extended_navigation(
+                    depth=depth, request=context.get('request')))
 
             # Apply descendant filter
             queryset &= parent.get_descendants()
@@ -162,7 +172,9 @@ class ParentLinkNode(SimpleNodeWithVarAndArgs):
             return page.get_ancestors()[level - 1].get_absolute_url()
         except IndexError:
             return '#'
-register.tag('feincms_parentlink',
+
+register.tag(
+    'feincms_parentlink',
     do_simple_node_with_var_and_args_helper(ParentLinkNode))
 
 
@@ -202,7 +214,7 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
         # Preserve the trailing path when switching languages if extra_path
         # exists (this is mostly the case when we are working inside an
         # ApplicationContent-managed page subtree)
-        trailing_path = u''
+        trailing_path = ''
         request = args.get('request', None)
         if request:
             # Trailing path without first slash
@@ -220,13 +232,17 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
             # hardcoded paths... bleh
             if key in translations:
-                links.append((key, name,
+                links.append((
+                    key,
+                    name,
                     translations[key].get_absolute_url() + trailing_path))
             elif not only_existing:
                 links.append((key, name, None))
 
         return links
-register.tag('feincms_languagelinks',
+
+register.tag(
+    'feincms_languagelinks',
     do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode))
 
 
@@ -289,7 +305,9 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
                     language = settings.LANGUAGES[0][0]
 
         return _translate_page_into(page, language, default=default)
-register.tag('feincms_translatedpage',
+
+register.tag(
+    'feincms_translatedpage',
     do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
 
 
@@ -299,7 +317,9 @@ class TranslatedPageNodeOrBase(TranslatedPageNode):
         return super(TranslatedPageNodeOrBase, self).what(
             page, args,
             default=getattr(page, 'get_original_translation', page))
-register.tag('feincms_translatedpage_or_base',
+
+register.tag(
+    'feincms_translatedpage_or_base',
     do_simple_assignment_node_with_var_and_args_helper(
         TranslatedPageNodeOrBase))
 
@@ -329,10 +349,6 @@ def feincms_breadcrumbs(page, include_self=True):
         {% feincms_breadcrumbs feincms_page %}
     """
 
-    if not page or not isinstance(page, BasePage):
-        raise ValueError(
-            "feincms_breadcrumbs must be called with a valid Page object")
-
     ancs = page.get_ancestors()
 
     bc = [(anc.get_absolute_url(), anc.short_title()) for anc in ancs]
@@ -345,7 +361,8 @@ def feincms_breadcrumbs(page, include_self=True):
 
 # ------------------------------------------------------------------------
 def _is_parent_of(page1, page2):
-    return (page1.tree_id == page2.tree_id
+    return (
+        page1.tree_id == page2.tree_id
         and page1.lft < page2.lft
         and page1.rght > page2.rght)
 
@@ -368,7 +385,8 @@ def is_parent_of(page1, page2):
 
 # ------------------------------------------------------------------------
 def _is_equal_or_parent_of(page1, page2):
-    return (page1.tree_id == page2.tree_id
+    return (
+        page1.tree_id == page2.tree_id
         and page1.lft <= page2.lft
         and page1.rght >= page2.rght)
 
@@ -443,7 +461,8 @@ def siblings_along_path_to(page_list, page2):
             # NOTE: This assumes that the input list actually is complete (ie.
             # comes from feincms_nav). We'll cope with the fall-out of that
             # assumption when it happens...
-            ancestors = [a_page for a_page in page_list
+            ancestors = [
+                a_page for a_page in page_list
                 if _is_equal_or_parent_of(a_page, page2)]
             top_level = min((a_page.level for a_page in page_list))
 
@@ -451,7 +470,9 @@ def siblings_along_path_to(page_list, page2):
                 # Happens when we sit on a page outside the navigation tree so
                 # fake an active root page to avoid a get_ancestors() db call
                 # which would only give us a non-navigation root page anyway.
-                p = Page(
+                page_class = _get_page_model()
+
+                p = page_class(
                     title="dummy",
                     tree_id=-1,
                     parent_id=None,
@@ -466,9 +487,35 @@ def siblings_along_path_to(page_list, page2):
 
             return siblings
         except (AttributeError, ValueError) as e:
-            logger.warn("siblings_along_path_to caught exception: %s",
+            logger.warn(
+                "siblings_along_path_to caught exception: %s",
                 format_exception(e))
 
     return ()
 
+
 # ------------------------------------------------------------------------
+@register.assignment_tag(takes_context=True)
+def page_is_active(context, page, feincms_page=None, path=None):
+    """
+    Usage example::
+
+        {% feincms_nav feincms_page level=1 as toplevel %}
+        <ul>
+        {% for page in toplevel %}
+            {% page_is_active page as is_active %}
+            <li {% if is_active %}class="active"{% endif %}>
+                <a href="{{ page.get_navigation_url }}">{{ page.title }}</a>
+            <li>
+        {% endfor %}
+        </ul>
+    """
+    if isinstance(page, PagePretender):
+        if path is None:
+            path = context['request'].path_info
+        return page.get_absolute_url().startswith(path)
+
+    else:
+        if feincms_page is None:
+            feincms_page = context['feincms_page']
+        return _is_equal_or_parent_of(page, feincms_page)

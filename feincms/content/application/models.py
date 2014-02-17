@@ -2,6 +2,8 @@
 Third-party application inclusion support.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from email.utils import parsedate
 from time import mktime
 from random import SystemRandom
@@ -9,8 +11,8 @@ import re
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.urlresolvers import (Resolver404, resolve, reverse,
-    NoReverseMatch)
+from django.core.urlresolvers import (
+    Resolver404, resolve, reverse, NoReverseMatch)
 from django.db import models
 from django.db.models import signals
 from django.http import HttpResponse
@@ -38,7 +40,7 @@ cycle_app_reverse_cache()
 
 
 def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
-        *vargs, **vkwargs):
+                *vargs, **vkwargs):
     """
     Reverse URLs from application contents
 
@@ -96,7 +98,8 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
     if url_prefix:
         # vargs and vkwargs are used to send through additional parameters
         # which are uninteresting to us (such as current_app)
-        return reverse(viewname,
+        return reverse(
+            viewname,
             url_prefix[0],
             args=args,
             kwargs=kwargs,
@@ -171,7 +174,8 @@ class ApplicationContent(models.Model):
                 "config": app_conf
             }
 
-        cls.add_to_class('urlconf_path',
+        cls.add_to_class(
+            'urlconf_path',
             models.CharField(_('application'), max_length=100, choices=[
                 (c['urls'], c['name']) for c in cls.ALL_APPS_CONFIG.values()])
         )
@@ -207,6 +211,7 @@ class ApplicationContent(models.Model):
                             get_fields(self, *args, **kwargs))
 
                     for k, v in self.custom_fields.items():
+                        v.initial = self.instance.parameters.get(k)
                         self.fields[k] = v
 
             def save(self, commit=True, *args, **kwargs):
@@ -218,8 +223,9 @@ class ApplicationContent(models.Model):
                 m = super(ApplicationContentItemEditorForm, self).save(
                     commit=False, *args, **kwargs)
 
-                m.parameters = dict((k, self.cleaned_data[k]) for k
-                    in self.custom_fields if k in self.cleaned_data)
+                m.parameters = dict(
+                    (k, self.cleaned_data[k])
+                    for k in self.custom_fields if k in self.cleaned_data)
 
                 if commit:
                     m.save(**kwargs)
@@ -264,7 +270,7 @@ class ApplicationContent(models.Model):
         try:
             fn, args, kwargs = resolve(path, urlconf_path)
         except (ValueError, Resolver404):
-            raise Resolver404('Not found (resolving %r in %r failed)' % (
+            raise Resolver404(str('Not found (resolving %r in %r failed)') % (
                 path, urlconf_path))
 
         # Variables from the ApplicationContent parameters are added to request
@@ -274,8 +280,11 @@ class ApplicationContent(models.Model):
 
         # Save the application configuration for reuse elsewhere
         request._feincms_extra_context.update({
-            'app_config': dict(self.app_config,
-                urlconf_path=self.urlconf_path)})
+            'app_config': dict(
+                self.app_config,
+                urlconf_path=self.urlconf_path,
+            ),
+        })
 
         view_wrapper = self.app_config.get("view_wrapper", None)
         if view_wrapper:
@@ -328,7 +337,7 @@ class ApplicationContent(models.Model):
                 or mimetype not in ('text/html', 'text/plain'))
 
     def render(self, **kwargs):
-        return getattr(self, 'rendered_result', u'')
+        return getattr(self, 'rendered_result', '')
 
     def finalize(self, request, response):
         headers = getattr(self, 'rendered_headers', None)
@@ -370,7 +379,7 @@ class ApplicationContent(models.Model):
         contents = cls.objects.filter(
             parent__in=page_class.objects.active(),
             urlconf_path=urlconf_path,
-            ).order_by('pk').select_related('parent')
+        ).order_by('pk').select_related('parent')
 
         if len(contents) > 1:
             try:
@@ -378,7 +387,7 @@ class ApplicationContent(models.Model):
                 return [
                     content for content in contents if
                     short_language_code(content.parent.language) == current
-                    ][0]
+                ][0]
 
             except (AttributeError, IndexError):
                 pass

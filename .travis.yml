@@ -1,7 +1,8 @@
 language: python
 python:
-  - "2.7"
   - "2.6"
+  - "2.7"
+  - "3.2"
   - "3.3"
 env:
   - DJANGO_VERSION=1.4.10
@@ -9,11 +10,13 @@ env:
   - DJANGO_VERSION=1.6.0
 matrix:
   exclude:
+    - python: "3.2"
+      env: DJANGO_VERSION=1.4.10
     - python: "3.3"
       env: DJANGO_VERSION=1.4.10
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - pip install -q Django==$DJANGO_VERSION django-mptt Pillow feedparser --use-mirrors
+  - pip install -q Django==$DJANGO_VERSION django-mptt Pillow feedparser flake8 --use-mirrors
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
-script: "cd tests && ./manage.py test testapp"
+script: "cd tests && ./manage.py test testapp && flake8 ."

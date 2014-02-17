@@ -15,6 +15,8 @@ will be activated per user or session even for non-FeinCMS managed views such
 as Django's administration tool.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 # ------------------------------------------------------------------------
 import logging
 
@@ -73,13 +75,13 @@ def translation_set_language(request, select_language):
             request.session['django_language'] = select_language
     elif request.method == 'GET' and not fallback:
         # No session is active. We need to set a cookie for the language
-        # so that it persists when the user changes his location to somewhere
+        # so that it persists when users change their location to somewhere
         # not under the control of the CMS.
         # Only do this when request method is GET (mainly, do not abort
         # POST requests)
         response = HttpResponseRedirect(request.get_full_path())
         response.set_cookie(
-            django_settings.LANGUAGE_COOKIE_NAME, select_language)
+            str(django_settings.LANGUAGE_COOKIE_NAME), select_language)
         return response
 
 
@@ -97,7 +99,7 @@ def translations_request_processor_explicit(page, request):
     if 'set_language' in request.GET:
         desired_language = request.GET['set_language']
     # ...or the user already has explicitely set a language, bail out and
-    # don't change it for him behind her back
+    # don't change it for them behind their back
     elif user_has_language_set(request):
         return
 
@@ -132,17 +134,24 @@ class Extension(extensions.Extension):
     def handle_model(self):
         cls = self.model
 
-        cls.add_to_class('language', models.CharField(_('language'),
-            max_length=10,
-            choices=django_settings.LANGUAGES,
-            default=django_settings.LANGUAGES[0][0]))
-        cls.add_to_class('translation_of', models.ForeignKey('self',
-            blank=True, null=True, verbose_name=_('translation of'),
-            related_name='translations',
-            limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
-            help_text=_(
-                'Leave this empty for entries in the primary language.')
-            ))
+        cls.add_to_class(
+            'language',
+            models.CharField(
+                _('language'),
+                max_length=10,
+                choices=django_settings.LANGUAGES,
+                default=django_settings.LANGUAGES[0][0]))
+        cls.add_to_class(
+            'translation_of',
+            models.ForeignKey(
+                'self',
+                blank=True, null=True, verbose_name=_('translation of'),
+                related_name='translations',
+                limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
+                help_text=_(
+                    'Leave this empty for entries in the primary language.'),
+            )
+        )
 
         if hasattr(cls, 'register_request_processor'):
             if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
@@ -226,18 +235,20 @@ class Extension(extensions.Extension):
                     continue
 
                 if key in translations:
-                    links.append(u'<a href="%s/" title="%s">%s</a>' % (
+                    links.append('<a href="%s/" title="%s">%s</a>' % (
                         translations[key], _('Edit translation'), key.upper()))
                 else:
                     links.append(
-                        u'<a style="color:#baa" href="add/?translation_of='
-                        u'%s&amp;language=%s" title="%s">%s</a>' % (
+                        '<a style="color:#baa" href="add/?translation_of='
+                        '%s&amp;language=%s" title="%s">%s</a>' % (
                             page.id,
                             key,
                             _('Create translation'),
-                            key.upper()))
+                            key.upper()
+                        )
+                    )
 
-            return u' | '.join(links)
+            return ' | '.join(links)
 
         available_translations_admin.allow_tags = True
         available_translations_admin.short_description = _('translations')
@@ -247,10 +258,11 @@ class Extension(extensions.Extension):
         if hasattr(modeladmin, 'add_extension_options'):
             modeladmin.add_extension_options('language', 'translation_of')
 
-        modeladmin.list_display.extend(
-            ['language', 'available_translations_admin'])
-        modeladmin.list_filter.extend(['language'])
-
-        modeladmin.raw_id_fields.append('translation_of')
+        modeladmin.extend_list(
+            'list_display',
+            ['language', 'available_translations_admin'],
+        )
+        modeladmin.extend_list('list_filter', ['language'])
+        modeladmin.extend_list('raw_id_fields', ['translation_of'])
 
 # ------------------------------------------------------------------------

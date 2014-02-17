@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import, unicode_literals
+
 from io import BytesIO
 import re
 
@@ -45,7 +47,7 @@ class Thumbnailer(object):
     def __str__(self):
         match = self.THUMBNAIL_SIZE_RE.match(self.size)
         if not (self.filename and match):
-            return u''
+            return ''
 
         matches = match.groupdict()
 
@@ -67,14 +69,14 @@ class Thumbnailer(object):
         except ValueError:
             basename, format = filename, 'jpg'
 
-        miniature = u''.join([
+        miniature = ''.join([
             settings.FEINCMS_THUMBNAIL_DIR,
             basename,
             self.MARKER,
             self.size,
             '.',
             format,
-            ])
+        ])
 
         if not storage.exists(miniature):
             generate = True
@@ -88,7 +90,7 @@ class Thumbnailer(object):
                 generate = False
             except (OSError, IOError):
                 # Someone might have delete the file
-                return u''
+                return ''
 
         if generate:
             return self.generate(
@@ -111,7 +113,8 @@ class Thumbnailer(object):
             buf = BytesIO()
             if image.mode not in ('RGBA', 'RGB', 'L'):
                 image = image.convert('RGBA')
-            image.save(buf,
+            image.save(
+                buf,
                 format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
                 quality=90)
             raw_data = buf.getvalue()
@@ -178,7 +181,8 @@ class CropscaleThumbnailer(Thumbnailer):
         buf = BytesIO()
         if image.mode not in ('RGBA', 'RGB', 'L'):
             image = image.convert('RGBA')
-        image.save(buf,
+        image.save(
+            buf,
             format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
             quality=90)
         raw_data = buf.getvalue()

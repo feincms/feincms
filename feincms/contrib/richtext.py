@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django import forms
 from django.db import models
 
@@ -29,7 +31,8 @@ try:
 
     RichTextField_introspection_rule = ((RichTextField,), [], {},)
 
-    add_introspection_rules(rules=[RichTextField_introspection_rule],
+    add_introspection_rules(
+        rules=[RichTextField_introspection_rule],
         patterns=["^feincms\.contrib\.richtext"])
 except ImportError:
     pass

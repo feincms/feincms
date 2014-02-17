@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -48,13 +50,16 @@ class RichTextContentAdminForm(ItemEditorForm):
                 if errors or not (
                         settings.FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE
                         and cleaned_data['seen_tidy_warnings']):
-                    self._errors["text"] = ErrorList([mark_safe(_(
-                        "HTML validation produced %(count)d warnings."
-                        " Please review the updated content below before"
-                        " continuing: %(messages)s") % {
-                        "count": len(warnings) + len(errors),
-                        "messages": '<ul><li>%s</li></ul>' % (
-                            "</li><li>".join(map(escape, errors + warnings))),
+                    self._errors["text"] = ErrorList([mark_safe(
+                        _(
+                            "HTML validation produced %(count)d warnings."
+                            " Please review the updated content below before"
+                            " continuing: %(messages)s"
+                        ) % {
+                            "count": len(warnings) + len(errors),
+                            "messages": '<ul><li>%s</li></ul>' % (
+                                "</li><li>".join(
+                                    map(escape, errors + warnings))),
                         }
                     )])
 
@@ -99,8 +104,10 @@ class RichTextContent(models.Model):
         verbose_name_plural = _('rich texts')
 
     def render(self, **kwargs):
-        return render_to_string('content/richtext/default.html',
-            {'content': self}, context_instance=kwargs.get('context'))
+        return render_to_string(
+            'content/richtext/default.html',
+            {'content': self},
+            context_instance=kwargs.get('context'))
 
     def save(self, *args, **kwargs):
         # TODO: Move this to the form?

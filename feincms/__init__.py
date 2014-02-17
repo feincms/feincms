@@ -1,4 +1,6 @@
-VERSION = (1, 9, 0, 'pre')
+from __future__ import absolute_import, unicode_literals
+
+VERSION = (1, 10, 0, 'pre')
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -11,8 +13,9 @@ class LazySettings(object):
             if not key.startswith('FEINCMS_'):
                 continue
 
-            setattr(self, key, getattr(django_settings, key,
-                getattr(default_settings, key)))
+            value = getattr(default_settings, key)
+            value = getattr(django_settings, key, value)
+            setattr(self, key, value)
 
     def __getattr__(self, attr):
         self._load_settings()
@@ -52,7 +55,8 @@ def ensure_completely_loaded(force=False):
     # don't miss out.
     from django.db.models import loading
     for model in loading.get_models():
-        for cache_name in ('_field_cache', '_field_name_cache', '_m2m_cache',
+        for cache_name in (
+                '_field_cache', '_field_name_cache', '_m2m_cache',
                 '_related_objects_cache', '_related_many_to_many_cache',
                 '_name_map'):
             try:
@@ -72,8 +76,14 @@ def ensure_completely_loaded(force=False):
     # get_models cache again here. If we don't do this, Django 1.5 chokes on
     # a model validation error (Django 1.4 doesn't exhibit this problem).
     # See Issue #323 on github.
-    loading.cache._get_models_cache.clear()
+    if hasattr(loading, 'cache'):
+        loading.cache._get_models_cache.clear()
 
-    if loading.app_cache_ready():
-        COMPLETELY_LOADED = True
+    if hasattr(loading.app_cache_ready, '__call__'):
+        if loading.app_cache_ready():
+            COMPLETELY_LOADED = True
+    else:
+        # TODO Django 1.7 offers us better ways of handling this, maybe.
+        if loading.app_cache_ready:
+            COMPLETELY_LOADED = True
     return True

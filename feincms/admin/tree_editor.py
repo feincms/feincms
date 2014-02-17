@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import, unicode_literals
+
 from functools import reduce
 import json
 import logging
@@ -10,7 +12,8 @@ from django.contrib.admin.views import main
 from django.contrib.admin.actions import delete_selected
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db.models import Q
-from django.http import (HttpResponse, HttpResponseBadRequest,
+from django.http import (
+    HttpResponse, HttpResponseBadRequest,
     HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError)
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -41,8 +44,8 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
     else:
         title = ''
     icon_url = static('feincms/img/icon-%s.gif' % BOOLEAN_MAPPING[field_val])
-    return mark_safe(u'<img src="%s" alt="%s" %s/>' %
-            (icon_url, alt_text, title))
+    return mark_safe(
+        '<img src="%s" alt="%s" %s/>' % (icon_url, alt_text, title))
 
 
 def _build_tree_structure(queryset):
@@ -102,7 +105,7 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
     (useful for "disabled and you can't change it" situations).
     """
     if text:
-        text = u'&nbsp;(%s)' % text
+        text = '&nbsp;(%s)' % text
 
     if override is not None:
         a = [django_boolean_icon(override, text), text]
@@ -114,11 +117,11 @@ def ajax_editable_boolean_cell(item, attr, text='', override=None):
                 item.pk,
                 attr,
                 'checked="checked"' if value else '',
-                )]
+            )]
 
     a.insert(0, '<div id="wrap_%s_%d">' % (attr, item.pk))
     a.append('</div>')
-    return u''.join(a)
+    return ''.join(a)
 
 
 # ------------------------------------------------------------------------
@@ -164,15 +167,17 @@ class ChangeList(main.ChangeList):
     def get_results(self, request):
         mptt_opts = self.model._mptt_meta
         if settings.FEINCMS_TREE_EDITOR_INCLUDE_ANCESTORS:
-            clauses = [Q(**{mptt_opts.tree_id_attr: tree_id,
-                            mptt_opts.left_attr + '__lte': lft,
-                            mptt_opts.right_attr + '__gte': rght,
-                            })
-                    for lft, rght, tree_id in self.query_set.values_list(
-                        mptt_opts.left_attr,
-                        mptt_opts.right_attr,
-                        mptt_opts.tree_id_attr,
-                    )]
+            clauses = [
+                Q(**{
+                    mptt_opts.tree_id_attr: tree_id,
+                    mptt_opts.left_attr + '__lte': lft,
+                    mptt_opts.right_attr + '__gte': rght,
+                }) for lft, rght, tree_id in self.query_set.values_list(
+                    mptt_opts.left_attr,
+                    mptt_opts.right_attr,
+                    mptt_opts.tree_id_attr,
+                )
+            ]
             # We could optimise a bit here by explicitely filtering out
             # any clauses that are for parents of nodes included in the
             # queryset anyway. (ie: drop all clauses that refer to a node
@@ -239,7 +244,7 @@ class TreeEditor(ExtensionModelAdmin):
                 opts.app_label, opts.object_name.lower()),
             'admin/feincms/%s/tree_editor.html' % opts.app_label,
             'admin/feincms/tree_editor.html',
-            ]
+        ]
         self.object_change_permission =\
             opts.app_label + '.' + opts.get_change_permission()
         self.object_add_permission =\
@@ -282,7 +287,7 @@ class TreeEditor(ExtensionModelAdmin):
         if hasattr(item, 'short_title') and callable(item.short_title):
             r += escape(item.short_title())
         else:
-            r += escape(u'%s' % item)
+            r += escape('%s' % item)
 #        r += '</span>'
         return mark_safe(r)
     indented_short_title.short_description = _('title')
@@ -364,7 +369,8 @@ class TreeEditor(ExtensionModelAdmin):
                 _("You do not have permission to modify this object"))
 
         new_state = not getattr(obj, attr)
-        logger.info("Toggle %s on #%d %s to %s by \"%s\"",
+        logger.info(
+            "Toggle %s on #%d %s to %s by \"%s\"",
             attr, obj.pk, obj, "on" if new_state else "off", request.user)
 
         try:
@@ -388,9 +394,9 @@ class TreeEditor(ExtensionModelAdmin):
         # Weed out unchanged cells to keep the updates small. This assumes
         # that the order a possible get_descendents() returns does not change
         # before and after toggling this attribute. Unlikely, but still...
-        return HttpResponse(json.dumps(
-            [b for a, b in zip(before_data, data) if a != b]
-            ), content_type="application/json")
+        return HttpResponse(
+            json.dumps([b for a, b in zip(before_data, data) if a != b]),
+            content_type="application/json")
 
     def get_changelist(self, request, **kwargs):
         return ChangeList
@@ -484,7 +490,7 @@ class TreeEditor(ExtensionModelAdmin):
             try:
                 tree_manager.move_node(cut_item, pasted_on, position)
             except InvalidMove as e:
-                self.message_user(request, u'%s' % e)
+                self.message_user(request, '%s' % e)
                 return HttpResponse('FAIL')
 
             # Ensure that model save methods have been run (required to
@@ -493,9 +499,9 @@ class TreeEditor(ExtensionModelAdmin):
             for item in queryset.filter(id__in=(cut_item.pk, pasted_on.pk)):
                 item.save()
 
-            self.message_user(request,
-                ugettext('%s has been moved to a new position.') %
-                cut_item)
+            self.message_user(
+                request,
+                ugettext('%s has been moved to a new position.') % cut_item)
             return HttpResponse('OK')
 
         self.message_user(request, _('Did not understand moving instruction.'))
@@ -507,7 +513,7 @@ class TreeEditor(ExtensionModelAdmin):
         return []
 
     def actions_column(self, instance):
-        return u' '.join(self._actions_column(instance))
+        return ' '.join(self._actions_column(instance))
     actions_column.allow_tags = True
     actions_column.short_description = _('actions')
 
@@ -520,20 +526,25 @@ class TreeEditor(ExtensionModelAdmin):
         # If this is True, the confirmation page has been displayed
         if request.POST.get('post'):
             n = 0
-            for obj in queryset:
-                if self.has_delete_permission(request, obj):
-                    obj.delete()
-                    n += 1
-                    obj_display = force_text(obj)
-                    self.log_deletion(request, obj, obj_display)
-                else:
-                    logger.warning(
-                        "Denied delete request by \"%s\" for object #%s",
-                        request.user, obj.id)
-            self.message_user(request,
-                _("Successfully deleted %(count)d items.") % {
-                    "count": n
-                    })
+            # TODO: The disable_mptt_updates / rebuild is a work around
+            # for what seems to be a mptt problem when deleting items
+            # in a loop. Revisit this, there should be a better solution.
+            with queryset.model.objects.disable_mptt_updates():
+                for obj in queryset:
+                    if self.has_delete_permission(request, obj):
+                        obj.delete()
+                        n += 1
+                        obj_display = force_text(obj)
+                        self.log_deletion(request, obj, obj_display)
+                    else:
+                        logger.warning(
+                            "Denied delete request by \"%s\" for object #%s",
+                            request.user, obj.id)
+            if n > 0:
+                queryset.model.objects.rebuild()
+            self.message_user(
+                request,
+                _("Successfully deleted %(count)d items.") % {"count": n})
             # Return None to display the change list page again
             return None
         else:

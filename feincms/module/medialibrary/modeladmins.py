@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import os
 
@@ -72,13 +72,13 @@ def assign_category(modeladmin, request, queryset):
         form = AddCategoryForm(initial={
             '_selected_action': request.POST.getlist(
                 admin.ACTION_CHECKBOX_NAME),
-            })
+        })
 
     return render_to_response('admin/medialibrary/add_to_category.html', {
         'mediafiles': queryset,
         'category_form': form,
         'opts': modeladmin.model._meta,
-        }, context_instance=RequestContext(request))
+    }, context_instance=RequestContext(request))
 
 
 assign_category.short_description = _('Add selected media files to category')
@@ -111,8 +111,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
     save_on_top = True
     date_hierarchy = 'created'
     inlines = [admin_translationinline(MediaFileTranslation)]
-    list_display = ['admin_thumbnail', '__str__', 'file_info',
-        'formatted_created']
+    list_display = [
+        'admin_thumbnail', '__str__', 'file_info', 'formatted_created']
     list_display_links = ['__str__']
     list_filter = ['type', 'categories']
     list_per_page = 25
@@ -124,11 +124,15 @@ class MediaFileAdmin(ExtensionModelAdmin):
         from django.conf.urls import patterns, url
 
         urls = super(MediaFileAdmin, self).get_urls()
-        my_urls = patterns('',
-            url(r'^mediafile-bulk-upload/$',
-                self.admin_site.admin_view(MediaFileAdmin.bulk_upload), {},
-                name='mediafile_bulk_upload'),
-            )
+        my_urls = patterns(
+            '',
+            url(
+                r'^mediafile-bulk-upload/$',
+                self.admin_site.admin_view(MediaFileAdmin.bulk_upload),
+                {},
+                name='mediafile_bulk_upload',
+            ),
+        )
 
         return my_urls + urls
 
@@ -142,12 +146,13 @@ class MediaFileAdmin(ExtensionModelAdmin):
     def admin_thumbnail(self, obj):
         image = admin_thumbnail(obj)
         if image:
-            return mark_safe(u"""
+            return mark_safe("""
                 <a href="%(url)s" target="_blank">
                     <img src="%(image)s" alt="" />
                 </a>""" % {
                 'url': obj.file.url,
-                'image': image})
+                'image': image}
+            )
         return ''
     admin_thumbnail.short_description = _('Preview')
     admin_thumbnail.allow_tags = True
@@ -191,17 +196,17 @@ class MediaFileAdmin(ExtensionModelAdmin):
         JS, like for example a TinyMCE connector shim.
         """
         return (
-            u'<input type="hidden" class="medialibrary_file_path"'
-            u' name="_media_path_%d" value="%s" id="_refkey_%d" />'
-            u' %s <br />%s, %s'
-            ) % (
+            '<input type="hidden" class="medialibrary_file_path"'
+            ' name="_media_path_%d" value="%s" id="_refkey_%d" />'
+            ' %s <br />%s, %s'
+        ) % (
             obj.id,
             obj.file.name,
             obj.id,
             shorten_string(os.path.basename(obj.file.name), max_length=40),
             self.file_type(obj),
             self.formatted_file_size(obj),
-            )
+        )
     file_info.admin_order_field = 'file'
     file_info.short_description = _('file info')
     file_info.allow_tags = True

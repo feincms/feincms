@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import os
 import re
@@ -17,8 +17,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
 from feincms.models import ExtensionsMixin
-from feincms.translations import (TranslatedObjectMixin, Translation,
-    TranslatedObjectManager)
+from feincms.translations import (
+    TranslatedObjectMixin, Translation, TranslatedObjectManager)
 
 from . import logger
 
@@ -43,7 +43,8 @@ class Category(models.Model):
     """
 
     title = models.CharField(_('title'), max_length=200)
-    parent = models.ForeignKey('self', blank=True, null=True,
+    parent = models.ForeignKey(
+        'self', blank=True, null=True,
         related_name='children', limit_choices_to={'parent__isnull': True},
         verbose_name=_('parent'))
 
@@ -58,7 +59,7 @@ class Category(models.Model):
 
     def __str__(self):
         if self.parent_id:
-            return u'%s - %s' % (self.parent.title, self.title)
+            return '%s - %s' % (self.parent.title, self.title)
 
         return self.title
 
@@ -89,18 +90,20 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     mechanism.
     """
 
-    file = models.FileField(_('file'), max_length=255,
+    file = models.FileField(
+        _('file'), max_length=255,
         upload_to=settings.FEINCMS_MEDIALIBRARY_UPLOAD_TO)
-    type = models.CharField(_('file type'), max_length=12, editable=False,
+    type = models.CharField(
+        _('file type'), max_length=12, editable=False,
         choices=())
-    created = models.DateTimeField(_('created'), editable=False,
-        default=timezone.now)
+    created = models.DateTimeField(
+        _('created'), editable=False, default=timezone.now)
     copyright = models.CharField(_('copyright'), max_length=200, blank=True)
-    file_size = models.IntegerField(_("file size"), blank=True, null=True,
-        editable=False)
+    file_size = models.IntegerField(
+        _("file size"), blank=True, null=True, editable=False)
 
-    categories = models.ManyToManyField(Category, verbose_name=_('categories'),
-                                        blank=True, null=True)
+    categories = models.ManyToManyField(
+        Category, verbose_name=_('categories'), blank=True, null=True)
     categories.category_filter = True
 
     class Meta:
@@ -149,7 +152,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             pass
 
         if trans:
-            trans = u'%s' % trans
+            trans = '%s' % trans
             if trans.strip():
                 return trans
         return os.path.basename(self.file.name)
@@ -160,15 +163,15 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     def determine_file_type(self, name):
         """
         >>> t = MediaFileBase()
-        >>> t.determine_file_type('foobar.jpg')
+        >>> str(t.determine_file_type('foobar.jpg'))
         'image'
-        >>> t.determine_file_type('foobar.PDF')
+        >>> str(t.determine_file_type('foobar.PDF'))
         'pdf'
-        >>> t.determine_file_type('foobar.jpg.pdf')
+        >>> str(t.determine_file_type('foobar.jpg.pdf'))
         'pdf'
-        >>> t.determine_file_type('foobar.jgp')
+        >>> str(t.determine_file_type('foobar.jgp'))
         'other'
-        >>> t.determine_file_type('foobar-jpg')
+        >>> str(t.determine_file_type('foobar-jpg'))
         'other'
         """
         for type_key, type_name, type_test in self.filetypes:
@@ -232,7 +235,7 @@ MediaFileBase.register_filetypes(
     ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(
         r'\.pptx?$', re.IGNORECASE).search(f)),
     ('other', _('Binary'), lambda f: True),  # Must be last
-    )
+)
 
 
 # ------------------------------------------------------------------------

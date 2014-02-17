@@ -7,7 +7,7 @@
 
 ``feincms_validate`` checks your models for common pitfalls.
 """
-from __future__ import print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
 from django.core.management.base import NoArgsCommand
 from django.core.management.color import color_style

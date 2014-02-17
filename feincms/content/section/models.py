@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
@@ -32,7 +34,8 @@ class SectionContent(models.Model):
 
     title = models.CharField(_('title'), max_length=200, blank=True)
     richtext = RichTextField(_('text'), blank=True)
-    mediafile = MediaFileForeignKey(MediaFile, verbose_name=_('media file'),
+    mediafile = MediaFileForeignKey(
+        MediaFile, verbose_name=_('media file'),
         related_name='+', blank=True, null=True)
 
     class Meta:
@@ -52,9 +55,11 @@ class SectionContent(models.Model):
                 'You need to set TYPE_CHOICES when creating a'
                 ' %s' % cls.__name__)
 
-        cls.add_to_class('type', models.CharField(_('type'),
+        cls.add_to_class('type', models.CharField(
+            _('type'),
             max_length=10, choices=TYPE_CHOICES,
-            default=TYPE_CHOICES[0][0]))
+            default=TYPE_CHOICES[0][0]
+        ))
 
         if cleanse:
             cls.cleanse = cleanse
@@ -71,12 +76,15 @@ class SectionContent(models.Model):
         else:
             mediafile_type = 'nomedia'
 
-        return render_to_string([
-            'content/section/%s_%s.html' % (mediafile_type, self.type),
-            'content/section/%s.html' % mediafile_type,
-            'content/section/%s.html' % self.type,
-            'content/section/default.html',
-            ], {'content': self})
+        return render_to_string(
+            [
+                'content/section/%s_%s.html' % (mediafile_type, self.type),
+                'content/section/%s.html' % mediafile_type,
+                'content/section/%s.html' % self.type,
+                'content/section/default.html',
+            ],
+            {'content': self},
+        )
 
     def save(self, *args, **kwargs):
         if getattr(self, 'cleanse', None):

@@ -6,6 +6,8 @@ blog entry in the primary language (the first language in settings.LANGUAGES),
 thereby enabling deeplinks between translated blog entries.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -17,16 +19,26 @@ class Extension(extensions.Extension):
     def handle_model(self):
         primary_language = settings.LANGUAGES[0][0]
 
-        self.model.add_to_class('language', models.CharField(
-            _('language'), max_length=10,
-            choices=settings.LANGUAGES))
-        self.model.add_to_class('translation_of', models.ForeignKey('self',
-            blank=True, null=True, verbose_name=_('translation of'),
-            related_name='translations',
-            limit_choices_to={'language': primary_language},
-            help_text=_(
-                'Leave this empty for entries in the primary language.')
-            ))
+        self.model.add_to_class(
+            'language',
+            models.CharField(
+                _('language'),
+                max_length=10,
+                choices=settings.LANGUAGES,
+            )
+        )
+        self.model.add_to_class(
+            'translation_of',
+            models.ForeignKey(
+                'self',
+                blank=True, null=True,
+                verbose_name=_('translation of'),
+                related_name='translations',
+                limit_choices_to={'language': primary_language},
+                help_text=_(
+                    'Leave this empty for entries in the primary language.'),
+            )
+        )
 
         def available_translations(self):
             if self.language == primary_language:
@@ -43,10 +55,12 @@ class Extension(extensions.Extension):
         def available_translations_admin(self):
             translations = self.available_translations()
 
-            return u', '.join(
-                u'<a href="%s/">%s</a>' % (
-                    page.id, page.language.upper()
-                ) for page in translations)
+            return ', '.join(
+                '<a href="%s/">%s</a>' % (
+                    page.id,
+                    page.language.upper()
+                ) for page in translations
+            )
 
         available_translations_admin.allow_tags = True
         available_translations_admin.short_description =\

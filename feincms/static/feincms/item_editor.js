@@ -195,6 +195,8 @@
             var old_region_id = REGION_MAP.indexOf(item.find("."+field).val());
             item.find("."+field).val(REGION_MAP[value]);
 
+            // show/hide the empty machine message in the source and
+            // target region.
             old_region_item = $("#"+REGION_MAP[old_region_id]+"_body");
             if (old_region_item.children("div.order-machine").children().length == 0)
                 old_region_item.children("div.empty-machine-msg").show();

@@ -2,6 +2,8 @@
 Add a keyword and a description field which are helpful for SEO optimization.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -22,9 +24,12 @@ class Extension(extensions.Extension):
                         'Text longer than 140 characters is truncated.')))
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.search_fields.extend(['meta_keywords', 'meta_description'])
+        modeladmin.extend_list(
+            'search_fields',
+            ['meta_keywords', 'meta_description'],
+        )
 
         modeladmin.add_extension_options(_('Search engine optimization'), {
             'fields': ('meta_keywords', 'meta_description'),
             'classes': ('collapse',),
-            })
+        })

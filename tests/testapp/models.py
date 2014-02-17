@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django import forms
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -10,8 +12,8 @@ from feincms.content.raw.models import RawContent
 from feincms.content.image.models import ImageContent
 from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.application.models import ApplicationContent
-from feincms.module.page.extensions.navigation import (NavigationExtension,
-    PagePretender)
+from feincms.module.page.extensions.navigation import (
+    NavigationExtension, PagePretender)
 from feincms.content.application.models import reverse
 
 from mptt.models import MPTTModel
@@ -24,15 +26,21 @@ Page.register_templates({
     'regions': (
         ('main', 'Main region'),
         ('sidebar', 'Sidebar', 'inherited'),
-        ),
-    })
+    ),
+})
 Page.create_content_type(RawContent)
-Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
-    ('default', 'Default position'),
-    ))
-Page.create_content_type(ImageContent, POSITION_CHOICES=(
-    ('default', 'Default position'),
-    ))
+Page.create_content_type(
+    MediaFileContent,
+    TYPE_CHOICES=(
+        ('default', 'Default position'),
+    )
+)
+Page.create_content_type(
+    ImageContent,
+    POSITION_CHOICES=(
+        ('default', 'Default position'),
+    )
+)
 
 
 def get_admin_fields(form, *args, **kwargs):
@@ -44,28 +52,34 @@ def get_admin_fields(form, *args, **kwargs):
             help_text=_(
                 'Exclude everything other than the application\'s content'
                 ' when rendering subpages.'),
-            ),
+        ),
+        'custom_field': forms.CharField(),
     }
 
 
-Page.create_content_type(ApplicationContent, APPLICATIONS=(
-    ('testapp.blog_urls', 'Blog', {'admin_fields': get_admin_fields}),
-    ('whatever', 'Test Urls', {'urls': 'testapp.applicationcontent_urls'}),
-    ))
+Page.create_content_type(
+    ApplicationContent,
+    APPLICATIONS=(
+        ('testapp.blog_urls', 'Blog', {'admin_fields': get_admin_fields}),
+        ('whatever', 'Test Urls', {'urls': 'testapp.applicationcontent_urls'}),
+    )
+)
 
 Entry.register_extensions(
     'feincms.module.extensions.seo',
     'feincms.module.extensions.translations',
     'feincms.module.extensions.seo',
     'feincms.module.extensions.ct_tracker',
-    )
+)
 Entry.register_regions(
     ('main', 'Main region'),
-    )
+)
 Entry.create_content_type(RawContent)
-Entry.create_content_type(ImageContent, POSITION_CHOICES=(
-    ('default', 'Default position'),
-    ))
+Entry.create_content_type(
+    ImageContent, POSITION_CHOICES=(
+        ('default', 'Default position'),
+    )
+)
 
 
 class BlogEntriesNavigationExtension(NavigationExtension):
@@ -80,9 +94,11 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=reverse('testapp.blog_urls/blog_entry_detail',
-                    kwargs={'object_id': entry.id}),
-                )
+                url=reverse(
+                    'testapp.blog_urls/blog_entry_detail',
+                    kwargs={'object_id': entry.id}
+                ),
+            )
 
 Page.register_extensions(
     'feincms.module.page.extensions.navigation',
@@ -97,15 +113,15 @@ Page.register_extensions(
     'feincms.module.page.extensions.navigation',
     'feincms.module.page.extensions.symlinks',
     'feincms.module.page.extensions.titles',
-    )
+)
 
 
 @python_2_unicode_compatible
 class Category(MPTTModel):
     name = models.CharField(max_length=20)
     slug = models.SlugField()
-    parent = models.ForeignKey('self', blank=True, null=True,
-        related_name='children')
+    parent = models.ForeignKey(
+        'self', blank=True, null=True, related_name='children')
 
     class Meta:
         ordering = ['tree_id', 'lft']
@@ -117,6 +133,7 @@ class Category(MPTTModel):
 
 
 # add m2m field to entry so it shows up in entry admin
-Entry.add_to_class('categories',
+Entry.add_to_class(
+    str('categories'),
     models.ManyToManyField(Category, blank=True, null=True))
 EntryAdmin.list_filter += ('categories',)

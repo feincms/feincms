@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re
 
@@ -31,18 +31,19 @@ class RedirectToWidget(ForeignKeyRawIdWidget):
             model = get_model(matches['app_label'], matches['module_name'])
             try:
                 instance = model._default_manager.get(pk=int(matches['pk']))
-                return u'&nbsp;<strong>%s (%s)</strong>' % (instance,
-                        instance.get_absolute_url())
+                return '&nbsp;<strong>%s (%s)</strong>' % (
+                    instance, instance.get_absolute_url())
 
             except model.DoesNotExist:
                 pass
 
-        return u''
+        return ''
 
 
 # ------------------------------------------------------------------------
 class PageAdminForm(MPTTAdminForm):
-    never_copy_fields = ('title', 'slug', 'parent', 'active', 'override_url',
+    never_copy_fields = (
+        'title', 'slug', 'parent', 'active', 'override_url',
         'translation_of', '_content_title', '_page_title')
 
     @property
@@ -93,13 +94,13 @@ class PageAdminForm(MPTTAdminForm):
                         'template_key': original.template_key,
                         'active': original.active,
                         'in_navigation': original.in_navigation,
-                        }
+                    }
 
                     if original.parent:
                         try:
                             data['parent'] = original.parent.get_translation(
                                 kwargs['initial']['language']
-                                ).id
+                            ).id
                         except self.page_model.DoesNotExist:
                             # ignore this -- the translation does not exist
                             pass
@@ -131,12 +132,14 @@ class PageAdminForm(MPTTAdminForm):
                 if template.singleton and other_pages_for_template.exists():
                     continue  # don't allow selection of singleton if in use
                 if template.preview_image:
-                    choices.append((template.key,
-                        mark_safe(u'<img src="%s" alt="%s" /> %s' % (
+                    choices.append((
+                        template.key,
+                        mark_safe('<img src="%s" alt="%s" /> %s' % (
                             template.preview_image,
                             template.key,
                             template.title,
-                            ))))
+                        ))
+                    ))
                 else:
                     choices.append((template.key, template.title))
 

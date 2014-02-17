@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django.http import Http404
 from django.template import Template
 from django.utils.datastructures import SortedDict
@@ -192,12 +194,11 @@ class ContentObjectMixin(TemplateResponseMixin):
                     and extra_context.get('extra_path', '/') != '/'
                     # XXX Already inside application content.  I'm not sure
                     # whether this fix is really correct...
-                    and not extra_context.get('app_config')
-                    ):
-                raise Http404('Not found (extra_path %r on %r)' % (
+                    and not extra_context.get('app_config')):
+                raise Http404(str('Not found (extra_path %r on %r)') % (
                     extra_context.get('extra_path', '/'),
                     self.object,
-                    ))
+                ))
 
     def finalize_content_types(self, response):
         """

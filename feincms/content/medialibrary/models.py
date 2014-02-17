@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -52,11 +54,19 @@ class MediaFileContent(ContentWithMediaFile):
     @classmethod
     def initialize_type(cls, TYPE_CHOICES=None):
         if TYPE_CHOICES is None:
-            raise ImproperlyConfigured('You have to set TYPE_CHOICES when'
+            raise ImproperlyConfigured(
+                'You have to set TYPE_CHOICES when'
                 ' creating a %s' % cls.__name__)
 
-        cls.add_to_class('type', models.CharField(_('type'),
-            max_length=20, choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0]))
+        cls.add_to_class(
+            'type',
+            models.CharField(
+                _('type'),
+                max_length=20,
+                choices=TYPE_CHOICES,
+                default=TYPE_CHOICES[0][0],
+            )
+        )
 
     def render(self, **kwargs):
         ctx = {'content': self}
@@ -66,4 +76,4 @@ class MediaFileContent(ContentWithMediaFile):
             'content/mediafile/%s.html' % self.mediafile.type,
             'content/mediafile/%s.html' % self.type,
             'content/mediafile/default.html',
-            ], ctx, context_instance=kwargs.get('context'))
+        ], ctx, context_instance=kwargs.get('context'))

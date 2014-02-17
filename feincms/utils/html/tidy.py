@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+from __future__ import absolute_import, unicode_literals
+
 import re
 import tidylib
 
@@ -67,7 +69,7 @@ def tidy_html(html):
         "fix-backslash": True,
         "indent": True,
         "output-xhtml": True,
-        }
+    }
     )
 
     messages = filter(None, (l.strip() for l in messages.split("\n") if l))

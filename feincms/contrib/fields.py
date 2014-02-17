@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 import json
 import logging
 
@@ -9,11 +11,19 @@ from django.utils import six
 
 class JSONFormField(forms.fields.CharField):
     def clean(self, value, *args, **kwargs):
+        # It seems that sometimes we receive dict objects here, not only
+        # strings. Partial form validation maybe?
         if value:
+            if isinstance(value, six.string_types):
+                try:
+                    value = json.loads(value)
+                except ValueError:
+                    raise forms.ValidationError("Invalid JSON data!")
+
             try:
                 # Run the value through JSON so we can normalize formatting
                 # and at least learn about malformed data:
-                value = json.dumps(json.loads(value), cls=DjangoJSONEncoder)
+                value = json.dumps(value, cls=DjangoJSONEncoder)
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 

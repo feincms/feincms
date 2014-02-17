@@ -1,5 +1,7 @@
-from feincms.module.page.extensions.navigation import (NavigationExtension,
-    PagePretender)
+from __future__ import absolute_import, unicode_literals
+
+from feincms.module.page.extensions.navigation import (
+    NavigationExtension, PagePretender)
 
 
 class PassthroughExtension(NavigationExtension):

@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 from django.contrib.admin.widgets import AdminFileWidget
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
@@ -31,16 +31,16 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
         try:
             obj = self.rel.to._default_manager.using(self.db).get(
                 **{key: value})
-            label = [u'&nbsp;<strong>%s</strong>' % escape(
+            label = ['&nbsp;<strong>%s</strong>' % escape(
                 shorten_string(six.text_type(obj)))]
             image = admin_thumbnail(obj)
 
             if image:
                 label.append(
-                    u'<br /><img src="%s" alt="" style="margin:1em 0 0 10em"'
-                    u'/>' % image)
+                    '<br /><img src="%s" alt="" style="margin:1em 0 0 10em"'
+                    '/>' % image)
 
-            return u''.join(label)
+            return ''.join(label)
         except (ValueError, self.rel.to.DoesNotExist):
             return ''
 
@@ -62,8 +62,8 @@ class ContentWithMediaFile(models.Model):
     class feincms_item_editor_inline(FeinCMSInline):
         raw_id_fields = ('mediafile',)
 
-    mediafile = MediaFileForeignKey(MediaFile, verbose_name=_('media file'),
-        related_name='+')
+    mediafile = MediaFileForeignKey(
+        MediaFile, verbose_name=_('media file'), related_name='+')
 
     class Meta:
         abstract = True
@@ -83,9 +83,9 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
             image = admin_thumbnail(value.instance)
             if image:
                 r = mark_safe((
-                    u'<img src="%s" alt="" style="float: left; padding-right:'
-                    u'8px; border-right: 1px solid #ccc; margin-right: 8px"'
-                    u'>' % image) + r)
+                    '<img src="%s" alt="" style="float: left; padding-right:'
+                    '8px; border-right: 1px solid #ccc; margin-right: 8px"'
+                    '>' % image) + r)
 
         return r
 
@@ -93,7 +93,8 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
 
 try:
     from south.modelsinspector import add_introspection_rules
-    add_introspection_rules(rules=[((MediaFileForeignKey,), [], {},)],
+    add_introspection_rules(
+        rules=[((MediaFileForeignKey,), [], {},)],
         patterns=["^feincms\.module\.medialibrary\.fields"])
 except ImportError:
     pass

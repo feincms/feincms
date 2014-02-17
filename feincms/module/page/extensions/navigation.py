@@ -7,6 +7,8 @@ which processes, modifies or adds subnavigation entries. The bundled
 be they real Page instances or extended navigation entries.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 from django.utils import six
 from django.utils.translation import ugettext_lazy as _
@@ -19,6 +21,8 @@ from feincms._internal import monkeypatch_method
 class TypeRegistryMetaClass(type):
     """
     You can access the list of subclasses as <BaseClass>.types
+
+    TODO use NavigationExtension.__subclasses__() instead?
     """
 
     def __init__(cls, name, bases, attrs):
@@ -105,7 +109,8 @@ class Extension(extensions.Extension):
     ident = 'navigation'  # TODO actually use this
 
     def handle_model(self):
-        self.model.add_to_class('navigation_extension',
+        self.model.add_to_class(
+            'navigation_extension',
             models.CharField(
                 _('navigation extension'),
                 choices=navigation_extension_choices(),
@@ -129,4 +134,4 @@ class Extension(extensions.Extension):
         modeladmin.add_extension_options(_('Navigation extension'), {
             'fields': ('navigation_extension',),
             'classes': ('collapse',),
-            })
+        })

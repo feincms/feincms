@@ -4,6 +4,8 @@ differing titles in the navigation and in the <title>-tag.  This extension lets
 you do that.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -16,14 +18,16 @@ class Extension(extensions.Extension):
         self.model.add_to_class('_content_title', models.TextField(
             _('content title'),
             blank=True,
-            help_text=_('The first line is the main title, the following'
+            help_text=_(
+                'The first line is the main title, the following'
                 ' lines are subtitles.')))
 
         self.model.add_to_class('_page_title', models.CharField(
             _('page title'),
             max_length=69,
             blank=True,
-            help_text=_('Page title for browser window. Same as title by'
+            help_text=_(
+                'Page title for browser window. Same as title by'
                 'default. Must not be longer than 70 characters.')))
 
         @monkeypatch_property(self.model)
@@ -50,10 +54,10 @@ class Extension(extensions.Extension):
 
         @monkeypatch_property(self.model)
         def content_subtitle(self):
-            return u'\n'.join(self._content_title.splitlines()[1:])
+            return '\n'.join(self._content_title.splitlines()[1:])
 
     def handle_modeladmin(self, modeladmin):
         modeladmin.add_extension_options(_('Titles'), {
             'fields': ('_content_title', '_page_title'),
             'classes': ('collapse',),
-            })
+        })

@@ -17,6 +17,8 @@ types present in each page at run time, save the current state at
 saving time, thus saving at least one DB query on page delivery.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import class_prepared, post_save, pre_save
 from django.utils.translation import ugettext_lazy as _
@@ -103,14 +105,17 @@ class TrackerContentProxy(ContentProxy):
 
         return dict((region, [
             (pk, map[-ct]) for pk, ct in items
-            ]) for region, items in inventory.items() if region != '_version_')
+        ]) for region, items in inventory.items() if region != '_version_')
 
     def _to_inventory(self, counts):
         map = self._translation_map()
 
-        inventory = dict((region, [
-            (pk, map[ct]) for pk, ct in items
-            ]) for region, items in counts.items())
+        inventory = dict(
+            (
+                region,
+                [(pk, map[ct]) for pk, ct in items],
+            ) for region, items in counts.items()
+        )
         inventory['_version_'] = INVENTORY_VERSION
         return inventory
 

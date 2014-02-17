@@ -4,8 +4,10 @@
 # Authors: Marinho Brandao <marinho at gmail.com>
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
-from django.contrib.admin.filters import (FieldListFilter,
-    ChoicesFieldListFilter)
+from __future__ import absolute_import, unicode_literals
+
+from django.contrib.admin.filters import (
+    FieldListFilter, ChoicesFieldListFilter)
 from django.utils import six
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
@@ -25,7 +27,7 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
     """
 
     def __init__(self, f, request, params, model, model_admin,
-            field_path=None):
+                 field_path=None):
         super(ParentFieldListFilter, self).__init__(
             f, request, params, model, model_admin, field_path)
 
@@ -36,7 +38,7 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
         self.lookup_choices = [(
             pk,
             "%s%s" % ("&nbsp;" * level, shorten_string(title, max_length=25)),
-            ) for pk, title, level in parents]
+        ) for pk, title, level in parents]
 
     def choices(self, cl):
         yield {
@@ -64,7 +66,7 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
     """
 
     def __init__(self, f, request, params, model, model_admin,
-            field_path=None):
+                 field_path=None):
         super(CategoryFieldListFilter, self).__init__(
             f, request, params, model, model_admin, field_path)
 
@@ -95,9 +97,11 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
         return _('Category')
 
 
-FieldListFilter.register(lambda f: getattr(f, 'parent_filter', False),
+FieldListFilter.register(
+    lambda f: getattr(f, 'parent_filter', False),
     ParentFieldListFilter,
     take_priority=True)
-FieldListFilter.register(lambda f: getattr(f, 'category_filter', False),
+FieldListFilter.register(
+    lambda f: getattr(f, 'category_filter', False),
     CategoryFieldListFilter,
     take_priority=True)

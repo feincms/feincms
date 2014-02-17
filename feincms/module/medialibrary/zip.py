@@ -7,7 +7,7 @@
 #
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import json
 import zipfile
@@ -158,8 +158,8 @@ def export_zipfile(site, queryset):
             'slug': cat.slug,
             'parent': cat.parent_id or 0,
             'level': len(cat.path_list()),
-            } for cat in used_categories],
-        }
+        } for cat in used_categories],
+    }
     zip_file.comment = json.dumps(info)
 
     for mf in queryset:
@@ -171,8 +171,8 @@ def export_zipfile(site, queryset):
                 'lang': t.language_code,
                 'caption': t.caption,
                 'description': t.description,
-                } for t in mf.translations.all()],
-            })
+            } for t in mf.translations.all()],
+        })
 
         with open(mf.file.path, "r") as file_data:
             zip_info = zipfile.ZipInfo(

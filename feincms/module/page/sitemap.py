@@ -2,6 +2,8 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db.models import Max
 from django.db.models import get_model
 from django.contrib.sitemaps import Sitemap
@@ -16,8 +18,9 @@ class PageSitemap(Sitemap):
     for submission to index engines. See http://www.sitemaps.org/ for details.
     """
     def __init__(self, navigation_only=False, max_depth=0, changefreq=None,
-            queryset=None, filter=None, extended_navigation=False,
-            page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL, *args, **kwargs):
+                 queryset=None, filter=None, extended_navigation=False,
+                 page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL,
+                 *args, **kwargs):
         """
         The PageSitemap accepts the following parameters for customisation
         of the resulting sitemap.xml output:
