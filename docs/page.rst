@@ -166,35 +166,35 @@ be activated as follows::
 
 The following extensions are available currently:
 
-* :mod:`~feincms.module.extensions.changedate` --- Creation and modification dates
+* :mod:`feincms.module.extensions.changedate` --- Creation and modification dates
 
   Adds automatically maintained creation and modification date fields
   to the page.
 
 
-* :mod:`~feincms.module.extensions.ct_tracker` --- Content type cache
+* :mod:`feincms.module.extensions.ct_tracker` --- Content type cache
 
   Helps reduce database queries if you have three or more content types.
 
 
-* :mod:`~feincms.module.extensions.datepublisher` --- Date-based publishing
+* :mod:`feincms.module.extensions.datepublisher` --- Date-based publishing
 
   Adds publication date and end date fields to the page, thereby enabling the
   administrator to define a date range where a page will be available to
   website visitors.
 
 
-* :mod:`~feincms.module.page.extensions.excerpt` --- Page summary
+* :mod:`feincms.module.page.extensions.excerpt` --- Page summary
 
   Add a brief excerpt summarizing the content of this page.
 
 
-* :mod:`~feincms.module.extensions.featured` --- Simple featured flag for a page
+* :mod:`feincms.module.extensions.featured` --- Simple featured flag for a page
 
   Lets administrators set a featured flag that lets you treat that page special.
 
 
-* :mod:`~feincms.module.page.extensions.navigation` --- Navigation extensions
+* :mod:`feincms.module.page.extensions.navigation` --- Navigation extensions
 
   Adds navigation extensions to the page model. You can define subclasses of
   ``NavigationExtension``, which provide submenus to the navigation generation
@@ -202,29 +202,29 @@ The following extensions are available currently:
   this extension.
 
 
-* :mod:`~feincms.module.page.extensions.relatedpages` --- Links related content
+* :mod:`feincms.module.page.extensions.relatedpages` --- Links related content
 
   Add a many-to-many relationship field to relate this page to other pages.
 
 
-* :mod:`~feincms.module.extensions.seo` --- Search engine optimization
+* :mod:`feincms.module.extensions.seo` --- Search engine optimization
 
   Adds fields to the page relevant for search engine optimization (SEO),
   currently only meta keywords and description.
 
 
-* :mod:`~feincms.module.page.extensions.sites` --- Limit pages to sites
+* :mod:`feincms.module.page.extensions.sites` --- Limit pages to sites
 
   Allows to limit a page to a certain site and not display it on other sites.
 
 
-* :mod:`~feincms.module.page.extensions.symlinks` --- Symlinked content extension
+* :mod:`feincms.module.page.extensions.symlinks` --- Symlinked content extension
 
   Sometimes you want to reuse all content from a page in another place. This
   extension lets you do that.
 
 
-* :mod:`~feincms.module.page.extensions.titles` --- Additional titles
+* :mod:`feincms.module.page.extensions.titles` --- Additional titles
 
   Adds additional title fields to the page model. You may not only define a
   single title for the page to be used in the navigation, the <title> tag and
@@ -233,7 +233,7 @@ The following extensions are available currently:
   content area.
 
 
-* :mod:`~feincms.module.extensions.translations` --- Page translations
+* :mod:`feincms.module.extensions.translations` --- Page translations
 
   Adds a language field and a recursive translations many to many field to the
   page, so that you can define the language the page is in and assign
