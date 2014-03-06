@@ -159,7 +159,9 @@ upon registering the extension. The :func:`register` method receives the
 :class:`~feincms.module.page.models.PageAdmin` as arguments. The extensions can
 be activated as follows::
 
-     Page.register_extensions('navigation', 'titles', 'translations')
+     Page.register_extensions('feincms.module.page.extensions.navigation',
+                              'feincms.module.page.extensions.titles',
+                              'feincms.module.extensions.translations')
 
 
 The following extensions are available currently:
