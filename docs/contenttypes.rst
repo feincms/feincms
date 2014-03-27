@@ -82,23 +82,23 @@ in the rendered result.
    outlined apply for all other CMS base types.
 
 
-The complete code required to implement and include a custom textile content
+The complete code required to implement and include a custom markdown content
 type is shown here::
 
+    from markdown2 import markdown
     from feincms.module.page.models import Page
-    from django.contrib.markup.templatetags.markup import textile
     from django.db import models
 
-    class TextilePageContent(models.Model):
+    class MarkdownPageContent(models.Model):
         content = models.TextField()
 
         class Meta:
             abstract = True
 
         def render(self, **kwargs):
-            return textile(self.content)
+            return markdown(self.content)
 
-    Page.create_content_type(TextilePageContent)
+    Page.create_content_type(MarkdownPageContent)
 
 
 There are three field names you should not use because they are added
@@ -435,18 +435,18 @@ Other rich text libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Other rich text widgets can be wired up for the RichTextContent.
-You would have to write two functions: One which is called when 
-rich text editing functionality is added ("richify"), and another 
-one which is called when functionality is removed ("poorify"). 
-The second is necessary because rich text editors do not like 
-being dragged; when dragging a rich text content type, it is first 
-poorified and then richified again as soon as the content type has 
+You would have to write two functions: One which is called when
+rich text editing functionality is added ("richify"), and another
+one which is called when functionality is removed ("poorify").
+The second is necessary because rich text editors do not like
+being dragged; when dragging a rich text content type, it is first
+poorified and then richified again as soon as the content type has
 been dropped into its final position.
 
 To perform those operations
   * Add a function adding the new rich text editor to
     ``contentblock_init_handlers`` and to ``contentblock_move_handlers.richify``
-  * Add a function removing the rich text editor to 
+  * Add a function removing the rich text editor to
     ``contentblock_move_handlers.poorify``
 
 
