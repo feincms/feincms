@@ -156,7 +156,7 @@ cluttering up the core page model for those who do not need them. The extensions
 are standard python modules with a :func:`register` method which will be called
 upon registering the extension. The :func:`register` method receives the
 :class:`~feincms.module.page.models.Page` class itself and the model admin class
-:class:`~feincms.module.page.models.PageAdmin` as arguments. The extensions can
+:class:`~feincms.module.page.modeladmins.PageAdmin` as arguments. The extensions can
 be activated as follows::
 
      Page.register_extensions('feincms.module.page.extensions.navigation',
