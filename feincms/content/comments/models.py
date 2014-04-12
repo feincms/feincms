@@ -81,8 +81,8 @@ class CommentsContent(models.Model):
             # post to the current path and handle it this way .. at least it
             # works for now.
 
-            #extra = request._feincms_extra_context.get('page_extra_path', ())
-            #if len(extra) > 0 and extra[0] == "post-comment":
+            # extra = request._feincms_extra_context.get('page_extra_path', ())
+            # if len(extra) > 0 and extra[0] == "post-comment":
 
             r = post_comment(request, next=comment_page.get_absolute_url())
 

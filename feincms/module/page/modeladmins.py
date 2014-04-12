@@ -215,14 +215,14 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             # Sanity check in case this is not already defined
             self._visible_pages = list()
 
-        if page.parent_id and not page.parent_id in self._visible_pages:
+        if page.parent_id and page.parent_id not in self._visible_pages:
             # parent page's invisibility is inherited
             if page.id in self._visible_pages:
                 self._visible_pages.remove(page.id)
             return tree_editor.ajax_editable_boolean_cell(
                 page, 'active', override=False, text=_('inherited'))
 
-        if page.active and not page.id in self._visible_pages:
+        if page.active and page.id not in self._visible_pages:
             # is active but should not be shown, so visibility limited by
             # extension: show a "not active"
             return tree_editor.ajax_editable_boolean_cell(

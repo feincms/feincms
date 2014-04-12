@@ -353,7 +353,7 @@ class TreeEditor(ExtensionModelAdmin):
 
         self._collect_editable_booleans()
 
-        if not attr in self._ajax_editable_booleans:
+        if attr not in self._ajax_editable_booleans:
             return HttpResponseBadRequest("not a valid attribute %s" % attr)
 
         try:

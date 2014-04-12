@@ -79,11 +79,11 @@ class CMSBaseTest(TestCase):
 
         self.assertTrue('yahoo' in obj.render())
 
-    #Creating a content type twice isn't forbidden anymore
-    #def test_03_double_creation(self):
-    #    # creating a content type twice is forbidden
-    #    self.assertRaises(ImproperlyConfigured,
-    #        lambda: ExampleCMSBase.create_content_type(RawContent))
+    # Creating a content type twice isn't forbidden anymore
+    # def test_03_double_creation(self):
+    #     # creating a content type twice is forbidden
+    #     self.assertRaises(ImproperlyConfigured,
+    #         lambda: ExampleCMSBase.create_content_type(RawContent))
 
     def test_04_mediafilecontent_creation(self):
         # the medialibrary needs to be enabled, otherwise this test fails
@@ -173,7 +173,7 @@ class CMSBaseTest(TestCase):
 
         self.assertTrue(Attachment in related_models)
         self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
-        #self.assertFalse(hasattr(Attachment, 'anycontents'))
+        # self.assertFalse(hasattr(Attachment, 'anycontents'))
 
         class AnyContent(models.Model):
             attachment = models.ForeignKey(

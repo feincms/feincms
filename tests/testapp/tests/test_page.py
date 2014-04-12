@@ -342,7 +342,7 @@ class PagesTestCase(TestCase):
         data = {
             'title': page.title,
             'slug': page.slug,
-            #'parent': page.parent_id, # this field is excluded from the form
+            # 'parent': page.parent_id,  # this field is excluded from the form
             'template_key': page.template_key,
             'publication_date_0': '2009-01-01',
             'publication_date_1': '00:00:00',
