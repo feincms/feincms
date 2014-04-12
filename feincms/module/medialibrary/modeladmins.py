@@ -42,7 +42,7 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
 
 
-#-------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 def assign_category(modeladmin, request, queryset):
     class AddCategoryForm(forms.Form):
         _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
@@ -84,7 +84,7 @@ def assign_category(modeladmin, request, queryset):
 assign_category.short_description = _('Add selected media files to category')
 
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 def save_as_zipfile(modeladmin, request, queryset):
     from .zip import export_zipfile
 

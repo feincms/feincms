@@ -333,7 +333,7 @@ class ItemEditor(ExtensionModelAdmin):
         fieldsets = copy.deepcopy(
             super(ItemEditor, self).get_fieldsets(request, obj))
 
-        if not FEINCMS_CONTENT_FIELDSET_NAME in dict(fieldsets).keys():
+        if FEINCMS_CONTENT_FIELDSET_NAME not in dict(fieldsets).keys():
             fieldsets.append(FEINCMS_CONTENT_FIELDSET)
 
         return fieldsets

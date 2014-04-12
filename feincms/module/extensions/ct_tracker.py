@@ -79,7 +79,7 @@ class TrackerContentProxy(ContentProxy):
 
     def _translation_map(self):
         cls = self.item.__class__
-        if not cls in _translation_map_cache:
+        if cls not in _translation_map_cache:
             # Prime translation map and cache it in the class. This needs to be
             # done late as opposed to at class definition time as not all
             # information is ready, especially when we are doing a "syncdb" the

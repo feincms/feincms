@@ -44,7 +44,7 @@ class ContentModelMixin(object):
             cls.response_processors = SortedDict()
         cls.response_processors[fn if key is None else key] = fn
 
-   # Implement admin_urlname templatetag protocol
+    # TODO Implement admin_urlname templatetag protocol
     @property
     def app_label(self):
         """

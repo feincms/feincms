@@ -47,7 +47,7 @@ def frontendediting_request_processor(page, request):
     Sets the frontend editing state in the cookie depending on the
     ``frontend_editing`` GET parameter and the user's permissions.
     """
-    if not 'frontend_editing' in request.GET:
+    if 'frontend_editing' not in request.GET:
         return
 
     response = HttpResponseRedirect(request.path)

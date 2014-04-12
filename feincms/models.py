@@ -405,8 +405,8 @@ def create_base_model(inherit_from=models.Model):
                 cls.template = property(_template)
 
             cls.TEMPLATE_CHOICES = field._choices = [
-                (template.key, template.title,)
-                for template in cls._feincms_templates.values()
+                (template_.key, template_.title,)
+                for template_ in cls._feincms_templates.values()
             ]
             field.default = field.choices[0][0]
 
