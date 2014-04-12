@@ -19,7 +19,8 @@ Now, you need to create your own model admin subclass inheriting from both
 FeinCMS' ``PageAdmin`` and from reversions ``VersionAdmin``::
 
     from django.contrib import admin
-    from feincms.module.page.models import Page, PageAdmin
+    from feincms.module.page.models import Page
+    from feincms.module.page.modeladmins import PageAdmin
     from reversion.admin import VersionAdmin
 
     admin.site.unregister(Page)
