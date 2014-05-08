@@ -55,3 +55,11 @@ def monkeypatch_class(name, bases, namespace):
         if name != "__metaclass__":
             setattr(base, name, value)
     return base
+
+
+def get_permission_codename(action, opts):
+    """
+    Backport of django.contrib.auth.get_permission_codename for older versions
+    of Django.
+    """
+    return '%s_%s' % (action, opts.model_name)

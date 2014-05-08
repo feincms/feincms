@@ -21,6 +21,7 @@ from django.utils.functional import curry
 from django.utils.translation import ugettext as _
 
 from feincms import settings, ensure_completely_loaded
+from feincms._internal import get_permission_codename
 from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
 from feincms.templatetags.feincms_admin_tags import is_popup_var
@@ -90,7 +91,7 @@ class ItemEditor(ExtensionModelAdmin):
     def can_add_content(self, request, content_type):
         perm = '.'.join((
             content_type._meta.app_label,
-            content_type._meta.get_add_permission()))
+            get_permission_codename('add', content_type._meta)))
         return request.user.has_perm(perm)
 
     def get_feincms_inlines(self, model, request):

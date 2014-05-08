@@ -10,6 +10,7 @@ from django import template
 from django.conf import settings
 from django.template.loader import render_to_string
 
+from feincms._internal import get_permission_codename
 from feincms.utils import get_singleton, get_singleton_url
 
 
@@ -88,7 +89,8 @@ def show_content_type_selection_widget(context, region):
     ungrouped = []
     for ct in region._content_types:
         # Skip cts that we shouldn't be adding anyway
-        perm = ct._meta.app_label + "." + ct._meta.get_add_permission()
+        opts = ct._meta
+        perm = opts.app_label + "." + get_permission_codename('add', opts)
         if not user.has_perm(perm):
             continue
 

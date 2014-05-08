@@ -24,6 +24,7 @@ from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm
 
 from feincms import settings
+from feincms._internal import get_permission_codename
 from feincms.extensions import ExtensionModelAdmin
 
 
@@ -246,11 +247,11 @@ class TreeEditor(ExtensionModelAdmin):
             'admin/feincms/tree_editor.html',
         ]
         self.object_change_permission =\
-            opts.app_label + '.' + opts.get_change_permission()
+            opts.app_label + '.' + get_permission_codename('change', opts)
         self.object_add_permission =\
-            opts.app_label + '.' + opts.get_add_permission()
+            opts.app_label + '.' + get_permission_codename('add', opts)
         self.object_delete_permission =\
-            opts.app_label + '.' + opts.get_delete_permission()
+            opts.app_label + '.' + get_permission_codename('delete', opts)
 
     def changeable(self, item):
         return getattr(item, 'feincms_changeable', True)
