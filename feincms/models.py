@@ -390,13 +390,17 @@ def create_base_model(inherit_from=models.Model):
                 instances[template.key] = template
 
             try:
-                field = cls._meta.get_field_by_name('template_key')[0]
-            except (FieldDoesNotExist, IndexError):
+                field = next(iter(
+                    field for field in cls._meta.local_fields
+                    if field.name == 'template_key'))
+            except (StopIteration,):
                 cls.add_to_class(
                     'template_key',
                     models.CharField(_('template'), max_length=255, choices=())
                 )
-                field = cls._meta.get_field_by_name('template_key')[0]
+                field = next(iter(
+                    field for field in cls._meta.local_fields
+                    if field.name == 'template_key'))
 
                 def _template(self):
                     ensure_completely_loaded()
