@@ -56,6 +56,11 @@ class ContentModelMixin(object):
         return self._meta.app_label
 
     @property
+    def model_name(self):
+        "See app_label"
+        return self.__class__.__name__.lower()
+
+    @property
     def module_name(self):
         "See app_label"
         return self.__class__.__name__.lower()
