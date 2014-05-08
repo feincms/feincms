@@ -424,7 +424,9 @@ class TreeEditor(ExtensionModelAdmin):
         self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
-        queryset = self.queryset(request)
+        queryset = (
+            self.get_queryset(request) if hasattr(self, 'get_queryset')
+            else self.queryset(request))
         extra_context['tree_structure'] = mark_safe(
             json.dumps(_build_tree_structure(queryset)))
 
@@ -478,7 +480,9 @@ class TreeEditor(ExtensionModelAdmin):
         else:
             tree_manager = self.model._tree_manager
 
-        queryset = self.queryset(request)
+        queryset = (
+            self.get_queryset(request) if hasattr(self, 'get_queryset')
+            else self.queryset(request))
         cut_item = queryset.get(pk=request.POST.get('cut_item'))
         pasted_on = queryset.get(pk=request.POST.get('pasted_on'))
         position = request.POST.get('position')
