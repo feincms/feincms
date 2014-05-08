@@ -29,7 +29,7 @@ from feincms.utils import path_to_cache_key, shorten_string
 
 
 REDIRECT_TO_RE = re.compile(
-    r'^(?P<app_label>\w+).(?P<module_name>\w+):(?P<pk>\d+)$')
+    r'^(?P<app_label>\w+).(?P<model_name>\w+):(?P<pk>\d+)$')
 
 
 # ------------------------------------------------------------------------
@@ -381,7 +381,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             return self.redirect_to
 
         matches = match.groupdict()
-        model = get_model(matches['app_label'], matches['module_name'])
+        model = get_model(matches['app_label'], matches['model_name'])
 
         if not model:
             return self.redirect_to

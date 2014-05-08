@@ -63,3 +63,10 @@ def get_permission_codename(action, opts):
     of Django.
     """
     return '%s_%s' % (action, opts.model_name)
+
+
+def get_model_name(opts):
+    try:
+        return opts.model_name
+    except AttributeError:
+        return opts.module_name

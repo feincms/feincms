@@ -3,8 +3,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 from django.core.management.color import color_style
 from django.db import connection
 
+from feincms._internal import get_model_name
 
-def check_database_schema(cls, module_name):
+
+def check_database_schema(cls, model_name):
     """
     Returns a function which inspects the database table of the passed class.
     It checks whether all fields in the model are available on the database
@@ -23,7 +25,7 @@ def check_database_schema(cls, module_name):
     """
 
     def _fn(sender, **kwargs):
-        if sender.__name__ != module_name:
+        if sender.__name__ != model_name:
             return
 
         cursor = connection.cursor()
