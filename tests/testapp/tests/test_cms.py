@@ -137,7 +137,7 @@ class CMSBaseTest(TestCase):
     def test_08_creating_two_content_types_in_same_application(self):
         ExampleCMSBase.create_content_type(RawContent)
         ct = ExampleCMSBase.content_type_for(RawContent)
-        self.assertEqual(ct._meta.db_table, 'tests_examplecmsbase_rawcontent')
+        self.assertEqual(ct._meta.db_table, 'testapp_examplecmsbase_rawcontent')
 
         ExampleCMSBase2.create_content_type(
             RawContent,
@@ -145,7 +145,7 @@ class CMSBaseTest(TestCase):
         ct2 = ExampleCMSBase2.content_type_for(RawContent)
         self.assertEqual(
             ct2._meta.db_table,
-            'tests_examplecmsbase2_rawcontent2')
+            'testapp_examplecmsbase2_rawcontent2')
 
     def test_09_related_objects_cache(self):
         """
