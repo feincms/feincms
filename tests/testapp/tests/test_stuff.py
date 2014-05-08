@@ -11,7 +11,7 @@ from django.test import TestCase
 from django.utils.encoding import force_text
 
 import feincms
-from feincms.models import Region, Template, Base
+from feincms.models import Region, Template
 from feincms.module.blog.models import Entry
 from feincms.utils import collect_dict_values, get_object, shorten_string
 
@@ -84,22 +84,6 @@ class UtilsTest(TestCase):
             10, ellipsis='-')
         self.assertEqual(string, 'Badger-ger')
         self.assertEqual(len(string), 10)
-
-
-class ExampleCMSBase(Base):
-    pass
-
-ExampleCMSBase.register_regions(
-    ('region', 'region title'),
-    ('region2', 'region2 title'))
-
-
-class ExampleCMSBase2(Base):
-        pass
-
-ExampleCMSBase2.register_regions(
-    ('region', 'region title'),
-    ('region2', 'region2 title'))
 
 
 class BlogTestCase(TestCase):

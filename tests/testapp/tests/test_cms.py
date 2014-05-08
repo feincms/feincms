@@ -16,7 +16,8 @@ from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
-from .test_stuff import ExampleCMSBase, Empty, ExampleCMSBase2
+from testapp.models import ExampleCMSBase, ExampleCMSBase2
+from .test_stuff import Empty
 
 
 # ------------------------------------------------------------------------

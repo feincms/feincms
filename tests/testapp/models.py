@@ -6,6 +6,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.models import Base
 from feincms.module.blog.models import Entry, EntryAdmin
 from feincms.module.page.models import Page
 from feincms.content.raw.models import RawContent
@@ -145,3 +146,19 @@ Entry.add_to_class(
     str('categories'),
     models.ManyToManyField(Category, blank=True, null=True))
 EntryAdmin.list_filter += ('categories',)
+
+
+class ExampleCMSBase(Base):
+    pass
+
+ExampleCMSBase.register_regions(
+    ('region', 'region title'),
+    ('region2', 'region2 title'))
+
+
+class ExampleCMSBase2(Base):
+        pass
+
+ExampleCMSBase2.register_regions(
+    ('region', 'region title'),
+    ('region2', 'region2 title'))
