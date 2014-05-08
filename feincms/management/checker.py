@@ -3,8 +3,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from django.core.management.color import color_style
 from django.db import connection
 
-from feincms._internal import get_model_name
-
 
 def check_database_schema(cls, model_name):
     """

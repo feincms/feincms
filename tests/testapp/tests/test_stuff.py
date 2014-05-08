@@ -13,7 +13,6 @@ from django.utils.encoding import force_text
 import feincms
 from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
-from feincms.module.page.models import Page
 from feincms.utils import collect_dict_values, get_object, shorten_string
 
 
