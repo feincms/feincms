@@ -44,9 +44,14 @@ def ensure_completely_loaded(force=False):
     if COMPLETELY_LOADED and not force:
         return True
 
-    from django.apps import apps
-    if not apps.ready:
-        return
+    try:
+        from django.apps import apps
+    except ImportError:
+        pass
+    else:
+        # Django 1.7 and up
+        if not apps.ready:
+            return
 
     # Ensure meta information concerning related fields is up-to-date.
     # Upon accessing the related fields information from Model._meta,
