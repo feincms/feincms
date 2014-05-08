@@ -6,14 +6,18 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.models import Base
 from feincms.module.blog.models import Entry, EntryAdmin
 from feincms.module.page.models import Page
 from feincms.content.raw.models import RawContent
 from feincms.content.image.models import ImageContent
 from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.application.models import ApplicationContent
+from feincms.content.contactform.models import ContactFormContent, ContactForm
+from feincms.content.file.models import FileContent
 from feincms.module.page.extensions.navigation import (
     NavigationExtension, PagePretender)
+from feincms.module.page import processors
 from feincms.content.application.models import reverse
 
 from mptt.models import MPTTModel
@@ -41,6 +45,12 @@ Page.create_content_type(
         ('default', 'Default position'),
     )
 )
+Page.create_content_type(ContactFormContent, form=ContactForm)
+Page.create_content_type(FileContent)
+Page.register_request_processor(processors.etag_request_processor)
+Page.register_response_processor(processors.etag_response_processor)
+Page.register_response_processor(
+    processors.debug_sql_queries_response_processor())
 
 
 def get_admin_fields(form, *args, **kwargs):
@@ -55,7 +65,6 @@ def get_admin_fields(form, *args, **kwargs):
         ),
         'custom_field': forms.CharField(),
     }
-
 
 Page.create_content_type(
     ApplicationContent,
@@ -137,3 +146,19 @@ Entry.add_to_class(
     str('categories'),
     models.ManyToManyField(Category, blank=True, null=True))
 EntryAdmin.list_filter += ('categories',)
+
+
+class ExampleCMSBase(Base):
+    pass
+
+ExampleCMSBase.register_regions(
+    ('region', 'region title'),
+    ('region2', 'region2 title'))
+
+
+class ExampleCMSBase2(Base):
+        pass
+
+ExampleCMSBase2.register_regions(
+    ('region', 'region title'),
+    ('region2', 'region2 title'))

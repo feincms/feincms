@@ -489,7 +489,7 @@ class PagesTestCase(TestCase):
 
         self.assertTrue('somefile.jpg' in page.content.main[2].render())
         self.assertTrue(re.search(
-            '<a .*href="somefile\.jpg">.*thetitle.*</a>',
+            '<a .*href="/media/somefile\.jpg">.*thetitle.*</a>',
             page.content.main[3].render(),
             re.MULTILINE + re.DOTALL) is not None)
 
@@ -510,7 +510,7 @@ class PagesTestCase(TestCase):
         (field.upload_to, field.storage, field.generate_filename) = old
 
         mediafile = MediaFile.objects.get(pk=1)
-        self.assertEqual(mediafile.file.url, 'somefile.jpg')
+        self.assertEqual(mediafile.file.url, '/media/somefile.jpg')
 
     def test_11_translations(self):
         self.create_default_page_set()

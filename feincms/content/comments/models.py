@@ -23,6 +23,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.item_editor import ItemEditorForm
+from feincms._internal import get_model_name
 
 
 # ------------------------------------------------------------------------
@@ -59,7 +60,7 @@ class CommentsContent(models.Model):
                                 _('public') if c.is_public
                                 else _('not public')),
                             'app': comments_model._meta.app_label,
-                            'model': comments_model._meta.module_name,
+                            'model': get_model_name(comments_model._meta),
                         }
                     f.help_text = r
 
