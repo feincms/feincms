@@ -20,6 +20,7 @@ from .fields import AdminFileWithPreviewWidget
 class MediaCategoryAdminForm(forms.ModelForm):
     class Meta:
         model = Category
+        fields = '__all__'
 
     def clean_parent(self):
         data = self.cleaned_data['parent']
@@ -40,6 +41,7 @@ class MediaFileAdminForm(forms.ModelForm):
     class Meta:
         model = MediaFile
         widgets = {'file': AdminFileWithPreviewWidget}
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(MediaFileAdminForm, self).__init__(*args, **kwargs)
