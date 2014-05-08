@@ -12,6 +12,7 @@ import sys
 import operator
 import warnings
 
+import django
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections, models
@@ -661,24 +662,29 @@ def create_base_model(inherit_from=models.Model):
                 # everything ok
                 pass
 
-            # Next name clash test. Happens when the same content type is
-            # created for two Base subclasses living in the same Django
-            # application (github issues #73 and #150)
-            try:
-                other_model = get_model(cls._meta.app_label, class_name)
-                if other_model is None:
-                    # Django 1.6 and earlier
-                    raise LookupError
-            except LookupError:
-                pass
-            else:
-                warnings.warn(
-                    'It seems that the content type %s exists twice in %s.'
-                    ' Use the class_name argument to create_content_type to'
-                    ' avoid this error.' % (
-                        model.__name__,
-                        cls._meta.app_label),
-                    RuntimeWarning)
+            if django.VERSION < (1, 7):
+                # Next name clash test. Happens when the same content type is
+                # created for two Base subclasses living in the same Django
+                # application (github issues #73 and #150)
+                #
+                # FIXME This code does not work with Django 1.7, because
+                # get_model depends on the app cache which is not ready at
+                # this time yet.
+                try:
+                    other_model = get_model(cls._meta.app_label, class_name)
+                    if other_model is None:
+                        # Django 1.6 and earlier
+                        raise LookupError
+                except LookupError:
+                    pass
+                else:
+                    warnings.warn(
+                        'It seems that the content type %s exists twice in %s.'
+                        ' Use the class_name argument to create_content_type'
+                        ' to avoid this error.' % (
+                            model.__name__,
+                            cls._meta.app_label),
+                        RuntimeWarning)
 
             if not model._meta.abstract:
                 raise ImproperlyConfigured(
