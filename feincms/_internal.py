@@ -57,16 +57,16 @@ def monkeypatch_class(name, bases, namespace):
     return base
 
 
-def get_permission_codename(action, opts):
-    """
-    Backport of django.contrib.auth.get_permission_codename for older versions
-    of Django.
-    """
-    return '%s_%s' % (action, opts.model_name)
-
-
 def get_model_name(opts):
     try:
         return opts.model_name
     except AttributeError:
         return opts.module_name
+
+
+def get_permission_codename(action, opts):
+    """
+    Backport of django.contrib.auth.get_permission_codename for older versions
+    of Django.
+    """
+    return '%s_%s' % (action, get_model_name(opts))
