@@ -11,13 +11,8 @@ from django.test import TestCase
 from django.utils.encoding import force_text
 
 import feincms
-
-from feincms.content.contactform.models import ContactFormContent, ContactForm
-from feincms.content.file.models import FileContent
-
 from feincms.models import Region, Template, Base
 from feincms.module.blog.models import Entry
-from feincms.module.page import processors
 from feincms.module.page.models import Page
 from feincms.utils import collect_dict_values, get_object, shorten_string
 
@@ -106,13 +101,6 @@ class ExampleCMSBase2(Base):
 ExampleCMSBase2.register_regions(
     ('region', 'region title'),
     ('region2', 'region2 title'))
-
-Page.create_content_type(ContactFormContent, form=ContactForm)
-Page.create_content_type(FileContent)
-Page.register_request_processor(processors.etag_request_processor)
-Page.register_response_processor(processors.etag_response_processor)
-Page.register_response_processor(
-    processors.debug_sql_queries_response_processor())
 
 
 class BlogTestCase(TestCase):
