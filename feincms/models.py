@@ -17,7 +17,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections, models
 from django.db.models import Q
-from django.db.models.fields import FieldDoesNotExist
 from django.db.models.loading import get_model
 from django.forms.widgets import Media
 from django.template.loader import render_to_string
