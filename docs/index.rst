@@ -76,6 +76,7 @@ Releases
    releases/1.7
    releases/1.8
    releases/1.9
+   releases/1.10
 
 
 Indices and tables

@@ -1,0 +1,53 @@
+==========================
+FeinCMS 1.10 release notes
+==========================
+
+Welcome to FeinCMS 1.10!
+
+
+Full compatibility with the app-loading refactor in Django 1.7
+==============================================================
+
+FeinCMS 1.10 is compatible with Django 1.7. It shouldn't even be necessary
+to change your FeinCMS-using code.
+
+The only change is that we cannot test for name clashes in content types
+anymore. This only concerns you if you were using more than one
+``feincms.models.Base`` subclass inside the same app using the same content
+types. You should be using the ``class_name`` argument to
+``create_content_type`` already anyway.  The technical reason for this change
+is that the name clash test requires the app registry to be ready (which it
+isn't yet when creating content types).
+
+
+Backwards-incompatible changes
+==============================
+
+
+Removal of deprecated features
+------------------------------
+
+*
+
+
+New deprecations
+================
+
+
+
+Notable features and improvements
+=================================
+
+* The bundled versions of jQuery and jQuery UI have been updated to 1.11.1
+  and 1.10.3 respectively.
+
+
+Bugfixes
+========
+
+
+Compatibility with Django and other apps
+========================================
+
+FeinCMS 1.10 requires Django 1.4 or better. The testsuite is successfully run
+against Django 1.4, 1.5, 1.6 and the upcoming 1.7.
