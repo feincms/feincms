@@ -133,4 +133,4 @@ Compatibility with Django and other apps
 ========================================
 
 FeinCMS 1.8 requires Django 1.4 or better. The testsuite is successfully run
-against Django 1.4, 1.5, 1.6 and the upcoming 1.7.
+against Django 1.4, 1.5 and 1.6. Django 1.7 is not supported.
