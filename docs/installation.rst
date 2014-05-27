@@ -47,9 +47,13 @@ TinyMCE_ works out of the box and is recommended.
 Configuration
 =============
 
-There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS``,
-most commonly you'll want to add ``feincms``, ``mptt``, ``feincms.module.page`` and
-``feincms.module.medialibrary``.
+There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS``, most commonly you'll want to add::
+
+    feincms,
+    mptt,
+    feincms.module.page,
+    feincms.module.medialibrary
+
 The customized administration interface needs some media and javascript
 libraries which you have to make available to the browser. FeinCMS uses Django's
 ``django.contrib.staticfiles`` application for this purpose, the media files will
@@ -67,4 +71,4 @@ pages and this is the most advanced module of FeinCMS too. Please
 proceed to :ref:`page` to find out how you can get the page module
 up and running.
 
-.. _settings: https://docs.djangoproject.com/en/dev/topics/i18n/translation/#how-django-discovers-language-preference
+.. _settings: https://docs.djangoproject.com/en/dev/ref/settings/#languages
