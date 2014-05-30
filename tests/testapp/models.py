@@ -6,6 +6,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.models import create_base_model
 from feincms.module.blog.models import Entry, EntryAdmin
 from feincms.module.page.models import Page
 from feincms.content.raw.models import RawContent
@@ -18,6 +19,7 @@ from feincms.content.application.models import reverse
 
 from mptt.models import MPTTModel
 
+from .content import CustomContentType
 
 Page.register_templates({
     'key': 'base',
@@ -136,3 +138,13 @@ Entry.add_to_class(
     str('categories'),
     models.ManyToManyField(Category, blank=True, null=True))
 EntryAdmin.list_filter += ('categories',)
+
+
+class MyModel(create_base_model()):
+    pass
+
+
+MyModel.register_regions(('main', 'Main region'))
+
+
+MyModel.create_content_type(CustomContentType)
