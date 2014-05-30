@@ -147,4 +147,6 @@ class MyModel(create_base_model()):
 MyModel.register_regions(('main', 'Main region'))
 
 
+unchanged = CustomContentType
 MyModel.create_content_type(CustomContentType)
+assert CustomContentType is unchanged
