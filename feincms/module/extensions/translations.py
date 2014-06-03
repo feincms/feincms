@@ -191,12 +191,19 @@ class Extension(extensions.Extension):
         def available_translations(self):
             if not self.id:  # New, unsaved pages have no translations
                 return []
+
+            filter_active = lambda queryset: queryset
+            if hasattr(cls.objects, 'apply_active_filters'):
+                filter_active = cls.objects.apply_active_filters
+
             if is_primary_language(self.language):
-                return self.translations.all()
+                return filter_active(self.translations.all())
             elif self.translation_of:
                 # reuse prefetched queryset, do not filter it
-                res = [t for t in list(self.translation_of.translations.all())
-                       if t.language != self.language]
+                res = [
+                    t for t
+                    in filter_active(self.translation_of.translations.all())
+                    if t.language != self.language]
                 res.insert(0, self.translation_of)
                 return res
             else:

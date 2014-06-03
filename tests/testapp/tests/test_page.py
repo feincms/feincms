@@ -521,6 +521,10 @@ class PagesTestCase(TestCase):
         page1 = Page.objects.get(pk=1)
         page2 = Page.objects.get(pk=2)
 
+        page1.active = True
+        page1.save()
+
+        page2.active = True
         page2.language = 'de'
         page2.save()
 

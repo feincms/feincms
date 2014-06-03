@@ -41,6 +41,9 @@ Notable features and improvements
 * The bundled versions of jQuery and jQuery UI have been updated to 1.11.1
   and 1.10.3 respectively.
 
+* ``feincms_languagelinks`` does not return page URLs leading to inactive
+  pages anymore.
+
 
 Bugfixes
 ========
