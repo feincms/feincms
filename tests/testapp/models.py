@@ -40,8 +40,9 @@ def get_admin_fields(form, *args, **kwargs):
             label=capfirst(_('exclusive subpages')),
             required=False,
             initial=form.instance.parameters.get('exclusive_subpages', False),
-            help_text=_('Exclude everything other than the application\'s content when rendering subpages.'),
-            ),
+            help_text=_('Exclude everything other when rendering subpages.'),
+        ),
+        'custom_field': forms.CharField(),
     }
 
 
