@@ -47,19 +47,28 @@ TinyMCE_ works out of the box and is recommended.
 Configuration
 =============
 
-There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS``, most commonly you'll want to add::
+There isn't much left to do apart from adding a few entries to
+``INSTALLED_APPS``, most commonly you'll want to add::
 
     feincms,
     mptt,
     feincms.module.page,
     feincms.module.medialibrary
 
-The customized administration interface needs some media and javascript
-libraries which you have to make available to the browser. FeinCMS uses Django's
-``django.contrib.staticfiles`` application for this purpose, the media files will
-be picked up automatically by the ``collectstatic`` management command.
+Also, you should add the request context processor to the list of
+``TEMPLATE_CONTEXT_PROCESSORS``, the template tag and the administration
+interface require it::
 
-If your website is multi-language you have to define ``LANGUAGES`` in the settings_.
+    django.core.context_processors.request
+
+The customized administration interface needs some media and javascript
+libraries which you have to make available to the browser. FeinCMS uses
+Django's ``django.contrib.staticfiles`` application for this purpose, the media
+files will be picked up automatically by the ``collectstatic`` management
+command.
+
+If your website is multi-language you have to define ``LANGUAGES`` in the
+settings_.
 
 Please note that the ``feincms`` module will not create or need any database
 tables, but you need to put it into ``INSTALLED_APPS`` because otherwise the
