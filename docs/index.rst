@@ -54,6 +54,7 @@ Contents
    integration
    medialibrary
    templatetags
+   settings
    migrations
    versioning
    advanced/index
