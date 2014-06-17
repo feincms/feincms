@@ -1427,8 +1427,8 @@ class PagesTestCase(TestCase):
 
         # Check if admin_fields get populated correctly
         app_ct = page.applicationcontent_set.all()[0]
-        app_ct.parameters = (
-            '{"custom_field": "val42", "exclusive_subpages": false}')
+        app_ct.parameters =\
+            '{"custom_field":"val42", "exclusive_subpages": false}'
         app_ct.save()
         r = self.client.get('/admin/page/page/%d/' % page.id)
         self.assertContains(r, 'val42')
