@@ -400,7 +400,7 @@ def create_base_model(inherit_from=models.Model):
                         # return first template as a fallback if the template
                         # has changed in-between
                         return self._feincms_templates[
-                            self._feincms_templates.keys()[0]]
+                            list(self._feincms_templates.keys())[0]]
 
                 cls.template = property(_template)
 
