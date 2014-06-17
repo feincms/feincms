@@ -1725,3 +1725,8 @@ class PagesTestCase(TestCase):
 
         page1.parent = page3
         self.assertRaises(InvalidMove, page1.save)
+
+    def test_38_invalid_template(self):
+        page = Page()
+        page.template_key = 'test'
+        self.assertEqual(page.template.key, 'base')
