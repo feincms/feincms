@@ -7,26 +7,20 @@ Installation instructions
 Installation
 ============
 
-This document describes the steps needed to get FeinCMS up and running.
+This document describes the steps needed to install FeinCMS.
 
-FeinCMS is based on Django, so you need a working Django_ installation
-first. The minimum support version of Django_ is the 1.4 line of releases.
+FeinCMS requires a working installation of Django_ version 1.4, 1.5 or 1.6. See the Django_ documentation for how to install and configure Django.
 
-You can download a stable release of FeinCMS using ``pip``::
+You can download a stable release of FeinCMS using ``pip``. Pip will install feincms and its dependencies. Dependencies which are automatically installed are:
+feedparser_, Pillow_ and django-mptt_.
 
     $ pip install feincms
 
-Pip will install feincms and its dependencies. It will however not install
-documentation, tests or the example project which comes with the development version,
-which you can download using the Git_ version control system::
+In order to install documentation, tests or an example project, install from the Git_ repository instead::
 
     $ git clone git://github.com/feincms/feincms.git
 
-Feincms, some content types or cleaning modules are dependent on the following apps, which are installed when using pip:
-feedparser_, Pillow_ and django-mptt_.
-
-However, django-tagging_ is not installed because the blog module that uses it is merely a proof of
-concept. If you are looking to implement a blog, check out elephantblog_.
+If you are looking to implement a blog, check out elephantblog_.
 
 You will also need a Javascript WYSIWYG editor of your choice (Not included).
 TinyMCE_ works out of the box and is recommended.
@@ -47,7 +41,7 @@ TinyMCE_ works out of the box and is recommended.
 Configuration
 =============
 
-There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS``, most commonly you'll want to add::
+There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS``. Most commonly you'll want to add::
 
     feincms,
     mptt,
@@ -56,7 +50,7 @@ There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS`
 
 The customized administration interface needs some media and javascript
 libraries which you have to make available to the browser. FeinCMS uses Django's
-``django.contrib.staticfiles`` application for this purpose, the media files will
+``django.contrib.staticfiles`` application for this purpose. The media files will
 be picked up automatically by the ``collectstatic`` management command.
 
 If your website is multi-language you have to define ``LANGUAGES`` in the settings_.
