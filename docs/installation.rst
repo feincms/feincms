@@ -9,14 +9,17 @@ Installation
 
 This document describes the steps needed to install FeinCMS.
 
-FeinCMS requires a working installation of Django_ version 1.4, 1.5 or 1.6. See the Django_ documentation for how to install and configure Django.
+FeinCMS requires a working installation of Django_ version 1.4, 1.5 or 1.6. See
+the Django_ documentation for how to install and configure Django.
 
-You can download a stable release of FeinCMS using ``pip``. Pip will install feincms and its dependencies. Dependencies which are automatically installed are:
-feedparser_, Pillow_ and django-mptt_.
+You can download a stable release of FeinCMS using ``pip``. Pip will install
+feincms and its dependencies. Dependencies which are automatically installed
+are: feedparser_, Pillow_ and django-mptt_.
 
     $ pip install feincms
 
-In order to install documentation, tests or an example project, install from the Git_ repository instead::
+In order to install documentation, tests or an example project, install from
+the Git_ repository instead::
 
     $ git clone git://github.com/feincms/feincms.git
 
@@ -41,7 +44,8 @@ TinyMCE_ works out of the box and is recommended.
 Configuration
 =============
 
-There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS``. Most commonly you'll want to add::
+There isn't much left to do apart from adding a few entries to
+``INSTALLED_APPS``. Most commonly you'll want to add::
 
     feincms,
     mptt,
@@ -49,11 +53,13 @@ There isn't much left to do apart from adding a few entries to ``INSTALLED_APPS`
     feincms.module.medialibrary
 
 The customized administration interface needs some media and javascript
-libraries which you have to make available to the browser. FeinCMS uses Django's
-``django.contrib.staticfiles`` application for this purpose. The media files will
-be picked up automatically by the ``collectstatic`` management command.
+libraries which you have to make available to the browser. FeinCMS uses
+Django's ``django.contrib.staticfiles`` application for this purpose. The media
+files will be picked up automatically by the ``collectstatic`` management
+command.
 
-If your website is multi-language you have to define ``LANGUAGES`` in the settings_.
+If your website is multi-language you have to define ``LANGUAGES`` in the
+settings_.
 
 Please note that the ``feincms`` module will not create or need any database
 tables, but you need to put it into ``INSTALLED_APPS`` because otherwise the
