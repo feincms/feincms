@@ -6,7 +6,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
-from feincms.models import Base
+from feincms.models import Base, create_base_model
 from feincms.module.blog.models import Entry, EntryAdmin
 from feincms.module.page.models import Page
 from feincms.content.raw.models import RawContent
@@ -22,6 +22,7 @@ from feincms.content.application.models import reverse
 
 from mptt.models import MPTTModel
 
+from .content import CustomContentType
 
 Page.register_templates({
     'key': 'base',
@@ -162,3 +163,15 @@ class ExampleCMSBase2(Base):
 ExampleCMSBase2.register_regions(
     ('region', 'region title'),
     ('region2', 'region2 title'))
+
+
+class MyModel(create_base_model()):
+    pass
+
+
+MyModel.register_regions(('main', 'Main region'))
+
+
+unchanged = CustomContentType
+MyModel.create_content_type(CustomContentType)
+assert CustomContentType is unchanged
