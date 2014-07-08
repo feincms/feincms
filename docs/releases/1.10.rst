@@ -23,15 +23,19 @@ isn't yet when creating content types).
 Backwards-incompatible changes
 ==============================
 
+Shouldn't have any.
+
 
 Removal of deprecated features
 ------------------------------
 
-*
+None.
 
 
 New deprecations
 ================
+
+None.
 
 
 
@@ -44,9 +48,24 @@ Notable features and improvements
 * ``feincms_languagelinks`` does not return page URLs leading to inactive
   pages anymore.
 
+* The application content type form does not mysteriously forget values
+  anymore.
+
+* ``Page.get_original_translation`` returns the current page instead of
+  crashing if there is no original translation.
+
+* ``feincms_nav`` returns an empty list instead of crashing if the page
+  argument is ``None``.
+
+* Settings are documented again.
+
 
 Bugfixes
 ========
+
+* Bulk deletion of pages in the tree editor shouldn't lead to MPTT data
+  corruption anymore. This didn't happen often before either, but shouldn't
+  happen anymore at all.
 
 
 Compatibility with Django and other apps
