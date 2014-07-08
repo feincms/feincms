@@ -215,8 +215,9 @@ class Extension(extensions.Extension):
                 return self
             if self.translation_of:
                 return self.translation_of
-            logger.debug("Page pk=%d (%s) has no primary language translation (%s)",
-                         self.pk, self.language, django_settings.LANGUAGES[0][0])
+            logger.debug(
+                "Page pk=%d (%s) has no primary language translation (%s)",
+                self.pk, self.language, django_settings.LANGUAGES[0][0])
             return self
 
         @monkeypatch_property(cls)
