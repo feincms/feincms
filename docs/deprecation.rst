@@ -101,3 +101,9 @@ will be issued for at least two releases.
 
 * The ``_feincms_extensions`` attribute on the page model and on models
   inheriting ``ExtensionsMixin`` is gone.
+
+
+1.10
+====
+
+No deprecations.
