@@ -10,8 +10,6 @@ All of these can be overridden by specifying them in the standard
 
 from __future__ import absolute_import, unicode_literals
 
-from os.path import join
-
 from django.conf import settings
 
 # ------------------------------------------------------------------------
