@@ -415,7 +415,7 @@ you can do this as follows::
 
     FEINCMS_RICHTEXT_INIT_CONTEXT = {
         'TINYMCE_JS_URL': '/your_custom_path/tiny_mce.js',
-        }
+    }
 
 Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 
@@ -430,12 +430,12 @@ Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 CKEditor
 ~~~~~~~~
 
-After adding the CKEditor assets to your project, also add the following
-settings::
+Add the following settings to activate `CKEditor <http://ckeditor.com/>`_::
 
     FEINCMS_RICHTEXT_INIT_TEMPLATE = 'admin/content/richtext/init_ckeditor.html'
     FEINCMS_RICHTEXT_INIT_CONTEXT = {
-        'CKEDITOR_JS_URL': '/static/ckeditor/ckeditor.js',
+        # See http://cdn.ckeditor.com/ for the latest version:
+        'CKEDITOR_JS_URL': '//cdn.ckeditor.com/4.4.2/standard/ckeditor.js',
     }
 
 
