@@ -403,14 +403,13 @@ Rich text
 .. module:: feincms.content.richtext.models
 .. class:: RichTextContent()
 
-Rich text editor widget, stripped down to the essentials; no media support, only
-a few styles activated. The necessary javascript files are not included,
+Rich text editor widget, stripped down to the essentials; no media support,
+only a few styles activated. The necessary javascript files are not included,
 you need to put them in the right place on your own.
 
-By default, ``RichTextContent`` expects a TinyMCE activation script at
-``<MEDIA_URL>js/tiny_mce/tiny_mce.js``. This can be customized by overriding
-``FEINCMS_RICHTEXT_INIT_TEMPLATE`` and ``FEINCMS_RICHTEXT_INIT_CONTEXT`` in
-your ``settings.py`` file.
+By default, ``RichTextContent`` uses the CDN-served version of TinyMCE 4.1.
+This can be customized by overriding ``FEINCMS_RICHTEXT_INIT_TEMPLATE`` and
+``FEINCMS_RICHTEXT_INIT_CONTEXT`` in your ``settings.py`` file.
 
 If you only want to provide a different path to the TinyMCE javascript file,
 you can do this as follows::
@@ -419,16 +418,26 @@ you can do this as follows::
         'TINYMCE_JS_URL': '/your_custom_path/tiny_mce.js',
         }
 
-If you pass cleanse=True to the create_content_type invocation for your
-RichTextContent types, the HTML code will be cleansed right before saving
-to the database everytime the content is modified.
-
 Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 
 * ``cleanse``:
 
-  Whether the HTML code should be cleansed of all tags and attributes
-  which are not explicitly whitelisted. The default is ``False``.
+  Either the dotted python path to a function or a function itself which
+  accepts a HTML string and returns a cleansed version of it. A library which
+  is often used for this purpose is
+  `feincms-cleanse <https://pypi.python.org/pypi/feincms-cleanse>`_.
+
+
+CKEditor
+~~~~~~~~
+
+After adding the CKEditor assets to your project, also add the following
+settings::
+
+    FEINCMS_RICHTEXT_INIT_TEMPLATE = 'admin/content/richtext/init_ckeditor.html'
+    FEINCMS_RICHTEXT_INIT_CONTEXT = {
+        'CKEDITOR_JS_URL': '/static/ckeditor/ckeditor.js',
+    }
 
 
 Other rich text libraries

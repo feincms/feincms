@@ -20,6 +20,15 @@ is that the name clash test requires the app registry to be ready (which it
 isn't yet when creating content types).
 
 
+TinyMCE 4.1 as default rich text configuration
+==============================================
+
+FeinCMS now uses TinyMCE 4.1 as the default rich text editor instead of the
+outdated 3.x line of releases. The previous version is still officially
+supported as is CKEditor. Also, the TinyMCE configuration has been changed to
+hide the menubar by default.
+
+
 Backwards-incompatible changes
 ==============================
 

@@ -46,11 +46,11 @@ FEINCMS_MEDIALIBRARY_THUMBNAIL = getattr(
 FEINCMS_RICHTEXT_INIT_TEMPLATE = getattr(
     settings,
     'FEINCMS_RICHTEXT_INIT_TEMPLATE',
-    'admin/content/richtext/init_tinymce.html')
+    'admin/content/richtext/init_tinymce4.html')
 FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(
     settings,
     'FEINCMS_RICHTEXT_INIT_CONTEXT', {
-        'TINYMCE_JS_URL': join(settings.MEDIA_URL, 'js/tiny_mce/tiny_mce.js'),
+        'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.1/tinymce.min.js',
         'TINYMCE_DOMAIN': None,
         'TINYMCE_CONTENT_CSS_URL': None,
         'TINYMCE_LINK_LIST_URL': None
