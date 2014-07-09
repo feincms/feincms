@@ -404,8 +404,7 @@ Rich text
 .. class:: RichTextContent()
 
 Rich text editor widget, stripped down to the essentials; no media support,
-only a few styles activated. The necessary javascript files are not included,
-you need to put them in the right place on your own.
+only a few styles activated.
 
 By default, ``RichTextContent`` uses the CDN-served version of TinyMCE 4.1.
 This can be customized by overriding ``FEINCMS_RICHTEXT_INIT_TEMPLATE`` and
