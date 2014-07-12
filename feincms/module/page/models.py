@@ -430,7 +430,10 @@ class Page(BasePage):
 Page.register_default_processors(
     frontend_editing=settings.FEINCMS_FRONTEND_EDITING)
 
-signals.post_syncdb.connect(check_database_schema(Page, __name__), weak=False)
+if settings.FEINCMS_CHECK_DATABASE_SCHEMA:
+    signals.post_syncdb.connect(
+        check_database_schema(Page, __name__),
+        weak=False)
 
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
