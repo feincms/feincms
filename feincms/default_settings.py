@@ -108,7 +108,7 @@ FEINCMS_DEFAULT_PAGE_MODEL = getattr(
 FEINCMS_CHECK_DATABASE_SCHEMA = getattr(
     settings,
     'FEINCMS_CHECK_DATABASE_SCHEMA',
-    True)
+    False)
 
 # ------------------------------------------------------------------------
 #: Allow random gunk after a valid page?
