@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
+from feincms import settings
 from feincms.admin import item_editor
 from feincms.management.checker import check_database_schema
 from feincms.models import Base
@@ -63,7 +64,10 @@ class Entry(Base):
         return ('blog_entry_detail', (self.id,), {})
 
 
-signals.post_syncdb.connect(check_database_schema(Entry, __name__), weak=False)
+if settings.FEINCMS_CHECK_DATABASE_SCHEMA:
+    signals.post_syncdb.connect(
+        check_database_schema(Entry, __name__),
+        weak=False)
 
 
 class EntryAdmin(item_editor.ItemEditor):
