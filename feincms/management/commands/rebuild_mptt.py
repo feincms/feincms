@@ -8,7 +8,7 @@
 ``rebuild_mptt`` rebuilds your mptt pointers. Only use in emergencies.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 from django.core.management.base import NoArgsCommand
 
@@ -21,5 +21,5 @@ class Command(NoArgsCommand):
         " emergencies.")
 
     def handle_noargs(self, **options):
-        print("Rebuilding MPTT pointers for Page")
+        self.stdout.write("Rebuilding MPTT pointers for Page")
         Page._tree_manager.rebuild()

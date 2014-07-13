@@ -31,7 +31,7 @@ For example::
     qs = Item.objects.filter(name__contains = 'e').transform(lookup_tags)
 
     for item in qs:
-        print item, item.fetched_tags
+        print(item, item.fetched_tags)
 
 Prints::
 

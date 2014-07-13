@@ -2,8 +2,6 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import print_function
-
 from django.core.management.base import NoArgsCommand
 
 from feincms.module.page.models import Page
@@ -41,5 +39,3 @@ class Command(NoArgsCommand):
                             title='Page %s.%s.%s.%s' % (i1, i2, i3, i4),
                             parent=parents[2],
                         )
-
-                print(parents)

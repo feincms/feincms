@@ -18,14 +18,14 @@ Print the titles of all news entries either in the current language (if
 available) or in any other language::
 
     for news in News.objects.all():
-        print news.translation.title
+        print(news.translation.title)
 
 Print all the titles of all news entries which have an english translation::
 
     from django.utils import translation
     translation.activate('en')
     for news in News.objects.filter(translations__language_code='en'):
-        print news.translation.title
+        print(news.translation.title)
 """
 
 from __future__ import absolute_import, unicode_literals

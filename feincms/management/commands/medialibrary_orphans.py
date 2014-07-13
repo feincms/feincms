@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import os
 
@@ -19,4 +19,4 @@ class Command(NoArgsCommand):
             for f in files:
                 full = os.path.join(base[6:], f)
                 if force_text(full) not in mediafiles:
-                    print(os.path.join(base, f))
+                    self.stdout.write(os.path.join(base, f))
