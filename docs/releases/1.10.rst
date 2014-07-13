@@ -29,18 +29,21 @@ supported as is CKEditor. Also, the TinyMCE configuration has been changed to
 hide the menubar by default.
 
 
-Home-grown schema checking support has been removed
-===================================================
+Home-grown schema checking support has been deactivated
+=======================================================
 
 Not many words needed. Use South or Django 1.7's own migrations support
 instead.
 
-This functionality has been removed without a deprecation period because
+This functionality has been deactivated without a deprecation period because
 compared to real database migration solutions it looks more like a bug than a
 feature. Also, it interfered with initial migrations -- the page table's
 schema was introspected because of other ``post_syncdb`` signals before the
 table itself even existed under certain circumstances, which meant that
 migrations failed with the only way out being ``syncdb --all``.
+
+To continue using this functionality, set ``FEINCMS_CHECK_DATABASE_SCHEMA``
+to ``True``. The functionality will be completely removed in the next release.
 
 
 Backwards-incompatible changes
