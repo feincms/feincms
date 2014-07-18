@@ -33,7 +33,8 @@ register = template.Library()
 
 @python_2_unicode_compatible
 class Thumbnailer(object):
-    THUMBNAIL_SIZE_RE = re.compile(r'^(?P<w>\d+)x(?P<h>\d+)$')
+    THUMBNAIL_SIZE_RE = re.compile(r'^(?P<w>\d+)x(?P<h>\d+)')
+    THUMBNAIL_QUALITY_RE = re.compile(r'(q([0-9]{1,2}))$')
     MARKER = '_thumb_'
 
     def __init__(self, filename, size='200x200'):
@@ -50,6 +51,15 @@ class Thumbnailer(object):
             return ''
 
         matches = match.groupdict()
+        
+        qualmatch = self.THUMBNAIL_QUALITY_RE.search(self.size)
+
+        if qualmatch:
+            self.quality_string = qualmatch.groups()[0]
+            self.quality = int(qualmatch.groups()[1])
+        else:
+            self.quality_string = "q%s" % settings.FEINCMS_THUMBNAIL_QUALITY
+            self.quality = settings.FEINCMS_THUMBNAIL_QUALITY
 
         # figure out storage
         if hasattr(self.filename, 'storage'):
@@ -74,6 +84,7 @@ class Thumbnailer(object):
             basename,
             self.MARKER,
             self.size,
+            'q%s' % str(self.quality),
             '.',
             format,
         ])
@@ -116,7 +127,7 @@ class Thumbnailer(object):
             image.save(
                 buf,
                 format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
-                quality=90)
+                quality=self.quality)
             raw_data = buf.getvalue()
             buf.close()
 
@@ -133,7 +144,7 @@ class Thumbnailer(object):
 
 class CropscaleThumbnailer(Thumbnailer):
     THUMBNAIL_SIZE_RE = re.compile(
-        r'^(?P<w>\d+)x(?P<h>\d+)(-(?P<x>\d+)x(?P<y>\d+))?$')
+        r'^(?P<w>\d+)x(?P<h>\d+)(-(?P<x>\d+)x(?P<y>\d+))?')
     MARKER = '_cropscale_'
 
     def generate(self, storage, original, size, miniature):
@@ -184,7 +195,7 @@ class CropscaleThumbnailer(Thumbnailer):
         image.save(
             buf,
             format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
-            quality=90)
+            quality=self.quality)
         raw_data = buf.getvalue()
         buf.close()
         storage.save(miniature, ContentFile(raw_data))
@@ -212,6 +223,15 @@ def thumbnail(filename, size='200x200'):
     of them, just set it to an arbitrarily large number::
 
         {{ object.image|thumbnail:"300x999999" }}
+    
+    You can pass in quality as qXX.:
+        
+        {{ object.image|thumbnail:"300x200q30" }}
+    or:
+        {{ object.image|thumbnail:"300x200q5" }}
+    
+    It will override the quality set in settings. 
+    Going below 30 is not recommended.
     """
 
     return Thumbnailer(filename, size)
