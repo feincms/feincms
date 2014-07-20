@@ -29,6 +29,6 @@ class Extension(extensions.Extension):
                 db_index=True))
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.add_extension_options(['navigation_group'])
+        modeladmin.add_extension_options('navigation_group')
         modeladmin.extend_list('list_display', ['navigation_group'])
         modeladmin.extend_list('list_filter', ['navigation_group'])
