@@ -1,0 +1,40 @@
+=====================================
+FeinCMS 1.11 release notes (upcoming)
+=====================================
+
+Welcome to FeinCMS 1.11!
+
+
+Major feature 1
+===============
+
+
+Backwards-incompatible changes
+==============================
+
+
+Removal of deprecated features
+------------------------------
+
+
+New deprecations
+================
+
+
+Notable features and improvements
+=================================
+
+* Feature 1
+
+
+Bugfixes
+========
+
+* Bugfix 1
+
+
+Compatibility with Django and other apps
+========================================
+
+FeinCMS 1.11 requires Django 1.4 or better. The testsuite is successfully run
+against Django 1.4, 1.5, 1.6 and the upcoming 1.7.
