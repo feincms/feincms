@@ -19,6 +19,12 @@ types. You should be using the ``class_name`` argument to
 is that the name clash test requires the app registry to be ready (which it
 isn't yet when creating content types).
 
+.. note::
+
+   If for some reason FeinCMS 1.10 does not work with Django 1.7 for you,
+   please provide a description of the problems you're seeing in the
+   `issue tracker <https://github.com/feincms/feincms/issues>`_.
+
 
 TinyMCE 4.1 as default rich text configuration
 ==============================================
