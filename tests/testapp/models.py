@@ -123,6 +123,7 @@ Page.register_extensions(
     'feincms.module.page.extensions.navigation',
     'feincms.module.page.extensions.symlinks',
     'feincms.module.page.extensions.titles',
+    'feincms.module.page.extensions.navigationgroups',
 )
 
 

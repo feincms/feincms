@@ -40,7 +40,7 @@ def format_exception(e):
 
 # ------------------------------------------------------------------------
 @register.assignment_tag(takes_context=True)
-def feincms_nav(context, feincms_page, level=1, depth=1):
+def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
     """
     Saves a list of pages into the given context variable.
     """
@@ -151,6 +151,15 @@ def feincms_nav(context, feincms_page, level=1, depth=1):
                     current_navextension_node = None
 
         queryset = _navext_filter(queryset)
+
+    if group is not None:
+        # navigationgroups extension support
+        def _navigationgroup_filter(iterable):
+            for elem in iterable:
+                if getattr(elem, 'navigation_group', None) == group:
+                    yield elem
+
+        queryset = _navigationgroup_filter(queryset)
 
     # Return a list, not a generator so that it can be consumed
     # several times in a template.

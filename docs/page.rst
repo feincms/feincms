@@ -40,9 +40,9 @@ by adding the following lines somewhere into your project, for example in a
     from feincms.content.medialibrary.models import MediaFileContent
 
     Page.register_extensions(
-    	'feincms.module.extensions.datepublisher', 
+        'feincms.module.extensions.datepublisher',
     	'feincms.module.extensions.translations'
-    	) # Example set of extensions
+    ) # Example set of extensions
 
     Page.register_templates({
         'title': _('Standard template'),
@@ -50,14 +50,14 @@ by adding the following lines somewhere into your project, for example in a
         'regions': (
             ('main', _('Main content area')),
             ('sidebar', _('Sidebar'), 'inherited'),
-            ),
-        })
+        ),
+    })
 
     Page.create_content_type(RichTextContent)
     Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
         ('default', _('default')),
         ('lightbox', _('lightbox')),
-        ))
+    ))
 
 
 It will be a good idea most of the time to register the
@@ -200,6 +200,13 @@ The following extensions are available currently:
   ``NavigationExtension``, which provide submenus to the navigation generation
   mechanism. See :ref:`page-ext-navigation` for more information on how to use
   this extension.
+
+
+* :mod:`feincms.module.page.extensions.navigationgroups` --- Navigation groups
+
+  Adds a navigation group field to each page which can be used to distinguish
+  between the header and footer (or meta) navigation. Filtering is achieved
+  by passing the ``group`` argument to ``feincms_nav``.
 
 
 * :mod:`feincms.module.page.extensions.relatedpages` --- Links related content

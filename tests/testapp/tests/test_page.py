@@ -88,6 +88,7 @@ class PagesTestCase(TestCase):
             'initial-publication_date_0': '2009-01-01',
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
+            'navigation_group': 'default',
             'site': self.site_1.id,
 
             'rawcontent_set-TOTAL_FORMS': 0,
@@ -128,6 +129,7 @@ class PagesTestCase(TestCase):
             'site': self.site_1,
             'in_navigation': False,
             'active': False,
+            'navigation_group': 'default',
         }
         defaults.update(kwargs)
         return Page.objects.create(
@@ -349,6 +351,7 @@ class PagesTestCase(TestCase):
             'initial-publication_date_0': '2009-01-01',
             'initial-publication_date_1': '00:00:00',
             'language': 'en',
+            'navigation_group': 'default',
             'site': self.site_1.id,
 
             'rawcontent_set-TOTAL_FORMS': 1,
@@ -1730,3 +1733,43 @@ class PagesTestCase(TestCase):
         page = Page()
         page.template_key = 'test'
         self.assertEqual(page.template.key, 'base')
+
+    def test_39_navigationgroups(self):
+        self.create_default_page_set()
+
+        page1, page2 = list(Page.objects.order_by('id'))
+
+        page1.active = True
+        page1.in_navigation = True
+        page1.save()
+
+        page2.active = True
+        page2.in_navigation = True
+        page2.navigation_group = 'footer'
+        page2.save()
+
+        t = template.Template(
+            '''
+{% load feincms_page_tags %}
+{% feincms_nav feincms_page level=1 depth=10 group='default' as nav %}
+{% for p in nav %}{{ p.get_absolute_url }},{% endfor %}
+            '''
+        )
+        str = t.render(template.Context({
+            'feincms_page': page1,
+        }))
+
+        self.assertEqual(str.strip(), '/test-page/,')
+
+        t = template.Template(
+            '''
+{% load feincms_page_tags %}
+{% feincms_nav feincms_page level=1 depth=10 group='footer' as nav %}
+{% for p in nav %}{{ p.get_absolute_url }},{% endfor %}
+            '''
+        )
+        str = t.render(template.Context({
+            'feincms_page': page1,
+        }))
+
+        self.assertEqual(str.strip(), '/test-page/test-child-page/,')

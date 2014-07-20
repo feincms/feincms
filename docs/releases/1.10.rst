@@ -46,6 +46,24 @@ To continue using this functionality, set ``FEINCMS_CHECK_DATABASE_SCHEMA``
 to ``True``. The functionality will be completely removed in the next release.
 
 
+A better mechanism for assigning pages to different menu bars
+=============================================================
+
+The new extension :mod:`feincms.module.page.extensions.navigationgroups`
+allows assigning pages to different regions, and asking ``feincms_nav`` to
+only return pages belonging to one of those.
+
+The default configuration of the extension defines two regions, ``default``
+and ``footer``. This can be easily changed by subclassing the extension class
+and overriding the ``groups`` attribute and registering this extension class
+instead of the original.
+
+An example for getting a list of pages for the footer region follows::
+
+    {% load feincms_page_tags %}
+    {% feincms_nav feincms_page level=2 group='footer' as footer_nav %}
+
+
 Backwards-incompatible changes
 ==============================
 

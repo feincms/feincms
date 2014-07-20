@@ -72,6 +72,7 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
 
    level: 1 = toplevel, 2 = sublevel, 3 = sub-sublevel
    depth: 1 = only one level, 2 = subpages too
+   group: Only used with the ``navigationgroups`` extension
 
    If you set depth to something else than 1, you might want to look into
    the ``tree_info`` template tag from the mptt_tags library.
@@ -81,6 +82,16 @@ All page module-specific template tags are contained in ``feincms_page_tags``::
        {% load feincms_page_tags %}
 
        {% feincms_nav feincms_page level=2 depth=1 as sublevel %}
+       {% for p in sublevel %}
+           <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
+       {% endfor %}
+
+   Example for outputting only the footer navigation when using the
+   default configuration of the ``navigationgroups`` page extension::
+
+       {% load feincms_page_tags %}
+
+       {% feincms_nav feincms_page level=2 depth=1 group='footer' as meta %}
        {% for p in sublevel %}
            <a href="{{ p.get_absolute_url }}">{{ p.title }}</a>
        {% endfor %}
