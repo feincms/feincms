@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-22 20:55-0500\n"
+"POT-Creation-Date: 2014-07-20 14:59+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/feincms/language/"
@@ -20,19 +20,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-
-#: models.py:390 content/template/models.py:63
-msgid "template"
-msgstr "шаблон"
-
-#: models.py:538
-msgid "ordering"
-msgstr "сортировка"
-
-#: translations.py:282 module/blog/extensions/translations.py:25
-#: module/extensions/translations.py:140
-msgid "language"
-msgstr "язык"
 
 #: admin/filterspecs.py:47 admin/filterspecs.py:86
 msgid "All"
@@ -47,45 +34,45 @@ msgstr "Родитель"
 msgid "Category"
 msgstr "Категория"
 
-#: admin/item_editor.py:189
+#: admin/item_editor.py:190
 #, python-format
 msgid "Change %s"
 msgstr "Изменить %s"
 
-#: admin/tree_editor.py:293 content/rss/models.py:23
-#: content/section/models.py:35 module/blog/models.py:34
+#: admin/tree_editor.py:294 content/rss/models.py:23
+#: content/section/models.py:35 module/blog/models.py:35
 #: module/medialibrary/models.py:45 module/page/models.py:172
 #: module/page/models.py:240
 msgid "title"
 msgstr "заголовок"
 
-#: admin/tree_editor.py:352 admin/tree_editor.py:369
+#: admin/tree_editor.py:353 admin/tree_editor.py:370
 msgid "You do not have permission to modify this object"
 msgstr "У вас нет прав для изменения этого объекта"
 
-#: admin/tree_editor.py:486
+#: admin/tree_editor.py:491
 msgid "No permission"
 msgstr "Нет прав"
 
-#: admin/tree_editor.py:504
+#: admin/tree_editor.py:509
 #, python-format
 msgid "%s has been moved to a new position."
 msgstr "Узел \"%s\" был перемещен на новое место."
 
-#: admin/tree_editor.py:507
+#: admin/tree_editor.py:512
 msgid "Did not understand moving instruction."
 msgstr "Перемещение не удалось. Непонятная команда."
 
-#: admin/tree_editor.py:518
+#: admin/tree_editor.py:523
 msgid "actions"
 msgstr "действия"
 
-#: admin/tree_editor.py:541
+#: admin/tree_editor.py:552
 #, fuzzy, python-format
 msgid "Successfully deleted %(count)d items."
 msgstr "Успешно удалено %s объектов"
 
-#: admin/tree_editor.py:554
+#: admin/tree_editor.py:565
 #, python-format
 msgid "Delete selected %(verbose_name_plural)s"
 msgstr "Удалить выбранные %(verbose_name_plural)s"
@@ -102,23 +89,23 @@ msgstr "Данные приложений"
 msgid "application"
 msgstr "приложение"
 
-#: content/comments/models.py:31
+#: content/comments/models.py:32
 msgid "enabled"
 msgstr "включены"
 
-#: content/comments/models.py:32
+#: content/comments/models.py:33
 msgid "New comments may be added"
 msgstr "Новые комментарии могут быть добавлены"
 
-#: content/comments/models.py:36 content/comments/models.py:37
+#: content/comments/models.py:37 content/comments/models.py:38
 msgid "comments"
 msgstr "комментарии"
 
-#: content/comments/models.py:59
+#: content/comments/models.py:60
 msgid "public"
 msgstr "Опубликовано"
 
-#: content/comments/models.py:60
+#: content/comments/models.py:61
 msgid "not public"
 msgstr "Не опубликовано"
 
@@ -218,8 +205,9 @@ msgid ""
 "HTML validation produced %(count)d warnings. Please review the updated "
 "content below before continuing: %(messages)s"
 msgstr ""
-"HTML валидация вызвала %(count)d предупреждений. Пожалуйста просмотрите ниже обновленное "
-"содержимое прежде чем продолжить: %(messages)s"
+"HTML валидация вызвала %(count)d предупреждений. Пожалуйста просмотрите ниже "
+"обновленное содержимое прежде чем продолжить: %(messages)s"
+
 #: content/richtext/models.py:99 content/section/models.py:36
 msgid "text"
 msgstr "текст"
@@ -239,6 +227,7 @@ msgid ""
 msgstr ""
 "RSS поле обновляется несколько раз в день. Изменение в названии будет видно  "
 "на главной странице только после следующего обновления фида"
+
 #: content/rss/models.py:28
 msgid "link"
 msgstr "ссылка"
@@ -279,6 +268,10 @@ msgstr "содержимое шаблона"
 msgid "template contents"
 msgstr "содержимое шаблонов"
 
+#: content/template/models.py:63 models.py:400
+msgid "template"
+msgstr "шаблон"
+
 #: content/video/models.py:34
 msgid "video link"
 msgstr "ссылка на видео"
@@ -303,35 +296,18 @@ msgstr "видео"
 msgid "Tagging"
 msgstr "Теггирование"
 
-#: module/blog/models.py:32
-msgid "published"
-msgstr "опубликовано"
-
-#: module/blog/models.py:35
-msgid "This is used for the generated navigation too."
-msgstr "Используется также в сгенерированно навигации."
-
-#: module/blog/models.py:39
-msgid "published on"
-msgstr "опубликовано"
-
-#: module/blog/models.py:41
-msgid "Will be set automatically once you tick the `published` checkbox above."
-msgstr ""
-"Будет установлено автоматически, как только Вы отметите пункт \"опубликовано"
-"\" выше."
-
-#: module/blog/models.py:47
-msgid "entry"
-msgstr "запись"
-
-#: module/blog/models.py:48
-msgid "entries"
-msgstr "записи"
+#: models.py:550
+msgid "ordering"
+msgstr "сортировка"
 
 #: module/blog/extensions/tags.py:17
 msgid "tags"
 msgstr "теги"
+
+#: module/blog/extensions/translations.py:25
+#: module/extensions/translations.py:140 translations.py:282
+msgid "language"
+msgstr "язык"
 
 #: module/blog/extensions/translations.py:35
 #: module/extensions/translations.py:148
@@ -347,6 +323,32 @@ msgstr "Оставьте поле пустым для записей на осн
 #: templates/admin/feincms/item_editor.html:33
 msgid "available translations"
 msgstr "доступные переводы"
+
+#: module/blog/models.py:33
+msgid "published"
+msgstr "опубликовано"
+
+#: module/blog/models.py:36
+msgid "This is used for the generated navigation too."
+msgstr "Используется также в сгенерированно навигации."
+
+#: module/blog/models.py:40
+msgid "published on"
+msgstr "опубликовано"
+
+#: module/blog/models.py:42
+msgid "Will be set automatically once you tick the `published` checkbox above."
+msgstr ""
+"Будет установлено автоматически, как только Вы отметите пункт \"опубликовано"
+"\" выше."
+
+#: module/blog/models.py:48
+msgid "entry"
+msgstr "запись"
+
+#: module/blog/models.py:49
+msgid "entries"
+msgstr "записи"
 
 #: module/extensions/changedate.py:41
 msgid "creation date"
@@ -405,29 +407,30 @@ msgid ""
 "This text is displayed on the search results page. It is however not used "
 "for the SEO ranking. Text longer than 140 characters is truncated."
 msgstr ""
-"Этот текст отображается в выдаче поисковиков. Но оно не используется "
-"для SEO ранжирования. Текст длиннее 140 символов усекается."
+"Этот текст отображается в выдаче поисковиков. Но оно не используется для SEO "
+"ранжирования. Текст длиннее 140 символов усекается."
+
 #: module/extensions/seo.py:32
 msgid "Search engine optimization"
 msgstr "SEO Оптимизация"
 
-#: module/extensions/translations.py:239
+#: module/extensions/translations.py:249
 msgid "Edit translation"
 msgstr "Изменить перевод"
 
-#: module/extensions/translations.py:246
+#: module/extensions/translations.py:256
 msgid "Create translation"
 msgstr "Создать перевод"
 
-#: module/extensions/translations.py:254
+#: module/extensions/translations.py:264
 msgid "translations"
 msgstr "переводы"
 
-#: module/medialibrary/forms.py:28
+#: module/medialibrary/forms.py:31
 msgid "This would create a loop in the hierarchy"
 msgstr "Это создало бы зацикливание в иерархии"
 
-#: module/medialibrary/forms.py:72
+#: module/medialibrary/forms.py:77
 #, python-format
 msgid ""
 "Cannot overwrite with different file type (attempt to overwrite a "
@@ -435,6 +438,7 @@ msgid ""
 msgstr ""
 "Невозможно перезаписать с различным типом файла (попытка перезаписать "
 "%(old_ext)s с %(new_ext)s)"
+
 #: module/medialibrary/modeladmins.py:63
 #, python-format
 msgid "Successfully added %(count)d media file to %(category)s."
@@ -576,115 +580,6 @@ msgstr "перевод медиа-файла"
 msgid "media file translations"
 msgstr "переводы медиа-файлов"
 
-#: module/page/forms.py:186
-msgid "This URL is already taken by an active page."
-msgstr "Этот URL уже занят активной страницей."
-
-#: module/page/forms.py:205
-msgid "This URL is already taken by another active page."
-msgstr "Этот URL уже занят другой активной страницей."
-
-#: module/page/forms.py:210
-msgid "This page does not allow attachment of child pages"
-msgstr "Эта страница не позволяет создание дочерних страниц"
-
-#: module/page/modeladmins.py:42
-msgid "Other options"
-msgstr "Другие параметры"
-
-#: module/page/modeladmins.py:80 module/page/models.py:182
-msgid "in navigation"
-msgstr "в навигации"
-
-#: module/page/modeladmins.py:109 module/page/modeladmins.py:111
-msgid "Add child page"
-msgstr "Добавить дочернюю страницу"
-
-#: module/page/modeladmins.py:120 module/page/modeladmins.py:122
-#: templates/admin/feincms/content_inline.html:9
-msgid "View on site"
-msgstr "Посмотреть на сайте"
-
-#: module/page/modeladmins.py:142
-#, python-format
-msgid "Add %(language)s translation of \"%(page)s\""
-msgstr "Добавить %(language)s перевод \"%(page)s\""
-
-#: module/page/modeladmins.py:177
-msgid ""
-"The content from the original translation has been copied to the newly "
-"created page."
-msgstr ""
-"Содержание на языке по-умолчанию было скопировано в свежесозданную "
-"страницу."
-#: module/page/modeladmins.py:197
-msgid "You don't have the necessary permissions to edit this object"
-msgstr "Вы не имеете необходимые права на изменение этого объекта"
-
-#: module/page/modeladmins.py:223
-msgid "inherited"
-msgstr "унаследованный"
-
-#: module/page/modeladmins.py:229
-msgid "extensions"
-msgstr "расширения"
-
-#: module/page/modeladmins.py:233 module/page/models.py:221
-msgid "is active"
-msgstr "активная?"
-
-#: module/page/models.py:169
-msgid "active"
-msgstr "активная"
-
-#: module/page/models.py:173
-#, fuzzy
-msgid "This title is also used for navigation menu items."
-msgstr "Этот заголовок также используется в навигации."
-
-#: module/page/models.py:176
-msgid "This is used to build the URL for this page"
-msgstr "Это используется для создания URL этой страницы"
-
-#: module/page/models.py:184
-msgid "override URL"
-msgstr "переопределение URL"
-
-#: module/page/models.py:186
-msgid ""
-"Override the target URL. Be sure to include slashes at the beginning and at "
-"the end if it is a local URL. This affects both the navigation and subpages' "
-"URLs."
-msgstr ""
-"Переопределение целевой URL. Не забудьте добавить слэш в начале и в "
-"конце, если это локальный URL. Это влияет на навигацию и URL дочерних страниц."
-#: module/page/models.py:190
-msgid "redirect to"
-msgstr "редирект на"
-
-#: module/page/models.py:193
-msgid "Target URL for automatic redirects or the primary key of a page."
-msgstr "Целевой URL для автоматических переадресации или первичный ключ страницы."
-
-#: module/page/models.py:196
-msgid "Cached URL"
-msgstr "Кешированный URL"
-
-#: module/page/models.py:298
-#, python-format
-msgid ""
-"This %(page_class)s uses a singleton template, and "
-"FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False"
-msgstr ""
-
-#: module/page/models.py:426
-msgid "page"
-msgstr "страница"
-
-#: module/page/models.py:427
-msgid "pages"
-msgstr "страницы"
-
 #: module/page/extensions/excerpt.py:18
 msgid "excerpt"
 msgstr "отрывок"
@@ -707,11 +602,26 @@ msgid ""
 "Select the module providing subpages for this page if you need to customize "
 "the navigation."
 msgstr ""
-"Выберите модуль который обеспечит подстраницы для этой страницы, если вам нужно настроить"
-"навигацию."
+"Выберите модуль который обеспечит подстраницы для этой страницы, если вам "
+"нужно настроитьнавигацию."
+
 #: module/page/extensions/navigation.py:134
 msgid "Navigation extension"
 msgstr "Расширение навигации"
+
+#: module/page/extensions/navigationgroups.py:20
+msgid "Default"
+msgstr ""
+
+#: module/page/extensions/navigationgroups.py:21
+msgid "Footer"
+msgstr ""
+
+#: module/page/extensions/navigationgroups.py:28
+#, fuzzy
+#| msgid "in navigation"
+msgid "navigation group"
+msgstr "в навигации"
 
 #: module/page/extensions/relatedpages.py:21
 msgid "Select pages that should be listed as related content."
@@ -758,10 +668,116 @@ msgstr ""
 msgid "Titles"
 msgstr "Заголовки"
 
-#: templates/admin/filter.html:3
+#: module/page/forms.py:187
+msgid "This URL is already taken by an active page."
+msgstr "Этот URL уже занят активной страницей."
+
+#: module/page/forms.py:206
+msgid "This URL is already taken by another active page."
+msgstr "Этот URL уже занят другой активной страницей."
+
+#: module/page/forms.py:211
+msgid "This page does not allow attachment of child pages"
+msgstr "Эта страница не позволяет создание дочерних страниц"
+
+#: module/page/modeladmins.py:42
+msgid "Other options"
+msgstr "Другие параметры"
+
+#: module/page/modeladmins.py:80 module/page/models.py:182
+msgid "in navigation"
+msgstr "в навигации"
+
+#: module/page/modeladmins.py:109 module/page/modeladmins.py:111
+msgid "Add child page"
+msgstr "Добавить дочернюю страницу"
+
+#: module/page/modeladmins.py:120 module/page/modeladmins.py:122
+#: templates/admin/feincms/content_inline.html:9
+msgid "View on site"
+msgstr "Посмотреть на сайте"
+
+#: module/page/modeladmins.py:142
 #, python-format
-msgid " By %(filter_title)s "
-msgstr " По %(filter_title)s "
+msgid "Add %(language)s translation of \"%(page)s\""
+msgstr "Добавить %(language)s перевод \"%(page)s\""
+
+#: module/page/modeladmins.py:177
+msgid ""
+"The content from the original translation has been copied to the newly "
+"created page."
+msgstr ""
+"Содержание на языке по-умолчанию было скопировано в свежесозданную страницу."
+
+#: module/page/modeladmins.py:197
+msgid "You don't have the necessary permissions to edit this object"
+msgstr "Вы не имеете необходимые права на изменение этого объекта"
+
+#: module/page/modeladmins.py:223
+msgid "inherited"
+msgstr "унаследованный"
+
+#: module/page/modeladmins.py:229
+msgid "extensions"
+msgstr "расширения"
+
+#: module/page/modeladmins.py:233 module/page/models.py:221
+msgid "is active"
+msgstr "активная?"
+
+#: module/page/models.py:169
+msgid "active"
+msgstr "активная"
+
+#: module/page/models.py:173
+#, fuzzy
+msgid "This title is also used for navigation menu items."
+msgstr "Этот заголовок также используется в навигации."
+
+#: module/page/models.py:176
+msgid "This is used to build the URL for this page"
+msgstr "Это используется для создания URL этой страницы"
+
+#: module/page/models.py:184
+msgid "override URL"
+msgstr "переопределение URL"
+
+#: module/page/models.py:186
+msgid ""
+"Override the target URL. Be sure to include slashes at the beginning and at "
+"the end if it is a local URL. This affects both the navigation and subpages' "
+"URLs."
+msgstr ""
+"Переопределение целевой URL. Не забудьте добавить слэш в начале и в конце, "
+"если это локальный URL. Это влияет на навигацию и URL дочерних страниц."
+
+#: module/page/models.py:190
+msgid "redirect to"
+msgstr "редирект на"
+
+#: module/page/models.py:193
+msgid "Target URL for automatic redirects or the primary key of a page."
+msgstr ""
+"Целевой URL для автоматических переадресации или первичный ключ страницы."
+
+#: module/page/models.py:196
+msgid "Cached URL"
+msgstr "Кешированный URL"
+
+#: module/page/models.py:298
+#, python-format
+msgid ""
+"This %(page_class)s uses a singleton template, and "
+"FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False"
+msgstr ""
+
+#: module/page/models.py:426
+msgid "page"
+msgstr "страница"
+
+#: module/page/models.py:427
+msgid "pages"
+msgstr "страницы"
 
 #: templates/admin/feincms/_messages_js.html:4
 msgid "Really delete item?"
@@ -833,8 +849,9 @@ msgid ""
 "Content from the parent site is automatically inherited. To override this "
 "behaviour, add some content."
 msgstr ""
-"Контент автоматически унаследован от родительского узла. Чтобы переопределить это"
-"поведение, добавьте содержимое."
+"Контент автоматически унаследован от родительского узла. Чтобы "
+"переопределить этоповедение, добавьте содержимое."
+
 #: templates/admin/feincms/content_editor.html:33
 msgid "Add new item"
 msgstr "Добавить элемент"
@@ -876,12 +893,20 @@ msgstr "вниз"
 msgid "remove"
 msgstr "удалить"
 
-#: templates/admin/feincms/recover_form.html:8
-#: templates/admin/feincms/revision_form.html:8
+#: templates/admin/feincms/page/page/item_editor.html:10
+msgid "Edit on site"
+msgstr "Редактировать на сайте"
+
 #: templates/admin/feincms/page/page/item_editor.html:23
 #: templates/admin/feincms/page/page/tree_editor.html:7
+#: templates/admin/feincms/recover_form.html:8
+#: templates/admin/feincms/revision_form.html:8
 msgid "Home"
 msgstr "Начало"
+
+#: templates/admin/feincms/page/page/item_editor.html:27
+msgid "Add"
+msgstr "Добавить"
 
 #: templates/admin/feincms/recover_form.html:11
 #, python-format
@@ -921,13 +946,10 @@ msgstr "Развернуть"
 msgid "Filter"
 msgstr "Фильтр"
 
-#: templates/admin/feincms/page/page/item_editor.html:10
-msgid "Edit on site"
-msgstr "Редактировать на сайте"
-
-#: templates/admin/feincms/page/page/item_editor.html:27
-msgid "Add"
-msgstr "Добавить"
+#: templates/admin/filter.html:3
+#, python-format
+msgid " By %(filter_title)s "
+msgstr " По %(filter_title)s "
 
 #: templates/admin/medialibrary/add_to_category.html:5
 #: templates/admin/medialibrary/add_to_category.html:9
