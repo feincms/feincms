@@ -6,12 +6,9 @@ such as header, footer and what else.
 from __future__ import absolute_import, unicode_literals
 
 from django.db import models
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
-from feincms.utils import get_object
-from feincms._internal import monkeypatch_method
 
 
 class Extension(extensions.Extension):
