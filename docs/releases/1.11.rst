@@ -20,6 +20,12 @@ Removal of deprecated features
 New deprecations
 ================
 
+* ``RSSContent`` and ``update_rsscontent`` have been deprecated, those being
+  the only reason why ``FeinCMS`` depends on ``feedparser``. This will allow
+  us to remove this dependency. Users should switch to
+  `feincms-syndication <https://github.com/feincms/feincms-syndication>`_
+  instead.
+
 
 Notable features and improvements
 =================================
