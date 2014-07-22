@@ -19,7 +19,7 @@ setup(
     license='BSD License',
     platforms=['OS Independent'],
     packages=find_packages(
-        exclude=['tests', 'example'],
+        exclude=['tests']
     ),
     package_data={
         '': ['*.html', '*.txt'],

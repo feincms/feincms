@@ -91,11 +91,6 @@ Visit us on IRC! We are hanging around in ``#feincms`` on freenode. If you
 do not have an IRC client you can use the
 `freenode Web IRC client <http://webchat.freenode.net/>`_.
 
-Quickstart
-----------
-
-You can find a short quickstart guide at QUICKSTART.rst
-
 Optional Packages
 -----------------
 
