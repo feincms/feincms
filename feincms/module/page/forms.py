@@ -114,7 +114,7 @@ class PageAdminForm(MPTTAdminForm):
         # Not required, only a nice-to-have for the `redirect_to` field
         modeladmin = kwargs.pop('modeladmin', None)
         super(PageAdminForm, self).__init__(*args, **kwargs)
-        if modeladmin:
+        if modeladmin and 'redirect_to' in self.fields:
             # Note: Using `parent` is not strictly correct, but we can be
             # sure that `parent` always points to another page instance,
             # and that's good enough for us.
@@ -172,7 +172,7 @@ class PageAdminForm(MPTTAdminForm):
             cleaned_data['redirect_to'] = '%s.%s:%s' % (
                 opts.app_label, get_model_name(opts), redirect_to)
 
-        if not cleaned_data['active']:
+        if 'active' in cleaned_data and not cleaned_data['active']:
             # If the current item is inactive, we do not need to conduct
             # further validation. Note that we only check for the flag, not
             # for any other active filters. This is because we do not want
@@ -180,7 +180,7 @@ class PageAdminForm(MPTTAdminForm):
             # really won't be active at the same time.
             return cleaned_data
 
-        if cleaned_data['override_url']:
+        if 'override_url' in cleaned_data and cleaned_data['override_url']:
             if active_pages.filter(
                     _cached_url=cleaned_data['override_url']).count():
                 self._errors['override_url'] = ErrorList([
