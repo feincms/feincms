@@ -8,8 +8,11 @@ env:
   - DJANGO_REQUIREMENT="Django>=1.4,<1.5"
   - DJANGO_REQUIREMENT="Django>=1.5,<1.6"
   - DJANGO_REQUIREMENT="Django>=1.6,<1.7"
+  - DJANGO_REQUIREMENT="Django>=1.7,<1.8"
 matrix:
   exclude:
+    - python: "2.6"
+      env: DJANGO_REQUIREMENT="Django>=1.7<1.8"
     - python: "3.2"
       env: DJANGO_REQUIREMENT="Django>=1.4,<1.5"
     - python: "3.3"
