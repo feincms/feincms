@@ -4,10 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-try:
-    from hashlib import md5
-except ImportError:
-    import md5
+from hashlib import md5
 
 from django.conf import settings as django_settings
 from django.core.exceptions import ImproperlyConfigured

@@ -42,5 +42,4 @@ Bugfixes
 Compatibility with Django and other apps
 ========================================
 
-FeinCMS 1.11 requires Django 1.4 or better. The testsuite is successfully run
-against Django 1.4, 1.5, 1.6 and the upcoming 1.7.
+FeinCMS 1.11 requires Django 1.6 or better.

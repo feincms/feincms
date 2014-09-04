@@ -35,7 +35,7 @@ setup(
         ],
     },
     install_requires=[
-        'Django>=1.4.2',
+        'Django>=1.6',
         'django-mptt>=0.6.0',
         'Pillow>=2.0.0',
         'feedparser>=5.0.0',
@@ -54,6 +54,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
