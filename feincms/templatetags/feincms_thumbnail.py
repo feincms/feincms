@@ -5,6 +5,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from io import BytesIO
+import logging
 from PIL import Image
 import re
 
@@ -17,6 +18,7 @@ from django.utils import six
 from feincms import settings
 
 
+logger = logging.getLogger('feincms.templatetags.thumbnail')
 register = template.Library()
 
 
@@ -98,7 +100,8 @@ class Thumbnailer(object):
                 with BytesIO(original_handle.read()) as original_bytes:
                     image = Image.open(original_bytes)
 
-        except:
+        except Exception as exc:
+            logger.warning('Rendering a thumbnail failed: %r' % exc)
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
             # happen, catch them all so the thumbnailer will never fail.
@@ -125,7 +128,8 @@ class Thumbnailer(object):
 
             return storage.url(miniature)
 
-        except:
+        except Exception as exc:
+            logger.warning('Rendering a thumbnail failed: %r' % exc)
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
             # happen, catch them all so the thumbnailer will never fail.
@@ -145,7 +149,8 @@ class CropscaleThumbnailer(Thumbnailer):
                 with BytesIO(original_handle.read()) as original_bytes:
                     image = Image.open(original_bytes)
 
-        except:
+        except Exception as exc:
+            logger.warning('Rendering a thumbnail failed: %r' % exc)
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
             # happen, catch them all so the thumbnailer will never fail.
