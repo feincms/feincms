@@ -108,9 +108,10 @@ class Extension(extensions.Extension):
         # Append publication date active check
         if hasattr(self.model._default_manager, 'add_to_active_filters'):
             self.model._default_manager.add_to_active_filters(
-                Q(publication_date__lte=granular_now) &
-                 (Q(publication_end_date__isnull=True) |
-                  Q(publication_end_date__gt=granular_now)),
+                lambda queryset: queryset.filter(
+                    Q(publication_date__lte=granular_now()) &
+                     (Q(publication_end_date__isnull=True) |
+                      Q(publication_end_date__gt=granular_now()))),
                 key='datepublisher',
             )
 
