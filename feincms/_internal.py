@@ -7,6 +7,21 @@ http://mail.python.org/pipermail/python-dev/2008-January/076194.html
 from __future__ import absolute_import, unicode_literals
 
 
+__all__ = (
+    'get_model', 'get_models', 'get_model_name', 'get_permission_codename',
+    'monkeypatch_method', 'monkeypatch_property', 'monkeypatch_class',
+)
+
+
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+    get_models = apps.get_models
+
+except ImportError:
+    from django.db.models import get_model, get_models
+
+
 def monkeypatch_method(cls):
     """
     A decorator to add a single method to an existing class::
