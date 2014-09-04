@@ -91,9 +91,20 @@ class Thumbnailer(object):
         return storage.url(miniature)
 
     def generate(self, storage, original, size, miniature):
-        try:
-            image = Image.open(BytesIO(storage.open(original).read()))
+        image = None
 
+        try:
+            with storage.open(original) as original_handle:
+                with BytesIO(original_handle.read()) as original_bytes:
+                    image = Image.open(original_bytes)
+
+        except:
+            # PIL raises a plethora of Exceptions if reading the image
+            # is not possible. Since we cannot be sure what Exception will
+            # happen, catch them all so the thumbnailer will never fail.
+            return storage.url(original)
+
+        try:
             # defining the size
             w, h = int(size['w']), int(size['h'])
 
@@ -113,6 +124,7 @@ class Thumbnailer(object):
             storage.save(miniature, ContentFile(raw_data))
 
             return storage.url(miniature)
+
         except:
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
@@ -126,15 +138,18 @@ class CropscaleThumbnailer(Thumbnailer):
     MARKER = '_cropscale_'
 
     def generate(self, storage, original, size, miniature):
+        image = None
+
         try:
-            image = Image.open(BytesIO(storage.open(original).read()))
+            with storage.open(original) as original_handle:
+                with BytesIO(original_handle.read()) as original_bytes:
+                    image = Image.open(original_bytes)
+
         except:
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
             # happen, catch them all so the thumbnailer will never fail.
             return storage.url(original)
-
-        storage.delete(miniature)
 
         w, h = int(size['w']), int(size['h'])
 
@@ -176,6 +191,8 @@ class CropscaleThumbnailer(Thumbnailer):
             quality=90)
         raw_data = buf.getvalue()
         buf.close()
+
+        storage.delete(miniature)
         storage.save(miniature, ContentFile(raw_data))
 
         return storage.url(miniature)

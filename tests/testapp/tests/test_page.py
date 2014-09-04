@@ -1540,10 +1540,11 @@ class PagesTestCase(TestCase):
             zf.writestr('test%d.jpg' % i, 'test%d' % i)
         zf.close()
 
-        response = self.client.post(
-            '/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
-                'data': open('test.zip', 'rb'),
-            })
+        with open('test.zip', 'rb') as handle:
+            response = self.client.post(
+                '/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
+                    'data': handle,
+                })
         self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
         self.assertEqual(
@@ -1555,12 +1556,13 @@ class PagesTestCase(TestCase):
         path = os.path.join(
             dn(dn(dn(dn(__file__)))), 'docs', 'images', 'tree_editor.png')
 
-        response = self.client.post('/admin/medialibrary/mediafile/add/', {
-            'file': open(path, 'rb'),
-            'translations-TOTAL_FORMS': 0,
-            'translations-INITIAL_FORMS': 0,
-            'translations-MAX_NUM_FORMS': 10,
-        })
+        with open(path, 'rb') as handle:
+            response = self.client.post('/admin/medialibrary/mediafile/add/', {
+                'file': handle,
+                'translations-TOTAL_FORMS': 0,
+                'translations-INITIAL_FORMS': 0,
+                'translations-MAX_NUM_FORMS': 10,
+            })
         self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
         self.assertContains(

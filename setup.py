@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
+from io import open
 import os
 from setuptools import setup, find_packages
 
 
 def read(filename):
-    return open(os.path.join(os.path.dirname(__file__), filename)).read()
+    path = os.path.join(os.path.dirname(__file__), filename)
+    with open(path, encoding='utf-8') as handle:
+        return handle.read()
 
 
 setup(

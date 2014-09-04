@@ -66,8 +66,9 @@ class CMSBaseTest(TestCase):
         _orig_parse = feedparser.parse
 
         def _new_parse(link):
-            return _orig_parse(open(
-                os.path.join(os.path.dirname(__file__), 'yahoo.rss'), 'rb'))
+            filename = os.path.join(os.path.dirname(__file__), 'yahoo.rss')
+            with open(filename, 'rb') as handle:
+                return _orig_parse(handle)
         feedparser.parse = _new_parse
 
         type = ExampleCMSBase.create_content_type(RSSContent)
