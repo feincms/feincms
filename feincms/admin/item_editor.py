@@ -11,7 +11,10 @@ import warnings
 
 from django import forms, template
 from django.contrib.admin.options import InlineModelAdmin
-from django.contrib.admin.utils import unquote
+try:
+    from django.contrib.admin.utils import unquote
+except ImportError:  # Django 1.6
+    from django.contrib.admin.util import unquote
 from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import render_to_response
