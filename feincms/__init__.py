@@ -47,7 +47,7 @@ def ensure_completely_loaded(force=False):
     try:
         from django.apps import apps
     except ImportError:
-        pass
+        from django.db.models import loading as apps
     else:
         # Django 1.7 and up
         if not apps.ready:
@@ -62,8 +62,8 @@ def ensure_completely_loaded(force=False):
     # Here we flush the caches rather than actually _filling them so
     # that relations defined after all content types registrations
     # don't miss out.
-    from django.db.models import loading
-    for model in loading.get_models():
+    from feincms._internal import get_models
+    for model in get_models():
         for cache_name in (
                 '_field_cache', '_field_name_cache', '_m2m_cache',
                 '_related_objects_cache', '_related_many_to_many_cache',
@@ -85,17 +85,16 @@ def ensure_completely_loaded(force=False):
     # get_models cache again here. If we don't do this, Django 1.5 chokes on
     # a model validation error (Django 1.4 doesn't exhibit this problem).
     # See Issue #323 on github.
-    if hasattr(loading, 'cache'):
+    if hasattr(apps, 'cache'):
         try:
-            loading.cache.get_models.cache_clear()  # Django 1.7+
+            apps.cache.get_models.cache_clear()  # Django 1.7+
         except AttributeError:
-            loading.cache._get_models_cache.clear()  # Django 1.6-
+            apps.cache._get_models_cache.clear()  # Django 1.6-
 
-    if hasattr(loading.app_cache_ready, '__call__'):
-        if loading.app_cache_ready():
+    if hasattr(apps, 'ready'):
+        if apps.ready:
             COMPLETELY_LOADED = True
-    else:
-        # TODO Django 1.7 offers us better ways of handling this, maybe.
-        if loading.app_cache_ready:
+    elif apps.app_cache_ready():
             COMPLETELY_LOADED = True
+
     return True
