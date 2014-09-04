@@ -84,58 +84,43 @@ class Thumbnailer(object):
                 return ''
 
         if generate:
-            return self.generate(
-                storage=storage,
-                original=filename,
-                size=matches,
-                miniature=miniature)
+            try:
+                self.generate(
+                    storage=storage,
+                    original=filename,
+                    size=matches,
+                    miniature=miniature)
+            except Exception as exc:
+                print(exc)
+                logger.warning('Rendering a thumbnail failed: %r' % exc)
+                # PIL raises a plethora of Exceptions if reading the image
+                # is not possible. Since we cannot be sure what Exception will
+                # happen, catch them all so the thumbnailer will never fail.
+                return storage.url(filename)
 
         return storage.url(miniature)
 
     def generate(self, storage, original, size, miniature):
-        image = None
+        with storage.open(original) as original_handle:
+            with BytesIO(original_handle.read()) as original_bytes:
+                image = Image.open(original_bytes)
 
-        try:
-            with storage.open(original) as original_handle:
-                with BytesIO(original_handle.read()) as original_bytes:
-                    image = Image.open(original_bytes)
+                # defining the size
+                w, h = int(size['w']), int(size['h'])
 
-        except Exception as exc:
-            print(exc)
-            logger.warning('Rendering a thumbnail failed: %r' % exc)
-            # PIL raises a plethora of Exceptions if reading the image
-            # is not possible. Since we cannot be sure what Exception will
-            # happen, catch them all so the thumbnailer will never fail.
-            return storage.url(original)
+                format = image.format  # Save format for the save() call later
+                image.thumbnail([w, h], Image.ANTIALIAS)
+                buf = BytesIO()
+                if image.mode not in ('RGBA', 'RGB', 'L'):
+                    image = image.convert('RGBA')
+                if format.lower() not in ('jpg', 'jpeg', 'png'):
+                    format = 'jpeg'
+                image.save(buf, format, quality=90)
+                raw_data = buf.getvalue()
+                buf.close()
 
-        try:
-            # defining the size
-            w, h = int(size['w']), int(size['h'])
-
-            format = image.format  # Save format for the save() call later
-            image.thumbnail([w, h], Image.ANTIALIAS)
-            buf = BytesIO()
-            if image.mode not in ('RGBA', 'RGB', 'L'):
-                image = image.convert('RGBA')
-            image.save(
-                buf,
-                format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
-                quality=90)
-            raw_data = buf.getvalue()
-            buf.close()
-
-            storage.delete(miniature)
-            storage.save(miniature, ContentFile(raw_data))
-
-            return storage.url(miniature)
-
-        except Exception as exc:
-            print(exc)
-            logger.warning('Rendering a thumbnail failed: %r' % exc)
-            # PIL raises a plethora of Exceptions if reading the image
-            # is not possible. Since we cannot be sure what Exception will
-            # happen, catch them all so the thumbnailer will never fail.
-            return storage.url(original)
+                storage.delete(miniature)
+                storage.save(miniature, ContentFile(raw_data))
 
 
 class CropscaleThumbnailer(Thumbnailer):
@@ -144,65 +129,52 @@ class CropscaleThumbnailer(Thumbnailer):
     MARKER = '_cropscale_'
 
     def generate(self, storage, original, size, miniature):
-        image = None
+        with storage.open(original) as original_handle:
+            with BytesIO(original_handle.read()) as original_bytes:
+                image = Image.open(original_bytes)
 
-        try:
-            with storage.open(original) as original_handle:
-                with BytesIO(original_handle.read()) as original_bytes:
-                    image = Image.open(original_bytes)
+                w, h = int(size['w']), int(size['h'])
 
-        except Exception as exc:
-            logger.warning('Rendering a thumbnail failed: %r' % exc)
-            # PIL raises a plethora of Exceptions if reading the image
-            # is not possible. Since we cannot be sure what Exception will
-            # happen, catch them all so the thumbnailer will never fail.
-            return storage.url(original)
+                if size['x'] and size['y']:
+                    x, y = int(size['x']), int(size['y'])
+                else:
+                    x, y = 50, 50
 
-        w, h = int(size['w']), int(size['h'])
+                src_width, src_height = image.size
+                src_ratio = float(src_width) / float(src_height)
+                dst_width, dst_height = w, h
+                dst_ratio = float(dst_width) / float(dst_height)
 
-        if size['x'] and size['y']:
-            x, y = int(size['x']), int(size['y'])
-        else:
-            x, y = 50, 50
+                if dst_ratio < src_ratio:
+                    crop_height = src_height
+                    crop_width = crop_height * dst_ratio
+                    x_offset = int(float(src_width - crop_width) * x / 100)
+                    y_offset = 0
+                else:
+                    crop_width = src_width
+                    crop_height = crop_width / dst_ratio
+                    x_offset = 0
+                    y_offset = int(float(src_height - crop_height) * y / 100)
 
-        src_width, src_height = image.size
-        src_ratio = float(src_width) / float(src_height)
-        dst_width, dst_height = w, h
-        dst_ratio = float(dst_width) / float(dst_height)
+                format = image.format  # Save format for the save() call later
+                image = image.crop((
+                    x_offset,
+                    y_offset,
+                    x_offset + int(crop_width),
+                    y_offset + int(crop_height)))
+                image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
 
-        if dst_ratio < src_ratio:
-            crop_height = src_height
-            crop_width = crop_height * dst_ratio
-            x_offset = int(float(src_width - crop_width) * x / 100)
-            y_offset = 0
-        else:
-            crop_width = src_width
-            crop_height = crop_width / dst_ratio
-            x_offset = 0
-            y_offset = int(float(src_height - crop_height) * y / 100)
+                buf = BytesIO()
+                if image.mode not in ('RGBA', 'RGB', 'L'):
+                    image = image.convert('RGBA')
+                if format.lower() not in ('jpg', 'jpeg', 'png'):
+                    format = 'jpeg'
+                image.save(buf, format, quality=90)
+                raw_data = buf.getvalue()
+                buf.close()
 
-        format = image.format  # Save format for the save() call later
-        image = image.crop((
-            x_offset,
-            y_offset,
-            x_offset + int(crop_width),
-            y_offset + int(crop_height)))
-        image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
-
-        buf = BytesIO()
-        if image.mode not in ('RGBA', 'RGB', 'L'):
-            image = image.convert('RGBA')
-        image.save(
-            buf,
-            format if format.lower() in ('jpg', 'jpeg', 'png') else 'jpeg',
-            quality=90)
-        raw_data = buf.getvalue()
-        buf.close()
-
-        storage.delete(miniature)
-        storage.save(miniature, ContentFile(raw_data))
-
-        return storage.url(miniature)
+                storage.delete(miniature)
+                storage.save(miniature, ContentFile(raw_data))
 
 
 @register.filter
