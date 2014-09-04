@@ -7,6 +7,11 @@ the feincms\_ namespace.
 
 from __future__ import absolute_import, unicode_literals
 
+try:
+    from collections import OrderedDict
+except ImportError:
+    from django.utils.datastructures import SortedDict as OrderedDict
+
 from functools import reduce
 import sys
 import operator
@@ -17,15 +22,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections, models
 from django.db.models import Q
-from django.db.models.loading import get_model
 from django.forms.widgets import Media
 from django.template.loader import render_to_string
-from django.utils.datastructures import SortedDict
 from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms._internal import get_model_name
+from feincms._internal import get_model, get_model_name
 from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 
@@ -379,7 +382,7 @@ def create_base_model(inherit_from=models.Model):
             """
 
             if not hasattr(cls, '_feincms_templates'):
-                cls._feincms_templates = SortedDict()
+                cls._feincms_templates = OrderedDict()
                 cls.TEMPLATES_CHOICES = []
 
             instances = cls._feincms_templates

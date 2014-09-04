@@ -8,14 +8,13 @@ import re
 
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.sites.models import Site
-from django.db.models.loading import get_model
 from django.forms.models import model_to_dict
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms._internal import get_model_name
+from feincms._internal import get_model, get_model_name
 
 from mptt.forms import MPTTAdminForm
 

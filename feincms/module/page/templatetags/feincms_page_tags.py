@@ -10,10 +10,10 @@ import traceback
 
 from django import template
 from django.conf import settings
-from django.db.models.loading import get_model
 from django.http import HttpRequest
 
 from feincms import settings as feincms_settings
+from feincms._internal import get_model
 from feincms.module.page.extensions.navigation import PagePretender
 from feincms.utils.templatetags import (
     SimpleNodeWithVarAndArgs,

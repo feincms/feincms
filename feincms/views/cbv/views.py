@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.db.models import get_model
 from django.http import Http404
 
 from feincms import settings
+from feincms._internal import get_model
 from feincms.module.mixins import ContentView
 
 

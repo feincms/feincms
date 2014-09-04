@@ -94,7 +94,7 @@ FEINCMS_USE_PAGE_ADMIN = getattr(
     'FEINCMS_USE_PAGE_ADMIN',
     True)
 
-#: app_label.model_name as per django.db.models.get_model.
+#: app_label.model_name as per apps.get_model.
 #: defaults to page.Page
 FEINCMS_DEFAULT_PAGE_MODEL = getattr(
     settings,

@@ -119,8 +119,5 @@ else:
         def get_queryset(self):
             return TransformQuerySet(self.model, using=self._db)
 
-        def get_queryset(self):
-            return TransformQuerySet(self.model, using=self._db)
-
         def transform(self, *fn):
             return self.get_queryset().transform(*fn)

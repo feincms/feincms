@@ -6,15 +6,19 @@ from __future__ import absolute_import, division, unicode_literals
 
 from hashlib import md5
 
+try:
+    from importlib import import_module
+except ImportError:
+    from django.utils.importlib import import_module
+
 from django.conf import settings as django_settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import AutoField
-from django.db.models import get_model
 from django.utils import six
 from django.utils.encoding import iri_to_uri
-from django.utils.importlib import import_module
 
 from feincms import settings
+from feincms._internal import get_model
 
 
 # ------------------------------------------------------------------------

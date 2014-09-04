@@ -11,8 +11,7 @@ import warnings
 
 from django import forms, template
 from django.contrib.admin.options import InlineModelAdmin
-from django.contrib.admin.util import unquote
-from django.db.models import loading
+from django.contrib.admin.utils import unquote
 from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import render_to_response
@@ -21,7 +20,7 @@ from django.utils.functional import curry
 from django.utils.translation import ugettext as _
 
 from feincms import settings, ensure_completely_loaded
-from feincms._internal import get_permission_codename
+from feincms._internal import get_model, get_permission_codename
 from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
 from feincms.templatetags.feincms_admin_tags import is_popup_var
@@ -140,8 +139,7 @@ class ItemEditor(ExtensionModelAdmin):
         """
 
         try:
-            model_cls = loading.get_model(
-                self.model._meta.app_label, content_type)
+            model_cls = get_model(self.model._meta.app_label, content_type)
             obj = model_cls.objects.get(parent=cms_id, id=content_id)
         except:
             raise Http404()
