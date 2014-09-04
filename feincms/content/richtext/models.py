@@ -3,7 +3,6 @@ from __future__ import absolute_import, unicode_literals
 from django import forms
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.forms.utils import ErrorList
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -50,7 +49,7 @@ class RichTextContentAdminForm(ItemEditorForm):
                 if errors or not (
                         settings.FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE
                         and cleaned_data['seen_tidy_warnings']):
-                    self._errors["text"] = ErrorList([mark_safe(
+                    self._errors["text"] = self.error_class([mark_safe(
                         _(
                             "HTML validation produced %(count)d warnings."
                             " Please review the updated content below before"

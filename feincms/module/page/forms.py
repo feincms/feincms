@@ -9,7 +9,6 @@ import re
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.contrib.sites.models import Site
 from django.forms.models import model_to_dict
-from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -182,7 +181,7 @@ class PageAdminForm(MPTTAdminForm):
         if 'override_url' in cleaned_data and cleaned_data['override_url']:
             if active_pages.filter(
                     _cached_url=cleaned_data['override_url']).count():
-                self._errors['override_url'] = ErrorList([
+                self._errors['override_url'] = self.error_class([
                     _('This URL is already taken by an active page.')])
                 del cleaned_data['override_url']
 
@@ -201,12 +200,12 @@ class PageAdminForm(MPTTAdminForm):
             new_url = '/%s/' % cleaned_data['slug']
 
         if active_pages.filter(_cached_url=new_url).count():
-            self._errors['active'] = ErrorList([
+            self._errors['active'] = self.error_class([
                 _('This URL is already taken by another active page.')])
             del cleaned_data['active']
 
         if parent and parent.template.enforce_leaf:
-            self._errors['parent'] = ErrorList(
+            self._errors['parent'] = self.error_class(
                 [_('This page does not allow attachment of child pages')])
             del cleaned_data['parent']
 
