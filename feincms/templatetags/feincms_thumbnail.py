@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals, print_function
+from __future__ import absolute_import, unicode_literals
 
 from io import BytesIO
 import logging
@@ -91,8 +91,11 @@ class Thumbnailer(object):
                     size=matches,
                     miniature=miniature)
             except Exception as exc:
-                print(exc)
-                logger.warning('Rendering a thumbnail failed: %r' % exc)
+                logger.warning(
+                    'Rendering a thumbnail failed: %r',
+                    exc,
+                    exc_info=True,
+                    extra={'stack': True, 'exception': exc})
                 # PIL raises a plethora of Exceptions if reading the image
                 # is not possible. Since we cannot be sure what Exception will
                 # happen, catch them all so the thumbnailer will never fail.
