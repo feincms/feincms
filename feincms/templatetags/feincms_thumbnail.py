@@ -2,7 +2,7 @@
 # coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, print_function
 
 from io import BytesIO
 import logging
@@ -101,6 +101,7 @@ class Thumbnailer(object):
                     image = Image.open(original_bytes)
 
         except Exception as exc:
+            print(exc)
             logger.warning('Rendering a thumbnail failed: %r' % exc)
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
@@ -129,6 +130,7 @@ class Thumbnailer(object):
             return storage.url(miniature)
 
         except Exception as exc:
+            print(exc)
             logger.warning('Rendering a thumbnail failed: %r' % exc)
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
