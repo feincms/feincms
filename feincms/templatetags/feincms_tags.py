@@ -86,7 +86,7 @@ def show_content_type_selection_widget(context, region):
     """
     if 'request' in context:
         user = context['request'].user
-    elif user in context:
+    elif 'user' in context:
         user = context['user']
     else:
         user = None
