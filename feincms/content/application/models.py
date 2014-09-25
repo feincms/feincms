@@ -70,21 +70,11 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
     appconfig = extra_context.get('app_config', {})
     urlconf = appconfig.get('urlconf_path', urlconf)
 
-    cache_generation = cache.get(APP_REVERSE_CACHE_GENERATION_KEY)
-    if cache_generation is None:
-        # This might never happen. Still, better be safe than sorry.
-        cache_generation = cycle_app_reverse_cache()
-
-    cache_key = 'FEINCMS:%s:APPCONTENT:L%s:U%s:G%s' % (
-        getattr(settings, 'SITE_ID', 0),
-        get_language(),
-        urlconf,
-        cache_generation)
-
+    appcontent_class = ApplicationContent._feincms_content_models[0]
+    cache_key = appcontent_class.app_reverse_cache_key(urlconf)
     url_prefix = cache.get(cache_key)
 
     if url_prefix is None:
-        appcontent_class = ApplicationContent._feincms_content_models[0]
         content = appcontent_class.closest_match(urlconf)
 
         if content is not None:
@@ -378,6 +368,19 @@ class ApplicationContent(models.Model):
         lm_list = [parsedate(x) for x in headers.get('Expires', ())]
         if len(lm_list) > 0:
             response['Expires'] = http_date(mktime(min(lm_list)))
+
+    @classmethod
+    def app_reverse_cache_key(self, urlconf_path, **kwargs):
+        cache_generation = cache.get(APP_REVERSE_CACHE_GENERATION_KEY)
+        if cache_generation is None:
+            # This might never happen. Still, better be safe than sorry.
+            cache_generation = cycle_app_reverse_cache()
+
+        return 'FEINCMS:%s:APPCONTENT:L%s:U%s:G%s' % (
+            getattr(settings, 'SITE_ID', 0),
+            get_language(),
+            urlconf_path,
+            cache_generation)
 
     @classmethod
     def closest_match(cls, urlconf_path):
