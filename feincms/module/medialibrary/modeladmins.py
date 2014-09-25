@@ -230,7 +230,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
         return HttpResponseRedirect(
             reverse('admin:medialibrary_mediafile_changelist'))
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         return super(MediaFileAdmin, self).get_queryset(request).transform(
             lookup_translations())
 
