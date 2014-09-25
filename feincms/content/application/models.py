@@ -28,6 +28,7 @@ from feincms.utils import get_object
 
 
 APP_REVERSE_CACHE_GENERATION_KEY = 'FEINCMS:APPREVERSECACHE'
+APP_REVERSE_CACHE_TIMEOUT = 300
 
 
 def cycle_app_reverse_cache(*args, **kwargs):
@@ -87,7 +88,7 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
             prefix += '/' if prefix[-1] != '/' else ''
 
             url_prefix = (urlconf, prefix)
-            cache.set(cache_key, url_prefix)
+            cache.set(cache_key, url_prefix, timeout=APP_REVERSE_CACHE_TIMEOUT)
 
     if url_prefix:
         # vargs and vkwargs are used to send through additional parameters
