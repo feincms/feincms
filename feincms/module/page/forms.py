@@ -7,7 +7,7 @@ from __future__ import absolute_import, unicode_literals
 import re
 
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-from django.contrib.sites.models import Site
+from django.db.models import FieldDoesNotExist
 from django.forms.models import model_to_dict
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -160,8 +160,15 @@ class PageAdminForm(MPTTAdminForm):
             current_id = self.instance.id
             active_pages = active_pages.exclude(id=current_id)
 
-        if hasattr(Site, 'page_set') and 'site' in cleaned_data:
-            active_pages = active_pages.filter(site=cleaned_data['site'])
+        try:
+            # XXX Django 1.7 allows asking
+            # apps.is_installed('django.contrib.sites')
+            self._meta.model._meta.get_field_by_name('site')
+        except FieldDoesNotExist:
+            pass
+        else:
+            if 'site' in cleaned_data:
+                active_pages = active_pages.filter(site=cleaned_data['site'])
 
         # Convert PK in redirect_to field to something nicer for the future
         redirect_to = cleaned_data.get('redirect_to')
