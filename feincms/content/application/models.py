@@ -27,11 +27,16 @@ from feincms.translations import short_language_code
 from feincms.utils import get_object
 
 
+APP_REVERSE_CACHE_GENERATION_KEY = 'FEINCMS:APPREVERSECACHE'
+
+
 def cycle_app_reverse_cache(*args, **kwargs):
     """Does not really empty the cache; instead it adds a random element to the
     cache key generation which guarantees that the cache does not yet contain
     values for all newly generated keys"""
-    cache.set('app_reverse_cache_generation', str(SystemRandom().random()))
+    value = '%07x' % (SystemRandom().randint(0, 0x10000000))
+    cache.set(APP_REVERSE_CACHE_GENERATION_KEY, value)
+    return value
 
 
 # Set the app_reverse_cache_generation value once per startup (at least).
@@ -65,16 +70,15 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
     appconfig = extra_context.get('app_config', {})
     urlconf = appconfig.get('urlconf_path', urlconf)
 
-    cache_generation = cache.get('app_reverse_cache_generation')
+    cache_generation = cache.get(APP_REVERSE_CACHE_GENERATION_KEY)
     if cache_generation is None:
         # This might never happen. Still, better be safe than sorry.
-        cycle_app_reverse_cache()
-        cache_generation = cache.get('app_reverse_cache_generation')
+        cache_generation = cycle_app_reverse_cache()
 
-    cache_key = '%s-%s-%s-%s' % (
-        urlconf,
-        get_language(),
+    cache_key = 'FEINCMS:%s:APPCONTENT:L%s:U%s:G%s' % (
         getattr(settings, 'SITE_ID', 0),
+        get_language(),
+        urlconf,
         cache_generation)
 
     url_prefix = cache.get(cache_key)
