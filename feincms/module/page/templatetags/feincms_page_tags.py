@@ -525,7 +525,7 @@ def page_is_active(context, page, feincms_page=None, path=None):
     if isinstance(page, PagePretender):
         if path is None:
             path = context['request'].path_info
-        return page.get_absolute_url().startswith(path)
+        return path.startswith(page.get_absolute_url())
 
     else:
         if feincms_page is None:
