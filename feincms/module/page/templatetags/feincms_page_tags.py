@@ -118,6 +118,15 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
 
         queryset = _parentactive_filter(queryset)
 
+    if group is not None:
+        # navigationgroups extension support
+        def _navigationgroup_filter(iterable):
+            for elem in iterable:
+                if getattr(elem, 'navigation_group', None) == group:
+                    yield elem
+
+        queryset = _navigationgroup_filter(queryset)
+
     if hasattr(feincms_page, 'navigation_extension'):
         # Filter out children of nodes which have a navigation extension
         def _navext_filter(iterable):
@@ -151,15 +160,6 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
                     current_navextension_node = None
 
         queryset = _navext_filter(queryset)
-
-    if group is not None:
-        # navigationgroups extension support
-        def _navigationgroup_filter(iterable):
-            for elem in iterable:
-                if getattr(elem, 'navigation_group', None) == group:
-                    yield elem
-
-        queryset = _navigationgroup_filter(queryset)
 
     # Return a list, not a generator so that it can be consumed
     # several times in a template.

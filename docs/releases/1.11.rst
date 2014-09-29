@@ -30,6 +30,12 @@ New deprecations
 Notable features and improvements
 =================================
 
+* Fix the inconsistent filtering of pages inside ``feincms_nav``. Navigation
+  extensions always came last, but the last release of FeinCMS added navigation
+  group filtering afterwards. This has been fixed. The workaround for the
+  previous behavior was to add the matching navigation group to page pretenders
+  as well.
+
 * Feature 1
 
 
