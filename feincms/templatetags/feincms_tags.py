@@ -8,9 +8,9 @@ import logging
 
 from django import template
 from django.conf import settings
+from django.contrib.auth import get_permission_codename
 from django.template.loader import render_to_string
 
-from feincms._internal import get_permission_codename
 from feincms.utils import get_singleton, get_singleton_url
 
 

@@ -15,6 +15,7 @@ try:
     from django.contrib.admin.utils import unquote
 except ImportError:  # Django 1.6
     from django.contrib.admin.util import unquote
+from django.contrib.auth import get_permission_codename
 from django.forms.models import modelform_factory
 from django.http import Http404
 from django.shortcuts import render_to_response
@@ -23,7 +24,7 @@ from django.utils.functional import curry
 from django.utils.translation import ugettext as _
 
 from feincms import settings, ensure_completely_loaded
-from feincms._internal import get_model, get_permission_codename
+from feincms._internal import get_model
 from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
 from feincms.templatetags.feincms_admin_tags import is_popup_var

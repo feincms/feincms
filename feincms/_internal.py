@@ -50,11 +50,3 @@ def monkeypatch_property(cls):
         setattr(cls, func.__name__, property(func))
         return func
     return decorator
-
-
-def get_permission_codename(action, opts):
-    """
-    Backport of django.contrib.auth.get_permission_codename for older versions
-    of Django.
-    """
-    return '%s_%s' % (action, opts.model_name)

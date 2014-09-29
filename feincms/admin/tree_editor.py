@@ -10,6 +10,7 @@ import logging
 
 from django.contrib.admin.views import main
 from django.contrib.admin.actions import delete_selected
+from django.contrib.auth import get_permission_codename
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db.models import Q
 from django.http import (
@@ -24,7 +25,6 @@ from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm
 
 from feincms import settings
-from feincms._internal import get_permission_codename
 from feincms.extensions import ExtensionModelAdmin
 
 
