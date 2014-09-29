@@ -8,8 +8,7 @@ from __future__ import absolute_import, unicode_literals
 
 
 __all__ = (
-    'get_model', 'get_models', 'get_permission_codename',
-    'monkeypatch_method', 'monkeypatch_property',
+    'get_model', 'get_models', 'monkeypatch_method', 'monkeypatch_property',
 )
 
 
