@@ -5,16 +5,56 @@ FeinCMS 1.11 release notes (upcoming)
 Welcome to FeinCMS 1.11!
 
 
-Major feature 1
-===============
+Template inheritance with application contents
+==============================================
+
+FeinCMS adds a decorator and a ``TemplateResponse`` subclass which can be
+returned from apps embedded through ``ApplicationContent``. The template
+response's template will override the template used by FeinCMS' main view and
+the context will be merged. A selection of HTTP response headers
+(currently *Cache-Control*, *Last-Modified* and *Expires*) will also be copied
+to the main response. The following two examples are fully equivalent::
+
+    from django.template.response import TemplateResponse
+    from feincms.content.application.models import UnpackTemplateResponse
+    from feincms.views.decorators import unpack
+
+    @unpack
+    def app_detail(request, ...):
+        return TemplateResponse(request, 'template.html', {...})
+
+    # or
+
+    def app_detail(request, ...):
+        return UnpackTemplateResponse(request, 'template.html', {...})
+
+The response class can also be easily used with Django's class-based views::
+
+    class MyListView(generic.ListView):
+        response_class = UnpackTemplateResponse
+
+This mechanism supersedes returning a tuple of ``(template_name, context)``.
+This is still supported, but lacks the possibility to override HTTP response
+headers.
 
 
 Backwards-incompatible changes
 ==============================
 
+* FeinCMS requires a minimum of Django 1.6.
+
+* The example project has been removed, because it did not really demonstrate
+  a best practices FeinCMS setup. A standard installation of FeinCMS will
+  often include additional libraries such as
+  `feincms-oembed <https://github.com/feincms/feincms-oembed>`_,
+  `form-designer <https://github.com/feincms/form_designer>`_ and additional
+  modules.
+
 
 Removal of deprecated features
 ------------------------------
+
+There were no deprecated features to be removed.
 
 
 New deprecations
@@ -36,13 +76,16 @@ Notable features and improvements
   previous behavior was to add the matching navigation group to page pretenders
   as well.
 
-* Feature 1
+* Support for importing PIL as `import Image` has been removed.
 
 
 Bugfixes
 ========
 
-* Bugfix 1
+* ``{% feincms_nav %}`` now filters by navigation group before applying navigation
+  extensions for internal consistency.
+
+* ``{% page_is_active %}`` correctly handles page pretenders now.
 
 
 Compatibility with Django and other apps
