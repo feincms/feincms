@@ -9,12 +9,12 @@ be they real Page instances or extended navigation entries.
 
 from __future__ import absolute_import, unicode_literals
 
+from collections import OrderedDict
 import types
 import warnings
 
 from django.db import models
 from django.utils import six
-from django.utils.datastructures import SortedDict
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
@@ -130,7 +130,7 @@ class Extension(extensions.Extension):
                 ' of dotted python paths into the navigation_extensions'
                 ' class variable.', DeprecationWarning, stacklevel=3)
 
-            return SortedDict(
+            return OrderedDict(
                 ('%s.%s' % (ext.__module__, ext.__name__), ext)
                 for ext in NavigationExtension.types
                 if (
@@ -138,7 +138,7 @@ class Extension(extensions.Extension):
                     and ext is not NavigationExtension))
 
         else:
-            return SortedDict(
+            return OrderedDict(
                 ('%s.%s' % (ext.__module__, ext.__name__), ext)
                 for ext
                 in map(get_extension_class, self.navigation_extensions))

@@ -38,6 +38,31 @@ This is still supported, but lacks the possibility to override HTTP response
 headers.
 
 
+Explicit definition of navigation extensions is now possible
+============================================================
+
+The auto-discovery of navigation extensions always was fragile and had to
+happen before the navigation extension itself was registered with the page
+class. This has been fixed; it's now possible to explicitly define the list
+of navigation extensions which should be available::
+
+    from feincms.module.page.extensions import navigation
+    from feincms.module.page.models import Page
+    from myapp.navigation_extensions import MyappNavigationExtension
+
+    class NavigationExtension(navigation.Extension):
+        navigation_extensions = [
+            MyappNavigationExtension,
+        ]
+
+    Page.register_extensions(
+        NavigationExtension,
+    )
+
+The previous method has been deprecated and will stop working in future
+versions of FeinCMS.
+
+
 Backwards-incompatible changes
 ==============================
 
@@ -85,8 +110,8 @@ Notable features and improvements
 Bugfixes
 ========
 
-* ``{% feincms_nav %}`` now filters by navigation group before applying navigation
-  extensions for internal consistency.
+* ``{% feincms_nav %}`` now filters by navigation group before applying
+  navigation extensions for internal consistency.
 
 * ``{% page_is_active %}`` correctly handles page pretenders now.
 
