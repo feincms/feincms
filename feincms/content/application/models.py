@@ -16,6 +16,7 @@ from django.core.urlresolvers import (
 from django.db import models
 from django.db.models import signals
 from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django.utils.functional import curry as partial, lazy, wraps
 from django.utils.http import http_date
 from django.utils.safestring import mark_safe
@@ -29,6 +30,14 @@ from feincms.utils import get_object
 
 APP_REVERSE_CACHE_GENERATION_KEY = 'FEINCMS:APPREVERSECACHE'
 APP_REVERSE_CACHE_TIMEOUT = 300
+
+
+class UnpackTemplateResponse(TemplateResponse):
+    """
+    Completely the same as marking applicationcontent-contained views with
+    the ``feincms.views.decorators.unpack`` decorator.
+    """
+    _feincms_unpack = True
 
 
 def cycle_app_reverse_cache(*args, **kwargs):
@@ -299,14 +308,22 @@ class ApplicationContent(models.Model):
                 return output
             elif output.status_code == 200:
 
-                # If the response supports deferred rendering, render the
-                # response right now. We do not handle template response
-                # middleware.
-                if hasattr(output, 'render') and callable(output.render):
-                    output.render()
+                if self.unpack(request, output) and 'view' in kw:
+                    # Handling of @unpack and UnpackTemplateResponse
+                    kw['view'].template_name = output.template_name
+                    kw['view'].request._feincms_extra_context.update(
+                        output.context_data)
 
-                self.rendered_result = mark_safe(
-                    output.content.decode('utf-8'))
+                else:
+                    # If the response supports deferred rendering, render the
+                    # response right now. We do not handle template response
+                    # middleware.
+                    if hasattr(output, 'render') and callable(output.render):
+                        output.render()
+
+                    self.rendered_result = mark_safe(
+                        output.content.decode('utf-8'))
+
                 self.rendered_headers = {}
 
                 # Copy relevant headers for later perusal
@@ -318,6 +335,7 @@ class ApplicationContent(models.Model):
         elif isinstance(output, tuple) and 'view' in kw:
             kw['view'].template_name = output[0]
             kw['view'].request._feincms_extra_context.update(output[1])
+
         else:
             self.rendered_result = mark_safe(output)
 
@@ -333,6 +351,9 @@ class ApplicationContent(models.Model):
                 or request.is_ajax()
                 or getattr(response, 'standalone', False)
                 or mimetype not in ('text/html', 'text/plain'))
+
+    def unpack(self, request, response):
+        return getattr(response, '_feincms_unpack', False)
 
     def render(self, **kwargs):
         return getattr(self, 'rendered_result', '')
