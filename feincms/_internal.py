@@ -8,7 +8,7 @@ from __future__ import absolute_import, unicode_literals
 
 
 __all__ = (
-    'get_model', 'get_models', 'get_model_name', 'get_permission_codename',
+    'get_model', 'get_models', 'get_permission_codename',
     'monkeypatch_method', 'monkeypatch_property', 'monkeypatch_class',
 )
 
@@ -72,16 +72,9 @@ def monkeypatch_class(name, bases, namespace):
     return base
 
 
-def get_model_name(opts):
-    try:
-        return opts.model_name
-    except AttributeError:
-        return opts.module_name
-
-
 def get_permission_codename(action, opts):
     """
     Backport of django.contrib.auth.get_permission_codename for older versions
     of Django.
     """
-    return '%s_%s' % (action, get_model_name(opts))
+    return '%s_%s' % (action, opts.model_name)

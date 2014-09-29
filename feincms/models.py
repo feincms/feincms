@@ -28,7 +28,7 @@ from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms._internal import get_model, get_model_name
+from feincms._internal import get_model
 from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 
@@ -525,7 +525,7 @@ def create_base_model(inherit_from=models.Model):
 
                 return '%s-%s-%s-%s-%s' % (
                     cls._meta.app_label,
-                    get_model_name(cls._meta),
+                    cls._meta.model_name,
                     self.__class__.__name__.lower(),
                     self.parent_id,
                     self.id,

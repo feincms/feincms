@@ -13,7 +13,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms._internal import get_model, get_model_name
+from feincms._internal import get_model
 
 from mptt.forms import MPTTAdminForm
 
@@ -175,7 +175,7 @@ class PageAdminForm(MPTTAdminForm):
         if redirect_to and re.match(r'^\d+$', redirect_to):
             opts = self.page_model._meta
             cleaned_data['redirect_to'] = '%s.%s:%s' % (
-                opts.app_label, get_model_name(opts), redirect_to)
+                opts.app_label, opts.model_name, redirect_to)
 
         if 'active' in cleaned_data and not cleaned_data['active']:
             # If the current item is inactive, we do not need to conduct
