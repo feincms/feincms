@@ -35,7 +35,9 @@ from feincms.context_processors import add_page_if_missing
 from feincms.models import ContentProxy
 from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page import processors
+from feincms.module.page.extensions.navigation import PagePretender
 from feincms.module.page.models import Page
+from feincms.module.page.templatetags import feincms_page_tags
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
 
@@ -1775,3 +1777,30 @@ class PagesTestCase(TestCase):
         }))
 
         self.assertEqual(str.strip(), '/test-page/test-child-page/,')
+
+    def test_40_page_is_active(self):
+        self.create_default_page_set()
+
+        page1, page2 = list(Page.objects.order_by('id'))
+
+        self.assertTrue(feincms_page_tags.page_is_active(
+            {'feincms_page': page1}, page1))
+        self.assertTrue(feincms_page_tags.page_is_active(
+            {'feincms_page': page2}, page1))
+        self.assertFalse(feincms_page_tags.page_is_active(
+            {'feincms_page': page1}, page2))
+
+        p = PagePretender(
+            title='bla',
+            slug='bla',
+            url='/test-page/whatsup/')
+
+        self.assertTrue(feincms_page_tags.page_is_active(
+            {}, p, path='/test-page/whatsup/test/'))
+        self.assertFalse(feincms_page_tags.page_is_active(
+            {}, p, path='/test-page/'))
+
+        self.assertTrue(feincms_page_tags.page_is_active(
+            {'feincms_page': page1}, p, path='/test-page/whatsup/test/'))
+        self.assertFalse(feincms_page_tags.page_is_active(
+            {'feincms_page': page2}, p, path='/test-page/'))
