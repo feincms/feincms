@@ -1633,6 +1633,11 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'some_sidebar_region_text')
         self.assertNotContains(response, 'some content outside')
 
+        response = self.client.get(
+            page.get_absolute_url() + 'inheritance20_unpack/')
+        self.assertContains(response, 'a content 43')
+        self.assertIn('yabba dabba', response['cache-control'])
+
     def test_33_preview(self):
         self.create_default_page_set()
         page = Page.objects.get(pk=1)

@@ -7,8 +7,9 @@ from __future__ import absolute_import, unicode_literals
 from django.conf.urls import patterns, url
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
+from django.template.response import TemplateResponse
 
-from feincms.views.decorators import standalone
+from feincms.views.decorators import standalone, unpack
 
 
 def module_root(request):
@@ -43,6 +44,16 @@ def inheritance20(request):
     return 'inheritance20.html', {'from_appcontent': 42}
 
 
+@unpack
+def inheritance20_unpack(request):
+    response = TemplateResponse(
+        request,
+        'inheritance20.html',
+        {'from_appcontent': 43})
+    response['Cache-Control'] = 'yabba dabba'
+    return response
+
+
 urlpatterns = patterns(
     '',
     url(r'^$', module_root, name='ac_module_root'),
@@ -55,4 +66,5 @@ urlpatterns = patterns(
     url(r'^response/$', response),
     url(r'^response_decorated/$', standalone(response)),
     url(r'^inheritance20/$', inheritance20),
+    url(r'^inheritance20_unpack/$', inheritance20_unpack),
 )
