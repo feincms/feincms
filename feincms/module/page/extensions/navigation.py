@@ -9,8 +9,13 @@ be they real Page instances or extended navigation entries.
 
 from __future__ import absolute_import, unicode_literals
 
+import types
+import warnings
+
 from django.db import models
 from django.utils import six
+from django.utils.datastructures import SortedDict
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
@@ -105,30 +110,71 @@ def navigation_extension_choices():
             yield ('%s.%s' % (ext.__module__, ext.__name__), ext.name)
 
 
+def get_extension_class(extension):
+    extension = get_object(extension)
+    if isinstance(extension, types.ModuleType):
+        return getattr(extension, 'Extension')
+    return extension
+
+
 class Extension(extensions.Extension):
     ident = 'navigation'  # TODO actually use this
+    navigation_extensions = None
+
+    @cached_property
+    def _extensions(self):
+        if self.navigation_extensions is None:
+            warnings.warn(
+                'Automatic registering of navigation extensions has been'
+                ' deprecated. Please inherit the extension and put a list'
+                ' of dotted python paths into the navigation_extensions'
+                ' class variable.', DeprecationWarning, stacklevel=3)
+
+            return SortedDict(
+                ('%s.%s' % (ext.__module__, ext.__name__), ext)
+                for ext in NavigationExtension.types
+                if (
+                    issubclass(ext, NavigationExtension)
+                    and ext is not NavigationExtension))
+
+        else:
+            return SortedDict(
+                ('%s.%s' % (ext.__module__, ext.__name__), ext)
+                for ext
+                in map(get_extension_class, self.navigation_extensions))
 
     def handle_model(self):
+        choices = [
+            (path, ext.name) for path, ext in self._extensions.items()]
+
         self.model.add_to_class(
             'navigation_extension',
             models.CharField(
                 _('navigation extension'),
-                choices=navigation_extension_choices(),
+                choices=choices,
                 blank=True, null=True, max_length=200,
                 help_text=_(
                     'Select the module providing subpages for this page if'
                     ' you need to customize the navigation.')))
+
+        extension = self
 
         @monkeypatch_method(self.model)
         def extended_navigation(self, **kwargs):
             if not self.navigation_extension:
                 return self.children.in_navigation()
 
-            cls = get_object(self.navigation_extension, fail_silently=True)
-            if not cls or not callable(cls):
-                return self.children.in_navigation()
+            cls = None
 
-            return cls().children(self, **kwargs)
+            try:
+                cls = extension._extensions[self.navigation_extension]
+            except KeyError:
+                cls = get_object(self.navigation_extension, fail_silently=True)
+                extension._extensions[self.navigation_extension] = cls
+
+            if cls:
+                return cls().children(self, **kwargs)
+            return self.children.in_navigation()
 
     def handle_modeladmin(self, modeladmin):
         modeladmin.add_extension_options(_('Navigation extension'), {

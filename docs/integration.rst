@@ -438,26 +438,33 @@ You don't need to do anything else as long as you use the built-in
 
 ::
 
-    from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
+    from feincms.module.page.extensions import navigation
 
-    class BlogCategoriesNavigationExtension(NavigationExtension):
+    class BlogCategoriesNavigationExtension(navigation.NavigationExtension):
         name = _('blog categories')
 
         def children(self, page, **kwargs):
             for category in Category.objects.all():
-                yield PagePretender(
+                yield navigation.PagePretender(
                     title=category.name,
                     url=category.get_absolute_url(),
                     )
 
-    class PassthroughExtension(NavigationExtension):
+    class PassthroughExtension(navigation.NavigationExtension):
         name = 'passthrough extension'
 
         def children(self, page, **kwargs):
             for p in page.children.in_navigation():
                 yield p
 
-    Page.register_extensions('feincms.module.page.extensions.navigation')
+    class MyExtension(navigation.Extension):
+        navigation_extensions = [
+            BlogCategoriesNavigationExtension,
+            PassthroughExtension,
+            # Alternatively, a dotted Python path also works.
+        ]
+
+    Page.register_extensions(MyExtension)
 
 Note that the objects returned should at least try to mimic a real page so
 navigation template tags as ``siblings_along_path_to`` and friends continue

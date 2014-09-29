@@ -66,6 +66,9 @@ New deprecations
   `feincms-syndication <https://github.com/feincms/feincms-syndication>`_
   instead.
 
+* The automatic discovery of subclasses of ``NavigationExtension`` has been
+  replaced with an explicit mechanism of defining navigation extensions.
+
 
 Notable features and improvements
 =================================
