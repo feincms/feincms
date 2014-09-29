@@ -9,7 +9,10 @@ be they real Page instances or extended navigation entries.
 
 from __future__ import absolute_import, unicode_literals
 
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    from django.utils.datastructures import SortedDict as OrderedDict
 import types
 import warnings
 
