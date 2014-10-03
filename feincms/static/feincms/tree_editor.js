@@ -391,7 +391,7 @@ feincms.jQuery(function($){
         rlist.hide();
         rlist_tbody.feinTree();
 
-        rlist.on('click', 'span.page_marker', function(event) {
+        rlist.find('.page_marker').on('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
 
