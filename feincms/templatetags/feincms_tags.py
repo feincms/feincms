@@ -8,7 +8,6 @@ import logging
 
 from django import template
 from django.conf import settings
-from django.contrib.auth import get_permission_codename
 from django.template.loader import render_to_string
 
 from feincms.utils import get_singleton, get_singleton_url
@@ -76,42 +75,6 @@ def feincms_frontend_editing(cms_obj, request):
         return render_to_string('admin/feincms/fe_tools.html', context)
 
     return ''
-
-
-@register.inclusion_tag('admin/feincms/content_type_selection_widget.html',
-                        takes_context=True)
-def show_content_type_selection_widget(context, region):
-    """
-    {% show_content_type_selection_widget region %}
-    """
-    if 'request' in context:
-        user = context['request'].user
-    elif 'user' in context:
-        user = context['user']
-    else:
-        user = None
-
-    grouped = {}
-    ungrouped = []
-
-    if user:
-        for ct in region._content_types:
-            # Skip cts that we shouldn't be adding anyway
-            opts = ct._meta
-            perm = opts.app_label + "." + get_permission_codename('add', opts)
-            if not user.has_perm(perm):
-                continue
-
-            ct_info = (ct.__name__.lower(), ct._meta.verbose_name)
-            if hasattr(ct, 'optgroup'):
-                if ct.optgroup in grouped:
-                    grouped[ct.optgroup].append(ct_info)
-                else:
-                    grouped[ct.optgroup] = [ct_info]
-            else:
-                ungrouped.append(ct_info)
-
-    return {'grouped': grouped, 'ungrouped': ungrouped}
 
 
 @register.assignment_tag
