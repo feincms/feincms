@@ -27,7 +27,6 @@ from feincms import settings, ensure_completely_loaded
 from feincms._internal import get_model
 from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
-from feincms.templatetags.feincms_admin_tags import is_popup_var
 
 
 # ------------------------------------------------------------------------
@@ -224,7 +223,6 @@ class ItemEditor(ExtensionModelAdmin):
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
 
             'FEINCMS_FRONTEND_EDITING': settings.FEINCMS_FRONTEND_EDITING,
-            'FEINCMS_POPUP_VAR': is_popup_var(),
         }
 
         for processor in self.model.feincms_item_editor_context_processors:
