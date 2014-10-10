@@ -51,6 +51,12 @@ class MediaFileForeignKey(models.ForeignKey):
     adds a thumbnail of media files if the media file foreign key is shown
     using ``raw_id_fields``.
     """
+
+    def __init__(self, *args, **kwargs):
+        if not args and 'to' not in kwargs:
+            args = (MediaFile,)
+        super(MediaFileForeignKey, self).__init__(*args, **kwargs)
+
     def formfield(self, **kwargs):
         if 'widget' in kwargs and isinstance(
                 kwargs['widget'], ForeignKeyRawIdWidget):
