@@ -18,7 +18,7 @@ from feincms.content.file.models import FileContent
 from feincms.module.page.extensions.navigation import (
     NavigationExtension, PagePretender)
 from feincms.module.page import processors
-from feincms.content.application.models import reverse
+from feincms.content.application.models import app_reverse
 
 from mptt.models import MPTTModel
 
@@ -104,7 +104,7 @@ class BlogEntriesNavigationExtension(NavigationExtension):
         for entry in Entry.objects.all():
             yield PagePretender(
                 title=entry.title,
-                url=reverse(
+                url=app_reverse(
                     'testapp.blog_urls/blog_entry_detail',
                     kwargs={'object_id': entry.id}
                 ),

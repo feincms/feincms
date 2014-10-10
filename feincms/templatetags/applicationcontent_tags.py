@@ -6,8 +6,7 @@ from django.template import TemplateSyntaxError
 from django.template.defaulttags import kwarg_re
 from django.utils.encoding import smart_str
 
-from feincms.content.application.models import (
-    ApplicationContent, app_reverse as do_app_reverse)
+from feincms.apps import ApplicationContent, app_reverse as do_app_reverse
 from feincms.templatetags.feincms_tags import _render_content
 # backwards compatibility import
 from feincms.templatetags.fragment_tags import (

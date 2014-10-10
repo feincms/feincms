@@ -25,8 +25,7 @@ from django.utils.encoding import force_text
 from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
-from feincms.content.application.models import (
-    app_reverse, cycle_app_reverse_cache)
+from feincms.apps.reverse import app_reverse, cycle_app_reverse_cache
 from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
