@@ -144,6 +144,4 @@ def prefetch_modeladmin_get_queryset(modeladmin, *lookups):
             return qs
         return wrapper
 
-    # queryset is renamed to get_queryset in Django 1.6
-    fn = "get_queryset" if hasattr(modeladmin, "get_queryset") else "queryset"
-    setattr(modeladmin, fn, do_wrap(getattr(modeladmin, fn)))
+    modeladmin.get_queryset = do_wrap(modeladmin.get_queryset)
