@@ -12,7 +12,7 @@ from django.views import generic
 from django.views.generic.base import TemplateResponseMixin
 
 from feincms import settings
-from feincms.views.decorators import standalone
+from feincms.apps import standalone
 
 
 class ContentModelMixin(object):
