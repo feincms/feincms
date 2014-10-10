@@ -77,9 +77,6 @@ checking of object level permissions.
 Settings for the page module
 ============================
 
-``FEINCMS_FRONTEND_EDITING``: Defaults to ``False``. Activate this to show
-the frontend editing button in the page change form.
-
 ``FEINCMS_USE_PAGE_ADMIN``: Defaults to ``True``. The page model admin module
 automatically registers the page model with the default admin site if this is
 active. Set to ``False`` if you have to configure the page admin module

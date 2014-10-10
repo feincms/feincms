@@ -8,7 +8,6 @@ import logging
 
 from django import template
 from django.conf import settings
-from django.template.loader import render_to_string
 
 from feincms.utils import get_singleton, get_singleton_url
 
@@ -30,11 +29,7 @@ def _render_content(content, **kwargs):
             return
         setattr(request, 'feincms_render_level', level + 1)
 
-    if (request and request.COOKIES.get('frontend_editing', False)
-            and hasattr(content, 'fe_render')):
-        r = content.fe_render(**kwargs)
-    else:
-        r = content.render(**kwargs)
+    r = content.render(**kwargs)
 
     if request is not None:
         level = getattr(request, 'feincms_render_level', 1)
@@ -59,22 +54,6 @@ def feincms_render_content(context, content, request=None):
     {% feincms_render_content content request %}
     """
     return _render_content(content, request=request, context=context)
-
-
-@register.simple_tag
-def feincms_frontend_editing(cms_obj, request):
-    """
-    {% feincms_frontend_editing feincms_page request %}
-    """
-
-    if (hasattr(request, 'COOKIES')
-            and request.COOKIES.get('frontend_editing') == 'True'):
-        context = template.RequestContext(request, {
-            "feincms_page": cms_obj,
-        })
-        return render_to_string('admin/feincms/fe_tools.html', context)
-
-    return ''
 
 
 @register.assignment_tag

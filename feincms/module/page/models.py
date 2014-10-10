@@ -404,7 +404,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         return path_to_cache_key(path.strip('/'), prefix=prefix)
 
     @classmethod
-    def register_default_processors(cls, frontend_editing=False):
+    def register_default_processors(cls):
         """
         Register our default request processors for the out-of-the-box
         Page experience.
@@ -413,14 +413,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             processors.redirect_request_processor, key='redirect')
         cls.register_request_processor(
             processors.extra_context_request_processor, key='extra_context')
-
-        if frontend_editing:
-            cls.register_request_processor(
-                processors.frontendediting_request_processor,
-                key='frontend_editing')
-            cls.register_response_processor(
-                processors.frontendediting_response_processor,
-                key='frontend_editing')
 
 
 # ------------------------------------------------------------------------
@@ -431,8 +423,7 @@ class Page(BasePage):
         verbose_name_plural = _('pages')
         # not yet # permissions = (("edit_page", _("Can edit page metadata")),)
 
-Page.register_default_processors(
-    frontend_editing=settings.FEINCMS_FRONTEND_EDITING)
+Page.register_default_processors()
 
 if settings.FEINCMS_CHECK_DATABASE_SCHEMA:
     signals.post_syncdb.connect(

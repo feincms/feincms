@@ -45,7 +45,7 @@
 
         var richtext_init_fn = function(){
             tinyMCE.init(tinymce_options);
-            $('{% block selectors %}.order-machine textarea.item-richtext, #frontend_editor textarea.item-richtext{% endblock %}').each(function(){
+            $('{% block selectors %}.order-machine textarea.item-richtext{% endblock %}').each(function(){
                 feincms_richtext_add_tinymce(this);
             });
         }

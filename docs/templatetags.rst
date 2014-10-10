@@ -54,9 +54,6 @@ the ``feincms_tags`` template tag library::
                context = kwargs.get('context')
 
 
-.. function:: feincms_frontend_editing:
-
-
 Page module-specific template tags
 ==================================
 
