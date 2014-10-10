@@ -42,14 +42,6 @@ def get_object(path, fail_silently=False):
 
 
 # ------------------------------------------------------------------------
-def collect_dict_values(data):
-    dic = {}
-    for key, value in data:
-        dic.setdefault(key, []).append(value)
-    return dic
-
-
-# ------------------------------------------------------------------------
 def copy_model_instance(obj, exclude=None):
     """
     Copy a model instance, excluding primary key and optionally a list
