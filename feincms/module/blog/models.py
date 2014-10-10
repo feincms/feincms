@@ -8,14 +8,11 @@ It does work, though.
 from __future__ import absolute_import, unicode_literals
 
 from django.db import models
-from django.db.models import signals
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from feincms import settings
 from feincms.admin import item_editor
-from feincms.management.checker import check_database_schema
 from feincms.models import Base
 
 
@@ -62,12 +59,6 @@ class Entry(Base):
     @models.permalink
     def get_absolute_url(self):
         return ('blog_entry_detail', (self.id,), {})
-
-
-if settings.FEINCMS_CHECK_DATABASE_SCHEMA:
-    signals.post_syncdb.connect(
-        check_database_schema(Entry, __name__),
-        weak=False)
 
 
 class EntryAdmin(item_editor.ItemEditor):

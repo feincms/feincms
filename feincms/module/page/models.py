@@ -10,7 +10,7 @@ from django.core.cache import cache as django_cache
 from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
 from django.db import models
-from django.db.models import Q, signals
+from django.db.models import Q
 from django.http import Http404
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -19,7 +19,6 @@ from mptt.models import MPTTModel, TreeManager
 
 from feincms import settings
 from feincms._internal import get_model
-from feincms.management.checker import check_database_schema
 from feincms.models import create_base_model
 from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
@@ -425,10 +424,4 @@ class Page(BasePage):
 
 Page.register_default_processors()
 
-if settings.FEINCMS_CHECK_DATABASE_SCHEMA:
-    signals.post_syncdb.connect(
-        check_database_schema(Page, __name__),
-        weak=False)
-
-# ------------------------------------------------------------------------
 # ------------------------------------------------------------------------

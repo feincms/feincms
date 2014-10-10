@@ -96,15 +96,6 @@ FEINCMS_DEFAULT_PAGE_MODEL = getattr(
     'page.Page')
 
 # ------------------------------------------------------------------------
-# Various settings
-
-#: Run the weak replacement for a real database migration solution?
-FEINCMS_CHECK_DATABASE_SCHEMA = getattr(
-    settings,
-    'FEINCMS_CHECK_DATABASE_SCHEMA',
-    False)
-
-# ------------------------------------------------------------------------
 #: Allow random gunk after a valid page?
 FEINCMS_ALLOW_EXTRA_PATH = getattr(
     settings,

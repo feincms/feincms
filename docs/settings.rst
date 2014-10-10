@@ -141,7 +141,3 @@ Various settings
 ``FEINCMS_THUMBNAIL_DIR``: Defaults to ``_thumbs/``. Defines a prefix for media
 file thumbnails. This allows you to easily remove all thumbnails without fear
 of removing files belonging to image and file fields.
-
-``FEINCMS_CHECK_DATABASE_SCHEMA``: Defaults to ``False``. Run the home-grown
-schema checker on the page module. Should not be used anymore, use South or
-Django 1.7's own migrations support.
