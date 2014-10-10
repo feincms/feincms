@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.http import Http404
+from django.utils.functional import cached_property
 
 from feincms import settings
 from feincms._internal import get_model
@@ -8,17 +9,13 @@ from feincms.module.mixins import ContentView
 
 
 class Handler(ContentView):
-    page_model_path = 'page.Page'
+    page_model_path = None
     context_object_name = 'feincms_page'
 
-    @property
+    @cached_property
     def page_model(self):
-        if not hasattr(self, '_page_model'):
-            self._page_model = get_model(*self.page_model_path.split('.'))
-            if self._page_model is None:
-                raise ImportError(
-                    "Can't import model \"%s\"" % self.page_model_path)
-        return self._page_model
+        model = self.page_model_path or settings.FEINCMS_DEFAULT_PAGE_MODEL
+        return get_model(*model.split('.'))
 
     def get_object(self):
         path = None
