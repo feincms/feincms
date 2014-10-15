@@ -51,6 +51,9 @@ def granular_now(n=None):
     """
     if n is None:
         n = timezone.now()
+    # WARNING/TODO: make_aware can raise a pytz NonExistentTimeError or
+    # AmbiguousTimeError if the resultant time is invalid in n.tzinfo
+    # -- see https://github.com/feincms/feincms/commit/5d0363df
     return timezone.make_aware(
         datetime(n.year, n.month, n.day, n.hour, (n.minute // 5) * 5),
         n.tzinfo)
@@ -66,15 +69,8 @@ def datepublisher_response_processor(page, request, response):
     """
     expires = page.publication_end_date
     if expires is not None:
-        now = datetime.now()
-        delta = expires - now
-
-        try:
-            delta = int(delta.days * 86400 + delta.seconds)
-        except Exception:
-            # This happens once every four years (or so)
-            delta = int(delta.days * 86400 + delta.seconds - 7200)
-
+        delta = expires - timezone.now()
+        delta = int(delta.days * 86400 + delta.seconds)
         patch_response_headers(response, delta)
 
 
