@@ -39,7 +39,7 @@ Rich text settings
 ==================
 
 ``FEINCMS_RICHTEXT_INIT_TEMPLATE``: Defaults to
-``admin/content/richtext/init_tinymce.html``. The template which contains the
+``admin/content/richtext/init_tinymce4.html``. The template which contains the
 initialization snippet for the rich text editor. Bundled templates are:
 
 * ``admin/content/richtext/init_tinymce.html`` for TinyMCE 3.x.
