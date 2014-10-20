@@ -283,7 +283,7 @@ class ApplicationContent(models.Model):
             # This might never happen. Still, better be safe than sorry.
             cache_generation = cycle_app_reverse_cache()
 
-        return 'FEINCMS:%s:APPCONTENT:L%s:U%s:G%s' % (
+        return 'FEINCMS:%s:APPCONTENT:%s:%s:%s' % (
             getattr(settings, 'SITE_ID', 0),
             get_language(),
             urlconf_path,
