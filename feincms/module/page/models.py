@@ -5,6 +5,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import re
+import warnings
 
 from django.core.cache import cache as django_cache
 from django.core.exceptions import PermissionDenied
@@ -347,6 +348,11 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         This function is here purely for your convenience. FeinCMS itself
         does not use it in any way.
         """
+        warnings.warn(
+            'Page.cache_key has never been used and has therefore been'
+            ' deprecated and will be removed in a future release. Have a'
+            ' look at Page.path_to_cache_key if you require comparable'
+            ' functionality.', DeprecationWarning, stacklevel=2)
         return '-'.join(str(fn(self)) for fn in self.cache_key_components)
 
     def etag(self, request):
