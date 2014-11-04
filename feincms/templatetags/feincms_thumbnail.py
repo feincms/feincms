@@ -5,6 +5,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from io import BytesIO
+import logging
 import re
 
 # Try to import PIL in either of the two ways it can end up installed.
@@ -28,6 +29,7 @@ from django.utils import six
 from feincms import settings
 
 
+logger = logging.getLogger(__name__)
 register = template.Library()
 
 
@@ -128,6 +130,7 @@ class Thumbnailer(object):
             # PIL raises a plethora of Exceptions if reading the image
             # is not possible. Since we cannot be sure what Exception will
             # happen, catch them all so the thumbnailer will never fail.
+            logger.exception("Generation of thumbnail failed")
             return storage.url(original)
 
 
