@@ -55,6 +55,13 @@ def translation_set_language(request, select_language):
     """
     Set and activate a language, if that language is available.
     """
+
+    # Check for feincms specific set of allowed front end languages.
+    if settings.FEINCMS_FRONTEND_LANGUAGES:
+        l = select_language[:2]
+        if l not in settings.FEINCMS_FRONTEND_LANGUAGES:
+            select_language = django_settings.LANGUAGES[0][0]
+
     if translation.check_for_language(select_language):
         fallback = False
     else:

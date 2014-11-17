@@ -201,3 +201,12 @@ FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED = getattr(
     False)
 
 # ------------------------------------------------------------------------
+#: Filter languages available for front end users to this set. This allows
+#: to have languages not yet ready for prime time while being able to access
+#: those pages in the admin backend.
+FEINCMS_FRONTEND_LANGUAGES = getattr(
+    settings,
+    'FEINCMS_FRONTEND_LANGUAGES',
+    None)
+
+# ------------------------------------------------------------------------
