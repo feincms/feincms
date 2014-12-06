@@ -20,6 +20,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
 
+try:
+    from pytz import InvalidTimeError
+except ImportError:
+    # Fall back to a catch-all
+    InvalidTimeError = Exception
+
 
 # ------------------------------------------------------------------------
 def format_date(d, if_none=''):
@@ -71,7 +77,10 @@ def datepublisher_response_processor(page, request, response):
     if expires is not None:
         delta = expires - timezone.now()
         delta = int(delta.days * 86400 + delta.seconds)
-        patch_response_headers(response, delta)
+        try:
+            patch_response_headers(response, delta)
+        except InvalidTimeError:  # NonExistentTimeError and AmbiguousTimeError
+            patch_response_headers(response, delta - 7200)
 
 
 # ------------------------------------------------------------------------
