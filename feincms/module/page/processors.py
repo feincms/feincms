@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import logging
 import re
 import sys
 
@@ -7,6 +8,7 @@ from django.conf import settings as django_settings
 from django.http import Http404, HttpResponseRedirect
 from django.utils.cache import add_never_cache_headers
 
+logger = logging.getLogger(__name__)
 
 def redirect_request_processor(page, request):
     """
@@ -15,8 +17,11 @@ def redirect_request_processor(page, request):
     """
     target = page.get_redirect_to_target(request)
     if target:
-        if request._feincms_extra_context.get('extra_path', '/') == '/':
+        extra_path = request._feincms_extra_context.get('extra_path', '/')
+        if extra_path == '/':
             return HttpResponseRedirect(target)
+        logger.debug("Page redirect on '%s' not taken because extra path '%s' present",
+            page.get_absolute_url(), extra_path)
         raise Http404()
 
 
