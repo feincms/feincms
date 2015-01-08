@@ -213,6 +213,10 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if not self.pk:
             return False
 
+        # No need to hit DB if page itself is inactive
+        if not self.active:
+            return False
+
         pages = self.__class__.objects.active().filter(
             tree_id=self.tree_id,
             lft__lte=self.lft,
