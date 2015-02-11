@@ -49,6 +49,7 @@ def user_has_language_set(request):
         return True
     return False
 
+
 # ------------------------------------------------------------------------
 def translation_allowed_language(select_language):
     "Check for feincms specific set of allowed front end languages."
@@ -58,6 +59,7 @@ def translation_allowed_language(select_language):
             select_language = django_settings.LANGUAGES[0][0]
 
     return select_language
+
 
 # ------------------------------------------------------------------------
 def translation_set_language(request, select_language):
@@ -206,9 +208,11 @@ class Extension(extensions.Extension):
             if not self.id:  # New, unsaved pages have no translations
                 return []
 
-            filter_active = lambda queryset: queryset
             if hasattr(cls.objects, 'apply_active_filters'):
                 filter_active = cls.objects.apply_active_filters
+            else:
+                def filter_active(queryset):
+                    return queryset
 
             if is_primary_language(self.language):
                 return filter_active(self.translations.all())

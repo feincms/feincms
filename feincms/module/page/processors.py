@@ -156,13 +156,15 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
     def processor(page, request, response):
         from django.db import connection
 
-        print_sql = lambda x: x
         try:
             import sqlparse
-            print_sql = lambda x: sqlparse.format(
-                x, reindent=True, keyword_case='upper')
+
+            def print_sql(x):
+                return sqlparse.format(
+                    x, reindent=True, keyword_case='upper')
         except:
-            pass
+            def print_sql(x):
+                return x
 
         if verbose:
             print("-" * 60, file=file)
