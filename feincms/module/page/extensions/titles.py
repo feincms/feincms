@@ -28,7 +28,7 @@ class Extension(extensions.Extension):
             blank=True,
             help_text=_(
                 'Page title for browser window. Same as title by'
-                'default. Must not be longer than 70 characters.')))
+                ' default. Must be 69 characters or fewer.')))
 
         @monkeypatch_property(self.model)
         def page_title(self):
