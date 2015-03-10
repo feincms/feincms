@@ -185,6 +185,14 @@ FEINCMS_THUMBNAIL_DIR = getattr(
     '_thumbs/')
 
 # ------------------------------------------------------------------------
+#: Default quality settings when creating thumbnails as a percentage of
+#: the original quality. 60 would equal a 40 decrease in quality.
+FEINCMS_THUMBNAIL_QUALITY = getattr(
+    settings,
+    'FEINCMS_THUMBNAIL_QUALITY',
+    90)
+
+# ------------------------------------------------------------------------
 #: Prevent changing template within admin for pages which have been
 #: allocated a Template with singleton=True -- template field will become
 #: read-only for singleton pages.
