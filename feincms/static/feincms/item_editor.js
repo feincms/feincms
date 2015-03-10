@@ -502,7 +502,7 @@
                 /* Simulate a click on the save button instead of form.submit(), so
                    that the submit handlers from FilteredSelectMultiple get
                    invoked. See Issue #372 */
-                form_element.find('input[type=submit][name=_save]').click();
+                form_element.find('[type=submit][name=_save]').click();
             } else {
                 // Restore original value
                 form_element.val($(input_element).data('original_value'));
