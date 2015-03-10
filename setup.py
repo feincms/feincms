@@ -42,6 +42,7 @@ setup(
         'django-mptt>=0.6.0',
         'Pillow>=2.0.0',
         'feedparser>=5.0.0',
+        'pytz>=2014.10',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

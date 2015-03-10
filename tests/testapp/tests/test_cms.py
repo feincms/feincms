@@ -6,6 +6,7 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
+import django
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.test import TestCase
@@ -18,6 +19,15 @@ from feincms.content.video.models import VideoContent
 
 from testapp.models import ExampleCMSBase, ExampleCMSBase2
 from .test_stuff import Empty
+
+try:
+    from unittest import skipIf
+except:
+    from django.utils.unittest import skipIf
+
+skipUnlessLegacy = skipIf(
+    django.VERSION >= (1, 8),
+    "Legacy tests only necessary in Django < 1.8")
 
 
 # ------------------------------------------------------------------------
@@ -150,6 +160,7 @@ class CMSBaseTest(TestCase):
             ct2._meta.db_table,
             'testapp_examplecmsbase2_rawcontent2')
 
+    @skipUnlessLegacy
     def test_09_related_objects_cache(self):
         """
         We need to define a model with relationship to our Base *after* all
