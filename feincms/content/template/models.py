@@ -54,18 +54,29 @@ class TemplateContent(models.Model):
         verbose_name_plural = _('template contents')
 
     @classmethod
-    def initialize_type(cls, TEMPLATE_LOADERS=DEFAULT_TEMPLATE_LOADERS):
-        cls.template_loaders = [
-            find_template_loader(loader)
-            for loader in TEMPLATE_LOADERS if loader]
+    def initialize_type(cls, TEMPLATE_LOADERS=DEFAULT_TEMPLATE_LOADERS,
+                        TEMPLATE_PATH='content/template'):
+        cls.template_path = TEMPLATE_PATH
+        template_loaders = []
+        for loader in TEMPLATE_LOADERS:
+            if loader:
+                # With Django 1.6 find_template_loader blows up during
+                # syncdb, probably because component initialization order
+                # has changed. Work around by ignoring exceptions here,
+                # but of course, this will also swallow legitimate
+                # exceptions. Tough luck :-(
+                try:
+                    template_loaders.append(find_template_loader(loader))
+                except Exception:
+                    pass
 
         cls.add_to_class('filename', models.CharField(
             _('template'), max_length=100,
-            choices=TemplateChoices(cls.template_loaders)))
+            choices=TemplateChoices(template_loaders)))
 
     def render(self, **kwargs):
         context = kwargs.pop('context', None)
-        name = 'content/template/%s' % self.filename
+        name = os.path.join(self.template_path, self.filename)
 
         for loader in self.template_loaders:
             try:
