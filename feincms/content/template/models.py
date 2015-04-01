@@ -53,11 +53,12 @@ class TemplateContent(models.Model):
         verbose_name = _('template content')
         verbose_name_plural = _('template contents')
 
+    template_loaders = []
+
     @classmethod
     def initialize_type(cls, TEMPLATE_LOADERS=DEFAULT_TEMPLATE_LOADERS,
                         TEMPLATE_PATH='content/template'):
         cls.template_path = TEMPLATE_PATH
-        template_loaders = []
         for loader in TEMPLATE_LOADERS:
             if loader:
                 # With Django 1.6 find_template_loader blows up during
@@ -66,13 +67,13 @@ class TemplateContent(models.Model):
                 # but of course, this will also swallow legitimate
                 # exceptions. Tough luck :-(
                 try:
-                    template_loaders.append(find_template_loader(loader))
+                    cls.template_loaders.append(find_template_loader(loader))
                 except Exception:
                     pass
 
         cls.add_to_class('filename', models.CharField(
             _('template'), max_length=100,
-            choices=TemplateChoices(template_loaders)))
+            choices=TemplateChoices(cls.template_loaders)))
 
     def render(self, **kwargs):
         context = kwargs.pop('context', None)
