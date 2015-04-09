@@ -48,3 +48,10 @@ You can either remove the line ``Page.register_extensions(...)`` from
 your code or drop the page_page table and re-run ``syncdb``. If you want
 to keep the pages you've already created, you need to figure out the
 correct ALTER TABLE statements for your database yourself.
+
+
+
+Is FeinCMS version X compatible with Django version Y?
+======================================================
+
+Check out the compatibility matrix `here <https://docs.google.com/spreadsheets/d/1w1Gix3q4pNtyBJ0RwNOPpLQpEakvxxChadv3LK_Uy70/edit?usp=sharing>`_.
