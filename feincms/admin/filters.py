@@ -11,6 +11,7 @@ from django.utils import six
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+from django import VERSION as DJANGO_VERSION
 
 from feincms.utils import shorten_string
 
@@ -72,11 +73,18 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
             f, request, params, model, model_admin, field_path)
 
         # Restrict results to categories which are actually in use:
+        if DJANGO_VERSION < (1,8):
+            related_model = f.related.parent_model
+            related_name = f.related.var_name
+        else:
+            related_model = f.related_model
+            related_name = f.related.name
+
         self.lookup_choices = [(
             i.pk,
             six.text_type(i))
-            for i in f.related.parent_model.objects.exclude(
-                **{f.related.var_name: None})
+            for i in related_model.objects.exclude(
+                **{related_name: None})
         ]
         self.lookup_choices.sort(key=lambda i: i[1])
 
