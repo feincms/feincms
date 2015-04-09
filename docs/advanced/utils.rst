@@ -15,8 +15,3 @@
        MyClass = get_object('module.MyClass')
 
        myfunc = get_object('anothermodule.module2.my_function', fail_silently=True)
-
-.. function:: collect_dict_values(data)
-
-   Converts a list of 2-tuples to a dict.
-

@@ -13,7 +13,7 @@ from django.utils.encoding import force_text
 import feincms
 from feincms.models import Region, Template
 from feincms.module.blog.models import Entry
-from feincms.utils import collect_dict_values, get_object, shorten_string
+from feincms.utils import get_object, shorten_string
 
 
 # ------------------------------------------------------------------------
@@ -60,11 +60,6 @@ class UtilsTest(TestCase):
             ImportError, lambda: get_object('feincms.does_not_exist.fn'))
 
         self.assertEqual(get_object, get_object('feincms.utils.get_object'))
-
-    def test_collect_dict_values(self):
-        self.assertEqual(
-            {'a': [1, 2], 'b': [3]},
-            collect_dict_values([('a', 1), ('a', 2), ('b', 3)]))
 
     def test_shorten_string(self):
         string = shorten_string(

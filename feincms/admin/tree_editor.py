@@ -10,6 +10,7 @@ import logging
 
 from django.contrib.admin.views import main
 from django.contrib.admin.actions import delete_selected
+from django.contrib.auth import get_permission_codename
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db.models import Q
 from django.http import (
@@ -24,7 +25,6 @@ from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm
 
 from feincms import settings
-from feincms._internal import get_permission_codename
 from feincms.extensions import ExtensionModelAdmin
 
 
@@ -157,9 +157,9 @@ class ChangeList(main.ChangeList):
         self.user = request.user
         super(ChangeList, self).__init__(request, *args, **kwargs)
 
-    def get_query_set(self, *args, **kwargs):
+    def get_queryset(self, *args, **kwargs):
         mptt_opts = self.model._mptt_meta
-        qs = super(ChangeList, self).get_query_set(*args, **kwargs).\
+        qs = super(ChangeList, self).get_queryset(*args, **kwargs).\
             order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr)
         # Force has_filters, so that the expand/collapse in sidebar is visible
         self.has_filters = True
@@ -188,14 +188,10 @@ class ChangeList(main.ChangeList):
                 # Note: Django ORM is smart enough to drop additional
                 # clauses if the initial query set is unfiltered. This
                 # is good.
-                queryset = self.query_set | self.model._default_manager.filter(
-                    reduce(lambda p, q: p | q, clauses))
-
-                if hasattr(self, 'queryset'):
-                    self.queryset = queryset
-                else:
-                    # Django 1.5 and older
-                    self.query_set = queryset
+                self.queryset = (
+                    self.queryset
+                    | self.model._default_manager.filter(
+                        reduce(lambda p, q: p | q, clauses)))
 
         super(ChangeList, self).get_results(request)
 
@@ -424,11 +420,8 @@ class TreeEditor(ExtensionModelAdmin):
         self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
-        queryset = (
-            self.get_queryset(request) if hasattr(self, 'get_queryset')
-            else self.queryset(request))
         extra_context['tree_structure'] = mark_safe(
-            json.dumps(_build_tree_structure(queryset)))
+            json.dumps(_build_tree_structure(self.get_queryset(request))))
 
         return super(TreeEditor, self).changelist_view(
             request, extra_context, *args, **kwargs)
@@ -480,9 +473,7 @@ class TreeEditor(ExtensionModelAdmin):
         else:
             tree_manager = self.model._tree_manager
 
-        queryset = (
-            self.get_queryset(request) if hasattr(self, 'get_queryset')
-            else self.queryset(request))
+        queryset = self.get_queryset(request)
         cut_item = queryset.get(pk=request.POST.get('cut_item'))
         pasted_on = queryset.get(pk=request.POST.get('pasted_on'))
         position = request.POST.get('position')

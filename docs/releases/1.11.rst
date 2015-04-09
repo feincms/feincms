@@ -1,0 +1,122 @@
+=====================================
+FeinCMS 1.11 release notes (upcoming)
+=====================================
+
+Welcome to FeinCMS 1.11!
+
+
+Template inheritance with application contents
+==============================================
+
+FeinCMS adds a decorator and a ``TemplateResponse`` subclass which can be
+returned from apps embedded through ``ApplicationContent``. The template
+response's template will override the template used by FeinCMS' main view and
+the context will be merged. A selection of HTTP response headers
+(currently *Cache-Control*, *Last-Modified* and *Expires*) will also be copied
+to the main response. The following two examples are fully equivalent::
+
+    from django.template.response import TemplateResponse
+    from feincms.content.application.models import UnpackTemplateResponse
+    from feincms.views.decorators import unpack
+
+    @unpack
+    def app_detail(request, ...):
+        return TemplateResponse(request, 'template.html', {...})
+
+    # or
+
+    def app_detail(request, ...):
+        return UnpackTemplateResponse(request, 'template.html', {...})
+
+The response class can also be easily used with Django's class-based views::
+
+    class MyListView(generic.ListView):
+        response_class = UnpackTemplateResponse
+
+This mechanism supersedes returning a tuple of ``(template_name, context)``.
+This is still supported, but lacks the possibility to override HTTP response
+headers.
+
+
+Explicit definition of navigation extensions is now possible
+============================================================
+
+The auto-discovery of navigation extensions always was fragile and had to
+happen before the navigation extension itself was registered with the page
+class. This has been fixed; it's now possible to explicitly define the list
+of navigation extensions which should be available::
+
+    from feincms.module.page.extensions import navigation
+    from feincms.module.page.models import Page
+    from myapp.navigation_extensions import MyappNavigationExtension
+
+    class NavigationExtension(navigation.Extension):
+        navigation_extensions = [
+            MyappNavigationExtension,
+        ]
+
+    Page.register_extensions(
+        NavigationExtension,
+    )
+
+The previous method has been deprecated and will stop working in future
+versions of FeinCMS.
+
+
+Backwards-incompatible changes
+==============================
+
+* FeinCMS requires a minimum of Django 1.6.
+
+* The example project has been removed, because it did not really demonstrate
+  a best practices FeinCMS setup. A standard installation of FeinCMS will
+  often include additional libraries such as
+  `feincms-oembed <https://github.com/feincms/feincms-oembed>`_,
+  `form-designer <https://github.com/feincms/form_designer>`_ and additional
+  modules.
+
+
+Removal of deprecated features
+------------------------------
+
+There were no deprecated features to be removed.
+
+
+New deprecations
+================
+
+* ``RSSContent`` and ``update_rsscontent`` have been deprecated, those being
+  the only reason why ``FeinCMS`` depends on ``feedparser``. This will allow
+  us to remove this dependency. Users should switch to
+  `feincms-syndication <https://github.com/feincms/feincms-syndication>`_
+  instead.
+
+* The automatic discovery of subclasses of ``NavigationExtension`` has been
+  replaced with an explicit mechanism of defining navigation extensions.
+
+
+Notable features and improvements
+=================================
+
+* Fix the inconsistent filtering of pages inside ``feincms_nav``. Navigation
+  extensions always came last, but the last release of FeinCMS added navigation
+  group filtering afterwards. This has been fixed. The workaround for the
+  previous behavior was to add the matching navigation group to page pretenders
+  as well.
+
+* Support for importing PIL as `import Image` has been removed.
+
+
+Bugfixes
+========
+
+* ``{% feincms_nav %}`` now filters by navigation group before applying
+  navigation extensions for internal consistency.
+
+* ``{% page_is_active %}`` correctly handles page pretenders now.
+
+
+Compatibility with Django and other apps
+========================================
+
+FeinCMS 1.11 requires Django 1.6 or better.

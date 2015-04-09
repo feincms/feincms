@@ -1,5 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
+import feedparser
+import warnings
 import time
 
 from django.db import models
@@ -8,7 +10,11 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
 
-import feedparser
+
+warnings.warn(
+    'RSSContent has been deprecated.'
+    ' Please use https://github.com/feincms/feincms-syndication instead.',
+    DeprecationWarning, stacklevel=2)
 
 
 class RSSContent(models.Model):

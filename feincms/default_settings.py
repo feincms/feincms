@@ -94,7 +94,7 @@ FEINCMS_USE_PAGE_ADMIN = getattr(
     'FEINCMS_USE_PAGE_ADMIN',
     True)
 
-#: app_label.model_name as per django.db.models.get_model.
+#: app_label.model_name as per apps.get_model.
 #: defaults to page.Page
 FEINCMS_DEFAULT_PAGE_MODEL = getattr(
     settings,
@@ -199,5 +199,14 @@ FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED = getattr(
     settings,
     'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED',
     False)
+
+# ------------------------------------------------------------------------
+#: Filter languages available for front end users to this set. This allows
+#: to have languages not yet ready for prime time while being able to access
+#: those pages in the admin backend.
+FEINCMS_FRONTEND_LANGUAGES = getattr(
+    settings,
+    'FEINCMS_FRONTEND_LANGUAGES',
+    None)
 
 # ------------------------------------------------------------------------

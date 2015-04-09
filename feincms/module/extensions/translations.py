@@ -49,12 +49,24 @@ def user_has_language_set(request):
         return True
     return False
 
+# ------------------------------------------------------------------------
+def translation_allowed_language(select_language):
+    "Check for feincms specific set of allowed front end languages."
+    if settings.FEINCMS_FRONTEND_LANGUAGES:
+        l = select_language[:2]
+        if l not in settings.FEINCMS_FRONTEND_LANGUAGES:
+            select_language = django_settings.LANGUAGES[0][0]
+
+    return select_language
 
 # ------------------------------------------------------------------------
 def translation_set_language(request, select_language):
     """
     Set and activate a language, if that language is available.
     """
+
+    select_language = translation_allowed_language(select_language)
+
     if translation.check_for_language(select_language):
         fallback = False
     else:
@@ -180,8 +192,10 @@ class Extension(extensions.Extension):
                     # Not an offsite link http://bla/blubb
                     try:
                         page = cls.objects.page_for_path(target)
-                        page = page.get_translation(
-                            get_current_language_code(request))
+                        language = get_current_language_code(request)
+                        language = translation_allowed_language(language)
+                        page = page.get_translation(language)
+                        # Note: Does not care about active status?
                         target = page.get_absolute_url()
                     except cls.DoesNotExist:
                         pass

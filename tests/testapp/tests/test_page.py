@@ -35,7 +35,9 @@ from feincms.context_processors import add_page_if_missing
 from feincms.models import ContentProxy
 from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page import processors
+from feincms.module.page.extensions.navigation import PagePretender
 from feincms.module.page.models import Page
+from feincms.module.page.templatetags import feincms_page_tags
 from feincms.templatetags import feincms_tags
 from feincms.translations import short_language_code
 
@@ -1540,10 +1542,11 @@ class PagesTestCase(TestCase):
             zf.writestr('test%d.jpg' % i, 'test%d' % i)
         zf.close()
 
-        response = self.client.post(
-            '/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
-                'data': open('test.zip', 'rb'),
-            })
+        with open('test.zip', 'rb') as handle:
+            response = self.client.post(
+                '/admin/medialibrary/mediafile/mediafile-bulk-upload/', {
+                    'data': handle,
+                })
         self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
         self.assertEqual(
@@ -1555,17 +1558,18 @@ class PagesTestCase(TestCase):
         path = os.path.join(
             dn(dn(dn(dn(__file__)))), 'docs', 'images', 'tree_editor.png')
 
-        response = self.client.post('/admin/medialibrary/mediafile/add/', {
-            'file': open(path, 'rb'),
-            'translations-TOTAL_FORMS': 0,
-            'translations-INITIAL_FORMS': 0,
-            'translations-MAX_NUM_FORMS': 10,
-        })
+        with open(path, 'rb') as handle:
+            response = self.client.post('/admin/medialibrary/mediafile/add/', {
+                'file': handle,
+                'translations-TOTAL_FORMS': 0,
+                'translations-INITIAL_FORMS': 0,
+                'translations-MAX_NUM_FORMS': 10,
+            })
         self.assertRedirects(response, '/admin/medialibrary/mediafile/')
 
         self.assertContains(
             self.client.get('/admin/medialibrary/mediafile/'),
-            '100x100.png" alt="" />')
+            '100x100')
 
         stats = list(MediaFile.objects.values_list('type', flat=True))
         self.assertEqual(stats.count('image'), 12)
@@ -1628,6 +1632,11 @@ class PagesTestCase(TestCase):
         self.assertNotContains(response, 'some_main_region_text')
         self.assertContains(response, 'some_sidebar_region_text')
         self.assertNotContains(response, 'some content outside')
+
+        response = self.client.get(
+            page.get_absolute_url() + 'inheritance20_unpack/')
+        self.assertContains(response, 'a content 43')
+        self.assertIn('yabba dabba', response['cache-control'])
 
     def test_33_preview(self):
         self.create_default_page_set()
@@ -1773,3 +1782,30 @@ class PagesTestCase(TestCase):
         }))
 
         self.assertEqual(str.strip(), '/test-page/test-child-page/,')
+
+    def test_40_page_is_active(self):
+        self.create_default_page_set()
+
+        page1, page2 = list(Page.objects.order_by('id'))
+
+        self.assertTrue(feincms_page_tags.page_is_active(
+            {'feincms_page': page1}, page1))
+        self.assertTrue(feincms_page_tags.page_is_active(
+            {'feincms_page': page2}, page1))
+        self.assertFalse(feincms_page_tags.page_is_active(
+            {'feincms_page': page1}, page2))
+
+        p = PagePretender(
+            title='bla',
+            slug='bla',
+            url='/test-page/whatsup/')
+
+        self.assertTrue(feincms_page_tags.page_is_active(
+            {}, p, path='/test-page/whatsup/test/'))
+        self.assertFalse(feincms_page_tags.page_is_active(
+            {}, p, path='/test-page/'))
+
+        self.assertTrue(feincms_page_tags.page_is_active(
+            {'feincms_page': page1}, p, path='/test-page/whatsup/test/'))
+        self.assertFalse(feincms_page_tags.page_is_active(
+            {'feincms_page': page2}, p, path='/test-page/'))

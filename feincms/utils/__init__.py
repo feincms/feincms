@@ -4,20 +4,21 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+from hashlib import md5
+
 try:
-    from hashlib import md5
+    from importlib import import_module
 except ImportError:
-    import md5
+    from django.utils.importlib import import_module
 
 from django.conf import settings as django_settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import AutoField
-from django.db.models import get_model
 from django.utils import six
 from django.utils.encoding import iri_to_uri
-from django.utils.importlib import import_module
 
 from feincms import settings
+from feincms._internal import get_model
 
 
 # ------------------------------------------------------------------------
@@ -38,14 +39,6 @@ def get_object(path, fail_silently=False):
         except (AttributeError, ImportError):
             if not fail_silently:
                 raise
-
-
-# ------------------------------------------------------------------------
-def collect_dict_values(data):
-    dic = {}
-    for key, value in data:
-        dic.setdefault(key, []).append(value)
-    return dic
 
 
 # ------------------------------------------------------------------------

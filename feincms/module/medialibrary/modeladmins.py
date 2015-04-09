@@ -11,7 +11,10 @@ from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
-from django.contrib.sites.models import Site
+try:
+    from django.contrib.sites.shortcuts import get_current_site
+except ImportError:  # Django 1.6
+    from django.contrib.sites.models import get_current_site
 from django.core.files.images import get_image_dimensions
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -88,7 +91,7 @@ assign_category.short_description = _('Add selected media files to category')
 def save_as_zipfile(modeladmin, request, queryset):
     from .zip import export_zipfile
 
-    site = Site.objects.get_current()
+    site = get_current_site(request)
     try:
         zip_name = export_zipfile(site, queryset)
         messages.info(request, _("ZIP file exported as %s") % zip_name)
@@ -230,8 +233,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
         return HttpResponseRedirect(
             reverse('admin:medialibrary_mediafile_changelist'))
 
-    def queryset(self, request):
-        return super(MediaFileAdmin, self).queryset(request).transform(
+    def get_queryset(self, request):
+        return super(MediaFileAdmin, self).get_queryset(request).transform(
             lookup_translations())
 
     def save_model(self, request, obj, form, change):

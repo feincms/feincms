@@ -7,6 +7,20 @@ http://mail.python.org/pipermail/python-dev/2008-January/076194.html
 from __future__ import absolute_import, unicode_literals
 
 
+__all__ = (
+    'get_model', 'get_models', 'monkeypatch_method', 'monkeypatch_property',
+)
+
+
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+    get_models = apps.get_models
+
+except ImportError:
+    from django.db.models import get_model, get_models
+
+
 def monkeypatch_method(cls):
     """
     A decorator to add a single method to an existing class::
@@ -35,38 +49,3 @@ def monkeypatch_property(cls):
         setattr(cls, func.__name__, property(func))
         return func
     return decorator
-
-
-def monkeypatch_class(name, bases, namespace):
-    """
-    A metaclass to add a number of methods (or other attributes) to an
-    existing class, using a convenient class notation::
-
-        class <newclass>(<someclass>):
-            __metaclass__ = monkeypatch_class
-            def <method1>(...): ...
-            def <method2>(...): ...
-            ...
-    """
-
-    assert len(bases) == 1, "Exactly one base class required"
-    base = bases[0]
-    for name, value in namespace.iteritems():
-        if name != "__metaclass__":
-            setattr(base, name, value)
-    return base
-
-
-def get_model_name(opts):
-    try:
-        return opts.model_name
-    except AttributeError:
-        return opts.module_name
-
-
-def get_permission_codename(action, opts):
-    """
-    Backport of django.contrib.auth.get_permission_codename for older versions
-    of Django.
-    """
-    return '%s_%s' % (action, get_model_name(opts))

@@ -33,6 +33,7 @@ BASEDIR = os.path.dirname(__file__)
 MEDIA_ROOT = os.path.join(BASEDIR, 'media/')
 STATIC_ROOT = os.path.join(BASEDIR, 'static/')
 SECRET_KEY = 'supersikret'
+USE_TZ = True
 
 ROOT_URLCONF = 'testapp.urls'
 LANGUAGES = (('en', 'English'), ('de', 'German'))

@@ -18,22 +18,21 @@ are: feedparser_, Pillow_ and django-mptt_.
 
     $ pip install feincms
 
-In order to install documentation, tests or an example project, install from
-the Git_ repository instead::
+In order to install documentation and tests install from the Git_ repository
+instead::
 
     $ git clone git://github.com/feincms/feincms.git
 
 If you are looking to implement a blog, check out elephantblog_.
 
 You will also need a Javascript WYSIWYG editor of your choice (Not included).
-TinyMCE_ works out of the box and is recommended.
+TinyMCE_ and CKEditor_ work out of the box and are recommended.
 
 
 .. _Django: http://www.djangoproject.com/
 .. _Git: http://git-scm.com/
 .. _Subversion: http://subversion.tigris.org/
 .. _django-mptt: http://github.com/django-mptt/django-mptt/
-.. _django-tagging: http://code.google.com/p/django-tagging/
 .. _feedparser: http://www.feedparser.org/
 .. _Pillow: https://pypi.python.org/pypi/Pillow/
 .. _elephantblog: http://github.com/feincms/feincms-elephantblog

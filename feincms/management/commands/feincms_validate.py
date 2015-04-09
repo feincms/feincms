@@ -11,7 +11,8 @@ from __future__ import absolute_import, unicode_literals
 
 from django.core.management.base import NoArgsCommand
 from django.core.management.color import color_style
-from django.db.models import loading
+
+from feincms._internal import get_models
 
 
 class Command(NoArgsCommand):
@@ -25,7 +26,7 @@ class Command(NoArgsCommand):
         self.stdout.write("Running Django's own validation:")
         self.validate(display_num_errors=True)
 
-        for model in loading.get_models():
+        for model in get_models():
             if hasattr(model, '_create_content_base'):
                 self.validate_base_model(model)
 

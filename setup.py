@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
+from io import open
 import os
 from setuptools import setup, find_packages
 
 
 def read(filename):
-    return open(os.path.join(os.path.dirname(__file__), filename)).read()
+    path = os.path.join(os.path.dirname(__file__), filename)
+    with open(path, encoding='utf-8') as handle:
+        return handle.read()
 
 
 setup(
@@ -19,7 +22,7 @@ setup(
     license='BSD License',
     platforms=['OS Independent'],
     packages=find_packages(
-        exclude=['tests', 'example'],
+        exclude=['tests']
     ),
     package_data={
         '': ['*.html', '*.txt'],
@@ -35,10 +38,11 @@ setup(
         ],
     },
     install_requires=[
-        'Django>=1.4.2',
-        'django-mptt>=0.6.0',
+        'Django>=1.6',
+        'django-mptt>=0.7.1',
         'Pillow>=2.0.0',
         'feedparser>=5.0.0',
+        'pytz>=2014.10',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -54,6 +58,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',

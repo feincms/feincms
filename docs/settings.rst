@@ -100,6 +100,11 @@ languages.
 * ``'EXPLICIT'``: The language set has priority, may only be overridden
   by explicitely a language with ``?set_language=xx``.
 
+``FEINCMS_FRONTEND_LANGUAGES``: Defaults to None; set it to a list of allowed
+language codes in the front end so to allow additional languages in the admin
+back end for preparing those pages while not yet making the available to the
+public.
+
 ``FEINCMS_CMS_404_PAGE``: Defaults to ``None``. Set this if you want the page
 handling mechanism to try and find a CMS page with that path if it encounters
 a page not found situation.

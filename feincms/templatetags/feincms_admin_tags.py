@@ -1,7 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
-import django
+import warnings
+
 from django import template
+from django.contrib.auth import get_permission_codename
 
 
 register = template.Library()
@@ -59,6 +61,44 @@ def is_popup_var():
     (Wrong parameters aren't simply ignored by django.contrib.admin, the
     change list actively errors out by redirecting to ?e=1)
     """
-    if django.VERSION < (1, 6):
-        return 'pop=1'
+    warnings.warn(
+        'Hardcode _popup=1 instead of using is_popup_var.',
+        DeprecationWarning, stacklevel=2)
+
     return '_popup=1'
+
+
+@register.inclusion_tag('admin/feincms/content_type_selection_widget.html',
+                        takes_context=True)
+def show_content_type_selection_widget(context, region):
+    """
+    {% show_content_type_selection_widget region %}
+    """
+    if 'request' in context:
+        user = context['request'].user
+    elif 'user' in context:
+        user = context['user']
+    else:
+        user = None
+
+    grouped = {}
+    ungrouped = []
+
+    if user:
+        for ct in region._content_types:
+            # Skip cts that we shouldn't be adding anyway
+            opts = ct._meta
+            perm = opts.app_label + "." + get_permission_codename('add', opts)
+            if not user.has_perm(perm):
+                continue
+
+            ct_info = (ct.__name__.lower(), ct._meta.verbose_name)
+            if hasattr(ct, 'optgroup'):
+                if ct.optgroup in grouped:
+                    grouped[ct.optgroup].append(ct_info)
+                else:
+                    grouped[ct.optgroup] = [ct_info]
+            else:
+                ungrouped.append(ct_info)
+
+    return {'grouped': grouped, 'ungrouped': ungrouped}

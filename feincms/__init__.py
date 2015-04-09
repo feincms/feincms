@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
-VERSION = (1, 10, 1)
+VERSION = (1, 11, 0, 'pre')
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -47,7 +47,7 @@ def ensure_completely_loaded(force=False):
     try:
         from django.apps import apps
     except ImportError:
-        pass
+        from django.db.models import loading as apps
     else:
         # Django 1.7 and up
         if not apps.ready:
@@ -62,40 +62,42 @@ def ensure_completely_loaded(force=False):
     # Here we flush the caches rather than actually _filling them so
     # that relations defined after all content types registrations
     # don't miss out.
-    from django.db.models import loading
-    for model in loading.get_models():
-        for cache_name in (
-                '_field_cache', '_field_name_cache', '_m2m_cache',
-                '_related_objects_cache', '_related_many_to_many_cache',
-                '_name_map'):
+    import django
+    if django.get_version() < '1.8':
+
+        from feincms._internal import get_models
+        for model in get_models():
+            for cache_name in (
+                    '_field_cache', '_field_name_cache', '_m2m_cache',
+                    '_related_objects_cache', '_related_many_to_many_cache',
+                    '_name_map'):
+                try:
+                    delattr(model._meta, cache_name)
+                except AttributeError:
+                    pass
+
+            # Randomly call some cache filling methods
+            # http://goo.gl/XNI2qz
+            model._meta._fill_fields_cache()
+
+        # Calls to get_models(...) are cached by the arguments used in the call.
+        # This cache is normally cleared in loading.register_models(), but we
+        # invalidate the get_models() cache, by calling get_models
+        # above before all apps have loaded. (Django's load_app() doesn't clear the
+        # get_models cache as it perhaps should). So instead we clear the
+        # get_models cache again here. If we don't do this, Django 1.5 chokes on
+        # a model validation error (Django 1.4 doesn't exhibit this problem).
+        # See Issue #323 on github.
+        if hasattr(apps, 'cache'):
             try:
-                delattr(model._meta, cache_name)
+                apps.cache.get_models.cache_clear()  # Django 1.7+
             except AttributeError:
-                pass
+                apps.cache._get_models_cache.clear()  # Django 1.6-
 
-        # Randomly call some cache filling methods
-        # http://goo.gl/XNI2qz
-        model._meta._fill_fields_cache()
-
-    # Calls to get_models(...) are cached by the arguments used in the call.
-    # This cache is normally cleared in loading.register_models(), but we
-    # invalidate the get_models() cache, by calling get_models
-    # above before all apps have loaded. (Django's load_app() doesn't clear the
-    # get_models cache as it perhaps should). So instead we clear the
-    # get_models cache again here. If we don't do this, Django 1.5 chokes on
-    # a model validation error (Django 1.4 doesn't exhibit this problem).
-    # See Issue #323 on github.
-    if hasattr(loading, 'cache'):
-        try:
-            loading.cache.get_models.cache_clear()  # Django 1.7+
-        except AttributeError:
-            loading.cache._get_models_cache.clear()  # Django 1.6-
-
-    if hasattr(loading.app_cache_ready, '__call__'):
-        if loading.app_cache_ready():
+    if hasattr(apps, 'ready'):
+        if apps.ready:
             COMPLETELY_LOADED = True
-    else:
-        # TODO Django 1.7 offers us better ways of handling this, maybe.
-        if loading.app_cache_ready:
+    elif apps.app_cache_ready():
             COMPLETELY_LOADED = True
+
     return True

@@ -5,10 +5,10 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.db.models import Max
-from django.db.models import get_model
 from django.contrib.sitemaps import Sitemap
 
 from feincms import settings
+from feincms._internal import get_model
 
 
 # ------------------------------------------------------------------------

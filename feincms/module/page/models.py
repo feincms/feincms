@@ -11,7 +11,6 @@ from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
 from django.db import models
 from django.db.models import Q, signals
-from django.db.models.loading import get_model
 from django.http import Http404
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
@@ -19,6 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.models import MPTTModel, TreeManager
 
 from feincms import settings
+from feincms._internal import get_model
 from feincms.management.checker import check_database_schema
 from feincms.models import create_base_model
 from feincms.module.mixins import ContentModelMixin
@@ -211,6 +211,10 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         """
 
         if not self.pk:
+            return False
+
+        # No need to hit DB if page itself is inactive
+        if not self.active:
             return False
 
         pages = self.__class__.objects.active().filter(

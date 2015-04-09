@@ -107,3 +107,12 @@ will be issued for at least two releases.
 ====
 
 No deprecations.
+
+
+1.11
+====
+
+* ``RSSContent`` and ``update_rsscontent`` have been deprecated.
+
+* The automatic discovery of subclasses of ``NavigationExtension`` has been
+  replaced with an explicit mechanism of defining navigation extensions.

@@ -29,8 +29,8 @@ class CategoryManager(models.Manager):
     Simple manager which exists only to supply ``.select_related("parent")``
     on querysets since we can't even __str__ efficiently without it.
     """
-    def get_query_set(self):
-        return super(CategoryManager, self).get_query_set().select_related(
+    def get_queryset(self):
+        return super(CategoryManager, self).get_queryset().select_related(
             "parent")
 
 
