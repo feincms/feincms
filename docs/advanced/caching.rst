@@ -31,7 +31,8 @@ of helper methods and variables, ready to be used in your templates.
 
 Here's an (incomplete) list of variables to use in {% cache %} blocks [#djangocache]_:
 
-    * feincms_page.cache_key -- a string describing the current page.
+    * feincms_page.cache_key -- DEPRECATED as of FeinCMS 1.11.
+        A string describing the current page.
         Depending on the extensions loaded, this varies with the page,
         the page's modification date, its language, etc. This is always
         a safe bet to use on page specific fragments.
