@@ -135,6 +135,7 @@ textarea {
     float:left;
     padding: 10px;
     border-left: 1px solid #eee;
+}
 
 .item-control-unit:first-child {
     border-left: none;
@@ -262,7 +263,7 @@ div.order-machine div.inline-related > h3{
     display: none;
 }
 
-.hidden-form-row{
+.hidden-form-row {
     display: none;
 }
 
