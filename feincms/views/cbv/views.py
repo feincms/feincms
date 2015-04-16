@@ -9,7 +9,9 @@ from feincms import settings
 from feincms._internal import get_model
 from feincms.module.mixins import ContentView
 
+
 logger = logging.getLogger(__name__)
+
 
 class Handler(ContentView):
     page_model_path = None
@@ -32,21 +34,27 @@ class Handler(ContentView):
             return super(Handler, self).dispatch(request, *args, **kwargs)
         except Http404 as e:
             if settings.FEINCMS_CMS_404_PAGE is not None:
-                logger.info("Http404 raised for '%s', attempting redirect to FEINCMS_CMS_404_PAGE", args[0])
+                logger.info(
+                    "Http404 raised for '%s', attempting redirect to"
+                    " FEINCMS_CMS_404_PAGE", args[0])
                 try:
-                    # Fudge environment so that we end up resolving the right page.
-                    # Note: request.path is used by the page redirect processor to
-                    # determine if the redirect can be taken, must be == to page url
+                    # Fudge environment so that we end up resolving the right
+                    # page.
+                    # Note: request.path is used by the page redirect processor
+                    # to determine if the redirect can be taken, must be == to
+                    # page url
                     request.path = settings.FEINCMS_CMS_404_PAGE
                     response = super(Handler, self).dispatch(
                         request, settings.FEINCMS_CMS_404_PAGE, **kwargs)
-                    # Only set status if we actually have a page. If we get
-                    # for example a redirect, overwriting would yield a blank page
+                    # Only set status if we actually have a page. If we get for
+                    # example a redirect, overwriting would yield a blank page
                     if response.status_code == 200:
                         response.status_code = 404
                     return response
                 except Http404:
-                    logger.error("Http404 raised while resolving FEINCMS_CMS_404_PAGE=%s",
+                    logger.error(
+                        "Http404 raised while resolving"
+                        " FEINCMS_CMS_404_PAGE=%s",
                         settings.FEINCMS_CMS_404_PAGE)
                     raise e
             else:

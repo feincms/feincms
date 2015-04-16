@@ -80,14 +80,14 @@ def ensure_completely_loaded(force=False):
             # http://goo.gl/XNI2qz
             model._meta._fill_fields_cache()
 
-        # Calls to get_models(...) are cached by the arguments used in the call.
-        # This cache is normally cleared in loading.register_models(), but we
-        # invalidate the get_models() cache, by calling get_models
-        # above before all apps have loaded. (Django's load_app() doesn't clear the
+        # Calls to get_models(...) are cached by the arguments used in the
+        # call.  This cache is normally cleared in loading.register_models(),
+        # but we invalidate the get_models() cache, by calling get_models above
+        # before all apps have loaded. (Django's load_app() doesn't clear the
         # get_models cache as it perhaps should). So instead we clear the
-        # get_models cache again here. If we don't do this, Django 1.5 chokes on
-        # a model validation error (Django 1.4 doesn't exhibit this problem).
-        # See Issue #323 on github.
+        # get_models cache again here. If we don't do this, Django 1.5 chokes
+        # on a model validation error (Django 1.4 doesn't exhibit this
+        # problem).  See Issue #323 on github.
         if hasattr(apps, 'cache'):
             try:
                 apps.cache.get_models.cache_clear()  # Django 1.7+
