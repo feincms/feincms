@@ -110,6 +110,15 @@ Notable features and improvements
 
 * Support for importing PIL as `import Image` has been removed.
 
+* The builtin and mostly broken frontend editing support has been removed. This
+  is not a decision against frontend editing / on site editing in general, it
+  is more about creating a space for new ideas and new implementations.
+
+* The home-grown schema checking support has been removed. Real migrations
+  should be used instead.
+
+* We are logging more stuff.
+
 
 Bugfixes
 ========
