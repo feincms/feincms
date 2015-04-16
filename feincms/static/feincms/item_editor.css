@@ -1,44 +1,36 @@
 .navi_tab {
     float:left;
-    padding: 5px 14px 5px 12px;
+    padding: 8px 10px;
     cursor:pointer;
-    border: 1px solid #ccc;
-    border-bottom:none;
-    min-width:100px;
     margin-top:3px;
-    /* height:13px; */
     font-weight: bold;
-    font-size: 12px;
-    background-image:none;
-    color: #333333;
-    background: #E1E1E1 url(img/nav-bg.gif) top repeat-x;
+    font-size: 11px;
+    color: #666;
+    background: #f6f6f6;
+    border: 1px solid #eee;
+    text-transform: uppercase;
 }
 .tab_active {
-    margin-top: 0;
-    padding-top: 6px;
-    padding-bottom: 7px;
-    background: #7BA0C6 url('img/default-bg.gif') top repeat-x;
+    background: #79aec8;
     color: white;
+    border-color: #79aec8;
 }
 
 #main {
     clear:both;
     padding: 10px 10px 10px 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #eee;
     margin: 0 0 10px 0;
 }
+
 .panel {
      display:none;
      position:relative;
-     padding-bottom:50px;
-}
-
-.order-machine {
-    margin-bottom:10px;
+     padding-bottom: 77px;
 }
 
 .order-item {
-    margin: 0 0 10px 0;
+    margin: 0;
     position:relative;
 }
 
@@ -54,8 +46,14 @@
 
 .order-item .collapse {
     cursor: pointer;
-    color: #444;
+    /*color: #444;*/
     font-weight: normal;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.order-item .collapse:hover {
+    opacity: 0.7;
 }
 
 .item-delete {
@@ -65,11 +63,11 @@
 }
 
 .highlight, .helper {
-    height: 25px;
+    height: 34px;
     margin: 0 0 10px 0;
     border: none;
     opacity: 0.3;
-    background: url('img/item_editor_form_title.png') no-repeat left bottom;
+    background: #79aec8;
 }
 
 .helper{
@@ -123,19 +121,41 @@ textarea {
 }
 
 .item-controls {
-    background:  url('img/wrench.png') no-repeat 12px center;
     padding-left:27px;
-    height: 35px;
+    min-height: 56px;
+    background-position: 12px 45%;
+}
+
+/* Clearfix */
+.item-control-units {
+    overflow: hidden;
 }
 
 .item-control-unit {
     float:left;
-    padding: 3px 10px 0 7px;
+    padding: 10px;
     border-left: 1px solid #eee;
-}
 
 .item-control-unit:first-child {
     border-left: none;
+}
+
+
+.item-control-unit .button,
+.item-controls select {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
+.item-control-unit .button {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+
+.move-control .button {
+    margin-left: 10px;
 }
 
 .machine-control {
@@ -147,6 +167,15 @@ textarea {
     left:-11px;
     bottom:-30px;
     width: 100%;
+
+    background: #f8f8f8;
+    border: 1px solid #eee;
+    height: 95px;
+}
+
+.machine-control .button {
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
 .control-unit {
@@ -154,6 +183,9 @@ textarea {
     padding-left: 5px;
     padding-right:20px;
     border-left: 1px solid #eee;
+
+    padding-bottom: 10px;
+    padding-top: 12px;
 }
 
 .control-unit:first-child {
@@ -199,22 +231,14 @@ a.audiocontent:hover { background-position: -350px -70px; }
 }
 
 .empty-machine-msg {
-    margin:10px 0px 5px 300px;
-    font-style: italic;
+    margin:10px 0px 20px 20px;
     font-size:14px;
-    color:#999;
 }
 
 td span select {
     width:600px;
 }
 
-
-/* override Django admin styles */
-.order-machine fieldset.module > h2{
-    padding: 4px 5px 6px 17px;
-    background: url(img/item_editor_form_title.png) no-repeat left bottom;
-}
 
 .change-template-button {
     margin-left: 7em;
@@ -223,15 +247,15 @@ td span select {
 
 /* Allow nested lists in error items */
 ul.errorlist ul {
-	margin-left: 1em;
-	padding-left: 0;
-	list-style-type: square;
+    margin-left: 1em;
+    padding-left: 0;
+    list-style-type: square;
 }
 
 ul.errorlist li li {
-	/* Avoid repeating the warning image every time*/
-	background-image:none;
-	padding: 0;
+    /* Avoid repeating the warning image every time*/
+    background-image:none;
+    padding: 0;
 }
 
 div.order-machine div.inline-related > h3{
@@ -245,6 +269,9 @@ div.order-machine div.inline-related > h3{
 
 /* various overrides */
 #id_redirect_to { width: 20em; } /* raw_id_fields act-a-like for redirect_to */
+
+/* overwrite flat theme default label width because of problems with the CKEditor */
+.aligned .text label { width: auto; }
 
 
 /* django suit hacks */
