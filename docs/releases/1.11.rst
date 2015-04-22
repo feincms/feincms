@@ -119,6 +119,10 @@ Notable features and improvements
 
 * We are logging more stuff.
 
+* The admin CSS has been updated in preparation for Django's (hopefully!)
+  upcoming
+  `django-flat-theme <https://pypi.python.org/pypi/django-flat-theme>`_ merge.
+
 
 Bugfixes
 ========
