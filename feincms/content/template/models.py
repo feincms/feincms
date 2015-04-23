@@ -3,8 +3,12 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from django.db import models
-from django.template.loader import (
-    Context, Template, TemplateDoesNotExist, find_template_loader)
+try:
+    from django.template.loader import (
+        Context, Template, TemplateDoesNotExist, find_template_loader)
+except ImportError:
+    Context = dict
+
 from django.utils.translation import ugettext_lazy as _
 
 

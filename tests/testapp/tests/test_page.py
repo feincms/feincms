@@ -110,6 +110,10 @@ class PagesTestCase(TestCase):
             'filecontent_set-INITIAL_FORMS': 0,
             'filecontent_set-MAX_NUM_FORMS': 10,
 
+            'templatecontent_set-TOTAL_FORMS': 0,
+            'templatecontent_set-INITIAL_FORMS': 0,
+            'templatecontent_set-MAX_NUM_FORMS': 10,
+
             'applicationcontent_set-TOTAL_FORMS': 0,
             'applicationcontent_set-INITIAL_FORMS': 0,
             'applicationcontent_set-MAX_NUM_FORMS': 10,
@@ -383,6 +387,10 @@ class PagesTestCase(TestCase):
             'filecontent_set-TOTAL_FORMS': 1,
             'filecontent_set-INITIAL_FORMS': 0,
             'filecontent_set-MAX_NUM_FORMS': 10,
+
+            'templatecontent_set-TOTAL_FORMS': 1,
+            'templatecontent_set-INITIAL_FORMS': 0,
+            'templatecontent_set-MAX_NUM_FORMS': 10,
 
             'applicationcontent_set-TOTAL_FORMS': 1,
             'applicationcontent_set-INITIAL_FORMS': 0,

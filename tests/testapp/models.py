@@ -15,6 +15,7 @@ from feincms.content.medialibrary.models import MediaFileContent
 from feincms.content.application.models import ApplicationContent
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
+from feincms.content.template.models import TemplateContent
 from feincms.module.page.extensions.navigation import (
     NavigationExtension, PagePretender)
 from feincms.module.page import processors
@@ -48,6 +49,7 @@ Page.create_content_type(
 )
 Page.create_content_type(ContactFormContent, form=ContactForm)
 Page.create_content_type(FileContent)
+Page.create_content_type(TemplateContent)
 Page.register_request_processor(processors.etag_request_processor)
 Page.register_response_processor(processors.etag_response_processor)
 Page.register_response_processor(
