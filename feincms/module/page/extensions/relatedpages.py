@@ -15,7 +15,6 @@ class Extension(extensions.Extension):
         self.model.add_to_class('related_pages', models.ManyToManyField(
             settings.FEINCMS_DEFAULT_PAGE_MODEL,
             blank=True,
-            null=True,
             related_name='%(app_label)s_%(class)s_related',
             help_text=_(
                 'Select pages that should be listed as related content.')))
