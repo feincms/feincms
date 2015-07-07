@@ -173,7 +173,7 @@ class ChangeList(main.ChangeList):
                     mptt_opts.tree_id_attr: tree_id,
                     mptt_opts.left_attr + '__lte': lft,
                     mptt_opts.right_attr + '__gte': rght,
-                }) for lft, rght, tree_id in self.query_set.values_list(
+                }) for lft, rght, tree_id in self.queryset.values_list(
                     mptt_opts.left_attr,
                     mptt_opts.right_attr,
                     mptt_opts.tree_id_attr,
