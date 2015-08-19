@@ -91,15 +91,6 @@ Visit us on IRC! We are hanging around in ``#feincms`` on freenode. If you
 do not have an IRC client you can use the
 `freenode Web IRC client <http://webchat.freenode.net/>`_.
 
-Optional Packages
------------------
-
-* `pytidylib <http://countergram.com/open-source/pytidylib/>`_ can be
-  installed to perform HTML validation and cleanup using `HTML Tidy
-  <http://tidy.sourceforge.net>`_ while editing content. Install pytidylib and
-  add ``FEINCMS_TIDY_HTML = True`` to your settings.py.
-
-
 Repository branches
 -------------------
 

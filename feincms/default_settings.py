@@ -114,33 +114,6 @@ FEINCMS_TRANSLATION_POLICY = getattr(
     'STANDARD')
 
 # ------------------------------------------------------------------------
-# Settings for HTML validation
-
-#: If True, HTML will be run through a tidy function before saving:
-FEINCMS_TIDY_HTML = getattr(
-    settings,
-    'FEINCMS_TIDY_HTML',
-    False)
-#: If True, displays form validation errors so the user can see how their
-#: HTML has been changed:
-FEINCMS_TIDY_SHOW_WARNINGS = getattr(
-    settings,
-    'FEINCMS_TIDY_SHOW_WARNINGS',
-    True)
-#: If True, users will be allowed to ignore HTML warnings (errors are always
-#: blocked):
-FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE = getattr(
-    settings,
-    'FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE',
-    True)
-#: Name of the tidy function - anything which takes ``(html)`` and returns
-#: ``(html, errors, warnings)`` can be used:
-FEINCMS_TIDY_FUNCTION = getattr(
-    settings,
-    'FEINCMS_TIDY_FUNCTION',
-    'feincms.utils.html.tidy.tidy_html')
-
-# ------------------------------------------------------------------------
 #: Makes the page handling mechanism try to find a cms page with that
 #: path if it encounters a page not found situation. This allows for nice
 #: customised cms-styled error pages. Do not go overboard, this should

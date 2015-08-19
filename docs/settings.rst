@@ -116,25 +116,6 @@ Prevent admin page deletion for pages which have been allocated a Template with
 ``singleton=True``.
 
 
-Settings for HTML validation
-============================
-
-These settings are currently only used by the bundled rich text content type.
-
-``FEINCMS_TIDY_HTML``. Defaults to ``False``. If ``True``, HTML will be run
-through a tidy function before saving.
-
-``FEINCMS_TIDY_SHOW_WARNINGS``: Defaults to ``True``.  If ``True``, displays
-form validation errors so the user can see how their HTML has been changed.
-
-``FEINCMS_TIDY_ALLOW_WARNINGS_OVERRIDE``: Defaults to ``True``.  If ``True``,
-users will be allowed to ignore HTML warnings (errors are always blocked).
-
-``FEINCMS_TIDY_FUNCTION``: Defaults to ``feincms.utils.html.tidy.tidy_html``.
-Name of the tidy function - anything which takes ``(html)`` and returns
-``(html, errors, warnings)`` can be used.
-
-
 Various settings
 ================
 
