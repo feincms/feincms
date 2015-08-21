@@ -7,7 +7,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib.admin.filters import ChoicesFieldListFilter
-from django.utils import six
+from django.db.models import Count
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
@@ -82,10 +82,10 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
 
         self.lookup_choices = [(
             i.pk,
-            six.text_type(i))
-            for i in related_model.objects.exclude(
-                **{related_name: None})
-        ]
+            '%s (%s)' % (i, i._related_count),
+        ) for i in related_model.objects.annotate(
+            _related_count=Count(related_name)
+        ).exclude(_related_count=0)]
         self.lookup_choices.sort(key=lambda i: i[1])
 
     def choices(self, cl):
