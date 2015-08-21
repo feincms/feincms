@@ -163,7 +163,7 @@ class PageAdminForm(MPTTAdminForm):
         try:
             # XXX Django 1.7 allows asking
             # apps.is_installed('django.contrib.sites')
-            self._meta.model._meta.get_field_by_name('site')
+            self._meta.model._meta.get_field('site')
         except FieldDoesNotExist:
             pass
         else:

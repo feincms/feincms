@@ -14,7 +14,7 @@ For example::
 
     def lookup_tags(item_qs):
         item_pks = [item.pk for item in item_qs]
-        m2mfield = Item._meta.get_field_by_name('tags')[0]
+        m2mfield = Item._meta.get_field('tags')[0]
         tags_for_item = Tag.objects.filter(
             item__in = item_pks
         ).extra(select = {
