@@ -7,7 +7,6 @@ from __future__ import absolute_import, unicode_literals
 import re
 import warnings
 
-from django.core.cache import cache as django_cache
 from django.core.exceptions import PermissionDenied
 from django.conf import settings as django_settings
 from django.db import models
@@ -25,7 +24,7 @@ from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
 
-from feincms.utils import path_to_cache_key, shorten_string
+from feincms.utils import shorten_string
 
 
 REDIRECT_TO_RE = re.compile(
@@ -83,15 +82,6 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
         paths = ['/']
         path = path.strip('/')
 
-        # Cache path -> page resolving.
-        # We flush the cache entry on page saving, so the cache should always
-        # be up to date.
-
-        ck = Page.path_to_cache_key(path)
-        page = django_cache.get(ck)
-        if page:
-            return page
-
         if path:
             tokens = path.split('/')
             paths += [
@@ -106,7 +96,6 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
             if not page.are_ancestors_active():
                 raise IndexError('Parents are inactive.')
 
-            django_cache.set(ck, page)
             return page
 
         except IndexError:
@@ -269,10 +258,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         cached_page_urls[self.id] = self._cached_url
         super(BasePage, self).save(*args, **kwargs)
 
-        # Okay, we have changed the page -- remove the old stale entry from the
-        # cache
-        self.invalidate_cache()
-
         # If our cached URL changed we need to update all descendants to
         # reflect the changes. Since this is a very expensive operation
         # on large sites we'll check whether our _cached_url actually changed
@@ -303,15 +288,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                     'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False' % {
                         'page_class': self._meta.verbose_name}))
         super(BasePage, self).delete(*args, **kwargs)
-        self.invalidate_cache()
     delete.alters_data = True
-
-    # Remove the page from the url-to-page cache
-    def invalidate_cache(self):
-        ck = self.path_to_cache_key(self._original_cached_url)
-        django_cache.delete(ck)
-        ck = self.path_to_cache_key(self._cached_url)
-        django_cache.delete(ck)
 
     @models.permalink
     def get_absolute_url(self):
@@ -333,27 +310,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if not self.redirect_to or REDIRECT_TO_RE.match(self.redirect_to):
             return self._cached_url
         return self.redirect_to
-
-    cache_key_components = [
-        lambda p: getattr(django_settings, 'SITE_ID', 0),
-        lambda p: p._django_content_type.id,
-        lambda p: p.id,
-    ]
-
-    def cache_key(self):
-        """
-        Return a string that may be used as cache key for the current page.
-        The cache_key is unique for each content type and content instance.
-
-        This function is here purely for your convenience. FeinCMS itself
-        does not use it in any way.
-        """
-        warnings.warn(
-            'Page.cache_key has never been used and has therefore been'
-            ' deprecated and will be removed in a future release. Have a'
-            ' look at Page.path_to_cache_key if you require comparable'
-            ' functionality.', DeprecationWarning, stacklevel=2)
-        return '-'.join(str(fn(self)) for fn in self.cache_key_components)
 
     def etag(self, request):
         """
@@ -402,11 +358,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             pass
 
         return self.redirect_to
-
-    @classmethod
-    def path_to_cache_key(cls, path):
-        prefix = "%s-FOR-URL" % cls.__name__.upper()
-        return path_to_cache_key(path.strip('/'), prefix=prefix)
 
     @classmethod
     def register_default_processors(cls):

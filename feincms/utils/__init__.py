@@ -5,6 +5,7 @@
 from __future__ import absolute_import, division, unicode_literals
 
 from hashlib import md5
+import warnings
 
 try:
     from importlib import import_module
@@ -84,6 +85,11 @@ def path_to_cache_key(path, max_length=200, prefix=""):
     cache mechanism as cache key. Ensure the string stays below the
     max key size, so if too long, hash it and use that instead.
     """
+
+    warnings.warn(
+        'path_to_cache_key will be removed, copy the implementation'
+        ' somewhere else if you really need it.',
+        DeprecationWarning)
 
     path = iri_to_uri(path)
 

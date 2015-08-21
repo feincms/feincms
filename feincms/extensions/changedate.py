@@ -42,11 +42,6 @@ class Extension(extensions.Extension):
         self.model.add_to_class('modification_date', models.DateTimeField(
             _('modification date'), null=True, editable=False))
 
-        if hasattr(self.model, 'cache_key_components'):
-            self.model.cache_key_components.append(
-                lambda page: page.modification_date and str(
-                    dt_to_utc_timestamp(page.modification_date)))
-
         self.model.last_modified = lambda p: p.modification_date
 
         pre_save.connect(pre_save_handler, sender=self.model)
