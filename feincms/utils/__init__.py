@@ -5,12 +5,8 @@
 from __future__ import absolute_import, division, unicode_literals
 
 from hashlib import md5
+from importlib import import_module
 import warnings
-
-try:
-    from importlib import import_module
-except ImportError:
-    from django.utils.importlib import import_module
 
 from django.apps import apps
 from django.conf import settings as django_settings
