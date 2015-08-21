@@ -88,15 +88,3 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
         assert isinstance(value, six.string_types)
 
         return value
-
-
-try:
-    from south.modelsinspector import add_introspection_rules
-
-    JSONField_introspection_rule = ((JSONField,), [], {},)
-
-    add_introspection_rules(
-        rules=[JSONField_introspection_rule],
-        patterns=["^feincms\.contrib\.fields"])
-except ImportError:
-    pass

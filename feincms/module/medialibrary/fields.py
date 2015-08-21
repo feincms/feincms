@@ -94,13 +94,3 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
                     '>' % image) + r)
 
         return r
-
-# ------------------------------------------------------------------------
-
-try:
-    from south.modelsinspector import add_introspection_rules
-    add_introspection_rules(
-        rules=[((MediaFileForeignKey,), [], {},)],
-        patterns=["^feincms\.module\.medialibrary\.fields"])
-except ImportError:
-    pass

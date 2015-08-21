@@ -24,15 +24,3 @@ class RichTextField(models.TextField):
     def formfield(self, form_class=RichTextFormField, **kwargs):
         return super(RichTextField, self).formfield(
             form_class=form_class, **kwargs)
-
-
-try:
-    from south.modelsinspector import add_introspection_rules
-
-    RichTextField_introspection_rule = ((RichTextField,), [], {},)
-
-    add_introspection_rules(
-        rules=[RichTextField_introspection_rule],
-        patterns=["^feincms\.contrib\.richtext"])
-except ImportError:
-    pass
