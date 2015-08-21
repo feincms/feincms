@@ -4,11 +4,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from django.apps import apps
 from django.db.models import Max
 from django.contrib.sitemaps import Sitemap
 
 from feincms import settings
-from feincms._internal import get_model
 
 
 # ------------------------------------------------------------------------
@@ -48,7 +48,7 @@ class PageSitemap(Sitemap):
         if queryset is not None:
             self.queryset = queryset
         else:
-            Page = get_model(*page_model.split('.'))
+            Page = apps.get_model(*page_model.split('.'))
             self.queryset = Page.objects.active()
 
     def items(self):

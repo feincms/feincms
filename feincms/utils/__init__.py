@@ -12,6 +12,7 @@ try:
 except ImportError:
     from django.utils.importlib import import_module
 
+from django.apps import apps
 from django.conf import settings as django_settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import AutoField
@@ -19,7 +20,6 @@ from django.utils import six
 from django.utils.encoding import iri_to_uri
 
 from feincms import settings
-from feincms._internal import get_model
 
 
 # ------------------------------------------------------------------------
@@ -113,7 +113,7 @@ def path_to_cache_key(path, max_length=200, prefix=""):
 def get_singleton(template_key, cls=None, raise_exception=True):
     cls = cls or settings.FEINCMS_DEFAULT_PAGE_MODEL
     try:
-        model = get_model(*cls.split('.'))
+        model = apps.get_model(*cls.split('.'))
         if not model:
             raise ImproperlyConfigured('Cannot load model "%s"' % cls)
         try:

@@ -27,7 +27,6 @@ from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms._internal import get_model
 from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 
@@ -627,30 +626,6 @@ def create_base_model(inherit_from=models.Model):
             except AttributeError:
                 # everything ok
                 pass
-
-            if django.VERSION < (1, 7):
-                # Next name clash test. Happens when the same content type is
-                # created for two Base subclasses living in the same Django
-                # application (github issues #73 and #150)
-                #
-                # FIXME This code does not work with Django 1.7, because
-                # get_model depends on the app cache which is not ready at
-                # this time yet.
-                try:
-                    other_model = get_model(cls._meta.app_label, class_name)
-                    if other_model is None:
-                        # Django 1.6 and earlier
-                        raise LookupError
-                except LookupError:
-                    pass
-                else:
-                    warnings.warn(
-                        'It seems that the content type %s exists twice in %s.'
-                        ' Use the class_name argument to create_content_type'
-                        ' to avoid this error.' % (
-                            model.__name__,
-                            cls._meta.app_label),
-                        RuntimeWarning)
 
             if not model._meta.abstract:
                 raise ImproperlyConfigured(

@@ -9,11 +9,11 @@ import sys
 import traceback
 
 from django import template
+from django.apps import apps
 from django.conf import settings
 from django.http import HttpRequest
 
 from feincms import settings as feincms_settings
-from feincms._internal import get_model
 from feincms.module.page.extensions.navigation import PagePretender
 from feincms.utils.templatetags import (
     SimpleNodeWithVarAndArgs,
@@ -28,7 +28,8 @@ register = template.Library()
 
 
 def _get_page_model():
-    return get_model(*feincms_settings.FEINCMS_DEFAULT_PAGE_MODEL.split('.'))
+    return apps.get_model(
+        *feincms_settings.FEINCMS_DEFAULT_PAGE_MODEL.split('.'))
 
 
 # ------------------------------------------------------------------------

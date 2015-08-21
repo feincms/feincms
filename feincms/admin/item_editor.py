@@ -10,10 +10,7 @@ import warnings
 
 from django import forms
 from django.contrib.admin.options import InlineModelAdmin
-try:
-    from django.contrib.admin.utils import unquote
-except ImportError:  # Django 1.6
-    from django.contrib.admin.util import unquote
+from django.contrib.admin.utils import unquote
 from django.contrib.auth import get_permission_codename
 from django.http import Http404
 

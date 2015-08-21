@@ -6,6 +6,7 @@ from __future__ import absolute_import, unicode_literals
 
 import re
 
+from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Q
@@ -16,7 +17,6 @@ from django.utils.translation import ugettext_lazy as _
 from mptt.models import MPTTModel, TreeManager
 
 from feincms import settings
-from feincms._internal import get_model
 from feincms.models import create_base_model
 from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
@@ -344,7 +344,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             return self.redirect_to
 
         matches = match.groupdict()
-        model = get_model(matches['app_label'], matches['model_name'])
+        model = apps.get_model(matches['app_label'], matches['model_name'])
 
         if not model:
             return self.redirect_to

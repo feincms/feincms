@@ -6,6 +6,7 @@ from __future__ import absolute_import, unicode_literals
 
 import re
 
+from django.apps import apps
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db.models import FieldDoesNotExist
 from django.forms.models import model_to_dict
@@ -13,7 +14,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms._internal import get_model
 
 from mptt.forms import MPTTAdminForm
 
@@ -27,7 +27,7 @@ class RedirectToWidget(ForeignKeyRawIdWidget):
 
         if match:
             matches = match.groupdict()
-            model = get_model(matches['app_label'], matches['model_name'])
+            model = apps.get_model(matches['app_label'], matches['model_name'])
             try:
                 instance = model._default_manager.get(pk=int(matches['pk']))
                 return '&nbsp;<strong>%s (%s)</strong>' % (

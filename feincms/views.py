@@ -2,11 +2,11 @@ from __future__ import absolute_import, unicode_literals
 
 import logging
 
+from django.apps import apps
 from django.http import Http404
 from django.utils.functional import cached_property
 
 from feincms import settings
-from feincms._internal import get_model
 from feincms.module.mixins import ContentView
 
 
@@ -20,7 +20,7 @@ class Handler(ContentView):
     @cached_property
     def page_model(self):
         model = self.page_model_path or settings.FEINCMS_DEFAULT_PAGE_MODEL
-        return get_model(*model.split('.'))
+        return apps.get_model(*model.split('.'))
 
     def get_object(self):
         path = None
