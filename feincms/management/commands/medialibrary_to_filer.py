@@ -56,3 +56,5 @@ class Command(NoArgsCommand):
 
             if not i % 10:
                 self.stdout.write('%s / %s files\n' % (i, count))
+
+        self.stdout.write('%s / %s files\n' % (count, count))
