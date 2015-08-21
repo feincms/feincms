@@ -1,0 +1,6 @@
+{% load thumbnail %}{% with image=content.mediafile %}
+<img src="{% thumbnail image 200x300 crop upscale %}" alt="{{ image.default_alt_text|default_if_none:image.label }}" />
+{% if image.default_caption %}<br><span class="caption">{{ image.default_caption }}</span>{% endif %}
+{% endwith %}
+
+{#{% thumbnail obj.img 200x300 crop upscale subject_location=obj.img.subject_location %}#}

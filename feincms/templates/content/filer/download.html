@@ -1,0 +1,8 @@
+{% with mediafile=content.mediafile %}
+<a href="{{ mediafile.file.url }}">
+    {{ mediafile.name|default:mediafile.file.name }}
+    {% if mediafile.description %}
+        <small>{{ mediafile.description }}</small>
+    {% endif %}
+</a>
+{% endwith %}
