@@ -1316,11 +1316,6 @@ class PagesTestCase(TestCase):
             self.client.get(
                 page.get_absolute_url() + 'response_decorated/').content)
 
-        # Test reversing of URLs (with overridden urls too)
-        page.applicationcontent_set.create(
-            region='main',
-            ordering=1,
-            urlconf_path='testapp.blog_urls')
         page1.applicationcontent_set.create(
             region='main',
             ordering=0,
@@ -1333,9 +1328,6 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'base:/test/')
 
         self.assertEqual(
-            app_reverse('blog_entry_list', 'testapp.blog_urls'),
-            '/test-page/test-child-page/')
-        self.assertEqual(
             app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
             '/test-page/test-child-page/')
         self.assertEqual(
@@ -1346,28 +1338,25 @@ class PagesTestCase(TestCase):
             urlconf_path='testapp.applicationcontent_urls').delete()
 
         self.assertEqual(
-            app_reverse('blog_entry_list', 'testapp.blog_urls'),
-            '/test-page/test-child-page/')
-        self.assertEqual(
             app_reverse('ac_module_root', 'whatever'),
             '/test-page/')
 
         # Ensure ApplicationContent's admin_fields support works properly
         self.login()
         self.assertContains(
-            self.client.get('/admin/page/page/%d/' % page.id),
+            self.client.get('/admin/page/page/%d/' % page1.id),
             'exclusive_subpages')
         self.assertContains(
-            self.client.get('/admin/page/page/%d/' % page.id),
+            self.client.get('/admin/page/page/%d/' % page1.id),
             'custom_field'
         )
 
         # Check if admin_fields get populated correctly
-        app_ct = page.applicationcontent_set.all()[0]
+        app_ct = page1.applicationcontent_set.all()[0]
         app_ct.parameters =\
             '{"custom_field":"val42", "exclusive_subpages": false}'
         app_ct.save()
-        r = self.client.get('/admin/page/page/%d/' % page.id)
+        r = self.client.get('/admin/page/page/%d/' % page1.id)
         self.assertContains(r, 'val42')
 
     def test_26_page_form_initial(self):
@@ -1471,7 +1460,7 @@ class PagesTestCase(TestCase):
         import zipfile
         zf = zipfile.ZipFile('test.zip', 'w')
         for i in range(10):
-            zf.writestr('test%d.jpg' % i, 'test%d' % i)
+            zf.writestr('test%d.txt' % i, 'test%d' % i)
         zf.close()
 
         with open('test.zip', 'rb') as handle:
@@ -1504,8 +1493,9 @@ class PagesTestCase(TestCase):
             '100x100')
 
         stats = list(MediaFile.objects.values_list('type', flat=True))
-        self.assertEqual(stats.count('image'), 12)
-        self.assertEqual(stats.count('other'), 0)
+        self.assertEqual(len(stats), 12)
+        self.assertEqual(stats.count('image'), 2)
+        self.assertEqual(stats.count('txt'), 10)
 
     def test_30_context_processors(self):
         self.create_default_page_set()

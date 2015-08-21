@@ -20,7 +20,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'feincms',
-    'feincms.module.blog',
     'feincms.module.medialibrary',
     'feincms.module.page',
     'mptt',

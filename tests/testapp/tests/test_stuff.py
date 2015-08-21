@@ -12,7 +12,6 @@ from django.utils.encoding import force_text
 
 import feincms
 from feincms.models import Region, Template
-from feincms.module.blog.models import Entry
 from feincms.utils import get_object, shorten_string
 
 
@@ -79,73 +78,3 @@ class UtilsTest(TestCase):
             10, ellipsis='-')
         self.assertEqual(string, 'Badger-ger')
         self.assertEqual(len(string), 10)
-
-
-class BlogTestCase(TestCase):
-    def setUp(self):
-        u = User(
-            username='test',
-            is_active=True,
-            is_staff=True,
-            is_superuser=True)
-        u.set_password('test')
-        u.save()
-
-    def login(self):
-        self.assertTrue(self.client.login(username='test', password='test'))
-
-    def create_entry(self):
-        entry = Entry.objects.create(
-            published=True,
-            title='Something',
-            slug='something',
-            language='en')
-
-        entry.rawcontent_set.create(
-            region='main',
-            ordering=0,
-            text='Something awful')
-
-        return entry
-
-    def create_entries(self):
-        entry = self.create_entry()
-
-        Entry.objects.create(
-            published=True,
-            title='Something 2',
-            slug='something-2',
-            language='de',
-            translation_of=entry)
-
-        Entry.objects.create(
-            published=True,
-            title='Something 3',
-            slug='something-3',
-            language='de')
-
-    def test_01_smoke_test_admin(self):
-        self.create_entry()
-
-        self.login()
-        self.assertEqual(
-            self.client.get('/admin/blog/entry/').status_code, 200)
-        self.assertEqual(
-            self.client.get('/admin/blog/entry/1/').status_code, 200)
-
-    def test_02_translations(self):
-        self.create_entries()
-
-        entries = Entry.objects.in_bulk((1, 2, 3))
-
-        self.assertEqual(len(entries[1].available_translations()), 1)
-        self.assertEqual(len(entries[2].available_translations()), 1)
-        self.assertEqual(len(entries[3].available_translations()), 0)
-
-    def test_03_admin(self):
-        self.login()
-        self.create_entries()
-        self.assertEqual(
-            self.client.get('/admin/blog/entry/').status_code, 200)
-        self.assertEqual(
-            self.client.get('/admin/blog/entry/1/').status_code, 200)
