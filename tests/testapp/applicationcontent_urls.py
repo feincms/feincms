@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 
-from feincms.views.decorators import standalone, unpack
+from feincms.apps import standalone, unpack
 
 
 def module_root(request):
