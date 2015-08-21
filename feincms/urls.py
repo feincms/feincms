@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 from django.conf.urls import url
 
-from feincms.views.cbv.views import Handler
+from feincms.views import Handler
 
 handler = Handler.as_view()
 
