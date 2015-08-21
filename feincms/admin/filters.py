@@ -77,8 +77,8 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
             related_model = f.related.parent_model
             related_name = f.related.var_name
         else:
-            related_model = f.related_model
-            related_name = f.related.name
+            related_model = f.rel.to
+            related_name = f.related_query_name()
 
         self.lookup_choices = [(
             i.pk,
