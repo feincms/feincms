@@ -8,7 +8,6 @@ from django.conf import settings
 from django.core.urlresolvers import (
     Resolver404, resolve)
 from django.db import models
-from django.db.models import signals
 from django.http import HttpResponse
 from django.utils.http import http_date
 from django.utils.safestring import mark_safe

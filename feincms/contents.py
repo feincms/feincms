@@ -1,19 +1,16 @@
 from __future__ import absolute_import, unicode_literals
 
-from django import forms
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.template.loader import render_to_string
-from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
-from feincms.admin.item_editor import FeinCMSInline, ItemEditorForm
+from feincms.admin.item_editor import FeinCMSInline
 from feincms.contrib.richtext import RichTextField
 from feincms.module.medialibrary.fields import ContentWithMediaFile
-from feincms.utils import get_object
 
 
 class MediaFileContentInline(FeinCMSInline):

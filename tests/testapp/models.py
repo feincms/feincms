@@ -15,10 +15,7 @@ from feincms.content.application.models import ApplicationContent
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
 from feincms.content.template.models import TemplateContent
-from feincms.module.page.extensions.navigation import (
-    NavigationExtension, PagePretender)
 from feincms.module.page import processors
-from feincms.content.application.models import app_reverse
 
 from mptt.models import MPTTModel
 

@@ -6,7 +6,6 @@ from __future__ import absolute_import, unicode_literals
 
 import doctest
 
-from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils.encoding import force_text
 

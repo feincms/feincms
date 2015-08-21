@@ -5,10 +5,8 @@
 from __future__ import absolute_import, unicode_literals
 
 import re
-import warnings
 
 from django.core.exceptions import PermissionDenied
-from django.conf import settings as django_settings
 from django.db import models
 from django.db.models import Q
 from django.http import Http404

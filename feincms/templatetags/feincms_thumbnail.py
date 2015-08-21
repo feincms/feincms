@@ -125,6 +125,8 @@ class Thumbnailer(object):
                 storage.delete(miniature)
                 storage.save(miniature, ContentFile(raw_data))
 
+                image.close()
+
 
 class CropscaleThumbnailer(Thumbnailer):
     THUMBNAIL_SIZE_RE = re.compile(
@@ -178,6 +180,8 @@ class CropscaleThumbnailer(Thumbnailer):
 
                 storage.delete(miniature)
                 storage.save(miniature, ContentFile(raw_data))
+
+                image.close()
 
 
 @register.filter
