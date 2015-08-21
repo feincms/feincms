@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from feincms.views.cbv.views import Handler
+from feincms.views import Handler
 
 
 class PreviewHandler(Handler):

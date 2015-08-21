@@ -29,7 +29,7 @@ urlpatterns = [
     ),
 
     url(r'', include('feincms.contrib.preview.urls')),
-    url(r'', include('feincms.views.cbv.urls')),
+    url(r'', include('feincms.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
