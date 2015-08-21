@@ -25,7 +25,7 @@ from django.utils.encoding import force_text
 from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
-from feincms.apps.reverse import app_reverse, cycle_app_reverse_cache
+from feincms.apps.reverse import app_reverse
 from feincms.content.image.models import ImageContent
 from feincms.content.raw.models import RawContent
 from feincms.content.richtext.models import RichTextContent
@@ -1269,17 +1269,6 @@ class PagesTestCase(TestCase):
             '/test-page/test-child-page/')
 
         if hasattr(self, 'assertNumQueries'):
-            self.assertNumQueries(
-                0,
-                lambda: app_reverse(
-                    'ac_module_root', 'testapp.applicationcontent_urls'))
-
-            cycle_app_reverse_cache()
-
-            self.assertNumQueries(
-                1,
-                lambda: app_reverse(
-                    'ac_module_root', 'testapp.applicationcontent_urls'))
             self.assertNumQueries(
                 0,
                 lambda: app_reverse(

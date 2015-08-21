@@ -5,7 +5,6 @@ from functools import partial
 from time import mktime
 
 from django.conf import settings
-from django.core.cache import cache
 from django.core.urlresolvers import (
     Resolver404, resolve)
 from django.db import models
@@ -19,8 +18,6 @@ from feincms.admin.item_editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
 from feincms.translations import short_language_code
 from feincms.utils import get_object
-
-from .reverse import APP_REVERSE_CACHE_GENERATION_KEY, cycle_app_reverse_cache
 
 
 class ApplicationContent(models.Model):
@@ -127,14 +124,6 @@ class ApplicationContent(models.Model):
         # This provides hooks for us to customize the admin interface for
         # embedded instances:
         cls.feincms_item_editor_form = ApplicationContentItemEditorForm
-
-        # Clobber the app_reverse cache when saving application contents
-        # and/or pages
-        page_class = cls.parent.field.rel.to
-        signals.post_save.connect(cycle_app_reverse_cache, sender=cls)
-        signals.post_delete.connect(cycle_app_reverse_cache, sender=cls)
-        signals.post_save.connect(cycle_app_reverse_cache, sender=page_class)
-        signals.post_delete.connect(cycle_app_reverse_cache, sender=page_class)
 
     def __init__(self, *args, **kwargs):
         super(ApplicationContent, self).__init__(*args, **kwargs)
@@ -278,16 +267,11 @@ class ApplicationContent(models.Model):
 
     @classmethod
     def app_reverse_cache_key(self, urlconf_path, **kwargs):
-        cache_generation = cache.get(APP_REVERSE_CACHE_GENERATION_KEY)
-        if cache_generation is None:
-            # This might never happen. Still, better be safe than sorry.
-            cache_generation = cycle_app_reverse_cache()
-
-        return 'FEINCMS:%s:APPCONTENT:%s:%s:%s' % (
+        return 'FEINCMS:%s:APPCONTENT:%s:%s' % (
             getattr(settings, 'SITE_ID', 0),
             get_language(),
             urlconf_path,
-            cache_generation)
+        )
 
     @classmethod
     def closest_match(cls, urlconf_path):

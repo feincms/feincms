@@ -1,29 +1,13 @@
 from __future__ import absolute_import, unicode_literals
 
 from functools import wraps
-from random import SystemRandom
 
 from django.core.cache import cache
 from django.core.urlresolvers import NoReverseMatch, reverse
 from django.utils.functional import lazy
 
 
-APP_REVERSE_CACHE_GENERATION_KEY = 'FEINCMS:APPREVERSECACHE'
-APP_REVERSE_CACHE_TIMEOUT = 300
-
-
-def cycle_app_reverse_cache(*args, **kwargs):
-    """Does not really empty the cache; instead it adds a random element to the
-    cache key generation which guarantees that the cache does not yet contain
-    values for all newly generated keys"""
-    value = '%07x' % (SystemRandom().randint(0, 0x10000000))
-    cache.set(APP_REVERSE_CACHE_GENERATION_KEY, value)
-    return value
-
-
-# Set the app_reverse_cache_generation value once per startup (at least).
-# This protects us against offline modifications of the database.
-cycle_app_reverse_cache()
+APP_REVERSE_CACHE_TIMEOUT = 3
 
 
 def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
