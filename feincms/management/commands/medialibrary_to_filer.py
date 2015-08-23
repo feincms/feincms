@@ -4,7 +4,9 @@ from django.core.files import File as DjangoFile
 from django.core.management.base import NoArgsCommand
 from django.contrib.auth.models import User
 
-from feincms.contents import MediaFileContent, FileContent, ImageContent
+from feincms.contents import (
+    MediaFileContent, FilerFileContent, FilerImageContent,
+)
 from feincms.module.medialibrary.models import MediaFile
 from feincms.module.page.models import Page
 
@@ -12,12 +14,14 @@ from filer.models import File, Image
 
 
 PageMediaFileContent = Page.content_type_for(MediaFileContent)
-PageFileContent = Page.content_type_for(FileContent)
-PageImageContent = Page.content_type_for(ImageContent)
+PageFilerFileContent = Page.content_type_for(FilerFileContent)
+PageFilerImageContent = Page.content_type_for(FilerImageContent)
 
 
-assert (PageMediaFileContent and PageFileContent and PageImageContent),\
-    'Not all required models available'
+assert all((
+    PageMediaFileContent,
+    PageFilerFileContent,
+    PageFilerImageContent)), 'Not all required models available'
 
 
 class Command(NoArgsCommand):
@@ -30,7 +34,7 @@ class Command(NoArgsCommand):
 
         for i, mediafile in enumerate(MediaFile.objects.order_by('pk')):
             model = Image if mediafile.type == 'image' else File
-            content_model = PageImageContent if mediafile.type == 'image' else PageFileContent  # noqa
+            content_model = PageFilerImageContent if mediafile.type == 'image' else PageFilerFileContent  # noqa
 
             filerfile = model.objects.create(
                 owner=user,

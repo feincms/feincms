@@ -162,7 +162,7 @@ else:
 
     class ContentWithFilerFile(models.Model):
         """
-        MediaFile Content for use with Django-Filer.
+        File content
         """
         feincms_item_editor_inline = MediaFileContentInline
 
@@ -179,7 +179,7 @@ else:
                 'content/filer/default.html',
             ], ctx, context_instance=kwargs.get('context'))
 
-    class FileContent(ContentWithFilerFile):
+    class FilerFileContent(ContentWithFilerFile):
         mediafile = FilerFileField(verbose_name=_('file'), related_name='+')
         file_type = 'file'
         type = 'download'
@@ -189,16 +189,16 @@ else:
             verbose_name = _('file')
             verbose_name_plural = _('files')
 
-    class ImageContent(ContentWithFilerFile):
+    class FilerImageContent(ContentWithFilerFile):
         """
         Create a media file content as follows::
 
-            from feincms.content.medialibrary.v2 import MediaFileContent
-            Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
+            from feincms.contents import FilerImageContent
+            Page.create_content_type(FilerImageContent, TYPE_CHOICES=(
                 ('inline', _('Default')),
                 ('lightbox', _('Lightbox')),
                 ('whatever', _('Whatever')),
-                ))
+            ))
 
         For a media file of type 'image' and type 'lightbox', the following
         templates are tried in order:
