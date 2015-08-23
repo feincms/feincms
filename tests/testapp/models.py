@@ -6,12 +6,11 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
+from feincms.apps import ApplicationContent
+from feincms.contents import RawContent, MediaFileContent
 from feincms.models import Base, create_base_model
 from feincms.module.page.models import Page
-from feincms.content.raw.models import RawContent
 from feincms.content.image.models import ImageContent
-from feincms.content.medialibrary.models import MediaFileContent
-from feincms.content.application.models import ApplicationContent
 from feincms.content.contactform.models import ContactFormContent, ContactForm
 from feincms.content.file.models import FileContent
 from feincms.content.template.models import TemplateContent
@@ -78,13 +77,13 @@ Page.create_content_type(
 Page.register_extensions(
     'feincms.module.page.extensions.navigation',
     'feincms.module.page.extensions.sites',
-    'feincms.module.extensions.translations',
-    'feincms.module.extensions.datepublisher',
-    'feincms.module.extensions.translations',
-    'feincms.module.extensions.ct_tracker',
-    'feincms.module.extensions.seo',
-    'feincms.module.extensions.changedate',
-    'feincms.module.extensions.seo',  # duplicate
+    'feincms.extensions.translations',
+    'feincms.extensions.datepublisher',
+    'feincms.extensions.translations',
+    'feincms.extensions.ct_tracker',
+    'feincms.extensions.seo',
+    'feincms.extensions.changedate',
+    'feincms.extensions.seo',  # duplicate
     'feincms.module.page.extensions.navigation',
     'feincms.module.page.extensions.symlinks',
     'feincms.module.page.extensions.titles',

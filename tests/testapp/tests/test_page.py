@@ -25,17 +25,16 @@ from django.utils.encoding import force_text
 from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
-from feincms.apps.reverse import app_reverse
+from feincms.apps import app_reverse
+from feincms.contents import RawContent, RichTextContent
 from feincms.content.image.models import ImageContent
-from feincms.content.raw.models import RawContent
-from feincms.content.richtext.models import RichTextContent
 
 from feincms.context_processors import add_page_if_missing
 from feincms.models import ContentProxy
 from feincms.module.medialibrary.models import Category, MediaFile
 from feincms.module.page.extensions.navigation import PagePretender
 from feincms.module.page.models import Page
-from feincms.module.page.templatetags import feincms_page_tags
+from feincms.templatetags import feincms_page_tags
 from feincms.translations import short_language_code
 
 from .test_stuff import Empty

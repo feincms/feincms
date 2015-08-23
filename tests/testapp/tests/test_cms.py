@@ -11,10 +11,9 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.test import TestCase
 
+from feincms.contents import RawContent, RichTextContent, MediaFileContent
 from feincms.content.contactform.models import ContactFormContent
 from feincms.content.file.models import FileContent
-from feincms.content.raw.models import RawContent
-from feincms.content.richtext.models import RichTextContent
 from feincms.content.video.models import VideoContent
 
 from testapp.models import ExampleCMSBase, ExampleCMSBase2
@@ -99,8 +98,6 @@ class CMSBaseTest(TestCase):
 
     def test_04_mediafilecontent_creation(self):
         # the medialibrary needs to be enabled, otherwise this test fails
-
-        from feincms.content.medialibrary.models import MediaFileContent
 
         # no TYPE_CHOICES, should raise
         self.assertRaises(

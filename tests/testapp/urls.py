@@ -4,7 +4,9 @@ import os
 
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.static import serve
 
 from feincms.module.page.sitemap import PageSitemap
 
@@ -18,13 +20,13 @@ urlpatterns = [
 
     url(
         r'^media/(?P<path>.*)$',
-        'django.views.static.serve',
+        serve,
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')},
     ),
 
     url(
         r'^sitemap\.xml$',
-        'django.contrib.sitemaps.views.sitemap',
+        sitemap,
         {'sitemaps': sitemaps},
     ),
 
