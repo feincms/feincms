@@ -80,13 +80,15 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
             related_model = f.rel.to
             related_name = f.related_query_name()
 
-        self.lookup_choices = [(
-            i.pk,
-            '%s (%s)' % (i, i._related_count),
-        ) for i in related_model.objects.annotate(
-            _related_count=Count(related_name)
-        ).exclude(_related_count=0)]
-        self.lookup_choices.sort(key=lambda i: i[1])
+        self.lookup_choices = sorted(
+            [
+                (i.pk, '%s (%s)' % (i, i._related_count))
+                for i in related_model.objects.annotate(
+                    _related_count=Count(related_name)
+                ).exclude(_related_count=0)
+            ],
+            key=lambda i: i[1],
+        )
 
     def choices(self, cl):
         yield {
