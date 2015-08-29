@@ -19,7 +19,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
-from feincms.utils import get_object
+from feincms.utils import get_object, shorten_string
 from feincms._internal import monkeypatch_method
 
 
@@ -77,7 +77,6 @@ class PagePretender(object):
         return page
 
     def short_title(self):
-        from feincms.utils import shorten_string
         return shorten_string(self.title)
 
 
