@@ -92,13 +92,6 @@ class Extension(object):
         pass
 
 
-def _ensure_list(cls, attribute):
-    if cls is None:
-        return
-    value = getattr(cls, attribute, ()) or ()
-    setattr(cls, attribute, list(value))
-
-
 class ExtensionModelAdmin(admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
         super(ExtensionModelAdmin, self).__init__(*args, **kwargs)
