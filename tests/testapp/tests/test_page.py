@@ -6,13 +6,11 @@ from __future__ import absolute_import, unicode_literals
 
 from datetime import datetime, timedelta
 import os
-import re
 
 from django import forms, template
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
-from django.core import mail
 from django.db import models
 from django.contrib.sites.models import Site
 from django.http import Http404, HttpResponseBadRequest
