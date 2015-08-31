@@ -7,13 +7,9 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.apps import ApplicationContent
-from feincms.contents import RawContent, MediaFileContent
+from feincms.contents import RawContent, MediaFileContent, TemplateContent
 from feincms.models import Base, create_base_model
 from feincms.module.page.models import Page
-from feincms.content.image.models import ImageContent
-from feincms.content.contactform.models import ContactFormContent, ContactForm
-from feincms.content.file.models import FileContent
-from feincms.content.template.models import TemplateContent
 from feincms.module.page import processors
 
 from mptt.models import MPTTModel
@@ -36,15 +32,9 @@ Page.create_content_type(
         ('default', 'Default position'),
     )
 )
-Page.create_content_type(
-    ImageContent,
-    POSITION_CHOICES=(
-        ('default', 'Default position'),
-    )
-)
-Page.create_content_type(ContactFormContent, form=ContactForm)
-Page.create_content_type(FileContent)
-Page.create_content_type(TemplateContent)
+Page.create_content_type(TemplateContent, TEMPLATES=[
+    ('templatecontent_1.html', 'template 1'),
+])
 Page.register_request_processor(processors.etag_request_processor)
 Page.register_response_processor(processors.etag_response_processor)
 Page.register_response_processor(

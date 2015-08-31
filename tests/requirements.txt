@@ -3,4 +3,3 @@ django-mptt
 Pillow
 coverage
 pytz
-feedparser

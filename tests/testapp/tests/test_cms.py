@@ -12,9 +12,6 @@ from django.db import models
 from django.test import TestCase
 
 from feincms.contents import RawContent, RichTextContent, MediaFileContent
-from feincms.content.contactform.models import ContactFormContent
-from feincms.content.file.models import FileContent
-from feincms.content.video.models import VideoContent
 
 from testapp.models import ExampleCMSBase, ExampleCMSBase2
 from .test_stuff import Empty
@@ -39,62 +36,18 @@ class SubRawContent(RawContent):
 
 class CMSBaseTest(TestCase):
     def test_01_simple_content_type_creation(self):
-        self.assertEqual(ExampleCMSBase.content_type_for(FileContent), None)
+        self.assertEqual(ExampleCMSBase.content_type_for(RawContent), None)
 
-        ExampleCMSBase.create_content_type(ContactFormContent)
-        ExampleCMSBase.create_content_type(FileContent, regions=('region2',))
-
-        ExampleCMSBase.create_content_type(RawContent)
+        ExampleCMSBase.create_content_type(RawContent, regions=('main2',))
         ExampleCMSBase.create_content_type(RichTextContent)
-
-        # test creating a cotent with arguments, but no initialize_type
-        # classmethod
-        ExampleCMSBase.create_content_type(
-            VideoContent,
-            arbitrary_arg='arbitrary_value')
 
         # content_type_for should return None if it does not have a subclass
         # registered
         self.assertEqual(ExampleCMSBase.content_type_for(Empty), None)
 
         self.assertTrue(
-            'filecontent' not in dict(
+            'rawcontent' not in dict(
                 ExampleCMSBase.template.regions[0].content_types).keys())
-        self.assertTrue(
-            'filecontent' in dict(
-                ExampleCMSBase.template.regions[1].content_types).keys())
-
-    def test_02_rsscontent_creation(self):
-        # this test resides in its own method because the required feedparser
-        # module is not available everywhere
-
-        from feincms.content.rss.models import RSSContent, feedparser
-
-        # Monkey-patch feedparser.parse to work with a local RSS dump so that
-        # the tests run faster.
-        _orig_parse = feedparser.parse
-
-        def _new_parse(link):
-            filename = os.path.join(os.path.dirname(__file__), 'yahoo.rss')
-            with open(filename, 'rb') as handle:
-                return _orig_parse(handle)
-        feedparser.parse = _new_parse
-
-        type = ExampleCMSBase.create_content_type(RSSContent)
-        obj = type()
-
-        self.assertTrue('yahoo' not in obj.render())
-
-        obj.link = 'http://rss.news.yahoo.com/rss/topstories'
-        obj.cache_content(save=False)
-
-        self.assertTrue('yahoo' in obj.render())
-
-    # Creating a content type twice isn't forbidden anymore
-    # def test_03_double_creation(self):
-    #     # creating a content type twice is forbidden
-    #     self.assertRaises(ImproperlyConfigured,
-    #         lambda: ExampleCMSBase.create_content_type(RawContent))
 
     def test_04_mediafilecontent_creation(self):
         # the medialibrary needs to be enabled, otherwise this test fails
@@ -113,19 +66,6 @@ class CMSBaseTest(TestCase):
         self.assertRaises(
             ImproperlyConfigured,
             lambda: ExampleCMSBase.create_content_type(TestContentType))
-
-    def test_06_videocontent(self):
-        type = ExampleCMSBase.content_type_for(VideoContent)
-        obj = type()
-        obj.video = 'http://www.youtube.com/watch?v=zmj1rpzDRZ0'
-
-        self.assertTrue('x-shockwave-flash' in obj.render())
-
-        self.assertEqual(getattr(type, 'arbitrary_arg'), 'arbitrary_value')
-
-        obj.video = 'http://www.example.com/'
-
-        self.assertTrue(obj.video in obj.render())
 
     def test_07_default_render_method(self):
         class SomethingElse(models.Model):

@@ -27,7 +27,6 @@ from mptt.exceptions import InvalidMove
 from feincms import settings as feincms_settings
 from feincms.apps import app_reverse
 from feincms.contents import RawContent, RichTextContent
-from feincms.content.image.models import ImageContent
 
 from feincms.context_processors import add_page_if_missing
 from feincms.models import ContentProxy
@@ -372,21 +371,6 @@ class PagesTestCase(TestCase):
             'mediafilecontent_set-0-parent': 1,
             'mediafilecontent_set-0-type': 'default',
 
-            'imagecontent_set-TOTAL_FORMS': 1,
-            'imagecontent_set-INITIAL_FORMS': 0,
-            'imagecontent_set-MAX_NUM_FORMS': 10,
-
-            'imagecontent_set-0-parent': 1,
-            'imagecontent_set-0-position': 'default',
-
-            'contactformcontent_set-TOTAL_FORMS': 1,
-            'contactformcontent_set-INITIAL_FORMS': 0,
-            'contactformcontent_set-MAX_NUM_FORMS': 10,
-
-            'filecontent_set-TOTAL_FORMS': 1,
-            'filecontent_set-INITIAL_FORMS': 0,
-            'filecontent_set-MAX_NUM_FORMS': 10,
-
             'templatecontent_set-TOTAL_FORMS': 1,
             'templatecontent_set-INITIAL_FORMS': 0,
             'templatecontent_set-MAX_NUM_FORMS': 10,
@@ -429,8 +413,6 @@ class PagesTestCase(TestCase):
         self.assertTrue(isinstance(page2.content.media, forms.Media))
 
         self.assertEqual(len(page2.content.all_of_type(RawContent)), 1)
-        self.assertEqual(len(page2.content.all_of_type((ImageContent,))), 0)
-        self.assertEqual(len(page2.content.all_of_type([ImageContent])), 0)
 
     def test_10_mediafile_and_imagecontent(self):
         self.create_default_page_set()
@@ -482,25 +464,6 @@ class PagesTestCase(TestCase):
 
         # this should not raise
         self.client.get('/admin/page/page/1/')
-
-        # self.assertTrue('alt="something"' in page.content.main[1].render())
-        # Since it isn't an image
-
-        page.imagecontent_set.create(
-            image='somefile.jpg', region='main', position='default',
-            ordering=2)
-        page.filecontent_set.create(
-            file='somefile.jpg', title='thetitle', region='main', ordering=3)
-
-        # Reload page, reset _ct_inventory
-        page = Page.objects.get(pk=page.pk)
-        page._ct_inventory = None
-
-        self.assertTrue('somefile.jpg' in page.content.main[2].render())
-        self.assertTrue(re.search(
-            '<a .*href="/media/somefile\.jpg">.*thetitle.*</a>',
-            page.content.main[3].render(),
-            re.MULTILINE + re.DOTALL) is not None)
 
         page.mediafilecontent_set.update(mediafile=3)
         # this should not raise
@@ -1149,39 +1112,6 @@ class PagesTestCase(TestCase):
         page2.copy_content_from(page)
         self.assertEqual(len(page2.content.main), 1)
 
-    def test_22_contactform(self):
-        self.create_default_page_set()
-        page = Page.objects.get(pk=1)
-        page.active = True
-        page.template_key = 'theother'
-        page.save()
-
-        page.contactformcontent_set.create(
-            email='mail@example.com', subject='bla',
-            region='main', ordering=0)
-
-        request = Empty()
-        request.method = 'GET'
-        request.GET = {}
-        request.META = {}
-        request.user = Empty()
-        request.user.is_authenticated = lambda: False
-        request.user.get_and_delete_messages = lambda: ()
-
-        page.content.main[0].process(request)
-        self.assertTrue('form' in page.content.main[0].render(request=request))
-
-        self.client.post(page.get_absolute_url(), {
-            'name': 'So what\'s your name, dude?',
-            'email': 'another@example.com',
-            'subject': 'This is a test. Please calm down',
-            'content': 'Hell on earth.',
-        })
-
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(
-            mail.outbox[0].subject, 'This is a test. Please calm down')
-
     def test_23_navigation_extension(self):
         self.create_default_page_set()
 
@@ -1719,3 +1649,19 @@ class PagesTestCase(TestCase):
             {'feincms_page': page1}, p, path='/test-page/whatsup/test/'))
         self.assertFalse(feincms_page_tags.page_is_active(
             {'feincms_page': page2}, p, path='/test-page/'))
+
+    def test_41_templatecontent(self):
+        page = self.create_page()
+        template = page.templatecontent_set.create(
+            region=0,
+            ordering=1,
+            template='templatecontent_1.html',
+        )
+
+        self.assertEqual(template.render(), 'TemplateContent_1\n')
+
+        # The empty form contains the template option.
+        self.login()
+        self.assertContains(
+            self.client.get('/admin/page/page/%s/' % page.id),
+            '<option value="templatecontent_1.html">template 1</option>')
