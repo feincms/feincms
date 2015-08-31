@@ -3,7 +3,6 @@ sudo: false
 python:
   - "2.7"
   - "3.2"
-  - "3.3"
   - "3.4"
 env:
   - DJANGO_REQUIREMENT="Django>=1.7,<1.8"
