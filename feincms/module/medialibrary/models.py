@@ -103,7 +103,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         _("file size"), blank=True, null=True, editable=False)
 
     categories = models.ManyToManyField(
-        Category, verbose_name=_('categories'), blank=True, null=True)
+        Category, verbose_name=_('categories'), blank=True)
     categories.category_filter = True
 
     class Meta:
