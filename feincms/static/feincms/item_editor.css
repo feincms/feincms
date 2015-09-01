@@ -82,7 +82,6 @@
 .button {
     margin:5px; padding:5px;
     font-weight: bold;
-    background-image:url('img/nav-bg.gif');
     cursor:pointer;
     border: 1px solid #678;
 }
@@ -127,7 +126,7 @@ textarea {
 .item-controls {
     padding-left:27px;
     min-height: 56px;
-    background-position: 12px 45%;
+    background: url('img/wrench.png') no-repeat 12px 45%;
 }
 
 /* Clearfix */
