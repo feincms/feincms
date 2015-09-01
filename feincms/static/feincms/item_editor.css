@@ -63,7 +63,7 @@
 .item-delete {
     cursor:pointer;
     float:right;
-    margin: 2px 0px 0px 0;
+    margin: 4px 3px 0px 0;
 }
 
 .highlight, .helper {
@@ -109,42 +109,17 @@ textarea {
 }
 
 .item-controls {
-    padding-left:27px;
-    min-height: 56px;
-    background: url('img/wrench.png') no-repeat 12px 45%;
-}
-
-/* Clearfix */
-.item-control-units {
-    overflow: hidden;
+    position: absolute;
+    top: 2px;
+    right: 32px;
 }
 
 .item-control-unit {
     float:left;
-    padding: 10px;
-    border-left: 1px solid #eee;
 }
 
-.item-control-unit:first-child {
-    border-left: none;
-}
-
-
-.item-control-unit .button,
 .item-controls select {
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-
-.item-control-unit .button {
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-
-
-.move-control .button {
-    margin-left: 10px;
+    margin-left: 7px;
 }
 
 .machine-control {

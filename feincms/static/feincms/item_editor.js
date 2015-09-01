@@ -49,74 +49,43 @@
 
     function update_item_controls(item, target_region_id){
         var item_controls = item.find(".item-controls");
-        item_controls.find(".item-control-units").remove(); // Remove all controls, if any.
-
-        // (Re)build controls
-        var control_units = $("<div>").addClass("item-control-units").appendTo(item_controls);
+        item_controls.empty();
 
         // Insert control unit
         var insert_control = $("<div>").addClass("item-control-unit");
         var select_content = SELECTS[REGION_MAP[target_region_id]].clone();
-        var insert_after = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('After')).click(function(){
-            var modvar = select_content.val();
-            var modname = select_content.find("option:selected").html();
-            var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-            add_fieldset(target_region_id, new_fieldset, {where:'insertAfter', relative_to:item, animate:true});
-            update_item_controls(new_fieldset, target_region_id);
-        });
-        var insert_before = $("<input>").attr("type", "button").addClass("button").attr("value", feincms_gettext('Before')).click(function(){
+        select_content.prepend('<option disabled selected>' + feincms_gettext('Insert new content:') + '</option>');
+
+        select_content.change(function() {
             var modvar = select_content.val();
             var modname = select_content.find("option:selected").html();
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(target_region_id, new_fieldset, {where:'insertBefore', relative_to:item, animate:true});
             update_item_controls(new_fieldset, target_region_id);
         });
-        insert_control.append("<span>" + feincms_gettext('Insert new:') + "</span>").append(" ").append(select_content).append(" ").append(insert_before).append(insert_after);
-        control_units.append(insert_control);
+        insert_control.append(select_content);
+        item_controls.append(insert_control);
 
         // Move control unit
         if (REGION_MAP.length > 1) {
             var wrp = [];
-            wrp.push('<div class="item-control-unit move-control"><span>'+feincms_gettext('Move to')+': </span><select name="item-move-select">');
+            wrp.push('<div class="item-control-unit move-control"><select name="item-move-select">');
+            wrp.push('<option disabled selected>' + feincms_gettext('Move to region:') + '</option>');
 
             for (var i=0; i < REGION_MAP.length; i++) {
                 if (i != target_region_id) { // Do not put the target region in the list
                     wrp.push('<option value="'+REGION_MAP[i]+'">'+REGION_NAMES[i]+'</option>');
                 }
             }
-            wrp.push('</select><input type="button" class="button" value="'+feincms_gettext('Move')+'" /></div>');
+            wrp.push('</select>');
 
             var move_control = $(wrp.join(""));
-            move_control.find(".button").click(function(){
-                var move_to = $(this).prev().val();
+            move_control.find("select").change(function(){
+                var move_to = $(this).val();
                 move_item(REGION_MAP.indexOf(move_to), item);
             });
-            control_units.append(move_control); // Add new one
+            item_controls.append(move_control); // Add new one
         }
-
-        // Controls animations
-        item_controls.find("*").hide();
-        var is_hidden = true;
-        var mouseenter_timeout;
-        var mouseleave_timeout;
-        function hide_controls() {
-            item_controls.find("*").fadeOut(400);
-            is_hidden = true;
-        }
-        function show_controls() {
-            item_controls.find("*").fadeIn(200);
-            is_hidden = false;
-        }
-        item_controls.unbind('mouseleave'); // Unbind in case it's already been bound.
-        item_controls.mouseleave(function() {
-            clearTimeout(mouseenter_timeout);
-            mouseleave_timeout = setTimeout(hide_controls, 200);
-        });
-        item_controls.unbind('mouseenter'); // Unbind in case it's already been bound.
-        item_controls.mouseenter(function() {
-            clearTimeout(mouseleave_timeout);
-            if (is_hidden) mouseenter_timeout = setTimeout(show_controls, 200); // To prevent the control bar to appear when mouse accidentally enters the zone.
-        });
     }
 
 
