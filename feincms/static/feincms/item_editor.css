@@ -108,21 +108,6 @@ textarea {
     width: auto;
 }
 
-.item-minimize {
-    width: 15px;
-    height:15px;
-    float: left;
-    cursor: pointer;
-    margin-left:-17px;
-}
-
-.item-minimize-disabled {
-    width: 15px;
-    height:15px;
-    float: left;
-    margin-left:-17px;
-}
-
 .item-controls {
     padding-left:27px;
     min-height: 56px;

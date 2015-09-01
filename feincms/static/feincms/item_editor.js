@@ -28,7 +28,7 @@
         if($('.delete', form).length || !$(original_id_id, form).val()) {
             wrp.push('<img class="item-delete" src="'+IMG_DELETELINK_PATH+'" />');
         }
-        wrp.push('<span class="handle"></span> <span class="modname">'+modname+'</span> &nbsp;(<span class="collapse">'+feincms_gettext('Hide')+'</span>)</h2>');
+        wrp.push('<span class="handle"></span> <span class="modname">'+modname+'</span></h2>');
         wrp.push('<div class="item-content"></div>');
         fieldset.append(wrp.join(""));
 
@@ -449,14 +449,6 @@
                   }
                 });
             }
-        });
-
-        $(document.body).on('click', 'h2 span.collapse', function() {
-            var node = this;
-            $(this.parentNode.parentNode).children('.item-content').slideToggle(function(){
-                $(node).text(feincms_gettext($(this).is(':visible') ? 'Hide' : 'Show'));
-            });
-            return false;
         });
 
         current_template = $('input[name=template_key][checked], select[name=template_key]').val();
