@@ -32,14 +32,18 @@
 .order-item {
     margin: 0;
     position:relative;
+
+}
+
+.order-item h2 {
+    background-image: url('img/arrow-move.png');
+    background-repeat: no-repeat;
+    background-position: 6px 9px;
 }
 
 .order-item .handle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    height: 24px;
+    display: inline-block;
+    height: 14px;
     width: 15px;
     cursor: move;
 }
