@@ -388,7 +388,7 @@
 
         $(document.body).on('click', 'h2 img.item-delete', function() {
             var item = $(this).parents(".order-item");
-            if (confirm(DELETE_MESSAGES[0])) {
+            if (confirm(DELETE_MESSAGE)) {
                 var in_database = item.find(".delete-field").length;
                 if(in_database==0){ // remove on client-side only
                     var id = item.find(".item-content > div").attr('id');
@@ -439,10 +439,10 @@
                 if(new_regions.indexOf(current_regions[i])==-1)
                     not_in_new.push(current_regions[i]);
 
-            var msg = CHANGE_TEMPLATE_MESSAGES[1];
+            var msg = CHANGE_TEMPLATE_MESSAGES[0];
 
             if(not_in_new.length) {
-                msg = interpolate(CHANGE_TEMPLATE_MESSAGES[2], {
+                msg = interpolate(CHANGE_TEMPLATE_MESSAGES[1], {
                     'source_regions': not_in_new,
                     'target_region': new_regions[0]
                 }, true);

@@ -1,14 +1,8 @@
 {% load i18n %}
 
 <script type="text/javascript" charset="utf-8">
-    DELETE_MESSAGES = [
-        "{% trans 'Really delete item?' %}",
-        "{% trans 'Confirm to delete item' %}",
-        "{% trans 'Item deleted successfully.' %}",
-        "{% trans 'Cannot delete item' %}",
-        "{% trans 'Cannot delete item, because it is parent of at least one other item.' %}"];
+    DELETE_MESSAGE = "{% trans 'Really delete item?' %}";
     CHANGE_TEMPLATE_MESSAGES = [
-        "{% trans 'Change template' %}",
         "{% trans 'Really change template? All changes are saved.' %}",
         "{% trans 'Really change template? All changes are saved and content from %(source_regions)s is moved to %(target_region)s.' %}"];
 
