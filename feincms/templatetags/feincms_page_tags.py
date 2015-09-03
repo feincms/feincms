@@ -47,7 +47,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
 
     page_class = _get_page_model()
 
-    if feincms_page is None:
+    if not feincms_page:
         return []
 
     if isinstance(feincms_page, HttpRequest):
