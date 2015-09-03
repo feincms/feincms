@@ -50,24 +50,6 @@ def post_process_fieldsets(fieldset):
     return fieldset
 
 
-@register.assignment_tag
-def is_popup_var():
-    """
-    Django 1.6 requires _popup=1 for raw id field popups, earlier versions
-    require pop=1.
-
-    The explicit version check is a bit ugly, but works well.
-
-    (Wrong parameters aren't simply ignored by django.contrib.admin, the
-    change list actively errors out by redirecting to ?e=1)
-    """
-    warnings.warn(
-        'Hardcode _popup=1 instead of using is_popup_var.',
-        DeprecationWarning, stacklevel=2)
-
-    return '_popup=1'
-
-
 @register.inclusion_tag('admin/feincms/content_type_selection_widget.html',
                         takes_context=True)
 def show_content_type_selection_widget(context, region):

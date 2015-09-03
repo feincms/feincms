@@ -84,10 +84,7 @@ def ensure_completely_loaded(force=False):
         # on a model validation error (Django 1.4 doesn't exhibit this
         # problem).  See Issue #323 on github.
         if hasattr(apps, 'cache'):
-            try:
-                apps.cache.get_models.cache_clear()  # Django 1.7+
-            except AttributeError:
-                apps.cache._get_models_cache.clear()  # Django 1.6-
+            apps.cache.get_models.cache_clear()
 
     if apps.ready:
         COMPLETELY_LOADED = True

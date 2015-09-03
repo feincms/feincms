@@ -236,19 +236,4 @@ class MediaFileAdmin(ExtensionModelAdmin):
         return super(MediaFileAdmin, self).save_model(
             request, obj, form, change)
 
-    def to_field_allowed(self, request, to_field):
-        """
-        This is a workaround for issue #552 which will raise a security
-        exception in the media select popup with django 1.6.6+.
-        According to the release notes, this should be fixed by the
-        yet (2014-09-22) unreleased 1.6.8, 1.5.11.
-
-        Details: https://code.djangoproject.com/ticket/23329#comment:11
-        """
-
-        if to_field == 'id':
-            return True
-
-        return super(MediaFileAdmin, self).to_field_allowed(request, to_field)
-
 # ------------------------------------------------------------------------
