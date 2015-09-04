@@ -1,8 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
-VERSION = (2, 0, 'a', 4)
+VERSION = (2, 0, 'a', 5)
 # __version__ = '.'.join(map(str, VERSION))
-__version__ = '2.0a4'
+__version__ = '2.0a5'
 
 
 class LazySettings(object):
