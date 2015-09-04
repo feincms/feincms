@@ -7,8 +7,8 @@ from django.contrib.auth import get_permission_codename
 register = template.Library()
 
 
-@register.filter
-def post_process_fieldsets(fieldset):
+@register.simple_tag(takes_context=True)
+def post_process_fieldsets(context, fieldset):
     """
     Removes a few fields from FeinCMS admin inlines, those being
     ``id``, ``DELETE`` and ``ORDER`` currently.
@@ -43,6 +43,14 @@ def post_process_fieldsets(fieldset):
     # the end of the fieldset
     for f in fields_to_include:
         new_fields.append(f)
+
+    if context.get('request'):
+        new_fields.extend(list(
+            fieldset.model_admin.get_readonly_fields(
+                context.get('request'),
+                context.get('original'),
+            )
+        ))
 
     fieldset.fields = new_fields
     return fieldset

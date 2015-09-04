@@ -12,7 +12,8 @@
   </h3>
   {% if inline_admin_form.form.non_field_errors %}{{ inline_admin_form.form.non_field_errors }}{% endif %}
   {% for fieldset in inline_admin_form %}
-    {% include "admin/includes/fieldset.html" with fieldset=fieldset|post_process_fieldsets %}
+    {% post_process_fieldsets fieldset %}
+    {% include "admin/includes/fieldset.html" %}
   {% endfor %}
   {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
   {{ inline_admin_form.fk_field.field }}
