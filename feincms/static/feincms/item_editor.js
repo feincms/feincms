@@ -54,7 +54,6 @@
         // Insert control unit
         var insert_control = $("<div>").addClass("item-control-unit");
         var select_content = SELECTS[REGION_MAP[target_region_id]].clone();
-        select_content.prepend('<option disabled selected>' + feincms_gettext('Insert new content:') + '</option>');
 
         select_content.change(function() {
             var modvar = select_content.val();
@@ -62,6 +61,8 @@
             var new_fieldset = create_new_fieldset_from_module(modvar, modname);
             add_fieldset(target_region_id, new_fieldset, {where:'insertBefore', relative_to:item, animate:true});
             update_item_controls(new_fieldset, target_region_id);
+
+            select_content.val('');
         });
         insert_control.append(select_content);
         item_controls.append(insert_control);
@@ -252,6 +253,21 @@
             var $select = $('select[name=order-machine-add-select]', this),
                 to_remove = [];
 
+            $select.change(function() {
+                var modvar = $select.val();
+                // bail out early if no content type selected
+                if (!modvar)
+                    return;
+
+                var modname = $select.find("option:selected").html();
+                var new_fieldset = create_new_fieldset_from_module(modvar, modname);
+                add_fieldset(ACTIVE_REGION, new_fieldset, {where:'append', animate:true});
+                update_item_controls(new_fieldset, ACTIVE_REGION);
+
+                $select.val('');
+            });
+
+
             for (var i=0; i<CONTENT_TYPE_BUTTONS.length; i++) {
                 var c = CONTENT_TYPE_BUTTONS[i],
                     $option = $select.find('option[value=' + c.type + ']');
@@ -371,20 +387,6 @@
 
         // save content type selects for later use
         save_content_type_selects();
-
-        $("input.order-machine-add-button").click(function(){
-            var select_content = $(this).prev();
-            var modvar = select_content.val();
-
-            // bail out early if no content type selected
-            if (!modvar)
-                return;
-
-            var modname = select_content.find("option:selected").html();
-            var new_fieldset = create_new_fieldset_from_module(modvar, modname);
-            add_fieldset(ACTIVE_REGION, new_fieldset, {where:'append', animate:true});
-            update_item_controls(new_fieldset, ACTIVE_REGION);
-        });
 
         $(document.body).on('click', 'h2 img.item-delete', function() {
             var item = $(this).parents(".order-item");

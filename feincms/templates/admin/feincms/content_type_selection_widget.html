@@ -1,4 +1,6 @@
+{% load i18n %}
 <select name="order-machine-add-select">
+  <option selected value>{% trans 'Insert new content:' %}</option>
     {% for v,n in ungrouped %}<option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
     {% for label,cts in grouped.items %}
         <optgroup label="{{ label }}">
