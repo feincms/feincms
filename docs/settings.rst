@@ -11,13 +11,6 @@ FeinCMS reads the settings from :mod:`feincms.settings` -- values should be
 overridden by placing them in your project's settings.
 
 
-Content type specific settings
-==============================
-
-``FEINCMS_UPLOAD_PREFIX``: Defaults to ``''``. Defines a prefix which is used
-for file and image content uploads (not used by the media library).
-
-
 Media library settings
 ======================
 
