@@ -46,15 +46,6 @@ FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(
 )
 
 # ------------------------------------------------------------------------
-# Admin media settings
-
-#: avoid jQuery conflicts -- scripts should use feincms.jQuery instead of $
-FEINCMS_JQUERY_NO_CONFLICT = getattr(
-    settings,
-    'FEINCMS_JQUERY_NO_CONFLICT',
-    False)
-
-# ------------------------------------------------------------------------
 # Settings for the page module
 
 #: Include ancestors in filtered tree editor lists

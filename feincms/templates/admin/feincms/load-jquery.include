@@ -8,11 +8,5 @@ or load more plugins or whatnot
 <script type="text/javascript" src="{% static 'feincms/jquery-ui-1.10.3.custom.min.js' %}"></script>
 
 <script type="text/javascript">
-    var feincms = {
-        {% if FEINCMS_JQUERY_NO_CONFLICT %}
-        "jQuery": jQuery.noConflict(true)
-        {% else %}
-        "jQuery": jQuery
-        {% endif %}
-    };
+var feincms = {jQuery: jQuery.noConflict(true)};
 </script>

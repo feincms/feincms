@@ -45,16 +45,6 @@ which is passed to the template mentioned above. Please refer to the templates
 directly to see all available variables.
 
 
-Admin media settings
-====================
-
-``FEINCMS_JQUERY_NO_CONFLICT``: Defaults to ``False``. Django admin's jQuery is
-not available as ``$`` or ``jQuery`` in the browser, but only as
-``django.jQuery``. FeinCMS' jQuery can be made available only as
-``feincms.jQuery`` by setting this variable to ``True``. Scripts should use
-``feincms.jQuery`` anyway.
-
-
 Settings for the tree editor
 ============================
 

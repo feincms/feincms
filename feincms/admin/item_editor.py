@@ -139,7 +139,6 @@ class ItemEditor(ExtensionModelAdmin):
                 self.model, '_feincms_templates', ()),
             'has_parent_attribute': hasattr(self.model, 'parent'),
             'content_types': self.get_content_type_map(request),
-            'FEINCMS_JQUERY_NO_CONFLICT': settings.FEINCMS_JQUERY_NO_CONFLICT,
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         }
 
