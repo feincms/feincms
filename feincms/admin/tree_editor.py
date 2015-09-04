@@ -320,17 +320,6 @@ class TreeEditor(ExtensionModelAdmin):
                     result_func = _fn(attr)
                 self._ajax_editable_booleans[attr] = result_func
 
-    def _refresh_changelist_caches(self):
-        """
-        Refresh information used to show the changelist tree structure such as
-        inherited active/inactive states etc.
-
-        XXX: This is somewhat hacky, but since it's an internal method, so be
-        it.
-        """
-
-        pass
-
     def _toggle_boolean(self, request):
         """
         Handle an AJAX toggle_boolean request
@@ -376,9 +365,6 @@ class TreeEditor(ExtensionModelAdmin):
             setattr(obj, attr, new_state)
             obj.save()
 
-            # ???: Perhaps better a post_save signal?
-            self._refresh_changelist_caches()
-
             # Construct html snippets to send back to client for status update
             data = self._ajax_editable_booleans[attr](self, obj)
 
@@ -416,8 +402,6 @@ class TreeEditor(ExtensionModelAdmin):
                 return self._move_node(request)
 
             return HttpResponseBadRequest('Oops. AJAX request not understood.')
-
-        self._refresh_changelist_caches()
 
         extra_context = extra_context or {}
         extra_context['tree_structure'] = mark_safe(
