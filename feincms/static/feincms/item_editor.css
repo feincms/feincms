@@ -26,11 +26,11 @@
 .panel {
      display:none;
      position:relative;
-     padding-bottom: 87px;
+     padding-bottom: 77px;
 }
 
 .order-item {
-    margin: 0;
+    margin: 0 0 10px 0;
     position:relative;
 
 }
