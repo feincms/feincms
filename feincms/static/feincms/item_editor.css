@@ -225,6 +225,15 @@ div.order-machine div.inline-related > h3{
     display: none;
 }
 
+#extension_options_wrapper {
+  border-bottom: 1px solid #eee;
+}
+
+#extension_options>.module.aligned {
+  border-top: 1px solid #eee;
+  margin-bottom: -1px;
+}
+
 
 /* various overrides */
 #id_redirect_to { width: 20em; } /* raw_id_fields act-a-like for redirect_to */
@@ -267,4 +276,3 @@ div.order-machine div.inline-related > h3{
 #suit-center .order-machine .order-item {
     margin-top: 10px;
 }
-
