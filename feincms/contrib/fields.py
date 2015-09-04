@@ -45,8 +45,8 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
 
         if isinstance(value, dict):
             return value
-        elif (isinstance(value, six.string_types)
-                or isinstance(value, six.binary_type)):
+        elif (isinstance(value, six.string_types) or
+                isinstance(value, six.binary_type)):
             # Avoid asking the JSON decoder to handle empty values:
             if not value:
                 return {}

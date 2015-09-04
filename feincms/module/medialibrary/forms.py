@@ -6,7 +6,6 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
-import django
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 

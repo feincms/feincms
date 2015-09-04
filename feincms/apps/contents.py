@@ -220,10 +220,11 @@ class ApplicationContent(models.Model):
             mimetype = mimetype.split(';')[0]
         mimetype = mimetype.strip()
 
-        return (response.status_code != 200
-                or request.is_ajax()
-                or getattr(response, 'standalone', False)
-                or mimetype not in ('text/html', 'text/plain'))
+        return (
+            response.status_code != 200 or
+            request.is_ajax() or
+            getattr(response, 'standalone', False) or
+            mimetype not in ('text/html', 'text/plain'))
 
     def unpack(self, request, response):
         return getattr(response, '_feincms_unpack', False)

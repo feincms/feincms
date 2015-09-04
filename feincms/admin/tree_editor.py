@@ -188,10 +188,9 @@ class ChangeList(main.ChangeList):
                 # Note: Django ORM is smart enough to drop additional
                 # clauses if the initial query set is unfiltered. This
                 # is good.
-                self.queryset = (
-                    self.queryset
-                    | self.model._default_manager.filter(
-                        reduce(lambda p, q: p | q, clauses)))
+                self.queryset |= self.model._default_manager.filter(
+                    reduce(lambda p, q: p | q, clauses),
+                )
 
         super(ChangeList, self).get_results(request)
 
@@ -202,8 +201,8 @@ class ChangeList(main.ChangeList):
                 request, item)
 
             item.feincms_addable = (
-                item.feincms_changeable
-                and self.model_admin.has_add_permission(request, item))
+                item.feincms_changeable and
+                self.model_admin.has_add_permission(request, item))
 
 
 # ------------------------------------------------------------------------

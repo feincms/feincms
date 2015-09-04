@@ -82,11 +82,10 @@ class PageSitemap(Sitemap):
                     cnt = 0
                     for p in page.extended_navigation():
                         depth_too_deep = (
-                            self.depth_cutoff > 0
-                            and p.level > self.depth_cutoff)
+                            self.depth_cutoff > 0 and
+                            p.level > self.depth_cutoff)
                         not_in_nav = (
-                            self.navigation_only
-                            and not p.in_navigation)
+                            self.navigation_only and not p.in_navigation)
                         if depth_too_deep or not_in_nav:
                             continue
                         cnt += 1

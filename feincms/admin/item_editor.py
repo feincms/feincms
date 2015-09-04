@@ -14,7 +14,7 @@ from django.contrib.admin.utils import unquote
 from django.contrib.auth import get_permission_codename
 from django.http import Http404
 
-from feincms import settings, ensure_completely_loaded
+from feincms import ensure_completely_loaded
 from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
 

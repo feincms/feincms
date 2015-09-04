@@ -48,8 +48,8 @@ def copy_model_instance(obj, exclude=None):
     exclude = exclude or ()
     initial = dict(
         (f.name, getattr(obj, f.name)) for f in obj._meta.fields
-        if not isinstance(f, AutoField) and f.name not in exclude
-        and f not in obj._meta.parents.values())
+        if not isinstance(f, AutoField) and f.name not in exclude and
+        f not in obj._meta.parents.values())
     return obj.__class__(**initial)
 
 
@@ -64,13 +64,13 @@ def shorten_string(str, max_length=50, ellipsis=' … '):
     if len(str) >= max_length:
         first_part = int(max_length * 0.6)
         next_space = str[first_part:(max_length // 2 - first_part)].find(' ')
-        if (next_space >= 0
-                and first_part + next_space + len(ellipsis) < max_length):
+        if (next_space >= 0 and
+                first_part + next_space + len(ellipsis) < max_length):
             first_part += next_space
         return (
-            str[:first_part]
-            + ellipsis
-            + str[-(max_length - first_part - len(ellipsis)):])
+            str[:first_part] +
+            ellipsis +
+            str[-(max_length - first_part - len(ellipsis)):])
     return str
 
 

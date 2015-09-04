@@ -145,8 +145,8 @@ def lookup_translations(language_code=None):
     def _process(candidates, instance_dict, lang_, op_):
         candidates = candidates.filter(
             Q(parent__pk__in=instance_dict.keys()),
-            Q(**{'language_code__' + op_: lang_})
-            | Q(**{'language_code__' + op_: short_language_code(lang_)})
+            Q(**{'language_code__' + op_: lang_}) |
+            Q(**{'language_code__' + op_: short_language_code(lang_)})
         ).order_by('-language_code')
 
         for candidate in candidates:
@@ -181,14 +181,14 @@ class TranslatedObjectMixin(object):
     def _get_translation_object(self, queryset, language_code):
         try:
             return queryset.filter(
-                Q(language_code__iexact=language_code)
-                | Q(language_code__iexact=short_language_code(language_code))
+                Q(language_code__iexact=language_code) |
+                Q(language_code__iexact=short_language_code(language_code))
             ).order_by('-language_code')[0]
         except IndexError:
             try:
                 return queryset.filter(
-                    Q(language_code__istartswith=settings.LANGUAGE_CODE)
-                    | Q(language_code__istartswith=short_language_code(
+                    Q(language_code__istartswith=settings.LANGUAGE_CODE) |
+                    Q(language_code__istartswith=short_language_code(
                         settings.LANGUAGE_CODE))
                 ).order_by('-language_code')[0]
             except IndexError:
@@ -203,8 +203,8 @@ class TranslatedObjectMixin(object):
         if not language_code:
             language_code = translation.get_language()
         return (
-            ('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0))
-            + '-'.join(
+            ('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
+            '-'.join(
                 ['%s' % s for s in (
                     self._meta.db_table,
                     self.id,

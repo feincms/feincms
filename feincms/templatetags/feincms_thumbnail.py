@@ -74,8 +74,8 @@ class Thumbnailer(object):
         else:
             try:
                 generate = (
-                    storage.modified_time(miniature)
-                    < storage.modified_time(filename))
+                    storage.modified_time(miniature) <
+                    storage.modified_time(filename))
             except (NotImplementedError, AttributeError):
                 # storage does NOT support modified_time
                 generate = False

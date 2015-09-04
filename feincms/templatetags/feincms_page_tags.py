@@ -479,10 +479,12 @@ def siblings_along_path_to(page_list, page2):
                 ancestors = (p,)
 
             siblings = [
-                a_page for a_page in page_list
-                if a_page.parent_id == page2.id
-                or a_page.level == top_level
-                or any((_is_sibling_of(a_page, a) for a in ancestors))]
+                a_page for a_page in page_list if (
+                    a_page.parent_id == page2.id or
+                    a_page.level == top_level or
+                    any((_is_sibling_of(a_page, a) for a in ancestors))
+                )
+            ]
 
             return siblings
         except (AttributeError, ValueError) as e:

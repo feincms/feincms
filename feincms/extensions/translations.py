@@ -43,8 +43,8 @@ def user_has_language_set(request):
     This is taken later on as an indication that we should not mess with the
     site's language settings, after all, the user's decision is what counts.
     """
-    if (hasattr(request, 'session')
-            and request.session.get(LANGUAGE_COOKIE_NAME) is not None):
+    if (hasattr(request, 'session') and
+            request.session.get(LANGUAGE_COOKIE_NAME) is not None):
         return True
     if LANGUAGE_COOKIE_NAME in request.COOKIES:
         return True

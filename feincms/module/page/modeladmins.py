@@ -156,14 +156,14 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     def response_add(self, request, obj, *args, **kwargs):
         response = super(PageAdmin, self).response_add(
             request, obj, *args, **kwargs)
-        if ('parent' in request.GET
-                and '_addanother' in request.POST
-                and response.status_code in (301, 302)):
+        if ('parent' in request.GET and
+                '_addanother' in request.POST and
+                response.status_code in (301, 302)):
             # Preserve GET parameters if we are about to add another page
             response['Location'] += '?parent=%s' % request.GET['parent']
 
-        if ('translation_of' in request.GET
-                and '_copy_content_from_original' in request.POST):
+        if ('translation_of' in request.GET and
+                '_copy_content_from_original' in request.POST):
             # Copy all contents
             for content_type in obj._feincms_content_types:
                 if content_type.objects.filter(parent=obj).exists():

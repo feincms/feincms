@@ -104,8 +104,8 @@ class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
 
 def navigation_extension_choices():
     for ext in NavigationExtension.types:
-        if (issubclass(ext, NavigationExtension)
-                and ext is not NavigationExtension):
+        if (issubclass(ext, NavigationExtension) and
+                ext is not NavigationExtension):
             yield ('%s.%s' % (ext.__module__, ext.__name__), ext.name)
 
 
@@ -133,8 +133,8 @@ class Extension(extensions.Extension):
                 ('%s.%s' % (ext.__module__, ext.__name__), ext)
                 for ext in NavigationExtension.types
                 if (
-                    issubclass(ext, NavigationExtension)
-                    and ext is not NavigationExtension))
+                    issubclass(ext, NavigationExtension) and
+                    ext is not NavigationExtension))
 
         else:
             return OrderedDict(

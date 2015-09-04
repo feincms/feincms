@@ -727,8 +727,8 @@ def create_base_model(inherit_from=models.Model):
                 concrete_type = Page.content_type_for(VideoContent)
             """
 
-            if (not hasattr(cls, '_feincms_content_types')
-                    or not cls._feincms_content_types):
+            if (not hasattr(cls, '_feincms_content_types') or
+                    not cls._feincms_content_types):
                 return None
 
             for type in cls._feincms_content_types:
@@ -754,9 +754,7 @@ def create_base_model(inherit_from=models.Model):
 
             # Check whether any content types have been created for this base
             # class
-            if (
-                    not hasattr(cls, '_feincms_content_types')
-                    or not cls._feincms_content_types):
+            if not getattr(cls, '_feincms_content_types', None):
                 raise ImproperlyConfigured(
                     'You need to create at least one'
                     ' content type for the %s model.' % cls.__name__)
