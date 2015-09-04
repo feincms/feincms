@@ -26,7 +26,7 @@
 .panel {
      display:none;
      position:relative;
-     padding-bottom: 77px;
+     padding-bottom: 39px;
 }
 
 .order-item {
@@ -123,7 +123,6 @@ textarea {
 }
 
 .machine-control {
-    height:70px;
     padding: 5px 10px 5px 10px;
     border: 1px solid #ccc;
     background-color: #edf3fe;
@@ -134,7 +133,7 @@ textarea {
 
     background: #f8f8f8;
     border: 1px solid #eee;
-    height: 95px;
+    height: 55px;
 }
 
 .machine-control .button {
@@ -144,12 +143,8 @@ textarea {
 
 .control-unit {
     float:left;
-    padding-left: 5px;
-    padding-right:20px;
+    padding: 0 20px 0 5px;
     border-left: 1px solid #eee;
-
-    padding-bottom: 10px;
-    padding-top: 12px;
 }
 
 .control-unit:first-child {
@@ -166,7 +161,7 @@ a.actionbutton {
     width:50px;
     height:50px;
     float:left;
-    margin: 5px 20px 0 0;
+    margin: 5px 0 0 20px;
     text-indent:-7000px;
 }
 
@@ -188,10 +183,10 @@ a.pdfcontent:hover { background-position: -210px -70px; }
 a.audiocontent { background: url(img/contenttypes.png) no-repeat -350px 0; }
 a.audiocontent:hover { background-position: -350px -70px; }
 
-.control-unit select,
-.control-unit input {
+.control-unit select {
+    float: left;
     position: relative;
-    top: 15px;
+    top: 13px;
 }
 
 .empty-machine-msg {

@@ -71,7 +71,7 @@
         if (REGION_MAP.length > 1) {
             var wrp = [];
             wrp.push('<div class="item-control-unit move-control"><select name="item-move-select">');
-            wrp.push('<option disabled selected>' + feincms_gettext('Move to region:') + '</option>');
+            wrp.push('<option disabled selected>' + feincms_gettext('MOVE_TO_REGION') + '</option>');
 
             for (var i=0; i < REGION_MAP.length; i++) {
                 if (i != target_region_id) { // Do not put the target region in the list
@@ -296,7 +296,7 @@
                     };
                 })(c));
 
-                $select.before($button);
+                $select.parent().append($button);
 
                 if (!c.keep)
                     to_remove.push($option);
