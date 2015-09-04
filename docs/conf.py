@@ -38,7 +38,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'FeinCMS'
-copyright = u'2009-2010, Feinheit GmbH and contributors'
+copyright = u'2009-2015, Feinheit GmbH and contributors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
