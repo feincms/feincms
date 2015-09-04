@@ -223,10 +223,6 @@ class ItemEditor(ExtensionModelAdmin):
 
     @property
     def change_form_template(self):
-        return self.get_template_list()
-
-    def get_template_list(self):
-        # retained for backwards-compatibility, change_form_template wraps it
         opts = self.model._meta
         return [
             'admin/feincms/%s/%s/item_editor.html' % (
