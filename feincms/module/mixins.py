@@ -61,11 +61,6 @@ class ContentModelMixin(object):
         "See app_label"
         return self.__class__.__name__.lower()
 
-    @property
-    def module_name(self):
-        "See app_label"
-        return self.__class__.__name__.lower()
-
 
 class ContentObjectMixin(TemplateResponseMixin):
     """
