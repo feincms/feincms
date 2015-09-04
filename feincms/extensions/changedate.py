@@ -8,10 +8,12 @@ Track the modification date for objects.
 from __future__ import absolute_import, unicode_literals
 
 from email.utils import parsedate_tz, mktime_tz
+from time import mktime
 
 from django.db import models
 from django.db.models.signals import pre_save
 from django.utils import timezone
+from django.utils.http import http_date
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
@@ -31,7 +33,6 @@ def pre_save_handler(sender, instance, **kwargs):
 
 # ------------------------------------------------------------------------
 def dt_to_utc_timestamp(dt):
-    from time import mktime
     return int(mktime(dt.timetuple()))
 
 
@@ -49,8 +50,6 @@ class Extension(extensions.Extension):
 
 # ------------------------------------------------------------------------
 def last_modified_response_processor(page, request, response):
-    from django.utils.http import http_date
-
     # Don't include Last-Modified if we don't want to be cached
     if "no-cache" in response.get('Cache-Control', ''):
         return
