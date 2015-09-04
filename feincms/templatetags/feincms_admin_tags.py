@@ -53,7 +53,7 @@ def post_process_fieldsets(context, fieldset):
         ))
 
     fieldset.fields = new_fields
-    return fieldset
+    return ''
 
 
 @register.inclusion_tag('admin/feincms/content_type_selection_widget.html',
