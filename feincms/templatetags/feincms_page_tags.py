@@ -16,8 +16,6 @@ from django.http import HttpRequest
 from feincms import settings as feincms_settings
 from feincms.module.page.extensions.navigation import PagePretender
 from feincms.utils.templatetags import (
-    SimpleNodeWithVarAndArgs,
-    do_simple_node_with_var_and_args_helper,
     SimpleAssignmentNodeWithVarAndArgs,
     do_simple_assignment_node_with_var_and_args_helper)
 
@@ -165,30 +163,6 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
     # Return a list, not a generator so that it can be consumed
     # several times in a template.
     return list(queryset)
-
-
-# ------------------------------------------------------------------------
-class ParentLinkNode(SimpleNodeWithVarAndArgs):
-    """
-    {% feincms_parentlink of feincms_page level=1 %}
-    """
-
-    def what(self, page, args):
-        level = int(args.get('level', 1))
-
-        if page.level + 1 == level:
-            return page.get_absolute_url()
-        elif page.level + 1 < level:
-            return '#'
-
-        try:
-            return page.get_ancestors()[level - 1].get_absolute_url()
-        except IndexError:
-            return '#'
-
-register.tag(
-    'feincms_parentlink',
-    do_simple_node_with_var_and_args_helper(ParentLinkNode))
 
 
 # ------------------------------------------------------------------------
