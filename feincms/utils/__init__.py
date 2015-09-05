@@ -4,16 +4,12 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-from hashlib import md5
 from importlib import import_module
-import warnings
 
 from django.apps import apps
-from django.conf import settings as django_settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import AutoField
 from django.utils import six
-from django.utils.encoding import iri_to_uri
 
 from feincms import settings
 
@@ -72,37 +68,6 @@ def shorten_string(str, max_length=50, ellipsis=' … '):
             ellipsis +
             str[-(max_length - first_part - len(ellipsis)):])
     return str
-
-
-# ------------------------------------------------------------------------
-def path_to_cache_key(path, max_length=200, prefix=""):
-    """
-    Convert a string (path) into something that can be fed to django's
-    cache mechanism as cache key. Ensure the string stays below the
-    max key size, so if too long, hash it and use that instead.
-    """
-
-    warnings.warn(
-        'path_to_cache_key will be removed, copy the implementation'
-        ' somewhere else if you really need it.',
-        DeprecationWarning)
-
-    path = iri_to_uri(path)
-
-    # logic below borrowed from
-    # http://richwklein.com/2009/08/04/improving-django-cache-part-ii/
-    # via acdha's django-sugar
-    if len(path) > max_length:
-        m = md5()
-        m.update(path)
-        path = m.hexdigest() + '-' + path[:max_length - 20]
-
-    cache_key = 'FEINCMS:%d:%s:%s' % (
-        getattr(django_settings, 'SITE_ID', 0),
-        prefix,
-        path,
-    )
-    return cache_key
 
 
 # ------------------------------------------------------------------------
