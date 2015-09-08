@@ -13,21 +13,20 @@
 <script type="text/javascript" src="{% static 'feincms/ie_compat.js' %}"></script>
 <script type="text/javascript" src="{% static 'feincms/js.cookie.js' %}"></script>
 <script type="text/javascript" src="{% static 'feincms/tree_editor.js' %}"></script>
-
 {% endblock %}
 
 
 {% block filters %}
-	<div id="changelist-filter">
-		<h2>{% trans 'Shortcuts' %}</h2>
-		<ul>
-			<li><a id="collapse_entire_tree" href="#">{% trans 'Collapse tree' %}</a></li>
-			<li><a id="open_entire_tree" href="#">{% trans 'Expand tree' %}</a></li>
-		</ul>
+  <div id="changelist-filter">
+    <h2>{% trans 'Shortcuts' %}</h2>
+    <ul>
+      <li><a id="collapse_entire_tree" href="#">{% trans 'Collapse tree' %}</a></li>
+      <li><a id="open_entire_tree" href="#">{% trans 'Expand tree' %}</a></li>
+    </ul>
 
-		{% if cl.filter_specs %}
-			<h2>{% trans 'Filter' %}</h2>
-			{% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
-		{% endif %}
-	</div>
+    {% if cl.filter_specs %}
+      <h2>{% trans 'Filter' %}</h2>
+      {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+    {% endif %}
+  </div>
 {% endblock %}
