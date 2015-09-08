@@ -7,11 +7,11 @@
 
 {% include "admin/feincms/load-jquery.include" %}
 <script type="text/javascript">
-	feincms.tree_structure = {{ tree_structure|default:"null" }};
+  feincms.tree_structure = {{ tree_structure|default:"null" }};
 </script>
 
 <script type="text/javascript" src="{% static 'feincms/ie_compat.js' %}"></script>
-<script type="text/javascript" src="{% static 'feincms/jquery.cookie.js' %}"></script>
+<script type="text/javascript" src="{% static 'feincms/js.cookie.js' %}"></script>
 <script type="text/javascript" src="{% static 'feincms/tree_editor.js' %}"></script>
 
 {% endblock %}

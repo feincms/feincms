@@ -7,7 +7,7 @@ feincms.jQuery.ajaxSetup({
     crossDomain: false,  // obviates need for sameOrigin test
     beforeSend: function(xhr, settings) {
         if (!(/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type))) {
-            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
         }
     }
 });
@@ -270,19 +270,14 @@ feincms.jQuery(function($){
        the current state of the tree so we can restore it on a reload.
        Note: We might use html5's session storage? */
     function storeCollapsedNodes(nodes) {
-        $.cookie('feincms_collapsed_nodes', "[" + nodes.join(",") + "]", { expires: 7 });
+        Cookies.set(
+            'feincms_collapsed_nodes',
+            nodes,
+            {expires: 7});
     }
 
     function retrieveCollapsedNodes() {
-        var n = $.cookie('feincms_collapsed_nodes');
-        if(n != null) {
-            try {
-                n = $.parseJSON(n);
-            } catch(e) {
-                n = null;
-            }
-        }
-        return n;
+        return Cookies.getJSON('feincms_collapsed_nodes');
     }
 
     function expandOrCollapseNode(item) {
