@@ -12,7 +12,13 @@ from feincms import extensions
 
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('featured', models.BooleanField(_('featured')))
+        self.model.add_to_class(
+            'featured',
+            models.BooleanField(
+                _('featured'),
+                default=False,
+            ),
+        )
 
     def handle_modeladmin(self, modeladmin):
         modeladmin.add_extension_options(_('Featured'), {
