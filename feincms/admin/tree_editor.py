@@ -64,29 +64,17 @@ def _build_tree_structure(queryset):
     all_nodes = {}
 
     mptt_opts = queryset.model._mptt_meta
-    items = queryset.order_by(
+    items = queryset.exclude(
+        parent_id=None,
+    ).order_by(
         mptt_opts.tree_id_attr,
-        mptt_opts.left_attr)
-    values_list = items.values_list(
+        mptt_opts.left_attr,
+    ).values_list(
         "pk",
-        "%s_id" % mptt_opts.parent_attr)
-    for p_id, parent_id in values_list:
-        all_nodes[p_id] = []
-
-        if parent_id:
-            if parent_id not in all_nodes:
-                # This happens very rarely, but protect against parents that
-                # we have yet to iteratove over. Happens with broken MPTT
-                # hierarchy.
-                all_nodes[parent_id] = []
-                logger.warn(
-                    "Incorrect MPTT hierarchy for %s, node %d has left_attr"
-                    " < than one of its parents. Try rebuilding mptt data (use"
-                    " '%s._default_manager.rebuild()').",
-                    queryset.model.__name__, p_id, queryset.model.__name__)
-
-            all_nodes[parent_id].append(p_id)
-
+        "%s_id" % mptt_opts.parent_attr,
+    )
+    for p_id, parent_id in items:
+        all_nodes.setdefault(str(parent_id), []).append(p_id)
     return all_nodes
 
 

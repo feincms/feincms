@@ -86,7 +86,7 @@ feincms.jQuery(function($){
 
     // toggle children
     function doToggle(id, show) {
-        var children = feincms.tree_structure[id];
+        var children = feincms.tree_structure[id] || [];
         for (var i=0; i<children.length; ++i) {
             var childId = children[i];
             if(show) {
@@ -120,7 +120,7 @@ feincms.jQuery(function($){
             // adds 'children' class to all parents
             var pageId = extractItemId($('.page_marker', el).attr('id'));
             $(el).attr('id', 'item-' + pageId);
-            if (feincms.tree_structure[pageId].length) {
+            if ((feincms.tree_structure[pageId] || []).length) {
                     $('.page_marker', el).addClass('children');
             }
 
