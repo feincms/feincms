@@ -1,5 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
+from collections import OrderedDict
+
 from django import template
 from django.contrib.auth import get_permission_codename
 
@@ -62,31 +64,20 @@ def show_content_type_selection_widget(context, region):
     """
     {% show_content_type_selection_widget region %}
     """
-    if 'request' in context:
-        user = context['request'].user
-    elif 'user' in context:
-        user = context['user']
-    else:
-        user = None
+    user = context['request'].user
+    types = OrderedDict((None, []))
 
-    grouped = {}
-    ungrouped = []
+    for ct in region._content_types:
+        # Skip cts that we shouldn't be adding anyway
+        opts = ct._meta
+        perm = opts.app_label + "." + get_permission_codename('add', opts)
+        if not user.has_perm(perm):
+            continue
 
-    if user:
-        for ct in region._content_types:
-            # Skip cts that we shouldn't be adding anyway
-            opts = ct._meta
-            perm = opts.app_label + "." + get_permission_codename('add', opts)
-            if not user.has_perm(perm):
-                continue
+        ct_info = (ct.__name__.lower(), ct._meta.verbose_name)
+        types.setdefault(
+            getattr(ct, 'optgroup', None),
+            [],
+        ).append((ct.__name__.lower, ct._meta.verbose_name))
 
-            ct_info = (ct.__name__.lower(), ct._meta.verbose_name)
-            if hasattr(ct, 'optgroup'):
-                if ct.optgroup in grouped:
-                    grouped[ct.optgroup].append(ct_info)
-                else:
-                    grouped[ct.optgroup] = [ct_info]
-            else:
-                ungrouped.append(ct_info)
-
-    return {'grouped': grouped, 'ungrouped': ungrouped}
+    return {'types': types}

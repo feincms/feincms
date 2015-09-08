@@ -134,6 +134,7 @@ class ItemEditor(ExtensionModelAdmin):
         """ Return extra context parameters for add/change views. """
 
         extra_context = {
+            'request': request,
             'model': self.model,
             'available_templates': getattr(
                 self.model, '_feincms_templates', ()),

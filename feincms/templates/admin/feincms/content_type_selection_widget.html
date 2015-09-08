@@ -1,10 +1,11 @@
 {% load i18n %}
 <select name="order-machine-add-select">
   <option selected value>{% trans 'Insert new content:' %}</option>
-    {% for v,n in ungrouped %}<option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
-    {% for label,cts in grouped.items %}
-        <optgroup label="{{ label }}">
-        {% for v,n in cts %}<option value="{{ v }}">{{ n|capfirst }}</option> {% endfor %}
-        </optgroup>
-    {% endfor %}
+  {% for group, cts in types.items %}
+    {% if group %}<optgroup label="{{ group }}">{% endif %}
+      {% for v, n in cts %}
+        <option value="{{ v }}">{{ n|capfirst }}</option>
+      {% endfor %}
+    {% if group %}</optgroup>{% endif %}
+  {% endfor %}
 </select>
