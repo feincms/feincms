@@ -256,12 +256,15 @@ class Extension(extensions.Extension):
         def available_translations_admin(self, page):
             # Do not use available_translations() because we don't care
             # whether pages are active or not here.
-            if is_primary_language(page.language):
-                translations = page.translations.all()
-            else:
-                translations = page.translation_of.translations.all()
-
-            translations = {p.language: p.id for p in translations}
+            translations = [page]
+            translations.extend(page.translations.all())
+            if page.translation_of:
+                translations.append(page.translation_of)
+                translations.extend(page.translation_of.translations.all())
+            translations = {
+                p.language: p.id
+                for p in translations
+            }
 
             links = []
 
