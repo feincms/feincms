@@ -65,7 +65,7 @@ def show_content_type_selection_widget(context, region):
     {% show_content_type_selection_widget region %}
     """
     user = context['request'].user
-    types = OrderedDict((None, []))
+    types = OrderedDict({None: []})
 
     for ct in region._content_types:
         # Skip cts that we shouldn't be adding anyway
