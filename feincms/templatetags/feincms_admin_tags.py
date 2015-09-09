@@ -74,7 +74,6 @@ def show_content_type_selection_widget(context, region):
         if not user.has_perm(perm):
             continue
 
-        ct_info = (ct.__name__.lower(), ct._meta.verbose_name)
         types.setdefault(
             getattr(ct, 'optgroup', None),
             [],
