@@ -90,13 +90,13 @@ feincms.jQuery(function($){
         for (var i=0; i<children.length; ++i) {
             var childId = children[i];
             if(show) {
-                $('#item-' + childId).show();
+                $('#page_marker-' + childId).closest('tr').show();
                 // only reveal children if current node is not collapsed
                 if(isExpandedNode(childId)) {
                     doToggle(childId, show);
                 }
             } else {
-                $('#item-' + childId).hide();
+                $('#page_marker-' + childId).closest('tr').hide();
                 // always recursively hide children
                 doToggle(childId, show);
             }
@@ -104,7 +104,8 @@ feincms.jQuery(function($){
     }
 
     function rowLevel($row) {
-        return parseInt($row.attr('rel').replace(/[^\d]/ig, ''));
+        var level = feincms.node_levels[extractItemId($row.find('.page_marker').attr('id'))];
+        return (level || 0) + 1;
     }
 
     /*
@@ -116,18 +117,8 @@ feincms.jQuery(function($){
      *
      */
     $.extend($.fn.feinTree = function() {
-        $('tr', this).each(function(i, el) {
-            // adds 'children' class to all parents
-            var pageId = extractItemId($('.page_marker', el).attr('id'));
-            $(el).attr('id', 'item-' + pageId);
-            if ((feincms.tree_structure[pageId] || []).length) {
-                    $('.page_marker', el).addClass('children');
-            }
-
-            // set 'level' on rel attribute
-            var pixels = $('.page_marker', el).css('width').replace(/[^\d]/ig,"");
-            var rel = Math.round(pixels/18);
-            $(el).attr('rel', rel);
+        $.each(feincms.tree_structure, function(key, value) {
+          $('#page_marker-' + key).addClass('children');
         });
 
         $('div.drag_handle').bind('mousedown', function(event) {
@@ -198,7 +189,7 @@ feincms.jQuery(function($){
                         }
 
                         if(targetRow) {
-                            var padding = 37 + element.attr('rel') * CHILD_PAD + (targetLoc == CHILD ? CHILD_PAD : 0 );
+                            var padding = 37 + rowLevel(element) * CHILD_PAD + (targetLoc == CHILD ? CHILD_PAD : 0 );
 
                             $("#drag_line").css({
                                 'width': targetRow.width() - padding,
@@ -232,7 +223,10 @@ feincms.jQuery(function($){
                     var pastedOn = extractItemId(moveTo.relativeTo.find('.page_marker').attr('id'));
                     // get out early if items are the same
                     if(cutItem != pastedOn) {
-                        var isParent = (moveTo.relativeTo.next().attr('rel') > moveTo.relativeTo.attr('rel'));
+                        var isParent = (
+                           rowLevel(moveTo.relativeTo.next()) >
+                           rowLevel(moveTo.relativeTo));
+
                         var position = '';
 
                         // determine position

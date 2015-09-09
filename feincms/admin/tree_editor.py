@@ -64,9 +64,7 @@ def _build_tree_structure(queryset):
     all_nodes = {}
 
     mptt_opts = queryset.model._mptt_meta
-    items = queryset.exclude(
-        parent_id=None,
-    ).order_by(
+    items = queryset.order_by(
         mptt_opts.tree_id_attr,
         mptt_opts.left_attr,
     ).values_list(
@@ -74,7 +72,10 @@ def _build_tree_structure(queryset):
         "%s_id" % mptt_opts.parent_attr,
     )
     for p_id, parent_id in items:
-        all_nodes.setdefault(str(parent_id), []).append(p_id)
+        all_nodes.setdefault(
+            str(parent_id) if parent_id else 0,
+            [],
+        ).append(p_id)
     return all_nodes
 
 
@@ -393,6 +394,11 @@ class TreeEditor(ExtensionModelAdmin):
         extra_context = extra_context or {}
         extra_context['tree_structure'] = mark_safe(
             json.dumps(_build_tree_structure(self.get_queryset(request))))
+        extra_context['node_levels'] = mark_safe(json.dumps(
+            dict(self.get_queryset(request).order_by().values_list(
+                'pk', self.model._mptt_meta.level_attr
+            ))
+        ))
 
         return super(TreeEditor, self).changelist_view(
             request, extra_context, *args, **kwargs)
