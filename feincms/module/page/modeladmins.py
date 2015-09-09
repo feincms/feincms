@@ -237,6 +237,11 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     # active toggle needs more sophisticated result function
     def is_visible_recursive(self, page):
+        # Have to refresh visible_pages here, because TreeEditor.toggle_boolean
+        # will have changed the value when inside this code path.
+        _local.visible_pages = list(
+            self.model.objects.active().values_list('id', flat=True))
+
         retval = []
         for c in page.get_descendants(include_self=True):
             retval.append(self.is_visible_admin(c))
