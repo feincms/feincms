@@ -17,6 +17,7 @@ as Django's administration tool.
 
 from __future__ import absolute_import, unicode_literals
 
+
 # ------------------------------------------------------------------------
 import logging
 
@@ -249,13 +250,18 @@ class Extension(extensions.Extension):
                 language=language)
 
     def handle_modeladmin(self, modeladmin):
-
         extensions.prefetch_modeladmin_get_queryset(
             modeladmin, 'translation_of__translations', 'translations')
 
         def available_translations_admin(self, page):
-            translations = dict(
-                (p.language, p.id) for p in page.available_translations())
+            # Do not use available_translations() because we don't care
+            # whether pages are active or not here.
+            if is_primary_language(page.language):
+                translations = page.translations.all()
+            else:
+                translations = page.translation_of.translations.all()
+
+            translations = {p.language: p.id for p in translations}
 
             links = []
 
