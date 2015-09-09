@@ -13,19 +13,6 @@ feincms.jQuery.ajaxSetup({
 });
 
 feincms.jQuery(function($){
-    // recolor tree after expand/collapse
-    $.extend($.fn.recolorRows = function() {
-        $('tr:visible:even', this).removeClass('row1').addClass('row2');
-        $('tr:visible:odd', this).removeClass('row2').addClass('row1');
-
-        /* Mark inactive rows */
-        $('tr.item_inactive').removeClass('item_inactive');
-        var in_wrap_active = $('div[id^=wrap_active_]');
-        var in_wrap_input = $('input', in_wrap_active);
-        $(':checkbox:not(:checked)', in_wrap_input).parents('tr').addClass('item_inactive');
-        $('img', in_wrap_active).parents('tr').addClass('item_inactive');
-    });
-
     $(document.body).on('click', '[data-inplace]', function() {
         var elem = $(this),
             id = elem.data('inplace-id'),
@@ -45,7 +32,6 @@ feincms.jQuery(function($){
                     var r_id = $(html).attr('id');
                     $('#' + r_id).replaceWith(html);
                 });
-                $('#result_list tbody').recolorRows();
             },
 
             error: function(xhr, status, err) {
@@ -312,7 +298,6 @@ feincms.jQuery(function($){
             });
             storeCollapsedNodes(feincms.collapsed_nodes);
             rlist.show();
-            $('tbody', rlist).recolorRows();
         });
         return this;
     });
@@ -333,7 +318,6 @@ feincms.jQuery(function($){
             });
             storeCollapsedNodes([]);
             rlist.show();
-            $('tbody', rlist).recolorRows();
         });
         return this;
     });
@@ -361,7 +345,6 @@ feincms.jQuery(function($){
             case 37: // left
             case 39: // right
                 expandOrCollapseNode($(this).find('.page_marker'));
-                $('#result_list tbody').recolorRows();
                 break;
             case 13: // return
                 where_to = extractItemId($('span', this).attr('id'));
@@ -385,8 +368,6 @@ feincms.jQuery(function($){
             event.stopPropagation();
 
             expandOrCollapseNode($(this));
-
-            rlist_tbody.recolorRows();
         });
 
         $('#collapse_entire_tree').bindCollapseTreeEvent();
@@ -416,5 +397,4 @@ feincms.jQuery(function($){
     }
 
     rlist.show();
-    $('tbody', rlist).recolorRows();
 });
