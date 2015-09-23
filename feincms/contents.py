@@ -117,8 +117,6 @@ class RichTextContent(models.Model):
         'head': [settings.FEINCMS_RICHTEXT_INIT_TEMPLATE],
     }
 
-    text = RichTextField(_('text'), blank=True)
-
     class Meta:
         abstract = True
         verbose_name = _('rich text')
@@ -130,24 +128,12 @@ class RichTextContent(models.Model):
             {'content': self},
             context_instance=kwargs.get('context'))
 
-    def save(self, *args, **kwargs):
-        if getattr(self, 'cleanse', None):
-            # Passes the rich text content as first argument because
-            # the passed callable has been converted into a bound method
-            self.text = self.cleanse(self.text)
-
-        super(RichTextContent, self).save(*args, **kwargs)
-    save.alters_data = True
-
     @classmethod
     def initialize_type(cls, cleanse=None):
-        def to_instance_method(func):
-            def func_im(self, *args, **kwargs):
-                return func(*args, **kwargs)
-            return func_im
-
-        if cleanse:
-            cls.cleanse = to_instance_method(cleanse)
+        cls.add_to_class(
+            'text',
+            RichTextField(_('text'), blank=True, cleanse=cleanse),
+        )
 
 
 class TemplateContent(models.Model):
