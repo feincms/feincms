@@ -234,6 +234,17 @@ else:
         """
 
         mediafile = FilerImageField(verbose_name=_('image'), related_name='+')
+        caption = models.CharField(
+            _('caption'),
+            max_length=1000,
+            blank=True,
+        )
+        url = models.CharField(
+            _('URL'),
+            max_length=1000,
+            blank=True,
+        )
+
         file_type = 'image'
 
         class Meta:
