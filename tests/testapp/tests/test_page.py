@@ -11,8 +11,9 @@ from django import forms, template
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
 from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
+from django.db import models
 from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
@@ -177,10 +178,14 @@ class PagesTestCase(TestCase):
         self.login()
         self.assertRedirects(
             self.create_page_through_admin(_continue=1),
-            '/admin/page/page/1/')
+            reverse('admin:page_page_change', args=(1,)))
         self.assertEqual(
-            self.client.get('/admin/page/page/1/').status_code, 200)
-        self.is_published('/admin/page/page/42/', should_be=False)
+            self.client.get(
+                reverse('admin:page_page_change', args=(1,))
+            ).status_code, 200)
+        self.is_published(
+            reverse('admin:page_page_change', args=(42,)),
+            should_be=False)
 
     def test_03_add_another(self):
         self.login()
@@ -379,7 +384,9 @@ class PagesTestCase(TestCase):
         }
         data.update(kwargs)
 
-        return self.client.post('/admin/page/page/%s/' % page.pk, data)
+        return self.client.post(
+            reverse('admin:page_page_change', args=(page.pk,)),
+            data)
 
     def test_09_pagecontent(self):
         self.create_default_page_set()
@@ -461,7 +468,7 @@ class PagesTestCase(TestCase):
             '%s-ha' % short_language_code() in mf.available_translations)
 
         # this should not raise
-        self.client.get('/admin/page/page/1/')
+        self.client.get(reverse('admin:page_page_change', args=(1,)))
 
         page.mediafilecontent_set.update(mediafile=3)
         # this should not raise
@@ -1139,7 +1146,9 @@ class PagesTestCase(TestCase):
         page = Page.objects.get(pk=1)
 
         response = self.create_page_through_admincontent(page, _continue=1)
-        self.assertRedirects(response, '/admin/page/page/1/')
+        self.assertRedirects(
+            response,
+            reverse('admin:page_page_change', args=(1,)))
 
         response = self.create_page_through_admincontent(page, _addanother=1)
         self.assertRedirects(response, '/admin/page/page/add/')
@@ -1656,5 +1665,7 @@ class PagesTestCase(TestCase):
         # The empty form contains the template option.
         self.login()
         self.assertContains(
-            self.client.get('/admin/page/page/%s/' % page.id),
+            self.client.get(
+                reverse('admin:page_page_change', args=(page.id,))
+            ),
             '<option value="templatecontent_1.html">template 1</option>')
