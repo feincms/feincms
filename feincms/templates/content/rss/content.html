@@ -1,9 +1,0 @@
-{% if feed_link %}<h2><a href="{{ feed_link }}">{{ feed_title }}</a></h2>
-{% else %}<h2>{{ feed_title }}</h2>
-{% endif %}
-
-<ul>
-{% for entry in entries %}
-    <li><a href="{{ entry.link }}">{{ entry.title }}</a></li>
-{% endfor %}
-</ul>

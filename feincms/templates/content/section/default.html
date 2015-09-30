@@ -1,7 +1,0 @@
-<h2>{{ content.title }}</h2>
-
-{% if content.mediafile %}
-  <a href="{{ content.mediafile.file.url }}">{{ content.mediafile }}</a>
-{% endif %}
-
-{{ content.richtext|safe }}
