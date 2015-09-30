@@ -1300,7 +1300,7 @@ class PagesTestCase(TestCase):
 
         self.assertRedirects(
             self.client.get(page.get_absolute_url() + 'redirect/'),
-            page.get_absolute_url())
+            'http://testserver' + page.get_absolute_url())
 
         self.assertEqual(
             app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
@@ -1357,21 +1357,23 @@ class PagesTestCase(TestCase):
 
         # Ensure ApplicationContent's admin_fields support works properly
         self.login()
-        self.assertContains(
-            self.client.get('/admin/page/page/%d/' % page.id),
-            'exclusive_subpages')
-        self.assertContains(
-            self.client.get('/admin/page/page/%d/' % page.id),
-            'custom_field'
+        response = self.client.get(
+            reverse('admin:page_page_change', args=(page1.id,))
         )
+
+        self.assertContains(response, 'exclusive_subpages')
+        self.assertContains(response, 'custom_field')
+
 
         # Check if admin_fields get populated correctly
         app_ct = page.applicationcontent_set.all()[0]
         app_ct.parameters =\
             '{"custom_field":"val42", "exclusive_subpages": false}'
         app_ct.save()
-        r = self.client.get('/admin/page/page/%d/' % page.id)
-        self.assertContains(r, 'val42')
+        response = self.client.get(
+            reverse('admin:page_page_change', args=(page1.id,))
+        )
+        self.assertContains(response, 'val42')
 
     def test_26_page_form_initial(self):
         self.create_default_page_set()
@@ -1744,21 +1746,3 @@ class PagesTestCase(TestCase):
             {'feincms_page': page1}, p, path='/test-page/whatsup/test/'))
         self.assertFalse(feincms_page_tags.page_is_active(
             {'feincms_page': page2}, p, path='/test-page/'))
-
-    def test_41_templatecontent(self):
-        page = self.create_page()
-        template = page.templatecontent_set.create(
-            region=0,
-            ordering=1,
-            template='templatecontent_1.html',
-        )
-
-        self.assertEqual(template.render(), 'TemplateContent_1\n')
-
-        # The empty form contains the template option.
-        self.login()
-        self.assertContains(
-            self.client.get(
-                reverse('admin:page_page_change', args=(page.id,))
-            ),
-            '<option value="templatecontent_1.html">template 1</option>')

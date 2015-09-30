@@ -7,6 +7,7 @@ from __future__ import absolute_import, unicode_literals
 import doctest
 
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.utils.encoding import force_text
 
@@ -131,7 +132,11 @@ class BlogTestCase(TestCase):
         self.assertEqual(
             self.client.get('/admin/blog/entry/').status_code, 200)
         self.assertEqual(
-            self.client.get('/admin/blog/entry/1/').status_code, 200)
+            self.client.get(
+                reverse('admin:blog_entry_change', args=(1,)),
+            ).status_code,
+            200,
+        )
 
     def test_02_translations(self):
         self.create_entries()
@@ -148,4 +153,8 @@ class BlogTestCase(TestCase):
         self.assertEqual(
             self.client.get('/admin/blog/entry/').status_code, 200)
         self.assertEqual(
-            self.client.get('/admin/blog/entry/1/').status_code, 200)
+            self.client.get(
+                reverse('admin:blog_entry_change', args=(1,))
+            ).status_code,
+            200,
+        )
