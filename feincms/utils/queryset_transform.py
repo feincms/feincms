@@ -90,9 +90,10 @@ class TransformQuerySet(models.query.QuerySet):
     def __init__(self, *args, **kwargs):
         super(TransformQuerySet, self).__init__(*args, **kwargs)
         self._transform_fns = []
+        self._orig_iterable_class = getattr(self, '_iterable_class', None)
 
-    def _clone(self, klass=None, setup=False, **kw):
-        c = super(TransformQuerySet, self)._clone(klass, setup, **kw)
+    def _clone(self, *args, **kwargs):
+        c = super(TransformQuerySet, self)._clone(*args, **kwargs)
         c._transform_fns = self._transform_fns[:]
         return c
 
@@ -103,12 +104,18 @@ class TransformQuerySet(models.query.QuerySet):
 
     def iterator(self):
         result_iter = super(TransformQuerySet, self).iterator()
-        if self._transform_fns:
-            results = list(result_iter)
-            for fn in self._transform_fns:
-                fn(results)
-            return iter(results)
-        return result_iter
+
+        if not self._transform_fns:
+            return result_iter
+
+        if getattr(self, '_iterable_class', None) != self._orig_iterable_class:
+            # Do not process the result of values() and values_list()
+            return result_iter
+
+        results = list(result_iter)
+        for fn in self._transform_fns:
+            fn(results)
+        return iter(results)
 
 
 if hasattr(models.Manager, 'from_queryset'):
