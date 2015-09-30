@@ -8,6 +8,7 @@ import logging
 
 from django import template
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from feincms.utils import get_singleton, get_singleton_url
 
@@ -46,9 +47,9 @@ def feincms_render_region(context, feincms_object, region, request=None):
     if not feincms_object:
         return ''
 
-    return ''.join(
+    return mark_safe(''.join(
         _render_content(content, request=request, context=context)
-        for content in getattr(feincms_object.content, region))
+        for content in getattr(feincms_object.content, region)))
 
 
 @register.simple_tag(takes_context=True)
