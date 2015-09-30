@@ -10,7 +10,8 @@ env:
   - DJANGO_REQUIREMENT="Django==1.9a1"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - pip install -q $DJANGO_REQUIREMENT django-mptt Pillow feedparser flake8 --use-mirrors
+# FIXME revert to a mptt release once it supports Django 1.9
+  - pip install -q $DJANGO_REQUIREMENT https://github.com/django-mptt/django-mptt/archive/master.zip Pillow feedparser flake8 --use-mirrors
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
 script: "cd tests && ./manage.py test testapp && flake8 ."
