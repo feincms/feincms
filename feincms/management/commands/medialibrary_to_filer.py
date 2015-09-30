@@ -4,9 +4,8 @@ from django.core.files import File as DjangoFile
 from django.core.management.base import NoArgsCommand
 from django.contrib.auth.models import User
 
-from feincms.contents import (
-    MediaFileContent, FilerFileContent, FilerImageContent,
-)
+from feincms.contents import FilerFileContent, FilerImageContent
+from feincms.module.medialibrary.contents import MediaFileContent
 from feincms.module.medialibrary.models import MediaFile
 from feincms.module.page.models import Page
 
