@@ -6,16 +6,29 @@
 </style>
 
 <script type="text/javascript">
-		{% block config %}
+    {% block config %}
     CKEDITOR.config.width = '787';
     CKEDITOR.config.height= '300';
     // CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4;pre';
     CKEDITOR.config.toolbar = [
-			{% block toolbar %}['Maximize','-','Format','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','NumberedList','BulletedList','-','Anchor', 'Link','Unlink','-','Source']{% endblock %}
+        {% block toolbar %}['Maximize','-','Format','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript','-','NumberedList','BulletedList','-','Anchor', 'Link','Unlink','-','Source']{% endblock %}
     ];
-		{% endblock %}
+    {% endblock %}
 
     (function($){
+        function feincms_richtext_remove_ckeditor(field) {
+            var id = field ? field.id : this.id;
+            if (id in CKEDITOR.instances) {
+                CKEDITOR.instances[id].destroy();
+            }
+        }
+
+        function feincms_richtext_add_ckeditor(field) {
+            var id = field ? field.id : this.id;
+            if (!(id in CKEDITOR.instances)) {
+                CKEDITOR.replace(id);
+            }
+        }
         contentblock_init_handlers.push(function(){
             $('.order-machine textarea.item-richtext').each(function(){
                 feincms_richtext_add_ckeditor(this);
@@ -29,18 +42,4 @@
             });
         });
     })(feincms.jQuery);
-
-    function feincms_richtext_remove_ckeditor(field) {
-        var id = field ? field.id : this.id;
-        if (id in CKEDITOR.instances) {
-            CKEDITOR.instances[id].destroy();
-        }
-    }
-
-    function feincms_richtext_add_ckeditor(field) {
-        var id = field ? field.id : this.id;
-        if (!(id in CKEDITOR.instances)) {
-            CKEDITOR.replace(id);
-        }
-    }
 </script>
