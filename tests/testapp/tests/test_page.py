@@ -1270,7 +1270,6 @@ class PagesTestCase(TestCase):
         self.assertContains(response, 'exclusive_subpages')
         self.assertContains(response, 'custom_field')
 
-
         # Check if admin_fields get populated correctly
         app_ct = page1.applicationcontent_set.all()[0]
         app_ct.parameters =\

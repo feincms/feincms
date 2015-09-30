@@ -7,6 +7,7 @@ python:
 env:
   - DJANGO_REQUIREMENT="Django>=1.7,<1.8"
   - DJANGO_REQUIREMENT="Django>=1.8,<1.9"
+  - DJANGO_REQUIREMENT="Django==1.9a1"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - pip install -q $DJANGO_REQUIREMENT django-mptt Pillow feedparser flake8 --use-mirrors
