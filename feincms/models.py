@@ -416,7 +416,7 @@ def create_base_model(inherit_from=models.Model):
                 (template_.key, template_.title,)
                 for template_ in cls._feincms_templates.values()
             ]
-            field.default = field.choices[0][0]
+            field.default = cls.TEMPLATE_CHOICES[0][0]
 
             # Build a set of all regions used anywhere
             cls._feincms_all_regions = set()
