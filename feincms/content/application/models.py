@@ -12,7 +12,9 @@ import re
 from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import (
-    Resolver404, resolve, reverse, NoReverseMatch)
+    Resolver404, resolve, reverse, NoReverseMatch,
+    get_script_prefix, set_script_prefix,
+)
 from django.db import models
 from django.db.models import signals
 from django.http import HttpResponse
@@ -54,7 +56,7 @@ def cycle_app_reverse_cache(*args, **kwargs):
 cycle_app_reverse_cache()
 
 
-def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
+def app_reverse(viewname, urlconf=None, args=None, kwargs=None,
                 *vargs, **vkwargs):
     """
     Reverse URLs from application contents
@@ -102,13 +104,17 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None,
     if url_prefix:
         # vargs and vkwargs are used to send through additional parameters
         # which are uninteresting to us (such as current_app)
-        return reverse(
-            viewname,
-            url_prefix[0],
-            args=args,
-            kwargs=kwargs,
-            prefix=url_prefix[1],
-            *vargs, **vkwargs)
+        prefix = get_script_prefix()
+        try:
+            set_script_prefix(url_prefix[1])
+            return reverse(
+                viewname,
+                url_prefix[0],
+                args=args,
+                kwargs=kwargs,
+                *vargs, **vkwargs)
+        finally:
+            set_script_prefix(prefix)
 
     raise NoReverseMatch("Unable to find ApplicationContent for %r" % urlconf)
 
