@@ -1,3 +1,13 @@
+// IE<9 lacks Array.prototype.indexOf
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(needle) {
+        for (i=0, l=this.length; i<l; ++i) {
+            if (this[i] === needle) return i;
+        }
+        return -1;
+    }
+}
+
 (function($){
     // Patch up urlify maps to generate nicer slugs in german
     if(typeof(Downcoder) != "undefined"){
