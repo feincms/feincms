@@ -203,9 +203,9 @@ class ItemEditor(ExtensionModelAdmin):
         return super(ItemEditor, self).change_view(
             request, object_id, **kwargs)
 
-    def save_related(self, request, form, formset, change):
+    def save_related(self, request, form, formsets, change):
         super(ItemEditor, self).save_related(
-            request, form, formset, change)
+            request, form, formsets, change)
         itemeditor_post_save_related.send(
             sender=form.instance.__class__,
             instance=form.instance,
