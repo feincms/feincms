@@ -426,6 +426,7 @@ class Page(BasePage):
         ordering = ['tree_id', 'lft']
         verbose_name = _('page')
         verbose_name_plural = _('pages')
+        app_label = 'page'
         # not yet # permissions = (("edit_page", _("Can edit page metadata")),)
 
 Page.register_default_processors()
