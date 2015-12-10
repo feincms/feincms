@@ -820,7 +820,7 @@ def create_base_model(inherit_from=models.Model):
         @classmethod
         def register_with_reversion(cls):
             try:
-                import reversion
+                from reversion import revisions as reversion
             except ImportError:
                 raise EnvironmentError("django-reversion is not installed")
 
