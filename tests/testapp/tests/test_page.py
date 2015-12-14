@@ -1358,7 +1358,7 @@ class PagesTestCase(TestCase):
         # Ensure ApplicationContent's admin_fields support works properly
         self.login()
         response = self.client.get(
-            reverse('admin:page_page_change', args=(page1.id,))
+            reverse('admin:page_page_change', args=(page.id,))
         )
 
         self.assertContains(response, 'exclusive_subpages')
@@ -1371,7 +1371,7 @@ class PagesTestCase(TestCase):
             '{"custom_field":"val42", "exclusive_subpages": false}'
         app_ct.save()
         response = self.client.get(
-            reverse('admin:page_page_change', args=(page1.id,))
+            reverse('admin:page_page_change', args=(page.id,))
         )
         self.assertContains(response, 'val42')
 
