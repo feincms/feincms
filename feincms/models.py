@@ -399,7 +399,11 @@ def create_base_model(inherit_from=models.Model):
             except (StopIteration,):
                 cls.add_to_class(
                     'template_key',
-                    models.CharField(_('template'), max_length=255, choices=())
+                    models.CharField(_('template'), max_length=255, choices=(
+                        # Dummy choice to trick Django. Cannot be empty,
+                        # otherwise admin.E023 happens.
+                        ('base', 'base'),
+                    ))
                 )
                 field = next(iter(
                     field for field in cls._meta.local_fields
@@ -820,9 +824,12 @@ def create_base_model(inherit_from=models.Model):
         @classmethod
         def register_with_reversion(cls):
             try:
-                import reversion
+                from reversion import revisions as reversion
             except ImportError:
-                raise EnvironmentError("django-reversion is not installed")
+                try:
+                    import reversion
+                except ImportError:
+                    raise EnvironmentError("django-reversion is not installed")
 
             follow = []
             for content_type in cls._feincms_content_types:
