@@ -6,23 +6,23 @@ python:
   - "3.2"
   - "3.4"
 env:
-  - DJANGO_REQUIREMENT="Django>=1.6,<1.7"
-  - DJANGO_REQUIREMENT="Django>=1.7,<1.8"
-  - DJANGO_REQUIREMENT="Django>=1.8,<1.9"
-  - DJANGO_REQUIREMENT="Django>=1.9,<1.10"
+  - REQ="Django>=1.6,<1.7 django-mptt"
+  - REQ="Django>=1.7,<1.8 django-mptt"
+  - REQ="Django>=1.8,<1.9 django-mptt"
+  - REQ="Django>=1.9,<1.10 https://github.com/django-mptt/django-mptt/archive/master.zip"
 matrix:
   exclude:
     - python: "2.6"
-      env: DJANGO_REQUIREMENT="Django>=1.7,<1.8"
+      env: REQ="Django>=1.7,<1.8 django-mptt"
     - python: "2.6"
-      env: DJANGO_REQUIREMENT="Django>=1.8,<1.9"
+      env: REQ="Django>=1.8,<1.9 django-mptt"
     - python: "2.6"
-      env: DJANGO_REQUIREMENT="Django>=1.9,<1.10"
+      env: REQ="Django>=1.9,<1.10 django-mptt"
     - python: "3.2"
-      env: DJANGO_REQUIREMENT="Django>=1.9,<1.10"
+      env: REQ="Django>=1.9,<1.10 https://github.com/django-mptt/django-mptt/archive/master.zip"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - pip install -q $DJANGO_REQUIREMENT https://github.com/django-mptt/django-mptt/archive/master.zip Pillow feedparser flake8 --use-mirrors
+  - pip install -q $REQ Pillow feedparser flake8 --use-mirrors
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
 script: "cd tests && ./manage.py test testapp && flake8 ."
