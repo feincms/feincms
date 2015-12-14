@@ -13,7 +13,6 @@ from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
-from django.db import models
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -1363,7 +1362,6 @@ class PagesTestCase(TestCase):
 
         self.assertContains(response, 'exclusive_subpages')
         self.assertContains(response, 'custom_field')
-
 
         # Check if admin_fields get populated correctly
         app_ct = page.applicationcontent_set.all()[0]

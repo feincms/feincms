@@ -45,7 +45,8 @@ class Handler(ContentView):
                     # page url.
                     # Also clear out the _feincms_page attribute which caches
                     # page lookups (and would just re-raise a 404).
-                    request.path = request.path_info = settings.FEINCMS_CMS_404_PAGE
+                    request.path = request.path_info =\
+                        settings.FEINCMS_CMS_404_PAGE
                     if hasattr(request, '_feincms_page'):
                         delattr(request, '_feincms_page')
                     response = super(Handler, self).dispatch(
