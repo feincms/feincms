@@ -9,12 +9,17 @@ env:
   - DJANGO_REQUIREMENT="Django>=1.6,<1.7"
   - DJANGO_REQUIREMENT="Django>=1.7,<1.8"
   - DJANGO_REQUIREMENT="Django>=1.8,<1.9"
+  - DJANGO_REQUIREMENT="Django>=1.9,<1.10"
 matrix:
   exclude:
     - python: "2.6"
       env: DJANGO_REQUIREMENT="Django>=1.7,<1.8"
     - python: "2.6"
       env: DJANGO_REQUIREMENT="Django>=1.8,<1.9"
+    - python: "2.6"
+      env: DJANGO_REQUIREMENT="Django>=1.9,<1.10"
+    - python: "3.2"
+      env: DJANGO_REQUIREMENT="Django>=1.9,<1.10"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - pip install -q $DJANGO_REQUIREMENT django-mptt Pillow feedparser flake8 --use-mirrors
