@@ -399,7 +399,11 @@ def create_base_model(inherit_from=models.Model):
             except (StopIteration,):
                 cls.add_to_class(
                     'template_key',
-                    models.CharField(_('template'), max_length=255, choices=())
+                    models.CharField(_('template'), max_length=255, choices=(
+                        # Dummy choice to trick Django. Cannot be empty,
+                        # otherwise admin.E023 happens.
+                        ('base', 'base'),
+                    ))
                 )
                 field = next(iter(
                     field for field in cls._meta.local_fields
