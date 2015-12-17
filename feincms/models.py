@@ -385,9 +385,15 @@ def create_base_model(inherit_from=models.Model):
                 cls.TEMPLATES_CHOICES = []
 
             instances = cls._feincms_templates
+            choices = []
 
             for template in templates:
                 if not isinstance(template, Template):
+                    # Include all possible choices to avoid being empty,
+                    # otherwise admin.E023 happens.
+                    choices.append(
+                        (template['path'], template['title'])
+                    )
                     template = Template(**template)
 
                 instances[template.key] = template
@@ -399,11 +405,7 @@ def create_base_model(inherit_from=models.Model):
             except (StopIteration,):
                 cls.add_to_class(
                     'template_key',
-                    models.CharField(_('template'), max_length=255, choices=(
-                        # Dummy choice to trick Django. Cannot be empty,
-                        # otherwise admin.E023 happens.
-                        ('base', 'base'),
-                    ))
+                    models.CharField(_('template'), max_length=255, choices=choices)
                 )
                 field = next(iter(
                     field for field in cls._meta.local_fields
