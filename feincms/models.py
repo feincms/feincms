@@ -402,7 +402,7 @@ def create_base_model(inherit_from=models.Model):
                     models.CharField(_('template'), max_length=255, choices=(
                         # Dummy choice to trick Django. Cannot be empty,
                         # otherwise admin.E023 happens.
-                        ('base', 'base'),
+                        ('__dummy', '__dummy'),
                     ))
                 )
                 field = next(iter(
@@ -422,10 +422,17 @@ def create_base_model(inherit_from=models.Model):
 
                 cls.template = property(_template)
 
-            cls.TEMPLATE_CHOICES = field._choices = [
+            cls.TEMPLATE_CHOICES = [
                 (template_.key, template_.title,)
                 for template_ in cls._feincms_templates.values()
             ]
+            try:
+                # noqa https://github.com/django/django/commit/80e3444eca045799cc40e50c92609e852a299d38
+                # Django 1.9 uses this code
+                field.choices = cls.TEMPLATE_CHOICES
+            except AttributeError:
+                # Older versions of Django use that.
+                field._choices = cls.TEMPLATE_CHOICES
             field.default = cls.TEMPLATE_CHOICES[0][0]
 
             # Build a set of all regions used anywhere
