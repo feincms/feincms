@@ -6,20 +6,20 @@ python:
   - "3.2"
   - "3.4"
 env:
-  - REQ="Django>=1.6,<1.7 django-mptt"
-  - REQ="Django>=1.7,<1.8 django-mptt"
+  - REQ="Django>=1.6,<1.7 django-mptt<0.8"
+  - REQ="Django>=1.7,<1.8 django-mptt<0.8"
   - REQ="Django>=1.8,<1.9 django-mptt"
-  - REQ="Django>=1.9,<1.10 https://github.com/django-mptt/django-mptt/archive/master.zip"
+  - REQ="Django>=1.9,<1.10 django-mptt"
 matrix:
   exclude:
     - python: "2.6"
-      env: REQ="Django>=1.7,<1.8 django-mptt"
+      env: REQ="Django>=1.7,<1.8 django-mptt<0.8"
     - python: "2.6"
       env: REQ="Django>=1.8,<1.9 django-mptt"
     - python: "2.6"
-      env: REQ="Django>=1.9,<1.10 https://github.com/django-mptt/django-mptt/archive/master.zip"
+      env: REQ="Django>=1.9,<1.10 django-mptt"
     - python: "3.2"
-      env: REQ="Django>=1.9,<1.10 https://github.com/django-mptt/django-mptt/archive/master.zip"
+      env: REQ="Django>=1.9,<1.10 django-mptt"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - pip install -q $REQ Pillow feedparser flake8 --use-mirrors
