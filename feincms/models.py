@@ -831,18 +831,18 @@ def create_base_model(inherit_from=models.Model):
         @classmethod
         def register_with_reversion(cls):
             try:
-                from reversion import revisions as reversion
+                from reversion.revisions import register
             except ImportError:
                 try:
-                    import reversion
+                    from reversion import register
                 except ImportError:
                     raise EnvironmentError("django-reversion is not installed")
 
             follow = []
             for content_type in cls._feincms_content_types:
                 follow.append('%s_set' % content_type.__name__.lower())
-                reversion.register(content_type)
-            reversion.register(cls, follow=follow)
+                register(content_type)
+            register(cls, follow=follow)
 
     return Base
 
