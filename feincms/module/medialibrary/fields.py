@@ -37,7 +37,7 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
 
             if image:
                 label.append(
-                    '<br /><img src="%s" alt="" style="margin:1em 0 0 10em"'
+                    '<br /><img src="%s" alt="" style="margin:1em 0 0 170px"'
                     '/>' % image)
 
             return ''.join(label)
