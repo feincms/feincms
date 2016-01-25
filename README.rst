@@ -80,7 +80,7 @@ Visit these sites
 Try out FeinCMS in a Box
 ------------------------
 
-`FeinCMS in a Box <https://github.com/matthiask/feincms-in-a-box>`_ is a
+`FeinCMS in a Box <https://github.com/feinheit/feincms-in-a-box>`_ is a
 prepackaged installation of FeinCMS with a few additional modules and a setup
 script. Try it out!
 

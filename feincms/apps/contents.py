@@ -5,8 +5,7 @@ from functools import partial
 from time import mktime
 
 from django.conf import settings
-from django.core.urlresolvers import (
-    Resolver404, resolve)
+from django.core.urlresolvers import Resolver404, resolve
 from django.db import models
 from django.http import HttpResponse
 from django.utils.http import http_date

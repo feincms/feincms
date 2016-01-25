@@ -304,10 +304,9 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         Return either ``redirect_to`` if it is set, or the URL of this page.
         """
 
-        # :-( maybe this could be cleaned up a bit?
-        if not self.redirect_to or REDIRECT_TO_RE.match(self.redirect_to):
-            return self._cached_url
-        return self.redirect_to
+        if self.redirect_to:
+            return self.get_redirect_to_target()
+        return self._cached_url
 
     def etag(self, request):
         """
@@ -328,34 +327,45 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         """
         return None
 
-    def get_redirect_to_target(self, request):
+    def get_redirect_to_page(self):
         """
         This might be overriden/extended by extension modules.
         """
 
         if not self.redirect_to:
-            return ''
+            return None
 
         # It might be an identifier for a different object
         match = REDIRECT_TO_RE.match(self.redirect_to)
 
         # It's not, oh well.
         if not match:
-            return self.redirect_to
+            return None
 
         matches = match.groupdict()
         model = apps.get_model(matches['app_label'], matches['model_name'])
 
         if not model:
-            return self.redirect_to
+            return None
 
         try:
             instance = model._default_manager.get(pk=int(matches['pk']))
-            return instance.get_absolute_url()
+            return instance
         except models.ObjectDoesNotExist:
             pass
 
-        return self.redirect_to
+        return None
+
+    def get_redirect_to_target(self, request=None):
+        """
+        This might be overriden/extended by extension modules.
+        """
+
+        target_page = self.get_redirect_to_page()
+        if target_page is None:
+            return self.redirect_to
+
+        return target_page.get_absolute_url()
 
     @classmethod
     def register_default_processors(cls):
@@ -375,6 +385,7 @@ class Page(BasePage):
         ordering = ['tree_id', 'lft']
         verbose_name = _('page')
         verbose_name_plural = _('pages')
+        app_label = 'page'
         # not yet # permissions = (("edit_page", _("Can edit page metadata")),)
 
 Page.register_default_processors()

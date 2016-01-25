@@ -354,7 +354,7 @@ Additional arguments for :func:`~feincms.models.Base.create_content_type`:
 
 Media library integration
 -------------------------
-.. module:: feincms.content.medialibrary.v2
+.. module:: feincms.content.medialibrary.models
 .. class:: MediaFileContent()
 
 Mini-framework for arbitrary file types with customizable rendering
@@ -552,7 +552,7 @@ do is adding a classmethod named :func:`initialize_type` to your content type, a
 pass additional keyword arguments to :func:`create_content_type`.
 
 If you want to see an example of these two uses, have a look at the
-:class:`~feincms.content.medialibrary.v2.MediaFileContent`.
+:class:`~feincms.content.medialibrary.models.MediaFileContent`.
 
 It is generally recommended to use this hook to configure content types
 compared to putting the configuration into the site-wide settings file. This

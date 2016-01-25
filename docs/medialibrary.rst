@@ -19,7 +19,7 @@ add :mod:`feincms.module.medialibrary` to your ``INSTALLED_APPS`` setting, and
 create a content type for a media file as follows::
 
     from feincms.module.page.models import Page
-    from feincms.content.medialibrary.v2 import MediaFileContent
+    from feincms.content.medialibrary.models import MediaFileContent
 
     Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
             ('default', _('default')),

@@ -22,7 +22,7 @@ class MediaFileContent(ContentWithMediaFile):
 
     Create a media file content as follows::
 
-        from feincms.content.medialibrary.v2 import MediaFileContent
+        from feincms.content.medialibrary.models import MediaFileContent
         Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
             ('default', _('Default')),
             ('lightbox', _('Lightbox')),
