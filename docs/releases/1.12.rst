@@ -1,0 +1,82 @@
+==========================
+FeinCMS 1.12 release notes
+==========================
+
+Welcome to FeinCMS 1.12!
+
+.. warning::
+
+   This is a cleanup release. Lots of changes ahead!
+
+
+Simplification of import paths
+==============================
+
+
+Template content requires explicit list of templates
+====================================================
+
+The template refactor in Django removed the ability to enumerate
+templates in template folders. Because of that templates must now
+be explicitly specified when creating the content type::
+
+    Page.create_content_type(TemplateContent, TEMPLATES=[
+        ('content/template/something1.html', 'something'),
+        ('content/template/something2.html', 'something else'),
+        ('base.html', 'makes no sense'),
+    ])
+
+
+The blog module has been completely removed
+============================================
+
+
+Backwards-incompatible changes
+==============================
+
+* FeinCMS requires Django 1.7 or better.
+
+* Django has removed comments support a long time ago, which meant
+  that our bundled comments content in ``feincms.content.comments``
+  was broken for some time. It has been completely removed.
+
+* ``feincms.content.rss`` has been removed, use ``feincms-syndication``
+  instead.
+
+
+Removal of deprecated features
+------------------------------
+
+South is not supported anymore? Django 1.7 and better only?
+
+``feincms.views.cbv`` has been removed. Use ``feincms.urls`` and
+``feincms.views`` directly instead.
+
+
+New deprecations
+================
+
+* VideoContent, SectionContent, ContactForm?, old import paths
+* Point 1
+
+
+Notable features and improvements
+=================================
+
+* Rich text cleaning using Tidy has been removed.
+
+* FeinCMS no longer comes with its own copy of jQuery — it reuses Django's
+  jQuery instead.
+
+* Some support has been added for ``django-filer``.
+
+Bugfixes
+========
+
+* Bug fix 1
+
+
+Compatibility with Django and other apps
+========================================
+
+FeinCMS 1.12 requires Django 1.7 or better.
