@@ -372,10 +372,7 @@ if (!Array.prototype.indexOf) {
 
         options_fieldsets.each(function(idx, elem) {
             var option_title = $('h2', $(elem)).text();
-            var c = $(elem).children('div');
             var id_base = 'extension_option_'+ idx;
-
-            $(elem).remove();
 
             var paren = option_title.indexOf(' (');
             if(paren > 0)
@@ -385,12 +382,14 @@ if (!Array.prototype.indexOf) {
                                    option_title +
                                    '</div>');
             var panel = $('<fieldset class="module aligned" style="clear: both; display: none" id="' + id_base + '_body"></fieldset>');
-            panel.html(c);
+            var $elem = $(elem);
+            panel.append($elem.children('div'));
+            $elem.remove(); // Remove the rest
             panels.push(panel);
         });
 
         option_wrapper.append('<div id="extension_options" />');
-        $('#extension_options').html(panels);
+        $('#extension_options').append(panels);
 
         create_tabbed('#extension_options_wrapper', '#extension_options');
         /* Done morphing extension options into tabs */
