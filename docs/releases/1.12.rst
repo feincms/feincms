@@ -26,6 +26,25 @@ be explicitly specified when creating the content type::
         ('base.html', 'makes no sense'),
     ])
 
+Also, you need to add a model migration which renames the old
+``filename`` field to the new ``template`` field::
+
+    # -*- coding: utf-8 -*-
+    from __future__ import unicode_literals
+
+    from django.db import models, migrations
+
+
+    class Migration(migrations.Migration):
+
+        dependencies = [
+            ('page', 'WHATEVER IS APPROPRIATE'),
+        ]
+
+        operations = [
+            migrations.RenameField('TemplateContent', 'filename', 'template'),
+        ]
+
 
 The blog module has been completely removed
 ============================================
