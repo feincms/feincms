@@ -31,6 +31,10 @@ The blog module has been completely removed
 ============================================
 
 
+Caching of pages in various page manager methods has been removed
+=================================================================
+
+
 Backwards-incompatible changes
 ==============================
 
