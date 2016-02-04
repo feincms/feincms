@@ -65,8 +65,8 @@ Notable features and improvements
 
 * Rich text cleaning using Tidy has been removed.
 
-* FeinCMS no longer comes with its own copy of jQuery — it reuses Django's
-  jQuery instead.
+* ``FEINCMS_JQUERY_NO_CONFLICT`` is gone. Either use ``django.jQuery`` or
+  ``feincms.jQuery`` explicitly.
 
 * Some support has been added for ``django-filer``.
 
