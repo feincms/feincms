@@ -9,8 +9,8 @@ Installation
 
 This document describes the steps needed to install FeinCMS.
 
-FeinCMS requires a working installation of Django_ version 1.4, 1.5, 1.6 or
-1.7. See the Django_ documentation for how to install and configure Django.
+FeinCMS requires a working installation of Django_ version 1.7 or better
+See the Django_ documentation for how to install and configure Django.
 
 You can download a stable release of FeinCMS using ``pip``. Pip will install
 feincms and its dependencies. Dependencies which are automatically installed

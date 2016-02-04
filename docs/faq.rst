@@ -30,28 +30,3 @@ too big, it might be time to reconsider whether you really want to use the
 extension mechanism or if it might not be easier to start freshly, only
 using the editor admin classes, feincms.models.Base and maybe parts of the
 included PageManager...
-
-
-
-I run ``syncdb`` and get a message about missing columns in the page table
-==========================================================================
-
-You enabled the page module (added :mod:`feincms.module.page` to
-``INSTALLED_APPS``), run syncdb, and afterwards registered a few
-extensions. The extensions you activated
-(:mod:`~feincms.module.page.extensions.datepublisher` and
-:mod:`~feincms.module.page.extensions.translations`) add new fields to
-the page model, but your first ``syncdb`` did not know about them and
-therefore did not create the columns for those extensions.
-
-You can either remove the line ``Page.register_extensions(...)`` from
-your code or drop the page_page table and re-run ``syncdb``. If you want
-to keep the pages you've already created, you need to figure out the
-correct ALTER TABLE statements for your database yourself.
-
-
-
-Is FeinCMS version X compatible with Django version Y?
-======================================================
-
-Check out the compatibility matrix `here <https://docs.google.com/spreadsheets/d/1w1Gix3q4pNtyBJ0RwNOPpLQpEakvxxChadv3LK_Uy70/edit?usp=sharing>`_.

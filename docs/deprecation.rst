@@ -120,3 +120,9 @@ No deprecations.
 * ``Page.cache_key`` has never been used by FeinCMS itself and will therefore
   be removed in a future release. Comparable functionality has been available
   for a long time with ``Page.path_to_cache_key``.
+
+
+1.12
+====
+
+* TODO update this

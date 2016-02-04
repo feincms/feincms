@@ -21,7 +21,8 @@ To activate the page module, you need to follow the instructions in
 :ref:`installation` and afterwards add :mod:`feincms.module.page` to your
 :data:`INSTALLED_APPS`.
 
-Before proceeding with ``manage.py syncdb``, it might be a good idea to take
+Before proceeding with ``manage.py makemigrations`` and ``./manage.py migrate``,
+it might be a good idea to take
 a look at :ref:`page-extensions` -- the page module does have the minimum of
 features in the default configuration and you will probably want to enable
 several extensions.
@@ -36,13 +37,13 @@ by adding the following lines somewhere into your project, for example in a
     from django.utils.translation import ugettext_lazy as _
 
     from feincms.module.page.models import Page
-    from feincms.content.richtext.models import RichTextContent
-    from feincms.content.medialibrary.models import MediaFileContent
+    from feincms.contents import RichTextContent
+    from feincms.module.medialibrary.contents import MediaFileContent
 
     Page.register_extensions(
-        'feincms.module.extensions.datepublisher',
-    	'feincms.module.extensions.translations'
-    ) # Example set of extensions
+        'feincms.extensions.datepublisher',
+        'feincms.extensions.translations'
+    )  # Example set of extensions
 
     Page.register_templates({
         'title': _('Standard template'),
@@ -84,6 +85,11 @@ richtext support::
         'TINYMCE_JS_URL': STATIC_URL + 'your_custom_path/tiny_mce.js',
     }
 
+If you want to use a different admin site, or want to apply customizations to
+the admin class used, add the following setting to your site-wide settings::
+
+    FEINCMS_USE_PAGE_ADMIN = False
+
 
 Wiring up the views
 ===================
@@ -92,9 +98,9 @@ Just add the following lines to your ``urls.py`` to get a catch-all URL pattern:
 
 ::
 
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'', include('feincms.urls')),
-    )
+    ]
 
 
 If you want to define a page as home page for the whole site, you can give it
@@ -159,37 +165,38 @@ upon registering the extension. The :func:`register` method receives the
 :class:`~feincms.module.page.modeladmins.PageAdmin` as arguments. The extensions can
 be activated as follows::
 
-     Page.register_extensions('feincms.module.page.extensions.navigation',
-                              'feincms.module.page.extensions.titles',
-                              'feincms.module.extensions.translations')
+     Page.register_extensions(
+        'feincms.module.page.extensions.navigation',
+        'feincms.module.page.extensions.titles',
+        'feincms.extensions.translations')
 
 
 The following extensions are available currently:
 
-* :mod:`feincms.module.extensions.changedate` --- Creation and modification dates
+* :mod:`feincms.extensions.changedate` --- Creation and modification dates
 
   Adds automatically maintained creation and modification date fields
   to the page.
 
 
-* :mod:`feincms.module.extensions.ct_tracker` --- Content type cache
+* :mod:`feincms.extensions.ct_tracker` --- Content type cache
 
   Helps reduce database queries if you have three or more content types.
 
 
-* :mod:`feincms.module.extensions.datepublisher` --- Date-based publishing
+* :mod:`feincms.extensions.datepublisher` --- Date-based publishing
 
   Adds publication date and end date fields to the page, thereby enabling the
   administrator to define a date range where a page will be available to
   website visitors.
 
 
-* :mod:`feincms.module.page.extensions.excerpt` --- Page summary
+* :mod:`feincms.page.extensions.excerpt` --- Page summary
 
   Add a brief excerpt summarizing the content of this page.
 
 
-* :mod:`feincms.module.extensions.featured` --- Simple featured flag for a page
+* :mod:`feincms.extensions.featured` --- Simple featured flag for a page
 
   Lets administrators set a featured flag that lets you treat that page special.
 
@@ -214,7 +221,7 @@ The following extensions are available currently:
   Add a many-to-many relationship field to relate this page to other pages.
 
 
-* :mod:`feincms.module.extensions.seo` --- Search engine optimization
+* :mod:`feincms.extensions.seo` --- Search engine optimization
 
   Adds fields to the page relevant for search engine optimization (SEO),
   currently only meta keywords and description.
@@ -240,7 +247,7 @@ The following extensions are available currently:
   content area.
 
 
-* :mod:`feincms.module.extensions.translations` --- Page translations
+* :mod:`feincms.extensions.translations` --- Page translations
 
   Adds a language field and a recursive translations many to many field to the
   page, so that you can define the language the page is in and assign
@@ -262,8 +269,7 @@ The following extensions are available currently:
 .. note::
 
    These extension modules add new fields to the ``Page`` class. If you add or
-   remove page extensions after you've run ``syncdb`` for the first time you
-   have to change the database schema yourself, or use :ref:`migrations`.
+   remove page extensions you make and apply new migrations.
 
 
 Using page request processors
@@ -379,10 +385,10 @@ Feincms site, add the following to your top-level urls.py::
     from feincms.module.page.sitemap import PageSitemap
     sitemaps = {'pages' : PageSitemap}
 
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap',
             {'sitemaps': sitemaps}),
-        )
+    ]
 
 This will produce a default sitemap at the /sitemap.xml url. A sitemap can be
 further customised by passing it appropriate parameters, like so::

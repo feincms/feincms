@@ -15,19 +15,19 @@ The default CMS handler view is ``feincms.views.cbv.handler``. You can
 add the following as last line in your ``urls.py`` to make a catch-all
 for any pages which were not matched before::
 
-    from feincms.views.cbv.views import Handler
+    from feincms.views import Handler
     handler = Handler.as_view()
 
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^$', handler, name='feincms_home'),
         url(r'^(.*)/$', handler, name='feincms_handler'),
-    )
+    ]
 
 Note that this default handler can also take a keyword parameter ``path``
 to specify which url to render. You can use that functionality to
 implement a default page by adding another entry to your ``urls.py``::
 
-    from feincms.views.cbv.views import Handler
+    from feincms.views import Handler
     handler = Handler.as_view()
 
     ...
@@ -41,9 +41,9 @@ of your own URL patterns like this::
 
     # ...
 
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'', include('feincms.urls')),
-    )
+    ]
 
 The URLconf entry names ``feincms_home`` and ``feincms_handler`` must
 both exist somewhere in your project. The standard ``feincms.urls``
@@ -95,20 +95,20 @@ can be too easily violated.
 
 An example ``urls.py`` follows::
 
-    from django.conf.urls import patterns, include, url
+    from django.conf.urls import include, url
     from django.views.generic.detail import DetailView
     from django.views.generic.list import ListView
     from news.models import Entry
 
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         url(r'^$', ListView.as_view(
             queryset=Entry.objects.all(),
             ), name='entry_list'),
         url(r'^(?P<slug>[^/]+)/$', DetailView.as_view(
             queryset=Entry.objects.all(),
             ), name='entry_detail'),
-    )
+    ]
 
 Please note that you should not add the ``news/`` prefix here. You should
 *not* reference this ``urls.py`` file anywhere in a ``include`` statement.
@@ -124,7 +124,7 @@ It's as simple as that::
 
     Page.create_content_type(ApplicationContent, APPLICATIONS=(
         ('news.urls', 'News application'),
-        ))
+    ))
 
 
 Writing the models
@@ -135,12 +135,11 @@ reachable through standard means (remember, they aren't ``include``\d
 anywhere) it's not possible to use standard ``reverse`` calls to
 determine the absolute URL of a news entry. FeinCMS provides its own
 ``app_reverse`` function (see :ref:`integration-reversing-urls` for
-details) and ``permalink`` decorator mimicking the interface of
-Django's standard functionality::
+details) mimicking the interface of Django's standard functionality::
 
 
     from django.db import models
-    from feincms.content.application import models as app_models
+    from feincms.apps import app_reverse
 
     class Entry(models.Model):
        title = models.CharField(max_length=200)
@@ -153,26 +152,22 @@ Django's standard functionality::
        def __str__(self):
            return self.title
 
-       @app_models.permalink
        def get_absolute_url(self):
-           return ('entry_detail', 'news.urls', (), {
+           return app_reverse('entry_detail', 'news.urls', kwargs={
                'slug': self.slug,
-               })
+            })
 
 
 The only difference is that you do not only have to specify the view name
-(``entry_detail``) but also the URLconf file (``news.urls``) for this
-specific ``permalink`` decorator. The URLconf string must correspond to the
-specification used in the ``APPLICATIONS`` list in the ``create_content_type``
-call.
+(``entry_detail``) but also the URLconf file (``news.urls``). The URLconf
+string must correspond to the specification used in the ``APPLICATIONS``
+list in the ``create_content_type`` call.
 
 .. note::
 
-   Previous FeinCMS versions only provided a monkey patched ``reverse``
+   Old FeinCMS versions only provided a monkey patched ``reverse``
    method with a slightly different syntax for reversing URLs. This
-   behavior is still available and as of now (FeinCMS 1.5) still active
-   by default. It is recommended to start using the new way right now
-   and add ``FEINCMS_REVERSE_MONKEY_PATCH = False`` to your settings file.
+   behavior has been removed some time ago.
 
 
 Returning content from views
@@ -246,12 +241,14 @@ of any template rendering calls:
 
 ``urls.py``::
 
-    from django.conf.urls import patterns, include, url
+    from django.conf.urls import url
 
-    urlpatterns = patterns('news.views',
-        url(r'^$', 'entry_list', name='entry_list'),
-        url(r'^(?P<slug>[^/]+)/$', 'entry_detail', name='entry_detail'),
-    )
+    from news.views import entry_list, entry_detail
+
+    urlpatterns = [
+        url(r'^$', entry_list, name='entry_list'),
+        url(r'^(?P<slug>[^/]+)/$', entry_detail, name='entry_detail'),
+    ]
 
 
 The two templates referenced, ``news/entry_list.html`` and
@@ -290,7 +287,7 @@ that it resolves URLs from application contents. The second argument,
 ``urlconf``, has to correspond to the URLconf parameter passed in the
 ``APPLICATIONS`` list to ``Page.create_content_type``::
 
-    from feincms.content.application.models import app_reverse
+    from feincms.apps import app_reverse
     app_reverse('mymodel-detail', 'myapp.urls', args=...)
 
 or::
@@ -344,8 +341,8 @@ need them. All of these must be specified in the ``APPLICATIONS`` argument to
       Page.create_content_type(ApplicationContent, APPLICATIONS=(
         ('registration', 'Account creation and management', {
             'urls': 'yourapp.registration_urls',
-            }),
-        )
+        }),
+      )
 
 * ``admin_fields``: Adding more fields to the application content interface:
 
@@ -362,15 +359,15 @@ need them. All of these must be specified in the ``APPLICATIONS`` argument to
                 required=False,
                 initial=form.instance.parameters.get('exclusive_subpages', True),
                 help_text=_('Exclude everything other than the application\'s content when rendering subpages.'),
-                ),
-            }
+            ),
+        }
 
       Page.create_content_type(ApplicationContent, APPLICATIONS=(
         ('registration', 'Account creation and management', {
             'urls': 'yourapp.registration_urls',
             'admin_fields': registration_admin_fields,
-            }),
-        )
+        }),
+    )
 
   The form fields will only be visible after saving the ``ApplicationContent``
   for the first time. They are stored inside a JSON-encoded field. The values
@@ -448,7 +445,7 @@ You don't need to do anything else as long as you use the built-in
                 yield navigation.PagePretender(
                     title=category.name,
                     url=category.get_absolute_url(),
-                    )
+                )
 
     class PassthroughExtension(navigation.NavigationExtension):
         name = 'passthrough extension'

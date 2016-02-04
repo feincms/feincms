@@ -22,9 +22,9 @@ create a content type for a media file as follows::
     from feincms.content.medialibrary.models import MediaFileContent
 
     Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
-            ('default', _('default')),
-            ('lightbox', _('lightbox')),
-            ))
+        ('default', _('default')),
+        ('lightbox', _('lightbox')),
+    ))
 
 
 ``TYPE_CHOICES`` has nothing to do with file types -- it's about choosing
@@ -59,19 +59,19 @@ find a template for rendering the
 The default set of pre-defined content types and recognition functions is::
 
     MediaFileBase.register_filetypes(
-            ('image', _('Image'), lambda f: re.compile(r'\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?)$', re.IGNORECASE).search(f)),
-            ('video', _('Video'), lambda f: re.compile(r'\.(mov|m[14]v|mp4|avi|mpe?g|qt|ogv|wmv)$', re.IGNORECASE).search(f)),
-            ('audio', _('Audio'), lambda f: re.compile(r'\.(au|mp3|m4a|wma|oga|ram|wav)$', re.IGNORECASE).search(f)),
-            ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
-            ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
-            ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
-            ('rtf', _('Rich Text'), lambda f: f.lower().endswith('.rtf')),
-            ('zip', _('Zip archive'), lambda f: f.lower().endswith('.zip')),
-            ('doc', _('Microsoft Word'), lambda f: re.compile(r'\.docx?$', re.IGNORECASE).search(f)),
-            ('xls', _('Microsoft Excel'), lambda f: re.compile(r'\.xlsx?$', re.IGNORECASE).search(f)),
-            ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(r'\.pptx?$', re.IGNORECASE).search(f)),
-            ('other', _('Binary'), lambda f: True), # Must be last
-        )
+        ('image', _('Image'), lambda f: re.compile(r'\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?)$', re.IGNORECASE).search(f)),
+        ('video', _('Video'), lambda f: re.compile(r'\.(mov|m[14]v|mp4|avi|mpe?g|qt|ogv|wmv)$', re.IGNORECASE).search(f)),
+        ('audio', _('Audio'), lambda f: re.compile(r'\.(au|mp3|m4a|wma|oga|ram|wav)$', re.IGNORECASE).search(f)),
+        ('pdf', _('PDF document'), lambda f: f.lower().endswith('.pdf')),
+        ('swf', _('Flash'), lambda f: f.lower().endswith('.swf')),
+        ('txt', _('Text'), lambda f: f.lower().endswith('.txt')),
+        ('rtf', _('Rich Text'), lambda f: f.lower().endswith('.rtf')),
+        ('zip', _('Zip archive'), lambda f: f.lower().endswith('.zip')),
+        ('doc', _('Microsoft Word'), lambda f: re.compile(r'\.docx?$', re.IGNORECASE).search(f)),
+        ('xls', _('Microsoft Excel'), lambda f: re.compile(r'\.xlsx?$', re.IGNORECASE).search(f)),
+        ('ppt', _('Microsoft PowerPoint'), lambda f: re.compile(r'\.pptx?$', re.IGNORECASE).search(f)),
+        ('other', _('Binary'), lambda f: True), # Must be last
+    )
 
 You can add to that set by calling ``MediaFile.register_filetypes()`` with your new
 file types similar to the above.
@@ -115,8 +115,9 @@ To have a thumbnail preview in your ModelAdmin and Inline class::
 
   class ImageForProject(models.Model):
       project = models.ForeignKey(Project)
-      mediafile = MediaFileForeignKey(MediaFile, related_name='+',
-                                    limit_choices_to={'type': 'image'})
+      mediafile = MediaFileForeignKey(
+        MediaFile, related_name='+',
+        limit_choices_to={'type': 'image'})
 
 
 For the maginfying-glass select widget in your content type inherit your inline
