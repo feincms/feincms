@@ -174,7 +174,11 @@ The following extensions are available currently:
 
 * :mod:`feincms.module.extensions.ct_tracker` --- Content type cache
 
-  Helps reduce database queries if you have three or more content types.
+  Helps reduce database queries if you have three or more content types by
+  caching in the database which content types are available on each page.
+  If this extension is used, ``Page._ct_inventory`` has to be nullified
+  after adding and/or removing content blocks, otherwise changes might not
+  be visible in the frontend. Saving the page instance accomplishes this.
 
 
 * :mod:`feincms.module.extensions.datepublisher` --- Date-based publishing
