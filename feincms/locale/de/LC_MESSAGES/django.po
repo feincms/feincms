@@ -810,7 +810,7 @@ msgid ""
 "%%(source_regions)s</strong> is moved to <strong>%%(target_region)s</strong>."
 msgstr ""
 "Template wechseln? <br />Alle Änderungen werden sofort gespeichert und "
-"Inhalt von \n"
+"Inhalt von "
 "<strong>%%(source_region)s</strong> nach <strong>%%(target_region)s</strong> "
 "verschoben."
 
