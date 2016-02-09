@@ -14,6 +14,8 @@ version = __import__('feincms').__version__
 devstatus = 'Development Status :: 5 - Production/Stable'
 if '.dev' in version:
     devstatus = 'Development Status :: 3 - Alpha'
+else if '.pre' in version:
+    devstatus = 'Development Status :: 4 - Beta'
 
 setup(
     name='FeinCMS',
