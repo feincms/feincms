@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
-VERSION = (1, 12, 0, 'pre')
+VERSION = (1, 11, 5, 'dev')
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -44,9 +44,14 @@ def ensure_completely_loaded(force=False):
     if COMPLETELY_LOADED and not force:
         return True
 
-    from django.apps import apps
-    if not apps.ready:
-        return
+    try:
+        from django.apps import apps
+    except ImportError:
+        from django.db.models import loading as apps
+    else:
+        # Django 1.7 and up
+        if not apps.ready:
+            return
 
     # Ensure meta information concerning related fields is up-to-date.
     # Upon accessing the related fields information from Model._meta,
@@ -60,7 +65,8 @@ def ensure_completely_loaded(force=False):
     import django
     if django.get_version() < '1.8':
 
-        for model in apps.get_models():
+        from feincms._internal import get_models
+        for model in get_models():
             for cache_name in (
                     '_field_cache', '_field_name_cache', '_m2m_cache',
                     '_related_objects_cache', '_related_many_to_many_cache',
@@ -83,9 +89,15 @@ def ensure_completely_loaded(force=False):
         # on a model validation error (Django 1.4 doesn't exhibit this
         # problem).  See Issue #323 on github.
         if hasattr(apps, 'cache'):
-            apps.cache.get_models.cache_clear()
+            try:
+                apps.cache.get_models.cache_clear()  # Django 1.7+
+            except AttributeError:
+                apps.cache._get_models_cache.clear()  # Django 1.6-
 
-    if apps.ready:
-        COMPLETELY_LOADED = True
+    if hasattr(apps, 'ready'):
+        if apps.ready:
+            COMPLETELY_LOADED = True
+    elif apps.app_cache_ready():
+            COMPLETELY_LOADED = True
 
     return True
