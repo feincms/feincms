@@ -45,6 +45,11 @@ Also, you need to add a model migration which renames the old
             migrations.RenameField('TemplateContent', 'filename', 'template'),
         ]
 
+Also, prepend ``content/template/`` to all values::
+
+    UPDATE page_page_templatecontent
+    SET template='content/template/' || template;
+
 
 The blog module has been completely removed
 ============================================
