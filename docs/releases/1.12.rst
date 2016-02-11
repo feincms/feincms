@@ -27,7 +27,8 @@ be explicitly specified when creating the content type::
     ])
 
 Also, you need to add a model migration which renames the old
-``filename`` field to the new ``template`` field::
+``filename`` field to the new ``template`` field and prepends
+``content/template/`` to all filenames::
 
     # -*- coding: utf-8 -*-
     from __future__ import unicode_literals
@@ -43,12 +44,13 @@ Also, you need to add a model migration which renames the old
 
         operations = [
             migrations.RenameField('TemplateContent', 'filename', 'template'),
+            migrations.RunSQL(
+                "UPDATE page_page_templatecontent"
+                " SET template='content/template/' || template;",
+                "UPDATE page_page_templatecontent"
+                " SET template=REPLACE(template, 'content/template/', '');"
+            ),
         ]
-
-Also, prepend ``content/template/`` to all values::
-
-    UPDATE page_page_templatecontent
-    SET template='content/template/' || template;
 
 
 The blog module has been completely removed
