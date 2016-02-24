@@ -13,8 +13,9 @@ from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
-from django.db import models
 from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
+from django.db import models
 from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
@@ -178,10 +179,14 @@ class PagesTestCase(TestCase):
         self.login()
         self.assertRedirects(
             self.create_page_through_admin(_continue=1),
-            '/admin/page/page/1/')
+            reverse('admin:page_page_change', args=(1,)))
         self.assertEqual(
-            self.client.get('/admin/page/page/1/').status_code, 200)
-        self.is_published('/admin/page/page/42/', should_be=False)
+            self.client.get(
+                reverse('admin:page_page_change', args=(1,))
+            ).status_code, 200)
+        self.is_published(
+            reverse('admin:page_page_change', args=(42,)),
+            should_be=False)
 
     def test_03_add_another(self):
         self.login()
@@ -391,7 +396,9 @@ class PagesTestCase(TestCase):
         }
         data.update(kwargs)
 
-        return self.client.post('/admin/page/page/%s/' % page.pk, data)
+        return self.client.post(
+            reverse('admin:page_page_change', args=(page.pk,)),
+            data)
 
     def test_09_pagecontent(self):
         self.create_default_page_set()
@@ -475,7 +482,7 @@ class PagesTestCase(TestCase):
             '%s-ha' % short_language_code() in mf.available_translations)
 
         # this should not raise
-        self.client.get('/admin/page/page/1/')
+        self.client.get(reverse('admin:page_page_change', args=(1,)))
 
         # self.assertTrue('alt="something"' in page.content.main[1].render())
         # Since it isn't an image
@@ -1210,7 +1217,9 @@ class PagesTestCase(TestCase):
         page = Page.objects.get(pk=1)
 
         response = self.create_page_through_admincontent(page, _continue=1)
-        self.assertRedirects(response, '/admin/page/page/1/')
+        self.assertRedirects(
+            response,
+            reverse('admin:page_page_change', args=(1,)))
 
         response = self.create_page_through_admincontent(page, _addanother=1)
         self.assertRedirects(response, '/admin/page/page/add/')
@@ -1290,7 +1299,7 @@ class PagesTestCase(TestCase):
 
         self.assertRedirects(
             self.client.get(page.get_absolute_url() + 'redirect/'),
-            page.get_absolute_url())
+            'http://testserver' + page.get_absolute_url())
 
         self.assertEqual(
             app_reverse('ac_module_root', 'testapp.applicationcontent_urls'),
@@ -1347,21 +1356,22 @@ class PagesTestCase(TestCase):
 
         # Ensure ApplicationContent's admin_fields support works properly
         self.login()
-        self.assertContains(
-            self.client.get('/admin/page/page/%d/' % page.id),
-            'exclusive_subpages')
-        self.assertContains(
-            self.client.get('/admin/page/page/%d/' % page.id),
-            'custom_field'
+        response = self.client.get(
+            reverse('admin:page_page_change', args=(page.id,))
         )
+
+        self.assertContains(response, 'exclusive_subpages')
+        self.assertContains(response, 'custom_field')
 
         # Check if admin_fields get populated correctly
         app_ct = page.applicationcontent_set.all()[0]
         app_ct.parameters =\
             '{"custom_field":"val42", "exclusive_subpages": false}'
         app_ct.save()
-        r = self.client.get('/admin/page/page/%d/' % page.id)
-        self.assertContains(r, 'val42')
+        response = self.client.get(
+            reverse('admin:page_page_change', args=(page.id,))
+        )
+        self.assertContains(response, 'val42')
 
     def test_26_page_form_initial(self):
         self.create_default_page_set()

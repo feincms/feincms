@@ -399,7 +399,11 @@ def create_base_model(inherit_from=models.Model):
             except (StopIteration,):
                 cls.add_to_class(
                     'template_key',
-                    models.CharField(_('template'), max_length=255, choices=())
+                    models.CharField(_('template'), max_length=255, choices=(
+                        # Dummy choice to trick Django. Cannot be empty,
+                        # otherwise admin.E023 happens.
+                        ('__dummy', '__dummy'),
+                    ))
                 )
                 field = next(iter(
                     field for field in cls._meta.local_fields
@@ -418,11 +422,18 @@ def create_base_model(inherit_from=models.Model):
 
                 cls.template = property(_template)
 
-            cls.TEMPLATE_CHOICES = field._choices = [
+            cls.TEMPLATE_CHOICES = [
                 (template_.key, template_.title,)
                 for template_ in cls._feincms_templates.values()
             ]
-            field.default = field.choices[0][0]
+            try:
+                # noqa https://github.com/django/django/commit/80e3444eca045799cc40e50c92609e852a299d38
+                # Django 1.9 uses this code
+                field.choices = cls.TEMPLATE_CHOICES
+            except AttributeError:
+                # Older versions of Django use that.
+                field._choices = cls.TEMPLATE_CHOICES
+            field.default = cls.TEMPLATE_CHOICES[0][0]
 
             # Build a set of all regions used anywhere
             cls._feincms_all_regions = set()
@@ -820,15 +831,18 @@ def create_base_model(inherit_from=models.Model):
         @classmethod
         def register_with_reversion(cls):
             try:
-                import reversion
+                from reversion.revisions import register
             except ImportError:
-                raise EnvironmentError("django-reversion is not installed")
+                try:
+                    from reversion import register
+                except ImportError:
+                    raise EnvironmentError("django-reversion is not installed")
 
             follow = []
             for content_type in cls._feincms_content_types:
                 follow.append('%s_set' % content_type.__name__.lower())
-                reversion.register(content_type)
-            reversion.register(cls, follow=follow)
+                register(content_type)
+            register(cls, follow=follow)
 
     return Base
 

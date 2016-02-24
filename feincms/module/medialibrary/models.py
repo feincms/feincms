@@ -54,6 +54,7 @@ class Category(models.Model):
         ordering = ['parent__title', 'title']
         verbose_name = _('category')
         verbose_name_plural = _('categories')
+        app_label = 'medialibrary'
 
     objects = CategoryManager()
 
@@ -240,7 +241,8 @@ MediaFileBase.register_filetypes(
 
 # ------------------------------------------------------------------------
 class MediaFile(MediaFileBase):
-    pass
+    class Meta:
+        app_label = 'medialibrary'
 
 
 @receiver(post_delete, sender=MediaFile)
@@ -264,6 +266,7 @@ class MediaFileTranslation(Translation(MediaFile)):
         verbose_name = _('media file translation')
         verbose_name_plural = _('media file translations')
         unique_together = ('parent', 'language_code')
+        app_label = 'medialibrary'
 
     def __str__(self):
         return self.caption

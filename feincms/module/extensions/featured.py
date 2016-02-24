@@ -12,7 +12,13 @@ from feincms import extensions
 
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('featured', models.BooleanField(_('featured')))
+        self.model.add_to_class(
+            'featured',
+            models.BooleanField(
+                _('featured'),
+                default=False,
+            ),
+        )
 
         if hasattr(self.model, 'cache_key_components'):
             self.model.cache_key_components.append(lambda page: page.featured)

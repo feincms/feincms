@@ -48,7 +48,7 @@ FEINCMS_RICHTEXT_INIT_TEMPLATE = getattr(
 FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(
     settings,
     'FEINCMS_RICHTEXT_INIT_CONTEXT', {
-        'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.1/tinymce.min.js',
+        'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.2/tinymce.min.js',
         'TINYMCE_DOMAIN': None,
         'TINYMCE_CONTENT_CSS_URL': None,
         'TINYMCE_LINK_LIST_URL': None

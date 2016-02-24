@@ -42,8 +42,13 @@ class Handler(ContentView):
                     # page.
                     # Note: request.path is used by the page redirect processor
                     # to determine if the redirect can be taken, must be == to
-                    # page url
-                    request.path = settings.FEINCMS_CMS_404_PAGE
+                    # page url.
+                    # Also clear out the _feincms_page attribute which caches
+                    # page lookups (and would just re-raise a 404).
+                    request.path = request.path_info =\
+                        settings.FEINCMS_CMS_404_PAGE
+                    if hasattr(request, '_feincms_page'):
+                        delattr(request, '_feincms_page')
                     response = super(Handler, self).dispatch(
                         request, settings.FEINCMS_CMS_404_PAGE, **kwargs)
                     # Only set status if we actually have a page. If we get for

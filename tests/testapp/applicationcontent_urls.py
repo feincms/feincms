@@ -13,7 +13,7 @@ from feincms.views.decorators import standalone, unpack
 
 
 def module_root(request):
-    return 'module_root'
+    return HttpResponse('module_root')
 
 
 def args_test(request, kwarg1, kwarg2):
@@ -33,7 +33,7 @@ def fragment(request):
 
 
 def redirect(request):
-    return HttpResponseRedirect('../')
+    return HttpResponseRedirect(request.build_absolute_uri('../'))
 
 
 def response(request):
