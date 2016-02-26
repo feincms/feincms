@@ -99,9 +99,11 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
                 for i in range(1, len(tokens) + 1)]
 
         try:
-            page = self.active().filter(_cached_url__in=paths).extra(
-                select={'_url_length': 'LENGTH(_cached_url)'}
+            from django.db.models.functions import Length
+            page = self.active().filter(_cached_url__in=paths).annotate(
+                _url_length=Length('_cached_url')
             ).order_by('-_url_length')[0]
+
 
             if not page.are_ancestors_active():
                 raise IndexError('Parents are inactive.')

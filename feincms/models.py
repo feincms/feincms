@@ -168,11 +168,29 @@ class ContentProxy(object):
         return self._cache['counts']
 
     def _fetch_content_type_count_helper(self, pk, regions=None):
+        from django.db.models import Count
+        _c ={}
+        for idx, cls in enumerate(self.item._feincms_content_types):
+            vals = cls.objects.filter(parent_id=pk)
+            if regions:
+                vals = vals.filter(region__in=regions)
+            vals = vals.distinct().annotate(
+                count=Count('region')
+            ).values('region','count')
+            for d in vals:
+                region = d['region']
+                count = d['count']
+                if count:
+                    _c.setdefault(region, []).append((pk, idx))
+        print _c
+        return _c
+
+    def __fetch_content_type_count_helper(self, pk, regions=None):
         tmpl = [
             'SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s'
         ]
         args = []
-
+        print regions
         if regions:
             tmpl.append(
                 'AND region IN (' + ','.join(['%%s'] * len(regions)) + ')')
@@ -186,7 +204,7 @@ class ContentProxy(object):
             for idx, cls in enumerate(self.item._feincms_content_types)
         ])
         sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
-
+        #print sql
         cursor = connections[self.db].cursor()
         cursor.execute(sql, args)
 
@@ -194,7 +212,7 @@ class ContentProxy(object):
         for ct_idx, region, count in cursor.fetchall():
             if count:
                 _c.setdefault(region, []).append((pk, ct_idx))
-
+        print _c
         return _c
 
     def _populate_content_type_caches(self, types):

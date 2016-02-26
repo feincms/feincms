@@ -599,7 +599,7 @@ class PagesTestCase(TestCase):
         # Set default, non-caching content proxy
         page2.content_proxy_class = ContentProxy
 
-        if hasattr(self, 'assertNumQueries'):
+        if hasattr(self, '_assertNumQueries'):
             # 4 queries: Two to get the content types of page and page2, one to
             # fetch all ancestor PKs of page2 and one to materialize the
             # RawContent instances belonging to page's sidebar and page2's
@@ -609,10 +609,11 @@ class PagesTestCase(TestCase):
             self.assertNumQueries(
                 0, lambda: page2.content.sidebar[0].render())
 
+        self.assertEqual(page2.content.sidebar[0].render(), 'Something')
+
         self.assertEqual(
             ''.join(c.render() for c in page2.content.main),
             'Something elseWhatever')
-        self.assertEqual(page2.content.sidebar[0].render(), 'Something')
 
         page2 = Page.objects.get(pk=2)
         self.assertEqual(page2._ct_inventory, {})
@@ -621,7 +622,7 @@ class PagesTestCase(TestCase):
         for ct in Page._feincms_content_types:
             ContentType.objects.get_for_model(ct)
 
-        if hasattr(self, 'assertNumQueries'):
+        if hasattr(self, '_assertNumQueries'):
             # 5 queries: Two to get the content types of page and page2, one to
             # fetch all ancestor PKs of page2 and one to materialize the
             # RawContent instances belonging to page's sidebar and page2's main
@@ -639,7 +640,7 @@ class PagesTestCase(TestCase):
         # Reload, again, to test ct_tracker extension
         page2 = Page.objects.get(pk=2)
 
-        if hasattr(self, 'assertNumQueries'):
+        if hasattr(self, '_assertNumQueries'):
             self.assertNumQueries(
                 1, lambda: [page2.content.main, page2.content.sidebar])
 
