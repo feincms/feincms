@@ -182,37 +182,6 @@ class ContentProxy(object):
                 count = d['count']
                 if count:
                     _c.setdefault(region, []).append((pk, idx))
-        print _c
-        return _c
-
-    def __fetch_content_type_count_helper(self, pk, regions=None):
-        tmpl = [
-            'SELECT %d AS ct_idx, region, COUNT(id) FROM %s WHERE parent_id=%s'
-        ]
-        args = []
-        print regions
-        if regions:
-            tmpl.append(
-                'AND region IN (' + ','.join(['%%s'] * len(regions)) + ')')
-            args.extend(regions * len(self.item._feincms_content_types))
-
-        tmpl.append('GROUP BY region')
-        tmpl = ' '.join(tmpl)
-
-        sql = ' UNION '.join([
-            tmpl % (idx, cls._meta.db_table, pk)
-            for idx, cls in enumerate(self.item._feincms_content_types)
-        ])
-        sql = 'SELECT * FROM ( ' + sql + ' ) AS ct ORDER BY ct_idx'
-        #print sql
-        cursor = connections[self.db].cursor()
-        cursor.execute(sql, args)
-
-        _c = {}
-        for ct_idx, region, count in cursor.fetchall():
-            if count:
-                _c.setdefault(region, []).append((pk, ct_idx))
-        print _c
         return _c
 
     def _populate_content_type_caches(self, types):
