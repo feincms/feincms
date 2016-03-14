@@ -183,7 +183,7 @@ class Extension(extensions.Extension):
             original_get_redirect_to_target = cls.get_redirect_to_target
 
             @monkeypatch_method(cls)
-            def get_redirect_to_target(self, request):
+            def get_redirect_to_target(self, request=None):
                 """
                 Find an acceptable redirect target. If this is a local link,
                 then try to find the page this redirect references and
