@@ -9,8 +9,8 @@ from django.utils import translation
 from django.conf import settings as django_settings
 
 from feincms.module.page.models import Page
-from feincms.module.extensions.translations import user_has_language_set,\
-    translation_set_language
+from feincms.module.extensions.translations import user_has_language_set
+from feincms.module.extensions.translations import translation_set_language
 
 
 class TranslationTestCase(TestCase):
@@ -101,4 +101,6 @@ class TranslationTestCase(TestCase):
         response = translation_set_language(request, 'en')
 
         self.assertEqual(request.LANGUAGE_CODE, 'en')
-        self.assertEqual(response.cookies[django_settings.LANGUAGE_COOKIE_NAME].value, 'en')
+
+        c_key = django_settings.LANGUAGE_COOKIE_NAME
+        self.assertEqual(response.cookies[c_key].value, 'en')
