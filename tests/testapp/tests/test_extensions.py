@@ -4,9 +4,11 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
+from django.utils.translation import LANGUAGE_SESSION_KEY
 
 from feincms.module.page.models import Page
+from feincms.module.extensions.translations import user_has_language_set, translation_set_language
 
 
 class TranslationTestCase(TestCase):
@@ -61,3 +63,23 @@ class TranslationTestCase(TestCase):
 
         # TODO:  add request tests
         # with translation.override('de'):
+
+    def test_user_has_language_set(self):
+        factory = RequestFactory()
+        request = factory.get(self.page_en.get_navigation_url())
+        setattr(request, 'session', dict())
+        request.session[LANGUAGE_SESSION_KEY] = 'en'
+        self.assertEqual(user_has_language_set(request), True)
+
+        setattr(request, 'session', dict())
+        request.COOKIES['django_language'] = 'en'
+        self.assertEqual(user_has_language_set(request), True)
+
+    def test_translation_set_language(self):
+        factory = RequestFactory()
+        request = factory.get(self.page_en.get_navigation_url())
+        setattr(request, 'session', dict())
+        translation_set_language(request, 'en')
+
+        self.assertEqual(request.LANGUAGE_CODE, 'en')
+        self.assertEqual(request.session[LANGUAGE_SESSION_KEY], 'en')
