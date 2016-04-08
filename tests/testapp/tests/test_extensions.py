@@ -36,7 +36,7 @@ class TranslationTestCase(TestCase):
         self.page_de = de.parent
         self.page_en = en.parent
 
-        if translation.LANGUAGE_SESSION_KEY:
+        if hasattr(translation, 'LANGUAGE_SESSION_KEY'):
             self.language_session_key = translation.LANGUAGE_SESSION_KEY
         else:
             # Django 1.6

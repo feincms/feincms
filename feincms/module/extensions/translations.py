@@ -35,7 +35,7 @@ from feincms._internal import monkeypatch_method, monkeypatch_property
 logger = logging.getLogger(__name__)
 
 LANGUAGE_COOKIE_NAME = django_settings.LANGUAGE_COOKIE_NAME
-if translation.LANGUAGE_SESSION_KEY:
+if hasattr(translation, 'LANGUAGE_SESSION_KEY'):
     LANGUAGE_SESSION_KEY = translation.LANGUAGE_SESSION_KEY
 else:
     # Django 1.6
