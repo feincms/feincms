@@ -1,7 +1,7 @@
 # flake8: noqa
 from __future__ import absolute_import
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from feincms.views.cbv.views import Handler
 

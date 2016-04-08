@@ -4,7 +4,7 @@ This is a dummy module used to test the ApplicationContent
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
@@ -54,8 +54,7 @@ def inheritance20_unpack(request):
     return response
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^$', module_root, name='ac_module_root'),
     url(r'^args_test/([^/]+)/([^/]+)/$', args_test, name='ac_args_test'),
     url(r'^kwargs_test/(?P<kwarg2>[^/]+)/(?P<kwarg1>[^/]+)/$', args_test),
@@ -66,5 +65,5 @@ urlpatterns = patterns(
     url(r'^response/$', response),
     url(r'^response_decorated/$', standalone(response)),
     url(r'^inheritance20/$', inheritance20),
-    url(r'^inheritance20_unpack/$', inheritance20_unpack),
-)
+    url(r'^inheritance20_unpack/$', inheritance20_unpack)
+]

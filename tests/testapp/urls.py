@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -13,8 +13,7 @@ sitemaps = {'pages': PageSitemap}
 
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
     url(
@@ -30,7 +29,7 @@ urlpatterns = patterns(
     ),
 
     url(r'', include('feincms.contrib.preview.urls')),
-    url(r'', include('feincms.views.cbv.urls')),
-)
+    url(r'', include('feincms.views.cbv.urls'))
+]
 
 urlpatterns += staticfiles_urlpatterns()
