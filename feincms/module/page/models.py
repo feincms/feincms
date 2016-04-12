@@ -21,13 +21,7 @@ from feincms.models import create_base_model
 from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
-
-from feincms.utils import shorten_string
-
-
-REDIRECT_TO_RE = re.compile(
-    r'^(?P<app_label>\w+).(?P<model_name>\w+):(?P<pk>\d+)$')
-
+from feincms.utils import shorten_string, match_model_string, get_model_instance
 
 # ------------------------------------------------------------------------
 class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
@@ -336,25 +330,11 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             return None
 
         # It might be an identifier for a different object
-        match = REDIRECT_TO_RE.match(self.redirect_to)
-
-        # It's not, oh well.
-        if not match:
+        whereto = match_model_string(self.redirect_to)
+        if not whereto:
             return None
 
-        matches = match.groupdict()
-        model = apps.get_model(matches['app_label'], matches['model_name'])
-
-        if not model:
-            return None
-
-        try:
-            instance = model._default_manager.get(pk=int(matches['pk']))
-            return instance
-        except models.ObjectDoesNotExist:
-            pass
-
-        return None
+        return get_model_instance(*whereto)
 
     def get_redirect_to_target(self, request=None):
         """

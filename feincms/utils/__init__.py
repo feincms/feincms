@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+import re
+
 from importlib import import_module
 
 from django.apps import apps
@@ -12,7 +14,6 @@ from django.db.models import AutoField
 from django.utils import six
 
 from feincms import settings
-
 
 # ------------------------------------------------------------------------
 def get_object(path, fail_silently=False):
@@ -33,6 +34,46 @@ def get_object(path, fail_silently=False):
             if not fail_silently:
                 raise
 
+# ------------------------------------------------------------------------
+def get_model_instance(app_label, model_name, pk):
+    """
+    Find an object instance given an app_label, a model name and the
+    object's pk.
+
+    This is used for page's get_link_target but can be used for other
+    content types that accept e.g. either an internal or external link.
+    """
+
+    model = apps.get_model(app_label, model_name)
+    if not model:
+        return None
+
+    try:
+        instance = model._default_manager.get(pk=pk)
+        return instance
+    except model.ObjectDoesNotExist:
+        pass
+
+    return None
+
+# ------------------------------------------------------------------------
+REDIRECT_TO_RE = re.compile(
+    r'^(?P<app_label>\w+).(?P<model_name>\w+):(?P<pk>\d+)$')
+
+def match_model_string(s):
+    """
+    Try to parse a string in format "app_label.model_name:pk", as is used
+    Page.get_link_target()
+
+    Returns a tuple app_label, model_name, pk or None if the string
+    does not match the expected format.
+    """
+
+    match = REDIRECT_TO_RE.match(s)
+    if not match:
+        return None
+    matches = match.groupdict()
+    return (matches['app_label'], matches['model_name'], int(matches['pk']))
 
 # ------------------------------------------------------------------------
 def copy_model_instance(obj, exclude=None):
