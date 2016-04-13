@@ -26,6 +26,7 @@ class Extension(extensions.Extension):
                 choices=self.groups,
                 default=self.groups[0][0],
                 max_length=20,
+                blank=True,
                 db_index=True))
 
     def handle_modeladmin(self, modeladmin):
