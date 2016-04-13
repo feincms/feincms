@@ -69,7 +69,9 @@ class ContentWithMediaFile(models.Model):
         raw_id_fields = ('mediafile',)
 
     mediafile = MediaFileForeignKey(
-        MediaFile, verbose_name=_('media file'), related_name='+')
+        MediaFile, verbose_name=_('media file'), related_name='+',
+        on_delete=models.PROTECT
+    )
 
     class Meta:
         abstract = True
