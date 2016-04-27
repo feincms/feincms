@@ -121,8 +121,9 @@ class MediaFileAdmin(ExtensionModelAdmin):
     actions = [assign_category, save_as_zipfile]
 
     def get_urls(self):
-        from django.conf.urls import include, url
+        from django.conf.urls import url
 
+        urls = super(MediaFileAdmin, self).get_urls()
         return [
             url(
                 r'^mediafile-bulk-upload/$',
@@ -130,8 +131,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 {},
                 name='mediafile_bulk_upload',
             ),
-            url('', include(super(MediaFileAdmin, self).get_urls())),
-        ]
+        ] + super(MediaFileAdmin, self).get_urls()
 
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:

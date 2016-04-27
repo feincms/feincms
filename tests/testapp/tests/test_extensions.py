@@ -4,9 +4,13 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
+from django.utils import translation
+from django.conf import settings as django_settings
 
 from feincms.module.page.models import Page
+from feincms.module.extensions.translations import user_has_language_set
+from feincms.module.extensions.translations import translation_set_language
 
 
 class TranslationTestCase(TestCase):
@@ -31,6 +35,12 @@ class TranslationTestCase(TestCase):
         de.parent.save()
         self.page_de = de.parent
         self.page_en = en.parent
+
+        if hasattr(translation, 'LANGUAGE_SESSION_KEY'):
+            self.language_session_key = translation.LANGUAGE_SESSION_KEY
+        else:
+            # Django 1.6
+            self.language_session_key = django_settings.LANGUAGE_COOKIE_NAME
 
     def create_page(self, title='Test page', parent=None, **kwargs):
         defaults = {
@@ -61,3 +71,36 @@ class TranslationTestCase(TestCase):
 
         # TODO:  add request tests
         # with translation.override('de'):
+
+    def test_user_has_language_set_with_session(self):
+        factory = RequestFactory()
+        request = factory.get(self.page_en.get_navigation_url())
+        setattr(request, 'session', dict())
+        request.session[self.language_session_key] = 'en'
+        self.assertEqual(user_has_language_set(request), True)
+
+    def test_user_has_language_set_with_cookie(self):
+        factory = RequestFactory()
+        request = factory.get(self.page_en.get_navigation_url())
+        request.COOKIES[django_settings.LANGUAGE_COOKIE_NAME] = 'en'
+
+        self.assertEqual(user_has_language_set(request), True)
+
+    def test_translation_set_language_to_session(self):
+        factory = RequestFactory()
+        request = factory.get(self.page_en.get_navigation_url())
+        setattr(request, 'session', dict())
+        translation_set_language(request, 'en')
+
+        self.assertEqual(request.LANGUAGE_CODE, 'en')
+        self.assertEqual(request.session[self.language_session_key], 'en')
+
+    def test_translation_set_language_to_cookie(self):
+        factory = RequestFactory()
+        request = factory.get(self.page_en.get_navigation_url())
+        response = translation_set_language(request, 'en')
+
+        self.assertEqual(request.LANGUAGE_CODE, 'en')
+
+        c_key = django_settings.LANGUAGE_COOKIE_NAME
+        self.assertEqual(response.cookies[c_key].value, 'en')
