@@ -123,7 +123,6 @@ class MediaFileAdmin(ExtensionModelAdmin):
     def get_urls(self):
         from django.conf.urls import url
 
-        urls = super(MediaFileAdmin, self).get_urls()
         return [
             url(
                 r'^mediafile-bulk-upload/$',

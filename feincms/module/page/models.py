@@ -4,9 +4,6 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import re
-
-from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Q
@@ -21,7 +18,10 @@ from feincms.models import create_base_model
 from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
-from feincms.utils import shorten_string, match_model_string, get_model_instance
+from feincms.utils import (
+    shorten_string, match_model_string, get_model_instance
+)
+
 
 # ------------------------------------------------------------------------
 class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):

@@ -15,6 +15,7 @@ from django.utils import six
 
 from feincms import settings
 
+
 # ------------------------------------------------------------------------
 def get_object(path, fail_silently=False):
     # Return early if path isn't a string (might already be an callable or
@@ -33,6 +34,7 @@ def get_object(path, fail_silently=False):
         except (AttributeError, ImportError):
             if not fail_silently:
                 raise
+
 
 # ------------------------------------------------------------------------
 def get_model_instance(app_label, model_name, pk):
@@ -56,9 +58,11 @@ def get_model_instance(app_label, model_name, pk):
 
     return None
 
+
 # ------------------------------------------------------------------------
 REDIRECT_TO_RE = re.compile(
     r'^(?P<app_label>\w+).(?P<model_name>\w+):(?P<pk>\d+)$')
+
 
 def match_model_string(s):
     """
@@ -74,6 +78,7 @@ def match_model_string(s):
         return None
     matches = match.groupdict()
     return (matches['app_label'], matches['model_name'], int(matches['pk']))
+
 
 # ------------------------------------------------------------------------
 def copy_model_instance(obj, exclude=None):
