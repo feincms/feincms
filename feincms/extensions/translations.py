@@ -17,7 +17,6 @@ as Django's administration tool.
 
 from __future__ import absolute_import, unicode_literals
 
-
 # ------------------------------------------------------------------------
 import logging
 
@@ -34,7 +33,13 @@ from feincms._internal import monkeypatch_method, monkeypatch_property
 
 # ------------------------------------------------------------------------
 logger = logging.getLogger(__name__)
+
 LANGUAGE_COOKIE_NAME = django_settings.LANGUAGE_COOKIE_NAME
+if hasattr(translation, 'LANGUAGE_SESSION_KEY'):
+    LANGUAGE_SESSION_KEY = translation.LANGUAGE_SESSION_KEY
+else:
+    # Django 1.6
+    LANGUAGE_SESSION_KEY = LANGUAGE_COOKIE_NAME
 
 
 # ------------------------------------------------------------------------
@@ -44,8 +49,8 @@ def user_has_language_set(request):
     This is taken later on as an indication that we should not mess with the
     site's language settings, after all, the user's decision is what counts.
     """
-    if (hasattr(request, 'session') and
-            request.session.get(LANGUAGE_COOKIE_NAME) is not None):
+    if (hasattr(request, 'session')
+            and request.session.get(LANGUAGE_SESSION_KEY) is not None):
         return True
     if LANGUAGE_COOKIE_NAME in request.COOKIES:
         return True
@@ -87,8 +92,8 @@ def translation_set_language(request, select_language):
 
     if hasattr(request, 'session'):
         # User has a session, then set this language there
-        if select_language != request.session.get(LANGUAGE_COOKIE_NAME):
-            request.session[LANGUAGE_COOKIE_NAME] = select_language
+        if select_language != request.session.get(LANGUAGE_SESSION_KEY):
+            request.session[LANGUAGE_SESSION_KEY] = select_language
     elif request.method == 'GET' and not fallback:
         # No session is active. We need to set a cookie for the language
         # so that it persists when users change their location to somewhere
