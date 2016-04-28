@@ -124,11 +124,10 @@ class MediaFileAdmin(ExtensionModelAdmin):
     actions = [assign_category, save_as_zipfile]
 
     def get_urls(self):
-        from django.conf.urls import patterns, url
+        from django.conf.urls import url
 
         urls = super(MediaFileAdmin, self).get_urls()
-        my_urls = patterns(
-            '',
+        my_urls = (
             url(
                 r'^mediafile-bulk-upload/$',
                 self.admin_site.admin_view(MediaFileAdmin.bulk_upload),
