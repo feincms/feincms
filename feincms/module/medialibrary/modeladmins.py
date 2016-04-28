@@ -127,14 +127,14 @@ class MediaFileAdmin(ExtensionModelAdmin):
         from django.conf.urls import url
 
         urls = super(MediaFileAdmin, self).get_urls()
-        my_urls = (
+        my_urls = [
             url(
                 r'^mediafile-bulk-upload/$',
                 self.admin_site.admin_view(MediaFileAdmin.bulk_upload),
                 {},
                 name='mediafile_bulk_upload',
             ),
-        )
+        ]
 
         return my_urls + urls
 
