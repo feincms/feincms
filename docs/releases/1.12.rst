@@ -6,11 +6,10 @@ Welcome to FeinCMS 1.12!
 
 .. warning::
 
-   This is a cleanup release. Lots of changes ahead!
+   This is a cleanup release. Lots of changes ahead! Please report problems
+   in our issue tracker on Github_!
 
-
-Simplification of import paths
-==============================
+.. _Github: https://github.com/feincms/feincms/issues
 
 
 Template content requires explicit list of templates
@@ -56,9 +55,17 @@ Also, you need to add a model migration which renames the old
 The blog module has been completely removed
 ============================================
 
+If you need a blog, have a look at Elephantblog_ instead.
+
+.. _Elephantblog: https://github.com/feincms/feincms-elephantblog
+
 
 Caching of pages in various page manager methods has been removed
 =================================================================
+
+Some methods such as `Page.objects.for_request` automatically cached
+the page instances. This behavior lead to non-obvious problems and has
+therefore been removed.
 
 
 Backwards-incompatible changes
@@ -86,8 +93,7 @@ South is not supported anymore? Django 1.7 and better only?
 New deprecations
 ================
 
-* VideoContent, SectionContent, ContactForm?, old import paths
-* Point 1
+* None.
 
 
 Notable features and improvements
@@ -103,7 +109,7 @@ Notable features and improvements
 Bugfixes
 ========
 
-* Bug fix 1
+* Too many to list.
 
 
 Compatibility with Django and other apps
