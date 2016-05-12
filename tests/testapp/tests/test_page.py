@@ -654,6 +654,11 @@ class PagesTestCase(TestCase):
         context = template.Context({'feincms_page': page2, 'page3': page3})
 
         t = template.Template(
+            '{% load feincms_page_tags %}{% feincms_parentlink of feincms_page'
+            ' level=1 %}')
+        self.assertEqual(t.render(context), '/test-page/')
+
+        t = template.Template(
             '{% load feincms_page_tags %}{% feincms_languagelinks for'
             ' feincms_page as links %}{% for key, name, link in links %}'
             '{{ key }}:{{ link }}{% if not forloop.last %},{% endif %}'

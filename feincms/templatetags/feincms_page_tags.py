@@ -494,3 +494,18 @@ def page_is_active(context, page, feincms_page=None, path=None):
         if feincms_page is None:
             feincms_page = context['feincms_page']
         return page.is_ancestor_of(feincms_page, include_self=True)
+
+
+# ------------------------------------------------------------------------
+@register.simple_tag
+def feincms_parentlink(of_, feincms_page, **kwargs):
+    level = int(kwargs.get('level', 1))
+    if feincms_page.level + 1 == level:
+        return feincms_page.get_absolute_url()
+    elif feincms_page.level + 1 < level:
+        return '#'
+
+    try:
+        return feincms_page.get_ancestors()[level - 1].get_absolute_url()
+    except IndexError:
+        return '#'
