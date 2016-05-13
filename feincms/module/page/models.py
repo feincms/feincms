@@ -84,8 +84,6 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
                 '/%s/' % '/'.join(tokens[:i])
                 for i in range(1, len(tokens) + 1)]
 
-        print(paths)
-
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
                 select={'_url_length': 'LENGTH(_cached_url)'}
