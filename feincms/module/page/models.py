@@ -5,6 +5,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
@@ -74,11 +75,16 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
         paths = ['/']
         path = path.strip('/')
 
+        for prefix in settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX:
+            path = path.lstrip(prefix).strip('/')
+
         if path:
             tokens = path.split('/')
             paths += [
                 '/%s/' % '/'.join(tokens[:i])
                 for i in range(1, len(tokens) + 1)]
+
+        print(paths)
 
         try:
             page = self.active().filter(_cached_url__in=paths).extra(
@@ -95,6 +101,30 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
                 raise Http404()
 
         raise self.model.DoesNotExist
+
+
+    # def best_match_for_path(self, path, language_code=None):
+    #     """
+    #     Return the UrlNode that is the closest parent to the given path.
+    #     UrlNode.objects.best_match_for_path('/photos/album/2008/09') might return the page with url '/photos/album/'.
+    #     .. versionchanged:: 0.9 This filter only returns the pages of the current site.
+    #     """
+    #     if language_code is None:
+    #         language_code = self._language or get_language()
+
+    #     # Based on FeinCMS:
+    #     paths = self._split_path_levels(path)
+
+    #     try:
+    #         qs = self._single_site() \
+    #                  .filter(translations___cached_url__in=paths, translations__language_code=language_code) \
+    #                  .extra(select={'_url_length': 'LENGTH(_cached_url)'}) \
+    #                  .order_by('-level', '-_url_length')  # / and /news/ is both level 0
+    #         obj = qs[0]
+    #         obj.set_current_language(language_code)  # NOTE: Explicitly set language to the state the object was fetched in.
+    #         return obj
+    #     except IndexError:
+    #         raise self.model.DoesNotExist(u"No published {0} found for the path '{1}'".format(self.model.__name__, path))
 
     def in_navigation(self):
         """

@@ -91,6 +91,15 @@ FEINCMS_ALLOW_EXTRA_PATH = getattr(
     False)
 
 # ------------------------------------------------------------------------
+#: Allow random prefixes to be ignored when using 
+#: `Page.best_match_for_path()` and the `add_page_if_missing` context
+#: processor.
+FEINCMS_ALLOW_EXTRA_PATH_PREFIX = getattr(
+    settings,
+    'FEINCMS_ALLOW_EXTRA_PATH_PREFIX',
+    ())
+
+# ------------------------------------------------------------------------
 #: How to switch languages.
 #: * ``'STANDARD'``: The page a user navigates to sets the site's language
 #:   and overwrites whatever was set before.
