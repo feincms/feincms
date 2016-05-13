@@ -93,7 +93,8 @@ FEINCMS_ALLOW_EXTRA_PATH = getattr(
 # ------------------------------------------------------------------------
 #: Allow random prefixes to be ignored when using 
 #: `Page.best_match_for_path()` and the `add_page_if_missing` context
-#: processor.
+#: processor. 
+#: Defaults to an empty tuple.
 FEINCMS_ALLOW_EXTRA_PATH_PREFIX = getattr(
     settings,
     'FEINCMS_ALLOW_EXTRA_PATH_PREFIX',

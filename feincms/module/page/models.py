@@ -102,30 +102,6 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
 
         raise self.model.DoesNotExist
 
-
-    # def best_match_for_path(self, path, language_code=None):
-    #     """
-    #     Return the UrlNode that is the closest parent to the given path.
-    #     UrlNode.objects.best_match_for_path('/photos/album/2008/09') might return the page with url '/photos/album/'.
-    #     .. versionchanged:: 0.9 This filter only returns the pages of the current site.
-    #     """
-    #     if language_code is None:
-    #         language_code = self._language or get_language()
-
-    #     # Based on FeinCMS:
-    #     paths = self._split_path_levels(path)
-
-    #     try:
-    #         qs = self._single_site() \
-    #                  .filter(translations___cached_url__in=paths, translations__language_code=language_code) \
-    #                  .extra(select={'_url_length': 'LENGTH(_cached_url)'}) \
-    #                  .order_by('-level', '-_url_length')  # / and /news/ is both level 0
-    #         obj = qs[0]
-    #         obj.set_current_language(language_code)  # NOTE: Explicitly set language to the state the object was fetched in.
-    #         return obj
-    #     except IndexError:
-    #         raise self.model.DoesNotExist(u"No published {0} found for the path '{1}'".format(self.model.__name__, path))
-
     def in_navigation(self):
         """
         Returns active pages which have the ``in_navigation`` flag set.
