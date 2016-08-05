@@ -78,7 +78,7 @@ def assign_category(modeladmin, request, queryset):
         'mediafiles': queryset,
         'category_form': form,
         'opts': modeladmin.model._meta,
-    }, context_instance=RequestContext(request))
+    }, request=request)
 
 
 assign_category.short_description = _('Add selected media files to category')

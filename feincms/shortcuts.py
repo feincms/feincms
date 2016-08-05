@@ -17,4 +17,4 @@ def render_to_response_best_match(request, template_name, dictionary=None):
     return render_to_response(
         template_name,
         dictionary,
-        context_instance=RequestContext(request))
+        request=request)
