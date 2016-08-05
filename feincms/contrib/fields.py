@@ -29,8 +29,7 @@ class JSONFormField(forms.fields.CharField):
 
         return super(JSONFormField, self).clean(value, *args, **kwargs)
 
-
-class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
+class JSONField(models.TextField):
     """
     TextField which transparently serializes/unserializes JSON objects
 
@@ -60,6 +59,9 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
         else:
             assert value is None
             return {}
+
+    def from_db_value(self, value, expression, connection, context):
+        return self.to_python(value)
 
     def get_prep_value(self, value):
         """Convert our JSON object to a string before we save"""
