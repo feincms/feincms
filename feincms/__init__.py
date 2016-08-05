@@ -58,7 +58,9 @@ def ensure_completely_loaded(force=False):
     # that relations defined after all content types registrations
     # don't miss out.
     import django
-    if django.get_version() < '1.8':
+    from distutils.version import LooseVersion
+
+    if LooseVersion(django.get_version()) < LooseVersion('1.8'):
 
         for model in apps.get_models():
             for cache_name in (
