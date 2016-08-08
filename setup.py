@@ -30,25 +30,13 @@ setup(
     packages=find_packages(
         exclude=['tests']
     ),
-    package_data={
-        '': ['*.html', '*.txt'],
-        'feincms': [
-            'locale/*/*/*.*',
-            'static/feincms/*.*',
-            'static/feincms/*/*.*',
-            'templates/*.*',
-            'templates/*/*.*',
-            'templates/*/*/*.*',
-            'templates/*/*/*/*.*',
-            'templates/*/*/*/*/*.*',
-        ],
-    },
-    install_requires=[
-        'Django>=1.6',
-        'django-mptt>=0.7.1',
-        'Pillow>=2.0.0',
-        'pytz>=2014.10',
-    ],
+    include_package_data=True,
+    # install_requires=[
+    #     'Django>=1.6',
+    #     'django-mptt>=0.7.1',
+    #     'Pillow>=2.0.0',
+    #     'pytz>=2014.10',
+    # ],
     classifiers=[
         devstatus,
         'Environment :: Web Environment',
@@ -58,12 +46,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
