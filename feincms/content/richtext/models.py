@@ -1,10 +1,10 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
+from feincms._internal import ct_render_to_string
 from feincms.contrib.richtext import RichTextField
 
 
@@ -34,11 +34,12 @@ class RichTextContent(models.Model):
         verbose_name_plural = _('rich texts')
 
     def render(self, **kwargs):
-        ctx = {'content': self}
-        ctx.update(kwargs)
-        return render_to_string(
+        return ct_render_to_string(
             'content/richtext/default.html',
-            ctx)
+            {'content': self},
+            request=kwargs.get('request'),
+            context=kwargs.get('context'),
+        )
 
     @classmethod
     def initialize_type(cls, cleanse=None):

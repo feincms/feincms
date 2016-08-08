@@ -35,7 +35,9 @@ class JSONFormField(forms.fields.CharField):
 if LooseVersion(get_version()) > LooseVersion('1.8'):
     workaround_class = models.TextField
 else:
-    workaround_class = six.with_metaclass(models.SubfieldBase, models.TextField)
+    workaround_class = six.with_metaclass(
+        models.SubfieldBase, models.TextField)
+
 
 class JSONField(workaround_class):
     """

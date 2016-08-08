@@ -11,9 +11,10 @@ from django import forms
 from django.core.mail import send_mail
 from django.db import models
 from django.http import HttpResponseRedirect
-from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+
+from feincms._internal import ct_render_to_string
 
 
 class ContactForm(forms.Form):
@@ -44,8 +45,9 @@ class ContactFormContent(models.Model):
 
     def process(self, request, **kwargs):
         if request.GET.get('_cf_thanks'):
-            self.rendered_output = render_to_string(
+            self.rendered_output = ct_render_to_string(
                 'content/contactform/thanks.html',
+                {'content': self},
                 request=request)
             return
 
@@ -72,7 +74,7 @@ class ContactFormContent(models.Model):
 
             form = self.form(initial=initial)
 
-        self.rendered_output = render_to_string(
+        self.rendered_output = ct_render_to_string(
             'content/contactform/form.html', {
                 'content': self,
                 'form': form,

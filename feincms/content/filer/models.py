@@ -3,10 +3,10 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
+from feincms._internal import ct_render_to_string
 
 try:
     from filer.fields.file import FilerFileField
@@ -34,14 +34,17 @@ else:
             abstract = True
 
         def render(self, **kwargs):
-            ctx = {'content': self}
-            ctx.update(kwargs)
-            return render_to_string([
-                'content/filer/%s_%s.html' % (self.file_type, self.type),
-                'content/filer/%s.html' % self.type,
-                'content/filer/%s.html' % self.file_type,
-                'content/filer/default.html',
-            ], ctx)
+            return ct_render_to_string(
+                [
+                    'content/filer/%s_%s.html' % (self.file_type, self.type),
+                    'content/filer/%s.html' % self.type,
+                    'content/filer/%s.html' % self.file_type,
+                    'content/filer/default.html',
+                ],
+                {'content': self},
+                request=kwargs.get('request'),
+                context=kwargs.get('context'),
+            )
 
     class FilerFileContent(ContentWithFilerFile):
         mediafile = FilerFileField(verbose_name=_('file'), related_name='+')

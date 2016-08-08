@@ -1666,7 +1666,7 @@ class PagesTestCase(TestCase):
             template='templatecontent_1.html',
         )
 
-        self.assertEqual(template.render(), 'TemplateContent_1\n##\n')
+        self.assertEqual(template.render(), 'TemplateContent_1\n#42#\n')
 
         # The empty form contains the template option.
         self.login()

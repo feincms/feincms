@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
+from feincms._internal import ct_render_to_string
 from feincms.content.raw.models import RawContent  # noqa
 from feincms.content.richtext.models import RichTextContent  # noqa
 
@@ -33,8 +33,9 @@ class TemplateContent(models.Model):
         ))
 
     def render(self, **kwargs):
-        ctx = {'content': self}
-        ctx.update(kwargs)
-        return render_to_string(
+        return ct_render_to_string(
             self.template,
-            ctx)
+            {'content': self},
+            request=kwargs.get('request'),
+            context=kwargs.get('context'),
+        )

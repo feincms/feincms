@@ -4,10 +4,10 @@ from django.conf import settings as django_settings
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
+from feincms._internal import ct_render_to_string
 from feincms.admin.item_editor import FeinCMSInline
 from feincms.contrib.richtext import RichTextField
 from feincms.module.medialibrary.fields import MediaFileForeignKey
@@ -76,7 +76,7 @@ class SectionContent(models.Model):
         else:
             mediafile_type = 'nomedia'
 
-        return render_to_string(
+        return ct_render_to_string(
             [
                 'content/section/%s_%s.html' % (mediafile_type, self.type),
                 'content/section/%s.html' % mediafile_type,
@@ -84,6 +84,8 @@ class SectionContent(models.Model):
                 'content/section/default.html',
             ],
             {'content': self},
+            request=kwargs.get('request'),
+            context=kwargs.get('context'),
         )
 
     def save(self, *args, **kwargs):

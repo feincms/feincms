@@ -16,7 +16,6 @@ from django.core.files.images import get_image_dimensions
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from django.template.context import RequestContext
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
