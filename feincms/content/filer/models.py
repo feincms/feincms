@@ -41,7 +41,7 @@ else:
                 'content/filer/%s.html' % self.type,
                 'content/filer/%s.html' % self.file_type,
                 'content/filer/default.html',
-            ], ctx, context_instance=kwargs.get('context'))
+            ], ctx)
 
     class FilerFileContent(ContentWithFilerFile):
         mediafile = FilerFileField(verbose_name=_('file'), related_name='+')

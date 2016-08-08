@@ -29,11 +29,12 @@ class FileContent(models.Model):
         verbose_name_plural = _('files')
 
     def render(self, **kwargs):
+        context = kwargs.get('context')
+        context.update({'content': self})
         return render_to_string(
             [
                 'content/file/%s.html' % self.region,
                 'content/file/default.html',
             ],
-            {'content': self},
-            context_instance=kwargs.get('context'),
+            context,
         )
