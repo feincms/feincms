@@ -34,10 +34,11 @@ class RichTextContent(models.Model):
         verbose_name_plural = _('rich texts')
 
     def render(self, **kwargs):
+        ctx = {'content': self}
+        ctx.update(kwargs)
         return render_to_string(
             'content/richtext/default.html',
-            {'content': self},
-            context_instance=kwargs.get('context'))
+            ctx)
 
     @classmethod
     def initialize_type(cls, cleanse=None):

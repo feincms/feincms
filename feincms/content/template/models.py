@@ -33,7 +33,8 @@ class TemplateContent(models.Model):
         ))
 
     def render(self, **kwargs):
+        ctx = {'content': self}
+        ctx.update(kwargs)
         return render_to_string(
             self.template,
-            {'content': self},
-            context_instance=kwargs.get('context'))
+            ctx)

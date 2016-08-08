@@ -66,9 +66,8 @@ class VideoContent(models.Model):
         return ctx
 
     def render(self, **kwargs):
-        context_instance = kwargs.get('context')
         ctx = self.ctx_for_video(self.video)
+        ctx.update(kwargs)
         return render_to_string(
             self.get_templates(ctx['portal']),
-            ctx,
-            context_instance=context_instance)
+            ctx)

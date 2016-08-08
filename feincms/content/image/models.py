@@ -59,10 +59,12 @@ class ImageContent(models.Model):
         templates = ['content/image/default.html']
         if hasattr(self, 'position'):
             templates.insert(0, 'content/image/%s.html' % self.position)
+
+        ctx = {'content': self}
+        ctx.update(kwargs)
         return render_to_string(
             templates,
-            {'content': self},
-            context_instance=kwargs.get('context'),
+            ctx,
         )
 
     def get_image(self):
