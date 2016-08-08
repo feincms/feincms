@@ -2,7 +2,9 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 import logging
+from distutils.version import LooseVersion
 
+from django import get_version
 from django import forms
 from django.db import models
 from django.core.serializers.json import DjangoJSONEncoder
@@ -29,7 +31,13 @@ class JSONFormField(forms.fields.CharField):
 
         return super(JSONFormField, self).clean(value, *args, **kwargs)
 
-class JSONField(models.TextField):
+
+if LooseVersion(get_version()) > LooseVersion('1.8'):
+    workaround_class = models.TextField
+else:
+    workaround_class = six.with_metaclass(models.SubfieldBase, models.TextField)
+
+class JSONField(workaround_class):
     """
     TextField which transparently serializes/unserializes JSON objects
 
