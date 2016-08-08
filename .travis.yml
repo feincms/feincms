@@ -13,7 +13,7 @@ env:
 matrix:
   exclude:
     - python: "3.5"
-      REQ="Django>=1.7,<1.8 django-mptt<0.8"
+      env: REQ="Django>=1.7,<1.8 django-mptt<0.8"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - pip install -U pip wheel setuptools
