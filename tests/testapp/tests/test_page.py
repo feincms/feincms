@@ -1660,7 +1660,7 @@ class PagesTestCase(TestCase):
 
     def test_41_templatecontent(self):
         page = self.create_page(active=True)
-        template = page.templatecontent_set.create(
+        page.templatecontent_set.create(
             region='main',
             ordering=10,
             template='templatecontent_1.html',
