@@ -44,6 +44,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     # request context processor is needed
     'django.core.context_processors.request',
+    'testapp.context_processors.test_context',
 )
 
 MIDDLEWARE_CLASSES = (

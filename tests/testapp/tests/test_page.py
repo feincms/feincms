@@ -1659,14 +1659,14 @@ class PagesTestCase(TestCase):
             {'feincms_page': page2}, p, path='/test-page/'))
 
     def test_41_templatecontent(self):
-        page = self.create_page()
+        page = self.create_page(active=True)
         template = page.templatecontent_set.create(
-            region=0,
-            ordering=1,
+            region='main',
+            ordering=10,
             template='templatecontent_1.html',
         )
 
-        self.assertEqual(template.render(), 'TemplateContent_1\n')
+        self.assertEqual(template.render(), 'TemplateContent_1\n##\n')
 
         # The empty form contains the template option.
         self.login()
@@ -1675,3 +1675,13 @@ class PagesTestCase(TestCase):
                 reverse('admin:page_page_change', args=(page.id,))
             ),
             '<option value="templatecontent_1.html">template 1</option>')
+
+        response = self.client.get(page.get_absolute_url())
+        self.assertContains(
+            response,
+            'TemplateContent_1',
+        )
+        self.assertContains(
+            response,
+            '#42#',
+        )
