@@ -51,7 +51,7 @@ if LooseVersion(get_version()) < LooseVersion('1.10'):
         from django.template import RequestContext
 
         context_instance = kwargs.get('context')
-        if context_instance is None and 'request' in kwargs:
+        if context_instance is None and kwargs.get('request'):
             context_instance = RequestContext(kwargs['request'])
 
         return render_to_string(
