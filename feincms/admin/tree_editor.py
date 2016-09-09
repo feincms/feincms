@@ -260,16 +260,16 @@ class TreeEditor(ExtensionModelAdmin):
         changeable_class = ''
         if not self.changeable(item):
             changeable_class = ' tree-item-not-editable'
-        subitem_class = ''
-        if item.parent:
-            subitem_class = ' tree-subitem'
+        tree_root_class = ''
+        if not item.parent:
+            tree_root_class = ' tree-root'
 
         r += (
             '<span id="page_marker-%d" class="page_marker%s%s"'
             ' style="width: %dpx;">&nbsp;</span>&nbsp;') % (
             item.pk,
             changeable_class,
-            subitem_class,
+            tree_root_class,
             14 + getattr(item, mptt_opts.level_attr) * 18)
 
 #        r += '<span tabindex="0">'
