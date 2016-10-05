@@ -72,6 +72,11 @@ by :mod:`feincms.module.page`.
 random gunk after a valid page URL. The standard behavior is to raise a 404
 if extra path elements aren't handled by a content type's ``process()`` method.
 
+``FEINCMS_ALLOW_EXTRA_PATH_PREFIX``: Defaults to ``()``. Define a tuple of 
+strings to allow predetermined url prefixes to be ignored. The standard behavior 
+is to raise a 404 if extra path elements aren't handled by a content type's 
+``process()`` method.
+
 ``FEINCMS_TRANSLATION_POLICY``: Defaults to ``STANDARD``.  How to switch
 languages.
 

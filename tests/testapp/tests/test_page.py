@@ -1063,18 +1063,30 @@ class PagesTestCase(TestCase):
             Page.objects.best_match_for_path(
                 page.get_absolute_url() + 'something/hello/'))
 
+        # test `FEINCMS_ALLOW_EXTRA_PATH`
         old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
-        request.path += 'hello/'
+        test_path = '%shello/' % request.path
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = False
-        self.assertEqual(self.client.get(request.path).status_code, 404)
+        self.assertEqual(self.client.get(test_path).status_code, 404)
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = True
-        self.assertEqual(self.client.get(request.path).status_code, 200)
+        self.assertEqual(self.client.get(test_path).status_code, 200)
         self.assertEqual(
             page, Page.objects.for_request(request, best_match=True))
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
+
+        # test FEINCMS_ALLOW_EXTRA_PATH_PREFIX
+        old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX
+        test_path = 'prefix%s' % request.path
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX = ('prefix',)
+        self.assertEqual(self.client.get(request.path).status_code, 200)
+        self.assertEqual(
+            page, Page.objects.for_request(request, best_match=True))
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX = old
 
         page_id = id(request._feincms_page)
         p = Page.objects.for_request(request)
