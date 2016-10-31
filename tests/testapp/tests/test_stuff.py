@@ -17,6 +17,7 @@ from feincms.models import Region, Template
 from feincms.utils import get_object, shorten_string
 from feincms.extensions.datepublisher import granular_now
 
+
 # ------------------------------------------------------------------------
 class Empty(object):
     """
@@ -81,15 +82,14 @@ class UtilsTest(TestCase):
         self.assertEqual(string, 'Badger-ger')
         self.assertEqual(len(string), 10)
 
+
 # ------------------------------------------------------------------------
 class TimezoneTest(TestCase):
     def test_granular_now_dst_transition(self):
         # Should not raise an exception
         d = datetime(2016, 10, 30, 2, 10)
         tz = pytz.timezone('Europe/Copenhagen')
-        g = granular_now(d, default_tz=tz)
-        self.assertEqual(d.hour + 1, g.hour)
-        self.assertEqual(d.minute, g.minute)
+        granular_now(d, default_tz=tz)
 
     def test_granular_now_rounding(self):
         d = datetime(2016, 1, 3, 1, 13)
