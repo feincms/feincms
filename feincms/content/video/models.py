@@ -3,8 +3,9 @@ from __future__ import absolute_import, unicode_literals
 import re
 
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+
+from feincms._internal import ct_render_to_string
 
 
 class VideoContent(models.Model):
@@ -66,9 +67,10 @@ class VideoContent(models.Model):
         return ctx
 
     def render(self, **kwargs):
-        context_instance = kwargs.get('context')
         ctx = self.ctx_for_video(self.video)
-        return render_to_string(
+        return ct_render_to_string(
             self.get_templates(ctx['portal']),
             ctx,
-            context_instance=context_instance)
+            request=kwargs.get('request'),
+            context=kwargs.get('context'),
+        )

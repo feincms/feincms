@@ -80,6 +80,7 @@ Releases
    releases/1.10
    releases/1.11
    releases/1.12
+   releases/1.13
 
 
 Indices and tables

@@ -15,8 +15,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.files.images import get_image_dimensions
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template.context import RequestContext
+from django.shortcuts import render
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
 from django.utils.translation import ungettext, ugettext_lazy as _
@@ -74,11 +73,11 @@ def assign_category(modeladmin, request, queryset):
                 admin.ACTION_CHECKBOX_NAME),
         })
 
-    return render_to_response('admin/medialibrary/add_to_category.html', {
+    return render(request, 'admin/medialibrary/add_to_category.html', {
         'mediafiles': queryset,
         'category_form': form,
         'opts': modeladmin.model._meta,
-    }, context_instance=RequestContext(request))
+    })
 
 
 assign_category.short_description = _('Add selected media files to category')

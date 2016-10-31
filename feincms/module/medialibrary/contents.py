@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
+from feincms._internal import ct_render_to_string
 from feincms.admin.item_editor import FeinCMSInline
 from feincms.module.medialibrary.fields import ContentWithMediaFile
 
@@ -65,11 +65,15 @@ class MediaFileContent(ContentWithMediaFile):
         )
 
     def render(self, **kwargs):
-        ctx = {'content': self}
-        ctx.update(kwargs)
-        return render_to_string([
-            'content/mediafile/%s_%s.html' % (self.mediafile.type, self.type),
-            'content/mediafile/%s.html' % self.mediafile.type,
-            'content/mediafile/%s.html' % self.type,
-            'content/mediafile/default.html',
-        ], ctx, context_instance=kwargs.get('context'))
+        return ct_render_to_string(
+            [
+                'content/mediafile/%s_%s.html' % (
+                    self.mediafile.type, self.type),
+                'content/mediafile/%s.html' % self.mediafile.type,
+                'content/mediafile/%s.html' % self.type,
+                'content/mediafile/default.html',
+            ],
+            {'content': self},
+            request=kwargs.get('request'),
+            context=kwargs.get('context'),
+        )

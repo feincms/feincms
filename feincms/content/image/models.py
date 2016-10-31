@@ -8,10 +8,10 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
+from feincms._internal import ct_render_to_string
 from feincms.templatetags import feincms_thumbnail
 
 
@@ -59,10 +59,12 @@ class ImageContent(models.Model):
         templates = ['content/image/default.html']
         if hasattr(self, 'position'):
             templates.insert(0, 'content/image/%s.html' % self.position)
-        return render_to_string(
+
+        return ct_render_to_string(
             templates,
             {'content': self},
-            context_instance=kwargs.get('context'),
+            request=kwargs.get('request'),
+            context=kwargs.get('context'),
         )
 
     def get_image(self):
