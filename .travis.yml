@@ -9,7 +9,7 @@ env:
   - REQ="Django>=1.7,<1.8 django-mptt<0.8"
   - REQ="Django>=1.8,<1.9 django-mptt<0.8"
   - REQ="Django>=1.9,<1.10 django-mptt"
-  - REQ="Django>=1.10,<1.11 django-mptt-nomagic"
+  - REQ="Django>=1.10,<1.11 django-mptt"
 matrix:
   exclude:
     - python: "3.5"
@@ -20,4 +20,4 @@ install:
   - pip install $REQ Pillow flake8 pytz
   - python setup.py install
 # command to run tests, e.g. python setup.py test
-script: "cd tests && ./manage.py test testapp && flake8 ."
+script: "cd tests && ./manage.py test testapp && cd .. && flake8 ."

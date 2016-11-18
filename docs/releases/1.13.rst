@@ -9,8 +9,6 @@ Compatibility with Django 1.10
 ==============================
 
 The biggest feature of Django 1.10 is being compatible with Django 1.10.
-Please note that django-mptt_ is at the time of writing not compatible
-with Django 1.10 yet. You may want to try django-mptt-nomagic_.
 
 
 Backwards-incompatible changes
@@ -50,4 +48,3 @@ FeinCMS 1.13 requires Django 1.7 or better.
 
 
 .. _django-mptt: https://github.com/django-mptt/django-mptt
-.. _django-mptt-nomagic: https://pypi.python.org/pypi/django-mptt-nomagic/

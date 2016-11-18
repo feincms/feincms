@@ -55,6 +55,7 @@ def get_admin_fields(form, *args, **kwargs):
         'custom_field': forms.CharField(),
     }
 
+
 Page.create_content_type(
     ApplicationContent,
     APPLICATIONS=(
@@ -101,6 +102,7 @@ class Category(MPTTModel):
 class ExampleCMSBase(Base):
     pass
 
+
 ExampleCMSBase.register_regions(
     ('region', 'region title'),
     ('region2', 'region2 title'))
@@ -108,6 +110,7 @@ ExampleCMSBase.register_regions(
 
 class ExampleCMSBase2(Base):
         pass
+
 
 ExampleCMSBase2.register_regions(
     ('region', 'region title'),

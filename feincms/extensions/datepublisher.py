@@ -74,6 +74,7 @@ def granular_now(n=None, default_tz=None):
 
     return retval
 
+
 # ------------------------------------------------------------------------
 def datepublisher_response_processor(page, request, response):
     """
