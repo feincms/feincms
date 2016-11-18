@@ -141,6 +141,8 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
 # ------------------------------------------------------------------------
 class PageManager(BasePageManager):
     pass
+
+
 PageManager.add_to_active_filters(Q(active=True))
 
 
@@ -367,6 +369,7 @@ class Page(BasePage):
         verbose_name_plural = _('pages')
         app_label = 'page'
         # not yet # permissions = (("edit_page", _("Can edit page metadata")),)
+
 
 Page.register_default_processors()
 

@@ -125,6 +125,8 @@ def class_prepared_handler(sender, **kwargs):
     # This leads to (lots of) crashes on the server. Better be safe and
     # kill the translation map when any class_prepared signal is received.
     _translation_map_cache.clear()
+
+
 class_prepared.connect(class_prepared_handler)
 
 

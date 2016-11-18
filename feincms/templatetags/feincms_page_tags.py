@@ -228,6 +228,7 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
         return links
 
+
 register.tag(
     'feincms_languagelinks',
     do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode))
@@ -293,6 +294,7 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
 
         return _translate_page_into(page, language, default=default)
 
+
 register.tag(
     'feincms_translatedpage',
     do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
@@ -304,6 +306,7 @@ class TranslatedPageNodeOrBase(TranslatedPageNode):
         return super(TranslatedPageNodeOrBase, self).what(
             page, args,
             default=getattr(page, 'get_original_translation', page))
+
 
 register.tag(
     'feincms_translatedpage_or_base',

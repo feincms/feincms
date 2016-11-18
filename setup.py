@@ -10,6 +10,7 @@ def read(filename):
     with open(path, encoding='utf-8') as handle:
         return handle.read()
 
+
 version = __import__('feincms').__version__
 devstatus = 'Development Status :: 5 - Production/Stable'
 if '.dev' in version:

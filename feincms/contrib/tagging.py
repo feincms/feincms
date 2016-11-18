@@ -37,6 +37,7 @@ def taglist_to_string(taglist):
 # The following is lifted from:
 # http://code.google.com/p/django-tagging/issues/detail?id=189
 
+
 """
 TagSelectField
 

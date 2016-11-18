@@ -22,6 +22,7 @@ class LazySettings(object):
         del self.__class__.__getattr__
         return self.__dict__[attr]
 
+
 settings = LazySettings()
 
 
