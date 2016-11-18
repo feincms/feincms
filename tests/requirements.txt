@@ -1,5 +1,5 @@
 Django
-django-mptt-nomagic
+django-mptt
 Pillow
 coverage
 pytz
