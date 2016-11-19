@@ -433,7 +433,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(force_text(category), 'Category')
 
         mediafile = MediaFile.objects.create(file='somefile.jpg')
-        mediafile.categories = [category]
+        mediafile.categories.set([category])
         page.mediafilecontent_set.create(
             mediafile=mediafile,
             region='main',

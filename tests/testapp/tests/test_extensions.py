@@ -9,8 +9,8 @@ from django.utils import translation
 from django.conf import settings as django_settings
 
 from feincms.module.page.models import Page
-from feincms.module.extensions.translations import user_has_language_set
-from feincms.module.extensions.translations import translation_set_language
+from feincms.extensions.translations import user_has_language_set
+from feincms.extensions.translations import translation_set_language
 
 
 class TranslationTestCase(TestCase):
