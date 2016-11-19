@@ -231,7 +231,6 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                 page, 'active', override=False, text=_('extensions'))
 
         return tree_editor.ajax_editable_boolean_cell(page, 'active')
-    is_visible_admin.allow_tags = True
     is_visible_admin.short_description = _('is active')
     is_visible_admin.editable_boolean_field = 'active'
 

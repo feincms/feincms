@@ -17,6 +17,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
+from django.utils.html import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
@@ -133,11 +134,10 @@ class Extension(extensions.Extension):
 
     def handle_modeladmin(self, modeladmin):
         def datepublisher_admin(self, obj):
-            return '%s &ndash; %s' % (
+            return mark_safe('%s &ndash; %s' % (
                 format_date(obj.publication_date),
                 format_date(obj.publication_end_date, '&infin;'),
-            )
-        datepublisher_admin.allow_tags = True
+            ))
         datepublisher_admin.short_description = _('visible from - to')
 
         modeladmin.__class__.datepublisher_admin = datepublisher_admin

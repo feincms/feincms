@@ -150,7 +150,6 @@ class MediaFileAdmin(ExtensionModelAdmin):
             )
         return ''
     admin_thumbnail.short_description = _('Preview')
-    admin_thumbnail.allow_tags = True
 
     def formatted_file_size(self, obj):
         return filesizeformat(obj.file_size)
@@ -177,10 +176,9 @@ class MediaFileAdmin(ExtensionModelAdmin):
                     t += " %d&times;%d" % (d[0], d[1])
             except (IOError, TypeError, ValueError) as e:
                 t += " (%s)" % e
-        return t
+        return mark_safe(t)
     file_type.admin_order_field = 'type'
     file_type.short_description = _('file type')
-    file_type.allow_tags = True
 
     def file_info(self, obj):
         """
@@ -190,7 +188,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
         the file name later on, this can be used to access the file name from
         JS, like for example a TinyMCE connector shim.
         """
-        return (
+        return mark_safe((
             '<input type="hidden" class="medialibrary_file_path"'
             ' name="_media_path_%d" value="%s" id="_refkey_%d" />'
             ' %s <br />%s, %s'
@@ -201,10 +199,9 @@ class MediaFileAdmin(ExtensionModelAdmin):
             shorten_string(os.path.basename(obj.file.name), max_length=40),
             self.file_type(obj),
             self.formatted_file_size(obj),
-        )
+        ))
     file_info.admin_order_field = 'file'
     file_info.short_description = _('file info')
-    file_info.allow_tags = True
 
     @staticmethod
     @csrf_protect
