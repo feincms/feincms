@@ -45,6 +45,7 @@ class Category(models.Model):
     title = models.CharField(_('title'), max_length=200)
     parent = models.ForeignKey(
         'self', blank=True, null=True,
+        on_delete=models.CASCADE,
         related_name='children', limit_choices_to={'parent__isnull': True},
         verbose_name=_('parent'))
 

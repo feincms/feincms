@@ -277,7 +277,8 @@ def Translation(model):
     """
 
     class Inner(models.Model):
-        parent = models.ForeignKey(model, related_name='translations')
+        parent = models.ForeignKey(
+            model, related_name='translations', on_delete=models.CASCADE)
         language_code = models.CharField(
             _('language'), max_length=10,
             choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],

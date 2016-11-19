@@ -18,6 +18,7 @@ class Extension(extensions.Extension):
             'self',
             blank=True,
             null=True,
+            on_delete=models.CASCADE,
             related_name='%(app_label)s_%(class)s_symlinks',
             verbose_name=_('symlinked page'),
             help_text=_('All content is inherited from this page if given.')))

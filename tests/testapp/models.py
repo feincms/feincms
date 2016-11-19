@@ -88,7 +88,8 @@ class Category(MPTTModel):
     name = models.CharField(max_length=20)
     slug = models.SlugField()
     parent = models.ForeignKey(
-        'self', blank=True, null=True, related_name='children')
+        'self', blank=True, null=True, related_name='children',
+        on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['tree_id', 'lft']

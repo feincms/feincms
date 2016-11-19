@@ -18,7 +18,8 @@ class Extension(extensions.Extension):
         self.model.add_to_class(
             'site',
             models.ForeignKey(
-                Site, verbose_name=_('Site'), default=settings.SITE_ID))
+                Site, verbose_name=_('Site'), default=settings.SITE_ID,
+                on_delete=models.CASCADE))
 
         PageManager.add_to_active_filters(current_site, key='current_site')
 

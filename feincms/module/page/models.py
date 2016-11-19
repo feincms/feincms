@@ -159,6 +159,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         help_text=_('This is used to build the URL for this page'))
     parent = models.ForeignKey(
         'self', verbose_name=_('Parent'), blank=True,
+        on_delete=models.CASCADE,
         null=True, related_name='children')
     # Custom list_filter - see admin/filterspecs.py
     parent.parent_filter = True

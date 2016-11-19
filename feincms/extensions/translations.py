@@ -167,6 +167,7 @@ class Extension(extensions.Extension):
             'translation_of',
             models.ForeignKey(
                 'self',
+                on_delete=models.CASCADE,
                 blank=True, null=True, verbose_name=_('translation of'),
                 related_name='translations',
                 limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
