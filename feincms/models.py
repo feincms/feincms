@@ -518,7 +518,8 @@ def create_base_model(inherit_from=models.Model):
                 'get_queryset': classmethod(get_queryset),
                 'Meta': Meta,
                 'parent': models.ForeignKey(
-                    cls, related_name='%(class)s_set', on_delete=models.CASCADE),
+                    cls, related_name='%(class)s_set',
+                    on_delete=models.CASCADE),
                 'region': models.CharField(max_length=255),
                 'ordering': models.IntegerField(_('ordering'), default=0),
             }
