@@ -53,7 +53,7 @@ def get_model_instance(app_label, model_name, pk):
     try:
         instance = model._default_manager.get(pk=pk)
         return instance
-    except model.ObjectDoesNotExist:
+    except model.DoesNotExist:
         pass
 
     return None
