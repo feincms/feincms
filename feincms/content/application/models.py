@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+from collections import OrderedDict
 from email.utils import parsedate
 from functools import partial, wraps
 from time import mktime
@@ -171,7 +172,7 @@ class ApplicationContent(models.Model):
     # MyBlogApp for blog <slug>")
     parameters = JSONField(null=True, editable=False)
 
-    ALL_APPS_CONFIG = {}
+    ALL_APPS_CONFIG = OrderedDict()
 
     class Meta:
         abstract = True

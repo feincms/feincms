@@ -5,6 +5,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
@@ -73,6 +74,9 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
 
         paths = ['/']
         path = path.strip('/')
+        for prefix in settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX:
+            if path.startswith('%s/' % prefix):
+                path = path[len(prefix)+1:]
 
         if path:
             tokens = path.split('/')
