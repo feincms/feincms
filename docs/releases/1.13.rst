@@ -8,7 +8,8 @@ Welcome to FeinCMS 1.13!
 Compatibility with Django 1.10
 ==============================
 
-The biggest feature of FeinCMS 1.13 is being compatible with Django 1.10.
+The biggest feature of FeinCMS 1.13 is being compatible with Django 1.10
+and Django 1.11.
 
 
 Backwards-incompatible changes
