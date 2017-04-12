@@ -7,12 +7,12 @@ from __future__ import absolute_import, unicode_literals
 from datetime import datetime, timedelta
 import os
 
+import django
 from django import forms, template
 from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
@@ -20,6 +20,10 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase
 from django.utils import timezone
 from django.utils.encoding import force_text
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 from mptt.exceptions import InvalidMove
 
@@ -433,7 +437,10 @@ class PagesTestCase(TestCase):
         self.assertEqual(force_text(category), 'Category')
 
         mediafile = MediaFile.objects.create(file='somefile.jpg')
-        mediafile.categories = [category]
+        if django.VERSION < (2, 0):
+            mediafile.categories = [category]
+        else:
+            mediafile.categories.set([category])
         page.mediafilecontent_set.create(
             mediafile=mediafile,
             region='main',

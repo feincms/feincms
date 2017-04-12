@@ -143,7 +143,7 @@ class PageManager(BasePageManager):
     pass
 
 
-PageManager.add_to_active_filters(Q(active=True))
+PageManager.add_to_active_filters(Q(active=True), key='is_active')
 
 
 # ------------------------------------------------------------------------

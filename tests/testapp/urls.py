@@ -16,7 +16,7 @@ sitemaps = {'pages': PageSitemap}
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     url(
         r'^media/(?P<path>.*)$',
