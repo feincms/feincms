@@ -22,7 +22,9 @@ def post_process_fieldsets(context, fieldset):
     if fieldset.model_admin.fieldsets:
         return fieldset
 
-    fields_to_include = set(fieldset.form.fields.keys())
+    fields_to_include = set(fieldset.form.fields.keys() + [
+        f.name for f in fieldset.form._meta.model._meta.fields])
+
     for f in ('id', 'DELETE', 'ORDER'):
         fields_to_include.discard(f)
 

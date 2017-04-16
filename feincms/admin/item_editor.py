@@ -48,6 +48,14 @@ class FeinCMSInline(InlineModelAdmin):
     fk_name = 'parent'
     template = 'admin/feincms/content_inline.html'
 
+    def get_readonly_fields(self, request, obj=None):
+        readonly = super(FeinCMSInline, self).get_readonly_fields(
+            request, obj=obj)
+        if hasattr(self, 'model'):
+            self.readonly_fields = list(readonly) + [
+                f.name for f in self.model._meta.fields if not f.editable]
+        return self.readonly_fields
+
 
 # ------------------------------------------------------------------------
 class ItemEditor(ExtensionModelAdmin):
