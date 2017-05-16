@@ -6,6 +6,7 @@ from __future__ import absolute_import, unicode_literals
 
 import logging
 
+import django
 from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
@@ -14,7 +15,10 @@ from feincms.utils import get_singleton, get_singleton_url
 
 
 register = template.Library()
-assignment_tag = getattr(register, 'assignment_tag', register.simple_tag)
+assignment_tag = (
+    register.simple_tag if django.VERSION >= (1, 9)
+    else register.assignment_tag
+)
 
 
 def _render_content(content, **kwargs):

@@ -10,6 +10,10 @@ from django.db.models import Q
 from django.http import Http404
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 from mptt.models import MPTTModel, TreeManager
 
@@ -285,7 +289,6 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         super(BasePage, self).delete(*args, **kwargs)
     delete.alters_data = True
 
-    @models.permalink
     def get_absolute_url(self):
         """
         Return the absolute URL of this page.
@@ -293,8 +296,8 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         # result url never begins or ends with a slash
         url = self._cached_url.strip('/')
         if url:
-            return ('feincms_handler', (url,), {})
-        return ('feincms_home', (), {})
+            return reverse('feincms_handler', args=(url,))
+        return reverse('feincms_home')
 
     def get_navigation_url(self):
         """

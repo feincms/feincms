@@ -8,6 +8,7 @@ import logging
 import sys
 import traceback
 
+import django
 from django import template
 from django.apps import apps
 from django.conf import settings
@@ -23,7 +24,10 @@ from feincms.utils.templatetags import (
 logger = logging.getLogger('feincms.templatetags.page')
 
 register = template.Library()
-assignment_tag = getattr(register, 'assignment_tag', register.simple_tag)
+assignment_tag = (
+    register.simple_tag if django.VERSION >= (1, 9)
+    else register.assignment_tag
+)
 
 
 def _get_page_model():
