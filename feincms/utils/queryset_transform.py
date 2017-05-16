@@ -121,7 +121,7 @@ class TransformQuerySet(models.query.QuerySet):
 
     else:
         def _fetch_all(self):
-            super()._fetch_all()
+            super(TransformQuerySet, self)._fetch_all()
             if getattr(self, '_iterable_class', None) == self._orig_iterable_class:  # noqa
                 for fn in self._transform_fns:
                     fn(self._result_cache)
