@@ -110,7 +110,7 @@ class TransformQuerySet(models.query.QuerySet):
             if not self._transform_fns:
                 return result_iter
 
-            if getattr(self, '_iterable_class', None) != self._orig_iterable_class:
+            if getattr(self, '_iterable_class', None) != self._orig_iterable_class:  # noqa
                 # Do not process the result of values() and values_list()
                 return result_iter
 
@@ -122,7 +122,7 @@ class TransformQuerySet(models.query.QuerySet):
     else:
         def _fetch_all(self):
             super()._fetch_all()
-            if getattr(self, '_iterable_class', None) == self._orig_iterable_class:
+            if getattr(self, '_iterable_class', None) == self._orig_iterable_class:  # noqa
                 for fn in self._transform_fns:
                     fn(self._result_cache)
 
