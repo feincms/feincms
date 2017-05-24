@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import warnings
 
-from feincms.extensions.changedate import *
+from feincms.extensions.ct_tracker import *
 
 warnings.warn(
     'Import %(name)s from feincms.extensions.%(name)s' % {
