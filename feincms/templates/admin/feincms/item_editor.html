@@ -1,5 +1,5 @@
 {% extends "admin/change_form.html" %}
-{% load i18n admin_modify staticfiles %}
+{% load i18n admin_modify admin_urls staticfiles %}
 
 {% block extrahead %}{{ block.super }}
 {% block feincms_jquery_ui %}
@@ -31,7 +31,7 @@
       <div style="float: right;padding: 5px 0 0 0" id="available_translations">
         {% trans "available translations" %}:
     {% endif %}
-          <a href="../{{ translation.id }}/" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
+        <a href="{% url opts|admin_urlname:'change' translation.id|admin_urlquote %}" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
     {% if forloop.last %}
       </div>
       <script type="text/javascript">
