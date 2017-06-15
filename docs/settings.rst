@@ -105,3 +105,9 @@ Various settings
 ``FEINCMS_THUMBNAIL_DIR``: Defaults to ``_thumbs/``. Defines a prefix for media
 file thumbnails. This allows you to easily remove all thumbnails without fear
 of removing files belonging to image and file fields.
+
+``FEINCMS_THUMBNAIL_CACHE_TIMEOUT``: ``feincms_thumbnail`` template
+filter library cache timeout. The default is to not cache anything for
+backwards compatibility. If you use cloud storage AND
+``feincms_thumbnail`` it is recommended to set the timeout to a large
+value.
