@@ -317,7 +317,7 @@ class TreeEditor(ExtensionModelAdmin):
         try:
             item_id = int(request.POST.get('item_id', None))
             attr = str(request.POST.get('attr', None))
-        except:
+        except Exception:
             return HttpResponseBadRequest("Malformed request")
 
         if not request.user.is_staff:
