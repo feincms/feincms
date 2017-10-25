@@ -332,7 +332,7 @@ msgid ""
 "Cannot overwrite with different file type (attempt to overwrite a "
 "%(old_ext)s with a %(new_ext)s)"
 msgstr ""
-"Невозможно перезаписать с различным типом файла (попытка перезаписать "
+"Невозможно перезаписать с другим типом файла (попытка перезаписать "
 "%(old_ext)s с %(new_ext)s)"
 
 #: module/medialibrary/modeladmins.py:65
@@ -600,7 +600,7 @@ msgid ""
 "The content from the original translation has been copied to the newly "
 "created page."
 msgstr ""
-"Содержание на языке по-умолчанию было скопировано в свежесозданную страницу."
+"Содержание на языке по умолчанию было скопировано в свежесозданную страницу."
 
 #: module/page/modeladmins.py:201
 msgid "You don't have the necessary permissions to edit this object"
@@ -749,7 +749,7 @@ msgstr "Восстановить удаленные %(verbose_name)s"
 
 #: templates/admin/feincms/recover_form.html:16
 msgid "Press the save button below to recover this version of the object."
-msgstr "Нажмите кнопку Сохранить ниже, чтобы восстановить эту версию объекта."
+msgstr "Нажмите кнопку \"Сохранить\" ниже, чтобы восстановить эту версию объекта."
 
 #: templates/admin/feincms/revision_form.html:11
 msgid "History"
@@ -762,7 +762,7 @@ msgstr "Восстановить %(verbose_name)s"
 
 #: templates/admin/feincms/revision_form.html:23
 msgid "Press the save button below to revert to this version of the object."
-msgstr "Нажмите кнопку Сохранить ниже, чтобы восстановить эту версию объекта."
+msgstr "Нажмите кнопку \"Сохранить\" ниже, чтобы восстановить эту версию объекта."
 
 #: templates/admin/feincms/tree_editor.html:21
 msgid "Shortcuts"
