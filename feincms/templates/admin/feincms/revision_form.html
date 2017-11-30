@@ -13,12 +13,12 @@
         </div>
 {% endblock %}
 
-{% block content %}
-        {% with 1 as is_popup %}
-                {{block.super}}
-        {% endwith %}
-{% endblock %}
-
 {% block form_top %}
         <p>{% blocktrans %}Press the save button below to revert to this version of the object.{% endblocktrans %}</p>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+<div class="submit-row">
+  <input type="submit" value="{% trans 'Save' %}" class="default" name="_save" />
+</div>
 {% endblock %}
