@@ -19,7 +19,7 @@ add :mod:`feincms.module.medialibrary` to your ``INSTALLED_APPS`` setting, and
 create a content type for a media file as follows::
 
     from feincms.module.page.models import Page
-    from feincms.content.medialibrary.models import MediaFileContent
+    from feincms.content.medialibrary.contents import MediaFileContent
 
     Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
         ('default', _('default')),
@@ -54,7 +54,7 @@ Rendering media file contents
 A set of recognition functions will be run on the file name to determine the file
 type. Using combinations of the name and type, the default render method tries to
 find a template for rendering the
-:class:`~feincms.content.medialibrary.models.MediaFileContent`.
+:class:`~feincms.content.medialibrary.models.MediaFileBase`.
 
 The default set of pre-defined content types and recognition functions is::
 
