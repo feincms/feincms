@@ -10,7 +10,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from django import forms
+from django import forms, VERSION
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models.signals import pre_save
 from django.utils import six
@@ -68,11 +68,12 @@ class TagSelectField(TagField):
         else:
             widget = forms.SelectMultiple()
 
-        def _render(name, value, attrs=None, *args, **kwargs):
-            value = parse_tag_input(value)
-            return type(widget).render(
-                widget, name, value, attrs, *args, **kwargs)
-        widget.render = _render
+        if VERSION < (1, 11):
+            def _render(name, value, attrs=None, *args, **kwargs):
+                value = parse_tag_input(value)
+                return type(widget).render(
+                    widget, name, value, attrs, *args, **kwargs)
+            widget.render = _render
         defaults['widget'] = widget
         choices = [(
             six.text_type(t),
