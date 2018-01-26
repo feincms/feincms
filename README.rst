@@ -44,7 +44,7 @@ that much, that you'd rather die than using a rich text editor?
 Then add the following code to your project, and you can go on using the
 CMS without being forced to use whatever the developers deemed best:
 
-::
+.. code-block:: python
 
     from markdown2 import markdown
     from feincms.module.page.models import Page
