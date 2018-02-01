@@ -260,7 +260,7 @@ class MediaFileTranslation(Translation(MediaFile)):
     Translated media file caption and description.
     """
 
-    caption = models.CharField(_('caption'), max_length=200)
+    caption = models.CharField(_('caption'), max_length=1024)
     description = models.TextField(_('description'), blank=True)
 
     class Meta:
