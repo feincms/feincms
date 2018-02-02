@@ -2,6 +2,11 @@
 FeinCMS - An extensible Django-based CMS
 ========================================
 
+.. image:: https://travis-ci.org/feincms/feincms.svg?branch=next
+   :target: https://travis-ci.org/feincms/feincms
+.. image:: https://travis-ci.org/feincms/feincms.svg?branch=master
+   :target: https://travis-ci.org/feincms/feincms
+
 When was the last time, that a pre-built software package you wanted to
 use got many things right, but in the end, you still needed to modify
 the core parts of the code just because it wasn't (easily) possible to
@@ -73,7 +78,7 @@ Visit these sites
 -----------------
 
 * FeinCMS Website: http://www.feincms.org/
-* Read the documentation: http://feincms-django-cms.readthedocs.org/
+* Read the documentation: https://feincms-django-cms.readthedocs.io/
 * See the Google Groups page at http://groups.google.com/group/django-feincms
 * FeinCMS on github: https://github.com/feincms/feincms/
 
@@ -94,12 +99,3 @@ rewinding policies are described below.
 * ``pu`` or feature branches are used for short-lived projects. These
   branches aren't guaranteed to stay around and are not meant to be
   deployed into production environments.
-
-
-Travis CI
-=========
-
-.. image:: https://travis-ci.org/feincms/feincms.png?branch=next
-   :target: https://travis-ci.org/feincms/feincms
-.. image:: https://travis-ci.org/feincms/feincms.png?branch=master
-   :target: https://travis-ci.org/feincms/feincms
