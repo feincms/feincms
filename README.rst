@@ -77,20 +77,6 @@ Visit these sites
 * See the Google Groups page at http://groups.google.com/group/django-feincms
 * FeinCMS on github: https://github.com/feincms/feincms/
 
-Try out FeinCMS in a Box
-------------------------
-
-`FeinCMS in a Box <https://github.com/feinheit/feincms-in-a-box>`_ is a
-prepackaged installation of FeinCMS with a few additional modules and a setup
-script. Try it out!
-
-IRC
----
-
-Visit us on IRC! We are hanging around in ``#feincms`` on freenode. If you
-do not have an IRC client you can use the
-`freenode Web IRC client <http://webchat.freenode.net/>`_.
-
 Repository branches
 -------------------
 
