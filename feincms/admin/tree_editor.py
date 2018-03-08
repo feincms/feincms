@@ -260,7 +260,7 @@ class TreeEditor(ExtensionModelAdmin):
         if not self.changeable(item):
             changeable_class = ' tree-item-not-editable'
         tree_root_class = ''
-        if not item.parent:
+        if not item.parent_id:
             tree_root_class = ' tree-root'
 
         r += (
