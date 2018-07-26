@@ -56,6 +56,27 @@ class TagSelectFormField(forms.MultipleChoiceField):
         return taglist_to_string(list(value))
 
 
+if VERSION >= (1, 10):
+    class Tag_formatvalue_mixin(object):
+        def format_value(self, value):
+            value = parse_tag_input(value or '')
+            return super(Tag_formatvalue_mixin, self).format_value(value)
+else:
+    # _format_value is a private method previous to Django 1.10,
+    # do the job in render() instead to avoid fiddling with
+    # anybody's privates
+    class Tag_formatvalue_mixin(object):
+        def render(name, value, attrs=None, *args, **kwargs):
+            value = parse_tag_input(value or '')
+            return super(Tag_formatvalue_mixin, self).render(
+                widget, name, value, attrs, *args, **kwargs)
+
+class fv_FilteredSelectMultiple(Tag_formatvalue_mixin, FilteredSelectMultiple):
+    pass
+
+class fv_SelectMultiple(Tag_formatvalue_mixin, forms.SelectMultiple):
+    pass
+
 class TagSelectField(TagField):
     def __init__(self, filter_horizontal=False, *args, **kwargs):
         super(TagSelectField, self).__init__(*args, **kwargs)
@@ -63,17 +84,11 @@ class TagSelectField(TagField):
 
     def formfield(self, **defaults):
         if self.filter_horizontal:
-            widget = FilteredSelectMultiple(
+            widget = fv_FilteredSelectMultiple(
                 self.verbose_name, is_stacked=False)
         else:
-            widget = forms.SelectMultiple()
+            widget = fv_SelectMultiple()
 
-        if VERSION < (1, 11):
-            def _render(name, value, attrs=None, *args, **kwargs):
-                value = parse_tag_input(value)
-                return type(widget).render(
-                    widget, name, value, attrs, *args, **kwargs)
-            widget.render = _render
         defaults['widget'] = widget
         choices = [(
             six.text_type(t),
@@ -82,7 +97,6 @@ class TagSelectField(TagField):
             choices=choices, required=not self.blank, **defaults)
 
 
-# ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
 def pre_save_handler(sender, instance, **kwargs):
     """
