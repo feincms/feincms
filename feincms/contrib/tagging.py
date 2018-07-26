@@ -66,10 +66,10 @@ else:
     # do the job in render() instead to avoid fiddling with
     # anybody's privates
     class Tag_formatvalue_mixin(object):
-        def render(name, value, attrs=None, *args, **kwargs):
+        def render(self, name, value, attrs=None, *args, **kwargs):
             value = parse_tag_input(value or '')
             return super(Tag_formatvalue_mixin, self).render(
-                widget, name, value, attrs, *args, **kwargs)
+                name, value, attrs, *args, **kwargs)
 
 class fv_FilteredSelectMultiple(Tag_formatvalue_mixin, FilteredSelectMultiple):
     pass
