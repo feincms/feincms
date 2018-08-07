@@ -71,11 +71,14 @@ else:
             return super(Tag_formatvalue_mixin, self).render(
                 name, value, attrs, *args, **kwargs)
 
+
 class fv_FilteredSelectMultiple(Tag_formatvalue_mixin, FilteredSelectMultiple):
     pass
 
+
 class fv_SelectMultiple(Tag_formatvalue_mixin, forms.SelectMultiple):
     pass
+
 
 class TagSelectField(TagField):
     def __init__(self, filter_horizontal=False, *args, **kwargs):
