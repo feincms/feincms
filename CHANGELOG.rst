@@ -17,6 +17,8 @@ Change log
   please be aware of the significant interface changes and database
   migrations in that product, and attempt upgrading in a development
   environment before upgrading a live site.
+- Added ``install_requires`` back to ``setup.py`` so that dependencies
+  are installed automatically again.
 
 
 .. _Next version: https://github.com/feincms/feincms/compare/v1.13.0...master
