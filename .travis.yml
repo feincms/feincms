@@ -1,37 +1,40 @@
 language: python
 sudo: false
 cache: pip
+python:
+  - "3.6"
+env:
+  - REQ=""
 matrix:
   include:
-      - python: "2.7"
-        REQ="Django>=1.7,<1.8 django-mptt<0.8"
-      - python: "2.7"
-        REQ="Django>=1.8,<1.9 django-mptt<0.8"
-      - python: "2.7"
-        REQ="Django>=1.11,<2.0 django-mptt"
-
-      - python: "3.4"
-        REQ="Django>=1.11,<2.0 django-mptt"
-      - python: "3.4"
-        REQ="Django>=2.0,<2.1 django-mptt"
-
-      - python: "3.5"
-        REQ="Django>=1.11,<2.0 django-mptt"
-      - python: "3.5"
-        REQ="Django>=2.0,<2.1 django-mptt"
-      - python: "3.5"
-        REQ="Django>=2.1,<2.2 django-mptt"
-
-      - python: "3.6"
-        REQ="Django>=1.11,<2.0 django-mptt"
-      - python: "3.6"
-        REQ="Django>=2.0,<2.1 django-mptt"
-      - python: "3.6"
-        REQ="Django>=2.1,<2.2 django-mptt"
-
-      - python: "3.6"
-        REQ="https://github.com/django/django/archive/master.zip django-mptt"
-
+    - python: "2.7"
+      env: REQ="Django>=1.7,<1.8 django-mptt<0.8"
+    - python: "2.7"
+      env: REQ="Django>=1.8,<1.9 django-mptt<0.8"
+    - python: "2.7"
+      env: REQ="Django>=1.9,<1.10 django-mptt<0.9"
+    - python: "2.7"
+      env: REQ="Django>=1.10,<1.11 django-mptt<0.9"
+    - python: "2.7"
+      env: REQ="Django>=1.11,<2.0 django-mptt"
+    - python: "3.4"
+      env: REQ="Django>=1.11,<2.0 django-mptt"
+    - python: "3.4"
+      env: REQ="Django>=2.0,<2.1 django-mptt"
+    - python: "3.5"
+      env: REQ="Django>=1.11,<2.0 django-mptt"
+    - python: "3.5"
+      env: REQ="Django>=2.0,<2.1 django-mptt"
+    - python: "3.5"
+      env: REQ="Django>=2.1,<2.2 django-mptt"
+    - python: "3.6"
+      env: REQ="Django>=1.11,<2.0 django-mptt"
+    - python: "3.6"
+      env: REQ="Django>=2.0,<2.1 django-mptt"
+    - python: "3.6"
+      env: REQ="Django>=2.1,<2.2 django-mptt"
+    - python: "3.6"
+      env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
   allow_failures:
     - env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
 install:
