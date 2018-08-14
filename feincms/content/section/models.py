@@ -35,7 +35,8 @@ class SectionContent(models.Model):
     title = models.CharField(_('title'), max_length=200, blank=True)
     richtext = RichTextField(_('text'), blank=True)
     mediafile = MediaFileForeignKey(
-        MediaFile, verbose_name=_('media file'),
+        MediaFile, on_delete=models.CASCADE,
+        verbose_name=_('media file'),
         related_name='+', blank=True, null=True)
 
     class Meta:
