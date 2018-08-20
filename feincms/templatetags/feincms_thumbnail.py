@@ -110,7 +110,11 @@ class Thumbnailer(object):
 
         url = storage.url(miniature)
         if settings.FEINCMS_THUMBNAIL_CACHE_TIMEOUT != 0:
-            cache.set(cache_key, url, timeout=FEINCMS_THUMBNAIL_CACHE_TIMEOUT)
+            cache.set(
+                cache_key,
+                url,
+                timeout=settings.FEINCMS_THUMBNAIL_CACHE_TIMEOUT
+            )
         return url
 
     def generate(self, storage, original, size, miniature):
