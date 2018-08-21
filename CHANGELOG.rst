@@ -6,6 +6,12 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Actually made use of the timeout specified as
+  ``FEINCMS_THUMBNAIL_CACHE_TIMEOUT`` instead of the hardcoded value of
+  seven days.
+- Reverted the deprecation of navigation extension autodiscovery.
+
+
 `v1.14.0`_ (2018-08-16)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
