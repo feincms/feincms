@@ -11,7 +11,6 @@ from __future__ import absolute_import, unicode_literals
 
 from collections import OrderedDict
 import types
-import warnings
 
 from django.db import models
 from django.utils import six
@@ -123,12 +122,6 @@ class Extension(extensions.Extension):
     @cached_property
     def _extensions(self):
         if self.navigation_extensions is None:
-            warnings.warn(
-                'Automatic registering of navigation extensions has been'
-                ' deprecated. Please inherit the extension and put a list'
-                ' of dotted python paths into the navigation_extensions'
-                ' class variable.', DeprecationWarning, stacklevel=3)
-
             return OrderedDict(
                 ('%s.%s' % (ext.__module__, ext.__name__), ext)
                 for ext in NavigationExtension.types
