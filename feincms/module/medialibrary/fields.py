@@ -83,9 +83,9 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
     Simple AdminFileWidget, but detects if the file is an image and
     tries to render a small thumbnail besides the input field.
     """
-    def render(self, name, value, *args, attrs=None, **kwargs):
+    def render(self, name, value, attrs=None, *args, **kwargs):
         r = super(AdminFileWithPreviewWidget, self).render(
-            name, value, *args, attrs=attrs, **kwargs)
+            name, value, attrs=attrs, *args, **kwargs)
 
         if value and getattr(value, 'instance', None):
             image = admin_thumbnail(value.instance)
