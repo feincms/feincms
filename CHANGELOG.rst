@@ -10,6 +10,8 @@ Change log
   ``FEINCMS_THUMBNAIL_CACHE_TIMEOUT`` instead of the hardcoded value of
   seven days.
 - Reverted the deprecation of navigation extension autodiscovery.
+- Fixed the item editor JavaScript and HTML to work with Django 2.1's
+  updated inlines.
 
 
 `v1.14.0`_ (2018-08-16)
