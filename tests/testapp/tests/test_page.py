@@ -1070,7 +1070,9 @@ class PagesTestCase(TestCase):
             Page.objects.best_match_for_path(
                 page.get_absolute_url() + 'something/hello/'))
 
+        # test `FEINCMS_ALLOW_EXTRA_PATH`
         old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH
+        old_path = request.path
         request.path += 'hello/'
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = False
@@ -1082,6 +1084,25 @@ class PagesTestCase(TestCase):
             page, Page.objects.for_request(request, best_match=True))
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
+        request.path = old_path
+
+        # test FEINCMS_ALLOW_EXTRA_PATH_PREFIX
+        old = feincms_settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX
+        old_path = request.path
+        request.path = 'prefix' + request.path
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = ()
+        self.assertRaises(
+            Page.DoesNotExist,
+            lambda: Page.objects.best_match_for_path(request.path))
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX = ('prefix',)
+        self.assertIsInstance(
+            Page.objects.best_match_for_path(request.path),
+            Page)
+
+        feincms_settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX = old
+        request.path = old_path
 
         page_id = id(request._feincms_page)
         p = Page.objects.for_request(request)

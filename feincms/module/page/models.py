@@ -77,6 +77,10 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
 
         paths = ['/']
         path = path.strip('/')
+        
+        for prefix in settings.FEINCMS_ALLOW_EXTRA_PATH_PREFIX:
+            if path.startswith('%s/' % prefix):
+                path = path[len(prefix)+1:]
 
         if path:
             tokens = path.split('/')
