@@ -6,6 +6,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`v1.15.0`_ (2018-12-21)
+~~~~~~~~~~~~~~~~~~~~~~~
+
 - Actually made use of the timeout specified as
   ``FEINCMS_THUMBNAIL_CACHE_TIMEOUT`` instead of the hardcoded value of
   seven days.
@@ -52,4 +56,5 @@ Change log
 
 
 .. _v1.14.0: https://github.com/feincms/feincms/compare/v1.13.0...v1.14.0
-.. _Next version: https://github.com/feincms/feincms/compare/v1.14.0...master
+.. _v1.15.0: https://github.com/feincms/feincms/compare/v1.14.0...v1.15.0
+.. _Next version: https://github.com/feincms/feincms/compare/v1.15.0...master
