@@ -9,6 +9,7 @@ import logging
 import django
 from django import template
 from django.conf import settings
+from django.template.engine import Engine
 from django.utils.safestring import mark_safe
 
 from feincms.utils import get_singleton, get_singleton_url
@@ -36,6 +37,25 @@ def _render_content(content, **kwargs):
         setattr(request, 'feincms_render_level', level + 1)
 
     r = content.render(**kwargs)
+
+    if isinstance(r, (list, tuple)):
+        # Modeled after feincms3's TemplatePluginRenderer
+        context = kwargs["context"]
+        plugin_template, plugin_context = r
+
+        if not hasattr(plugin_template, "render"):  # Quacks like a template?
+            try:
+                engine = context.template.engine
+            except AttributeError:
+                engine = Engine.get_default()
+
+            if isinstance(plugin_template, (list, tuple)):
+                plugin_template = engine.select_template(plugin_template)
+            else:
+                plugin_template = engine.get_template(plugin_template)
+
+        with context.push(plugin_context):
+            return plugin_template.render(context)
 
     if request is not None:
         level = getattr(request, 'feincms_render_level', 1)

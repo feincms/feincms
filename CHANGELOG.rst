@@ -14,6 +14,10 @@ Change log
   updated inlines.
 - Fixed ``TranslatedObjectManager.only_language`` to evaluate callables
   before filtering.
+- Changed the ``render`` protocol of content types to allow returning a
+  tuple of ``(ct_template, ct_context)`` which works the same way as
+  `feincms3's template renderers
+  <https://feincms3.readthedocs.io/en/latest/guides/rendering.html>`__.
 
 
 `v1.14.0`_ (2018-08-16)
