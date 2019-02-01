@@ -9,7 +9,6 @@ from threading import local
 from django.conf import settings as django_settings
 from django.core.exceptions import PermissionDenied
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib import admin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -20,6 +19,12 @@ try:
     from django.urls import reverse
 except ImportError:
     from django.core.urlresolvers import reverse
+
+try:
+    from django.contrib.staticfiles.templatetags.staticfiles import static
+except ImportError:
+    # Newer Django versions.
+    from django.templatetags.static import static
 
 from feincms import ensure_completely_loaded
 from feincms import settings
