@@ -17,7 +17,7 @@ from .modeladmins import PageAdmin
 if settings.FEINCMS_USE_PAGE_ADMIN:
     ensure_completely_loaded()
     try:
-        Page._meta.get_field('template_key')
+        Page._meta.get_field("template_key")
     except FieldDoesNotExist:
         raise ImproperlyConfigured(
             "The page module requires a 'Page.register_templates()' call "

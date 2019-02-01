@@ -91,7 +91,7 @@ class TransformQuerySet(models.query.QuerySet):
     def __init__(self, *args, **kwargs):
         super(TransformQuerySet, self).__init__(*args, **kwargs)
         self._transform_fns = []
-        self._orig_iterable_class = getattr(self, '_iterable_class', None)
+        self._orig_iterable_class = getattr(self, "_iterable_class", None)
 
     def _clone(self, *args, **kwargs):
         c = super(TransformQuerySet, self)._clone(*args, **kwargs)
@@ -104,13 +104,16 @@ class TransformQuerySet(models.query.QuerySet):
         return c
 
     if django.VERSION < (1, 11):
+
         def iterator(self):
             result_iter = super(TransformQuerySet, self).iterator()
 
             if not self._transform_fns:
                 return result_iter
 
-            if getattr(self, '_iterable_class', None) != self._orig_iterable_class:  # noqa
+            if (
+                getattr(self, "_iterable_class", None) != self._orig_iterable_class
+            ):  # noqa
                 # Do not process the result of values() and values_list()
                 return result_iter
 
@@ -120,17 +123,21 @@ class TransformQuerySet(models.query.QuerySet):
             return iter(results)
 
     else:
+
         def _fetch_all(self):
             super(TransformQuerySet, self)._fetch_all()
-            if getattr(self, '_iterable_class', None) == self._orig_iterable_class:  # noqa
+            if (
+                getattr(self, "_iterable_class", None) == self._orig_iterable_class
+            ):  # noqa
                 for fn in self._transform_fns:
                     fn(self._result_cache)
 
 
-if hasattr(models.Manager, 'from_queryset'):
+if hasattr(models.Manager, "from_queryset"):
     TransformManager = models.Manager.from_queryset(TransformQuerySet)
 
 else:
+
     class TransformManager(models.Manager):
         def get_queryset(self):
             return TransformQuerySet(self.model, using=self._db)

@@ -29,9 +29,7 @@ class PreviewHandler(Handler):
 
     def handler(self, request, *args, **kwargs):
         if not request.user.is_staff:
-            raise Http404('Not found (not allowed)')
-        response = super(PreviewHandler, self).handler(
-            request, *args, **kwargs)
-        response['Cache-Control'] =\
-            'no-cache, must-revalidate, no-store, private'
+            raise Http404("Not found (not allowed)")
+        response = super(PreviewHandler, self).handler(request, *args, **kwargs)
+        response["Cache-Control"] = "no-cache, must-revalidate, no-store, private"
         return response

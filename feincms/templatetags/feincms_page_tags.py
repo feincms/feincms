@@ -18,21 +18,20 @@ from feincms import settings as feincms_settings
 from feincms.module.page.extensions.navigation import PagePretender
 from feincms.utils.templatetags import (
     SimpleAssignmentNodeWithVarAndArgs,
-    do_simple_assignment_node_with_var_and_args_helper)
+    do_simple_assignment_node_with_var_and_args_helper,
+)
 
 
-logger = logging.getLogger('feincms.templatetags.page')
+logger = logging.getLogger("feincms.templatetags.page")
 
 register = template.Library()
 assignment_tag = (
-    register.simple_tag if django.VERSION >= (1, 9)
-    else register.assignment_tag
+    register.simple_tag if django.VERSION >= (1, 9) else register.assignment_tag
 )
 
 
 def _get_page_model():
-    return apps.get_model(
-        *feincms_settings.FEINCMS_DEFAULT_PAGE_MODEL.split('.'))
+    return apps.get_model(*feincms_settings.FEINCMS_DEFAULT_PAGE_MODEL.split("."))
 
 
 # ------------------------------------------------------------------------
@@ -56,8 +55,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
 
     if isinstance(feincms_page, HttpRequest):
         try:
-            feincms_page = page_class.objects.for_request(
-                feincms_page, best_match=True)
+            feincms_page = page_class.objects.for_request(feincms_page, best_match=True)
         except page_class.DoesNotExist:
             return []
 
@@ -68,8 +66,8 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
 
     queryset = feincms_page.__class__._default_manager.in_navigation().filter(
         **{
-            '%s__gte' % mptt_opts.level_attr: mptt_level_range[0],
-            '%s__lt' % mptt_opts.level_attr: mptt_level_range[1],
+            "%s__gte" % mptt_opts.level_attr: mptt_level_range[0],
+            "%s__lt" % mptt_opts.level_attr: mptt_level_range[1],
         }
     )
 
@@ -98,10 +96,13 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
             queryset = page_class.objects.none()
 
         if parent:
-            if getattr(parent, 'navigation_extension', None):
+            if getattr(parent, "navigation_extension", None):
                 # Special case for navigation extensions
-                return list(parent.extended_navigation(
-                    depth=depth, request=context.get('request')))
+                return list(
+                    parent.extended_navigation(
+                        depth=depth, request=context.get("request")
+                    )
+                )
 
             # Apply descendant filter
             queryset &= parent.get_descendants()
@@ -126,40 +127,44 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
         # navigationgroups extension support
         def _navigationgroup_filter(iterable):
             for elem in iterable:
-                if getattr(elem, 'navigation_group', None) == group:
+                if getattr(elem, "navigation_group", None) == group:
                     yield elem
 
         queryset = _navigationgroup_filter(queryset)
 
-    if hasattr(feincms_page, 'navigation_extension'):
+    if hasattr(feincms_page, "navigation_extension"):
         # Filter out children of nodes which have a navigation extension
         def _navext_filter(iterable):
             current_navextension_node = None
             for elem in iterable:
                 # Eliminate all subitems of last processed nav extension
-                if current_navextension_node is not None and \
-                   current_navextension_node.is_ancestor_of(elem):
+                if (
+                    current_navextension_node is not None
+                    and current_navextension_node.is_ancestor_of(elem)
+                ):
                     continue
 
                 yield elem
-                if getattr(elem, 'navigation_extension', None):
+                if getattr(elem, "navigation_extension", None):
                     current_navextension_node = elem
                     try:
                         for extended in elem.extended_navigation(
-                                depth=depth, request=context.get('request')):
+                            depth=depth, request=context.get("request")
+                        ):
                             # Only return items from the extended navigation
                             # which are inside the requested level+depth
                             # values. The "-1" accounts for the differences in
                             # MPTT and navigation level counting
-                            this_level = getattr(
-                                extended, mptt_opts.level_attr, 0)
+                            this_level = getattr(extended, mptt_opts.level_attr, 0)
                             if this_level < level + depth - 1:
                                 yield extended
                     except Exception as e:
                         logger.warn(
                             "feincms_nav caught exception in navigation"
                             " extension for page %d: %s",
-                            current_navextension_node.id, format_exception(e))
+                            current_navextension_node.id,
+                            format_exception(e),
+                        )
                 else:
                     current_navextension_node = None
 
@@ -200,21 +205,19 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
     """
 
     def what(self, page, args):
-        only_existing = args.get('existing', False)
-        exclude_current = args.get('excludecurrent', False)
+        only_existing = args.get("existing", False)
+        exclude_current = args.get("excludecurrent", False)
 
         # Preserve the trailing path when switching languages if extra_path
         # exists (this is mostly the case when we are working inside an
         # ApplicationContent-managed page subtree)
-        trailing_path = ''
-        request = args.get('request', None)
+        trailing_path = ""
+        request = args.get("request", None)
         if request:
             # Trailing path without first slash
-            trailing_path = request._feincms_extra_context.get(
-                'extra_path', '')[1:]
+            trailing_path = request._feincms_extra_context.get("extra_path", "")[1:]
 
-        translations = dict(
-            (t.language, t) for t in page.available_translations())
+        translations = dict((t.language, t) for t in page.available_translations())
         translations[page.language] = page
 
         links = []
@@ -224,10 +227,9 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
             # hardcoded paths... bleh
             if key in translations:
-                links.append((
-                    key,
-                    name,
-                    translations[key].get_absolute_url() + trailing_path))
+                links.append(
+                    (key, name, translations[key].get_absolute_url() + trailing_path)
+                )
             elif not only_existing:
                 links.append((key, name, None))
 
@@ -235,8 +237,9 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
 
 
 register.tag(
-    'feincms_languagelinks',
-    do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode))
+    "feincms_languagelinks",
+    do_simple_assignment_node_with_var_and_args_helper(LanguageLinksNode),
+)
 
 
 # ------------------------------------------------------------------------
@@ -251,14 +254,13 @@ def _translate_page_into(page, language, default=None):
             return page
 
         if language is not None:
-            translations = dict(
-                (t.language, t) for t in page.available_translations())
+            translations = dict((t.language, t) for t in page.available_translations())
             if language in translations:
                 return translations[language]
     except AttributeError:
         pass
 
-    if hasattr(default, '__call__'):
+    if hasattr(default, "__call__"):
         return default(page=page)
     return default
 
@@ -284,16 +286,16 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
     whether settings LANGUAGES contains that code -- so naming a variable "en"
     will probably not do what is intended.
     """
+
     def what(self, page, args, default=None):
-        language = args.get('language', None)
+        language = args.get("language", None)
 
         if language is None:
             language = settings.LANGUAGES[0][0]
         else:
             if language not in (x[0] for x in settings.LANGUAGES):
                 try:
-                    language = template.Variable(language).resolve(
-                        self.render_context)
+                    language = template.Variable(language).resolve(self.render_context)
                 except template.VariableDoesNotExist:
                     language = settings.LANGUAGES[0][0]
 
@@ -301,32 +303,34 @@ class TranslatedPageNode(SimpleAssignmentNodeWithVarAndArgs):
 
 
 register.tag(
-    'feincms_translatedpage',
-    do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode))
+    "feincms_translatedpage",
+    do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNode),
+)
 
 
 # ------------------------------------------------------------------------
 class TranslatedPageNodeOrBase(TranslatedPageNode):
     def what(self, page, args):
         return super(TranslatedPageNodeOrBase, self).what(
-            page, args,
-            default=getattr(page, 'get_original_translation', page))
+            page, args, default=getattr(page, "get_original_translation", page)
+        )
 
 
 register.tag(
-    'feincms_translatedpage_or_base',
-    do_simple_assignment_node_with_var_and_args_helper(
-        TranslatedPageNodeOrBase))
+    "feincms_translatedpage_or_base",
+    do_simple_assignment_node_with_var_and_args_helper(TranslatedPageNodeOrBase),
+)
 
 
 # ------------------------------------------------------------------------
 @register.filter
 def feincms_translated_or_base(pages, language=None):
-    if not hasattr(pages, '__iter__'):
+    if not hasattr(pages, "__iter__"):
         pages = [pages]
     for page in pages:
         yield _translate_page_into(
-            page, language, default=page.get_original_translation)
+            page, language, default=page.get_original_translation
+        )
 
 
 # ------------------------------------------------------------------------
@@ -443,8 +447,10 @@ def siblings_along_path_to(page_list, page2):
             # comes from feincms_nav). We'll cope with the fall-out of that
             # assumption when it happens...
             ancestors = [
-                a_page for a_page in page_list
-                if a_page.is_ancestor_of(page2, include_self=True)]
+                a_page
+                for a_page in page_list
+                if a_page.is_ancestor_of(page2, include_self=True)
+            ]
             top_level = min((a_page.level for a_page in page_list))
 
             if not ancestors:
@@ -454,25 +460,25 @@ def siblings_along_path_to(page_list, page2):
                 page_class = _get_page_model()
 
                 p = page_class(
-                    title="dummy",
-                    tree_id=-1,
-                    parent_id=None,
-                    in_navigation=False)
+                    title="dummy", tree_id=-1, parent_id=None, in_navigation=False
+                )
                 ancestors = (p,)
 
             siblings = [
-                a_page for a_page in page_list if (
-                    a_page.parent_id == page2.id or
-                    a_page.level == top_level or
-                    any((_is_sibling_of(a_page, a) for a in ancestors))
+                a_page
+                for a_page in page_list
+                if (
+                    a_page.parent_id == page2.id
+                    or a_page.level == top_level
+                    or any((_is_sibling_of(a_page, a) for a in ancestors))
                 )
             ]
 
             return siblings
         except (AttributeError, ValueError) as e:
             logger.warn(
-                "siblings_along_path_to caught exception: %s",
-                format_exception(e))
+                "siblings_along_path_to caught exception: %s", format_exception(e)
+            )
 
     return ()
 
@@ -495,25 +501,25 @@ def page_is_active(context, page, feincms_page=None, path=None):
     """
     if isinstance(page, PagePretender):
         if path is None:
-            path = context['request'].path_info
+            path = context["request"].path_info
         return path.startswith(page.get_absolute_url())
 
     else:
         if feincms_page is None:
-            feincms_page = context['feincms_page']
+            feincms_page = context["feincms_page"]
         return page.is_ancestor_of(feincms_page, include_self=True)
 
 
 # ------------------------------------------------------------------------
 @register.simple_tag
 def feincms_parentlink(of_, feincms_page, **kwargs):
-    level = int(kwargs.get('level', 1))
+    level = int(kwargs.get("level", 1))
     if feincms_page.level + 1 == level:
         return feincms_page.get_absolute_url()
     elif feincms_page.level + 1 < level:
-        return '#'
+        return "#"
 
     try:
         return feincms_page.get_ancestors()[level - 1].get_absolute_url()
     except IndexError:
-        return '#'
+        return "#"

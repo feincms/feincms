@@ -1,4 +1,4 @@
-'''
+"""
 I really hate repeating myself. These are helpers that avoid typing the
 whole thing over and over when implementing additional template tags
 
@@ -7,7 +7,7 @@ They help implementing tags of the following forms::
     {% tag as var_name %}
     {% tag of template_var as var_name %}
     {% tag of template_var as var_name arg1,arg2,kwarg3=4 %}
-'''
+"""
 
 from __future__ import absolute_import, unicode_literals
 
@@ -17,9 +17,9 @@ from django import template
 def _parse_args(argstr, context=None):
     try:
         args = {}
-        for token in argstr.split(','):
-            if '=' in token:
-                k, v = token.split('=', 1)
+        for token in argstr.split(","):
+            if "=" in token:
+                k, v = token.split("=", 1)
                 if context:
                     try:
                         args[k] = template.Variable(v).resolve(context)
@@ -33,23 +33,21 @@ def _parse_args(argstr, context=None):
         return args
 
     except TypeError:
-        raise template.TemplateSyntaxError('Malformed arguments')
+        raise template.TemplateSyntaxError("Malformed arguments")
 
 
 def do_simple_assignment_node_with_var_and_args_helper(cls):
     def _func(parser, token):
         try:
-            tag_name, of_, in_var_name, as_, var_name, args =\
-                token.contents.split()
+            tag_name, of_, in_var_name, as_, var_name, args = token.contents.split()
         except ValueError:
             try:
-                tag_name, of_, in_var_name, as_, var_name =\
-                    token.contents.split()
-                args = ''
+                tag_name, of_, in_var_name, as_, var_name = token.contents.split()
+                args = ""
             except ValueError:
                 raise template.TemplateSyntaxError(
-                    'Invalid syntax for %s node: %s' % (
-                        cls.__name__, token.contents))
+                    "Invalid syntax for %s node: %s" % (cls.__name__, token.contents)
+                )
 
         return cls(tag_name, in_var_name, var_name, args)
 
@@ -69,9 +67,8 @@ class SimpleAssignmentNodeWithVarAndArgs(template.Node):
             instance = self.in_var.resolve(context)
         except template.VariableDoesNotExist:
             context[self.var_name] = []
-            return ''
+            return ""
 
-        context[self.var_name] = self.what(
-            instance, _parse_args(self.args, context))
+        context[self.var_name] = self.what(instance, _parse_args(self.args, context))
 
-        return ''
+        return ""

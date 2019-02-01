@@ -38,10 +38,14 @@ def dt_to_utc_timestamp(dt):
 
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('creation_date', models.DateTimeField(
-            _('creation date'), null=True, editable=False))
-        self.model.add_to_class('modification_date', models.DateTimeField(
-            _('modification date'), null=True, editable=False))
+        self.model.add_to_class(
+            "creation_date",
+            models.DateTimeField(_("creation date"), null=True, editable=False),
+        )
+        self.model.add_to_class(
+            "modification_date",
+            models.DateTimeField(_("modification date"), null=True, editable=False),
+        )
 
         self.model.last_modified = lambda p: p.modification_date
 
@@ -51,16 +55,17 @@ class Extension(extensions.Extension):
 # ------------------------------------------------------------------------
 def last_modified_response_processor(page, request, response):
     # Don't include Last-Modified if we don't want to be cached
-    if "no-cache" in response.get('Cache-Control', ''):
+    if "no-cache" in response.get("Cache-Control", ""):
         return
 
     # If we already have a Last-Modified, take the later one
     last_modified = dt_to_utc_timestamp(page.last_modified())
-    if response.has_header('Last-Modified'):
+    if response.has_header("Last-Modified"):
         last_modified = max(
-            last_modified,
-            mktime_tz(parsedate_tz(response['Last-Modified'])))
+            last_modified, mktime_tz(parsedate_tz(response["Last-Modified"]))
+        )
 
-    response['Last-Modified'] = http_date(last_modified)
+    response["Last-Modified"] = http_date(last_modified)
+
 
 # ------------------------------------------------------------------------

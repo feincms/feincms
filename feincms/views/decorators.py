@@ -6,5 +6,7 @@ import warnings
 from feincms.apps import *
 
 warnings.warn(
-    'Import ApplicationContent and friends from feincms.content.application.models',
-    DeprecationWarning, stacklevel=2)
+    "Import ApplicationContent and friends from feincms.content.application.models",
+    DeprecationWarning,
+    stacklevel=2,
+)

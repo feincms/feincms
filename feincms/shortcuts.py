@@ -11,6 +11,6 @@ def render_to_response_best_match(request, template_name, dictionary=None):
     """
 
     dictionary = dictionary or {}
-    dictionary['feincms_page'] = Page.objects.best_match_for_request(request)
+    dictionary["feincms_page"] = Page.objects.best_match_for_request(request)
 
     return render(request, template_name, dictionary)

@@ -6,6 +6,8 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Reformatted everything using black.
+
 
 `v1.15.0`_ (2018-12-21)
 ~~~~~~~~~~~~~~~~~~~~~~~

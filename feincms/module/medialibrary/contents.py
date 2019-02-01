@@ -11,8 +11,8 @@ from feincms.module.medialibrary.fields import ContentWithMediaFile
 
 
 class MediaFileContentInline(FeinCMSInline):
-    raw_id_fields = ('mediafile',)
-    radio_fields = {'type': admin.VERTICAL}
+    raw_id_fields = ("mediafile",)
+    radio_fields = {"type": admin.VERTICAL}
 
 
 class MediaFileContent(ContentWithMediaFile):
@@ -44,36 +44,35 @@ class MediaFileContent(ContentWithMediaFile):
 
     class Meta:
         abstract = True
-        verbose_name = _('media file')
-        verbose_name_plural = _('media files')
+        verbose_name = _("media file")
+        verbose_name_plural = _("media files")
 
     @classmethod
     def initialize_type(cls, TYPE_CHOICES=None):
         if TYPE_CHOICES is None:
             raise ImproperlyConfigured(
-                'You have to set TYPE_CHOICES when'
-                ' creating a %s' % cls.__name__)
+                "You have to set TYPE_CHOICES when" " creating a %s" % cls.__name__
+            )
 
         cls.add_to_class(
-            'type',
+            "type",
             models.CharField(
-                _('type'),
+                _("type"),
                 max_length=20,
                 choices=TYPE_CHOICES,
                 default=TYPE_CHOICES[0][0],
-            )
+            ),
         )
 
     def render(self, **kwargs):
         return ct_render_to_string(
             [
-                'content/mediafile/%s_%s.html' % (
-                    self.mediafile.type, self.type),
-                'content/mediafile/%s.html' % self.mediafile.type,
-                'content/mediafile/%s.html' % self.type,
-                'content/mediafile/default.html',
+                "content/mediafile/%s_%s.html" % (self.mediafile.type, self.type),
+                "content/mediafile/%s.html" % self.mediafile.type,
+                "content/mediafile/%s.html" % self.type,
+                "content/mediafile/default.html",
             ],
-            {'content': self},
-            request=kwargs.get('request'),
-            context=kwargs.get('context'),
+            {"content": self},
+            request=kwargs.get("request"),
+            context=kwargs.get("context"),
         )

@@ -7,7 +7,7 @@ register = template.Library()
 
 
 class FragmentNode(template.Node):
-    def __init__(self, nodelist, request, identifier, mode='append'):
+    def __init__(self, nodelist, request, identifier, mode="append"):
         self.nodelist = nodelist
         self.request_var = template.Variable(request)
         self.identifier_var = template.Variable(identifier)
@@ -18,19 +18,19 @@ class FragmentNode(template.Node):
         identifier = self.identifier_var.resolve(context)
         rendered = self.nodelist.render(context)
 
-        if not hasattr(request, '_feincms_fragments'):
+        if not hasattr(request, "_feincms_fragments"):
             request._feincms_fragments = {}
 
-        old = request._feincms_fragments.get(identifier, '')
+        old = request._feincms_fragments.get(identifier, "")
 
-        if self.mode == 'prepend':
+        if self.mode == "prepend":
             request._feincms_fragments[identifier] = rendered + old
-        elif self.mode == 'replace':
+        elif self.mode == "replace":
             request._feincms_fragments[identifier] = rendered
         else:  # append
             request._feincms_fragments[identifier] = old + rendered
 
-        return ''
+        return ""
 
 
 @register.tag
@@ -50,7 +50,7 @@ def fragment(parser, token):
         {% endfragment %}
     """
 
-    nodelist = parser.parse(('endfragment'),)
+    nodelist = parser.parse(("endfragment"))
     parser.delete_first_token()
 
     return FragmentNode(nodelist, *token.contents.split()[1:])
@@ -69,11 +69,11 @@ class GetFragmentNode(template.Node):
         try:
             value = request._feincms_fragments[fragment]
         except (AttributeError, KeyError):
-            value = ''
+            value = ""
 
         if self.as_var:
             context[self.as_var] = value
-            return ''
+            return ""
         return value
 
 
@@ -95,10 +95,11 @@ def get_fragment(parser, token):
 
     if len(fragments) == 3:
         return GetFragmentNode(fragments[1], fragments[2])
-    elif len(fragments) == 5 and fragments[3] == 'as':
+    elif len(fragments) == 5 and fragments[3] == "as":
         return GetFragmentNode(fragments[1], fragments[2], fragments[4])
     raise template.TemplateSyntaxError(
-        'Invalid syntax for get_fragment: %s' % token.contents)
+        "Invalid syntax for get_fragment: %s" % token.contents
+    )
 
 
 @register.filter
@@ -108,4 +109,4 @@ def has_fragment(request, identifier):
 
         {% if request|has_fragment:"title" %} ... {% endif %}
     """
-    return getattr(request, '_feincms_fragments', {}).get(identifier)
+    return getattr(request, "_feincms_fragments", {}).get(identifier)
