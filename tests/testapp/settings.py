@@ -72,7 +72,10 @@ MIDDLEWARE = (
 if django.VERSION < (1, 11):
     MIDDLEWARE_CLASSES = MIDDLEWARE
 
-if (2,) <= django.VERSION < (2, 1):
+if django.VERSION < (2,):
+    pass
+
+elif (2,) <= django.VERSION < (2, 1):
     from django.utils import deprecation
 
     # Anything to make mptt.templatetags.mptt_admin importable
