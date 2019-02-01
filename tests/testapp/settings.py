@@ -78,7 +78,7 @@ if (2,) <= django.VERSION < (2, 1):
     # Anything to make mptt.templatetags.mptt_admin importable
     deprecation.RemovedInDjango20Warning = deprecation.RemovedInDjango21Warning
 
-elif django.VERSION >= (2,):
+elif django.VERSION < (3,):
     from django.utils import deprecation
 
     # Anything to make mptt.templatetags.mptt_admin importable

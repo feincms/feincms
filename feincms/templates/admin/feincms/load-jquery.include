@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 {% comment %}
 Include jquery, override this template if you want to use a cdn version
 or load more plugins or whatnot
