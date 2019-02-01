@@ -6,7 +6,12 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+`v1.16.0`_ (2019-02-01)
+~~~~~~~~~~~~~~~~~~~~~~~
+
 - Reformatted everything using black.
+- Added a fallback import for the ``staticfiles`` template tag library
+  which will be gone in Django 3.0.
 
 
 `v1.15.0`_ (2018-12-21)
@@ -59,4 +64,5 @@ Change log
 
 .. _v1.14.0: https://github.com/feincms/feincms/compare/v1.13.0...v1.14.0
 .. _v1.15.0: https://github.com/feincms/feincms/compare/v1.14.0...v1.15.0
-.. _Next version: https://github.com/feincms/feincms/compare/v1.15.0...master
+.. _v1.16.0: https://github.com/feincms/feincms/compare/v1.15.0...v1.16.0
+.. _Next version: https://github.com/feincms/feincms/compare/v1.16.0...master
