@@ -2,7 +2,7 @@
 This is the core of FeinCMS
 
 All models defined here are abstract, which means no tables are created in
-the feincms\_ namespace.
+the feincms namespace.
 """
 
 from __future__ import absolute_import, unicode_literals

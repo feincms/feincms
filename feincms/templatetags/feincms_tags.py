@@ -37,6 +37,30 @@ def _render_content(content, **kwargs):
 
     r = content.render(**kwargs)
 
+    if isinstance(r, (list, tuple)):
+        # Modeled after feincms3's TemplatePluginRenderer
+        context = kwargs["context"]
+        plugin_template, plugin_context = r
+
+        if not hasattr(plugin_template, "render"):  # Quacks like a template?
+            try:
+                engine = context.template.engine
+            except AttributeError:
+                # This fails hard in Django 1.7 (ImportError). So what. This
+                # just means that this particular feature isn't available
+                # there.
+                from django.template.engine import Engine
+
+                engine = Engine.get_default()
+
+            if isinstance(plugin_template, (list, tuple)):
+                plugin_template = engine.select_template(plugin_template)
+            else:
+                plugin_template = engine.get_template(plugin_template)
+
+        with context.push(plugin_context):
+            return plugin_template.render(context)
+
     if request is not None:
         level = getattr(request, 'feincms_render_level', 1)
         setattr(request, 'feincms_render_level', max(level - 1, 0))
