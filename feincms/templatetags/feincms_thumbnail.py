@@ -11,6 +11,7 @@ import re
 
 from django import template
 from django.utils.encoding import force_text, python_2_unicode_compatible
+from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.utils import six
@@ -69,6 +70,12 @@ class Thumbnailer(object):
             format,
         ])
 
+        if settings.FEINCMS_THUMBNAIL_CACHE_TIMEOUT != 0:
+            cache_key = 'thumb_url_%s' % miniature
+            url = cache.get(cache_key)
+            if url:
+                return url
+
         if not storage.exists(miniature):
             generate = True
         else:
@@ -101,7 +108,10 @@ class Thumbnailer(object):
                 # happen, catch them all so the thumbnailer will never fail.
                 return storage.url(filename)
 
-        return storage.url(miniature)
+        url = storage.url(miniature)
+        if settings.FEINCMS_THUMBNAIL_CACHE_TIMEOUT != 0:
+            cache.set(cache_key, url, timeout=86400 * 7)
+        return url
 
     def generate(self, storage, original, size, miniature):
         with storage.open(original) as original_handle:

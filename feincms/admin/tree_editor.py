@@ -260,7 +260,7 @@ class TreeEditor(ExtensionModelAdmin):
         if not self.changeable(item):
             changeable_class = ' tree-item-not-editable'
         tree_root_class = ''
-        if not item.parent:
+        if not item.parent_id:
             tree_root_class = ' tree-root'
 
         r += (
@@ -317,7 +317,7 @@ class TreeEditor(ExtensionModelAdmin):
         try:
             item_id = int(request.POST.get('item_id', None))
             attr = str(request.POST.get('attr', None))
-        except:
+        except Exception:
             return HttpResponseBadRequest("Malformed request")
 
         if not request.user.is_staff:

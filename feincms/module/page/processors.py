@@ -129,7 +129,7 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
             def print_sql(x):
                 return sqlparse.format(
                     x, reindent=True, keyword_case='upper')
-        except:
+        except Exception:
             def print_sql(x):
                 return x
 

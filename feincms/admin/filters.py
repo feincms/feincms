@@ -76,8 +76,11 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
         if DJANGO_VERSION < (1, 8):
             related_model = f.related.parent_model
             related_name = f.related.var_name
-        else:
+        elif DJANGO_VERSION < (2, 0):
             related_model = f.rel.to
+            related_name = f.related_query_name()
+        else:
+            related_model = f.remote_field.model
             related_name = f.related_query_name()
 
         self.lookup_choices = sorted(

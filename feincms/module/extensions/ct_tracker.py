@@ -6,5 +6,6 @@ import warnings
 from feincms.extensions.ct_tracker import *
 
 warnings.warn(
-    'Import %s from feincms.extensions.%s' % (__name__, __name__),
-    DeprecationWarning, stacklevel=2)
+    'Import %(name)s from feincms.extensions.%(name)s' % {
+        'name': __name__.split('.')[-1],
+    }, DeprecationWarning, stacklevel=2)

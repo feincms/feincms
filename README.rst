@@ -2,6 +2,11 @@
 FeinCMS - An extensible Django-based CMS
 ========================================
 
+.. image:: https://travis-ci.org/feincms/feincms.svg?branch=next
+   :target: https://travis-ci.org/feincms/feincms
+.. image:: https://travis-ci.org/feincms/feincms.svg?branch=master
+   :target: https://travis-ci.org/feincms/feincms
+
 When was the last time, that a pre-built software package you wanted to
 use got many things right, but in the end, you still needed to modify
 the core parts of the code just because it wasn't (easily) possible to
@@ -44,7 +49,7 @@ that much, that you'd rather die than using a rich text editor?
 Then add the following code to your project, and you can go on using the
 CMS without being forced to use whatever the developers deemed best:
 
-::
+.. code-block:: python
 
     from markdown2 import markdown
     from feincms.module.page.models import Page
@@ -73,23 +78,9 @@ Visit these sites
 -----------------
 
 * FeinCMS Website: http://www.feincms.org/
-* Read the documentation: http://feincms-django-cms.readthedocs.org/
+* Read the documentation: https://feincms-django-cms.readthedocs.io/
 * See the Google Groups page at http://groups.google.com/group/django-feincms
 * FeinCMS on github: https://github.com/feincms/feincms/
-
-Try out FeinCMS in a Box
-------------------------
-
-`FeinCMS in a Box <https://github.com/feinheit/feincms-in-a-box>`_ is a
-prepackaged installation of FeinCMS with a few additional modules and a setup
-script. Try it out!
-
-IRC
----
-
-Visit us on IRC! We are hanging around in ``#feincms`` on freenode. If you
-do not have an IRC client you can use the
-`freenode Web IRC client <http://webchat.freenode.net/>`_.
 
 Repository branches
 -------------------
@@ -108,12 +99,3 @@ rewinding policies are described below.
 * ``pu`` or feature branches are used for short-lived projects. These
   branches aren't guaranteed to stay around and are not meant to be
   deployed into production environments.
-
-
-Travis CI
-=========
-
-.. image:: https://travis-ci.org/feincms/feincms.png?branch=next
-   :target: https://travis-ci.org/feincms/feincms
-.. image:: https://travis-ci.org/feincms/feincms.png?branch=master
-   :target: https://travis-ci.org/feincms/feincms

@@ -83,6 +83,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import absolute_import, unicode_literals
 
+import django
 from django.db import models
 
 
@@ -102,20 +103,28 @@ class TransformQuerySet(models.query.QuerySet):
         c._transform_fns.extend(fn)
         return c
 
-    def iterator(self):
-        result_iter = super(TransformQuerySet, self).iterator()
+    if django.VERSION < (1, 11):
+        def iterator(self):
+            result_iter = super(TransformQuerySet, self).iterator()
 
-        if not self._transform_fns:
-            return result_iter
+            if not self._transform_fns:
+                return result_iter
 
-        if getattr(self, '_iterable_class', None) != self._orig_iterable_class:
-            # Do not process the result of values() and values_list()
-            return result_iter
+            if getattr(self, '_iterable_class', None) != self._orig_iterable_class:  # noqa
+                # Do not process the result of values() and values_list()
+                return result_iter
 
-        results = list(result_iter)
-        for fn in self._transform_fns:
-            fn(results)
-        return iter(results)
+            results = list(result_iter)
+            for fn in self._transform_fns:
+                fn(results)
+            return iter(results)
+
+    else:
+        def _fetch_all(self):
+            super(TransformQuerySet, self)._fetch_all()
+            if getattr(self, '_iterable_class', None) == self._orig_iterable_class:  # noqa
+                for fn in self._transform_fns:
+                    fn(self._result_cache)
 
 
 if hasattr(models.Manager, 'from_queryset'):

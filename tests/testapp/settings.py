@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
+import django
 import os
 
 SITE_ID = 1
@@ -63,7 +64,7 @@ TEMPLATES = [
         },
     },
 ]
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,3 +72,16 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware'
 )
+
+if django.VERSION < (1, 11):
+    MIDDLEWARE_CLASSES = MIDDLEWARE
+
+if (2,) <= django.VERSION < (2, 1):
+    from django.utils import deprecation
+    # Anything to make mptt.templatetags.mptt_admin importable
+    deprecation.RemovedInDjango20Warning = deprecation.RemovedInDjango21Warning
+
+elif django.VERSION >= (2,):
+    from django.utils import deprecation
+    # Anything to make mptt.templatetags.mptt_admin importable
+    deprecation.RemovedInDjango20Warning = deprecation.RemovedInDjango30Warning

@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 
+from collections import OrderedDict
 from email.utils import parsedate
 from functools import partial, wraps
 from time import mktime
@@ -7,10 +8,6 @@ import warnings
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.urlresolvers import (
-    NoReverseMatch, reverse, get_script_prefix, set_script_prefix,
-    Resolver404, resolve,
-)
 from django.db import models
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
@@ -18,6 +15,16 @@ from django.utils.functional import lazy
 from django.utils.http import http_date
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language, ugettext_lazy as _
+try:
+    from django.urls import (
+        NoReverseMatch, reverse, get_script_prefix, set_script_prefix,
+        Resolver404, resolve,
+    )
+except ImportError:
+    from django.core.urlresolvers import (
+        NoReverseMatch, reverse, get_script_prefix, set_script_prefix,
+        Resolver404, resolve,
+    )
 
 from feincms.admin.item_editor import ItemEditorForm
 from feincms.contrib.fields import JSONField
@@ -171,7 +178,7 @@ class ApplicationContent(models.Model):
     # MyBlogApp for blog <slug>")
     parameters = JSONField(null=True, editable=False)
 
-    ALL_APPS_CONFIG = {}
+    ALL_APPS_CONFIG = OrderedDict()
 
     class Meta:
         abstract = True
@@ -421,7 +428,10 @@ class ApplicationContent(models.Model):
 
     @classmethod
     def closest_match(cls, urlconf_path):
-        page_class = cls.parent.field.rel.to
+        try:
+            page_class = cls.parent.field.remote_field.model
+        except AttributeError:
+            page_class = cls.parent.field.rel.to
 
         contents = cls.objects.filter(
             parent__in=page_class.objects.active(),

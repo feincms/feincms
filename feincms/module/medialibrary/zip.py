@@ -49,7 +49,7 @@ def import_zipfile(category_id, overwrite, data):
         info = json.loads(z.comment)
         if info['export_magic'] == export_magic:
             is_export_file = True
-    except:
+    except Exception:
         pass
 
     # If meta information, do we need to create any categories?

@@ -1,10 +1,13 @@
 from __future__ import absolute_import, unicode_literals
 
 from django import template
-from django.core.urlresolvers import NoReverseMatch
 from django.template import TemplateSyntaxError
 from django.template.defaulttags import kwarg_re
 from django.utils.encoding import smart_str
+try:
+    from django.urls import NoReverseMatch
+except ImportError:
+    from django.core.urlresolvers import NoReverseMatch
 
 from feincms.apps import ApplicationContent, app_reverse as do_app_reverse
 from feincms.templatetags.feincms_tags import _render_content

@@ -17,7 +17,7 @@ from .test_stuff import Empty
 
 try:
     from unittest import skipIf
-except:
+except ImportError:
     from django.utils.unittest import skipIf
 
 skipUnlessLegacy = skipIf(

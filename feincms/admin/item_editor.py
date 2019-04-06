@@ -243,8 +243,17 @@ class ItemEditor(ExtensionModelAdmin):
 
     recover_form_template = "admin/feincms/recover_form.html"
 
+    # For Reversion < v2.0.0
     def render_revision_form(self, request, obj, version, context,
                              revert=False, recover=False):
         context.update(self.get_extra_context(request))
         return super(ItemEditor, self).render_revision_form(
             request, obj, version, context, revert, recover)
+
+    # For Reversion >= v2.0.0
+    def _reversion_revisionform_view(self, request, version, template_name,
+                                     extra_context=None):
+        context = extra_context or {}
+        context.update(self.get_extra_context(request))
+        return super(ItemEditor, self)._reversion_revisionform_view(
+            request, version, template_name, context)

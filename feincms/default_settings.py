@@ -131,6 +131,14 @@ FEINCMS_THUMBNAIL_DIR = getattr(
     '_thumbs/')
 
 # ------------------------------------------------------------------------
+#: feincms_thumbnail template filter library cache timeout. The default is to
+#: not cache anything for backwards compatibility.
+FEINCMS_THUMBNAIL_CACHE_TIMEOUT = getattr(
+    settings,
+    'FEINCMS_THUMBNAIL_CACHE_TIMEOUT',
+    0)
+
+# ------------------------------------------------------------------------
 #: Prevent changing template within admin for pages which have been
 #: allocated a Template with singleton=True -- template field will become
 #: read-only for singleton pages.

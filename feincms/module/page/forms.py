@@ -115,8 +115,9 @@ class PageAdminForm(MPTTAdminForm):
             # Note: Using `parent` is not strictly correct, but we can be
             # sure that `parent` always points to another page instance,
             # and that's good enough for us.
+            field = self.page_model._meta.get_field('parent')
             self.fields['redirect_to'].widget = RedirectToWidget(
-                self.page_model._meta.get_field('parent').rel,
+                field.remote_field if hasattr(field, 'remote_field') else field.rel,  # noqa
                 modeladmin.admin_site)
 
         if 'template_key' in self.fields:
