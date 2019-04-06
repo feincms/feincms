@@ -23,7 +23,7 @@ def post_process_fieldsets(context, fieldset):
         return fieldset
 
     fields_to_include = set(fieldset.form.fields.keys())
-    for f in ('id', 'DELETE', 'ORDER'):
+    for f in ("id", "DELETE", "ORDER"):
         fields_to_include.discard(f)
 
     def _filter_recursive(fields):
@@ -46,37 +46,38 @@ def post_process_fieldsets(context, fieldset):
     for f in fields_to_include:
         new_fields.append(f)
 
-    if context.get('request'):
-        new_fields.extend(list(
-            fieldset.model_admin.get_readonly_fields(
-                context.get('request'),
-                context.get('original'),
+    if context.get("request"):
+        new_fields.extend(
+            list(
+                fieldset.model_admin.get_readonly_fields(
+                    context.get("request"), context.get("original")
+                )
             )
-        ))
+        )
 
     fieldset.fields = new_fields
-    return ''
+    return ""
 
 
-@register.inclusion_tag('admin/feincms/content_type_selection_widget.html',
-                        takes_context=True)
+@register.inclusion_tag(
+    "admin/feincms/content_type_selection_widget.html", takes_context=True
+)
 def show_content_type_selection_widget(context, region):
     """
     {% show_content_type_selection_widget region %}
     """
-    user = context['request'].user
+    user = context["request"].user
     types = OrderedDict({None: []})
 
     for ct in region._content_types:
         # Skip cts that we shouldn't be adding anyway
         opts = ct._meta
-        perm = opts.app_label + "." + get_permission_codename('add', opts)
+        perm = opts.app_label + "." + get_permission_codename("add", opts)
         if not user.has_perm(perm):
             continue
 
-        types.setdefault(
-            getattr(ct, 'optgroup', None),
-            [],
-        ).append((ct.__name__.lower, ct._meta.verbose_name))
+        types.setdefault(getattr(ct, "optgroup", None), []).append(
+            (ct.__name__.lower, ct._meta.verbose_name)
+        )
 
-    return {'types': types}
+    return {"types": types}

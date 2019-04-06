@@ -30,7 +30,7 @@ class TypeRegistryMetaClass(type):
     """
 
     def __init__(cls, name, bases, attrs):
-        if not hasattr(cls, 'types'):
+        if not hasattr(cls, "types"):
             cls.types = []
         else:
             cls.types.append(cls)
@@ -46,11 +46,12 @@ class PagePretender(object):
     parameters on creation: title, url, level. If using the translation
     extension, also add language.
     """
+
     pk = None
 
     # emulate mptt properties to get the template tags working
     class _mptt_meta:
-        level_attr = 'level'
+        level_attr = "level"
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -86,7 +87,7 @@ class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
     The name attribute is shown to the website administrator.
     """
 
-    name = _('navigation extension')
+    name = _("navigation extension")
 
     def children(self, page, **kwargs):
         """
@@ -103,51 +104,56 @@ class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
 
 def navigation_extension_choices():
     for ext in NavigationExtension.types:
-        if (issubclass(ext, NavigationExtension) and
-                ext is not NavigationExtension):
-            yield ('%s.%s' % (ext.__module__, ext.__name__), ext.name)
+        if issubclass(ext, NavigationExtension) and ext is not NavigationExtension:
+            yield ("%s.%s" % (ext.__module__, ext.__name__), ext.name)
 
 
 def get_extension_class(extension):
     extension = get_object(extension)
     if isinstance(extension, types.ModuleType):
-        return getattr(extension, 'Extension')
+        return getattr(extension, "Extension")
     return extension
 
 
 class Extension(extensions.Extension):
-    ident = 'navigation'  # TODO actually use this
+    ident = "navigation"  # TODO actually use this
     navigation_extensions = None
 
     @cached_property
     def _extensions(self):
         if self.navigation_extensions is None:
             return OrderedDict(
-                ('%s.%s' % (ext.__module__, ext.__name__), ext)
+                ("%s.%s" % (ext.__module__, ext.__name__), ext)
                 for ext in NavigationExtension.types
                 if (
-                    issubclass(ext, NavigationExtension) and
-                    ext is not NavigationExtension))
+                    issubclass(ext, NavigationExtension)
+                    and ext is not NavigationExtension
+                )
+            )
 
         else:
             return OrderedDict(
-                ('%s.%s' % (ext.__module__, ext.__name__), ext)
-                for ext
-                in map(get_extension_class, self.navigation_extensions))
+                ("%s.%s" % (ext.__module__, ext.__name__), ext)
+                for ext in map(get_extension_class, self.navigation_extensions)
+            )
 
     def handle_model(self):
-        choices = [
-            (path, ext.name) for path, ext in self._extensions.items()]
+        choices = [(path, ext.name) for path, ext in self._extensions.items()]
 
         self.model.add_to_class(
-            'navigation_extension',
+            "navigation_extension",
             models.CharField(
-                _('navigation extension'),
+                _("navigation extension"),
                 choices=choices,
-                blank=True, null=True, max_length=200,
+                blank=True,
+                null=True,
+                max_length=200,
                 help_text=_(
-                    'Select the module providing subpages for this page if'
-                    ' you need to customize the navigation.')))
+                    "Select the module providing subpages for this page if"
+                    " you need to customize the navigation."
+                ),
+            ),
+        )
 
         extension = self
 
@@ -169,7 +175,7 @@ class Extension(extensions.Extension):
             return self.children.in_navigation()
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.add_extension_options(_('Navigation extension'), {
-            'fields': ('navigation_extension',),
-            'classes': ('collapse',),
-        })
+        modeladmin.add_extension_options(
+            _("Navigation extension"),
+            {"fields": ("navigation_extension",), "classes": ("collapse",)},
+        )

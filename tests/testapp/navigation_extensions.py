@@ -1,12 +1,11 @@
 from __future__ import absolute_import, unicode_literals
 
-from feincms.module.page.extensions.navigation import (
-    NavigationExtension, PagePretender)
+from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
 
 
 class PassthroughExtension(NavigationExtension):
     # See PagesTestCase.test_23_navigation_extension
-    name = 'passthrough extension'
+    name = "passthrough extension"
 
     def children(self, page, **kwargs):
         for p in page.children.in_navigation():
@@ -14,7 +13,7 @@ class PassthroughExtension(NavigationExtension):
 
 
 class PretenderExtension(NavigationExtension):
-    name = 'pretender extension'
+    name = "pretender extension"
 
     def children(self, page, **kwargs):
-        return [PagePretender(title='blabla', url='/asdsa/')]
+        return [PagePretender(title="blabla", url="/asdsa/")]

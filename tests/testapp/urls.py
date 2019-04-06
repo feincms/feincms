@@ -11,27 +11,20 @@ from django.views.static import serve
 from feincms.module.page.sitemap import PageSitemap
 
 
-sitemaps = {'pages': PageSitemap}
+sitemaps = {"pages": PageSitemap}
 
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-
+    url(r"^admin/", admin.site.urls),
     url(
-        r'^media/(?P<path>.*)$',
+        r"^media/(?P<path>.*)$",
         serve,
-        {'document_root': os.path.join(os.path.dirname(__file__), 'media/')},
+        {"document_root": os.path.join(os.path.dirname(__file__), "media/")},
     ),
-
-    url(
-        r'^sitemap\.xml$',
-        sitemap,
-        {'sitemaps': sitemaps},
-    ),
-
-    url(r'', include('feincms.contrib.preview.urls')),
-    url(r'', include('feincms.urls')),
+    url(r"^sitemap\.xml$", sitemap, {"sitemaps": sitemaps}),
+    url(r"", include("feincms.contrib.preview.urls")),
+    url(r"", include("feincms.urls")),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

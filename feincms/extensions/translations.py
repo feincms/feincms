@@ -36,7 +36,7 @@ from feincms._internal import monkeypatch_method, monkeypatch_property
 logger = logging.getLogger(__name__)
 
 LANGUAGE_COOKIE_NAME = django_settings.LANGUAGE_COOKIE_NAME
-if hasattr(translation, 'LANGUAGE_SESSION_KEY'):
+if hasattr(translation, "LANGUAGE_SESSION_KEY"):
     LANGUAGE_SESSION_KEY = translation.LANGUAGE_SESSION_KEY
 else:
     # Django 1.6
@@ -50,8 +50,10 @@ def user_has_language_set(request):
     This is taken later on as an indication that we should not mess with the
     site's language settings, after all, the user's decision is what counts.
     """
-    if (hasattr(request, 'session') and
-            request.session.get(LANGUAGE_SESSION_KEY) is not None):
+    if (
+        hasattr(request, "session")
+        and request.session.get(LANGUAGE_SESSION_KEY) is not None
+    ):
         return True
     if LANGUAGE_COOKIE_NAME in request.COOKIES:
         return True
@@ -91,19 +93,18 @@ def translation_set_language(request, select_language):
     translation.activate(select_language)
     request.LANGUAGE_CODE = translation.get_language()
 
-    if hasattr(request, 'session'):
+    if hasattr(request, "session"):
         # User has a session, then set this language there
         if select_language != request.session.get(LANGUAGE_SESSION_KEY):
             request.session[LANGUAGE_SESSION_KEY] = select_language
-    elif request.method == 'GET' and not fallback:
+    elif request.method == "GET" and not fallback:
         # No session is active. We need to set a cookie for the language
         # so that it persists when users change their location to somewhere
         # not under the control of the CMS.
         # Only do this when request method is GET (mainly, do not abort
         # POST requests)
         response = HttpResponseRedirect(request.get_full_path())
-        response.set_cookie(
-            str(LANGUAGE_COOKIE_NAME), select_language)
+        response.set_cookie(str(LANGUAGE_COOKIE_NAME), select_language)
         return response
 
 
@@ -118,8 +119,8 @@ def translations_request_processor_explicit(page, request):
     desired_language = page.language
 
     # ...except if the user explicitely wants to switch language
-    if 'set_language' in request.GET:
-        desired_language = request.GET['set_language']
+    if "set_language" in request.GET:
+        desired_language = request.GET["set_language"]
     # ...or the user already has explicitely set a language, bail out and
     # don't change it for them behind their back
     elif user_has_language_set(request):
@@ -131,7 +132,7 @@ def translations_request_processor_explicit(page, request):
 # ------------------------------------------------------------------------
 def translations_request_processor_standard(page, request):
     # If this page is just a redirect, don't do any language specific setup
-    if getattr(page, 'redirect_to', None):
+    if getattr(page, "redirect_to", None):
         return
 
     if page.language == translation.get_language():
@@ -142,51 +143,54 @@ def translations_request_processor_standard(page, request):
 
 # ------------------------------------------------------------------------
 def get_current_language_code(request):
-    language_code = getattr(request, 'LANGUAGE_CODE', None)
+    language_code = getattr(request, "LANGUAGE_CODE", None)
     if language_code is None:
         logger.warning(
             "Could not access request.LANGUAGE_CODE. Is 'django.middleware."
-            "locale.LocaleMiddleware' in MIDDLEWARE_CLASSES?")
+            "locale.LocaleMiddleware' in MIDDLEWARE_CLASSES?"
+        )
     return language_code
 
 
 # ------------------------------------------------------------------------
 class Extension(extensions.Extension):
-
     def handle_model(self):
         cls = self.model
 
         cls.add_to_class(
-            'language',
+            "language",
             models.CharField(
-                _('language'),
+                _("language"),
                 max_length=10,
                 choices=django_settings.LANGUAGES,
-                default=django_settings.LANGUAGES[0][0]))
+                default=django_settings.LANGUAGES[0][0],
+            ),
+        )
         cls.add_to_class(
-            'translation_of',
+            "translation_of",
             models.ForeignKey(
-                'self',
+                "self",
                 on_delete=models.CASCADE,
-                blank=True, null=True, verbose_name=_('translation of'),
-                related_name='translations',
-                limit_choices_to={'language': django_settings.LANGUAGES[0][0]},
-                help_text=_(
-                    'Leave this empty for entries in the primary language.'),
-            )
+                blank=True,
+                null=True,
+                verbose_name=_("translation of"),
+                related_name="translations",
+                limit_choices_to={"language": django_settings.LANGUAGES[0][0]},
+                help_text=_("Leave this empty for entries in the primary language."),
+            ),
         )
 
-        if hasattr(cls, 'register_request_processor'):
+        if hasattr(cls, "register_request_processor"):
             if settings.FEINCMS_TRANSLATION_POLICY == "EXPLICIT":
                 cls.register_request_processor(
-                    translations_request_processor_explicit,
-                    key='translations')
+                    translations_request_processor_explicit, key="translations"
+                )
             else:  # STANDARD
                 cls.register_request_processor(
-                    translations_request_processor_standard,
-                    key='translations')
+                    translations_request_processor_standard, key="translations"
+                )
 
-        if hasattr(cls, 'get_redirect_to_target'):
+        if hasattr(cls, "get_redirect_to_target"):
             original_get_redirect_to_target = cls.get_redirect_to_target
 
             @monkeypatch_method(cls)
@@ -199,7 +203,7 @@ class Extension(extensions.Extension):
                 redirection.
                 """
                 target = original_get_redirect_to_target(self, request)
-                if target and target.find('//') == -1:
+                if target and target.find("//") == -1:
                     # Not an offsite link http://bla/blubb
                     try:
                         page = cls.objects.page_for_path(target)
@@ -217,9 +221,10 @@ class Extension(extensions.Extension):
             if not self.id:  # New, unsaved pages have no translations
                 return []
 
-            if hasattr(cls.objects, 'apply_active_filters'):
+            if hasattr(cls.objects, "apply_active_filters"):
                 filter_active = cls.objects.apply_active_filters
             else:
+
                 def filter_active(queryset):
                     return queryset
 
@@ -228,9 +233,10 @@ class Extension(extensions.Extension):
             elif self.translation_of:
                 # reuse prefetched queryset, do not filter it
                 res = [
-                    t for t
-                    in filter_active(self.translation_of.translations.all())
-                    if t.language != self.language]
+                    t
+                    for t in filter_active(self.translation_of.translations.all())
+                    if t.language != self.language
+                ]
                 res.insert(0, self.translation_of)
                 return res
             else:
@@ -244,7 +250,10 @@ class Extension(extensions.Extension):
                 return self.translation_of
             logger.debug(
                 "Page pk=%d (%s) has no primary language translation (%s)",
-                self.pk, self.language, django_settings.LANGUAGES[0][0])
+                self.pk,
+                self.language,
+                django_settings.LANGUAGES[0][0],
+            )
             return self
 
         @monkeypatch_property(cls)
@@ -253,12 +262,12 @@ class Extension(extensions.Extension):
 
         @monkeypatch_method(cls)
         def get_translation(self, language):
-            return self.original_translation.translations.get(
-                language=language)
+            return self.original_translation.translations.get(language=language)
 
     def handle_modeladmin(self, modeladmin):
         extensions.prefetch_modeladmin_get_queryset(
-            modeladmin, 'translation_of__translations', 'translations')
+            modeladmin, "translation_of__translations", "translations"
+        )
 
         def available_translations_admin(self, page):
             # Do not use available_translations() because we don't care
@@ -268,10 +277,7 @@ class Extension(extensions.Extension):
             if page.translation_of:
                 translations.append(page.translation_of)
                 translations.extend(page.translation_of.translations.all())
-            translations = {
-                p.language: p.id
-                for p in translations
-            }
+            translations = {p.language: p.id for p in translations}
 
             links = []
 
@@ -280,33 +286,30 @@ class Extension(extensions.Extension):
                     continue
 
                 if key in translations:
-                    links.append('<a href="%s/" title="%s">%s</a>' % (
-                        translations[key], _('Edit translation'), key.upper()))
+                    links.append(
+                        '<a href="%s/" title="%s">%s</a>'
+                        % (translations[key], _("Edit translation"), key.upper())
+                    )
                 else:
                     links.append(
                         '<a style="color:#baa" href="add/?translation_of='
-                        '%s&amp;language=%s" title="%s">%s</a>' % (
-                            page.id,
-                            key,
-                            _('Create translation'),
-                            key.upper()
-                        )
+                        '%s&amp;language=%s" title="%s">%s</a>'
+                        % (page.id, key, _("Create translation"), key.upper())
                     )
 
-            return mark_safe(' | '.join(links))
+            return mark_safe(" | ".join(links))
 
-        available_translations_admin.short_description = _('translations')
-        modeladmin.__class__.available_translations_admin =\
-            available_translations_admin
+        available_translations_admin.short_description = _("translations")
+        modeladmin.__class__.available_translations_admin = available_translations_admin
 
-        if hasattr(modeladmin, 'add_extension_options'):
-            modeladmin.add_extension_options('language', 'translation_of')
+        if hasattr(modeladmin, "add_extension_options"):
+            modeladmin.add_extension_options("language", "translation_of")
 
         modeladmin.extend_list(
-            'list_display',
-            ['language', 'available_translations_admin'],
+            "list_display", ["language", "available_translations_admin"]
         )
-        modeladmin.extend_list('list_filter', ['language'])
-        modeladmin.extend_list('raw_id_fields', ['translation_of'])
+        modeladmin.extend_list("list_filter", ["language"])
+        modeladmin.extend_list("raw_id_fields", ["translation_of"])
+
 
 # ------------------------------------------------------------------------

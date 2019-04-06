@@ -8,6 +8,6 @@ from feincms.views import Handler
 handler = Handler.as_view()
 
 urlpatterns = [
-    url(r'^$', handler, name='feincms_home'),
-    url(r'^(.*)/$', handler, name='feincms_handler'),
+    url(r"^$", handler, name="feincms_home"),
+    url(r"^(.*)/$", handler, name="feincms_handler"),
 ]

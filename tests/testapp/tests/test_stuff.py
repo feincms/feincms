@@ -39,47 +39,40 @@ class ModelsTest(TestCase):
     def test_region(self):
         # Creation should not fail
 
-        r = Region('region', 'region title')
+        r = Region("region", "region title")
         t = Template(
-            'base template',
-            'base.html',
-            (
-                ('region', 'region title'),
-                Region('region2', 'region2 title'),
-            ),
+            "base template",
+            "base.html",
+            (("region", "region title"), Region("region2", "region2 title")),
         )
 
         # I'm not sure whether this test tests anything at all
         self.assertEqual(r.key, t.regions[0].key)
-        self.assertEqual(force_text(r), 'region title')
+        self.assertEqual(force_text(r), "region title")
 
 
 class UtilsTest(TestCase):
     def test_get_object(self):
-        self.assertRaises(
-            AttributeError, lambda: get_object('feincms.does_not_exist'))
-        self.assertRaises(
-            ImportError, lambda: get_object('feincms.does_not_exist.fn'))
+        self.assertRaises(AttributeError, lambda: get_object("feincms.does_not_exist"))
+        self.assertRaises(ImportError, lambda: get_object("feincms.does_not_exist.fn"))
 
-        self.assertEqual(get_object, get_object('feincms.utils.get_object'))
+        self.assertEqual(get_object, get_object("feincms.utils.get_object"))
 
     def test_shorten_string(self):
         string = shorten_string(
-            "Der Wolf und die Grossmutter assen im Wald zu mittag",
-            15, ellipsis="_")
-        self.assertEqual(string, 'Der Wolf und_ag')
+            "Der Wolf und die Grossmutter assen im Wald zu mittag", 15, ellipsis="_"
+        )
+        self.assertEqual(string, "Der Wolf und_ag")
         self.assertEqual(len(string), 15)
 
         string = shorten_string(
-            "Haenschen-Klein, ging allein, in den tiefen Wald hinein",
-            15)
-        self.assertEqual(string, 'Haenschen \u2026 ein')
+            "Haenschen-Klein, ging allein, in den tiefen Wald hinein", 15
+        )
+        self.assertEqual(string, "Haenschen \u2026 ein")
         self.assertEqual(len(string), 15)
 
-        string = shorten_string(
-            'Badgerbadgerbadgerbadgerbadger',
-            10, ellipsis='-')
-        self.assertEqual(string, 'Badger-ger')
+        string = shorten_string("Badgerbadgerbadgerbadgerbadger", 10, ellipsis="-")
+        self.assertEqual(string, "Badger-ger")
         self.assertEqual(len(string), 10)
 
 
@@ -88,7 +81,7 @@ class TimezoneTest(TestCase):
     def test_granular_now_dst_transition(self):
         # Should not raise an exception
         d = datetime(2016, 10, 30, 2, 10)
-        tz = pytz.timezone('Europe/Copenhagen')
+        tz = pytz.timezone("Europe/Copenhagen")
         granular_now(d, default_tz=tz)
 
     def test_granular_now_rounding(self):
@@ -96,5 +89,6 @@ class TimezoneTest(TestCase):
         g = granular_now(d)
         self.assertEqual(d.hour, g.hour)
         self.assertEqual(10, g.minute)
+
 
 # ------------------------------------------------------------------------

@@ -15,20 +15,30 @@ from feincms._internal import monkeypatch_property
 
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('_content_title', models.TextField(
-            _('content title'),
-            blank=True,
-            help_text=_(
-                'The first line is the main title, the following'
-                ' lines are subtitles.')))
+        self.model.add_to_class(
+            "_content_title",
+            models.TextField(
+                _("content title"),
+                blank=True,
+                help_text=_(
+                    "The first line is the main title, the following"
+                    " lines are subtitles."
+                ),
+            ),
+        )
 
-        self.model.add_to_class('_page_title', models.CharField(
-            _('page title'),
-            max_length=69,
-            blank=True,
-            help_text=_(
-                'Page title for browser window. Same as title by'
-                ' default. Must be 69 characters or fewer.')))
+        self.model.add_to_class(
+            "_page_title",
+            models.CharField(
+                _("page title"),
+                max_length=69,
+                blank=True,
+                help_text=_(
+                    "Page title for browser window. Same as title by"
+                    " default. Must be 69 characters or fewer."
+                ),
+            ),
+        )
 
         @monkeypatch_property(self.model)
         def page_title(self):
@@ -54,10 +64,10 @@ class Extension(extensions.Extension):
 
         @monkeypatch_property(self.model)
         def content_subtitle(self):
-            return '\n'.join(self._content_title.splitlines()[1:])
+            return "\n".join(self._content_title.splitlines()[1:])
 
     def handle_modeladmin(self, modeladmin):
-        modeladmin.add_extension_options(_('Titles'), {
-            'fields': ('_content_title', '_page_title'),
-            'classes': ('collapse',),
-        })
+        modeladmin.add_extension_options(
+            _("Titles"),
+            {"fields": ("_content_title", "_page_title"), "classes": ("collapse",)},
+        )

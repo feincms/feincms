@@ -13,12 +13,12 @@ class RawContent(models.Model):
     snippets too.
     """
 
-    text = models.TextField(_('content'), blank=True)
+    text = models.TextField(_("content"), blank=True)
 
     class Meta:
         abstract = True
-        verbose_name = _('raw content')
-        verbose_name_plural = _('raw contents')
+        verbose_name = _("raw content")
+        verbose_name_plural = _("raw contents")
 
     def render(self, **kwargs):
         return mark_safe(self.text)

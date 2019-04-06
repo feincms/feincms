@@ -10,6 +10,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+
 try:
     from django.urls import reverse
 except ImportError:
@@ -22,9 +23,7 @@ from feincms.models import create_base_model
 from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
 from feincms.utils.managers import ActiveAwareContentManagerMixin
-from feincms.utils import (
-    shorten_string, match_model_string, get_model_instance
-)
+from feincms.utils import shorten_string, match_model_string, get_model_instance
 
 
 # ------------------------------------------------------------------------
@@ -35,8 +34,7 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
     """
 
     # The fields which should be excluded when creating a copy.
-    exclude_from_copy = [
-        'id', 'tree_id', 'lft', 'rght', 'level', 'redirect_to']
+    exclude_from_copy = ["id", "tree_id", "lft", "rght", "level", "redirect_to"]
 
     def page_for_path(self, path, raise404=False):
         """
@@ -47,14 +45,13 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
             Page.objects.page_for_path(request.path)
         """
 
-        stripped = path.strip('/')
+        stripped = path.strip("/")
 
         try:
-            page = self.active().get(
-                _cached_url='/%s/' % stripped if stripped else '/')
+            page = self.active().get(_cached_url="/%s/" % stripped if stripped else "/")
 
             if not page.are_ancestors_active():
-                raise self.model.DoesNotExist('Parents are inactive.')
+                raise self.model.DoesNotExist("Parents are inactive.")
 
             return page
 
@@ -75,22 +72,23 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
         page with url '/photos/album/'.
         """
 
-        paths = ['/']
-        path = path.strip('/')
+        paths = ["/"]
+        path = path.strip("/")
 
         if path:
-            tokens = path.split('/')
-            paths += [
-                '/%s/' % '/'.join(tokens[:i])
-                for i in range(1, len(tokens) + 1)]
+            tokens = path.split("/")
+            paths += ["/%s/" % "/".join(tokens[:i]) for i in range(1, len(tokens) + 1)]
 
         try:
-            page = self.active().filter(_cached_url__in=paths).extra(
-                select={'_url_length': 'LENGTH(_cached_url)'}
-            ).order_by('-_url_length')[0]
+            page = (
+                self.active()
+                .filter(_cached_url__in=paths)
+                .extra(select={"_url_length": "LENGTH(_cached_url)"})
+                .order_by("-_url_length")[0]
+            )
 
             if not page.are_ancestors_active():
-                raise IndexError('Parents are inactive.')
+                raise IndexError("Parents are inactive.")
 
             return page
 
@@ -114,8 +112,7 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
 
         return self.in_navigation().filter(parent__isnull=True)
 
-    def for_request(self, request, raise404=False, best_match=False,
-                    path=None):
+    def for_request(self, request, raise404=False, best_match=False, path=None):
         """
         Return a page for the request
 
@@ -129,15 +126,15 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
         could be determined.
         """
 
-        if not hasattr(request, '_feincms_page'):
+        if not hasattr(request, "_feincms_page"):
             path = path or request.path_info or request.path
 
             if best_match:
                 request._feincms_page = self.best_match_for_path(
-                    path, raise404=raise404)
+                    path, raise404=raise404
+                )
             else:
-                request._feincms_page = self.page_for_path(
-                    path, raise404=raise404)
+                request._feincms_page = self.page_for_path(path, raise404=raise404)
 
         return request._feincms_page
 
@@ -147,45 +144,65 @@ class PageManager(BasePageManager):
     pass
 
 
-PageManager.add_to_active_filters(Q(active=True), key='is_active')
+PageManager.add_to_active_filters(Q(active=True), key="is_active")
 
 
 # ------------------------------------------------------------------------
 @python_2_unicode_compatible
 class BasePage(create_base_model(MPTTModel), ContentModelMixin):
-    active = models.BooleanField(_('active'), default=True)
+    active = models.BooleanField(_("active"), default=True)
 
     # structure and navigation
-    title = models.CharField(_('title'), max_length=200, help_text=_(
-        'This title is also used for navigation menu items.'))
+    title = models.CharField(
+        _("title"),
+        max_length=200,
+        help_text=_("This title is also used for navigation menu items."),
+    )
     slug = models.SlugField(
-        _('slug'), max_length=150,
-        help_text=_('This is used to build the URL for this page'))
+        _("slug"),
+        max_length=150,
+        help_text=_("This is used to build the URL for this page"),
+    )
     parent = models.ForeignKey(
-        'self', verbose_name=_('Parent'), blank=True,
+        "self",
+        verbose_name=_("Parent"),
+        blank=True,
         on_delete=models.CASCADE,
-        null=True, related_name='children')
+        null=True,
+        related_name="children",
+    )
     # Custom list_filter - see admin/filterspecs.py
     parent.parent_filter = True
-    in_navigation = models.BooleanField(_('in navigation'), default=False)
+    in_navigation = models.BooleanField(_("in navigation"), default=False)
     override_url = models.CharField(
-        _('override URL'), max_length=255,
-        blank=True, help_text=_(
-            'Override the target URL. Be sure to include slashes at the '
-            'beginning and at the end if it is a local URL. This '
-            'affects both the navigation and subpages\' URLs.'))
-    redirect_to = models.CharField(
-        _('redirect to'), max_length=255,
+        _("override URL"),
+        max_length=255,
         blank=True,
         help_text=_(
-            'Target URL for automatic redirects'
-            ' or the primary key of a page.'))
+            "Override the target URL. Be sure to include slashes at the "
+            "beginning and at the end if it is a local URL. This "
+            "affects both the navigation and subpages' URLs."
+        ),
+    )
+    redirect_to = models.CharField(
+        _("redirect to"),
+        max_length=255,
+        blank=True,
+        help_text=_(
+            "Target URL for automatic redirects" " or the primary key of a page."
+        ),
+    )
     _cached_url = models.CharField(
-        _('Cached URL'), max_length=255, blank=True,
-        editable=False, default='', db_index=True)
+        _("Cached URL"),
+        max_length=255,
+        blank=True,
+        editable=False,
+        default="",
+        db_index=True,
+    )
 
     class Meta:
-        ordering = ['tree_id', 'lft']
+        ordering = ["tree_id", "lft"]
         abstract = True
 
     objects = PageManager()
@@ -206,11 +223,11 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             return False
 
         pages = self.__class__.objects.active().filter(
-            tree_id=self.tree_id,
-            lft__lte=self.lft,
-            rght__gte=self.rght)
+            tree_id=self.tree_id, lft__lte=self.lft, rght__gte=self.rght
+        )
         return pages.count() > self.level
-    is_active.short_description = _('is active')
+
+    is_active.short_description = _("is active")
 
     def are_ancestors_active(self):
         """
@@ -228,8 +245,9 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         Title shortened for display.
         """
         return shorten_string(self.title)
-    short_title.admin_order_field = 'title'
-    short_title.short_description = _('title')
+
+    short_title.admin_order_field = "title"
+    short_title.short_description = _("title")
 
     def __init__(self, *args, **kwargs):
         super(BasePage, self).__init__(*args, **kwargs)
@@ -250,9 +268,9 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if self.override_url:
             self._cached_url = self.override_url
         elif self.is_root_node():
-            self._cached_url = '/%s/' % self.slug
+            self._cached_url = "/%s/" % self.slug
         else:
-            self._cached_url = '%s%s/' % (self.parent._cached_url, self.slug)
+            self._cached_url = "%s%s/" % (self.parent._cached_url, self.slug)
 
         cached_page_urls[self.id] = self._cached_url
         super(BasePage, self).save(*args, **kwargs)
@@ -264,29 +282,35 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if self._cached_url == self._original_cached_url:
             return
 
-        pages = self.get_descendants().order_by('lft')
+        pages = self.get_descendants().order_by("lft")
 
         for page in pages:
             if page.override_url:
                 page._cached_url = page.override_url
             else:
                 # cannot be root node by definition
-                page._cached_url = '%s%s/' % (
+                page._cached_url = "%s%s/" % (
                     cached_page_urls[page.parent_id],
-                    page.slug)
+                    page.slug,
+                )
 
             cached_page_urls[page.id] = page._cached_url
             super(BasePage, page).save()  # do not recurse
+
     save.alters_data = True
 
     def delete(self, *args, **kwargs):
         if not settings.FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED:
             if self.template.singleton:
-                raise PermissionDenied(_(
-                    'This %(page_class)s uses a singleton template, and '
-                    'FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False' % {
-                        'page_class': self._meta.verbose_name}))
+                raise PermissionDenied(
+                    _(
+                        "This %(page_class)s uses a singleton template, and "
+                        "FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False"
+                        % {"page_class": self._meta.verbose_name}
+                    )
+                )
         super(BasePage, self).delete(*args, **kwargs)
+
     delete.alters_data = True
 
     def get_absolute_url(self):
@@ -294,10 +318,10 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         Return the absolute URL of this page.
         """
         # result url never begins or ends with a slash
-        url = self._cached_url.strip('/')
+        url = self._cached_url.strip("/")
         if url:
-            return reverse('feincms_handler', args=(url,))
-        return reverse('feincms_home')
+            return reverse("feincms_handler", args=(url,))
+        return reverse("feincms_home")
 
     def get_navigation_url(self):
         """
@@ -360,18 +384,20 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         Page experience.
         """
         cls.register_request_processor(
-            processors.redirect_request_processor, key='redirect')
+            processors.redirect_request_processor, key="redirect"
+        )
         cls.register_request_processor(
-            processors.extra_context_request_processor, key='extra_context')
+            processors.extra_context_request_processor, key="extra_context"
+        )
 
 
 # ------------------------------------------------------------------------
 class Page(BasePage):
     class Meta:
-        ordering = ['tree_id', 'lft']
-        verbose_name = _('page')
-        verbose_name_plural = _('pages')
-        app_label = 'page'
+        ordering = ["tree_id", "lft"]
+        verbose_name = _("page")
+        verbose_name_plural = _("pages")
+        app_label = "page"
         # not yet # permissions = (("edit_page", _("Can edit page metadata")),)
 
 

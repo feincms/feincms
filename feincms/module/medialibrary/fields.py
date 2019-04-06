@@ -18,7 +18,7 @@ from .models import MediaFile
 from .thumbnail import admin_thumbnail
 
 
-__all__ = ('MediaFileForeignKey', 'ContentWithMediaFile')
+__all__ = ("MediaFileForeignKey", "ContentWithMediaFile")
 
 
 # ------------------------------------------------------------------------
@@ -29,20 +29,21 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
     def label_for_value(self, value):
         key = self.rel.get_related_field().name
         try:
-            obj = self.rel.to._default_manager.using(self.db).get(
-                **{key: value})
-            label = ['&nbsp;<strong>%s</strong>' % escape(
-                shorten_string(six.text_type(obj)))]
+            obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
+            label = [
+                "&nbsp;<strong>%s</strong>" % escape(shorten_string(six.text_type(obj)))
+            ]
             image = admin_thumbnail(obj)
 
             if image:
                 label.append(
                     '<br /><img src="%s" alt="" style="margin:1em 0 0 170px"'
-                    '/>' % image)
+                    "/>" % image
+                )
 
-            return ''.join(label)
+            return "".join(label)
         except (ValueError, self.rel.to.DoesNotExist):
-            return ''
+            return ""
 
 
 class MediaFileForeignKey(models.ForeignKey):
@@ -53,24 +54,25 @@ class MediaFileForeignKey(models.ForeignKey):
     """
 
     def __init__(self, *args, **kwargs):
-        if not args and 'to' not in kwargs:
+        if not args and "to" not in kwargs:
             args = (MediaFile,)
         super(MediaFileForeignKey, self).__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        if 'widget' in kwargs and isinstance(
-                kwargs['widget'], ForeignKeyRawIdWidget):
-            kwargs['widget'] = MediaFileForeignKeyRawIdWidget(kwargs['widget'])
+        if "widget" in kwargs and isinstance(kwargs["widget"], ForeignKeyRawIdWidget):
+            kwargs["widget"] = MediaFileForeignKeyRawIdWidget(kwargs["widget"])
         return super(MediaFileForeignKey, self).formfield(**kwargs)
 
 
 class ContentWithMediaFile(models.Model):
     class feincms_item_editor_inline(FeinCMSInline):
-        raw_id_fields = ('mediafile',)
+        raw_id_fields = ("mediafile",)
 
     mediafile = MediaFileForeignKey(
-        MediaFile, verbose_name=_('media file'), related_name='+',
-        on_delete=models.PROTECT
+        MediaFile,
+        verbose_name=_("media file"),
+        related_name="+",
+        on_delete=models.PROTECT,
     )
 
     class Meta:
@@ -83,16 +85,22 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
     Simple AdminFileWidget, but detects if the file is an image and
     tries to render a small thumbnail besides the input field.
     """
+
     def render(self, name, value, attrs=None, *args, **kwargs):
         r = super(AdminFileWithPreviewWidget, self).render(
-            name, value, attrs=attrs, *args, **kwargs)
+            name, value, attrs=attrs, *args, **kwargs
+        )
 
-        if value and getattr(value, 'instance', None):
+        if value and getattr(value, "instance", None):
             image = admin_thumbnail(value.instance)
             if image:
-                r = mark_safe((
-                    '<img src="%s" alt="" style="float: left; padding-right:'
-                    '8px; border-right: 1px solid #ccc; margin-right: 8px"'
-                    '>' % image) + r)
+                r = mark_safe(
+                    (
+                        '<img src="%s" alt="" style="float: left; padding-right:'
+                        '8px; border-right: 1px solid #ccc; margin-right: 8px"'
+                        ">" % image
+                    )
+                    + r
+                )
 
         return r

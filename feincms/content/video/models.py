@@ -20,38 +20,43 @@ class VideoContent(models.Model):
     """
 
     PORTALS = (
-        ('youtube', re.compile(r'youtube'), lambda url: {
-            'v': re.search(r'([?&]v=|./././)([^#&]+)', url).group(2),
-        }),
-        ('vimeo', re.compile(r'vimeo'), lambda url: {
-            'id': re.search(r'/(\d+)', url).group(1),
-        }),
-        ('sf', re.compile(r'sf\.tv'), lambda url: {
-            'id': re.search(r'/([a-z0-9\-]+)', url).group(1),
-        }),
+        (
+            "youtube",
+            re.compile(r"youtube"),
+            lambda url: {"v": re.search(r"([?&]v=|./././)([^#&]+)", url).group(2)},
+        ),
+        (
+            "vimeo",
+            re.compile(r"vimeo"),
+            lambda url: {"id": re.search(r"/(\d+)", url).group(1)},
+        ),
+        (
+            "sf",
+            re.compile(r"sf\.tv"),
+            lambda url: {"id": re.search(r"/([a-z0-9\-]+)", url).group(1)},
+        ),
     )
 
     video = models.URLField(
-        _('video link'),
+        _("video link"),
         help_text=_(
-            'This should be a link to a youtube or vimeo video,'
-            ' i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0'))
+            "This should be a link to a youtube or vimeo video,"
+            " i.e.: http://www.youtube.com/watch?v=zmj1rpzDRZ0"
+        ),
+    )
 
     class Meta:
         abstract = True
-        verbose_name = _('video')
-        verbose_name_plural = _('videos')
+        verbose_name = _("video")
+        verbose_name_plural = _("videos")
 
     def get_context_dict(self):
         "Extend this if you need more variables passed to template"
-        return {'content': self, 'portal': 'unknown'}
+        return {"content": self, "portal": "unknown"}
 
-    def get_templates(self, portal='unknown'):
+    def get_templates(self, portal="unknown"):
         "Extend/override this if you want to modify the templates used"
-        return [
-            'content/video/%s.html' % portal,
-            'content/video/unknown.html',
-        ]
+        return ["content/video/%s.html" % portal, "content/video/unknown.html"]
 
     def ctx_for_video(self, vurl):
         "Get a context dict for a given video URL"
@@ -60,7 +65,7 @@ class VideoContent(models.Model):
             if match.search(vurl):
                 try:
                     ctx.update(context_fn(vurl))
-                    ctx['portal'] = portal
+                    ctx["portal"] = portal
                     break
                 except AttributeError:
                     continue
@@ -69,8 +74,8 @@ class VideoContent(models.Model):
     def render(self, **kwargs):
         ctx = self.ctx_for_video(self.video)
         return ct_render_to_string(
-            self.get_templates(ctx['portal']),
+            self.get_templates(ctx["portal"]),
             ctx,
-            request=kwargs.get('request'),
-            context=kwargs.get('context'),
+            request=kwargs.get("request"),
+            context=kwargs.get("context"),
         )

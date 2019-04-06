@@ -32,11 +32,10 @@ class JSONFormField(forms.fields.CharField):
         return super(JSONFormField, self).clean(value, *args, **kwargs)
 
 
-if LooseVersion(get_version()) > LooseVersion('1.8'):
+if LooseVersion(get_version()) > LooseVersion("1.8"):
     workaround_class = models.TextField
 else:
-    workaround_class = six.with_metaclass(
-        models.SubfieldBase, models.TextField)
+    workaround_class = six.with_metaclass(models.SubfieldBase, models.TextField)
 
 
 class JSONField(workaround_class):
@@ -54,8 +53,7 @@ class JSONField(workaround_class):
 
         if isinstance(value, dict):
             return value
-        elif (isinstance(value, six.string_types) or
-                isinstance(value, six.binary_type)):
+        elif isinstance(value, six.string_types) or isinstance(value, six.binary_type):
             # Avoid asking the JSON decoder to handle empty values:
             if not value:
                 return {}
@@ -64,7 +62,8 @@ class JSONField(workaround_class):
                 return json.loads(value)
             except ValueError:
                 logging.getLogger("feincms.contrib.fields").exception(
-                    "Unable to deserialize store JSONField data: %s", value)
+                    "Unable to deserialize store JSONField data: %s", value
+                )
                 return {}
         else:
             assert value is None

@@ -9,77 +9,123 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=20)),
-                ('slug', models.SlugField()),
-                ('lft', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('rght', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('tree_id', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('level', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('parent', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='testapp.Category')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=20)),
+                ("slug", models.SlugField()),
+                ("lft", models.PositiveIntegerField(db_index=True, editable=False)),
+                ("rght", models.PositiveIntegerField(db_index=True, editable=False)),
+                ("tree_id", models.PositiveIntegerField(db_index=True, editable=False)),
+                ("level", models.PositiveIntegerField(db_index=True, editable=False)),
+                (
+                    "parent",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="children",
+                        to="testapp.Category",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'category',
-                'verbose_name_plural': 'categories',
-                'ordering': ['tree_id', 'lft'],
+                "verbose_name": "category",
+                "verbose_name_plural": "categories",
+                "ordering": ["tree_id", "lft"],
             },
         ),
         migrations.CreateModel(
-            name='CustomContentType',
+            name="CustomContentType",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('region', models.CharField(max_length=255)),
-                ('ordering', models.IntegerField(default=0, verbose_name='ordering')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("region", models.CharField(max_length=255)),
+                ("ordering", models.IntegerField(default=0, verbose_name="ordering")),
             ],
             options={
-                'verbose_name': 'custom content type',
-                'verbose_name_plural': 'custom content types',
-                'db_table': 'testapp_mymodel_customcontenttype',
-                'ordering': ['ordering'],
-                'permissions': [],
-                'abstract': False,
+                "verbose_name": "custom content type",
+                "verbose_name_plural": "custom content types",
+                "db_table": "testapp_mymodel_customcontenttype",
+                "ordering": ["ordering"],
+                "permissions": [],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='ExampleCMSBase',
+            name="ExampleCMSBase",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
             bases=(models.Model, feincms.extensions.base.ExtensionsMixin),
         ),
         migrations.CreateModel(
-            name='ExampleCMSBase2',
+            name="ExampleCMSBase2",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
             bases=(models.Model, feincms.extensions.base.ExtensionsMixin),
         ),
         migrations.CreateModel(
-            name='MyModel',
+            name="MyModel",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
             bases=(models.Model, feincms.extensions.base.ExtensionsMixin),
         ),
         migrations.AddField(
-            model_name='customcontenttype',
-            name='parent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='customcontenttype_set', to='testapp.MyModel'),
+            model_name="customcontenttype",
+            name="parent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="customcontenttype_set",
+                to="testapp.MyModel",
+            ),
         ),
     ]

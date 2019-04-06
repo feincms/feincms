@@ -43,54 +43,59 @@ class ImageContent(models.Model):
     """
 
     image = models.ImageField(
-        _('image'), max_length=255,
-        upload_to=os.path.join(settings.FEINCMS_UPLOAD_PREFIX, 'imagecontent'))
+        _("image"),
+        max_length=255,
+        upload_to=os.path.join(settings.FEINCMS_UPLOAD_PREFIX, "imagecontent"),
+    )
     alt_text = models.CharField(
-        _('alternate text'), max_length=255, blank=True,
-        help_text=_('Description of image'))
-    caption = models.CharField(_('caption'), max_length=255, blank=True)
+        _("alternate text"),
+        max_length=255,
+        blank=True,
+        help_text=_("Description of image"),
+    )
+    caption = models.CharField(_("caption"), max_length=255, blank=True)
 
     class Meta:
         abstract = True
-        verbose_name = _('image')
-        verbose_name_plural = _('images')
+        verbose_name = _("image")
+        verbose_name_plural = _("images")
 
     def render(self, **kwargs):
-        templates = ['content/image/default.html']
-        if hasattr(self, 'position'):
-            templates.insert(0, 'content/image/%s.html' % self.position)
+        templates = ["content/image/default.html"]
+        if hasattr(self, "position"):
+            templates.insert(0, "content/image/%s.html" % self.position)
 
         return ct_render_to_string(
             templates,
-            {'content': self},
-            request=kwargs.get('request'),
-            context=kwargs.get('context'),
+            {"content": self},
+            request=kwargs.get("request"),
+            context=kwargs.get("context"),
         )
 
     def get_image(self):
-        type, separator, size = getattr(self, 'format', '').partition(':')
+        type, separator, size = getattr(self, "format", "").partition(":")
         if not size:
             return self.image
 
-        thumbnailer = {
-            'cropscale': feincms_thumbnail.CropscaleThumbnailer,
-        }.get(type, feincms_thumbnail.Thumbnailer)
+        thumbnailer = {"cropscale": feincms_thumbnail.CropscaleThumbnailer}.get(
+            type, feincms_thumbnail.Thumbnailer
+        )
         return thumbnailer(self.image, size)
 
     @classmethod
     def initialize_type(cls, POSITION_CHOICES=None, FORMAT_CHOICES=None):
         if POSITION_CHOICES:
             models.CharField(
-                _('position'),
+                _("position"),
                 max_length=10,
                 choices=POSITION_CHOICES,
-                default=POSITION_CHOICES[0][0]
-            ).contribute_to_class(cls, 'position')
+                default=POSITION_CHOICES[0][0],
+            ).contribute_to_class(cls, "position")
 
         if FORMAT_CHOICES:
             models.CharField(
-                _('format'),
+                _("format"),
                 max_length=64,
                 choices=FORMAT_CHOICES,
-                default=FORMAT_CHOICES[0][0]
-            ).contribute_to_class(cls, 'format')
+                default=FORMAT_CHOICES[0][0],
+            ).contribute_to_class(cls, "format")
