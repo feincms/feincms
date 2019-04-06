@@ -469,9 +469,10 @@ class PagesTestCase(TestCase):
         # this should not raise
         self.client.get(reverse("admin:page_page_change", args=(1,)))
 
-        page.mediafilecontent_set.update(mediafile=3)
+        page.mediafilecontent_set.update(mediafile=3)  # WTF is this?
         # this should not raise
         self.client.get("/admin/page/page/1/")
+        page.mediafilecontent_set.update(mediafile=mf.id)  # Revert changes
 
         field = MediaFile._meta.get_field("file")
         old = (field.upload_to, field.storage, field.generate_filename)
