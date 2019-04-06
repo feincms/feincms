@@ -468,8 +468,10 @@ class PagesTestCase(TestCase):
         self.assertEqual(MediaFile.objects.only_language('en').count(), 0)
         self.assertEqual(
             MediaFile.objects.only_language(
-                '%s-ha' % short_language_code()).count(),
-            1)
+                lambda: '%s-ha' % short_language_code()
+            ).count(),
+            1,
+        )
 
         self.assertTrue(
             '%s-ha' % short_language_code() in mf.available_translations)

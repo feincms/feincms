@@ -14,7 +14,10 @@ See the Django_ documentation for how to install and configure Django.
 
 You can download a stable release of FeinCMS using ``pip``. Pip will install
 feincms and its dependencies. Dependencies which are automatically installed
-are: feedparser_, Pillow_ and django-mptt_.
+are: feedparser_, Pillow_ and django-mptt_. For outdated versions of
+Django the best place to find supported combinations of library versions is the
+`Travis CI build configuration
+<https://github.com/feincms/feincms/blob/master/.travis.yml>`_.
 
     $ pip install feincms
 

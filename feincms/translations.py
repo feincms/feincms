@@ -169,7 +169,9 @@ class TranslatedObjectManager(queryset_transform.TransformManager):
         Uses the currently active language by default.
         """
 
-        return self.filter(translations__language_code=language)
+        return self.filter(translations__language_code=(
+            language() if callable(language) else language
+        ))
 
 
 @python_2_unicode_compatible
