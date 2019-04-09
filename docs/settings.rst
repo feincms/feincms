@@ -98,6 +98,10 @@ pages.
 Prevent admin page deletion for pages which have been allocated a Template with
 ``singleton=True``.
 
+``FEINCMS_MEDIAFILE_TRANSLATIONS``: Defaults to ``True``. Set to ``False`` if
+you want FeinCMS to not translate ``MediaFile`` names, and instead just use the
+filename directly.
+
 
 Various settings
 ================
