@@ -818,7 +818,7 @@ def create_base_model(inherit_from=models.Model):
             self.copy_content_from(obj)
 
         @classmethod
-        def register_with_reversion(cls):
+        def register_with_reversion(cls, **kwargs):
             try:
                 from reversion.revisions import register
             except ImportError:
@@ -830,8 +830,8 @@ def create_base_model(inherit_from=models.Model):
             follow = []
             for content_type in cls._feincms_content_types:
                 follow.append("%s_set" % content_type.__name__.lower())
-                register(content_type)
-            register(cls, follow=follow)
+                register(content_type, **kwargs)
+            register(cls, follow=follow, **kwargs)
 
     return Base
 

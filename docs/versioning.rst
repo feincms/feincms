@@ -12,9 +12,12 @@ with django-reversion_:
 
 * Add ``'reversion'`` to the list of installed applications.
 * Add ``'reversion.middleware.RevisionMiddleware'`` to ``MIDDLEWARE_CLASSES``.
-* Call ``Page.register_with_reversion()`` after all content types have been
-  created (after all ``create_content_type`` invocations).
+* Call ``Page.register_with_reversion(**kwargs)`` after all content types have been
+  created (after all ``create_content_type`` invocations). You can optionally
+  supply kwargs_ that will be passed to ``reversion.register()``.
 * Add ``FEINCMS_USE_PAGE_ADMIN = False`` to your ``settings`` file.
+
+.. _kwargs: https://django-reversion.readthedocs.io/en/stable/api.html#registration-api
 
 Now, you need to create your own model admin subclass inheriting from both
 FeinCMS' ``PageAdmin`` and from reversions ``VersionAdmin``::
