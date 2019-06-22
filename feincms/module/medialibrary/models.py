@@ -155,19 +155,21 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             self._original_file_name = self.file.name
 
     def __str__(self):
-        trans = None
+        if settings.FEINCMS_MEDIAFILE_TRANSLATIONS:
+            trans = None
 
-        try:
-            trans = self.translation
-        except models.ObjectDoesNotExist:
-            pass
-        except AttributeError:
-            pass
+            try:
+                trans = self.translation
+            except models.ObjectDoesNotExist:
+                pass
+            except AttributeError:
+                pass
 
-        if trans:
-            trans = "%s" % trans
-            if trans.strip():
-                return trans
+            if trans:
+                trans = "%s" % trans
+                if trans.strip():
+                    return trans
+
         return os.path.basename(self.file.name)
 
     def get_absolute_url(self):

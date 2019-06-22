@@ -136,3 +136,12 @@ FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED = getattr(
 FEINCMS_FRONTEND_LANGUAGES = getattr(settings, "FEINCMS_FRONTEND_LANGUAGES", None)
 
 # ------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------
+#: Attempt to get translations of MediaFile objects. If `False`, FeinCMS will
+#: instead just output the file name.
+FEINCMS_MEDIAFILE_TRANSLATIONS = getattr(
+    settings, "FEINCMS_MEDIAFILE_TRANSLATIONS", True
+)
+
+# ------------------------------------------------------------------------
