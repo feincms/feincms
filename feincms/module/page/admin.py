@@ -6,11 +6,15 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import FieldDoesNotExist
 
 from feincms import ensure_completely_loaded, settings
 from .models import Page
 from .modeladmins import PageAdmin
+
+try:
+    from django.core.exceptions import FieldDoesNotExist
+except ImportError:  # Django<1.8
+    from django.db.models import FieldDoesNotExist
 
 # ------------------------------------------------------------------------
 
