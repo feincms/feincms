@@ -20,7 +20,7 @@ from django.db import connections, models
 from django.db.models import Q
 from django.forms.widgets import Media
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms import ensure_completely_loaded
 from feincms.extensions import ExtensionsMixin
