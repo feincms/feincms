@@ -5,11 +5,11 @@ Base types for extensions refactor
 from __future__ import absolute_import, unicode_literals
 
 from functools import wraps
+import six
 import inspect
 
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
-from django.utils import six
 
 from feincms.utils import get_object
 

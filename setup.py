@@ -35,6 +35,7 @@ setup(
         "django-mptt>=0.7.1",
         "Pillow>=2.0.0",
         "pytz>=2014.10",
+        "six",
     ],
     classifiers=[
         devstatus,

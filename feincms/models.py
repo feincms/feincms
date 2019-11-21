@@ -9,6 +9,7 @@ from __future__ import absolute_import, unicode_literals
 
 from collections import OrderedDict
 from functools import reduce
+import six
 import sys
 import operator
 import warnings
@@ -18,7 +19,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import connections, models
 from django.db.models import Q
 from django.forms.widgets import Media
-from django.utils.encoding import force_text, python_2_unicode_compatible
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import ensure_completely_loaded
@@ -26,7 +27,7 @@ from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 
 
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class Region(object):
     """
     This class represents a region inside a template. Example regions might be
@@ -54,7 +55,7 @@ class Region(object):
         ]
 
 
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class Template(object):
     """
     A template is a standard Django template which is used to render a
@@ -547,7 +548,7 @@ def create_base_model(inherit_from=models.Model):
                     RuntimeWarning,
                 )
 
-            cls._feincms_content_model = python_2_unicode_compatible(
+            cls._feincms_content_model = six.python_2_unicode_compatible(
                 type(str(name), (models.Model,), attrs)
             )
 

@@ -10,10 +10,10 @@ be they real Page instances or extended navigation entries.
 from __future__ import absolute_import, unicode_literals
 
 from collections import OrderedDict
+import six
 import types
 
 from django.db import models
-from django.utils import six
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 

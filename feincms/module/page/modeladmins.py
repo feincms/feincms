@@ -86,7 +86,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         ensure_completely_loaded()
 
         if len(model._feincms_templates) > 4 and "template_key" in self.radio_fields:
-            del (self.radio_fields["template_key"])
+            del self.radio_fields["template_key"]
 
         super(PageAdmin, self).__init__(model, admin_site)
 

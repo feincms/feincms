@@ -8,13 +8,13 @@ from io import BytesIO
 import logging
 from PIL import Image
 import re
+import six
 
 from django import template
-from django.utils.encoding import force_text, python_2_unicode_compatible
+from django.utils.encoding import force_text
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from django.utils import six
 
 from feincms import settings
 
@@ -23,7 +23,7 @@ logger = logging.getLogger("feincms.templatetags.thumbnail")
 register = template.Library()
 
 
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class Thumbnailer(object):
     THUMBNAIL_SIZE_RE = re.compile(r"^(?P<w>\d+)x(?P<h>\d+)$")
     MARKER = "_thumb_"

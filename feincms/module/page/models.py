@@ -4,11 +4,12 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import six
+
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -148,7 +149,7 @@ PageManager.add_to_active_filters(Q(active=True), key="is_active")
 
 
 # ------------------------------------------------------------------------
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     active = models.BooleanField(_("active"), default=True)
 

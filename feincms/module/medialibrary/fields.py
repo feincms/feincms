@@ -4,10 +4,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import six
+
 from django.contrib.admin.widgets import AdminFileWidget
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db import models
-from django.utils import six
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _

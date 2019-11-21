@@ -10,10 +10,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import six
+
 from django import forms, VERSION
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models.signals import pre_save
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 
 from tagging.fields import TagField

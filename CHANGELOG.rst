@@ -6,6 +6,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Added a dependency on ``six``, Django 3.0 will not ship
+  ``django.utils.six`` anymore.
+
+
 `v1.16.0`_ (2019-02-01)
 ~~~~~~~~~~~~~~~~~~~~~~~
 

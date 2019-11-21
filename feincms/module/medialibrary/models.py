@@ -6,6 +6,7 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 import re
+import six
 
 import django
 from django.db import models
@@ -13,7 +14,6 @@ from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 from django.template.defaultfilters import slugify
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms import settings
@@ -39,7 +39,7 @@ class CategoryManager(models.Manager):
 
 
 # ------------------------------------------------------------------------
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class Category(models.Model):
     """
     These categories are meant primarily for organizing media files in the
@@ -93,7 +93,7 @@ class Category(models.Model):
 
 
 # ------------------------------------------------------------------------
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     """
     Abstract media file class. Includes the
@@ -292,7 +292,7 @@ def _mediafile_post_delete(sender, instance, **kwargs):
 
 
 # ------------------------------------------------------------------------
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class MediaFileTranslation(Translation(MediaFile)):
     """
     Translated media file caption and description.

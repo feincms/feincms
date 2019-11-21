@@ -30,6 +30,8 @@ Print all the titles of all news entries which have an english translation::
 
 from __future__ import absolute_import, unicode_literals
 
+import six
+
 from django.conf import settings
 from django.contrib import admin
 from django.core.cache import cache
@@ -37,7 +39,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django.utils import translation
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from feincms.utils import queryset_transform
@@ -170,7 +171,7 @@ class TranslatedObjectManager(queryset_transform.TransformManager):
         )
 
 
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class TranslatedObjectMixin(object):
     """
     Mixin with helper methods.
