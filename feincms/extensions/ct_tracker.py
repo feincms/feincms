@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import class_prepared, post_save, pre_save
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
 from feincms.contrib.fields import JSONField

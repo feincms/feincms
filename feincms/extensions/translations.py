@@ -25,7 +25,7 @@ from django.db import models
 from django.http import HttpResponseRedirect
 from django.utils import translation
 from django.utils.html import mark_safe
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions, settings
 from feincms.translations import is_primary_language

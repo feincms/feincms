@@ -5,7 +5,7 @@ Add a "featured" field to objects so admins can better direct top content.
 from __future__ import absolute_import, unicode_literals
 
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from feincms import extensions
 

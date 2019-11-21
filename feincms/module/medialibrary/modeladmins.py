@@ -17,7 +17,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, gettext_lazy as _
+from django.utils.translation import ungettext, ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
 try:
