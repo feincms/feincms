@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from functools import partial
 from threading import local
 
 from django.conf import settings as django_settings
@@ -12,7 +13,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -103,7 +103,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     def get_form(self, *args, **kwargs):
         form = super(PageAdmin, self).get_form(*args, **kwargs)
-        return curry(form, modeladmin=self)
+        return partial(form, modeladmin=self)
 
     def _actions_column(self, page):
         addable = getattr(page, "feincms_addable", True)
