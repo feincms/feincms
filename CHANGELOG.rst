@@ -6,8 +6,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-- Added a dependency on ``six``, Django 3.0 will not ship
-  ``django.utils.six`` anymore.
+`v1.17.0`_ (2019-11-21)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- Added compatibility with Django 3.0.
 
 
 `v1.16.0`_ (2019-02-01)
@@ -69,4 +71,5 @@ Change log
 .. _v1.14.0: https://github.com/feincms/feincms/compare/v1.13.0...v1.14.0
 .. _v1.15.0: https://github.com/feincms/feincms/compare/v1.14.0...v1.15.0
 .. _v1.16.0: https://github.com/feincms/feincms/compare/v1.15.0...v1.16.0
-.. _Next version: https://github.com/feincms/feincms/compare/v1.16.0...master
+.. _v1.17.0: https://github.com/feincms/feincms/compare/v1.16.0...v1.17.0
+.. _Next version: https://github.com/feincms/feincms/compare/v1.17.0...master
