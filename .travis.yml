@@ -35,6 +35,10 @@ matrix:
     - python: "3.6"
       env: REQ="Django>=2.1,<2.2 django-mptt"
     - python: "3.6"
+      env: REQ="Django>=2.2,<3.0 django-mptt"
+    - python: "3.7"
+      env: REQ="Django>=2.2,<3.0 django-mptt"
+    - python: "3.6"
       env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
   allow_failures:
     - env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
