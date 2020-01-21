@@ -44,6 +44,13 @@ matrix:
       env: REQ="Django>=3.0,<3.1 django-mptt"
     - python: "3.7"
       env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
+    - python: 3.7
+      env: REQ="black flake8"
+      install:
+        - pip install black flake8
+      script:
+        - flake8 .
+        - black --check feincms tests
   allow_failures:
     - env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
 install:
