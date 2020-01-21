@@ -6,6 +6,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Added a style checking job to the CI matrix.
+- Dropped compatibility with Django 1.7.
+
+
 `v1.17.0`_ (2019-11-21)
 ~~~~~~~~~~~~~~~~~~~~~~~
 

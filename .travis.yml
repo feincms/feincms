@@ -9,8 +9,6 @@ env:
 matrix:
   include:
     - python: "2.7"
-      env: REQ="Django>=1.7,<1.8 django-mptt<0.8"
-    - python: "2.7"
       env: REQ="Django>=1.8,<1.9 django-mptt<0.8"
     - python: "2.7"
       env: REQ="Django>=1.9,<1.10 django-mptt<0.9"
