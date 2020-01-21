@@ -13,7 +13,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 try:
     from django.urls import reverse

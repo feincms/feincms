@@ -10,7 +10,7 @@ from django.contrib.admin.filters import ChoicesFieldListFilter
 from django.db.models import Count
 from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django import VERSION as DJANGO_VERSION
 
 from feincms.utils import shorten_string

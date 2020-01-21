@@ -34,7 +34,7 @@ be to create :class:`~feincms.content.medialibrary.models.MediaFileContent` and
 by adding the following lines somewhere into your project, for example in a
 ``models.py`` file that will be processed anyway::
 
-    from django.utils.translation import ugettext_lazy as _
+    from django.utils.translation import gettext_lazy as _
 
     from feincms.module.page.models import Page
     from feincms.contents import RichTextContent

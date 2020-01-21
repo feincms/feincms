@@ -5,7 +5,7 @@ import six
 from django import forms
 from django.db import models
 from django.utils.text import capfirst
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms.apps import ApplicationContent
 from feincms.contents import RawContent, TemplateContent

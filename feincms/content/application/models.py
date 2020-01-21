@@ -14,7 +14,7 @@ from django.template.response import TemplateResponse
 from django.utils.functional import lazy
 from django.utils.http import http_date
 from django.utils.safestring import mark_safe
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 
 try:
     from django.urls import (

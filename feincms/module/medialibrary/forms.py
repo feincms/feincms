@@ -7,7 +7,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms import settings
 

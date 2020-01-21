@@ -21,7 +21,7 @@ from django.http import (
 )
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.encoding import force_text
 
 from mptt.exceptions import InvalidMove
@@ -509,7 +509,7 @@ class TreeEditor(ExtensionModelAdmin):
                 item.save()
 
             self.message_user(
-                request, ugettext("%s has been moved to a new position.") % cut_item
+                request, gettext("%s has been moved to a new position.") % cut_item
             )
             return HttpResponse("OK")
 

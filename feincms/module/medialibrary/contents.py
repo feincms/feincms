@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms._internal import ct_render_to_string
 from feincms.admin.item_editor import FeinCMSInline
