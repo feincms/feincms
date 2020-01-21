@@ -69,6 +69,11 @@ MIDDLEWARE = (
     "django.middleware.locale.LocaleMiddleware",
 )
 
+MIGRATION_MODULES = {
+    "page": "testapp.migrate.page",
+    "medialibrary": "testapp.migrate.medialibrary",
+}
+
 if django.VERSION < (1, 11):
     MIDDLEWARE_CLASSES = MIDDLEWARE
 
