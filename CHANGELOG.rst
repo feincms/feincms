@@ -6,6 +6,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`v1.18.0`_ (2020-01-21)
+~~~~~~~~~~~~~~~~~~~~~~~
+
 - Added a style checking job to the CI matrix.
 - Dropped compatibility with Django 1.7.
 
@@ -76,4 +80,5 @@ Change log
 .. _v1.15.0: https://github.com/feincms/feincms/compare/v1.14.0...v1.15.0
 .. _v1.16.0: https://github.com/feincms/feincms/compare/v1.15.0...v1.16.0
 .. _v1.17.0: https://github.com/feincms/feincms/compare/v1.16.0...v1.17.0
-.. _Next version: https://github.com/feincms/feincms/compare/v1.17.0...master
+.. _v1.18.0: https://github.com/feincms/feincms/compare/v1.17.0...v1.18.0
+.. _Next version: https://github.com/feincms/feincms/compare/v1.18.0...master

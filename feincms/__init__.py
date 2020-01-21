@@ -1,6 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
-VERSION = (1, 17, 0)
+VERSION = (1, 18, 0)
 __version__ = ".".join(map(str, VERSION))
 
 
