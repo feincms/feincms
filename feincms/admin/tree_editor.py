@@ -18,10 +18,8 @@ from django.http import (
     HttpResponseNotFound,
     HttpResponseServerError,
 )
-from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _, gettext
-from django.utils.encoding import force_text
+from django.utils.translation import gettext_lazy as _
 
 from mptt.admin import DraggableMPTTAdmin
 
@@ -198,30 +196,34 @@ class TreeEditor(ExtensionModelAdmin, DraggableMPTTAdmin):
 
         self.list_display = list(self.list_display)
 
-        if not {
-            'indented_short_title', 'indented_title'
-        }.intersection(self.list_display):
-            if self.list_display[0] == 'action_checkbox':
-                self.list_display[1] = 'indented_short_title'
+        if not {"indented_short_title", "indented_title"}.intersection(
+            self.list_display
+        ):
+            if self.list_display[0] == "action_checkbox":
+                self.list_display[1] = "indented_short_title"
             else:
                 self.list_display[0] = "indented_short_title"
         self.list_display_links = ("indented_short_title",)
 
         opts = self.model._meta
 
-        self.object_change_permission =\
-            opts.app_label + '.' + get_permission_codename('change', opts)
-        self.object_add_permission =\
-            opts.app_label + '.' + get_permission_codename('add', opts)
-        self.object_delete_permission =\
-            opts.app_label + '.' + get_permission_codename('delete', opts)
+        self.object_change_permission = (
+            opts.app_label + "." + get_permission_codename("change", opts)
+        )
+        self.object_add_permission = (
+            opts.app_label + "." + get_permission_codename("add", opts)
+        )
+        self.object_delete_permission = (
+            opts.app_label + "." + get_permission_codename("delete", opts)
+        )
 
     def changeable(self, item):
         return getattr(item, "feincms_changeable", True)
 
     def indented_short_title(self, item):
         return super(TreeEditor, self).indented_title(item)
-    indented_short_title.short_description = _('title')
+
+    indented_short_title.short_description = _("title")
 
     def _collect_editable_booleans(self):
         """
@@ -340,7 +342,7 @@ class TreeEditor(ExtensionModelAdmin, DraggableMPTTAdmin):
         """
 
         # handle common AJAX requests
-        if request.is_ajax() and request.POST.get('cmd') == 'toggle_boolean':
+        if request.is_ajax() and request.POST.get("cmd") == "toggle_boolean":
             return self._toggle_boolean(request)
 
         return super(TreeEditor, self).changelist_view(
@@ -392,5 +394,6 @@ class TreeEditor(ExtensionModelAdmin, DraggableMPTTAdmin):
         return []
 
     def actions_column(self, instance):
-        return mark_safe(' '.join(self._actions_column(instance)))
-    actions_column.short_description = _('actions')
+        return mark_safe(" ".join(self._actions_column(instance)))
+
+    actions_column.short_description = _("actions")

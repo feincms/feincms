@@ -61,12 +61,15 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     ]
     readonly_fields = []
     list_display = [
-        'short_title', 'tree_actions', 'is_visible_admin',
-        'in_navigation_toggle', 'template',
+        "short_title",
+        "tree_actions",
+        "is_visible_admin",
+        "in_navigation_toggle",
+        "template",
     ]
-    list_filter = ['active', 'in_navigation', 'template_key', 'parent']
-    search_fields = ['title', 'slug']
-    prepopulated_fields = {'slug': ('title',)}
+    list_filter = ["active", "in_navigation", "template_key", "parent"]
+    search_fields = ["title", "slug"]
+    prepopulated_fields = {"slug": ("title",)}
     raw_id_fields = ["parent"]
     radio_fields = {"template_key": admin.HORIZONTAL}
 
