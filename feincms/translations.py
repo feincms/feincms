@@ -30,6 +30,8 @@ Print all the titles of all news entries which have an english translation::
 
 from __future__ import absolute_import, unicode_literals
 
+import six
+
 from django.conf import settings
 from django.contrib import admin
 from django.core.cache import cache
@@ -37,8 +39,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django.utils import translation
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms.utils import queryset_transform
 
@@ -47,6 +48,7 @@ class _NoTranslation(object):
     """Simple marker for when no translations exist for a certain object
 
     Only used for caching."""
+
     pass
 
 
@@ -65,7 +67,7 @@ def short_language_code(code=None):
     if code is None:
         code = translation.get_language()
 
-    pos = code.find('-')
+    pos = code.find("-")
     if pos > -1:
         return code[:pos]
     return code
@@ -91,6 +93,7 @@ def lookup_translations(language_code=None):
 
     The current language is used if ``language_code`` isn't specified.
     """
+
     def _transform(qs):
         lang_ = language_code if language_code else translation.get_language()
 
@@ -112,22 +115,16 @@ def lookup_translations(language_code=None):
         if not instance_dict:
             return
 
-        candidates = list(
-            instance_dict.values()
-        )[0].translations.model._default_manager.all()
+        candidates = list(instance_dict.values())[
+            0
+        ].translations.model._default_manager.all()
 
         if instance_dict:
-            _process(candidates, instance_dict, lang_, 'iexact')
+            _process(candidates, instance_dict, lang_, "iexact")
         if instance_dict:
-            _process(
-                candidates,
-                instance_dict,
-                settings.LANGUAGE_CODE,
-                'istartswith',
-            )
+            _process(candidates, instance_dict, settings.LANGUAGE_CODE, "istartswith")
         if instance_dict:
-            for candidate in candidates.filter(
-                    parent__pk__in=instance_dict.keys()):
+            for candidate in candidates.filter(parent__pk__in=instance_dict.keys()):
                 if candidate.parent_id in instance_dict:
                     _found(instance_dict, candidate)
 
@@ -145,9 +142,9 @@ def lookup_translations(language_code=None):
     def _process(candidates, instance_dict, lang_, op_):
         candidates = candidates.filter(
             Q(parent__pk__in=instance_dict.keys()),
-            Q(**{'language_code__' + op_: lang_}) |
-            Q(**{'language_code__' + op_: short_language_code(lang_)})
-        ).order_by('-language_code')
+            Q(**{"language_code__" + op_: lang_})
+            | Q(**{"language_code__" + op_: short_language_code(lang_)}),
+        ).order_by("-language_code")
 
         for candidate in candidates:
             # The candidate's parent might already have a translation by now
@@ -169,10 +166,12 @@ class TranslatedObjectManager(queryset_transform.TransformManager):
         Uses the currently active language by default.
         """
 
-        return self.filter(translations__language_code=language)
+        return self.filter(
+            translations__language_code=(language() if callable(language) else language)
+        )
 
 
-@python_2_unicode_compatible
+@six.python_2_unicode_compatible
 class TranslatedObjectMixin(object):
     """
     Mixin with helper methods.
@@ -181,16 +180,19 @@ class TranslatedObjectMixin(object):
     def _get_translation_object(self, queryset, language_code):
         try:
             return queryset.filter(
-                Q(language_code__iexact=language_code) |
-                Q(language_code__iexact=short_language_code(language_code))
-            ).order_by('-language_code')[0]
+                Q(language_code__iexact=language_code)
+                | Q(language_code__iexact=short_language_code(language_code))
+            ).order_by("-language_code")[0]
         except IndexError:
             try:
                 return queryset.filter(
-                    Q(language_code__istartswith=settings.LANGUAGE_CODE) |
-                    Q(language_code__istartswith=short_language_code(
-                        settings.LANGUAGE_CODE))
-                ).order_by('-language_code')[0]
+                    Q(language_code__istartswith=settings.LANGUAGE_CODE)
+                    | Q(
+                        language_code__istartswith=short_language_code(
+                            settings.LANGUAGE_CODE
+                        )
+                    )
+                ).order_by("-language_code")[0]
             except IndexError:
                 try:
                     return queryset.all()[0]
@@ -202,15 +204,8 @@ class TranslatedObjectMixin(object):
         can purge on-demand"""
         if not language_code:
             language_code = translation.get_language()
-        return (
-            ('FEINCMS:%d:XLATION:' % getattr(settings, 'SITE_ID', 0)) +
-            '-'.join(
-                ['%s' % s for s in (
-                    self._meta.db_table,
-                    self.id,
-                    language_code,
-                )]
-            )
+        return ("FEINCMS:%d:XLATION:" % getattr(settings, "SITE_ID", 0)) + "-".join(
+            ["%s" % s for s in (self._meta.db_table, self.id, language_code)]
         )
 
     def get_translation(self, language_code=None):
@@ -224,7 +219,8 @@ class TranslatedObjectMixin(object):
         if trans is None:
             try:
                 trans = self._get_translation_object(
-                    self.translations.all(), language_code)
+                    self.translations.all(), language_code
+                )
             except ObjectDoesNotExist:
                 trans = _NoTranslation
             cache.set(key, trans)
@@ -238,13 +234,13 @@ class TranslatedObjectMixin(object):
 
     @property
     def translation(self):
-        if not hasattr(self, '_cached_translation'):
+        if not hasattr(self, "_cached_translation"):
             self._cached_translation = self.get_translation()
         return self._cached_translation
 
     @property
     def available_translations(self):
-        return self.translations.values_list('language_code', flat=True)
+        return self.translations.values_list("language_code", flat=True)
 
     def __str__(self):
         try:
@@ -253,7 +249,7 @@ class TranslatedObjectMixin(object):
             return self.__class__.__name__
 
         if translation:
-            return '%s' % translation
+            return "%s" % translation
 
         return self.__class__.__name__
 
@@ -278,14 +274,18 @@ def Translation(model):
 
     class Inner(models.Model):
         parent = models.ForeignKey(
-            model, related_name='translations', on_delete=models.CASCADE)
+            model, related_name="translations", on_delete=models.CASCADE
+        )
         language_code = models.CharField(
-            _('language'), max_length=10,
-            choices=settings.LANGUAGES, default=settings.LANGUAGES[0][0],
-            editable=len(settings.LANGUAGES) > 1)
+            _("language"),
+            max_length=10,
+            choices=settings.LANGUAGES,
+            default=settings.LANGUAGES[0][0],
+            editable=len(settings.LANGUAGES) > 1,
+        )
 
         class Meta:
-            unique_together = ('parent', 'language_code')
+            unique_together = ("parent", "language_code")
             # (beware the above will not be inherited automatically if you
             #  provide a Meta class within your translation subclass)
             abstract = True
@@ -296,11 +296,13 @@ def Translation(model):
         def save(self, *args, **kwargs):
             super(Inner, self).save(*args, **kwargs)
             self.parent.purge_translation_cache()
+
         save.alters_data = True
 
         def delete(self, *args, **kwargs):
             super(Inner, self).delete(*args, **kwargs)
             self.parent.purge_translation_cache()
+
         delete.alters_data = True
 
     return Inner
@@ -320,8 +322,7 @@ def admin_translationinline(model, inline_class=admin.StackedInline, **kwargs):
             )
     """
 
-    kwargs['extra'] = 1
-    kwargs['max_num'] = len(settings.LANGUAGES)
-    kwargs['model'] = model
-    return type(
-        str(model.__class__.__name__ + 'Inline'), (inline_class,), kwargs)
+    kwargs["extra"] = 1
+    kwargs["max_num"] = len(settings.LANGUAGES)
+    kwargs["model"] = model
+    return type(str(model.__class__.__name__ + "Inline"), (inline_class,), kwargs)

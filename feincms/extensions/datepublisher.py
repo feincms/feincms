@@ -18,13 +18,13 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.html import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms import extensions
 
 
 # ------------------------------------------------------------------------
-def format_date(d, if_none=''):
+def format_date(d, if_none=""):
     """
     Format a date in a nice human readable way: Omit the year if it's the
     current year. Also return a default value if no date is passed in.
@@ -34,12 +34,12 @@ def format_date(d, if_none=''):
         return if_none
 
     now = timezone.now()
-    fmt = (d.year == now.year) and '%d.%m' or '%d.%m.%Y'
+    fmt = (d.year == now.year) and "%d.%m" or "%d.%m.%Y"
     return d.strftime(fmt)
 
 
 def latest_children(self):
-    return self.get_children().order_by('-publication_date')
+    return self.get_children().order_by("-publication_date")
 
 
 # ------------------------------------------------------------------------
@@ -70,8 +70,8 @@ def granular_now(n=None, default_tz=None):
             retval = timezone.make_aware(d, default_tz, is_dst=False)
         except TypeError:  # Pre-Django 1.9
             retval = timezone.make_aware(
-                datetime(n.year, n.month, n.day, n.hour + 1, rounded_minute),
-                default_tz)
+                datetime(n.year, n.month, n.day, n.hour + 1, rounded_minute), default_tz
+            )
 
     return retval
 
@@ -95,16 +95,19 @@ def datepublisher_response_processor(page, request, response):
 class Extension(extensions.Extension):
     def handle_model(self):
         self.model.add_to_class(
-            'publication_date',
-            models.DateTimeField(_('publication date'), default=granular_now))
+            "publication_date",
+            models.DateTimeField(_("publication date"), default=granular_now),
+        )
         self.model.add_to_class(
-            'publication_end_date',
+            "publication_end_date",
             models.DateTimeField(
-                _('publication end date'),
-                blank=True, null=True,
-                help_text=_(
-                    'Leave empty if the entry should stay active forever.')))
-        self.model.add_to_class('latest_children', latest_children)
+                _("publication end date"),
+                blank=True,
+                null=True,
+                help_text=_("Leave empty if the entry should stay active forever."),
+            ),
+        )
+        self.model.add_to_class("latest_children", latest_children)
 
         # Patch in rounding the pub and pub_end dates on save
         orig_save = self.model.save
@@ -113,44 +116,52 @@ class Extension(extensions.Extension):
             if obj.publication_date:
                 obj.publication_date = granular_now(obj.publication_date)
             if obj.publication_end_date:
-                obj.publication_end_date = granular_now(
-                    obj.publication_end_date)
+                obj.publication_end_date = granular_now(obj.publication_end_date)
             orig_save(obj, *args, **kwargs)
+
         self.model.save = granular_save
 
         # Append publication date active check
-        if hasattr(self.model._default_manager, 'add_to_active_filters'):
+        if hasattr(self.model._default_manager, "add_to_active_filters"):
             self.model._default_manager.add_to_active_filters(
                 lambda queryset: queryset.filter(
-                    Q(publication_date__lte=granular_now()) &
-                     (Q(publication_end_date__isnull=True) |
-                      Q(publication_end_date__gt=granular_now()))),
-                key='datepublisher',
+                    Q(publication_date__lte=granular_now())
+                    & (
+                        Q(publication_end_date__isnull=True)
+                        | Q(publication_end_date__gt=granular_now())
+                    )
+                ),
+                key="datepublisher",
             )
 
         # Processor to patch up response headers for expiry date
-        self.model.register_response_processor(
-            datepublisher_response_processor)
+        self.model.register_response_processor(datepublisher_response_processor)
 
     def handle_modeladmin(self, modeladmin):
         def datepublisher_admin(self, obj):
-            return mark_safe('%s &ndash; %s' % (
-                format_date(obj.publication_date),
-                format_date(obj.publication_end_date, '&infin;'),
-            ))
-        datepublisher_admin.short_description = _('visible from - to')
+            return mark_safe(
+                "%s &ndash; %s"
+                % (
+                    format_date(obj.publication_date),
+                    format_date(obj.publication_end_date, "&infin;"),
+                )
+            )
+
+        datepublisher_admin.short_description = _("visible from - to")
 
         modeladmin.__class__.datepublisher_admin = datepublisher_admin
 
         try:
-            pos = modeladmin.list_display.index('is_visible_admin')
+            pos = modeladmin.list_display.index("is_visible_admin")
         except ValueError:
             pos = len(modeladmin.list_display)
 
-        modeladmin.list_display.insert(pos + 1, 'datepublisher_admin')
+        modeladmin.list_display.insert(pos + 1, "datepublisher_admin")
 
-        modeladmin.add_extension_options(_('Date-based publishing'), {
-            'fields': ['publication_date', 'publication_end_date'],
-        })
+        modeladmin.add_extension_options(
+            _("Date-based publishing"),
+            {"fields": ["publication_date", "publication_end_date"]},
+        )
+
 
 # ------------------------------------------------------------------------

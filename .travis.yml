@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 sudo: false
 cache: pip
@@ -7,8 +8,6 @@ env:
   - REQ=""
 matrix:
   include:
-    - python: "2.7"
-      env: REQ="Django>=1.7,<1.8 django-mptt<0.8"
     - python: "2.7"
       env: REQ="Django>=1.8,<1.9 django-mptt<0.8"
     - python: "2.7"
@@ -34,11 +33,26 @@ matrix:
     - python: "3.6"
       env: REQ="Django>=2.1,<2.2 django-mptt"
     - python: "3.6"
+      env: REQ="Django>=2.2,<3.0 django-mptt"
+    - python: "3.7"
+      env: REQ="Django>=2.2,<3.0 django-mptt"
+    - python: "3.6"
+      env: REQ="Django>=3.0,<3.1 django-mptt"
+    - python: "3.7"
+      env: REQ="Django>=3.0,<3.1 django-mptt"
+    - python: "3.7"
       env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
+    - python: 3.7
+      env: REQ="black flake8"
+      install:
+        - pip install black flake8
+      script:
+        - flake8 .
+        - black --check feincms tests
   allow_failures:
     - env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
 install:
   - pip install -U pip wheel setuptools
-  - pip install $REQ Pillow flake8 pytz
+  - pip install $REQ Pillow flake8 pytz six
   - python setup.py install
 script: "cd tests && ./manage.py test testapp && cd .. && flake8 ."

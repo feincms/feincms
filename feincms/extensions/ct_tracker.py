@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import class_prepared, post_save, pre_save
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms import extensions
 from feincms.contrib.fields import JSONField
@@ -46,34 +46,37 @@ class TrackerContentProxy(ContentProxy):
         empty _ct_inventory.
         """
 
-        if 'counts' not in self._cache:
-            if (self.item._ct_inventory and
-                    self.item._ct_inventory.get('_version_', -1) ==
-                    INVENTORY_VERSION):
+        if "counts" not in self._cache:
+            if (
+                self.item._ct_inventory
+                and self.item._ct_inventory.get("_version_", -1) == INVENTORY_VERSION
+            ):
 
                 try:
-                    self._cache['counts'] = self._from_inventory(
-                        self.item._ct_inventory)
+                    self._cache["counts"] = self._from_inventory(
+                        self.item._ct_inventory
+                    )
                 except KeyError:
                     # It's possible that the inventory does not fit together
                     # with the current models anymore, f.e. because a content
                     # type has been removed.
                     pass
 
-            if 'counts' not in self._cache:
+            if "counts" not in self._cache:
                 super(TrackerContentProxy, self)._fetch_content_type_counts()
 
-                self.item._ct_inventory = self._to_inventory(
-                    self._cache['counts'])
+                self.item._ct_inventory = self._to_inventory(self._cache["counts"])
 
                 self.item.__class__.objects.filter(id=self.item.id).update(
-                    _ct_inventory=self.item._ct_inventory)
+                    _ct_inventory=self.item._ct_inventory
+                )
 
                 # Run post save handler by hand
-                if hasattr(self.item, 'get_descendants'):
+                if hasattr(self.item, "get_descendants"):
                     self.item.get_descendants(include_self=False).update(
-                        _ct_inventory=None)
-        return self._cache['counts']
+                        _ct_inventory=None
+                    )
+        return self._cache["counts"]
 
     def _translation_map(self):
         cls = self.item.__class__
@@ -101,20 +104,20 @@ class TrackerContentProxy(ContentProxy):
 
         map = self._translation_map()
 
-        return dict((region, [
-            (pk, map[-ct]) for pk, ct in items
-        ]) for region, items in inventory.items() if region != '_version_')
+        return dict(
+            (region, [(pk, map[-ct]) for pk, ct in items])
+            for region, items in inventory.items()
+            if region != "_version_"
+        )
 
     def _to_inventory(self, counts):
         map = self._translation_map()
 
         inventory = dict(
-            (
-                region,
-                [(pk, map[ct]) for pk, ct in items],
-            ) for region, items in counts.items()
+            (region, [(pk, map[ct]) for pk, ct in items])
+            for region, items in counts.items()
         )
-        inventory['_version_'] = INVENTORY_VERSION
+        inventory["_version_"] = INVENTORY_VERSION
         return inventory
 
 
@@ -151,12 +154,15 @@ def single_pre_save_handler(sender, instance, **kwargs):
 # ------------------------------------------------------------------------
 class Extension(extensions.Extension):
     def handle_model(self):
-        self.model.add_to_class('_ct_inventory', JSONField(
-            _('content types'), editable=False, blank=True, null=True))
+        self.model.add_to_class(
+            "_ct_inventory",
+            JSONField(_("content types"), editable=False, blank=True, null=True),
+        )
         self.model.content_proxy_class = TrackerContentProxy
 
         pre_save.connect(single_pre_save_handler, sender=self.model)
-        if hasattr(self.model, 'get_descendants'):
+        if hasattr(self.model, "get_descendants"):
             post_save.connect(tree_post_save_handler, sender=self.model)
+
 
 # ------------------------------------------------------------------------

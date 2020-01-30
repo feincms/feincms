@@ -267,7 +267,7 @@ content.
 .. note::
 
    Older versions of FeinCMS only offered fragments for a similar purpose. They
-   are still suported, but it's recommended you switch over to this style instead.
+   are still supported, but it's recommended you switch over to this style instead.
 
 .. warning::
 

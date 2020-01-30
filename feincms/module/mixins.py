@@ -79,7 +79,7 @@ class ContentObjectMixin(TemplateResponseMixin):
     context_object_name = None
 
     def handler(self, request, *args, **kwargs):
-        if not hasattr(self.request, '_feincms_extra_context'):
+        if not hasattr(self.request, "_feincms_extra_context"):
             self.request._feincms_extra_context = {}
 
         r = self.run_request_processors()
@@ -121,7 +121,7 @@ class ContentObjectMixin(TemplateResponseMixin):
 
     def get_context_data(self, **kwargs):
         context = self.request._feincms_extra_context
-        context[self.context_object_name or 'feincms_object'] = self.object
+        context[self.context_object_name or "feincms_object"] = self.object
         context.update(kwargs)
         return super(ContentObjectMixin, self).get_context_data(**context)
 
@@ -140,7 +140,7 @@ class ContentObjectMixin(TemplateResponseMixin):
         also return a ``HttpResponse`` for shortcutting the rendering and
         returning that response immediately to the client.
         """
-        if not getattr(self.object, 'request_processors', None):
+        if not getattr(self.object, "request_processors", None):
             return
 
         for fn in reversed(list(self.object.request_processors.values())):
@@ -154,7 +154,7 @@ class ContentObjectMixin(TemplateResponseMixin):
         processors are called to modify the response, eg. for setting cache or
         expiration headers, keeping statistics, etc.
         """
-        if not getattr(self.object, 'response_processors', None):
+        if not getattr(self.object, "response_processors", None):
             return
 
         for fn in self.object.response_processors.values():
@@ -172,8 +172,9 @@ class ContentObjectMixin(TemplateResponseMixin):
         # did any content type successfully end processing?
         successful = False
 
-        for content in self.object.content.all_of_type(tuple(
-                self.object._feincms_content_types_with_process)):
+        for content in self.object.content.all_of_type(
+            tuple(self.object._feincms_content_types_with_process)
+        ):
 
             try:
                 r = content.process(self.request, view=self)
@@ -191,15 +192,17 @@ class ContentObjectMixin(TemplateResponseMixin):
 
             extra_context = self.request._feincms_extra_context
 
-            if (not settings.FEINCMS_ALLOW_EXTRA_PATH and
-                    extra_context.get('extra_path', '/') != '/' and
-                    # XXX Already inside application content.  I'm not sure
-                    # whether this fix is really correct...
-                    not extra_context.get('app_config')):
-                raise Http404(str('Not found (extra_path %r on %r)') % (
-                    extra_context.get('extra_path', '/'),
-                    self.object,
-                ))
+            if (
+                not settings.FEINCMS_ALLOW_EXTRA_PATH
+                and extra_context.get("extra_path", "/") != "/"
+                # XXX Already inside application content.  I'm not sure
+                # whether this fix is really correct...
+                and not extra_context.get("app_config")
+            ):
+                raise Http404(
+                    str("Not found (extra_path %r on %r)")
+                    % (extra_context.get("extra_path", "/"), self.object)
+                )
 
     def finalize_content_types(self, response):
         """
@@ -207,8 +210,9 @@ class ContentObjectMixin(TemplateResponseMixin):
         returns the final response.
         """
 
-        for content in self.object.content.all_of_type(tuple(
-                self.object._feincms_content_types_with_finalize)):
+        for content in self.object.content.all_of_type(
+            tuple(self.object._feincms_content_types_with_finalize)
+        ):
 
             r = content.finalize(self.request, response)
             if r:

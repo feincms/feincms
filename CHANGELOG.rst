@@ -6,12 +6,43 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`v1.18.0`_ (2020-01-21)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- Added a style checking job to the CI matrix.
+- Dropped compatibility with Django 1.7.
+
+
+`v1.17.0`_ (2019-11-21)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- Added compatibility with Django 3.0.
+
+
+`v1.16.0`_ (2019-02-01)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- Reformatted everything using black.
+- Added a fallback import for the ``staticfiles`` template tag library
+  which will be gone in Django 3.0.
+
+
+`v1.15.0`_ (2018-12-21)
+~~~~~~~~~~~~~~~~~~~~~~~
+
 - Actually made use of the timeout specified as
   ``FEINCMS_THUMBNAIL_CACHE_TIMEOUT`` instead of the hardcoded value of
   seven days.
 - Reverted the deprecation of navigation extension autodiscovery.
 - Fixed the item editor JavaScript and HTML to work with Django 2.1's
   updated inlines.
+- Fixed ``TranslatedObjectManager.only_language`` to evaluate callables
+  before filtering.
+- Changed the ``render`` protocol of content types to allow returning a
+  tuple of ``(ct_template, ct_context)`` which works the same way as
+  `feincms3's template renderers
+  <https://feincms3.readthedocs.io/en/latest/guides/rendering.html>`__.
 
 
 `v1.14.0`_ (2018-08-16)
@@ -46,4 +77,8 @@ Change log
 
 
 .. _v1.14.0: https://github.com/feincms/feincms/compare/v1.13.0...v1.14.0
-.. _Next version: https://github.com/feincms/feincms/compare/v1.14.0...master
+.. _v1.15.0: https://github.com/feincms/feincms/compare/v1.14.0...v1.15.0
+.. _v1.16.0: https://github.com/feincms/feincms/compare/v1.15.0...v1.16.0
+.. _v1.17.0: https://github.com/feincms/feincms/compare/v1.16.0...v1.17.0
+.. _v1.18.0: https://github.com/feincms/feincms/compare/v1.17.0...v1.18.0
+.. _Next version: https://github.com/feincms/feincms/compare/v1.18.0...master

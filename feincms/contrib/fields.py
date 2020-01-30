@@ -2,13 +2,13 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 import logging
+import six
 from distutils.version import LooseVersion
 
 from django import get_version
 from django import forms
 from django.db import models
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import six
 
 
 class JSONFormField(forms.fields.CharField):
@@ -32,11 +32,10 @@ class JSONFormField(forms.fields.CharField):
         return super(JSONFormField, self).clean(value, *args, **kwargs)
 
 
-if LooseVersion(get_version()) > LooseVersion('1.8'):
+if LooseVersion(get_version()) > LooseVersion("1.8"):
     workaround_class = models.TextField
 else:
-    workaround_class = six.with_metaclass(
-        models.SubfieldBase, models.TextField)
+    workaround_class = six.with_metaclass(models.SubfieldBase, models.TextField)
 
 
 class JSONField(workaround_class):
@@ -54,8 +53,7 @@ class JSONField(workaround_class):
 
         if isinstance(value, dict):
             return value
-        elif (isinstance(value, six.string_types) or
-                isinstance(value, six.binary_type)):
+        elif isinstance(value, six.string_types) or isinstance(value, six.binary_type):
             # Avoid asking the JSON decoder to handle empty values:
             if not value:
                 return {}
@@ -64,13 +62,14 @@ class JSONField(workaround_class):
                 return json.loads(value)
             except ValueError:
                 logging.getLogger("feincms.contrib.fields").exception(
-                    "Unable to deserialize store JSONField data: %s", value)
+                    "Unable to deserialize store JSONField data: %s", value
+                )
                 return {}
         else:
             assert value is None
             return {}
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection, context=None):
         return self.to_python(value)
 
     def get_prep_value(self, value):

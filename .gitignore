@@ -16,3 +16,7 @@ tests/test.zip
 /tests/.coverage
 /tests/htmlcov
 venv
+.tox
+.coverage
+htmlcov
+test.zip

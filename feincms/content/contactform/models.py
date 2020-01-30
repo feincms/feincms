@@ -12,19 +12,17 @@ from django.core.mail import send_mail
 from django.db import models
 from django.http import HttpResponseRedirect
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms._internal import ct_render_to_string
 
 
 class ContactForm(forms.Form):
-    name = forms.CharField(label=_('name'))
-    email = forms.EmailField(label=_('email'))
-    subject = forms.CharField(label=_('subject'))
+    name = forms.CharField(label=_("name"))
+    email = forms.EmailField(label=_("email"))
+    subject = forms.CharField(label=_("subject"))
 
-    content = forms.CharField(
-        widget=forms.Textarea, required=False,
-        label=_('content'))
+    content = forms.CharField(widget=forms.Textarea, required=False, label=_("content"))
 
 
 class ContactFormContent(models.Model):
@@ -35,8 +33,8 @@ class ContactFormContent(models.Model):
 
     class Meta:
         abstract = True
-        verbose_name = _('contact form')
-        verbose_name_plural = _('contact forms')
+        verbose_name = _("contact form")
+        verbose_name_plural = _("contact forms")
 
     @classmethod
     def initialize_type(cls, form=None):
@@ -44,42 +42,40 @@ class ContactFormContent(models.Model):
             cls.form = form
 
     def process(self, request, **kwargs):
-        if request.GET.get('_cf_thanks'):
+        if request.GET.get("_cf_thanks"):
             self.rendered_output = ct_render_to_string(
-                'content/contactform/thanks.html',
-                {'content': self},
-                request=request)
+                "content/contactform/thanks.html", {"content": self}, request=request
+            )
             return
 
-        if request.method == 'POST':
+        if request.method == "POST":
             form = self.form(request.POST)
 
             if form.is_valid():
                 send_mail(
-                    form.cleaned_data['subject'],
-                    render_to_string('content/contactform/email.txt', {
-                        'data': form.cleaned_data,
-                    }),
-                    form.cleaned_data['email'],
+                    form.cleaned_data["subject"],
+                    render_to_string(
+                        "content/contactform/email.txt", {"data": form.cleaned_data}
+                    ),
+                    form.cleaned_data["email"],
                     [self.email],
                     fail_silently=True,
                 )
 
-                return HttpResponseRedirect('?_cf_thanks=1')
+                return HttpResponseRedirect("?_cf_thanks=1")
         else:
-            initial = {'subject': self.subject}
+            initial = {"subject": self.subject}
             if request.user.is_authenticated():
-                initial['email'] = request.user.email
-                initial['name'] = request.user.get_full_name()
+                initial["email"] = request.user.email
+                initial["name"] = request.user.get_full_name()
 
             form = self.form(initial=initial)
 
         self.rendered_output = ct_render_to_string(
-            'content/contactform/form.html', {
-                'content': self,
-                'form': form,
-            },
-            request=request)
+            "content/contactform/form.html",
+            {"content": self, "form": form},
+            request=request,
+        )
 
     def render(self, **kwargs):
-        return getattr(self, 'rendered_output', '')
+        return getattr(self, "rendered_output", "")

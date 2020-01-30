@@ -17,10 +17,19 @@ class PageSitemap(Sitemap):
     The PageSitemap can be used to automatically generate sitemap.xml files
     for submission to index engines. See http://www.sitemaps.org/ for details.
     """
-    def __init__(self, navigation_only=False, max_depth=0, changefreq=None,
-                 queryset=None, filter=None, extended_navigation=False,
-                 page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL,
-                 *args, **kwargs):
+
+    def __init__(
+        self,
+        navigation_only=False,
+        max_depth=0,
+        changefreq=None,
+        queryset=None,
+        filter=None,
+        extended_navigation=False,
+        page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL,
+        *args,
+        **kwargs
+    ):
         """
         The PageSitemap accepts the following parameters for customisation
         of the resulting sitemap.xml output:
@@ -48,7 +57,7 @@ class PageSitemap(Sitemap):
         if queryset is not None:
             self.queryset = queryset
         else:
-            Page = apps.get_model(*page_model.split('.'))
+            Page = apps.get_model(*page_model.split("."))
             self.queryset = Page.objects.active()
 
     def items(self):
@@ -60,7 +69,7 @@ class PageSitemap(Sitemap):
         if callable(base_qs):
             base_qs = base_qs()
 
-        self.max_depth = base_qs.aggregate(Max('level'))['level__max'] or 0
+        self.max_depth = base_qs.aggregate(Max("level"))["level__max"] or 0
         if self.depth_cutoff > 0:
             self.max_depth = min(self.depth_cutoff, self.max_depth)
 
@@ -78,14 +87,13 @@ class PageSitemap(Sitemap):
             for idx, page in enumerate(pages):
                 if self.depth_cutoff > 0 and page.level == self.max_depth:
                     continue
-                if getattr(page, 'navigation_extension', None):
+                if getattr(page, "navigation_extension", None):
                     cnt = 0
                     for p in page.extended_navigation():
                         depth_too_deep = (
-                            self.depth_cutoff > 0 and
-                            p.level > self.depth_cutoff)
-                        not_in_nav = (
-                            self.navigation_only and not p.in_navigation)
+                            self.depth_cutoff > 0 and p.level > self.depth_cutoff
+                        )
+                        not_in_nav = self.navigation_only and not p.in_navigation
                         if depth_too_deep or not_in_nav:
                             continue
                         cnt += 1
@@ -97,7 +105,7 @@ class PageSitemap(Sitemap):
         return pages
 
     def lastmod(self, obj):
-        return getattr(obj, 'modification_date', None)
+        return getattr(obj, "modification_date", None)
 
     # the priority is computed of the depth in the tree of a page
     # may we should make an extension to give control to the user for priority
@@ -107,7 +115,7 @@ class PageSitemap(Sitemap):
         the site. Top level get highest priority, then each level is decreased
         by per_level.
         """
-        if getattr(obj, 'override_url', '') == '/':
+        if getattr(obj, "override_url", "") == "/":
             prio = 1.0
         else:
             prio = 1.0 - (obj.level + 1) * self.per_level
@@ -118,5 +126,6 @@ class PageSitemap(Sitemap):
             prio += 1.2 * self.per_level
 
         return "%0.2g" % min(1.0, prio)
+
 
 # ------------------------------------------------------------------------

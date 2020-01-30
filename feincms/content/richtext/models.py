@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from feincms import settings
 from feincms._internal import ct_render_to_string
@@ -24,26 +24,21 @@ class RichTextContent(models.Model):
     feincms_item_editor_context_processors = (
         lambda x: settings.FEINCMS_RICHTEXT_INIT_CONTEXT,
     )
-    feincms_item_editor_includes = {
-        'head': [settings.FEINCMS_RICHTEXT_INIT_TEMPLATE],
-    }
+    feincms_item_editor_includes = {"head": [settings.FEINCMS_RICHTEXT_INIT_TEMPLATE]}
 
     class Meta:
         abstract = True
-        verbose_name = _('rich text')
-        verbose_name_plural = _('rich texts')
+        verbose_name = _("rich text")
+        verbose_name_plural = _("rich texts")
 
     def render(self, **kwargs):
         return ct_render_to_string(
-            'content/richtext/default.html',
-            {'content': self},
-            request=kwargs.get('request'),
-            context=kwargs.get('context'),
+            "content/richtext/default.html",
+            {"content": self},
+            request=kwargs.get("request"),
+            context=kwargs.get("context"),
         )
 
     @classmethod
     def initialize_type(cls, cleanse=None):
-        cls.add_to_class(
-            'text',
-            RichTextField(_('text'), blank=True, cleanse=cleanse),
-        )
+        cls.add_to_class("text", RichTextField(_("text"), blank=True, cleanse=cleanse))

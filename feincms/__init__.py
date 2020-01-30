@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
-VERSION = (1, 14, 2)
-__version__ = '.'.join(map(str, VERSION))
+VERSION = (1, 18, 0)
+__version__ = ".".join(map(str, VERSION))
 
 
 class LazySettings(object):
@@ -10,7 +10,7 @@ class LazySettings(object):
         from django.conf import settings as django_settings
 
         for key in dir(default_settings):
-            if not key.startswith('FEINCMS_'):
+            if not key.startswith("FEINCMS_"):
                 continue
 
             value = getattr(default_settings, key)
@@ -46,6 +46,7 @@ def ensure_completely_loaded(force=False):
         return True
 
     from django.apps import apps
+
     if not apps.ready:
         return
 
@@ -61,13 +62,17 @@ def ensure_completely_loaded(force=False):
     import django
     from distutils.version import LooseVersion
 
-    if LooseVersion(django.get_version()) < LooseVersion('1.8'):
+    if LooseVersion(django.get_version()) < LooseVersion("1.8"):
 
         for model in apps.get_models():
             for cache_name in (
-                    '_field_cache', '_field_name_cache', '_m2m_cache',
-                    '_related_objects_cache', '_related_many_to_many_cache',
-                    '_name_map'):
+                "_field_cache",
+                "_field_name_cache",
+                "_m2m_cache",
+                "_related_objects_cache",
+                "_related_many_to_many_cache",
+                "_name_map",
+            ):
                 try:
                     delattr(model._meta, cache_name)
                 except AttributeError:
@@ -85,7 +90,7 @@ def ensure_completely_loaded(force=False):
         # get_models cache again here. If we don't do this, Django 1.5 chokes
         # on a model validation error (Django 1.4 doesn't exhibit this
         # problem).  See Issue #323 on github.
-        if hasattr(apps, 'cache'):
+        if hasattr(apps, "cache"):
             apps.cache.get_models.cache_clear()
 
     if apps.ready:

@@ -18,12 +18,14 @@ def redirect_request_processor(page, request):
     """
     target = page.get_redirect_to_target(request)
     if target:
-        extra_path = request._feincms_extra_context.get('extra_path', '/')
-        if extra_path == '/':
+        extra_path = request._feincms_extra_context.get("extra_path", "/")
+        if extra_path == "/":
             return HttpResponseRedirect(target)
         logger.debug(
             "Page redirect on '%s' not taken because extra path '%s' present",
-            page.get_absolute_url(), extra_path)
+            page.get_absolute_url(),
+            extra_path,
+        )
         raise Http404()
 
 
@@ -31,22 +33,24 @@ def extra_context_request_processor(page, request):
     """
     Fills ``request._feincms_extra_context`` with a few useful variables.
     """
-    request._feincms_extra_context.update({
-        # XXX This variable name isn't accurate anymore.
-        'in_appcontent_subpage': False,
-        'extra_path': '/',
-    })
+    request._feincms_extra_context.update(
+        {
+            # XXX This variable name isn't accurate anymore.
+            "in_appcontent_subpage": False,
+            "extra_path": "/",
+        }
+    )
 
     url = page.get_absolute_url()
     if request.path != url:
-        request._feincms_extra_context.update({
-            'in_appcontent_subpage': True,
-            'extra_path': re.sub(
-                '^' + re.escape(url.rstrip('/')),
-                '',
-                request.path,
-            ),
-        })
+        request._feincms_extra_context.update(
+            {
+                "in_appcontent_subpage": True,
+                "extra_path": re.sub(
+                    "^" + re.escape(url.rstrip("/")), "", request.path
+                ),
+            }
+        )
 
 
 def etag_request_processor(page, request):
@@ -62,6 +66,7 @@ def etag_request_processor(page, request):
         This is a dummy class with enough behaviour of HttpResponse so we
         can use the condition decorator without too much pain.
         """
+
         def has_header(page, what):
             return False
 
@@ -85,7 +90,8 @@ def etag_request_processor(page, request):
     # the handler if processing is to continue and a non-DummyResponse
     # (should be a "304 not modified") if the etag matches.
     rsp = condition(etag_func=etagger, last_modified_func=lastmodifier)(
-        dummy_response_handler)(request, page)
+        dummy_response_handler
+    )(request, page)
 
     # If dummy then don't do anything, if a real response, return and
     # thus shortcut the request processing.
@@ -101,7 +107,7 @@ def etag_response_processor(page, request, response):
     """
     etag = page.etag(request)
     if etag is not None:
-        response['ETag'] = '"' + etag + '"'
+        response["ETag"] = '"' + etag + '"'
 
 
 def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
@@ -127,9 +133,10 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
             import sqlparse
 
             def print_sql(x):
-                return sqlparse.format(
-                    x, reindent=True, keyword_case='upper')
+                return sqlparse.format(x, reindent=True, keyword_case="upper")
+
         except Exception:
+
             def print_sql(x):
                 return x
 
@@ -140,9 +147,10 @@ def debug_sql_queries_response_processor(verbose=False, file=sys.stderr):
         for q in connection.queries:
             i += 1
             if verbose:
-                print("%d : [%s]\n%s\n" % (
-                    i, q['time'], print_sql(q['sql'])), file=file)
-            time += float(q['time'])
+                print(
+                    "%d : [%s]\n%s\n" % (i, q["time"], print_sql(q["sql"])), file=file
+                )
+            time += float(q["time"])
 
         print("-" * 60, file=file)
         print("Total: %d queries, %.3f ms" % (i, time), file=file)
