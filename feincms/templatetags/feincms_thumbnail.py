@@ -128,10 +128,13 @@ class Thumbnailer(object):
                 format = image.format  # Save format for the save() call later
                 image.thumbnail([w, h], Image.ANTIALIAS)
                 buf = BytesIO()
-                if image.mode not in ("RGBA", "RGB", "L"):
-                    image = image.convert("RGBA")
                 if format.lower() not in ("jpg", "jpeg", "png"):
                     format = "jpeg"
+                if image.mode not in ("RGBA", "RGB", "L"):
+                    if format == "png":
+                        image = image.convert("RGBA")
+                    else:
+                        image = image.convert("RGB")
                 image.save(buf, format, quality=90)
                 raw_data = buf.getvalue()
                 buf.close()
@@ -186,10 +189,13 @@ class CropscaleThumbnailer(Thumbnailer):
                 image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
 
                 buf = BytesIO()
-                if image.mode not in ("RGBA", "RGB", "L"):
-                    image = image.convert("RGBA")
                 if format.lower() not in ("jpg", "jpeg", "png"):
                     format = "jpeg"
+                if image.mode not in ("RGBA", "RGB", "L"):
+                    if format == "png":
+                        image = image.convert("RGBA")
+                    else:
+                        image = image.convert("RGB")
                 image.save(buf, format, quality=90)
                 raw_data = buf.getvalue()
                 buf.close()
