@@ -307,7 +307,7 @@ Bundled content types
 
 Application content
 -------------------
-.. module:: feincms.apps
+.. module:: feincms.content.application.models
 .. class:: ApplicationContent()
 
 Used to let the administrator freely integrate 3rd party applications into

@@ -7,7 +7,7 @@ from django.db import models
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
-from feincms.apps import ApplicationContent
+from feincms.content.application.models import ApplicationContent
 from feincms.contents import RawContent, TemplateContent
 from feincms.models import Base, create_base_model
 from feincms.module.medialibrary.contents import MediaFileContent

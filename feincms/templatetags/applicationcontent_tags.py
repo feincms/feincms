@@ -10,7 +10,10 @@ try:
 except ImportError:
     from django.core.urlresolvers import NoReverseMatch
 
-from feincms.apps import ApplicationContent, app_reverse as do_app_reverse
+from feincms.content.application.models import (
+    ApplicationContent,
+    app_reverse as do_app_reverse,
+)
 from feincms.templatetags.feincms_tags import _render_content
 
 # backwards compatibility import

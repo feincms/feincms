@@ -139,7 +139,7 @@ details) mimicking the interface of Django's standard functionality::
 
 
     from django.db import models
-    from feincms.apps import app_reverse
+    from feincms.content.application.models import app_reverse
 
     class Entry(models.Model):
        title = models.CharField(max_length=200)
@@ -287,7 +287,7 @@ that it resolves URLs from application contents. The second argument,
 ``urlconf``, has to correspond to the URLconf parameter passed in the
 ``APPLICATIONS`` list to ``Page.create_content_type``::
 
-    from feincms.apps import app_reverse
+    from feincms.content.application.models import app_reverse
     app_reverse('mymodel-detail', 'myapp.urls', args=...)
 
 or::

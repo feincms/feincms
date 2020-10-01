@@ -29,7 +29,7 @@ except ImportError:
 from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
-from feincms.apps import app_reverse
+from feincms.content.application.models import app_reverse
 from feincms.contents import RawContent, RichTextContent
 
 from feincms.context_processors import add_page_if_missing
