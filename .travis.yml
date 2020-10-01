@@ -3,7 +3,7 @@ language: python
 sudo: false
 cache: pip
 python:
-  - "3.6"
+  - "3.8"
 env:
   - REQ=""
 matrix:
@@ -40,9 +40,15 @@ matrix:
       env: REQ="Django>=3.0,<3.1 django-mptt"
     - python: "3.7"
       env: REQ="Django>=3.0,<3.1 django-mptt"
+    - python: "3.6"
+      env: REQ="Django>=3.1,<3.1 django-mptt"
     - python: "3.7"
+      env: REQ="Django>=3.1,<3.1 django-mptt"
+    - python: "3.8"
+      env: REQ="Django>=3.1,<3.1 django-mptt"
+    - python: "3.8"
       env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
-    - python: 3.7
+    - python: 3.8
       env: REQ="black flake8"
       install:
         - pip install black flake8
