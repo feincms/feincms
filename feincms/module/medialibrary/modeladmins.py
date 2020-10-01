@@ -62,11 +62,14 @@ def assign_category(modeladmin, request, queryset):
                 category.mediafile_set.add(mediafile)
                 count += 1
 
-            message = ungettext(
-                "Successfully added %(count)d media file to %(category)s.",
-                "Successfully added %(count)d media files to %(category)s.",
-                count,
-            ) % {"count": count, "category": category}
+            message = (
+                ungettext(
+                    "Successfully added %(count)d media file to %(category)s.",
+                    "Successfully added %(count)d media files to %(category)s.",
+                    count,
+                )
+                % {"count": count, "category": category}
+            )
             modeladmin.message_user(request, message)
             return HttpResponseRedirect(request.get_full_path())
     if "cancel" in request.POST:
