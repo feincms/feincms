@@ -67,6 +67,10 @@ def etag_request_processor(page, request):
         can use the condition decorator without too much pain.
         """
 
+        @property
+        def headers(self):
+            return self
+
         def has_header(page, what):
             return False
 
