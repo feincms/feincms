@@ -63,8 +63,11 @@ Contents
    deprecation
 
 
-Releases
-========
+.. include:: ../CHANGELOG.rst
+
+
+Old release notes
+=================
 
 .. toctree::
    :maxdepth: 1
