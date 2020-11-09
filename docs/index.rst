@@ -72,18 +72,18 @@ Old release notes
 .. toctree::
    :maxdepth: 1
 
-   releases/1.2
-   releases/1.3
-   releases/1.4
-   releases/1.5
-   releases/1.6
-   releases/1.7
-   releases/1.8
-   releases/1.9
-   releases/1.10
-   releases/1.11
-   releases/1.12
    releases/1.13
+   releases/1.12
+   releases/1.11
+   releases/1.10
+   releases/1.9
+   releases/1.8
+   releases/1.7
+   releases/1.6
+   releases/1.5
+   releases/1.4
+   releases/1.3
+   releases/1.2
 
 
 Indices and tables
