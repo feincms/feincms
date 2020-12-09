@@ -40,9 +40,9 @@ initialization snippet for the rich text editor. Bundled templates are:
 * ``admin/content/richtext/init_ckeditor.html`` for CKEditor.
 
 ``FEINCMS_RICHTEXT_INIT_CONTEXT``: Defaults to
-``{'TINYMCE_JS_URL': '//tinymce.cachefly.net/4.1/tinymce.min.js'}``. A dictionary
-which is passed to the template mentioned above. Please refer to the templates
-directly to see all available variables.
+``{'TINYMCE_JS_URL': 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js'}``.
+A dictionary which is passed to the template mentioned above. Please
+refer to the templates directly to see all available variables.
 
 
 Settings for the tree editor
