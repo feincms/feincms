@@ -7,6 +7,22 @@ Change log
 ~~~~~~~~~~~~~~~
 
 
+`v1.19.0`_ (2021-03-04)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed a bug where the thumbnailer would try to save JPEGs as RGBA.
+- Reformatted the code using black, again.
+- Added Python 3.8, Django 3.1 to the build.
+- Added the Django 3.2 `.headers` property to the internal dummy response used
+  in the etag request processor.
+- Added a workaround for ``AppConfig``-autodiscovery related crashes. (Because
+  ``feincms.apps`` now has more meanings). Changed the documentation to prefer
+  ``feincms.content.application.models.*`` to ``feincms.apps.*``.
+- Updated the TinyMCE CDN URL to an version which doesn't show JavaScript
+  alerts.
+- Added missing ``on_delete`` values to the django-filer content types.
+
+
 `v1.18.0`_ (2020-01-21)
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -81,4 +97,5 @@ Change log
 .. _v1.16.0: https://github.com/feincms/feincms/compare/v1.15.0...v1.16.0
 .. _v1.17.0: https://github.com/feincms/feincms/compare/v1.16.0...v1.17.0
 .. _v1.18.0: https://github.com/feincms/feincms/compare/v1.17.0...v1.18.0
-.. _Next version: https://github.com/feincms/feincms/compare/v1.18.0...master
+.. _v1.19.0: https://github.com/feincms/feincms/compare/v1.18.0...v1.19.0
+.. _Next version: https://github.com/feincms/feincms/compare/v1.19.0...master
