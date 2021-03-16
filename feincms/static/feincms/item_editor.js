@@ -496,7 +496,8 @@ if (!Array.prototype.indexOf) {
         $('form').submit(function(){
             give_ordering_to_content_types();
             var form = $(this);
-            form.attr('action', form.attr('action')+window.location.hash);
+            var action = form.attr("action") || "";
+            form.attr('action', action + window.location.hash);
             return true;
         });
 
