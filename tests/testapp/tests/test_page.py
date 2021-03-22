@@ -19,7 +19,8 @@ from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
 from django.utils import timezone
-from django.utils.encoding import force_text
+
+from feincms._internal import force_text
 
 
 try:

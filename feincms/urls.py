@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 from feincms.views import Handler
 
+
 try:
     from django.urls import re_path
 except ImportError:

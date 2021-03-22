@@ -386,9 +386,14 @@ class ApplicationContent(models.Model):
             mimetype = mimetype.split(";")[0]
         mimetype = mimetype.strip()
 
+        is_ajax = (
+            request.is_ajax()
+            if hasattr(request, "is_ajax")
+            else request.headers.get('x-requested-with') == 'XMLHttpRequest'
+        )
         return (
             response.status_code != 200
-            or request.is_ajax()
+            or is_ajax
             or getattr(response, "standalone", False)
             or mimetype not in ("text/html", "text/plain")
         )

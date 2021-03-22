@@ -19,7 +19,6 @@ from django.http import (
     HttpResponseNotFound,
     HttpResponseServerError,
 )
-from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
@@ -27,6 +26,7 @@ from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm
 
 from feincms import settings
+from feincms._internal import force_text
 from feincms.extensions import ExtensionModelAdmin
 
 
@@ -414,7 +414,7 @@ class TreeEditor(ExtensionModelAdmin):
             self.list_display.append("actions_column")
 
         # handle common AJAX requests
-        if request.is_ajax():
+        if "__cmd" in request.POST:
             cmd = request.POST.get("__cmd")
             if cmd == "toggle_boolean":
                 return self._toggle_boolean(request)

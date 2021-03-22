@@ -9,6 +9,7 @@ from django.views.static import serve
 
 from feincms.module.page.sitemap import PageSitemap
 
+
 try:
     from django.urls import include, re_path
 except ImportError:

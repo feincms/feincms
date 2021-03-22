@@ -16,7 +16,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _, ungettext
+from django.utils.translation import gettext_lazy as _, ngettext
 from django.views.decorators.csrf import csrf_protect
 
 
@@ -63,7 +63,7 @@ def assign_category(modeladmin, request, queryset):
                 count += 1
 
             message = (
-                ungettext(
+                ngettext(
                     "Successfully added %(count)d media file to %(category)s.",
                     "Successfully added %(count)d media files to %(category)s.",
                     count,
@@ -126,10 +126,13 @@ class MediaFileAdmin(ExtensionModelAdmin):
     actions = [assign_category, save_as_zipfile]
 
     def get_urls(self):
-        from django.conf.urls import url
+        try:
+            from django.urls import re_path
+        except ImportError:
+            from django.conf.urls import url as re_path
 
         return [
-            url(
+            re_path(
                 r"^mediafile-bulk-upload/$",
                 self.admin_site.admin_view(MediaFileAdmin.bulk_upload),
                 {},

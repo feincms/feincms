@@ -13,10 +13,10 @@ from django import template
 from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.utils.encoding import force_text
 from PIL import Image
 
 from feincms import settings
+from feincms._internal import force_text
 
 
 logger = logging.getLogger("feincms.templatetags.thumbnail")

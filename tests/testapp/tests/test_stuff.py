@@ -9,9 +9,9 @@ from datetime import datetime
 
 import pytz
 from django.test import TestCase
-from django.utils.encoding import force_text
 
 import feincms
+from feincms._internal import force_text
 from feincms.extensions.datepublisher import granular_now
 from feincms.models import Region, Template
 from feincms.utils import get_object, shorten_string

@@ -19,10 +19,10 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import connections, models
 from django.db.models import Q
 from django.forms.widgets import Media
-from django.utils.encoding import force_text
 from django.utils.translation import gettext_lazy as _
 
 from feincms import ensure_completely_loaded
+from feincms._internal import force_text
 from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 

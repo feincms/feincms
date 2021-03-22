@@ -12,7 +12,7 @@ from django import get_version
 from django.template.loader import render_to_string
 
 
-__all__ = ("monkeypatch_method", "monkeypatch_property")
+__all__ = ("monkeypatch_method", "monkeypatch_property", "force_text", "smart_text")
 
 
 def monkeypatch_method(cls):
@@ -63,3 +63,11 @@ else:
 
     def ct_render_to_string(template, ctx, **kwargs):
         return render_to_string(template, ctx, request=kwargs.get("request"))
+
+
+# We support older than old versions of Python and Django. Keep the *_text name
+# around for a bit longer.
+if LooseVersion(get_version()) < LooseVersion("4.0"):
+    from django.utils.encoding import force_text, smart_text
+else:
+    from django.utils.encoding import force_str as force_text, smart_str as smart_text

@@ -11,6 +11,8 @@ Change log
 - Switched to GitHub actions.
 - Sorted imports.
 - Reformated the JavaScript code using prettier.
+- Added Python up to 3.9, Django up to the main branch (the upcoming 4.0) to
+  the CI list.
 
 
 `v1.19.0`_ (2021-03-04)

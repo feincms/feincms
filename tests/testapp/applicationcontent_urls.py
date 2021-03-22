@@ -10,6 +10,7 @@ from django.template.response import TemplateResponse
 
 from feincms.content.application.models import standalone, unpack
 
+
 try:
     from django.urls import re_path
 except ImportError:
