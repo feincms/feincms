@@ -2,10 +2,8 @@
 FeinCMS - An extensible Django-based CMS
 ========================================
 
-.. image:: https://travis-ci.org/feincms/feincms.svg?branch=next
-   :target: https://travis-ci.org/feincms/feincms
-.. image:: https://travis-ci.org/feincms/feincms.svg?branch=master
-   :target: https://travis-ci.org/feincms/feincms
+.. image:: https://github.com/feincms/feincms/workflows/Tests/badge.svg
+    :target: https://github.com/feincms/feincms
 
 When was the last time, that a pre-built software package you wanted to
 use got many things right, but in the end, you still needed to modify

@@ -10,9 +10,9 @@
 from __future__ import absolute_import, unicode_literals
 
 import json
-import zipfile
 import os
 import time
+import zipfile
 
 from django.conf import settings as django_settings
 from django.core.files.base import ContentFile

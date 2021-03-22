@@ -1,8 +1,18 @@
 /* tree editor */
 
-.page_marker { display:block; text-align: right; float: left; padding: 1px 1px 0 0; }
-tr.cut { border: 2px dashed black; opacity: 0.5; }
-.title-column { width: 400px; }
+.page_marker {
+  display: block;
+  text-align: right;
+  float: left;
+  padding: 1px 1px 0 0;
+}
+tr.cut {
+  border: 2px dashed black;
+  opacity: 0.5;
+}
+.title-column {
+  width: 400px;
+}
 
 #result_list tbody tr:focus {
   background-color: #79aec8 !important;
@@ -31,7 +41,7 @@ tr.cut { border: 2px dashed black; opacity: 0.5; }
 }
 
 table tr.dragging {
-  opacity: .3;
+  opacity: 0.3;
 }
 
 table tr.dragging td {
@@ -59,22 +69,23 @@ div#drag_line div {
 }
 
 .page_marker.children {
-    background: url(img/disclosure-down.png) no-repeat right top;
+  background: url(img/disclosure-down.png) no-repeat right top;
 }
 
 .page_marker.closed {
-    background: url(img/disclosure-right.png) no-repeat right top;
+  background: url(img/disclosure-right.png) no-repeat right top;
 }
 
-tr.non-editable a:link, tr.non-editable a:visited, tr.non-editable td {
-    color: #AAA;
+tr.non-editable a:link,
+tr.non-editable a:visited,
+tr.non-editable td {
+  color: #aaa;
 }
-
 
 tr.item_inactive {
-    color: rgb(221, 17, 68);
+  color: rgb(221, 17, 68);
 }
 
 tr.item_inactive th a {
-    color: rgb(221, 17, 68);
+  color: rgb(221, 17, 68);
 }

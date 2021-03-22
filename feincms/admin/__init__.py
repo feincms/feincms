@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 
 from django.contrib.admin.filters import FieldListFilter
-from .filters import ParentFieldListFilter, CategoryFieldListFilter
+
+from .filters import CategoryFieldListFilter, ParentFieldListFilter
 
 
 FieldListFilter.register(

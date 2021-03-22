@@ -7,13 +7,13 @@ the feincms namespace.
 
 from __future__ import absolute_import, unicode_literals
 
+import operator
+import sys
+import warnings
 from collections import OrderedDict
 from functools import reduce
-import six
-import sys
-import operator
-import warnings
 
+import six
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections, models

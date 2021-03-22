@@ -5,10 +5,9 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import re
-import six
-
 from importlib import import_module
 
+import six
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import AutoField

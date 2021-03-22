@@ -5,6 +5,7 @@ import warnings
 
 from feincms.extensions.ct_tracker import *
 
+
 warnings.warn(
     "Import %(name)s from feincms.extensions.%(name)s"
     % {"name": __name__.split(".")[-1]},

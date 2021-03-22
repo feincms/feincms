@@ -8,12 +8,13 @@ import django
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.test import TestCase
+from testapp.models import ExampleCMSBase, ExampleCMSBase2
 
 from feincms.contents import RawContent, RichTextContent
 from feincms.module.medialibrary.contents import MediaFileContent
 
-from testapp.models import ExampleCMSBase, ExampleCMSBase2
 from .test_stuff import Empty
+
 
 try:
     from unittest import skipIf

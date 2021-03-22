@@ -2,13 +2,12 @@ from __future__ import absolute_import, unicode_literals
 
 import json
 import logging
-import six
 from distutils.version import LooseVersion
 
-from django import get_version
-from django import forms
-from django.db import models
+import six
+from django import forms, get_version
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import models
 
 
 class JSONFormField(forms.fields.CharField):

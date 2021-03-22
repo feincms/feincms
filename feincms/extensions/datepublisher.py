@@ -11,7 +11,6 @@ the page's manager to determine which entries are to be considered active.
 from __future__ import absolute_import, unicode_literals
 
 from datetime import datetime
-from pytz.exceptions import AmbiguousTimeError
 
 from django.db import models
 from django.db.models import Q
@@ -19,6 +18,7 @@ from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
+from pytz.exceptions import AmbiguousTimeError
 
 from feincms import extensions
 

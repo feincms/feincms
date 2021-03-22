@@ -5,8 +5,9 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from feincms.admin.item_editor import FeinCMSInline
 from feincms._internal import ct_render_to_string
+from feincms.admin.item_editor import FeinCMSInline
+
 
 try:
     from filer.fields.file import FilerFileField

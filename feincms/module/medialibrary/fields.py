@@ -5,9 +5,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import six
-
-from django.contrib.admin.widgets import AdminFileWidget
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
+from django.contrib.admin.widgets import AdminFileWidget, ForeignKeyRawIdWidget
 from django.db import models
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -15,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
 from feincms.utils import shorten_string
+
 from .models import MediaFile
 from .thumbnail import admin_thumbnail
 

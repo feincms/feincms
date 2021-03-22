@@ -6,9 +6,9 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 import re
-import six
 
 import django
+import six
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -19,9 +19,9 @@ from django.utils.translation import gettext_lazy as _
 from feincms import settings
 from feincms.models import ExtensionsMixin
 from feincms.translations import (
+    TranslatedObjectManager,
     TranslatedObjectMixin,
     Translation,
-    TranslatedObjectManager,
 )
 
 from . import logger

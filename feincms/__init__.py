@@ -1,13 +1,15 @@
 from __future__ import absolute_import, unicode_literals
 
+
 VERSION = (1, 19, 0)
 __version__ = ".".join(map(str, VERSION))
 
 
 class LazySettings(object):
     def _load_settings(self):
-        from feincms import default_settings
         from django.conf import settings as django_settings
+
+        from feincms import default_settings
 
         for key in dir(default_settings):
             if not key.startswith("FEINCMS_"):
@@ -59,8 +61,9 @@ def ensure_completely_loaded(force=False):
     # Here we flush the caches rather than actually _filling them so
     # that relations defined after all content types registrations
     # don't miss out.
-    import django
     from distutils.version import LooseVersion
+
+    import django
 
     if LooseVersion(django.get_version()) < LooseVersion("1.8"):
 

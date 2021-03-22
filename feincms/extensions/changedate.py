@@ -7,7 +7,7 @@ Track the modification date for objects.
 
 from __future__ import absolute_import, unicode_literals
 
-from email.utils import parsedate_tz, mktime_tz
+from email.utils import mktime_tz, parsedate_tz
 from time import mktime
 
 from django.db import models

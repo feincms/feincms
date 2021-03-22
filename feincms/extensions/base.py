@@ -4,10 +4,10 @@ Base types for extensions refactor
 
 from __future__ import absolute_import, unicode_literals
 
-from functools import wraps
-import six
 import inspect
+from functools import wraps
 
+import six
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 

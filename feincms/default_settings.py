@@ -12,6 +12,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf import settings
 
+
 # e.g. 'uploads' if you would prefer <media root>/uploads/imagecontent/test.jpg
 # to <media root>/imagecontent/test.jpg.
 FEINCMS_UPLOAD_PREFIX = getattr(settings, "FEINCMS_UPLOAD_PREFIX", "")

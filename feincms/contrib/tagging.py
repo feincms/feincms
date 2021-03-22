@@ -11,15 +11,14 @@
 from __future__ import absolute_import, unicode_literals
 
 import six
-
-from django import forms, VERSION
+from django import VERSION, forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models.signals import pre_save
 from django.utils.translation import gettext_lazy as _
-
 from tagging.fields import TagField
 from tagging.models import Tag
 from tagging.utils import parse_tag_input
+
 
 try:
     from tagging.registry import AlreadyRegistered

@@ -11,6 +11,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.dispatch import Signal
 
+
 # ------------------------------------------------------------------------
 # This signal is sent when an item editor managed object is completely
 # saved, especially including all foreign or manytomany dependencies.

@@ -28,8 +28,8 @@ from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from feincms import extensions, settings
-from feincms.translations import is_primary_language
 from feincms._internal import monkeypatch_method, monkeypatch_property
+from feincms.translations import is_primary_language
 
 
 # ------------------------------------------------------------------------

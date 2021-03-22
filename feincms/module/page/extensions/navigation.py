@@ -9,17 +9,17 @@ be they real Page instances or extended navigation entries.
 
 from __future__ import absolute_import, unicode_literals
 
-from collections import OrderedDict
-import six
 import types
+from collections import OrderedDict
 
+import six
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from feincms import extensions
-from feincms.utils import get_object, shorten_string
 from feincms._internal import monkeypatch_method
+from feincms.utils import get_object, shorten_string
 
 
 class TypeRegistryMetaClass(type):

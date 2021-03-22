@@ -12,8 +12,8 @@ from django.utils.translation import gettext_lazy as _
 from feincms import settings
 
 from . import logger
-from .models import Category, MediaFile
 from .fields import AdminFileWithPreviewWidget
+from .models import Category, MediaFile
 
 
 # ------------------------------------------------------------------------

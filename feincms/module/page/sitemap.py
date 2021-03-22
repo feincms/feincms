@@ -5,8 +5,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.apps import apps
-from django.db.models import Max
 from django.contrib.sitemaps import Sitemap
+from django.db.models import Max
 
 from feincms import settings
 

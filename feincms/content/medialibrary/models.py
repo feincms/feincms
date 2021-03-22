@@ -5,6 +5,7 @@ import warnings
 
 from feincms.module.medialibrary.contents import MediaFileContent
 
+
 warnings.warn(
     "Import MediaFileContent from feincms.module.medialibrary.contents.",
     DeprecationWarning,

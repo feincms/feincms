@@ -4,17 +4,17 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from io import BytesIO
 import logging
-from PIL import Image
 import re
-import six
+from io import BytesIO
 
+import six
 from django import template
-from django.utils.encoding import force_text
 from django.core.cache import cache
-from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.utils.encoding import force_text
+from PIL import Image
 
 from feincms import settings
 

@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
+import warnings
 from collections import OrderedDict
 from email.utils import parsedate
 from functools import partial, wraps
 from time import mktime
-import warnings
 
 from django.conf import settings
 from django.core.cache import cache
@@ -16,14 +16,15 @@ from django.utils.http import http_date
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language, gettext_lazy as _
 
+
 try:
     from django.urls import (
         NoReverseMatch,
-        reverse,
-        get_script_prefix,
-        set_script_prefix,
         Resolver404,
+        get_script_prefix,
         resolve,
+        reverse,
+        set_script_prefix,
     )
 except ImportError:
     from django.core.urlresolvers import (

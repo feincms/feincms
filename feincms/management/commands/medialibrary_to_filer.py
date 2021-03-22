@@ -1,15 +1,14 @@
 from __future__ import absolute_import, unicode_literals
 
+from django.contrib.auth.models import User
 from django.core.files import File as DjangoFile
 from django.core.management.base import NoArgsCommand
-from django.contrib.auth.models import User
+from filer.models import File, Image
 
 from feincms.contents import FilerFileContent, FilerImageContent
 from feincms.module.medialibrary.contents import MediaFileContent
 from feincms.module.medialibrary.models import MediaFile
 from feincms.module.page.models import Page
-
-from filer.models import File, Image
 
 
 PageMediaFileContent = Page.content_type_for(MediaFileContent)

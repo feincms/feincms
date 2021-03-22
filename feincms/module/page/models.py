@@ -5,12 +5,12 @@
 from __future__ import absolute_import, unicode_literals
 
 import six
-
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
+
 
 try:
     from django.urls import reverse
@@ -23,8 +23,8 @@ from feincms import settings
 from feincms.models import create_base_model
 from feincms.module.mixins import ContentModelMixin
 from feincms.module.page import processors
+from feincms.utils import get_model_instance, match_model_string, shorten_string
 from feincms.utils.managers import ActiveAwareContentManagerMixin
-from feincms.utils import shorten_string, match_model_string, get_model_instance
 
 
 # ------------------------------------------------------------------------

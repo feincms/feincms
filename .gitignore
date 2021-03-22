@@ -20,3 +20,4 @@ venv
 .coverage
 htmlcov
 test.zip
+node_modules

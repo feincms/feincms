@@ -4,13 +4,13 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta
 
 import django
 from django import forms, template
 from django.conf import settings
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.db import models
@@ -20,6 +20,7 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase
 from django.utils import timezone
 from django.utils.encoding import force_text
+
 
 try:
     from django.urls import reverse
@@ -31,7 +32,6 @@ from mptt.exceptions import InvalidMove
 from feincms import settings as feincms_settings
 from feincms.content.application.models import app_reverse
 from feincms.contents import RawContent, RichTextContent
-
 from feincms.context_processors import add_page_if_missing
 from feincms.models import ContentProxy
 from feincms.module.medialibrary.models import Category, MediaFile

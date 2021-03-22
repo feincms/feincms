@@ -7,6 +7,7 @@ http://mail.python.org/pipermail/python-dev/2008-January/076194.html
 from __future__ import absolute_import, unicode_literals
 
 from distutils.version import LooseVersion
+
 from django import get_version
 from django.template.loader import render_to_string
 

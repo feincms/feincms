@@ -31,7 +31,6 @@ Print all the titles of all news entries which have an english translation::
 from __future__ import absolute_import, unicode_literals
 
 import six
-
 from django.conf import settings
 from django.contrib import admin
 from django.core.cache import cache

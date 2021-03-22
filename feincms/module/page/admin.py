@@ -8,8 +8,10 @@ from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 
 from feincms import ensure_completely_loaded, settings
-from .models import Page
+
 from .modeladmins import PageAdmin
+from .models import Page
+
 
 try:
     from django.core.exceptions import FieldDoesNotExist

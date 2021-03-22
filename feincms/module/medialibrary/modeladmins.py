@@ -8,8 +8,7 @@ import os
 
 from django import forms
 from django.conf import settings as django_settings
-from django.contrib import admin
-from django.contrib import messages
+from django.contrib import admin, messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.files.images import get_image_dimensions
@@ -17,8 +16,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaultfilters import filesizeformat
 from django.utils.safestring import mark_safe
-from django.utils.translation import ungettext, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, ungettext
 from django.views.decorators.csrf import csrf_protect
+
 
 try:
     from django.urls import reverse
@@ -29,8 +29,8 @@ from feincms.extensions import ExtensionModelAdmin
 from feincms.translations import admin_translationinline, lookup_translations
 from feincms.utils import shorten_string
 
-from .models import Category, MediaFileTranslation
 from .forms import MediaCategoryAdminForm, MediaFileAdminForm
+from .models import Category, MediaFileTranslation
 from .thumbnail import admin_thumbnail
 from .zip import import_zipfile
 

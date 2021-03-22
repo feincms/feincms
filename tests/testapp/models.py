@@ -1,22 +1,21 @@
 from __future__ import absolute_import, unicode_literals
 
 import six
-
 from django import forms
 from django.db import models
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
+from mptt.models import MPTTModel
 
 from feincms.content.application.models import ApplicationContent
 from feincms.contents import RawContent, TemplateContent
 from feincms.models import Base, create_base_model
 from feincms.module.medialibrary.contents import MediaFileContent
-from feincms.module.page.models import Page
 from feincms.module.page import processors
-
-from mptt.models import MPTTModel
+from feincms.module.page.models import Page
 
 from .content import CustomContentType
+
 
 Page.register_templates(
     {

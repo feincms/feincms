@@ -4,12 +4,12 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from functools import reduce
 import json
 import logging
+from functools import reduce
 
-from django.contrib.admin.views import main
 from django.contrib.admin.actions import delete_selected
+from django.contrib.admin.views import main
 from django.contrib.auth import get_permission_codename
 from django.db.models import Q
 from django.http import (
@@ -19,16 +19,16 @@ from django.http import (
     HttpResponseNotFound,
     HttpResponseServerError,
 )
+from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import gettext_lazy as _, gettext
-from django.utils.encoding import force_text
-
+from django.utils.translation import gettext, gettext_lazy as _
 from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm
 
 from feincms import settings
 from feincms.extensions import ExtensionModelAdmin
+
 
 try:
     # Django<3

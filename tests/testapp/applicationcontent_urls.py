@@ -4,12 +4,16 @@ This is a dummy module used to test the ApplicationContent
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 
 from feincms.content.application.models import standalone, unpack
+
+try:
+    from django.urls import re_path
+except ImportError:
+    from django.conf.urls import url as re_path
 
 
 def module_root(request):
@@ -52,15 +56,15 @@ def inheritance20_unpack(request):
 
 
 urlpatterns = [
-    url(r"^$", module_root, name="ac_module_root"),
-    url(r"^args_test/([^/]+)/([^/]+)/$", args_test, name="ac_args_test"),
-    url(r"^kwargs_test/(?P<kwarg2>[^/]+)/(?P<kwarg1>[^/]+)/$", args_test),
-    url(r"^full_reverse_test/$", full_reverse_test),
-    url(r"^alias_reverse_test/$", alias_reverse_test),
-    url(r"^fragment/$", fragment),
-    url(r"^redirect/$", redirect),
-    url(r"^response/$", response),
-    url(r"^response_decorated/$", standalone(response)),
-    url(r"^inheritance20/$", inheritance20),
-    url(r"^inheritance20_unpack/$", inheritance20_unpack),
+    re_path(r"^$", module_root, name="ac_module_root"),
+    re_path(r"^args_test/([^/]+)/([^/]+)/$", args_test, name="ac_args_test"),
+    re_path(r"^kwargs_test/(?P<kwarg2>[^/]+)/(?P<kwarg1>[^/]+)/$", args_test),
+    re_path(r"^full_reverse_test/$", full_reverse_test),
+    re_path(r"^alias_reverse_test/$", alias_reverse_test),
+    re_path(r"^fragment/$", fragment),
+    re_path(r"^redirect/$", redirect),
+    re_path(r"^response/$", response),
+    re_path(r"^response_decorated/$", standalone(response)),
+    re_path(r"^inheritance20/$", inheritance20),
+    re_path(r"^inheritance20_unpack/$", inheritance20_unpack),
 ]

@@ -1,7 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
-import django
 import os
+
+import django
+
 
 SITE_ID = 1
 

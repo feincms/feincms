@@ -6,6 +6,12 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Renamed the main branch to main.
+- Switched to a declarative setup.
+- Switched to GitHub actions.
+- Sorted imports.
+- Reformated the JavaScript code using prettier.
+
 
 `v1.19.0`_ (2021-03-04)
 ~~~~~~~~~~~~~~~~~~~~~~~
