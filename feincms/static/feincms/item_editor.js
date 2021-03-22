@@ -52,7 +52,7 @@ if (!Array.prototype.indexOf) {
 
     SELECTS = {};
     function save_content_type_selects() {
-        $('#main>.panel').each(function() {
+        $('#feincmsmain>.panel').each(function() {
             SELECTS[this.id.replace(/_body$/, '')] = $("select[name=order-machine-add-select]", this).clone().removeAttr("name");
         });
     }
@@ -259,7 +259,7 @@ if (!Array.prototype.indexOf) {
     }
 
     function init_content_type_buttons() {
-        $('#main > .panel').each(function() {
+        $('#feincmsmain > .panel').each(function() {
             var $select = $('select[name=order-machine-add-select]', this),
                 to_remove = [];
 
@@ -358,7 +358,7 @@ if (!Array.prototype.indexOf) {
     $(document).ready(function($){
         hide_form_rows_with_hidden_widgets();
 
-        create_tabbed('#main_wrapper', '#main', function(tab_str){
+        create_tabbed('#feincmsmain_wrapper', '#feincmsmain', function(tab_str){
             ACTIVE_REGION = REGION_MAP.indexOf(tab_str);
             // make it possible to open current tab on page reload
             window.location.replace('#tab_'+tab_str);
@@ -496,7 +496,8 @@ if (!Array.prototype.indexOf) {
         $('form').submit(function(){
             give_ordering_to_content_types();
             var form = $(this);
-            form.attr('action', form.attr('action')+window.location.hash);
+            var action = form.attr("action") || "";
+            form.attr('action', action + window.location.hash);
             return true;
         });
 
@@ -564,7 +565,7 @@ if (!Array.prototype.indexOf) {
         });
 
 
-        var errors = $('#main div.errors');
+        var errors = $('#feincmsmain div.errors');
 
         if(errors.length) {
             var id = errors.parents('fieldset[id$=_body], div[id$=_body]').attr('id');
@@ -579,7 +580,7 @@ if (!Array.prototype.indexOf) {
                 }
             }
 
-            $('#main_wrapper>div.navi_tab:first-child').trigger('click');
+            $('#feincmsmain_wrapper>div.navi_tab:first-child').trigger('click');
         }
     });
 

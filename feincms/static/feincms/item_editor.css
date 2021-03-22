@@ -16,7 +16,7 @@
     border-color: #79aec8;
 }
 
-#main {
+#feincmsmain {
     clear:both;
     padding: 10px 10px 10px 10px;
     border: 1px solid #eee;
@@ -90,7 +90,7 @@ select {
     max-width: 580px;
 }
 
-#main_wrapper {
+#feincmsmain_wrapper {
     margin: 10px 0 30px 0;
 }
 
@@ -245,7 +245,7 @@ div.order-machine div.inline-related > h3{
 /* django suit hacks */
 /*********************/
 
-#suit-center #main {
+#suit-center #feincmsmain {
     clear:none;
 }
 
