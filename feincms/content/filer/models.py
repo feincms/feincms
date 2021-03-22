@@ -50,7 +50,9 @@ else:
             )
 
     class FilerFileContent(ContentWithFilerFile):
-        mediafile = FilerFileField(verbose_name=_("file"), related_name="+", on_delete=models.CASCADE)
+        mediafile = FilerFileField(
+            verbose_name=_("file"), related_name="+", on_delete=models.CASCADE
+        )
         file_type = "file"
         type = "download"
 
@@ -86,7 +88,9 @@ else:
         must_always_publish_copyright, date_taken, file, id, is_public, url
         """
 
-        mediafile = FilerImageField(verbose_name=_("image"), related_name="+", on_delete=models.CASCADE)
+        mediafile = FilerImageField(
+            verbose_name=_("image"), related_name="+", on_delete=models.CASCADE
+        )
         caption = models.CharField(_("caption"), max_length=1000, blank=True)
         url = models.CharField(_("URL"), max_length=1000, blank=True)
 
