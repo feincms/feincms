@@ -54,12 +54,6 @@ There isn't much left to do apart from adding a few entries to
     feincms.module.page,
     feincms.module.medialibrary
 
-Also, you should add the request context processor to the list of
-``TEMPLATE_CONTEXT_PROCESSORS``, the template tag and the administration
-interface require it::
-
-    django.core.context_processors.request
-
 The customized administration interface needs some media and javascript
 libraries which you have to make available to the browser. FeinCMS uses
 Django's ``django.contrib.staticfiles`` application for this purpose. The media
