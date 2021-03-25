@@ -26,6 +26,10 @@ instead::
 
     $ git clone git://github.com/feincms/feincms.git
 
+Please be aware that feincms3 is being developed as a separate, new project. 
+For new CMS projects I’m more likely to use django-content-editor and feincms3. 
+You can read more about feincms3 on https://feincms3.readthedocs.io/en/latest/
+
 If you are looking to implement a blog, check out elephantblog_.
 
 You will also need a Javascript WYSIWYG editor of your choice (Not included).
