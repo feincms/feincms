@@ -43,12 +43,12 @@
                 }
         }
 
-        var richtext_init_fn = function(){
+        function richtext_init_fn() {
             tinyMCE.init(tinymce_options);
             $('{% block selectors %}.order-machine textarea.item-richtext{% endblock %}').each(function(){
                 feincms_richtext_add_tinymce(this);
             });
-        };
+        }
 
 			{% block enable %}
         contentblock_init_handlers.push(richtext_init_fn);
