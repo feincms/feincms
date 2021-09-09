@@ -55,7 +55,7 @@
                 }
         }
 
-        var richtext_init_fn = function(){
+        function richtext_init_fn() {
             $('{% block selectors %}.order-machine textarea.item-richtext{% endblock %}').each(function(){
                 feincms_richtext_add_tinymce(this);
             });
