@@ -48,7 +48,7 @@
             $('{% block selectors %}.order-machine textarea.item-richtext{% endblock %}').each(function(){
                 feincms_richtext_add_tinymce(this);
             });
-        }
+        };
 
 			{% block enable %}
         contentblock_init_handlers.push(richtext_init_fn);
