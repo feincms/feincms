@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import logging
 import sys
@@ -110,7 +108,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
     if depth > 1:
         # Filter out children with inactive parents
         # None (no parent) is always allowed
-        parents = set([None])
+        parents = {None}
         if parent:
             # Subset filtering; allow children of parent as well
             parents.add(parent.id)
@@ -217,7 +215,7 @@ class LanguageLinksNode(SimpleAssignmentNodeWithVarAndArgs):
             # Trailing path without first slash
             trailing_path = request._feincms_extra_context.get("extra_path", "")[1:]
 
-        translations = dict((t.language, t) for t in page.available_translations())
+        translations = {t.language: t for t in page.available_translations()}
         translations[page.language] = page
 
         links = []
@@ -254,7 +252,7 @@ def _translate_page_into(page, language, default=None):
             return page
 
         if language is not None:
-            translations = dict((t.language, t) for t in page.available_translations())
+            translations = {t.language: t for t in page.available_translations()}
             if language in translations:
                 return translations[language]
     except AttributeError:
@@ -311,7 +309,7 @@ register.tag(
 # ------------------------------------------------------------------------
 class TranslatedPageNodeOrBase(TranslatedPageNode):
     def what(self, page, args):
-        return super(TranslatedPageNodeOrBase, self).what(
+        return super().what(
             page, args, default=getattr(page, "get_original_translation", page)
         )
 
@@ -451,7 +449,7 @@ def siblings_along_path_to(page_list, page2):
                 for a_page in page_list
                 if a_page.is_ancestor_of(page2, include_self=True)
             ]
-            top_level = min((a_page.level for a_page in page_list))
+            top_level = min(a_page.level for a_page in page_list)
 
             if not ancestors:
                 # Happens when we sit on a page outside the navigation tree so
@@ -470,7 +468,7 @@ def siblings_along_path_to(page_list, page2):
                 if (
                     a_page.parent_id == page2.id
                     or a_page.level == top_level
-                    or any((_is_sibling_of(a_page, a) for a in ancestors))
+                    or any(_is_sibling_of(a_page, a) for a in ancestors)
                 )
             ]
 

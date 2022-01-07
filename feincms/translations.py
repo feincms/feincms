@@ -28,9 +28,7 @@ Print all the titles of all news entries which have an english translation::
         print(news.translation.title)
 """
 
-from __future__ import absolute_import, unicode_literals
 
-import six
 from django.conf import settings
 from django.contrib import admin
 from django.core.cache import cache
@@ -43,12 +41,10 @@ from django.utils.translation import gettext_lazy as _
 from feincms.utils import queryset_transform
 
 
-class _NoTranslation(object):
+class _NoTranslation:
     """Simple marker for when no translations exist for a certain object
 
     Only used for caching."""
-
-    pass
 
 
 def short_language_code(code=None):
@@ -170,8 +166,7 @@ class TranslatedObjectManager(queryset_transform.TransformManager):
         )
 
 
-@six.python_2_unicode_compatible
-class TranslatedObjectMixin(object):
+class TranslatedObjectMixin:
     """
     Mixin with helper methods.
     """
@@ -293,13 +288,13 @@ def Translation(model):
             return short_language_code(self.language_code)
 
         def save(self, *args, **kwargs):
-            super(Inner, self).save(*args, **kwargs)
+            super().save(*args, **kwargs)
             self.parent.purge_translation_cache()
 
         save.alters_data = True
 
         def delete(self, *args, **kwargs):
-            super(Inner, self).delete(*args, **kwargs)
+            super().delete(*args, **kwargs)
             self.parent.purge_translation_cache()
 
         delete.alters_data = True

@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -67,7 +65,7 @@ class MediaFileContent(ContentWithMediaFile):
     def render(self, **kwargs):
         return ct_render_to_string(
             [
-                "content/mediafile/%s_%s.html" % (self.mediafile.type, self.type),
+                f"content/mediafile/{self.mediafile.type}_{self.type}.html",
                 "content/mediafile/%s.html" % self.mediafile.type,
                 "content/mediafile/%s.html" % self.type,
                 "content/mediafile/default.html",

@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from collections import OrderedDict
 
 from django.http import Http404
@@ -12,7 +10,7 @@ from feincms import settings
 from feincms.content.application.models import standalone
 
 
-class ContentModelMixin(object):
+class ContentModelMixin:
     """
     Mixin for ``feincms.models.Base`` subclasses which need need some degree of
     additional control over the request-response cycle.
@@ -117,13 +115,13 @@ class ContentObjectMixin(TemplateResponseMixin):
 
         # Hopefully someone else has a usable get_template_names()
         # implementation...
-        return super(ContentObjectMixin, self).get_template_names()
+        return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = self.request._feincms_extra_context
         context[self.context_object_name or "feincms_object"] = self.object
         context.update(kwargs)
-        return super(ContentObjectMixin, self).get_context_data(**context)
+        return super().get_context_data(**context)
 
     @property
     def __name__(self):
@@ -200,7 +198,7 @@ class ContentObjectMixin(TemplateResponseMixin):
                 and not extra_context.get("app_config")
             ):
                 raise Http404(
-                    str("Not found (extra_path %r on %r)")
+                    "Not found (extra_path %r on %r)"
                     % (extra_context.get("extra_path", "/"), self.object)
                 )
 
@@ -233,4 +231,4 @@ class ContentView(ContentObjectMixin, generic.DetailView):
 class StandaloneView(generic.View):
     @method_decorator(standalone)
     def dispatch(self, request, *args, **kwargs):
-        return super(StandaloneView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)

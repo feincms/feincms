@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 import logging
 
 from django.apps import apps
@@ -32,7 +30,7 @@ class Handler(ContentView):
 
     def dispatch(self, request, *args, **kwargs):
         try:
-            return super(Handler, self).dispatch(request, *args, **kwargs)
+            return super().dispatch(request, *args, **kwargs)
         except Http404 as e:
             if settings.FEINCMS_CMS_404_PAGE is not None:
                 logger.info(
@@ -51,7 +49,7 @@ class Handler(ContentView):
                     request.path = request.path_info = settings.FEINCMS_CMS_404_PAGE
                     if hasattr(request, "_feincms_page"):
                         delattr(request, "_feincms_page")
-                    response = super(Handler, self).dispatch(
+                    response = super().dispatch(
                         request, settings.FEINCMS_CMS_404_PAGE, **kwargs
                     )
                     # Only set status if we actually have a page. If we get for

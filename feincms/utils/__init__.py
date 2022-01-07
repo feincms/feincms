@@ -1,13 +1,10 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, division, unicode_literals
 
 import re
 from importlib import import_module
 
-import six
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import AutoField
@@ -19,7 +16,7 @@ from feincms import settings
 def get_object(path, fail_silently=False):
     # Return early if path isn't a string (might already be an callable or
     # a class or whatever)
-    if not isinstance(path, six.string_types):  # XXX bytes?
+    if not isinstance(path, str):  # XXX bytes?
         return path
 
     try:
@@ -86,13 +83,13 @@ def copy_model_instance(obj, exclude=None):
     """
 
     exclude = exclude or ()
-    initial = dict(
-        (f.name, getattr(obj, f.name))
+    initial = {
+        f.name: getattr(obj, f.name)
         for f in obj._meta.fields
         if not isinstance(f, AutoField)
         and f.name not in exclude
         and f not in obj._meta.parents.values()
-    )
+    }
     return obj.__class__(**initial)
 
 
@@ -128,15 +125,15 @@ def get_singleton(template_key, cls=None, raise_exception=True):
             assert model._feincms_templates[template_key].singleton
         except AttributeError as e:
             raise ImproperlyConfigured(
-                "%r does not seem to be a valid FeinCMS base class (%r)" % (model, e)
+                f"{model!r} does not seem to be a valid FeinCMS base class ({e!r})"
             )
         except KeyError:
             raise ImproperlyConfigured(
-                "%r is not a registered template for %r!" % (template_key, model)
+                f"{template_key!r} is not a registered template for {model!r}!"
             )
         except AssertionError:
             raise ImproperlyConfigured(
-                "%r is not a *singleton* template for %r!" % (template_key, model)
+                f"{template_key!r} is not a *singleton* template for {model!r}!"
             )
         try:
             return model._default_manager.get(template_key=template_key)

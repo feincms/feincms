@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 from functools import partial
 from threading import local
@@ -87,31 +85,31 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         if len(model._feincms_templates) > 4 and "template_key" in self.radio_fields:
             del self.radio_fields["template_key"]
 
-        super(PageAdmin, self).__init__(model, admin_site)
+        super().__init__(model, admin_site)
 
     in_navigation_toggle = tree_editor.ajax_editable_boolean(
         "in_navigation", _("in navigation")
     )
 
     def get_readonly_fields(self, request, obj=None):
-        readonly = super(PageAdmin, self).get_readonly_fields(request, obj=obj)
+        readonly = super().get_readonly_fields(request, obj=obj)
         if not settings.FEINCMS_SINGLETON_TEMPLATE_CHANGE_ALLOWED:
             if obj and obj.template and obj.template.singleton:
                 return tuple(readonly) + ("template_key",)
         return readonly
 
     def get_form(self, *args, **kwargs):
-        form = super(PageAdmin, self).get_form(*args, **kwargs)
+        form = super().get_form(*args, **kwargs)
         return partial(form, modeladmin=self)
 
     def _actions_column(self, page):
         addable = getattr(page, "feincms_addable", True)
 
-        preview_url = "../../r/%s/%s/" % (
+        preview_url = "../../r/{}/{}/".format(
             ContentType.objects.get_for_model(self.model).id,
             page.id,
         )
-        actions = super(PageAdmin, self)._actions_column(page)
+        actions = super()._actions_column(page)
 
         if addable:
             if not page.template.enforce_leaf:
@@ -160,10 +158,10 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
                     "language_name": language,
                     "translation_of": original,
                 }
-        return super(PageAdmin, self).add_view(request, **kwargs)
+        return super().add_view(request, **kwargs)
 
     def response_add(self, request, obj, *args, **kwargs):
-        response = super(PageAdmin, self).response_add(request, obj, *args, **kwargs)
+        response = super().response_add(request, obj, *args, **kwargs)
         if (
             "parent" in request.GET
             and "_addanother" in request.POST
@@ -205,7 +203,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
     def change_view(self, request, object_id, **kwargs):
         try:
-            return super(PageAdmin, self).change_view(request, object_id, **kwargs)
+            return super().change_view(request, object_id, **kwargs)
         except PermissionDenied:
             messages.add_message(
                 request,
@@ -218,13 +216,13 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         if not settings.FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED:
             if obj and obj.template.singleton:
                 return False
-        return super(PageAdmin, self).has_delete_permission(request, obj=obj)
+        return super().has_delete_permission(request, obj=obj)
 
     def changelist_view(self, request, *args, **kwargs):
         _local.visible_pages = list(
             self.model.objects.active().values_list("id", flat=True)
         )
-        return super(PageAdmin, self).changelist_view(request, *args, **kwargs)
+        return super().changelist_view(request, *args, **kwargs)
 
     def is_visible_admin(self, page):
         """

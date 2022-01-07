@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import doctest
 from datetime import datetime
@@ -18,12 +16,10 @@ from feincms.utils import get_object, shorten_string
 
 
 # ------------------------------------------------------------------------
-class Empty(object):
+class Empty:
     """
     Helper class to use as request substitute (or whatever)
     """
-
-    pass
 
 
 class DocTest(TestCase):

@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import copy
 import logging
@@ -66,12 +64,10 @@ class ItemEditor(ExtensionModelAdmin):
     def __init__(self, model, admin_site):
         ensure_completely_loaded()
 
-        super(ItemEditor, self).__init__(model, admin_site)
+        super().__init__(model, admin_site)
 
     def get_inline_instances(self, request, *args, **kwargs):
-        inline_instances = super(ItemEditor, self).get_inline_instances(
-            request, *args, **kwargs
-        )
+        inline_instances = super().get_inline_instances(request, *args, **kwargs)
         self.append_feincms_inlines(inline_instances, request)
         return inline_instances
 
@@ -93,7 +89,7 @@ class ItemEditor(ExtensionModelAdmin):
         return request.user.has_perm(perm)
 
     def get_feincms_inlines(self, model, request):
-        """ Generate genuine django inlines for registered content types. """
+        """Generate genuine django inlines for registered content types."""
         model._needs_content_types()
 
         inlines = []
@@ -127,7 +123,7 @@ class ItemEditor(ExtensionModelAdmin):
         return inlines
 
     def get_content_type_map(self, request):
-        """ Prepare mapping of content types to their prettified names. """
+        """Prepare mapping of content types to their prettified names."""
         content_types = []
         for content_type in self.model._feincms_content_types:
             if self.model == content_type._feincms_content_class:
@@ -136,7 +132,7 @@ class ItemEditor(ExtensionModelAdmin):
         return content_types
 
     def get_extra_context(self, request):
-        """ Return extra context parameters for add/change views. """
+        """Return extra context parameters for add/change views."""
 
         extra_context = {
             "request": request,
@@ -174,7 +170,7 @@ class ItemEditor(ExtensionModelAdmin):
         context.update(self.get_extra_context(request))
         context.update(kwargs.get("extra_context", {}))
         kwargs["extra_context"] = context
-        return super(ItemEditor, self).add_view(request, **kwargs)
+        return super().add_view(request, **kwargs)
 
     def render_change_form(self, request, context, **kwargs):
         if kwargs.get("add"):
@@ -185,7 +181,7 @@ class ItemEditor(ExtensionModelAdmin):
                     ].form.initial["template_key"]
                 # ensure that initially-selected template in form is also
                 # used to render the initial regions in the item editor
-        return super(ItemEditor, self).render_change_form(request, context, **kwargs)
+        return super().render_change_form(request, context, **kwargs)
 
     def change_view(self, request, object_id, **kwargs):
         obj = self.get_object(request, unquote(object_id))
@@ -201,10 +197,10 @@ class ItemEditor(ExtensionModelAdmin):
         context.update(self.get_extra_context(request))
         context.update(kwargs.get("extra_context", {}))
         kwargs["extra_context"] = context
-        return super(ItemEditor, self).change_view(request, object_id, **kwargs)
+        return super().change_view(request, object_id, **kwargs)
 
     def save_related(self, request, form, formsets, change):
-        super(ItemEditor, self).save_related(request, form, formsets, change)
+        super().save_related(request, form, formsets, change)
         itemeditor_post_save_related.send(
             sender=form.instance.__class__, instance=form.instance, created=not change
         )
@@ -225,7 +221,7 @@ class ItemEditor(ExtensionModelAdmin):
         Is it reasonable to assume this should always be included?
         """
 
-        fieldsets = copy.deepcopy(super(ItemEditor, self).get_fieldsets(request, obj))
+        fieldsets = copy.deepcopy(super().get_fieldsets(request, obj))
         names = [f[0] for f in fieldsets]
 
         if FEINCMS_CONTENT_FIELDSET_NAME not in names:
@@ -244,7 +240,7 @@ class ItemEditor(ExtensionModelAdmin):
         self, request, obj, version, context, revert=False, recover=False
     ):
         context.update(self.get_extra_context(request))
-        return super(ItemEditor, self).render_revision_form(
+        return super().render_revision_form(
             request, obj, version, context, revert, recover
         )
 
@@ -254,6 +250,6 @@ class ItemEditor(ExtensionModelAdmin):
     ):
         context = extra_context or {}
         context.update(self.get_extra_context(request))
-        return super(ItemEditor, self)._reversion_revisionform_view(
+        return super()._reversion_revisionform_view(
             request, version, template_name, context
         )

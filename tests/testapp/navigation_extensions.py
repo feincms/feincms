@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from feincms.module.page.extensions.navigation import NavigationExtension, PagePretender
 
 
@@ -8,8 +6,7 @@ class PassthroughExtension(NavigationExtension):
     name = "passthrough extension"
 
     def children(self, page, **kwargs):
-        for p in page.children.in_navigation():
-            yield p
+        yield from page.children.in_navigation()
 
 
 class PretenderExtension(NavigationExtension):

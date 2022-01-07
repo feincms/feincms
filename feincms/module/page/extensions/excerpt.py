@@ -2,7 +2,6 @@
 Add an excerpt field to the page.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _

@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import re
 
@@ -29,7 +27,7 @@ class RedirectToWidget(ForeignKeyRawIdWidget):
             model = apps.get_model(matches["app_label"], matches["model_name"])
             try:
                 instance = model._default_manager.get(pk=int(matches["pk"]))
-                return "&nbsp;<strong>%s (%s)</strong>" % (
+                return "&nbsp;<strong>{} ({})</strong>".format(
                     instance,
                     instance.get_absolute_url(),
                 )
@@ -117,7 +115,7 @@ class PageAdminForm(MPTTAdminForm):
 
         # Not required, only a nice-to-have for the `redirect_to` field
         modeladmin = kwargs.pop("modeladmin", None)
-        super(PageAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if modeladmin and "redirect_to" in self.fields:
             # Note: Using `parent` is not strictly correct, but we can be
             # sure that `parent` always points to another page instance,
@@ -157,7 +155,7 @@ class PageAdminForm(MPTTAdminForm):
             self.fields["template_key"].choices = choices
 
     def clean(self):
-        cleaned_data = super(PageAdminForm, self).clean()
+        cleaned_data = super().clean()
 
         # No need to think further, let the user correct errors first
         if self._errors:
@@ -180,7 +178,7 @@ class PageAdminForm(MPTTAdminForm):
         redirect_to = cleaned_data.get("redirect_to")
         if redirect_to and re.match(r"^\d+$", redirect_to):
             opts = self.page_model._meta
-            cleaned_data["redirect_to"] = "%s.%s:%s" % (
+            cleaned_data["redirect_to"] = "{}.{}:{}".format(
                 opts.app_label,
                 opts.model_name,
                 redirect_to,
@@ -211,7 +209,7 @@ class PageAdminForm(MPTTAdminForm):
             parent = cleaned_data["parent"]
 
         if parent:
-            new_url = "%s%s/" % (parent._cached_url, cleaned_data["slug"])
+            new_url = "{}{}/".format(parent._cached_url, cleaned_data["slug"])
         else:
             new_url = "/%s/" % cleaned_data["slug"]
 

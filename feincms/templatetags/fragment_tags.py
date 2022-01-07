@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from django import template
 
 
@@ -50,7 +48,7 @@ def fragment(parser, token):
         {% endfragment %}
     """
 
-    nodelist = parser.parse(("endfragment"))
+    nodelist = parser.parse("endfragment")
     parser.delete_first_token()
 
     return FragmentNode(nodelist, *token.contents.split()[1:])

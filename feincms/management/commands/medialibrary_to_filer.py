@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from django.contrib.auth.models import User
 from django.core.files import File as DjangoFile
 from django.core.management.base import NoArgsCommand
@@ -57,6 +55,6 @@ class Command(NoArgsCommand):
                 content.delete()
 
             if not i % 10:
-                self.stdout.write("%s / %s files\n" % (i, count))
+                self.stdout.write(f"{i} / {count} files\n")
 
-        self.stdout.write("%s / %s files\n" % (count, count))
+        self.stdout.write(f"{count} / {count} files\n")

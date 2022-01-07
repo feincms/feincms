@@ -128,4 +128,3 @@ from FeinCMSInline::
 
   class MyContent(models.Model):
       feincms_item_editor_inline = MyContentInline
-

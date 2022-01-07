@@ -1,14 +1,11 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import logging
 import re
 from io import BytesIO
 
-import six
 from django import template
 from django.core.cache import cache
 from django.core.files.base import ContentFile
@@ -23,8 +20,7 @@ logger = logging.getLogger("feincms.templatetags.thumbnail")
 register = template.Library()
 
 
-@six.python_2_unicode_compatible
-class Thumbnailer(object):
+class Thumbnailer:
     THUMBNAIL_SIZE_RE = re.compile(r"^(?P<w>\d+)x(?P<h>\d+)$")
     MARKER = "_thumb_"
 
@@ -34,7 +30,7 @@ class Thumbnailer(object):
 
     @property
     def url(self):
-        return six.text_type(self)
+        return str(self)
 
     def __str__(self):
         match = self.THUMBNAIL_SIZE_RE.match(self.size)
@@ -88,7 +84,7 @@ class Thumbnailer(object):
             except (NotImplementedError, AttributeError):
                 # storage does NOT support modified_time
                 generate = False
-            except (OSError, IOError):
+            except OSError:
                 # Someone might have delete the file
                 return ""
 

@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 """
 Default settings for FeinCMS
@@ -8,7 +7,6 @@ All of these can be overridden by specifying them in the standard
 ``settings.py`` file.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 from django.conf import settings
 

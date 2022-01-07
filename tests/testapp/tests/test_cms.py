@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import django
 from django.core.exceptions import ImproperlyConfigured
@@ -111,7 +109,11 @@ class CMSBaseTest(TestCase):
         """
 
         class Attachment(models.Model):
-            base = models.ForeignKey(ExampleCMSBase, related_name="test_related_name")
+            base = models.ForeignKey(
+                ExampleCMSBase,
+                on_delete=models.CASCADE,
+                related_name="test_related_name",
+            )
 
         # See issue #323 on Github.
         ExampleCMSBase._meta._fill_related_objects_cache()
@@ -125,7 +127,9 @@ class CMSBaseTest(TestCase):
         # self.assertFalse(hasattr(Attachment, 'anycontents'))
 
         class AnyContent(models.Model):
-            attachment = models.ForeignKey(Attachment, related_name="anycontents")
+            attachment = models.ForeignKey(
+                Attachment, on_delete=models.CASCADE, related_name="anycontents"
+            )
 
             class Meta:
                 abstract = True

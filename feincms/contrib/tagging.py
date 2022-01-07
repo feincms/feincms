@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 # FeinCMS django-tagging support. To add tagging to your (page) model,
 # simply do a
@@ -8,9 +7,7 @@
 #    tagging.tag_model(Page)
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
-import six
 from django import VERSION, forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models.signals import pre_save
@@ -60,22 +57,19 @@ class TagSelectFormField(forms.MultipleChoiceField):
 
 if VERSION >= (1, 10):
 
-    class Tag_formatvalue_mixin(object):
+    class Tag_formatvalue_mixin:
         def format_value(self, value):
             value = parse_tag_input(value or "")
-            return super(Tag_formatvalue_mixin, self).format_value(value)
-
+            return super().format_value(value)
 
 else:
     # _format_value is a private method previous to Django 1.10,
     # do the job in render() instead to avoid fiddling with
     # anybody's privates
-    class Tag_formatvalue_mixin(object):
+    class Tag_formatvalue_mixin:
         def render(self, name, value, attrs=None, *args, **kwargs):
             value = parse_tag_input(value or "")
-            return super(Tag_formatvalue_mixin, self).render(
-                name, value, attrs, *args, **kwargs
-            )
+            return super().render(name, value, attrs, *args, **kwargs)
 
 
 class fv_FilteredSelectMultiple(Tag_formatvalue_mixin, FilteredSelectMultiple):
@@ -88,7 +82,7 @@ class fv_SelectMultiple(Tag_formatvalue_mixin, forms.SelectMultiple):
 
 class TagSelectField(TagField):
     def __init__(self, filter_horizontal=False, *args, **kwargs):
-        super(TagSelectField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.filter_horizontal = filter_horizontal
 
     def formfield(self, **defaults):
@@ -98,7 +92,7 @@ class TagSelectField(TagField):
             widget = fv_SelectMultiple()
 
         defaults["widget"] = widget
-        choices = [(six.text_type(t), six.text_type(t)) for t in Tag.objects.all()]
+        choices = [(str(t), str(t)) for t in Tag.objects.all()]
         return TagSelectFormField(choices=choices, required=not self.blank, **defaults)
 
 

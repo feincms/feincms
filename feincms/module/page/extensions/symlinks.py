@@ -3,7 +3,6 @@ This introduces a new page type, which has no content of its own but inherits
 all content from the linked page.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _

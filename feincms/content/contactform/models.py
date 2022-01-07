@@ -5,7 +5,6 @@ You can provide your own comment form by passing an additional
 ``form=YourClass`` argument to the ``create_content_type`` call.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.core.mail import send_mail

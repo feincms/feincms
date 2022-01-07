@@ -4,7 +4,6 @@ These are internal helpers. Do not rely on their presence.
 http://mail.python.org/pipermail/python-dev/2008-January/076194.html
 """
 
-from __future__ import absolute_import, unicode_literals
 
 from distutils.version import LooseVersion
 
@@ -58,7 +57,6 @@ if LooseVersion(get_version()) < LooseVersion("1.10"):
 
         return render_to_string(template, ctx, context_instance=context_instance)
 
-
 else:
 
     def ct_render_to_string(template, ctx, **kwargs):
@@ -68,6 +66,6 @@ else:
 # We support older than old versions of Python and Django. Keep the *_text name
 # around for a bit longer.
 if LooseVersion(get_version()) < LooseVersion("4.0"):
-    from django.utils.encoding import force_text, smart_text
+    pass
 else:
     from django.utils.encoding import force_str as force_text, smart_str as smart_text

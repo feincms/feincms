@@ -8,7 +8,6 @@ the page's manager to determine which entries are to be considered active.
 """
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 from datetime import datetime
 

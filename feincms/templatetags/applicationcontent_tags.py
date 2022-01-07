@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from django import template
 from django.template import TemplateSyntaxError
 from django.template.defaulttags import kwarg_re
@@ -69,12 +67,9 @@ class AppReverseNode(template.Node):
 
     def render(self, context):
         args = [arg.resolve(context) for arg in self.args]
-        kwargs = dict(
-            [
-                (smart_str(k, "ascii"), v.resolve(context))
-                for k, v in self.kwargs.items()
-            ]
-        )
+        kwargs = {
+            smart_str(k, "ascii"): v.resolve(context) for k, v in self.kwargs.items()
+        }
         view_name = self.view_name.resolve(context)
         urlconf = self.urlconf.resolve(context)
 

@@ -478,5 +478,3 @@ to work, ie. at least the following attributes should exist:
     level     = page.level+1
     lft       = page.lft
     rght      = page.rght
-
-

@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 #
 #  Created by Martin J. Laubach on 2011-12-07
@@ -7,7 +6,6 @@
 #
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import json
 import os
@@ -184,7 +182,7 @@ def export_zipfile(site, queryset):
             }
         )
 
-        with open(mf.file.path, "r") as file_data:
+        with open(mf.file.path) as file_data:
             zip_info = zipfile.ZipInfo(
                 filename=mf.file.name,
                 date_time=(

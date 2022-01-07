@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
@@ -30,6 +28,6 @@ class PreviewHandler(Handler):
     def handler(self, request, *args, **kwargs):
         if not request.user.is_staff:
             raise Http404("Not found (not allowed)")
-        response = super(PreviewHandler, self).handler(request, *args, **kwargs)
+        response = super().handler(request, *args, **kwargs)
         response["Cache-Control"] = "no-cache, must-revalidate, no-store, private"
         return response

@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 from django.contrib.admin.filters import FieldListFilter
 
 from .filters import CategoryFieldListFilter, ParentFieldListFilter

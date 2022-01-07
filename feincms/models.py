@@ -5,7 +5,6 @@ All models defined here are abstract, which means no tables are created in
 the feincms namespace.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import operator
 import sys
@@ -27,8 +26,7 @@ from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 
 
-@six.python_2_unicode_compatible
-class Region(object):
+class Region:
     """
     This class represents a region inside a template. Example regions might be
     'main' and 'sidebar'.
@@ -55,8 +53,7 @@ class Region(object):
         ]
 
 
-@six.python_2_unicode_compatible
-class Template(object):
+class Template:
     """
     A template is a standard Django template which is used to render a
     CMS object, most commonly a page.
@@ -83,13 +80,13 @@ class Template(object):
             return Region(*data)
 
         self.regions = [_make_region(row) for row in regions]
-        self.regions_dict = dict((r.key, r) for r in self.regions)
+        self.regions_dict = {r.key: r for r in self.regions}
 
     def __str__(self):
         return force_text(self.title)
 
 
-class ContentProxy(object):
+class ContentProxy:
     """
     The ``ContentProxy`` is responsible for loading the content blocks for all
     regions (including content blocks in inherited regions) and assembling
@@ -240,10 +237,10 @@ class ContentProxy(object):
                 for instance in content_list:
                     contents.setdefault(instance.region, []).append(instance)
 
-            self._cache["regions"] = dict(
-                (region, sorted(instances, key=lambda c: c.ordering))
+            self._cache["regions"] = {
+                region: sorted(instances, key=lambda c: c.ordering)
                 for region, instances in contents.items()
-            )
+            }
 
         return self._cache["regions"]
 
@@ -666,7 +663,7 @@ def create_base_model(inherit_from=models.Model):
             feincms_content_base = cls._feincms_content_model
 
             class Meta(feincms_content_base.Meta):
-                db_table = "%s_%s" % (cls._meta.db_table, class_name.lower())
+                db_table = f"{cls._meta.db_table}_{class_name.lower()}"
                 verbose_name = model._meta.verbose_name
                 verbose_name_plural = model._meta.verbose_name_plural
                 permissions = model._meta.permissions
@@ -693,7 +690,7 @@ def create_base_model(inherit_from=models.Model):
 
             # content types can be limited to a subset of regions
             if not regions:
-                regions = set([region.key for region in cls._feincms_all_regions])
+                regions = {region.key for region in cls._feincms_all_regions}
 
             for region in cls._feincms_all_regions:
                 if region.key in regions:
@@ -826,7 +823,7 @@ def create_base_model(inherit_from=models.Model):
                 try:
                     from reversion import register
                 except ImportError:
-                    raise EnvironmentError("django-reversion is not installed")
+                    raise OSError("django-reversion is not installed")
 
             follow = []
             for content_type in cls._feincms_content_types:

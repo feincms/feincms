@@ -6,6 +6,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Added pre-commit.
+- Dropped compatibility guarantees with Python < 3.6, Django < 3.2.
+
 
 `v1.20.0`_ (2021-03-22)
 ~~~~~~~~~~~~~~~~~~~~~~~

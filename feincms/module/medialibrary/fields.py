@@ -1,10 +1,7 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
-import six
 from django.contrib.admin.widgets import AdminFileWidget, ForeignKeyRawIdWidget
 from django.db import models
 from django.utils.html import escape
@@ -30,9 +27,7 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
         key = self.rel.get_related_field().name
         try:
             obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
-            label = [
-                "&nbsp;<strong>%s</strong>" % escape(shorten_string(six.text_type(obj)))
-            ]
+            label = ["&nbsp;<strong>%s</strong>" % escape(shorten_string(str(obj)))]
             image = admin_thumbnail(obj)
 
             if image:
@@ -56,12 +51,12 @@ class MediaFileForeignKey(models.ForeignKey):
     def __init__(self, *args, **kwargs):
         if not args and "to" not in kwargs:
             args = (MediaFile,)
-        super(MediaFileForeignKey, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
         if "widget" in kwargs and isinstance(kwargs["widget"], ForeignKeyRawIdWidget):
             kwargs["widget"] = MediaFileForeignKeyRawIdWidget(kwargs["widget"])
-        return super(MediaFileForeignKey, self).formfield(**kwargs)
+        return super().formfield(**kwargs)
 
 
 class ContentWithMediaFile(models.Model):
@@ -87,9 +82,7 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
     """
 
     def render(self, name, value, attrs=None, *args, **kwargs):
-        r = super(AdminFileWithPreviewWidget, self).render(
-            name, value, attrs=attrs, *args, **kwargs
-        )
+        r = super().render(name, value, attrs=attrs, *args, **kwargs)
 
         if value and getattr(value, "instance", None):
             image = admin_thumbnail(value.instance)

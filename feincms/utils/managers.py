@@ -1,8 +1,5 @@
-from __future__ import absolute_import, unicode_literals
-
-
 # ------------------------------------------------------------------------
-class ActiveAwareContentManagerMixin(object):
+class ActiveAwareContentManagerMixin:
     """
     Implement what's necessary to add some kind of "active" state for content
     objects. The notion of active is defined by a number of filter rules that

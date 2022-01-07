@@ -1,11 +1,8 @@
-from __future__ import absolute_import, unicode_literals
-
-
 VERSION = (1, 20, 1)
 __version__ = ".".join(map(str, VERSION))
 
 
-class LazySettings(object):
+class LazySettings:
     def _load_settings(self):
         from django.conf import settings as django_settings
 

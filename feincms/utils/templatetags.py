@@ -9,7 +9,6 @@ They help implementing tags of the following forms::
     {% tag of template_var as var_name arg1,arg2,kwarg3=4 %}
 """
 
-from __future__ import absolute_import, unicode_literals
 
 from django import template
 
@@ -46,7 +45,7 @@ def do_simple_assignment_node_with_var_and_args_helper(cls):
                 args = ""
             except ValueError:
                 raise template.TemplateSyntaxError(
-                    "Invalid syntax for %s node: %s" % (cls.__name__, token.contents)
+                    f"Invalid syntax for {cls.__name__} node: {token.contents}"
                 )
 
         return cls(tag_name, in_var_name, var_name, args)

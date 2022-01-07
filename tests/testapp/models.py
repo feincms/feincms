@@ -1,6 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
-import six
 from django import forms
 from django.db import models
 from django.utils.text import capfirst
@@ -83,7 +80,6 @@ Page.register_extensions(
 )
 
 
-@six.python_2_unicode_compatible
 class Category(MPTTModel):
     name = models.CharField(max_length=20)
     slug = models.SlugField()

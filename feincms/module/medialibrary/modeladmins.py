@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import os
 
@@ -138,15 +136,13 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 {},
                 name="mediafile_bulk_upload",
             )
-        ] + super(MediaFileAdmin, self).get_urls()
+        ] + super().get_urls()
 
     def changelist_view(self, request, extra_context=None):
         if extra_context is None:
             extra_context = {}
         extra_context["categories"] = Category.objects.order_by("title")
-        return super(MediaFileAdmin, self).changelist_view(
-            request, extra_context=extra_context
-        )
+        return super().changelist_view(request, extra_context=extra_context)
 
     def admin_thumbnail(self, obj):
         image = admin_thumbnail(obj)
@@ -187,7 +183,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 d = get_image_dimensions(obj.file.file)
                 if d:
                     t += " %d&times;%d" % (d[0], d[1])
-            except (IOError, TypeError, ValueError) as e:
+            except (OSError, TypeError, ValueError) as e:
                 t += " (%s)" % e
         return mark_safe(t)
 
@@ -241,15 +237,11 @@ class MediaFileAdmin(ExtensionModelAdmin):
         return HttpResponseRedirect(reverse("admin:medialibrary_mediafile_changelist"))
 
     def get_queryset(self, request):
-        return (
-            super(MediaFileAdmin, self)
-            .get_queryset(request)
-            .transform(lookup_translations())
-        )
+        return super().get_queryset(request).transform(lookup_translations())
 
     def save_model(self, request, obj, form, change):
         obj.purge_translation_cache()
-        return super(MediaFileAdmin, self).save_model(request, obj, form, change)
+        return super().save_model(request, obj, form, change)
 
 
 # ------------------------------------------------------------------------

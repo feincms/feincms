@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 import os
 
 from django.contrib import admin
@@ -13,7 +11,8 @@ from feincms.module.page.sitemap import PageSitemap
 try:
     from django.urls import include, re_path
 except ImportError:
-    from django.conf.urls import include, url as re_path
+    from django.conf.urls import url as re_path
+    from django.urls import include
 
 
 sitemaps = {"pages": PageSitemap}

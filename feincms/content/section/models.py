@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from django.conf import settings as django_settings
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
@@ -85,7 +83,7 @@ class SectionContent(models.Model):
 
         return ct_render_to_string(
             [
-                "content/section/%s_%s.html" % (mediafile_type, self.type),
+                f"content/section/{mediafile_type}_{self.type}.html",
                 "content/section/%s.html" % mediafile_type,
                 "content/section/%s.html" % self.type,
                 "content/section/default.html",
@@ -106,6 +104,6 @@ class SectionContent(models.Model):
                 # content instance along
                 self.richtext = self.cleanse.im_func(self.richtext)
 
-        super(SectionContent, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     save.alters_data = True

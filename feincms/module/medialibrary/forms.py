@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import os
 
@@ -30,7 +28,7 @@ class MediaCategoryAdminForm(forms.ModelForm):
         return data
 
     def __init__(self, *args, **kwargs):
-        super(MediaCategoryAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["parent"].queryset = self.fields["parent"].queryset.exclude(
             pk=self.instance.pk
         )
@@ -44,7 +42,7 @@ class MediaFileAdminForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(MediaFileAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if settings.FEINCMS_MEDIAFILE_OVERWRITE and self.instance.id:
             field = self.instance.file.field

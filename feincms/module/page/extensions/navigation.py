@@ -7,12 +7,10 @@ which processes, modifies or adds subnavigation entries. The bundled
 be they real Page instances or extended navigation entries.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import types
 from collections import OrderedDict
 
-import six
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
@@ -36,7 +34,7 @@ class TypeRegistryMetaClass(type):
             cls.types.append(cls)
 
 
-class PagePretender(object):
+class PagePretender:
     """
     A PagePretender pretends to be a page, but in reality is just a shim layer
     that implements enough functionality to inject fake pages eg. into the
@@ -67,7 +65,7 @@ class PagePretender(object):
         return self.level
 
     def get_children(self):
-        """ overwrite this if you want nested extensions using recursetree """
+        """overwrite this if you want nested extensions using recursetree"""
         return []
 
     def available_translations(self):
@@ -80,7 +78,7 @@ class PagePretender(object):
         return shorten_string(self.title)
 
 
-class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
+class NavigationExtension(metaclass=TypeRegistryMetaClass):
     """
     Base class for all navigation extensions.
 
@@ -105,7 +103,7 @@ class NavigationExtension(six.with_metaclass(TypeRegistryMetaClass)):
 def navigation_extension_choices():
     for ext in NavigationExtension.types:
         if issubclass(ext, NavigationExtension) and ext is not NavigationExtension:
-            yield ("%s.%s" % (ext.__module__, ext.__name__), ext.name)
+            yield (f"{ext.__module__}.{ext.__name__}", ext.name)
 
 
 def get_extension_class(extension):
@@ -123,7 +121,7 @@ class Extension(extensions.Extension):
     def _extensions(self):
         if self.navigation_extensions is None:
             return OrderedDict(
-                ("%s.%s" % (ext.__module__, ext.__name__), ext)
+                (f"{ext.__module__}.{ext.__name__}", ext)
                 for ext in NavigationExtension.types
                 if (
                     issubclass(ext, NavigationExtension)
@@ -133,7 +131,7 @@ class Extension(extensions.Extension):
 
         else:
             return OrderedDict(
-                ("%s.%s" % (ext.__module__, ext.__name__), ext)
+                (f"{ext.__module__}.{ext.__name__}", ext)
                 for ext in map(get_extension_class, self.navigation_extensions)
             )
 

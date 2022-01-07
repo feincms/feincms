@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # FeinCMS documentation build configuration file, created by
 # sphinx-quickstart on Mon Aug 10 17:03:33 2009.
@@ -38,8 +37,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"FeinCMS"
-copyright = u"2009-2010, Feinheit GmbH and contributors"
+project = "FeinCMS"
+copyright = "2009-2010, Feinheit GmbH and contributors"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -47,7 +46,7 @@ copyright = u"2009-2010, Feinheit GmbH and contributors"
 #
 # The short X.Y version.
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-import feincms
+import feincms  # noqa
 
 
 version = ".".join(map(str, feincms.VERSION))
@@ -181,8 +180,8 @@ latex_documents = [
     (
         "index",
         "FeinCMS.tex",
-        u"FeinCMS Documentation",
-        u"Feinheit GmbH and contributors",
+        "FeinCMS Documentation",
+        "Feinheit GmbH and contributors",
         "manual",
     ),
 ]

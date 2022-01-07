@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 from django.apps import apps
 from django.contrib.sitemaps import Sitemap
@@ -48,7 +46,7 @@ class PageSitemap(Sitemap):
         extensions. If using PagePretender, make sure to include title, url,
         level, in_navigation and optionally modification_date.
         """
-        super(PageSitemap, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.depth_cutoff = max_depth
         self.navigation_only = navigation_only
         self.changefreq = changefreq

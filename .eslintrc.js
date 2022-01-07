@@ -16,4 +16,4 @@ module.exports = {
     "prettier/prettier": "error",
     quotes: 0,
   },
-};
+}

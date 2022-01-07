@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -40,7 +38,7 @@ else:
         def render(self, **kwargs):
             return ct_render_to_string(
                 [
-                    "content/filer/%s_%s.html" % (self.file_type, self.type),
+                    f"content/filer/{self.file_type}_{self.type}.html",
                     "content/filer/%s.html" % self.type,
                     "content/filer/%s.html" % self.file_type,
                     "content/filer/default.html",

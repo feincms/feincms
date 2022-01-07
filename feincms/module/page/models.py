@@ -1,10 +1,7 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
-import six
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Q
@@ -149,7 +146,6 @@ PageManager.add_to_active_filters(Q(active=True), key="is_active")
 
 
 # ------------------------------------------------------------------------
-@six.python_2_unicode_compatible
 class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     active = models.BooleanField(_("active"), default=True)
 
@@ -251,7 +247,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
     short_title.short_description = _("title")
 
     def __init__(self, *args, **kwargs):
-        super(BasePage, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Cache a copy of the loaded _cached_url value so we can reliably
         # determine whether it has been changed in the save handler:
         self._original_cached_url = self._cached_url
@@ -271,10 +267,10 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         elif self.is_root_node():
             self._cached_url = "/%s/" % self.slug
         else:
-            self._cached_url = "%s%s/" % (self.parent._cached_url, self.slug)
+            self._cached_url = f"{self.parent._cached_url}{self.slug}/"
 
         cached_page_urls[self.id] = self._cached_url
-        super(BasePage, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # If our cached URL changed we need to update all descendants to
         # reflect the changes. Since this is a very expensive operation
@@ -290,7 +286,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                 page._cached_url = page.override_url
             else:
                 # cannot be root node by definition
-                page._cached_url = "%s%s/" % (
+                page._cached_url = "{}{}/".format(
                     cached_page_urls[page.parent_id],
                     page.slug,
                 )
@@ -310,7 +306,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                         % {"page_class": self._meta.verbose_name}
                     )
                 )
-        super(BasePage, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
     delete.alters_data = True
 

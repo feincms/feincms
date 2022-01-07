@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import os
 from datetime import datetime, timedelta
@@ -133,7 +131,7 @@ class PagesTestCase(TestCase):
             title=title,
             slug=kwargs.get("slug", slugify(title)),
             parent=parent,
-            **defaults
+            **defaults,
         )
 
     def create_default_page_set(self):
@@ -1510,7 +1508,7 @@ class PagesTestCase(TestCase):
         self.login()
         self.assertEqual(self.client.get(page.get_absolute_url()).status_code, 404)
         self.assertContains(
-            self.client.get("%s_preview/%s/" % (page.get_absolute_url(), page.pk)),
+            self.client.get(f"{page.get_absolute_url()}_preview/{page.pk}/"),
             "Example content",
         )
 

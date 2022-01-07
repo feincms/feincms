@@ -36,16 +36,15 @@ Here's an (incomplete) list of variables to use in {% cache %} blocks [#djangoca
         Depending on the extensions loaded, this varies with the page,
         the page's modification date, its language, etc. This is always
         a safe bet to use on page specific fragments.
-        
+
     * LANGUAGE_CODE -- even if two requests are asking for the same page,
         the html code rendered might differ in translated elements in the
         navigation or elsewhere. If the fragment varies on language, include
         LANGUAGE_CODE in the cache specifier.
-        
+
     * request.user.id -- different users might be allowed to see different
         views of the site. Add request.user.id to the cache specifier if
         this is the case.
 
-.. [#djangocache] Please see the django documentation for detailed 
+.. [#djangocache] Please see the django documentation for detailed
     description of the {% cache %} template tag.
-

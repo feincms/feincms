@@ -2,19 +2,17 @@
 Base types for extensions refactor
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import inspect
 from functools import wraps
 
-import six
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
 
 from feincms.utils import get_object
 
 
-class ExtensionsMixin(object):
+class ExtensionsMixin:
     @classmethod
     def register_extensions(cls, *extensions):
         """
@@ -40,13 +38,13 @@ class ExtensionsMixin(object):
             if inspect.isclass(ext) and issubclass(ext, Extension):
                 extension = ext
 
-            elif isinstance(ext, six.string_types):
+            elif isinstance(ext, str):
                 try:
                     extension = get_object(ext)
                 except (AttributeError, ImportError, ValueError):
                     if not extension:
                         raise ImproperlyConfigured(
-                            "%s is not a valid extension for %s" % (ext, cls.__name__)
+                            f"{ext} is not a valid extension for {cls.__name__}"
                         )
 
             if hasattr(extension, "Extension"):
@@ -60,7 +58,7 @@ class ExtensionsMixin(object):
 
             else:
                 raise ImproperlyConfigured(
-                    "%s is not a valid extension for %s" % (ext, cls.__name__)
+                    f"{ext} is not a valid extension for {cls.__name__}"
                 )
 
             if extension in cls._extensions_seen:
@@ -73,7 +71,7 @@ class ExtensionsMixin(object):
                 raise ImproperlyConfigured("%r is an invalid extension." % extension)
 
 
-class Extension(object):
+class Extension:
     def __init__(self, model, **kwargs):
         self.model = model
         for key, value in kwargs.items():
@@ -95,7 +93,7 @@ class Extension(object):
 
 class ExtensionModelAdmin(admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
-        super(ExtensionModelAdmin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.initialize_extensions()
 
     def initialize_extensions(self):

@@ -1,10 +1,8 @@
-# encoding=utf-8
 # Thanks to http://www.djangosnippets.org/snippets/1051/
 #
 # Authors: Marinho Brandao <marinho at gmail.com>
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
-from __future__ import absolute_import, unicode_literals
 
 from django import VERSION as DJANGO_VERSION
 from django.contrib.admin.filters import ChoicesFieldListFilter
@@ -27,9 +25,7 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
     """
 
     def __init__(self, f, request, params, model, model_admin, field_path=None):
-        super(ParentFieldListFilter, self).__init__(
-            f, request, params, model, model_admin, field_path
-        )
+        super().__init__(f, request, params, model, model_admin, field_path)
 
         parent_ids = (
             model.objects.exclude(parent=None)
@@ -43,7 +39,9 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
         self.lookup_choices = [
             (
                 pk,
-                "%s%s" % ("&nbsp;&nbsp;" * level, shorten_string(title, max_length=25)),
+                "{}{}".format(
+                    "&nbsp;&nbsp;" * level, shorten_string(title, max_length=25)
+                ),
             )
             for pk, title, level in parents
         ]
@@ -74,9 +72,7 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
     """
 
     def __init__(self, f, request, params, model, model_admin, field_path=None):
-        super(CategoryFieldListFilter, self).__init__(
-            f, request, params, model, model_admin, field_path
-        )
+        super().__init__(f, request, params, model, model_admin, field_path)
 
         # Restrict results to categories which are actually in use:
         if DJANGO_VERSION < (1, 8):
@@ -90,12 +86,12 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
             related_name = f.related_query_name()
 
         self.lookup_choices = sorted(
-            [
-                (i.pk, "%s (%s)" % (i, i._related_count))
+            (
+                (i.pk, f"{i} ({i._related_count})")
                 for i in related_model.objects.annotate(
                     _related_count=Count(related_name)
                 ).exclude(_related_count=0)
-            ],
+            ),
             key=lambda i: i[1],
         )
 

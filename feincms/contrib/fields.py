@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 import json
 import logging
 from distutils.version import LooseVersion
@@ -15,7 +13,7 @@ class JSONFormField(forms.fields.CharField):
         # It seems that sometimes we receive dict objects here, not only
         # strings. Partial form validation maybe?
         if value:
-            if isinstance(value, six.string_types):
+            if isinstance(value, str):
                 try:
                     value = json.loads(value)
                 except ValueError:
@@ -28,7 +26,7 @@ class JSONFormField(forms.fields.CharField):
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 
-        return super(JSONFormField, self).clean(value, *args, **kwargs)
+        return super().clean(value, *args, **kwargs)
 
 
 if LooseVersion(get_version()) > LooseVersion("1.8"):
@@ -52,7 +50,7 @@ class JSONField(workaround_class):
 
         if isinstance(value, dict):
             return value
-        elif isinstance(value, six.string_types) or isinstance(value, six.binary_type):
+        elif isinstance(value, str) or isinstance(value, bytes):
             # Avoid asking the JSON decoder to handle empty values:
             if not value:
                 return {}
@@ -95,6 +93,6 @@ class JSONField(workaround_class):
         if isinstance(value, dict):
             value = json.dumps(value, cls=DjangoJSONEncoder)
 
-        assert isinstance(value, six.string_types)
+        assert isinstance(value, str)
 
         return value

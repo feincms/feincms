@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import logging
 
@@ -29,7 +27,7 @@ def _render_content(content, **kwargs):
         level = getattr(request, "feincms_render_level", 0)
         if level > 10:
             logging.getLogger("feincms").error(
-                "Refusing to render %r, render level is already %s" % (content, level)
+                f"Refusing to render {content!r}, render level is already {level}"
             )
             return
         setattr(request, "feincms_render_level", level + 1)

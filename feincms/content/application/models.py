@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import warnings
 from collections import OrderedDict
 from email.utils import parsedate
@@ -240,7 +238,7 @@ class ApplicationContent(models.Model):
             custom_fields = {}
 
             def __init__(self, *args, **kwargs):
-                super(ApplicationContentItemEditorForm, self).__init__(*args, **kwargs)
+                super().__init__(*args, **kwargs)
 
                 instance = kwargs.get("instance", None)
 
@@ -277,15 +275,13 @@ class ApplicationContent(models.Model):
                 # get the model so we can set .parameters to the values of our
                 # custom fields before calling save(commit=True)
 
-                m = super(ApplicationContentItemEditorForm, self).save(
-                    commit=False, *args, **kwargs
-                )
+                m = super().save(commit=False, *args, **kwargs)
 
-                m.parameters = dict(
-                    (k, self.cleaned_data[k])
+                m.parameters = {
+                    k: self.cleaned_data[k]
                     for k in self.custom_fields
                     if k in self.cleaned_data
-                )
+                }
 
                 if commit:
                     m.save(**kwargs)
@@ -297,7 +293,7 @@ class ApplicationContent(models.Model):
         cls.feincms_item_editor_form = ApplicationContentItemEditorForm
 
     def __init__(self, *args, **kwargs):
-        super(ApplicationContent, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.app_config = self.ALL_APPS_CONFIG.get(self.urlconf_path, {}).get(
             "config", {}
         )
@@ -322,7 +318,7 @@ class ApplicationContent(models.Model):
             fn, args, kwargs = resolve(path, urlconf_path)
         except (ValueError, Resolver404):
             raise Resolver404(
-                str("Not found (resolving %r in %r failed)") % (path, urlconf_path)
+                f"Not found (resolving {path!r} in {urlconf_path!r} failed)"
             )
 
         # Variables from the ApplicationContent parameters are added to request
@@ -389,7 +385,7 @@ class ApplicationContent(models.Model):
         is_ajax = (
             request.is_ajax()
             if hasattr(request, "is_ajax")
-            else request.headers.get('x-requested-with') == 'XMLHttpRequest'
+            else request.headers.get("x-requested-with") == "XMLHttpRequest"
         )
         return (
             response.status_code != 200
@@ -418,9 +414,9 @@ class ApplicationContent(models.Model):
         # Ideally, for the Cache-Control header, we'd want to do some
         # intelligent combining, but that's hard. Let's just collect and unique
         # them and let the client worry about that.
-        cc_headers = set(("must-revalidate",))
+        cc_headers = {"must-revalidate"}
         for x in (cc.split(",") for cc in headers.get("Cache-Control", ())):
-            cc_headers |= set((s.strip() for s in x))
+            cc_headers |= {s.strip() for s in x}
 
         if len(cc_headers):
             response["Cache-Control"] = ", ".join(cc_headers)
@@ -439,7 +435,7 @@ class ApplicationContent(models.Model):
 
     @classmethod
     def app_reverse_cache_key(self, urlconf_path, **kwargs):
-        return "FEINCMS:%s:APPCONTENT:%s:%s" % (
+        return "FEINCMS:{}:APPCONTENT:{}:{}".format(
             getattr(settings, "SITE_ID", 0),
             get_language(),
             urlconf_path,

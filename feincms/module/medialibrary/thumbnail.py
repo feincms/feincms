@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 from feincms import settings
 from feincms.templatetags import feincms_thumbnail
 from feincms.utils import get_object

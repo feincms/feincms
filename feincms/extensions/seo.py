@@ -2,7 +2,6 @@
 Add a keyword and a description field which are helpful for SEO optimization.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _

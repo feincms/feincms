@@ -1,8 +1,6 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import json
 import logging
@@ -54,7 +52,7 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
     else:
         title = ""
     icon_url = static("feincms/img/icon-%s.gif" % BOOLEAN_MAPPING[field_val])
-    return mark_safe('<img src="%s" alt="%s" %s/>' % (icon_url, alt_text, title))
+    return mark_safe(f'<img src="{icon_url}" alt="{alt_text}" {title}/>')
 
 
 def _build_tree_structure(queryset):
@@ -144,12 +142,12 @@ class ChangeList(main.ChangeList):
 
     def __init__(self, request, *args, **kwargs):
         self.user = request.user
-        super(ChangeList, self).__init__(request, *args, **kwargs)
+        super().__init__(request, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         mptt_opts = self.model._mptt_meta
         qs = (
-            super(ChangeList, self)
+            super()
             .get_queryset(*args, **kwargs)
             .order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr)
         )
@@ -185,7 +183,7 @@ class ChangeList(main.ChangeList):
                     reduce(lambda p, q: p | q, clauses)
                 )
 
-        super(ChangeList, self).get_results(request)
+        super().get_results(request)
 
         # Pre-process permissions because we still have the request here,
         # which is not passed in later stages in the tree editor
@@ -218,7 +216,7 @@ class TreeEditor(ExtensionModelAdmin):
         list_per_page = 999999999
 
     def __init__(self, *args, **kwargs):
-        super(TreeEditor, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.list_display = list(self.list_display)
 
@@ -391,7 +389,7 @@ class TreeEditor(ExtensionModelAdmin):
 
         except Exception:
             logger.exception("Unhandled exception while toggling %s on %s", attr, obj)
-            return HttpResponseServerError("Unable to toggle %s on %s" % (attr, obj))
+            return HttpResponseServerError(f"Unable to toggle {attr} on {obj}")
 
         # Weed out unchanged cells to keep the updates small. This assumes
         # that the order a possible get_descendents() returns does not change
@@ -437,9 +435,7 @@ class TreeEditor(ExtensionModelAdmin):
             )
         )
 
-        return super(TreeEditor, self).changelist_view(
-            request, extra_context, *args, **kwargs
-        )
+        return super().changelist_view(request, extra_context, *args, **kwargs)
 
     def has_add_permission(self, request, obj=None):
         """
@@ -452,7 +448,7 @@ class TreeEditor(ExtensionModelAdmin):
         else:
             r = request.user.has_perm(perm)
 
-        return r and super(TreeEditor, self).has_add_permission(request)
+        return r and super().has_add_permission(request)
 
     def has_change_permission(self, request, obj=None):
         """
@@ -465,7 +461,7 @@ class TreeEditor(ExtensionModelAdmin):
         else:
             r = request.user.has_perm(perm)
 
-        return r and super(TreeEditor, self).has_change_permission(request, obj)
+        return r and super().has_change_permission(request, obj)
 
     def has_delete_permission(self, request, obj=None):
         """
@@ -478,7 +474,7 @@ class TreeEditor(ExtensionModelAdmin):
         else:
             r = request.user.has_perm(perm)
 
-        return r and super(TreeEditor, self).has_delete_permission(request, obj)
+        return r and super().has_delete_permission(request, obj)
 
     def _move_node(self, request):
         if hasattr(self.model.objects, "move_node"):
@@ -563,7 +559,7 @@ class TreeEditor(ExtensionModelAdmin):
             return delete_selected(self, request, queryset)
 
     def get_actions(self, request):
-        actions = super(TreeEditor, self).get_actions(request)
+        actions = super().get_actions(request)
         if "delete_selected" in actions:
             actions["delete_selected"] = (
                 self.delete_selected_tree,

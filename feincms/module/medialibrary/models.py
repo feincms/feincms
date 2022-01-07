@@ -1,14 +1,11 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 
-from __future__ import absolute_import, unicode_literals
 
 import os
 import re
 
 import django
-import six
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -35,11 +32,10 @@ class CategoryManager(models.Manager):
     """
 
     def get_queryset(self):
-        return super(CategoryManager, self).get_queryset().select_related("parent")
+        return super().get_queryset().select_related("parent")
 
 
 # ------------------------------------------------------------------------
-@six.python_2_unicode_compatible
 class Category(models.Model):
     """
     These categories are meant primarily for organizing media files in the
@@ -69,7 +65,7 @@ class Category(models.Model):
 
     def __str__(self):
         if self.parent_id:
-            return "%s - %s" % (self.parent.title, self.title)
+            return f"{self.parent.title} - {self.title}"
 
         return self.title
 
@@ -77,7 +73,7 @@ class Category(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
 
-        super(Category, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     save.alters_data = True
 
@@ -89,11 +85,10 @@ class Category(models.Model):
         return p
 
     def path(self):
-        return " - ".join((f.title for f in self.path_list()))
+        return " - ".join(f.title for f in self.path_list())
 
 
 # ------------------------------------------------------------------------
-@six.python_2_unicode_compatible
 class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
     """
     Abstract media file class. Includes the
@@ -150,7 +145,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
             cls._meta.get_field("type").choices = choices
 
     def __init__(self, *args, **kwargs):
-        super(MediaFileBase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.file:
             self._original_file_name = self.file.name
 
@@ -202,10 +197,10 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         if self.file:
             try:
                 self.file_size = self.file.size
-            except (OSError, IOError, ValueError) as e:
-                logger.error("Unable to read file size for %s: %s" % (self, e))
+            except (OSError, ValueError) as e:
+                logger.error(f"Unable to read file size for {self}: {e}")
 
-        super(MediaFileBase, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         logger.info(
             "Saved mediafile %d (%s, type %s, %d bytes)"
@@ -228,7 +223,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         try:
             self.file.storage.delete(name)
         except Exception as e:
-            logger.warn("Cannot delete media file %s: %s" % (name, e))
+            logger.warn(f"Cannot delete media file {name}: {e}")
 
 
 # ------------------------------------------------------------------------
@@ -292,7 +287,6 @@ def _mediafile_post_delete(sender, instance, **kwargs):
 
 
 # ------------------------------------------------------------------------
-@six.python_2_unicode_compatible
 class MediaFileTranslation(Translation(MediaFile)):
     """
     Translated media file caption and description.

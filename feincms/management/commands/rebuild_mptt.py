@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------------
-# coding=utf-8
 # ------------------------------------------------------------------------
 """
 ``rebuild_mptt``
@@ -7,8 +6,6 @@
 
 ``rebuild_mptt`` rebuilds your mptt pointers. Only use in emergencies.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 
 try:
