@@ -22,7 +22,9 @@ class Handler(ContentView):
 
     def get_object(self):
         path = None
-        if self.args:
+        if "path" in self.kwargs:
+            path = self.kwargs["path"]
+        elif self.args:
             path = self.args[0]
         return self.page_model._default_manager.for_request(
             self.request, raise404=True, best_match=True, path=path
