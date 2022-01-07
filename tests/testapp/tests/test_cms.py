@@ -1,8 +1,3 @@
-# ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
-
-
-import django
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.test import TestCase
@@ -12,16 +7,6 @@ from feincms.contents import RawContent, RichTextContent
 from feincms.module.medialibrary.contents import MediaFileContent
 
 from .test_stuff import Empty
-
-
-try:
-    from unittest import skipIf
-except ImportError:
-    from django.utils.unittest import skipIf
-
-skipUnlessLegacy = skipIf(
-    django.VERSION >= (1, 8), "Legacy tests only necessary in Django < 1.8"
-)
 
 
 # ------------------------------------------------------------------------
@@ -91,53 +76,6 @@ class CMSBaseTest(TestCase):
         ExampleCMSBase2.create_content_type(RawContent, class_name="RawContent2")
         ct2 = ExampleCMSBase2.content_type_for(RawContent)
         self.assertEqual(ct2._meta.db_table, "testapp_examplecmsbase2_rawcontent2")
-
-    @skipUnlessLegacy
-    def test_09_related_objects_cache(self):
-        """
-        We need to define a model with relationship to our Base *after* all
-        content types have been registered; previously _fill_*_cache methods
-        were called during each content type registration, so any new related
-        objects added after the last content type time missed the boat. Now we
-        delete the cache so hopefully _fill_*_cache* won't be called until all
-        related models have been defined.
-
-        TODO that's a dumb test, we should try being less dynamic instead of
-        supporting all types of ad-hoc definitions of models etc.
-
-        It also fails on Django 1.7 since the introduction of django.apps
-        """
-
-        class Attachment(models.Model):
-            base = models.ForeignKey(
-                ExampleCMSBase,
-                on_delete=models.CASCADE,
-                related_name="test_related_name",
-            )
-
-        # See issue #323 on Github.
-        ExampleCMSBase._meta._fill_related_objects_cache()
-
-        related_models = map(
-            lambda x: x.model, ExampleCMSBase._meta.get_all_related_objects()
-        )
-
-        self.assertTrue(Attachment in related_models)
-        self.assertTrue(hasattr(ExampleCMSBase, "test_related_name"))
-        # self.assertFalse(hasattr(Attachment, 'anycontents'))
-
-        class AnyContent(models.Model):
-            attachment = models.ForeignKey(
-                Attachment, on_delete=models.CASCADE, related_name="anycontents"
-            )
-
-            class Meta:
-                abstract = True
-
-        ExampleCMSBase.create_content_type(AnyContent)
-
-        self.assertTrue(hasattr(ExampleCMSBase, "test_related_name"))
-        self.assertTrue(hasattr(Attachment, "anycontents"))
 
     def test_10_content_type_subclasses(self):
         """

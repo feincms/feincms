@@ -6,14 +6,8 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-
 from mptt.models import MPTTModel, TreeManager
 
 from feincms import settings

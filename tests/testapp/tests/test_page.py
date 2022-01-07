@@ -16,19 +16,12 @@ from django.http import Http404, HttpResponseBadRequest
 from django.template import TemplateDoesNotExist
 from django.template.defaultfilters import slugify
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
-
-from feincms._internal import force_text
-
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-
 from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
+from feincms._internal import force_text
 from feincms.content.application.models import app_reverse
 from feincms.contents import RawContent, RichTextContent
 from feincms.context_processors import add_page_if_missing

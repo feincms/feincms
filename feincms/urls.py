@@ -1,12 +1,6 @@
-# flake8: noqa
+from django.urls import re_path
 
 from feincms.views import Handler
-
-
-try:
-    from django.urls import re_path
-except ImportError:
-    from django.conf.urls import url as re_path
 
 
 handler = Handler.as_view()

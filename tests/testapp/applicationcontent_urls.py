@@ -6,14 +6,9 @@ This is a dummy module used to test the ApplicationContent
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
+from django.urls import re_path
 
 from feincms.content.application.models import standalone, unpack
-
-
-try:
-    from django.urls import re_path
-except ImportError:
-    from django.conf.urls import url as re_path
 
 
 def module_root(request):

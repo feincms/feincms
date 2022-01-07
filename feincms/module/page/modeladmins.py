@@ -10,19 +10,9 @@ from django.contrib import admin, messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
+from django.templatetags.static import static
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-
-try:
-    from django.contrib.staticfiles.templatetags.staticfiles import static
-except ImportError:
-    # Newer Django versions.
-    from django.templatetags.static import static
 
 from feincms import ensure_completely_loaded, settings
 from feincms.admin import item_editor, tree_editor

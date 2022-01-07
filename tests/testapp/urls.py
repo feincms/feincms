@@ -3,16 +3,10 @@ import os
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.urls import include, re_path
 from django.views.static import serve
 
 from feincms.module.page.sitemap import PageSitemap
-
-
-try:
-    from django.urls import include, re_path
-except ImportError:
-    from django.conf.urls import url as re_path
-    from django.urls import include
 
 
 sitemaps = {"pages": PageSitemap}

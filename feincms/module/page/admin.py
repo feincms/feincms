@@ -3,18 +3,13 @@
 
 
 from django.contrib import admin
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 
 from feincms import ensure_completely_loaded, settings
 
 from .modeladmins import PageAdmin
 from .models import Page
 
-
-try:
-    from django.core.exceptions import FieldDoesNotExist
-except ImportError:  # Django<1.8
-    from django.db.models import FieldDoesNotExist
 
 # ------------------------------------------------------------------------
 

@@ -9,30 +9,18 @@ from django.core.cache import cache
 from django.db import models
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
+from django.urls import (
+    NoReverseMatch,
+    Resolver404,
+    get_script_prefix,
+    resolve,
+    reverse,
+    set_script_prefix,
+)
 from django.utils.functional import lazy
 from django.utils.http import http_date
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language, gettext_lazy as _
-
-
-try:
-    from django.urls import (
-        NoReverseMatch,
-        Resolver404,
-        get_script_prefix,
-        resolve,
-        reverse,
-        set_script_prefix,
-    )
-except ImportError:
-    from django.core.urlresolvers import (
-        NoReverseMatch,
-        reverse,
-        get_script_prefix,
-        set_script_prefix,
-        Resolver404,
-        resolve,
-    )
 
 from feincms.admin.item_editor import ItemEditorForm
 from feincms.contrib.fields import JSONField

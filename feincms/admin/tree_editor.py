@@ -17,6 +17,7 @@ from django.http import (
     HttpResponseNotFound,
     HttpResponseServerError,
 )
+from django.templatetags.static import static
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
@@ -26,13 +27,6 @@ from mptt.forms import MPTTAdminForm
 from feincms import settings
 from feincms._internal import force_text
 from feincms.extensions import ExtensionModelAdmin
-
-
-try:
-    # Django<3
-    from django.contrib.staticfiles.templatetags.staticfiles import static
-except ImportError:
-    from django.templatetags.static import static
 
 
 logger = logging.getLogger(__name__)

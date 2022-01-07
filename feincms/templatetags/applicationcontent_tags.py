@@ -1,13 +1,8 @@
 from django import template
 from django.template import TemplateSyntaxError
 from django.template.defaulttags import kwarg_re
+from django.urls import NoReverseMatch
 from django.utils.encoding import smart_str
-
-
-try:
-    from django.urls import NoReverseMatch
-except ImportError:
-    from django.core.urlresolvers import NoReverseMatch
 
 from feincms.content.application.models import (
     ApplicationContent,

@@ -43,9 +43,6 @@ def _render_content(content, **kwargs):
             try:
                 engine = context.template.engine
             except AttributeError:
-                # This fails hard in Django 1.7 (ImportError). So what. This
-                # just means that this particular feature isn't available
-                # there.
                 from django.template.engine import Engine
 
                 engine = Engine.get_default()

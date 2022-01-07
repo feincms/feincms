@@ -13,15 +13,10 @@ from django.core.files.images import get_image_dimensions
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.defaultfilters import filesizeformat
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _, ngettext
 from django.views.decorators.csrf import csrf_protect
-
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
 
 from feincms.extensions import ExtensionModelAdmin
 from feincms.translations import admin_translationinline, lookup_translations
@@ -124,10 +119,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
     actions = [assign_category, save_as_zipfile]
 
     def get_urls(self):
-        try:
-            from django.urls import re_path
-        except ImportError:
-            from django.conf.urls import url as re_path
+        from django.urls import re_path
 
         return [
             re_path(
