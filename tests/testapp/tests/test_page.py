@@ -22,7 +22,7 @@ from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
 from feincms.content.application.models import app_reverse
-from feincms.contents import RawContent, RichTextContent
+from feincms.contents import RawContent
 from feincms.context_processors import add_page_if_missing
 from feincms.models import ContentProxy
 from feincms.module.medialibrary.models import Category, MediaFile
@@ -591,19 +591,6 @@ class PagesTestCase(TestCase):
             )
 
         self.assertNotEqual(page2._ct_inventory, {})
-
-    def test_14_richtext(self):
-        # only create the content type to test the item editor
-        # customization hooks
-        tmp = Page._feincms_content_types[:]
-        type = Page.create_content_type(RichTextContent, regions=("notexists",))
-        Page._feincms_content_types = tmp
-
-        from django.utils.safestring import SafeData
-
-        obj = type()
-        obj.text = "Something"
-        self.assertTrue(isinstance(obj.render(), SafeData))
 
     def test_17_page_template_tags(self):
         self.create_default_page_set()

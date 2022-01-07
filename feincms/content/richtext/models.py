@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from feincms import settings
-from feincms._internal import ct_render_to_string
 from feincms.contrib.richtext import RichTextField
 
 
@@ -30,11 +29,9 @@ class RichTextContent(models.Model):
         verbose_name_plural = _("rich texts")
 
     def render(self, **kwargs):
-        return ct_render_to_string(
+        return (
             "content/richtext/default.html",
             {"content": self},
-            request=kwargs.get("request"),
-            context=kwargs.get("context"),
         )
 
     @classmethod

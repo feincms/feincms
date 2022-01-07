@@ -10,7 +10,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from feincms import settings
-from feincms._internal import ct_render_to_string
 from feincms.templatetags import feincms_thumbnail
 
 
@@ -64,11 +63,9 @@ class ImageContent(models.Model):
         if hasattr(self, "position"):
             templates.insert(0, "content/image/%s.html" % self.position)
 
-        return ct_render_to_string(
+        return (
             templates,
             {"content": self},
-            request=kwargs.get("request"),
-            context=kwargs.get("context"),
         )
 
     def get_image(self):

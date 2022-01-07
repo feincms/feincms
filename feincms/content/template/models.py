@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from feincms._internal import ct_render_to_string
 from feincms.content.raw.models import RawContent  # noqa
 from feincms.content.richtext.models import RichTextContent  # noqa
 
@@ -31,9 +30,7 @@ class TemplateContent(models.Model):
         )
 
     def render(self, **kwargs):
-        return ct_render_to_string(
+        return (
             self.template,
             {"content": self},
-            request=kwargs.get("request"),
-            context=kwargs.get("context"),
         )

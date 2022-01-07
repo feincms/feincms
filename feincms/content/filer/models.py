@@ -3,7 +3,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from feincms._internal import ct_render_to_string
 from feincms.admin.item_editor import FeinCMSInline
 
 
@@ -36,7 +35,7 @@ else:
             abstract = True
 
         def render(self, **kwargs):
-            return ct_render_to_string(
+            return (
                 [
                     f"content/filer/{self.file_type}_{self.type}.html",
                     "content/filer/%s.html" % self.type,
@@ -44,8 +43,6 @@ else:
                     "content/filer/default.html",
                 ],
                 {"content": self},
-                request=kwargs.get("request"),
-                context=kwargs.get("context"),
             )
 
     class FilerFileContent(ContentWithFilerFile):

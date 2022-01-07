@@ -8,6 +8,12 @@ Change log
 
 - Added pre-commit.
 - Dropped compatibility guarantees with Python < 3.6, Django < 3.2.
+- Changed all bundled content types' ``render()`` methods to return the
+  ``(template_name, context)`` tuple instead of rendering content themselves.
+- The default view was changed to accept the path as a ``path`` keyword
+  argument, not only as a positional argument.
+- Changed the item editor action buttons CSS to not use transitions so that the
+  sprite buttons look as they should.
 
 
 `v1.20.0`_ (2021-03-22)

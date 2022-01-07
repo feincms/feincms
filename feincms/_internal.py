@@ -5,9 +5,6 @@ http://mail.python.org/pipermail/python-dev/2008-January/076194.html
 """
 
 
-from django.template.loader import render_to_string
-
-
 __all__ = ("monkeypatch_method", "monkeypatch_property")
 
 
@@ -41,7 +38,3 @@ def monkeypatch_property(cls):
         return func
 
     return decorator
-
-
-def ct_render_to_string(template, ctx, **kwargs):
-    return render_to_string(template, ctx, request=kwargs.get("request"))

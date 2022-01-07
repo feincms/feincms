@@ -3,7 +3,6 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from feincms._internal import ct_render_to_string
 from feincms.admin.item_editor import FeinCMSInline
 from feincms.module.medialibrary.fields import ContentWithMediaFile
 
@@ -63,7 +62,7 @@ class MediaFileContent(ContentWithMediaFile):
         )
 
     def render(self, **kwargs):
-        return ct_render_to_string(
+        return (
             [
                 f"content/mediafile/{self.mediafile.type}_{self.type}.html",
                 "content/mediafile/%s.html" % self.mediafile.type,
@@ -71,6 +70,4 @@ class MediaFileContent(ContentWithMediaFile):
                 "content/mediafile/default.html",
             ],
             {"content": self},
-            request=kwargs.get("request"),
-            context=kwargs.get("context"),
         )
