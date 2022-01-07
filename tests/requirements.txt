@@ -1,5 +1,0 @@
-Django
-django-mptt
-Pillow
-coverage
-pytz

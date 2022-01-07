@@ -17,7 +17,6 @@ from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
-from pytz.exceptions import AmbiguousTimeError
 
 from feincms import extensions
 
@@ -53,26 +52,11 @@ def granular_now(n=None, default_tz=None):
     if n is None:
         n = timezone.now()
     if default_tz is None:
-        default_tz = n.tzinfo
-
-    # Django 1.9:
-    # The correct way to resolve the AmbiguousTimeError every dst
-    # transition is... the is_dst parameter appeared with 1.9
-    # make_aware(some_datetime, get_current_timezone(), is_dst=True)
+        default_tz = timezone.get_current_timezone()
 
     rounded_minute = (n.minute // 5) * 5
     d = datetime(n.year, n.month, n.day, n.hour, rounded_minute)
-    try:
-        retval = timezone.make_aware(d, default_tz)
-    except AmbiguousTimeError:
-        try:
-            retval = timezone.make_aware(d, default_tz, is_dst=False)
-        except TypeError:  # Pre-Django 1.9
-            retval = timezone.make_aware(
-                datetime(n.year, n.month, n.day, n.hour + 1, rounded_minute), default_tz
-            )
-
-    return retval
+    return timezone.make_aware(d, default_tz, is_dst=True)
 
 
 # ------------------------------------------------------------------------

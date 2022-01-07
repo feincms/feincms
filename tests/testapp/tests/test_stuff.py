@@ -5,7 +5,6 @@
 import doctest
 from datetime import datetime
 
-import pytz
 from django.test import TestCase
 
 import feincms
@@ -74,6 +73,11 @@ class UtilsTest(TestCase):
 # ------------------------------------------------------------------------
 class TimezoneTest(TestCase):
     def test_granular_now_dst_transition(self):
+        try:
+            import pytz
+        except ModuleNotFoundError:
+            return
+
         # Should not raise an exception
         d = datetime(2016, 10, 30, 2, 10)
         tz = pytz.timezone("Europe/Copenhagen")
