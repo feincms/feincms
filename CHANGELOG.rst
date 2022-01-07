@@ -6,10 +6,14 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-- Added pre-commit.
-- Dropped compatibility guarantees with Python < 3.6, Django < 3.2.
+
+`v22.0.0`_ (2022-01-07)
+~~~~~~~~~~~~~~~~~~~~~~~
+
 - Changed all bundled content types' ``render()`` methods to return the
   ``(template_name, context)`` tuple instead of rendering content themselves.
+- Dropped compatibility guarantees with Python < 3.6, Django < 3.2.
+- Added pre-commit.
 - The default view was changed to accept the path as a ``path`` keyword
   argument, not only as a positional argument.
 - Changed the item editor action buttons CSS to not use transitions so that the
@@ -124,4 +128,5 @@ Change log
 .. _v1.18.0: https://github.com/feincms/feincms/compare/v1.17.0...v1.18.0
 .. _v1.19.0: https://github.com/feincms/feincms/compare/v1.18.0...v1.19.0
 .. _v1.20.0: https://github.com/feincms/feincms/compare/v1.19.0...v1.20.0
-.. _Next version: https://github.com/feincms/feincms/compare/v1.20.0...master
+.. _v22.0.0: https://github.com/feincms/feincms/compare/v1.20.0...v22.0.0
+.. _Next version: https://github.com/feincms/feincms/compare/v22.0.0...master
