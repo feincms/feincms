@@ -172,6 +172,7 @@ a.actionbutton {
   float: left;
   margin: 5px 0 0 20px;
   text-indent: -7000px;
+  transition: none;
 }
 
 a.richtextcontent {
