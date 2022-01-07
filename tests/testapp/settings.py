@@ -31,6 +31,7 @@ MEDIA_ROOT = os.path.join(BASEDIR, "media/")
 STATIC_ROOT = os.path.join(BASEDIR, "static/")
 SECRET_KEY = "supersikret"
 USE_TZ = True
+TIME_ZONE = "Europe/Zurich"
 
 ROOT_URLCONF = "testapp.urls"
 LANGUAGES = (("en", "English"), ("de", "German"))

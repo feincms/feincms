@@ -118,6 +118,7 @@ class PagesTestCase(TestCase):
             "in_navigation": False,
             "active": False,
             "navigation_group": "default",
+            "publication_date": timezone.now() - timedelta(days=1),
         }
         defaults.update(kwargs)
         return Page.objects.create(
