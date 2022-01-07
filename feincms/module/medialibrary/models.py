@@ -172,16 +172,15 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
 
     def determine_file_type(self, name):
         """
-        >>> t = MediaFileBase()
-        >>> str(t.determine_file_type('foobar.jpg'))
+        >>> str(MediaFile().determine_file_type('foobar.jpg'))
         'image'
-        >>> str(t.determine_file_type('foobar.PDF'))
+        >>> str(MediaFile().determine_file_type('foobar.PDF'))
         'pdf'
-        >>> str(t.determine_file_type('foobar.jpg.pdf'))
+        >>> str(MediaFile().determine_file_type('foobar.jpg.pdf'))
         'pdf'
-        >>> str(t.determine_file_type('foobar.jgp'))
+        >>> str(MediaFile().determine_file_type('foobar.jgp'))
         'other'
-        >>> str(t.determine_file_type('foobar-jpg'))
+        >>> str(MediaFile().determine_file_type('foobar-jpg'))
         'other'
         """
         for type_key, type_name, type_test in self.filetypes:
