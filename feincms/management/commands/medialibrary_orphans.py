@@ -1,8 +1,8 @@
 import os
 
 from django.core.management.base import NoArgsCommand
+from django.utils.encoding import force_str
 
-from feincms._internal import force_text
 from feincms.module.medialibrary.models import MediaFile
 
 
@@ -16,5 +16,5 @@ class Command(NoArgsCommand):
         for base, dirs, files in os.walk("media/medialibrary"):
             for f in files:
                 full = os.path.join(base[6:], f)
-                if force_text(full) not in mediafiles:
+                if force_str(full) not in mediafiles:
                     self.stdout.write(os.path.join(base, f))

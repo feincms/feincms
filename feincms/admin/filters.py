@@ -7,10 +7,10 @@
 from django import VERSION as DJANGO_VERSION
 from django.contrib.admin.filters import ChoicesFieldListFilter
 from django.db.models import Count
+from django.utils.encoding import smart_str
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
-from feincms._internal import smart_text
 from feincms.utils import shorten_string
 
 
@@ -57,7 +57,7 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
             yield {
                 "selected": pk == int(self.lookup_val or "0"),
                 "query_string": cl.get_query_string({self.lookup_kwarg: pk}),
-                "display": mark_safe(smart_text(title)),
+                "display": mark_safe(smart_str(title)),
             }
 
     def title(self):
@@ -106,7 +106,7 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
             yield {
                 "selected": pk == int(self.lookup_val or "0"),
                 "query_string": cl.get_query_string({self.lookup_kwarg: pk}),
-                "display": mark_safe(smart_text(title)),
+                "display": mark_safe(smart_str(title)),
             }
 
     def title(self):

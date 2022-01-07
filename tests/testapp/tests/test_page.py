@@ -18,10 +18,10 @@ from django.template.defaultfilters import slugify
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.encoding import force_str
 from mptt.exceptions import InvalidMove
 
 from feincms import settings as feincms_settings
-from feincms._internal import force_text
 from feincms.content.application.models import app_reverse
 from feincms.contents import RawContent, RichTextContent
 from feincms.context_processors import add_page_if_missing
@@ -395,7 +395,7 @@ class PagesTestCase(TestCase):
 
         self.assertEqual(page2.content.main[0].__class__.__name__, "RawContent")
         self.assertEqual(
-            force_text(page2.content.main[0]),
+            force_str(page2.content.main[0]),
             "RawContent<pk=1, parent=Page<pk=1, Test page>, region=main,"
             " ordering=0>",
         )
@@ -418,8 +418,8 @@ class PagesTestCase(TestCase):
         category = Category.objects.create(title="Category", parent=None)
         category2 = Category.objects.create(title="Something", parent=category)
 
-        self.assertEqual(force_text(category2), "Category - Something")
-        self.assertEqual(force_text(category), "Category")
+        self.assertEqual(force_str(category2), "Category - Something")
+        self.assertEqual(force_str(category), "Category")
 
         mediafile = MediaFile.objects.create(file="somefile.jpg")
         if django.VERSION < (2, 0):
@@ -430,21 +430,21 @@ class PagesTestCase(TestCase):
             mediafile=mediafile, region="main", type="default", ordering=1
         )
 
-        self.assertEqual(force_text(mediafile), "somefile.jpg")
+        self.assertEqual(force_str(mediafile), "somefile.jpg")
 
         mediafile.translations.create(
             caption="something", language_code="%s-ha" % short_language_code()
         )
         mediafile.purge_translation_cache()
 
-        self.assertTrue("something" in force_text(mediafile))
+        self.assertTrue("something" in force_str(mediafile))
 
         mf = page.content.main[1].mediafile
 
         self.assertEqual(mf.translation.caption, "something")
         self.assertEqual(mf.translation.short_language_code(), short_language_code())
         self.assertNotEqual(mf.get_absolute_url(), "")
-        self.assertEqual(force_text(mf), "something")
+        self.assertEqual(force_str(mf), "something")
         self.assertTrue(mf.type == "image")
 
         self.assertEqual(MediaFile.objects.only_language("de").count(), 0)

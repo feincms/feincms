@@ -6,9 +6,9 @@ import doctest
 from datetime import datetime
 
 from django.test import TestCase
+from django.utils.encoding import force_str
 
 import feincms
-from feincms._internal import force_text
 from feincms.extensions.datepublisher import granular_now
 from feincms.models import Region, Template
 from feincms.utils import get_object, shorten_string
@@ -42,7 +42,7 @@ class ModelsTest(TestCase):
 
         # I'm not sure whether this test tests anything at all
         self.assertEqual(r.key, t.regions[0].key)
-        self.assertEqual(force_text(r), "region title")
+        self.assertEqual(force_str(r), "region title")
 
 
 class UtilsTest(TestCase):

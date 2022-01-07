@@ -18,10 +18,10 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import connections, models
 from django.db.models import Q
 from django.forms.widgets import Media
+from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
 from feincms import ensure_completely_loaded
-from feincms._internal import force_text
 from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 
@@ -39,7 +39,7 @@ class Region:
         self._content_types = []
 
     def __str__(self):
-        return force_text(self.title)
+        return force_str(self.title)
 
     @property
     def content_types(self):
@@ -83,7 +83,7 @@ class Template:
         self.regions_dict = {r.key: r for r in self.regions}
 
     def __str__(self):
-        return force_text(self.title)
+        return force_str(self.title)
 
 
 class ContentProxy:

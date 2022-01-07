@@ -18,6 +18,7 @@ from django.http import (
     HttpResponseServerError,
 )
 from django.templatetags.static import static
+from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext, gettext_lazy as _
@@ -25,7 +26,6 @@ from mptt.exceptions import InvalidMove
 from mptt.forms import MPTTAdminForm
 
 from feincms import settings
-from feincms._internal import force_text
 from feincms.extensions import ExtensionModelAdmin
 
 
@@ -533,7 +533,7 @@ class TreeEditor(ExtensionModelAdmin):
                     if self.has_delete_permission(request, obj):
                         obj.delete()
                         n += 1
-                        obj_display = force_text(obj)
+                        obj_display = force_str(obj)
                         self.log_deletion(request, obj, obj_display)
                     else:
                         logger.warning(
