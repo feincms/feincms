@@ -6,7 +6,6 @@ import logging
 import sys
 import traceback
 
-import django
 from django import template
 from django.apps import apps
 from django.conf import settings
@@ -23,9 +22,6 @@ from feincms.utils.templatetags import (
 logger = logging.getLogger("feincms.templatetags.page")
 
 register = template.Library()
-assignment_tag = (
-    register.simple_tag if django.VERSION >= (1, 9) else register.assignment_tag
-)
 
 
 def _get_page_model():
@@ -40,7 +36,7 @@ def format_exception(e):
 
 
 # ------------------------------------------------------------------------
-@assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
     """
     Saves a list of pages into the given context variable.
@@ -482,7 +478,7 @@ def siblings_along_path_to(page_list, page2):
 
 
 # ------------------------------------------------------------------------
-@assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def page_is_active(context, page, feincms_page=None, path=None):
     """
     Usage example::

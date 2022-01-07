@@ -4,7 +4,6 @@
 
 import logging
 
-import django
 from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
@@ -13,9 +12,6 @@ from feincms.utils import get_singleton, get_singleton_url
 
 
 register = template.Library()
-assignment_tag = (
-    register.simple_tag if django.VERSION >= (1, 9) else register.assignment_tag
-)
 
 
 def _render_content(content, **kwargs):
@@ -89,7 +85,7 @@ def feincms_render_content(context, content, request=None):
     return _render_content(content, request=request, context=context)
 
 
-@assignment_tag
+@register.simple_tag
 def feincms_load_singleton(template_key, cls=None):
     """
     {% feincms_load_singleton template_key %} -- return a FeinCMS

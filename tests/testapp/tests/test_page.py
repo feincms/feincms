@@ -5,7 +5,6 @@
 import os
 from datetime import datetime, timedelta
 
-import django
 from django import forms, template
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
@@ -423,10 +422,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(force_str(category), "Category")
 
         mediafile = MediaFile.objects.create(file="somefile.jpg")
-        if django.VERSION < (2, 0):
-            mediafile.categories = [category]
-        else:
-            mediafile.categories.set([category])
+        mediafile.categories.set([category])
         page.mediafilecontent_set.create(
             mediafile=mediafile, region="main", type="default", ordering=1
         )

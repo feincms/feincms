@@ -5,9 +5,6 @@ http://mail.python.org/pipermail/python-dev/2008-January/076194.html
 """
 
 
-from distutils.version import LooseVersion
-
-from django import get_version
 from django.template.loader import render_to_string
 
 
@@ -46,18 +43,5 @@ def monkeypatch_property(cls):
     return decorator
 
 
-if LooseVersion(get_version()) < LooseVersion("1.10"):
-
-    def ct_render_to_string(template, ctx, **kwargs):
-        from django.template import RequestContext
-
-        context_instance = kwargs.get("context")
-        if context_instance is None and kwargs.get("request"):
-            context_instance = RequestContext(kwargs["request"])
-
-        return render_to_string(template, ctx, context_instance=context_instance)
-
-else:
-
-    def ct_render_to_string(template, ctx, **kwargs):
-        return render_to_string(template, ctx, request=kwargs.get("request"))
+def ct_render_to_string(template, ctx, **kwargs):
+    return render_to_string(template, ctx, request=kwargs.get("request"))

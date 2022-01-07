@@ -8,7 +8,7 @@
 # ------------------------------------------------------------------------
 
 
-from django import VERSION, forms
+from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models.signals import pre_save
 from django.utils.translation import gettext_lazy as _
@@ -55,21 +55,10 @@ class TagSelectFormField(forms.MultipleChoiceField):
         return taglist_to_string(list(value))
 
 
-if VERSION >= (1, 10):
-
-    class Tag_formatvalue_mixin:
-        def format_value(self, value):
-            value = parse_tag_input(value or "")
-            return super().format_value(value)
-
-else:
-    # _format_value is a private method previous to Django 1.10,
-    # do the job in render() instead to avoid fiddling with
-    # anybody's privates
-    class Tag_formatvalue_mixin:
-        def render(self, name, value, attrs=None, *args, **kwargs):
-            value = parse_tag_input(value or "")
-            return super().render(name, value, attrs, *args, **kwargs)
+class Tag_formatvalue_mixin:
+    def format_value(self, value):
+        value = parse_tag_input(value or "")
+        return super().format_value(value)
 
 
 class fv_FilteredSelectMultiple(Tag_formatvalue_mixin, FilteredSelectMultiple):

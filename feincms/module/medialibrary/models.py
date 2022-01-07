@@ -5,7 +5,6 @@
 import os
 import re
 
-import django
 from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -139,10 +138,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         cls.filetypes[0:0] = types
         choices = [t[0:2] for t in cls.filetypes]
         cls.filetypes_dict = dict(choices)
-        if django.VERSION < (1, 9):
-            cls._meta.get_field("type").choices[:] = choices
-        else:
-            cls._meta.get_field("type").choices = choices
+        cls._meta.get_field("type").choices = choices
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

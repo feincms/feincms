@@ -4,7 +4,6 @@
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
 
-from django import VERSION as DJANGO_VERSION
 from django.contrib.admin.filters import ChoicesFieldListFilter
 from django.db.models import Count
 from django.utils.encoding import smart_str
@@ -75,15 +74,8 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
         super().__init__(f, request, params, model, model_admin, field_path)
 
         # Restrict results to categories which are actually in use:
-        if DJANGO_VERSION < (1, 8):
-            related_model = f.related.parent_model
-            related_name = f.related.var_name
-        elif DJANGO_VERSION < (2, 0):
-            related_model = f.rel.to
-            related_name = f.related_query_name()
-        else:
-            related_model = f.remote_field.model
-            related_name = f.related_query_name()
+        related_model = f.remote_field.model
+        related_name = f.related_query_name()
 
         self.lookup_choices = sorted(
             (

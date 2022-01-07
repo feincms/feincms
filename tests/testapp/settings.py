@@ -1,7 +1,5 @@
 import os
 
-import django
-
 
 SITE_ID = 1
 
@@ -75,21 +73,3 @@ MIGRATION_MODULES = {
     "page": "testapp.migrate.page",
     "medialibrary": "testapp.migrate.medialibrary",
 }
-
-if django.VERSION < (1, 11):
-    MIDDLEWARE_CLASSES = MIDDLEWARE
-
-if django.VERSION < (2,):
-    pass
-
-elif (2,) <= django.VERSION < (2, 1):
-    from django.utils import deprecation
-
-    # Anything to make mptt.templatetags.mptt_admin importable
-    deprecation.RemovedInDjango20Warning = deprecation.RemovedInDjango21Warning
-
-elif django.VERSION < (3,):
-    from django.utils import deprecation
-
-    # Anything to make mptt.templatetags.mptt_admin importable
-    deprecation.RemovedInDjango20Warning = deprecation.RemovedInDjango30Warning

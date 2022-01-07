@@ -6,7 +6,7 @@ import copy
 import logging
 import warnings
 
-from django import VERSION, forms
+from django import forms
 from django.contrib.admin.options import InlineModelAdmin
 from django.contrib.admin.utils import unquote
 from django.contrib.auth import get_permission_codename
@@ -43,10 +43,7 @@ class FeinCMSInline(InlineModelAdmin):
     form = ItemEditorForm
     extra = 0
     fk_name = "parent"
-    if VERSION < (2, 1):
-        template = "admin/feincms/content_inline_dj20.html"
-    else:
-        template = "admin/feincms/content_inline.html"
+    template = "admin/feincms/content_inline.html"
 
 
 # ------------------------------------------------------------------------

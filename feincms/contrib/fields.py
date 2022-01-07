@@ -1,9 +1,7 @@
 import json
 import logging
-from distutils.version import LooseVersion
 
-import six
-from django import forms, get_version
+from django import forms
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
@@ -29,13 +27,7 @@ class JSONFormField(forms.fields.CharField):
         return super().clean(value, *args, **kwargs)
 
 
-if LooseVersion(get_version()) > LooseVersion("1.8"):
-    workaround_class = models.TextField
-else:
-    workaround_class = six.with_metaclass(models.SubfieldBase, models.TextField)
-
-
-class JSONField(workaround_class):
+class JSONField(models.TextField):
     """
     TextField which transparently serializes/unserializes JSON objects
 
