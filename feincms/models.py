@@ -21,7 +21,6 @@ from django.forms.widgets import Media
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
-from feincms import ensure_completely_loaded
 from feincms.extensions import ExtensionsMixin
 from feincms.utils import copy_model_instance
 
@@ -411,8 +410,6 @@ def create_base_model(inherit_from=models.Model):
                 )
 
                 def _template(self):
-                    ensure_completely_loaded()
-
                     try:
                         return self._feincms_templates[self.template_key]
                     except KeyError:
@@ -735,7 +732,6 @@ def create_base_model(inherit_from=models.Model):
                         incls
                     )
 
-            ensure_completely_loaded(force=True)
             return new_type
 
         @property
@@ -768,8 +764,6 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def _needs_templates(cls):
-            ensure_completely_loaded()
-
             # helper which can be used to ensure that either register_regions
             # or register_templates has been executed before proceeding
             if not hasattr(cls, "template"):
@@ -780,8 +774,6 @@ def create_base_model(inherit_from=models.Model):
 
         @classmethod
         def _needs_content_types(cls):
-            ensure_completely_loaded()
-
             # Check whether any content types have been created for this base
             # class
             if not getattr(cls, "_feincms_content_types", None):

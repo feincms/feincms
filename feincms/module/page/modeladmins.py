@@ -14,7 +14,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from feincms import ensure_completely_loaded, settings
+from feincms import settings
 from feincms.admin import item_editor, tree_editor
 
 # ------------------------------------------------------------------------
@@ -70,8 +70,6 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             cls.fieldsets[1][1]["fields"].extend(f)
 
     def __init__(self, model, admin_site):
-        ensure_completely_loaded()
-
         if len(model._feincms_templates) > 4 and "template_key" in self.radio_fields:
             del self.radio_fields["template_key"]
 

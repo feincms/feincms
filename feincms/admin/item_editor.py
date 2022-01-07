@@ -12,7 +12,6 @@ from django.contrib.admin.utils import unquote
 from django.contrib.auth import get_permission_codename
 from django.http import Http404
 
-from feincms import ensure_completely_loaded
 from feincms.extensions import ExtensionModelAdmin
 from feincms.signals import itemeditor_post_save_related
 
@@ -60,11 +59,6 @@ class ItemEditor(ExtensionModelAdmin):
     It does not have any public API except from everything inherited from'
     the standard ``ModelAdmin`` class.
     """
-
-    def __init__(self, model, admin_site):
-        ensure_completely_loaded()
-
-        super().__init__(model, admin_site)
 
     def get_inline_instances(self, request, *args, **kwargs):
         inline_instances = super().get_inline_instances(request, *args, **kwargs)

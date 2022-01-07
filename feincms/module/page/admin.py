@@ -5,7 +5,7 @@
 from django.contrib import admin
 from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
 
-from feincms import ensure_completely_loaded, settings
+from feincms import settings
 
 from .modeladmins import PageAdmin
 from .models import Page
@@ -14,7 +14,6 @@ from .models import Page
 # ------------------------------------------------------------------------
 
 if settings.FEINCMS_USE_PAGE_ADMIN:
-    ensure_completely_loaded()
     try:
         Page._meta.get_field("template_key")
     except FieldDoesNotExist:

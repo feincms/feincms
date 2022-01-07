@@ -11,8 +11,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from mptt.forms import MPTTAdminForm
 
-from feincms import ensure_completely_loaded
-
 
 class RedirectToWidget(ForeignKeyRawIdWidget):
     def label_for_value(self, value):
@@ -60,8 +58,6 @@ class PageAdminForm(MPTTAdminForm):
         return self.page_model._default_manager
 
     def __init__(self, *args, **kwargs):
-        ensure_completely_loaded()
-
         if "initial" in kwargs:
             if "parent" in kwargs["initial"]:
                 # Prefill a few form values from the parent page
