@@ -30,6 +30,10 @@ def _render_content(content, **kwargs):
 
     r = content.render(**kwargs)
 
+    if request is not None:
+        level = getattr(request, "feincms_render_level", 1)
+        setattr(request, "feincms_render_level", max(level - 1, 0))
+
     if isinstance(r, (list, tuple)):
         # Modeled after feincms3's TemplatePluginRenderer
         context = kwargs["context"]
@@ -50,10 +54,6 @@ def _render_content(content, **kwargs):
 
         with context.push(plugin_context):
             return plugin_template.render(context)
-
-    if request is not None:
-        level = getattr(request, "feincms_render_level", 1)
-        setattr(request, "feincms_render_level", max(level - 1, 0))
 
     return r
 

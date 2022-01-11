@@ -6,6 +6,8 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Fixed the ``feincms_render_level`` render recursion protection.
+
 
 `v22.0.0`_ (2022-01-07)
 ~~~~~~~~~~~~~~~~~~~~~~~
