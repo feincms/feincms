@@ -232,7 +232,8 @@ class MediaFileAdmin(ExtensionModelAdmin):
         return super().get_queryset(request).transform(lookup_translations())
 
     def save_model(self, request, obj, form, change):
-        obj.purge_translation_cache()
+        if obj.id:
+            obj.purge_translation_cache()
         return super().save_model(request, obj, form, change)
 
 
