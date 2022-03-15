@@ -194,11 +194,16 @@ class ContentProxy:
                 ).append((region, pk))
 
         # Resolve abstract to concrete content types
-        content_types = (
-            cls
-            for cls in self.item._feincms_content_types
-            if issubclass(cls, tuple(types))
-        )
+        if types is self.item._feincms_content_types:
+            # If we come from _fetch_regions, we don't need to do
+            # any type resolving
+            content_types = self.item._feincms_content_types
+        else:
+            content_types = (
+                cls
+                for cls in self.item._feincms_content_types
+                if issubclass(cls, tuple(types))
+            )
 
         for cls in content_types:
             counts = counts_by_type.get(cls)
