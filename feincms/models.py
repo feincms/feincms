@@ -223,7 +223,7 @@ class ContentProxy:
         # share this content proxy object between all content items
         # so that each can use obj.parent.content to determine its
         # relationship to its siblings, etc.
-        for cls, objects in self._cache["cts"].items():
+        for objects in self._cache["cts"].values():
             for obj in objects:
                 setattr(obj.parent, "_content_proxy", self)
 
