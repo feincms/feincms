@@ -12,7 +12,6 @@ import warnings
 from collections import OrderedDict
 from functools import reduce
 
-import six
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections, models
@@ -535,9 +534,7 @@ def create_base_model(inherit_from=models.Model):
                     RuntimeWarning,
                 )
 
-            cls._feincms_content_model = six.python_2_unicode_compatible(
-                type(str(name), (models.Model,), attrs)
-            )
+            cls._feincms_content_model = type(str(name), (models.Model,), attrs)
 
             # list of concrete content types
             cls._feincms_content_types = []
