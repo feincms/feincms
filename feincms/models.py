@@ -173,13 +173,12 @@ class ContentProxy:
         )
         sql = "SELECT * FROM ( " + sql + " ) AS ct ORDER BY ct_idx"
 
-        cursor = connections[self.db].cursor()
-        cursor.execute(sql, args)
-
         _c = {}
-        for ct_idx, region, count in cursor.fetchall():
-            if count:
-                _c.setdefault(region, []).append((pk, ct_idx))
+        with connections[self.db].cursor() as cursor:
+            cursor.execute(sql, args)
+            for ct_idx, region, count in cursor.fetchall():
+                if count:
+                    _c.setdefault(region, []).append((pk, ct_idx))
 
         return _c
 
