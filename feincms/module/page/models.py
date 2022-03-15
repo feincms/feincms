@@ -3,7 +3,7 @@
 
 
 from django.core.exceptions import PermissionDenied
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.http import Http404
 from django.urls import reverse
@@ -264,29 +264,29 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             self._cached_url = f"{self.parent._cached_url}{self.slug}/"
 
         cached_page_urls[self.id] = self._cached_url
-        super().save(*args, **kwargs)
 
-        # If our cached URL changed we need to update all descendants to
-        # reflect the changes. Since this is a very expensive operation
-        # on large sites we'll check whether our _cached_url actually changed
-        # or if the updates weren't navigation related:
-        if self._cached_url == self._original_cached_url:
-            return
+        with transaction.atomic():
+            super().save(*args, **kwargs)
 
-        pages = self.get_descendants().order_by("lft")
+            # If our cached URL changed we need to update all descendants to
+            # reflect the changes. Since this is a very expensive operation
+            # on large sites we'll check whether our _cached_url actually changed
+            # or if the updates weren't navigation related:
+            if self._cached_url != self._original_cached_url:
+                pages = self.get_descendants().order_by("lft")
 
-        for page in pages:
-            if page.override_url:
-                page._cached_url = page.override_url
-            else:
-                # cannot be root node by definition
-                page._cached_url = "{}{}/".format(
-                    cached_page_urls[page.parent_id],
-                    page.slug,
-                )
+                for page in pages:
+                    if page.override_url:
+                        page._cached_url = page.override_url
+                    else:
+                        # cannot be root node by definition
+                        page._cached_url = "{}{}/".format(
+                            cached_page_urls[page.parent_id],
+                            page.slug,
+                        )
 
-            cached_page_urls[page.id] = page._cached_url
-            super(BasePage, page).save()  # do not recurse
+                    cached_page_urls[page.id] = page._cached_url
+                    super(BasePage, page).save()  # do not recurse
 
     save.alters_data = True
 
