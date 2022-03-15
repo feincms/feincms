@@ -8,11 +8,7 @@
 """
 
 
-try:
-    from django.core.management.base import NoArgsCommand as BaseCommand
-except ImportError:
-    from django.core.management.base import BaseCommand
-
+from django.core.management.base import BaseCommand
 from feincms.module.page.models import Page
 
 
