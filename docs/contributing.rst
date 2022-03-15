@@ -12,9 +12,9 @@ The FeinCMS repository on github has several branches. Their purpose and
 rewinding policies are described below.
 
 * ``maint``: Maintenance branch for the second-newest version of FeinCMS.
-* ``master``: Stable version of FeinCMS.
+* ``main``: Stable version of FeinCMS.
 
-``master`` and ``maint`` are never rebased or rewound.
+``main`` and ``maint`` are never rebased or rewound.
 
 * ``next``: Upcoming version of FeinCMS. This branch is rarely rebased
   if ever, but this might happen. A note will be sent to the official
