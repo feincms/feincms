@@ -4,6 +4,7 @@ import sys
 
 from django.conf import settings as django_settings
 from django.http import Http404, HttpResponseRedirect
+from django.views.decorators.http import condition
 
 
 logger = logging.getLogger(__name__)
@@ -51,29 +52,26 @@ def extra_context_request_processor(page, request):
         )
 
 
+class __DummyResponse(dict):
+    """
+    This is a dummy class with enough behaviour of HttpResponse so we
+    can use the condition decorator without too much pain.
+    """
+
+    @property
+    def headers(self):
+        return self
+
+    def has_header(self, what):
+        return False
+
 def etag_request_processor(page, request):
     """
     Short-circuits the request-response cycle if the ETag matches.
     """
 
-    # XXX is this a performance concern? Does it create a new class
-    # every time the processor is called or is this optimized to a static
-    # class??
-    class DummyResponse(dict):
-        """
-        This is a dummy class with enough behaviour of HttpResponse so we
-        can use the condition decorator without too much pain.
-        """
-
-        @property
-        def headers(self):
-            return self
-
-        def has_header(page, what):
-            return False
-
     def dummy_response_handler(*args, **kwargs):
-        return DummyResponse()
+        return __DummyResponse()
 
     def etagger(request, page, *args, **kwargs):
         etag = page.etag(request)
@@ -82,10 +80,6 @@ def etag_request_processor(page, request):
     def lastmodifier(request, page, *args, **kwargs):
         lm = page.last_modified()
         return lm
-
-    # Unavailable in Django 1.0 -- the current implementation of ETag support
-    # requires Django 1.1 unfortunately.
-    from django.views.decorators.http import condition
 
     # Now wrap the condition decorator around our dummy handler:
     # the net effect is that we will be getting a DummyResponse from
@@ -97,7 +91,7 @@ def etag_request_processor(page, request):
 
     # If dummy then don't do anything, if a real response, return and
     # thus shortcut the request processing.
-    if not isinstance(rsp, DummyResponse):
+    if not isinstance(rsp, __DummyResponse):
         return rsp
 
 
