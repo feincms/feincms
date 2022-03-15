@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.files import File as DjangoFile
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand
 from filer.models import File, Image
 
 from feincms.contents import FilerFileContent, FilerImageContent
@@ -19,10 +19,10 @@ assert all(
 ), "Not all required models available"
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = "Migrate the medialibrary and contents to django-filer"
 
-    def handle_noargs(self, **options):
+    def handle(self, **options):
         user = User.objects.order_by("pk")[0]
 
         count = MediaFile.objects.count()
