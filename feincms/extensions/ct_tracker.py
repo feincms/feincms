@@ -84,8 +84,9 @@ class TrackerContentProxy(ContentProxy):
             # information is ready, especially when we are doing a "syncdb" the
             # ContentType table does not yet exist
             map = {}
+            model_to_contenttype = ContentType.objects.get_for_models(*self.item._feincms_content_types)
             for idx, fct in enumerate(self.item._feincms_content_types):
-                dct = ContentType.objects.get_for_model(fct)
+                dct = model_to_contenttype[fct]
 
                 # Rely on non-negative primary keys
                 map[-dct.id] = idx  # From-inventory map
