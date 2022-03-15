@@ -232,7 +232,7 @@ class ContentProxy:
         if "regions" not in self._cache:
             self._populate_content_type_caches(self.item._feincms_content_types)
             contents = {}
-            for cls, content_list in self._cache["cts"].items():
+            for content_list in self._cache["cts"].values():
                 for instance in content_list:
                     contents.setdefault(instance.region, []).append(instance)
 
