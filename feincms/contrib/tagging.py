@@ -12,15 +12,11 @@ from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models.signals import pre_save
 from django.utils.translation import gettext_lazy as _
+
 from tagging.fields import TagField
 from tagging.models import Tag
 from tagging.utils import parse_tag_input
-
-
-try:
-    from tagging.registry import AlreadyRegistered
-except ImportError:
-    from tagging import AlreadyRegistered
+from tagging.registry import AlreadyRegistered, register as tagging_register
 
 
 # ------------------------------------------------------------------------
@@ -122,10 +118,6 @@ def tag_model(
     auto_add_admin_field If True, attempts to add the tag field to the admin
                 class.
     """
-    try:
-        from tagging.registry import register as tagging_register
-    except ImportError:
-        from tagging import register as tagging_register
 
     cls.add_to_class(
         field_name,
