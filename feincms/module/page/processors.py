@@ -65,6 +65,7 @@ class __DummyResponse(dict):
     def has_header(self, what):
         return False
 
+
 def etag_request_processor(page, request):
     """
     Short-circuits the request-response cycle if the ETag matches.
