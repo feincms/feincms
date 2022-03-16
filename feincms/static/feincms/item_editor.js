@@ -1,4 +1,4 @@
-/* global Downcoder, django, feincms */
+/* global Downcoder, django, feincms, ItemEditor, interpolate */
 /* global IMG_DELETELINK_PATH, REGION_MAP, REGION_NAMES, ACTIVE_REGION, CONTENT_NAMES, FEINCMS_ITEM_EDITOR_GETTEXT, CONTENT_TYPE_BUTTONS */
 /* global contentblock_init_handlers, contentblock_move_handlers */
 /* global id_to_windowname */
@@ -35,19 +35,17 @@ if (!Array.prototype.indexOf) {
 
   function create_new_item_from_form(form, modname, modvar) {
     let fieldset = $("<fieldset>").addClass(
-      "module aligned order-item item-wrapper-" + modvar
+      `module aligned order-item item-wrapper-${modvar}`
     )
-    let original_id_id = "#id_" + form.attr("id") + "-id"
+    let original_id_id = `#id_${form.attr("id")}-id`
 
     let wrp = ["<h2>"]
     // If original has delete checkbox or this is a freshly added CT? Add delete link!
     if ($(".delete", form).length || !$(original_id_id, form).val()) {
-      wrp.push('<img class="item-delete" src="' + IMG_DELETELINK_PATH + '" />')
+      wrp.push(`<img class="item-delete" src="${IMG_DELETELINK_PATH}" />`)
     }
     wrp.push(
-      '<span class="handle"></span> <span class="modname">' +
-        modname +
-        "</span></h2>"
+      `<span class="handle"></span> <span class="modname">${modname}</span></h2>`
     )
     wrp.push('<div class="item-content"></div>')
     fieldset.append(wrp.join(""))
@@ -79,7 +77,7 @@ if (!Array.prototype.indexOf) {
     let insert_control = $("<div>").addClass("item-control-unit")
     let select_content = SELECTS[REGION_MAP[target_region_id]].clone()
 
-    select_content.change(function () {
+    select_content.change(() => {
       let modvar = select_content.val()
       let modname = select_content.find("option:selected").html()
       let new_fieldset = create_new_fieldset_from_module(modvar, modname)
@@ -102,20 +100,16 @@ if (!Array.prototype.indexOf) {
         '<div class="item-control-unit move-control"><select name="item-move-select">'
       )
       wrp.push(
-        "<option disabled selected>" +
-          feincms_gettext("MOVE_TO_REGION") +
-          "</option>"
+        `<option disabled selected>${feincms_gettext(
+          "MOVE_TO_REGION"
+        )}</option>`
       )
 
       for (let i = 0; i < REGION_MAP.length; i++) {
         if (i != target_region_id) {
           // Do not put the target region in the list
           wrp.push(
-            '<option value="' +
-              REGION_MAP[i] +
-              '">' +
-              REGION_NAMES[i] +
-              "</option>"
+            `<option value="${REGION_MAP[i]}">${REGION_NAMES[i]}</option>`
           )
         }
       }
@@ -156,7 +150,7 @@ if (!Array.prototype.indexOf) {
 
     item.hide()
     if (how.where == "append" || how.where == "prepend") {
-      $("#" + REGION_MAP[region_id] + "_body")
+      $(`#${REGION_MAP[region_id]}_body`)
         .children("div.order-machine")
         [how.where](item)
     } else if (how.where == "insertBefore" || how.where == "insertAfter") {
@@ -181,10 +175,7 @@ if (!Array.prototype.indexOf) {
   }
 
   function create_new_spare_form(modvar) {
-    let old_form_count = parseInt(
-      $("#id_" + modvar + "_set-TOTAL_FORMS").val(),
-      10
-    )
+    let old_form_count = parseInt($(`#id_${modvar}_set-TOTAL_FORMS`).val(), 10)
     // **** UGLY CODE WARNING, avert your gaze! ****
     // for some unknown reason, the add-button click handler function
     // fails on the first triggerHandler call in some rare cases;
@@ -193,15 +184,15 @@ if (!Array.prototype.indexOf) {
       // Use Django's built-in inline spawing mechanism (Django 1.2+)
       // must use django.jQuery since the bound function lives there:
       django
-        .jQuery("#" + modvar + "_set-group")
+        .jQuery(`#${modvar}_set-group`)
         .find(".add-row a")
         .triggerHandler("click")
       let new_form_count = parseInt(
-        $("#id_" + modvar + "_set-TOTAL_FORMS").val(),
+        $(`#id_${modvar}_set-TOTAL_FORMS`).val(),
         10
       )
       if (new_form_count > old_form_count) {
-        return $("#" + modvar + "_set-" + (new_form_count - 1))
+        return $(`#${modvar}_set-${new_form_count - 1}`)
       }
     }
   }
@@ -209,26 +200,26 @@ if (!Array.prototype.indexOf) {
   function set_item_field_value(item, field, value) {
     // item: DOM object for the item's fieldset.
     // field: "order-field" | "delete-field" | "region-choice-field"
-    if (field == "delete-field") item.find("." + field).attr("checked", value)
+    if (field == "delete-field") item.find(`.${field}`).attr("checked", value)
     else if (field == "region-choice-field") {
-      let old_region_id = REGION_MAP.indexOf(item.find("." + field).val())
-      item.find("." + field).val(REGION_MAP[value])
+      let old_region_id = REGION_MAP.indexOf(item.find(`.${field}`).val())
+      item.find(`.${field}`).val(REGION_MAP[value])
 
       // show/hide the empty machine message in the source and
       // target region.
-      old_region_item = $("#" + REGION_MAP[old_region_id] + "_body")
+      let old_region_item = $(`#${REGION_MAP[old_region_id]}_body`)
       if (old_region_item.children("div.order-machine").children().length == 0)
         old_region_item.children("div.empty-machine-msg").show()
       else old_region_item.children("div.empty-machine-msg").hide()
 
-      new_region_item = $("#" + REGION_MAP[value] + "_body")
+      let new_region_item = $(`#${REGION_MAP[value]}_body`)
       new_region_item.children("div.empty-machine-msg").hide()
-    } else item.find("." + field).val(value)
+    } else item.find(`.${field}`).val(value)
   }
 
   function move_item(region_id, item) {
     poorify_rich(item)
-    item.fadeOut(800, function () {
+    item.fadeOut(800, () => {
       add_fieldset(region_id, item, { where: "append" })
       richify_poor(item)
       update_item_controls(item, region_id)
@@ -258,10 +249,10 @@ if (!Array.prototype.indexOf) {
 
   function give_ordering_to_content_types() {
     for (let i = 0; i < REGION_MAP.length; i++) {
-      let container = $("#" + REGION_MAP[i] + "_body div.order-machine")
+      let container = $(`#${REGION_MAP[i]}_body div.order-machine`)
       for (let j = 0; j < container.children().length; j++) {
         set_item_field_value(
-          container.find("fieldset.order-item:eq(" + j + ")"),
+          container.find(`fieldset.order-item:eq(${j})`),
           "order-field",
           j
         )
@@ -271,7 +262,7 @@ if (!Array.prototype.indexOf) {
 
   function order_content_types_in_regions() {
     for (let i = 0; i < REGION_MAP.length; i++) {
-      let container = $("#" + REGION_MAP[i] + "_body div.order-machine")
+      let container = $(`#${REGION_MAP[i]}_body div.order-machine`)
       container
         .children()
         .sort(sort_by_ordering)
@@ -306,7 +297,7 @@ if (!Array.prototype.indexOf) {
       let $select = $("select[name=order-machine-add-select]", this),
         to_remove = []
 
-      $select.change(function () {
+      $select.change(() => {
         let modvar = $select.val()
         // bail out early if no content type selected
         if (!modvar) return
@@ -324,7 +315,7 @@ if (!Array.prototype.indexOf) {
 
       for (let i = 0; i < CONTENT_TYPE_BUTTONS.length; i++) {
         let c = CONTENT_TYPE_BUTTONS[i],
-          $option = $select.find("option[value=" + c.type + "]")
+          $option = $select.find(`option[value=${c.type}]`)
 
         if (!$option.length) continue
 
@@ -379,7 +370,7 @@ if (!Array.prototype.indexOf) {
 
     $(tab_selector).addClass("clearfix")
 
-    $(tab_selector + " > .navi_tab").on("click", function () {
+    $(`${tab_selector} > .navi_tab`).on("click", function () {
       let elem = $(this),
         tab_str = elem.attr("id").substr(0, elem.attr("id").length - 4)
 
@@ -388,18 +379,15 @@ if (!Array.prototype.indexOf) {
         tab_str.indexOf("extension_option") != -1
       ) {
         elem.removeClass("tab_active")
-        $("#" + tab_str + "_body").hide()
+        $(`#${tab_str}_body`).hide()
       } else {
-        $(tab_selector + " > .navi_tab").removeClass("tab_active")
+        $(`${tab_selector} > .navi_tab`).removeClass("tab_active")
         elem.addClass("tab_active")
         $(
-          main_selector +
-            " > div:visible, " +
-            main_selector +
-            " > fieldset:visible"
+          `${main_selector} > div:visible, ${main_selector} > fieldset:visible`
         ).hide()
 
-        $("#" + tab_str + "_body").show()
+        $(`#${tab_str}_body`).show()
 
         if (switch_cb) {
           switch_cb(tab_str)
@@ -411,13 +399,13 @@ if (!Array.prototype.indexOf) {
   // global variable holding the current template key
   let current_template
 
-  $(document).ready(function ($) {
+  $(document).ready(($) => {
     hide_form_rows_with_hidden_widgets()
 
-    create_tabbed("#feincmsmain_wrapper", "#feincmsmain", function (tab_str) {
+    create_tabbed("#feincmsmain_wrapper", "#feincmsmain", (tab_str) => {
       ACTIVE_REGION = REGION_MAP.indexOf(tab_str)
       // make it possible to open current tab on page reload
-      window.location.replace("#tab_" + tab_str)
+      window.location.replace(`#tab_${tab_str}`)
     })
 
     /* Rearrange the options fieldsets so we can wrap them into a tab bar */
@@ -426,24 +414,18 @@ if (!Array.prototype.indexOf) {
     let option_wrapper = $("#extension_options_wrapper")
     let panels = []
 
-    options_fieldsets.each(function (idx, elem) {
+    options_fieldsets.each((idx, elem) => {
       let option_title = $("h2", $(elem)).text()
-      let id_base = "extension_option_" + idx
+      let id_base = `extension_option_${idx}`
 
       let paren = option_title.indexOf(" (")
       if (paren > 0) option_title = option_title.substr(0, paren)
 
       option_wrapper.append(
-        '<div class="navi_tab" id="' +
-          id_base +
-          '_tab">' +
-          option_title +
-          "</div>"
+        `<div class="navi_tab" id="${id_base}_tab">${option_title}</div>`
       )
       let panel = $(
-        '<fieldset class="module aligned" style="clear: both; display: none" id="' +
-          id_base +
-          '_body"></fieldset>'
+        `<fieldset class="module aligned" style="clear: both; display: none" id="${id_base}_body"></fieldset>`
       )
       let $elem = $(elem)
       panel.append($elem.children("div"))
@@ -476,7 +458,7 @@ if (!Array.prototype.indexOf) {
 
           // remove content
           django
-            .jQuery("#" + id)
+            .jQuery(`#${id}`)
             .find("a.inline-deletelink")
             .triggerHandler("click")
 
@@ -488,8 +470,8 @@ if (!Array.prototype.indexOf) {
           // saved on server, don't remove form
           set_item_field_value(item, "delete-field", "checked")
         }
-        item.fadeOut(200, function () {
-          let region_item = $("#" + REGION_MAP[ACTIVE_REGION] + "_body")
+        item.fadeOut(200, () => {
+          let region_item = $(`#${REGION_MAP[ACTIVE_REGION]}_body`)
           if (
             region_item.children("div.order-machine").children(":visible")
               .length == 0
@@ -536,7 +518,7 @@ if (!Array.prototype.indexOf) {
 
       if (confirm(msg)) {
         for (let i = 0; i < not_in_new.length; i++) {
-          let body = $("#" + not_in_new[i] + "_body"),
+          let body = $(`#${not_in_new[i]}_body`),
             machine = body.find(".order-machine"),
             inputs = machine.find("input[name$=region]")
 
@@ -611,15 +593,15 @@ if (!Array.prototype.indexOf) {
     // register regions as sortable for drag N drop
     $(".order-machine").sortable({
       handle: ".handle",
-      helper: function (event, ui) {
+      helper(event, ui) {
         let h2 = $("<h2>").html($(ui).find("span.modname").html())
         return $("<fieldset>").addClass("helper module").append(h2)
       },
       placeholder: "highlight",
-      start: function (event, ui) {
+      start(event, ui) {
         poorify_rich($(ui.item))
       },
-      stop: function (event, ui) {
+      stop(event, ui) {
         richify_poor($(ui.item))
       },
     })
@@ -637,7 +619,7 @@ if (!Array.prototype.indexOf) {
     $(".extra-object-tools").remove()
 
     /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
-    $(document.documentElement).keydown(function (event) {
+    $(document.documentElement).keydown((event) => {
       if (event.which == 83 && event.metaKey) {
         let sel = event.shiftKey
           ? "form:first input[name=_continue]"
@@ -651,10 +633,10 @@ if (!Array.prototype.indexOf) {
 
     if (errors.length) {
       let id = errors.parents("fieldset[id$=_body], div[id$=_body]").attr("id")
-      $("#" + id.replace("_body", "_tab")).trigger("click")
+      $(`#${id.replace("_body", "_tab")}`).trigger("click")
     } else {
       if (window.location.hash) {
-        let tab = $("#" + window.location.hash.substr(5) + "_tab")
+        let tab = $(`#${window.location.hash.substr(5)}_tab`)
 
         if (tab.length) {
           tab.trigger("click")
@@ -670,7 +652,7 @@ if (!Array.prototype.indexOf) {
 
   // externally accessible helpers
   window.ItemEditor = {
-    add_content: function (type, region) {
+    add_content(type, region) {
       let new_fieldset = create_new_fieldset_from_module(
         type,
         CONTENT_NAMES[type]
@@ -680,7 +662,7 @@ if (!Array.prototype.indexOf) {
       return new_fieldset
     },
 
-    add_content_to_current: function (type) {
+    add_content_to_current(type) {
       return ItemEditor.add_content(type, ACTIVE_REGION)
     },
   }
