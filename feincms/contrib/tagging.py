@@ -12,11 +12,10 @@ from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models.signals import pre_save
 from django.utils.translation import gettext_lazy as _
-
 from tagging.fields import TagField
 from tagging.models import Tag
-from tagging.utils import parse_tag_input
 from tagging.registry import AlreadyRegistered, register as tagging_register
+from tagging.utils import parse_tag_input
 
 
 # ------------------------------------------------------------------------

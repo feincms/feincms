@@ -11,20 +11,20 @@
 	} else if (typeof exports === 'object') {
 		module.exports = factory();
 	} else {
-		var _OldCookies = window.Cookies;
-		var api = window.Cookies = factory();
+		let _OldCookies = window.Cookies;
+		let api = window.Cookies = factory();
 		api.noConflict = function () {
 			window.Cookies = _OldCookies;
 			return api;
 		};
 	}
-}(function () {
+}(() => {
 	function extend () {
-		var i = 0;
-		var result = {};
+		let i = 0;
+		let result = {};
 		for (; i < arguments.length; i++) {
-			var attributes = arguments[ i ];
-			for (var key in attributes) {
+			let attributes = arguments[ i ];
+			for (let key in attributes) {
 				result[key] = attributes[key];
 			}
 		}
@@ -33,7 +33,7 @@
 
 	function init (converter) {
 		function api (key, value, attributes) {
-			var result;
+			let result;
 
 			// Write
 
@@ -43,7 +43,7 @@
 				}, api.defaults, attributes);
 
 				if (typeof attributes.expires === 'number') {
-					var expires = new Date();
+					let expires = new Date();
 					expires.setMilliseconds(expires.getMilliseconds() + attributes.expires * 864e+5);
 					attributes.expires = expires;
 				}
@@ -64,9 +64,9 @@
 
 				return (document.cookie = [
 					key, '=', value,
-					attributes.expires && '; expires=' + attributes.expires.toUTCString(), // use expires attribute, max-age is not supported by IE
-					attributes.path    && '; path=' + attributes.path,
-					attributes.domain  && '; domain=' + attributes.domain,
+					attributes.expires && `; expires=${  attributes.expires.toUTCString()}`, // use expires attribute, max-age is not supported by IE
+					attributes.path    && `; path=${  attributes.path}`,
+					attributes.domain  && `; domain=${  attributes.domain}`,
 					attributes.secure ? '; secure' : ''
 				].join(''));
 			}
@@ -80,14 +80,14 @@
 			// To prevent the for loop in the first place assign an empty array
 			// in case there are no cookies at all. Also prevents odd result when
 			// calling "get()"
-			var cookies = document.cookie ? document.cookie.split('; ') : [];
-			var rdecode = /(%[0-9A-Z]{2})+/g;
-			var i = 0;
+			let cookies = document.cookie ? document.cookie.split('; ') : [];
+			let rdecode = /(%[0-9A-Z]{2})+/g;
+			let i = 0;
 
 			for (; i < cookies.length; i++) {
-				var parts = cookies[i].split('=');
-				var name = parts[0].replace(rdecode, decodeURIComponent);
-				var cookie = parts.slice(1).join('=');
+				let parts = cookies[i].split('=');
+				let name = parts[0].replace(rdecode, decodeURIComponent);
+				let cookie = parts.slice(1).join('=');
 
 				if (cookie.charAt(0) === '"') {
 					cookie = cookie.slice(1, -1);
