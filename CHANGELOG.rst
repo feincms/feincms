@@ -6,11 +6,27 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+.. _Next version: https://github.com/feincms/feincms/compare/v22.1.0...main
+
+
+`v22.1.0`_ (2022-03-31)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _v22.1.0: https://github.com/feincms/feincms/compare/v22.0.0...v22.1.0
+
 - Fixed the ``feincms_render_level`` render recursion protection.
+- Wrapped the recursive saving of pages in a transaction, so if anything fails
+  we have a consistent state.
+- Dropped more compatibility code for Django 1.x.
+- Made ``medialibrary_orphans`` work again.
+- Removed the ``six`` dependency since we're Python 3-only now.
+- Updated the pre-commit hooks, cleaned up the JavaScript a bit.
 
 
 `v22.0.0`_ (2022-01-07)
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _v22.0.0: https://github.com/feincms/feincms/compare/v1.20.0...v22.0.0
 
 - Changed all bundled content types' ``render()`` methods to return the
   ``(template_name, context)`` tuple instead of rendering content themselves.
@@ -130,5 +146,3 @@ Change log
 .. _v1.18.0: https://github.com/feincms/feincms/compare/v1.17.0...v1.18.0
 .. _v1.19.0: https://github.com/feincms/feincms/compare/v1.18.0...v1.19.0
 .. _v1.20.0: https://github.com/feincms/feincms/compare/v1.19.0...v1.20.0
-.. _v22.0.0: https://github.com/feincms/feincms/compare/v1.20.0...v22.0.0
-.. _Next version: https://github.com/feincms/feincms/compare/v22.0.0...main
