@@ -1,5 +1,5 @@
 /* global Downcoder, django, feincms, ItemEditor, interpolate */
-/* global IMG_DELETELINK_PATH, REGION_MAP, REGION_NAMES, ACTIVE_REGION, CONTENT_NAMES, FEINCMS_ITEM_EDITOR_GETTEXT, CONTENT_TYPE_BUTTONS */
+/* global IMG_DELETELINK_PATH, REGION_MAP, REGION_NAMES, CONTENT_NAMES, FEINCMS_ITEM_EDITOR_GETTEXT, CONTENT_TYPE_BUTTONS */
 /* global contentblock_init_handlers, contentblock_move_handlers */
 /* global id_to_windowname */
 /* global template_regions */
@@ -304,11 +304,11 @@ if (!Array.prototype.indexOf) {
 
         let modname = $select.find("option:selected").html()
         let new_fieldset = create_new_fieldset_from_module(modvar, modname)
-        add_fieldset(ACTIVE_REGION, new_fieldset, {
+        add_fieldset(window.ACTIVE_REGION, new_fieldset, {
           where: "append",
           animate: true,
         })
-        update_item_controls(new_fieldset, ACTIVE_REGION)
+        update_item_controls(new_fieldset, window.ACTIVE_REGION)
 
         $select.val("")
       })
@@ -403,7 +403,7 @@ if (!Array.prototype.indexOf) {
     hide_form_rows_with_hidden_widgets()
 
     create_tabbed("#feincmsmain_wrapper", "#feincmsmain", (tab_str) => {
-      ACTIVE_REGION = REGION_MAP.indexOf(tab_str)
+      window.ACTIVE_REGION = REGION_MAP.indexOf(tab_str)
       // make it possible to open current tab on page reload
       window.location.replace(`#tab_${tab_str}`)
     })
@@ -471,7 +471,7 @@ if (!Array.prototype.indexOf) {
           set_item_field_value(item, "delete-field", "checked")
         }
         item.fadeOut(200, () => {
-          let region_item = $(`#${REGION_MAP[ACTIVE_REGION]}_body`)
+          let region_item = $(`#${REGION_MAP[window.ACTIVE_REGION]}_body`)
           if (
             region_item.children("div.order-machine").children(":visible")
               .length == 0
@@ -663,7 +663,7 @@ if (!Array.prototype.indexOf) {
     },
 
     add_content_to_current(type) {
-      return ItemEditor.add_content(type, ACTIVE_REGION)
+      return ItemEditor.add_content(type, window.ACTIVE_REGION)
     },
   }
 })(feincms.jQuery)

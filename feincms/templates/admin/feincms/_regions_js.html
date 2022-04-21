@@ -1,10 +1,10 @@
 {% load static %}
 <script type="text/javascript" charset="utf-8">
-IMG_DELETELINK_PATH = "{% static 'feincms/img/icon_deletelink.gif' %}";
+window.IMG_DELETELINK_PATH = "{% static 'feincms/img/icon_deletelink.gif' %}";
 
-REGION_MAP = [{% for region in original.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
-REGION_NAMES = [{% for region in original.template.regions %}'{{ region.title|capfirst }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
-ACTIVE_REGION = 0;
+window.REGION_MAP = [{% for region in original.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+window.REGION_NAMES = [{% for region in original.template.regions %}'{{ region.title|capfirst }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+window.ACTIVE_REGION = 0;
 
 CONTENT_NAMES = {
     {% for name, value in content_types %}'{{ value }}': '{{ name|capfirst }}'{% if not forloop.last %},{% endif %}

@@ -8,6 +8,8 @@ Change log
 
 .. _Next version: https://github.com/feincms/feincms/compare/v22.1.0...main
 
+- Dropped support for Python < 3.8.
+
 
 `v22.1.0`_ (2022-03-31)
 ~~~~~~~~~~~~~~~~~~~~~~~
