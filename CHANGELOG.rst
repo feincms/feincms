@@ -6,7 +6,13 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-.. _Next version: https://github.com/feincms/feincms/compare/v22.1.0...main
+.. _Next version: https://github.com/feincms/feincms/compare/v22.2.0...main
+
+
+`v22.2.0`_ (2022-05-06)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _v22.2.0: https://github.com/feincms/feincms/compare/v22.1.0...v22.2.0
 
 - Dropped support for Python < 3.8.
 - Fixed the thumbnailing support of the ``MediaFileForeignKey``. It has been
