@@ -4,8 +4,7 @@
 
 from django.contrib.admin.widgets import AdminFileWidget, ForeignKeyRawIdWidget
 from django.db import models
-from django.utils.html import escape
-from django.utils.safestring import mark_safe
+from django.utils.html import escape, mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
@@ -23,10 +22,15 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
     def __init__(self, original):
         self.__dict__ = original.__dict__
 
-    def label_for_value(self, value):
-        key = self.rel.get_related_field().name
+    def label_and_url_for_value(self, value):
+        label, url = super().label_and_url_for_value(value)
+        key = "pk"
         try:
-            obj = self.rel.to._default_manager.using(self.db).get(**{key: value})
+            obj = (
+                self.rel.model._default_manager.using(self.db)
+                .filter(**{key: value})
+                .first()
+            )
             label = ["&nbsp;<strong>%s</strong>" % escape(shorten_string(str(obj)))]
             image = admin_thumbnail(obj)
 
@@ -36,9 +40,9 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
                     "/>" % image
                 )
 
-            return "".join(label)
-        except (ValueError, self.rel.to.DoesNotExist):
-            return ""
+            return mark_safe("".join(label)), url
+        except (ValueError, self.rel.model.DoesNotExist):
+            return label, url
 
 
 class MediaFileForeignKey(models.ForeignKey):
