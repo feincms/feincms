@@ -74,7 +74,6 @@ class TranslationTestCase(TestCase):
         # TODO:  add request tests
         # with translation.override('de'):
 
-    @skipIf(VERSION >= (4, 0), "Language no longer saved to session in django 4+")
     def test_user_has_language_set_with_session(self):
         factory = RequestFactory()
         request = factory.get(self.page_en.get_navigation_url())
@@ -89,7 +88,6 @@ class TranslationTestCase(TestCase):
 
         self.assertEqual(user_has_language_set(request), True)
 
-    @skipIf(VERSION >= (4, 0), "Language no longer saved to session in django 4+")
     def test_translation_set_language_to_session(self):
         factory = RequestFactory()
         request = factory.get(self.page_de.get_navigation_url())
@@ -99,7 +97,6 @@ class TranslationTestCase(TestCase):
         self.assertEqual(request.LANGUAGE_CODE, "de")
         self.assertEqual(request.session[self.language_session_key], "de")
 
-    @skipIf(VERSION >= (4, 0), "Language no longer saved to session in django 4+")
     def test_translation_set_language_to_session_primary(self):
         factory = RequestFactory()
         request = factory.get(self.page_en.get_navigation_url())
@@ -107,6 +104,7 @@ class TranslationTestCase(TestCase):
         translation_set_language(request, "en")
 
         self.assertEqual(request.LANGUAGE_CODE, "en")
+        # We avoid setting the translation language to the primary language, so should not be set
         self.assertEqual(request.session.get(self.language_session_key, 'unset'), "unset")
 
     def test_translation_set_language_to_cookie(self):
