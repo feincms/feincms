@@ -17,12 +17,13 @@ as Django's administration tool.
 
 # ------------------------------------------------------------------------
 import logging
+from typing import Optional
 
 from django.conf import settings as django_settings
 from django.db import models
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.utils import translation
-from django.utils.html import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from feincms import extensions, settings
@@ -33,16 +34,12 @@ from feincms.translations import is_primary_language
 # ------------------------------------------------------------------------
 logger = logging.getLogger(__name__)
 
-LANGUAGE_COOKIE_NAME = django_settings.LANGUAGE_COOKIE_NAME
-if hasattr(translation, "LANGUAGE_SESSION_KEY"):
-    LANGUAGE_SESSION_KEY = translation.LANGUAGE_SESSION_KEY
-else:
-    # Django 1.6
-    LANGUAGE_SESSION_KEY = LANGUAGE_COOKIE_NAME
-
+LANGUAGE_COOKIE_NAME: str = django_settings.LANGUAGE_COOKIE_NAME
+LANGUAGE_SESSION_KEY = translation.LANGUAGE_SESSION_KEY
+PRIMARY_LANGUAGE: str = django_settings.LANGUAGES[0][0]
 
 # ------------------------------------------------------------------------
-def user_has_language_set(request):
+def user_has_language_set(request: HttpRequest) -> bool:
     """
     Determine whether the user has explicitely set a language earlier on.
     This is taken later on as an indication that we should not mess with the
@@ -59,18 +56,18 @@ def user_has_language_set(request):
 
 
 # ------------------------------------------------------------------------
-def translation_allowed_language(select_language):
+def translation_allowed_language(select_language: str) -> str:
     "Check for feincms specific set of allowed front end languages."
     if settings.FEINCMS_FRONTEND_LANGUAGES:
         language = select_language[:2]
         if language not in settings.FEINCMS_FRONTEND_LANGUAGES:
-            select_language = django_settings.LANGUAGES[0][0]
+            select_language = PRIMARY_LANGUAGE
 
     return select_language
 
 
 # ------------------------------------------------------------------------
-def translation_set_language(request, select_language):
+def translation_set_language(request: HttpRequest, select_language: str) -> Optional[HttpResponseRedirect]:
     """
     Set and activate a language, if that language is available.
     """
@@ -85,15 +82,17 @@ def translation_set_language(request, select_language):
         # other messages and other applications. It is *highly* recommended to
         # create a new django.po for the language instead of
         # using this behaviour.
-        select_language = django_settings.LANGUAGES[0][0]
+        select_language = PRIMARY_LANGUAGE
         fallback = True
 
     translation.activate(select_language)
-    request.LANGUAGE_CODE = translation.get_language()
+    request.LANGUAGE_CODE = translation.get_language()  # type: ignore
 
     if hasattr(request, "session"):
         # User has a session, then set this language there
-        if select_language != request.session.get(LANGUAGE_SESSION_KEY):
+        current_session_language = request.session.get(LANGUAGE_SESSION_KEY, PRIMARY_LANGUAGE)
+
+        if select_language != current_session_language:
             request.session[LANGUAGE_SESSION_KEY] = select_language
     elif request.method == "GET" and not fallback:
         # No session is active. We need to set a cookie for the language
@@ -102,7 +101,7 @@ def translation_set_language(request, select_language):
         # Only do this when request method is GET (mainly, do not abort
         # POST requests)
         response = HttpResponseRedirect(request.get_full_path())
-        response.set_cookie(str(LANGUAGE_COOKIE_NAME), select_language)
+        response.set_cookie(str(LANGUAGE_COOKIE_NAME), select_language, samesite="Lax")
         return response
 
 
@@ -161,7 +160,7 @@ class Extension(extensions.Extension):
                 _("language"),
                 max_length=10,
                 choices=django_settings.LANGUAGES,
-                default=django_settings.LANGUAGES[0][0],
+                default=PRIMARY_LANGUAGE,
             ),
         )
         cls.add_to_class(
@@ -173,7 +172,7 @@ class Extension(extensions.Extension):
                 null=True,
                 verbose_name=_("translation of"),
                 related_name="translations",
-                limit_choices_to={"language": django_settings.LANGUAGES[0][0]},
+                limit_choices_to={"language": PRIMARY_LANGUAGE},
                 help_text=_("Leave this empty for entries in the primary language."),
             ),
         )
@@ -250,7 +249,7 @@ class Extension(extensions.Extension):
                 "Page pk=%d (%s) has no primary language translation (%s)",
                 self.pk,
                 self.language,
-                django_settings.LANGUAGES[0][0],
+                PRIMARY_LANGUAGE,
             )
             return self
 
