@@ -301,11 +301,13 @@ feincms.jQuery(($) => {
        the current state of the tree so we can restore it on a reload.
        Note: We might use html5's session storage? */
   function storeCollapsedNodes(nodes) {
-    Cookies.set("feincms_collapsed_nodes", nodes, { expires: 7 })
+    const v = JSON.stringify(nodes);
+    Cookies.set("feincms_collapsed_nodes", v, { expires: 7, sameSite: 'strict' })
   }
 
   function retrieveCollapsedNodes() {
-    return Cookies.getJSON("feincms_collapsed_nodes")
+    const collapse_cookie = Cookies.get('feincms_collapsed_nodes');
+    return collapse_cookie ? JSON.parse(collapse_cookie) : null;
   }
 
   function expandOrCollapseNode(item) {
