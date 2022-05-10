@@ -35,7 +35,10 @@ from feincms.translations import is_primary_language
 logger = logging.getLogger(__name__)
 
 LANGUAGE_COOKIE_NAME: str = django_settings.LANGUAGE_COOKIE_NAME
-LANGUAGE_SESSION_KEY = translation.LANGUAGE_SESSION_KEY
+try:
+    LANGUAGE_SESSION_KEY = translation.LANGUAGE_SESSION_KEY
+except AttributeError:  # stopgap measure for django >= 4, need to revisit this later
+    LANGUAGE_SESSION_KEY = '_language'
 PRIMARY_LANGUAGE: str = django_settings.LANGUAGES[0][0]
 
 # ------------------------------------------------------------------------
