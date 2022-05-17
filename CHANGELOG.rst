@@ -8,6 +8,12 @@ Change log
 
 .. _Next version: https://github.com/feincms/feincms/compare/v22.2.0...main
 
+- The ``render()`` methods of bundled content types have been changed to return
+  a tuple instead of a HTML fragment in FeinCMS v22.0.0. This was backwards
+  incompatible in some scenarios. Those methods have been changed to return a
+  tuple subclass which automatically renders a HTML fragment if evaluated in a
+  string context.
+
 
 `v22.2.0`_ (2022-05-06)
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,8 +44,9 @@ Change log
 
 .. _v22.0.0: https://github.com/feincms/feincms/compare/v1.20.0...v22.0.0
 
-- Changed all bundled content types' ``render()`` methods to return the
-  ``(template_name, context)`` tuple instead of rendering content themselves.
+- **Possibly backwards incompatible** Changed all bundled content types'
+  ``render()`` methods to return the ``(template_name, context)`` tuple instead
+  of rendering content themselves.
 - Dropped compatibility guarantees with Python < 3.6, Django < 3.2.
 - Added pre-commit.
 - The default view was changed to accept the path as a ``path`` keyword

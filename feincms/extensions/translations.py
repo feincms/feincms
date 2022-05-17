@@ -21,7 +21,7 @@ from typing import Optional
 
 from django.conf import settings as django_settings
 from django.db import models
-from django.http import HttpResponseRedirect, HttpRequest
+from django.http import HttpRequest, HttpResponseRedirect
 from django.utils import translation
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -42,6 +42,7 @@ else:
     LANGUAGE_SESSION_KEY = LANGUAGE_COOKIE_NAME
 
 PRIMARY_LANGUAGE: str = django_settings.LANGUAGES[0][0]
+
 
 # ------------------------------------------------------------------------
 def user_has_language_set(request: HttpRequest) -> bool:
@@ -72,7 +73,9 @@ def translation_allowed_language(select_language: str) -> str:
 
 
 # ------------------------------------------------------------------------
-def translation_set_language(request: HttpRequest, select_language: str) -> Optional[HttpResponseRedirect]:
+def translation_set_language(
+    request: HttpRequest, select_language: str
+) -> Optional[HttpResponseRedirect]:
     """
     Set and activate a language, if that language is available.
     """
@@ -95,7 +98,9 @@ def translation_set_language(request: HttpRequest, select_language: str) -> Opti
 
     if hasattr(request, "session"):
         # User has a session, then set this language there
-        current_session_language = request.session.get(LANGUAGE_SESSION_KEY, PRIMARY_LANGUAGE)
+        current_session_language = request.session.get(
+            LANGUAGE_SESSION_KEY, PRIMARY_LANGUAGE
+        )
 
         if select_language != current_session_language:
             request.session[LANGUAGE_SESSION_KEY] = select_language

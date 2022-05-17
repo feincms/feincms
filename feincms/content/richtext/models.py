@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from feincms import settings
 from feincms.contrib.richtext import RichTextField
+from feincms.utils.tuple import AutoRenderTuple
 
 
 class RichTextContent(models.Model):
@@ -29,10 +30,7 @@ class RichTextContent(models.Model):
         verbose_name_plural = _("rich texts")
 
     def render(self, **kwargs):
-        return (
-            "content/richtext/default.html",
-            {"content": self},
-        )
+        return AutoRenderTuple(("content/richtext/default.html", {"content": self}))
 
     @classmethod
     def initialize_type(cls, cleanse=None):

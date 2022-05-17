@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
+from feincms.utils.tuple import AutoRenderTuple
 
 
 try:
@@ -35,14 +36,16 @@ else:
             abstract = True
 
         def render(self, **kwargs):
-            return (
-                [
-                    f"content/filer/{self.file_type}_{self.type}.html",
-                    "content/filer/%s.html" % self.type,
-                    "content/filer/%s.html" % self.file_type,
-                    "content/filer/default.html",
-                ],
-                {"content": self},
+            return AutoRenderTuple(
+                (
+                    [
+                        f"content/filer/{self.file_type}_{self.type}.html",
+                        "content/filer/%s.html" % self.type,
+                        "content/filer/%s.html" % self.file_type,
+                        "content/filer/default.html",
+                    ],
+                    {"content": self},
+                )
             )
 
     class FilerFileContent(ContentWithFilerFile):

@@ -1,7 +1,3 @@
-
-from unittest import skipIf
-
-from django import VERSION
 from django.conf import settings as django_settings
 from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
@@ -105,7 +101,9 @@ class TranslationTestCase(TestCase):
 
         self.assertEqual(request.LANGUAGE_CODE, "en")
         # We avoid setting the translation language to the primary language, so should not be set
-        self.assertEqual(request.session.get(self.language_session_key, 'unset'), "unset")
+        self.assertEqual(
+            request.session.get(self.language_session_key, "unset"), "unset"
+        )
 
     def test_translation_set_language_to_cookie(self):
         factory = RequestFactory()

@@ -10,6 +10,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from feincms import settings
+from feincms.utils.tuple import AutoRenderTuple
 
 
 class FileContent(models.Model):
@@ -29,7 +30,9 @@ class FileContent(models.Model):
         verbose_name_plural = _("files")
 
     def render(self, **kwargs):
-        return (
-            ["content/file/%s.html" % self.region, "content/file/default.html"],
-            {"content": self},
+        return AutoRenderTuple(
+            (
+                ["content/file/%s.html" % self.region, "content/file/default.html"],
+                {"content": self},
+            )
         )

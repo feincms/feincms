@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from feincms.content.raw.models import RawContent  # noqa
 from feincms.content.richtext.models import RichTextContent  # noqa
+from feincms.utils.tuple import AutoRenderTuple
 
 
 class TemplateContent(models.Model):
@@ -30,7 +31,4 @@ class TemplateContent(models.Model):
         )
 
     def render(self, **kwargs):
-        return (
-            self.template,
-            {"content": self},
-        )
+        return AutoRenderTuple((self.template, {"content": self}))

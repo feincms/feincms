@@ -3,6 +3,8 @@ import re
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from feincms.utils.tuple import AutoRenderTuple
+
 
 class VideoContent(models.Model):
     """
@@ -69,7 +71,4 @@ class VideoContent(models.Model):
 
     def render(self, **kwargs):
         ctx = self.ctx_for_video(self.video)
-        return (
-            self.get_templates(ctx["portal"]),
-            ctx,
-        )
+        return AutoRenderTuple((self.get_templates(ctx["portal"]), ctx))

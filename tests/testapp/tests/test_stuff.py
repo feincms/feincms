@@ -12,6 +12,7 @@ import feincms
 from feincms.extensions.datepublisher import granular_now
 from feincms.models import Region, Template
 from feincms.utils import get_object, shorten_string
+from feincms.utils.tuple import AutoRenderTuple
 
 
 # ------------------------------------------------------------------------
@@ -68,6 +69,14 @@ class UtilsTest(TestCase):
         string = shorten_string("Badgerbadgerbadgerbadgerbadger", 10, ellipsis="-")
         self.assertEqual(string, "Badger-ger")
         self.assertEqual(len(string), 10)
+
+    def test_autotuple(self):
+        t = AutoRenderTuple(
+            ("content/richtext/default.html", {"content": {"text": "hello"}})
+        )
+
+        self.assertTrue(isinstance(t, tuple))
+        self.assertEqual(str(t).strip(), "hello")
 
 
 # ------------------------------------------------------------------------

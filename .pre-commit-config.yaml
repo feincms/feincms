@@ -12,12 +12,12 @@ repos:
       - id: file-contents-sorter
         files: .gitignore
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.32.0
+    rev: v2.32.1
     hooks:
       - id: pyupgrade
         args: [--py38-plus]
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.5.0
+    rev: 1.7.0
     hooks:
       - id: django-upgrade
         args: [--target-version, "3.2"]
@@ -36,13 +36,13 @@ repos:
       - id: flake8
         args: ["--ignore=E203,E501,W503"]
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.13.0
+    rev: v8.15.0
     hooks:
       - id: eslint
         args: [--fix]
         verbose: true
         additional_dependencies:
-          - eslint@8.13.0
+          - eslint@8.15.0
           - eslint-config-prettier@8.5.0
           - "@babel/core"
           - "@babel/eslint-parser"

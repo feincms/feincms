@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from feincms import settings
 from feincms.templatetags import feincms_thumbnail
+from feincms.utils.tuple import AutoRenderTuple
 
 
 class ImageContent(models.Model):
@@ -63,10 +64,7 @@ class ImageContent(models.Model):
         if hasattr(self, "position"):
             templates.insert(0, "content/image/%s.html" % self.position)
 
-        return (
-            templates,
-            {"content": self},
-        )
+        return AutoRenderTuple((templates, {"content": self}))
 
     def get_image(self):
         type, separator, size = getattr(self, "format", "").partition(":")

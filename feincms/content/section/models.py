@@ -9,6 +9,7 @@ from feincms.admin.item_editor import FeinCMSInline
 from feincms.contrib.richtext import RichTextField
 from feincms.module.medialibrary.fields import MediaFileForeignKey
 from feincms.module.medialibrary.models import MediaFile
+from feincms.utils.tuple import AutoRenderTuple
 
 
 class SectionContentInline(FeinCMSInline):
@@ -80,14 +81,16 @@ class SectionContent(models.Model):
         else:
             mediafile_type = "nomedia"
 
-        return (
-            [
-                f"content/section/{mediafile_type}_{self.type}.html",
-                "content/section/%s.html" % mediafile_type,
-                "content/section/%s.html" % self.type,
-                "content/section/default.html",
-            ],
-            {"content": self},
+        return AutoRenderTuple(
+            (
+                [
+                    f"content/section/{mediafile_type}_{self.type}.html",
+                    "content/section/%s.html" % mediafile_type,
+                    "content/section/%s.html" % self.type,
+                    "content/section/default.html",
+                ],
+                {"content": self},
+            )
         )
 
     def save(self, *args, **kwargs):

@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from feincms.admin.item_editor import FeinCMSInline
 from feincms.module.medialibrary.fields import ContentWithMediaFile
+from feincms.utils.tuple import AutoRenderTuple
 
 
 class MediaFileContentInline(FeinCMSInline):
@@ -62,12 +63,14 @@ class MediaFileContent(ContentWithMediaFile):
         )
 
     def render(self, **kwargs):
-        return (
-            [
-                f"content/mediafile/{self.mediafile.type}_{self.type}.html",
-                "content/mediafile/%s.html" % self.mediafile.type,
-                "content/mediafile/%s.html" % self.type,
-                "content/mediafile/default.html",
-            ],
-            {"content": self},
+        return AutoRenderTuple(
+            (
+                [
+                    f"content/mediafile/{self.mediafile.type}_{self.type}.html",
+                    "content/mediafile/%s.html" % self.mediafile.type,
+                    "content/mediafile/%s.html" % self.type,
+                    "content/mediafile/default.html",
+                ],
+                {"content": self},
+            )
         )
