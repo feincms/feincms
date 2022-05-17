@@ -6,7 +6,13 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-.. _Next version: https://github.com/feincms/feincms/compare/v22.2.0...main
+.. _Next version: https://github.com/feincms/feincms/compare/v22.3.0...main
+
+
+`v22.3.0`_ (2022-05-17)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _v22.3.0: https://github.com/feincms/feincms/compare/v22.2.0...v22.3.0
 
 - The ``render()`` methods of bundled content types have been changed to return
   a tuple instead of a HTML fragment in FeinCMS v22.0.0. This was backwards
