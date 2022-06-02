@@ -21,7 +21,7 @@ from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
 from feincms.extensions import ExtensionsMixin
-from feincms.utils import copy_model_instance
+from feincms.utils import ChoicesCharField, copy_model_instance
 
 
 class Region:
@@ -394,14 +394,9 @@ def create_base_model(inherit_from=models.Model):
             except (StopIteration,):
                 cls.add_to_class(
                     "template_key",
-                    models.CharField(
+                    ChoicesCharField(
                         _("template"),
                         max_length=255,
-                        choices=(
-                            # Dummy choice to trick Django. Cannot be empty,
-                            # otherwise admin.E023 happens.
-                            ("__dummy", "__dummy"),
-                        ),
                     ),
                 )
                 field = next(

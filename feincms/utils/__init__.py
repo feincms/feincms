@@ -7,7 +7,7 @@ from importlib import import_module
 
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import AutoField
+from django.db.models import AutoField, CharField
 
 from feincms import settings
 
@@ -151,3 +151,19 @@ def get_singleton(template_key, cls=None, raise_exception=True):
 def get_singleton_url(template_key, cls=None, raise_exception=True):
     obj = get_singleton(template_key, cls, raise_exception)
     return obj.get_absolute_url() if obj else "#broken-link"
+
+
+class ChoicesCharField(CharField):
+    """
+    ``models.CharField`` with choices, which makes the migration framework
+    always ignore changes to ``choices``, ever.
+    """
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("choices", [("", "")])  # Non-empty choices for get_*_display
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs["choices"] = [("", "")]
+        return name, "django.db.models.CharField", args, kwargs
