@@ -6,7 +6,13 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-.. _Next version: https://github.com/feincms/feincms/compare/v22.3.0...main
+.. _Next version: https://github.com/feincms/feincms/compare/v22.4.0...main
+
+
+`v22.4.0`_ (2022-06-02)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _v22.4.0: https://github.com/feincms/feincms/compare/v22.3.0...v22.4.0
 
 - Changed the ``template_key`` field type to avoid boring migrations because of
   changing choices.
