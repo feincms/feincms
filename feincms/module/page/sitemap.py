@@ -36,7 +36,7 @@ class PageSitemap(Sitemap):
         will appear in the site map.
         * max_depth -- if set to a non-negative integer, will limit the sitemap
         generated to this page hierarchy depth.
-        * changefreq -- should be a string or callable specifiying the page
+        * changefreq -- should be a string or callable specifying the page
         update frequency, according to the sitemap protocol.
         * queryset -- pass in a query set to restrict the Pages to include
         in the site map.
