@@ -6,7 +6,13 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-.. _Next version: https://github.com/feincms/feincms/compare/v22.4.0...main
+.. _Next version: https://github.com/feincms/feincms/compare/v23.1.0...main
+
+
+`v23.1.0`_ (2023-03-09)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _v23.1.0: https://github.com/feincms/feincms/compare/v22.4.0...v23.1.0
 
 - Fixed a place where ``ACTION_CHECKBOX_NAME`` was imported from the wrong
   place.
