@@ -11,6 +11,7 @@ the page's manager to determine which entries are to be considered active.
 
 from datetime import datetime
 
+import django
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
@@ -56,7 +57,10 @@ def granular_now(n=None, default_tz=None):
 
     rounded_minute = (n.minute // 5) * 5
     d = datetime(n.year, n.month, n.day, n.hour, rounded_minute)
-    return timezone.make_aware(d, default_tz)
+    if django.VERSION < (5,):
+        return timezone.make_aware(d, default_tz, is_dst=True)
+    else:
+        return timezone.make_aware(d, default_tz)
 
 
 # ------------------------------------------------------------------------
