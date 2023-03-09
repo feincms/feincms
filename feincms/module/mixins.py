@@ -173,7 +173,6 @@ class ContentObjectMixin(TemplateResponseMixin):
         for content in self.object.content.all_of_type(
             tuple(self.object._feincms_content_types_with_process)
         ):
-
             try:
                 r = content.process(self.request, view=self)
                 if r in (True, False):
@@ -211,7 +210,6 @@ class ContentObjectMixin(TemplateResponseMixin):
         for content in self.object.content.all_of_type(
             tuple(self.object._feincms_content_types_with_finalize)
         ):
-
             r = content.finalize(self.request, response)
             if r:
                 return r

@@ -7,7 +7,6 @@ import feincms.extensions.base
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = []

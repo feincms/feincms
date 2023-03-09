@@ -1,4 +1,4 @@
-from django.urls import re_path
+from django.urls import path, re_path
 
 from feincms.views import Handler
 
@@ -6,6 +6,6 @@ from feincms.views import Handler
 handler = Handler.as_view()
 
 urlpatterns = [
-    re_path(r"^$", handler, name="feincms_home"),
+    path("", handler, name="feincms_home"),
     re_path(r"^(.*)/$", handler, name="feincms_handler"),
 ]

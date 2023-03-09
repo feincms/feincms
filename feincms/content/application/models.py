@@ -331,7 +331,6 @@ class ApplicationContent(models.Model):
             if self.send_directly(request, output):
                 return output
             elif output.status_code == 200:
-
                 if self.unpack(request, output) and "view" in kw:
                     # Handling of @unpack and UnpackTemplateResponse
                     kw["view"].template_name = output.template_name

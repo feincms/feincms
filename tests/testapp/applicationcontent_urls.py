@@ -6,7 +6,7 @@ This is a dummy module used to test the ApplicationContent
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
-from django.urls import re_path
+from django.urls import path, re_path
 
 from feincms.content.application.models import standalone, unpack
 
@@ -51,15 +51,15 @@ def inheritance20_unpack(request):
 
 
 urlpatterns = [
-    re_path(r"^$", module_root, name="ac_module_root"),
+    path("", module_root, name="ac_module_root"),
     re_path(r"^args_test/([^/]+)/([^/]+)/$", args_test, name="ac_args_test"),
-    re_path(r"^kwargs_test/(?P<kwarg2>[^/]+)/(?P<kwarg1>[^/]+)/$", args_test),
-    re_path(r"^full_reverse_test/$", full_reverse_test),
-    re_path(r"^alias_reverse_test/$", alias_reverse_test),
-    re_path(r"^fragment/$", fragment),
-    re_path(r"^redirect/$", redirect),
-    re_path(r"^response/$", response),
-    re_path(r"^response_decorated/$", standalone(response)),
-    re_path(r"^inheritance20/$", inheritance20),
-    re_path(r"^inheritance20_unpack/$", inheritance20_unpack),
+    path("kwargs_test/<str:kwarg2>/<str:kwarg1>/", args_test),
+    path("full_reverse_test/", full_reverse_test),
+    path("alias_reverse_test/", alias_reverse_test),
+    path("fragment/", fragment),
+    path("redirect/", redirect),
+    path("response/", response),
+    path("response_decorated/", standalone(response)),
+    path("inheritance20/", inheritance20),
+    path("inheritance20_unpack/", inheritance20_unpack),
 ]

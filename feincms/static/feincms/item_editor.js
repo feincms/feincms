@@ -35,7 +35,7 @@ if (!Array.prototype.indexOf) {
 
   function create_new_item_from_form(form, modname, modvar) {
     let fieldset = $("<fieldset>").addClass(
-      `module aligned order-item item-wrapper-${modvar}`
+      `module aligned order-item item-wrapper-${modvar}`,
     )
     let original_id_id = `#id_${form.attr("id")}-id`
 
@@ -45,7 +45,7 @@ if (!Array.prototype.indexOf) {
       wrp.push(`<img class="item-delete" src="${IMG_DELETELINK_PATH}" />`)
     }
     wrp.push(
-      `<span class="handle"></span> <span class="modname">${modname}</span></h2>`
+      `<span class="handle"></span> <span class="modname">${modname}</span></h2>`,
     )
     wrp.push('<div class="item-content"></div>')
     fieldset.append(wrp.join(""))
@@ -62,7 +62,7 @@ if (!Array.prototype.indexOf) {
     $("#feincmsmain>.panel").each(function () {
       SELECTS[this.id.replace(/_body$/, "")] = $(
         "select[name=order-machine-add-select]",
-        this
+        this,
       )
         .clone()
         .removeAttr("name")
@@ -97,19 +97,19 @@ if (!Array.prototype.indexOf) {
     if (REGION_MAP.length > 1) {
       let wrp = []
       wrp.push(
-        '<div class="item-control-unit move-control"><select name="item-move-select">'
+        '<div class="item-control-unit move-control"><select name="item-move-select">',
       )
       wrp.push(
         `<option disabled selected>${feincms_gettext(
-          "MOVE_TO_REGION"
-        )}</option>`
+          "MOVE_TO_REGION",
+        )}</option>`,
       )
 
       for (let i = 0; i < REGION_MAP.length; i++) {
         if (i != target_region_id) {
           // Do not put the target region in the list
           wrp.push(
-            `<option value="${REGION_MAP[i]}">${REGION_NAMES[i]}</option>`
+            `<option value="${REGION_MAP[i]}">${REGION_NAMES[i]}</option>`,
           )
         }
       }
@@ -145,7 +145,7 @@ if (!Array.prototype.indexOf) {
           relative_to: undefined,
           animate: false,
         },
-        how
+        how,
       )
 
     item.hide()
@@ -189,7 +189,7 @@ if (!Array.prototype.indexOf) {
         .triggerHandler("click")
       let new_form_count = parseInt(
         $(`#id_${modvar}_set-TOTAL_FORMS`).val(),
-        10
+        10,
       )
       if (new_form_count > old_form_count) {
         return $(`#${modvar}_set-${new_form_count - 1}`)
@@ -254,7 +254,7 @@ if (!Array.prototype.indexOf) {
         set_item_field_value(
           container.find(`fieldset.order-item:eq(${j})`),
           "order-field",
-          j
+          j,
         )
       }
     }
@@ -337,7 +337,7 @@ if (!Array.prototype.indexOf) {
                     .open(
                       c.raw_id_picker,
                       id_to_windowname(id.replace(/^lookup_/, "")),
-                      "height=500,width=800,resizable=yes,scrollbars=yes"
+                      "height=500,width=800,resizable=yes,scrollbars=yes",
                     )
                     .focus()
                 }
@@ -345,7 +345,7 @@ if (!Array.prototype.indexOf) {
               if (c.after) c.after.call(null, fieldset)
               return false
             }
-          })(c)
+          })(c),
         )
 
         $select.parent().append($button)
@@ -384,7 +384,7 @@ if (!Array.prototype.indexOf) {
         $(`${tab_selector} > .navi_tab`).removeClass("tab_active")
         elem.addClass("tab_active")
         $(
-          `${main_selector} > div:visible, ${main_selector} > fieldset:visible`
+          `${main_selector} > div:visible, ${main_selector} > fieldset:visible`,
         ).hide()
 
         $(`#${tab_str}_body`).show()
@@ -422,10 +422,10 @@ if (!Array.prototype.indexOf) {
       if (paren > 0) option_title = option_title.substr(0, paren)
 
       option_wrapper.append(
-        `<div class="navi_tab" id="${id_base}_tab">${option_title}</div>`
+        `<div class="navi_tab" id="${id_base}_tab">${option_title}</div>`,
       )
       let panel = $(
-        `<fieldset class="module aligned" style="clear: both; display: none" id="${id_base}_body"></fieldset>`
+        `<fieldset class="module aligned" style="clear: both; display: none" id="${id_base}_body"></fieldset>`,
       )
       let $elem = $(elem)
       panel.append($elem.children("div"))
@@ -483,7 +483,7 @@ if (!Array.prototype.indexOf) {
     })
 
     current_template = $(
-      "input[name=template_key][checked], select[name=template_key]"
+      "input[name=template_key][checked], select[name=template_key]",
     ).val()
 
     function on_template_key_changed() {
@@ -512,7 +512,7 @@ if (!Array.prototype.indexOf) {
             source_regions: not_in_new,
             target_region: new_regions[0],
           },
-          true
+          true,
         )
       }
 
@@ -528,7 +528,7 @@ if (!Array.prototype.indexOf) {
         input_element.checked = true
 
         form_element.append(
-          '<input type="hidden" name="_continue" value="1" />'
+          '<input type="hidden" name="_continue" value="1" />',
         )
         /* Simulate a click on the save button instead of form.submit(), so
                    that the submit handlers from FilteredSelectMultiple get
@@ -574,7 +574,7 @@ if (!Array.prototype.indexOf) {
 
       if (!elem.hasClass("empty-form")) {
         let region_id = REGION_MAP.indexOf(
-          elem.find(".region-choice-field").val()
+          elem.find(".region-choice-field").val(),
         )
         if (REGION_MAP[region_id] != undefined) {
           let content_type = elem
@@ -583,7 +583,7 @@ if (!Array.prototype.indexOf) {
           let item = create_new_item_from_form(
             elem,
             CONTENT_NAMES[content_type],
-            content_type
+            content_type,
           )
           add_fieldset(region_id, item, { where: "append" })
           update_item_controls(item, region_id)
@@ -655,7 +655,7 @@ if (!Array.prototype.indexOf) {
     add_content(type, region) {
       let new_fieldset = create_new_fieldset_from_module(
         type,
-        CONTENT_NAMES[type]
+        CONTENT_NAMES[type],
       )
       add_fieldset(region, new_fieldset, { where: "append", animate: "true" })
       update_item_controls(new_fieldset, region)

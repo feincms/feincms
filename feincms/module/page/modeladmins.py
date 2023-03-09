@@ -212,6 +212,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
         )
         return super().changelist_view(request, *args, **kwargs)
 
+    @admin.display(description=_("is active"))
     def is_visible_admin(self, page):
         """
         Instead of just showing an on/off boolean, also indicate whether this
@@ -234,7 +235,6 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
 
         return tree_editor.ajax_editable_boolean_cell(page, "active")
 
-    is_visible_admin.short_description = _("is active")
     is_visible_admin.editable_boolean_field = "active"
 
     # active toggle needs more sophisticated result function

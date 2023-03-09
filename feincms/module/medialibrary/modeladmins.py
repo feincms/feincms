@@ -40,6 +40,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # ------------------------------------------------------------------------
+@admin.action(description=_("Add selected media files to category"))
 def assign_category(modeladmin, request, queryset):
     class AddCategoryForm(forms.Form):
         _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
@@ -68,9 +69,7 @@ def assign_category(modeladmin, request, queryset):
 
     if not form:
         form = AddCategoryForm(
-            initial={
-                "_selected_action": request.POST.getlist(ACTION_CHECKBOX_NAME)
-            }
+            initial={"_selected_action": request.POST.getlist(ACTION_CHECKBOX_NAME)}
         )
 
     return render(
@@ -80,10 +79,8 @@ def assign_category(modeladmin, request, queryset):
     )
 
 
-assign_category.short_description = _("Add selected media files to category")
-
-
 # -------------------------------------------------------------------------
+@admin.action(description=_("Export selected media files as zip file"))
 def save_as_zipfile(modeladmin, request, queryset):
     from .zip import export_zipfile
 
@@ -96,9 +93,6 @@ def save_as_zipfile(modeladmin, request, queryset):
         return
 
     return HttpResponseRedirect(os.path.join(django_settings.MEDIA_URL, zip_name))
-
-
-save_as_zipfile.short_description = _("Export selected media files as zip file")
 
 
 # ------------------------------------------------------------------------
@@ -117,11 +111,11 @@ class MediaFileAdmin(ExtensionModelAdmin):
     actions = [assign_category, save_as_zipfile]
 
     def get_urls(self):
-        from django.urls import re_path
+        from django.urls import path
 
         return [
-            re_path(
-                r"^mediafile-bulk-upload/$",
+            path(
+                "mediafile-bulk-upload/",
                 self.admin_site.admin_view(MediaFileAdmin.bulk_upload),
                 {},
                 name="mediafile_bulk_upload",
@@ -134,6 +128,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
         extra_context["categories"] = Category.objects.order_by("title")
         return super().changelist_view(request, extra_context=extra_context)
 
+    @admin.display(description=_("Preview"))
     def admin_thumbnail(self, obj):
         image = admin_thumbnail(obj)
         if image:
@@ -146,20 +141,24 @@ class MediaFileAdmin(ExtensionModelAdmin):
             )
         return ""
 
-    admin_thumbnail.short_description = _("Preview")
-
+    @admin.display(
+        description=_("file size"),
+        ordering="file_size",
+    )
     def formatted_file_size(self, obj):
         return filesizeformat(obj.file_size)
 
-    formatted_file_size.short_description = _("file size")
-    formatted_file_size.admin_order_field = "file_size"
-
+    @admin.display(
+        description=_("created"),
+        ordering="created",
+    )
     def formatted_created(self, obj):
         return obj.created.strftime("%Y-%m-%d")
 
-    formatted_created.short_description = _("created")
-    formatted_created.admin_order_field = "created"
-
+    @admin.display(
+        description=_("file type"),
+        ordering="type",
+    )
     def file_type(self, obj):
         t = obj.filetypes_dict[obj.type]
         if obj.type == "image":
@@ -177,9 +176,10 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 t += " (%s)" % e
         return mark_safe(t)
 
-    file_type.admin_order_field = "type"
-    file_type.short_description = _("file type")
-
+    @admin.display(
+        description=_("file info"),
+        ordering="file",
+    )
     def file_info(self, obj):
         """
         Method for showing the file name in admin.
@@ -203,9 +203,6 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 self.formatted_file_size(obj),
             )
         )
-
-    file_info.admin_order_field = "file"
-    file_info.short_description = _("file info")
 
     @staticmethod
     @csrf_protect

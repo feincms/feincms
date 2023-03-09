@@ -49,7 +49,6 @@ class TrackerContentProxy(ContentProxy):
                 self.item._ct_inventory
                 and self.item._ct_inventory.get("_version_", -1) == INVENTORY_VERSION
             ):
-
                 try:
                     self._cache["counts"] = self._from_inventory(
                         self.item._ct_inventory

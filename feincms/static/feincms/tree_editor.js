@@ -162,7 +162,7 @@ feincms.jQuery(($) => {
             // check if drag_line element already exists, else append
             if ($("#drag_line").length < 1) {
               $("body").append(
-                '<div id="drag_line" style="position:absolute">line<div></div></div>'
+                '<div id="drag_line" style="position:absolute">line<div></div></div>',
               )
             }
 
@@ -246,10 +246,10 @@ feincms.jQuery(($) => {
         $("body").bind("mouseup", () => {
           if (moveTo.relativeTo) {
             let cutItem = extractItemId(
-              originalRow.find(".page_marker").attr("id")
+              originalRow.find(".page_marker").attr("id"),
             )
             let pastedOn = extractItemId(
-              moveTo.relativeTo.find(".page_marker").attr("id")
+              moveTo.relativeTo.find(".page_marker").attr("id"),
             )
             // get out early if items are the same
             if (cutItem != pastedOn) {
@@ -278,7 +278,7 @@ feincms.jQuery(($) => {
                 },
                 () => {
                   window.location.reload()
-                }
+                },
               )
             } else {
               $("#drag_line").remove()
@@ -294,7 +294,7 @@ feincms.jQuery(($) => {
       })
 
       return this
-    })
+    }),
   )
 
   /* Every time the user expands or collapses a part of the tree, we remember
@@ -353,7 +353,7 @@ feincms.jQuery(($) => {
         rlist.show()
       })
       return this
-    })
+    }),
   )
 
   // bind the open all children event
@@ -375,7 +375,7 @@ feincms.jQuery(($) => {
         rlist.show()
       })
       return this
-    })
+    }),
   )
 
   let changelist_tab = function (elem, event, direction) {

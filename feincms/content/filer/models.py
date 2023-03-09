@@ -14,7 +14,6 @@ except ImportError:
     __all__ = ()
 
 else:
-
     __all__ = (
         "MediaFileContentInline",
         "ContentWithFilerFile",
