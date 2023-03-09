@@ -8,6 +8,11 @@ Change log
 
 .. _Next version: https://github.com/feincms/feincms/compare/v22.4.0...main
 
+- Fixed a place where ``ACTION_CHECKBOX_NAME`` was imported from the wrong
+  place.
+- Dropped the ``is_dst`` argument to ``timezone.make_aware``.
+- Added Django 4.1 and 4.2 to the CI matrix.
+
 
 `v22.4.0`_ (2022-06-02)
 ~~~~~~~~~~~~~~~~~~~~~~~

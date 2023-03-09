@@ -56,7 +56,7 @@ def granular_now(n=None, default_tz=None):
 
     rounded_minute = (n.minute // 5) * 5
     d = datetime(n.year, n.month, n.day, n.hour, rounded_minute)
-    return timezone.make_aware(d, default_tz, is_dst=True)
+    return timezone.make_aware(d, default_tz)
 
 
 # ------------------------------------------------------------------------
