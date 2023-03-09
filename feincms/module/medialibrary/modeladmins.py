@@ -7,6 +7,7 @@ import os
 from django import forms
 from django.conf import settings as django_settings
 from django.contrib import admin, messages
+from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
 from django.contrib.auth.decorators import permission_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.files.images import get_image_dimensions
@@ -68,7 +69,7 @@ def assign_category(modeladmin, request, queryset):
     if not form:
         form = AddCategoryForm(
             initial={
-                "_selected_action": request.POST.getlist(admin.ACTION_CHECKBOX_NAME)
+                "_selected_action": request.POST.getlist(ACTION_CHECKBOX_NAME)
             }
         )
 
