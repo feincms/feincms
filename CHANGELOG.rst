@@ -11,6 +11,7 @@ Change log
 - Made the filter argument of content base's ``get_queryset`` method optional.
   This enables easier interoperability of FeinCMS content types with feincms3
   plugins.
+- Added Python 3.11.
 
 
 `v23.1.0`_ (2023-03-09)
