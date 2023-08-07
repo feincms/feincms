@@ -6,7 +6,13 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-.. _Next version: https://github.com/feincms/feincms/compare/v23.1.0...main
+.. _Next version: https://github.com/feincms/feincms/compare/v23.8.0...main
+
+
+`v23.8.0`_ (2023-08-07)
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _v23.8.0: https://github.com/feincms/feincms/compare/v23.1.0...v23.8.0
 
 - Made the filter argument of content base's ``get_queryset`` method optional.
   This enables easier interoperability of FeinCMS content types with feincms3
