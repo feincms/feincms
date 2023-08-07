@@ -12,6 +12,7 @@ Change log
   This enables easier interoperability of FeinCMS content types with feincms3
   plugins.
 - Added Python 3.11.
+- Fixed the Pillow resampling constant.
 
 
 `v23.1.0`_ (2023-03-09)

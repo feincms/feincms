@@ -122,7 +122,7 @@ class Thumbnailer:
                 w, h = int(size["w"]), int(size["h"])
 
                 format = image.format  # Save format for the save() call later
-                image.thumbnail([w, h], Image.ANTIALIAS)
+                image.thumbnail([w, h], Image.Resampling.LANCZOS)
                 buf = BytesIO()
                 if format.lower() not in ("jpg", "jpeg", "png"):
                     format = "jpeg"
@@ -182,7 +182,7 @@ class CropscaleThumbnailer(Thumbnailer):
                         y_offset + int(crop_height),
                     )
                 )
-                image = image.resize((dst_width, dst_height), Image.ANTIALIAS)
+                image = image.resize((dst_width, dst_height), Image.Resampling.LANCZOS)
 
                 buf = BytesIO()
                 if format.lower() not in ("jpg", "jpeg", "png"):
