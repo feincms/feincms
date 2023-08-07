@@ -210,7 +210,7 @@ class ContentProxy:
             if cls not in self._cache["cts"]:
                 if counts:
                     self._cache["cts"][cls] = list(
-                        cls.get_queryset(
+                        cls.get_queryset().filter(
                             reduce(
                                 operator.or_,
                                 (Q(region=r[0], parent=r[1]) for r in counts),
@@ -500,8 +500,11 @@ def create_base_model(inherit_from=models.Model):
 
                 raise NotImplementedError
 
-            def get_queryset(cls, filter_args):
-                return cls.objects.select_related().filter(filter_args)
+            def get_queryset(cls, filter_args=None):
+                qs = cls.objects.select_related()
+                if filter_args is not None:
+                    return qs.filter(filter_args)
+                return qs
 
             attrs = {
                 # The basic content type is put into
