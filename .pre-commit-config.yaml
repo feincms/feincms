@@ -12,12 +12,12 @@ repos:
       - id: file-contents-sorter
         files: .gitignore
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.10.1
     hooks:
       - id: pyupgrade
         args: [--py38-plus]
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.13.0
+    rev: 1.14.0
     hooks:
       - id: django-upgrade
         args: [--target-version, "3.2"]
@@ -27,16 +27,16 @@ repos:
       - id: isort
         args: [--profile=black, --lines-after-imports=2, --combine-as]
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.7.0
     hooks:
       - id: black
   - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
         args: ["--ignore=E203,E501,W503"]
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.35.0
+    rev: v8.46.0
     hooks:
       - id: eslint
         args: [--fix]
@@ -48,7 +48,7 @@ repos:
           - "@babel/eslint-parser"
           - "@babel/preset-env"
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.0-alpha.6
+    rev: v3.0.1
     hooks:
       - id: prettier
         args: [--list-different, --no-semi]
