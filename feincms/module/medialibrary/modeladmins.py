@@ -169,7 +169,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
             except NotImplementedError:
                 return t
             try:
-                d = get_image_dimensions(obj.file.file)
+                d = get_image_dimensions(obj.file.file, close=True)
                 if d:
                     t += " %d&times;%d" % (d[0], d[1])
             except (OSError, TypeError, ValueError) as e:
