@@ -6,7 +6,13 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-.. _Next version: https://github.com/feincms/feincms/compare/v23.8.0...main
+v23.12.0 (2023-12-22)
+~~~~~~~~~~~~~~~~~~~~~
+
+- Added Python 3.12, Django 5.0.
+- Closed images after reading their dimensions. Raised the logging level to
+  exception when thumbnailing fails. Thanks to Jeroen Pulles for those two
+  contributions!
 
 
 `v23.8.0`_ (2023-08-07)
