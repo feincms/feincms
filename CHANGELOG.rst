@@ -10,7 +10,7 @@ v24.4.0 (2024-04-08)
 ~~~~~~~~~~~~~~~~~~~~~
 
 - Fetched the CSRF token value from the input field instead of from the cookie.
-  This allows making the CSRF cookie ``httponly``. Thanks to Samuel Lin for the
+  This allows making the CSRF cookie ``httponly``. Thanks to Samuel Lim for the
   contribution!
 
 
