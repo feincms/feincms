@@ -6,6 +6,14 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+v24.4.0 (2024-04-08)
+~~~~~~~~~~~~~~~~~~~~~
+
+- Fetched the CSRF token value from the input field instead of from the cookie.
+  This allows making the CSRF cookie ``httponly``. Thanks to Samuel Lin for the
+  contribution!
+
+
 v23.12.0 (2023-12-22)
 ~~~~~~~~~~~~~~~~~~~~~
 
