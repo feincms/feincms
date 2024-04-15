@@ -228,7 +228,7 @@ MediaFileBase.register_filetypes(
         "image",
         _("Image"),
         lambda f: re.compile(
-            r"\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?)$", re.IGNORECASE
+            r"\.(bmp|jpe?g|jp2|jxr|gif|png|tiff?|webp)$", re.IGNORECASE
         ).search(f),
     ),
     (

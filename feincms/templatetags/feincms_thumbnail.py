@@ -23,6 +23,8 @@ register = template.Library()
 class Thumbnailer:
     THUMBNAIL_SIZE_RE = re.compile(r"^(?P<w>\d+)x(?P<h>\d+)$")
     MARKER = "_thumb_"
+    BROWSER_SUPPORTED_FORMATS = ("jpg", "jpeg", "png", "webp")  # browser supported image formats
+    TRANSPARENCY_SUPPORTING_FORMATS = ('png', 'webp')  # formats with alpha channel
 
     def __init__(self, filename, size="200x200"):
         self.filename = filename
@@ -85,7 +87,7 @@ class Thumbnailer:
                 # storage does NOT support modified_time
                 generate = False
             except OSError:
-                # Someone might have delete the file
+                # Someone might have deleted the file
                 return ""
 
         if generate:
@@ -116,13 +118,14 @@ class Thumbnailer:
                 # defining the size
                 w, h = int(size["w"]), int(size["h"])
 
-                format = image.format  # Save format for the save() call later
-                image.thumbnail([w, h], Image.LANCZOS)
+                assert image.format is not None
+                format = image.format.lower()  # Save format for the save() call later
+                image.thumbnail([w, h], Image.Resampling.LANCZOS)
                 buf = BytesIO()
-                if format.lower() not in ("jpg", "jpeg", "png"):
+                if format not in self.BROWSER_SUPPORTED_FORMATS:  # browser supported image formats
                     format = "jpeg"
                 if image.mode not in ("RGBA", "RGB", "L"):
-                    if format == "png":
+                    if format in self.TRANSPARENCY_SUPPORTING_FORMATS:  # handles transparency?
                         image = image.convert("RGBA")
                     else:
                         image = image.convert("RGB")
@@ -168,7 +171,8 @@ class CropscaleThumbnailer(Thumbnailer):
                     x_offset = 0
                     y_offset = int(float(src_height - crop_height) * y / 100)
 
-                format = image.format  # Save format for the save() call later
+                assert image.format is not None
+                format = image.format.lower()  # Save format for the save() call later
                 image = image.crop(
                     (
                         x_offset,
@@ -177,13 +181,13 @@ class CropscaleThumbnailer(Thumbnailer):
                         y_offset + int(crop_height),
                     )
                 )
-                image = image.resize((dst_width, dst_height), Image.LANCZOS)
+                image = image.resize((dst_width, dst_height), Image.Resampling.LANCZOS)
 
                 buf = BytesIO()
-                if format.lower() not in ("jpg", "jpeg", "png"):
+                if format not in self.BROWSER_SUPPORTED_FORMATS:
                     format = "jpeg"
                 if image.mode not in ("RGBA", "RGB", "L"):
-                    if format == "png":
+                    if format in self.TRANSPARENCY_SUPPORTING_FORMATS:
                         image = image.convert("RGBA")
                     else:
                         image = image.convert("RGB")
