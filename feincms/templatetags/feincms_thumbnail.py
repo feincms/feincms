@@ -97,12 +97,7 @@ class Thumbnailer:
                     miniature=miniature,
                 )
             except Exception as exc:
-                logger.warning(
-                    "Rendering a thumbnail failed: %r",
-                    exc,
-                    exc_info=True,
-                    extra={"stack": True, "exception": exc},
-                )
+                logger.exception("Rendering a thumbnail failed: %s", exc)
                 # PIL raises a plethora of Exceptions if reading the image
                 # is not possible. Since we cannot be sure what Exception will
                 # happen, catch them all so the thumbnailer will never fail.
