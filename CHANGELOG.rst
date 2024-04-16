@@ -6,6 +6,14 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+v24.4.1 (2024-04-16)
+~~~~~~~~~~~~~~~~~~~~~
+
+- Forwarded cookies set by ``ApplicationContent`` apps to the final response.
+- Added support for webp image formats to the media library.
+
+
 v24.4.0 (2024-04-08)
 ~~~~~~~~~~~~~~~~~~~~~
 
