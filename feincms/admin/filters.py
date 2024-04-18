@@ -4,6 +4,9 @@
 #          Guilherme M. Gondim (semente) <semente at taurinus.org>
 
 
+from operator import itemgetter
+
+import django
 from django.contrib.admin.filters import ChoicesFieldListFilter
 from django.db.models import Count
 from django.utils.encoding import smart_str
@@ -23,8 +26,8 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
     my_model_field.page_parent_filter = True
     """
 
-    def __init__(self, f, request, params, model, model_admin, field_path=None):
-        super().__init__(f, request, params, model, model_admin, field_path)
+    def __init__(self, field, request, params, model, model_admin, field_path=None):
+        super().__init__(field, request, params, model, model_admin, field_path)
 
         parent_ids = (
             model.objects.exclude(parent=None)
@@ -45,17 +48,23 @@ class ParentFieldListFilter(ChoicesFieldListFilter):
             for pk, title, level in parents
         ]
 
-    def choices(self, cl):
+    def choices(self, changelist):
         yield {
             "selected": self.lookup_val is None,
-            "query_string": cl.get_query_string({}, [self.lookup_kwarg]),
+            "query_string": changelist.get_query_string({}, [self.lookup_kwarg]),
             "display": _("All"),
         }
 
+        # Pre Django 5 lookup_val would be a scalar, now it can do multiple
+        # selections and thus is a list. Deal with that.
+        lookup_vals = self.lookup_val
+        if lookup_vals is not None and django.VERSION < (5,):
+            lookup_vals = [lookup_vals]
+
         for pk, title in self.lookup_choices:
             yield {
-                "selected": pk == int(self.lookup_val or "0"),
-                "query_string": cl.get_query_string({self.lookup_kwarg: pk}),
+                "selected": lookup_vals is not None and str(pk) in lookup_vals,
+                "query_string": changelist.get_query_string({self.lookup_kwarg: pk}),
                 "display": mark_safe(smart_str(title)),
             }
 
@@ -70,12 +79,12 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
     my_model_field.category_filter = True
     """
 
-    def __init__(self, f, request, params, model, model_admin, field_path=None):
-        super().__init__(f, request, params, model, model_admin, field_path)
+    def __init__(self, field, *args, **kwargs):
+        super().__init__(field, *args, **kwargs)
 
         # Restrict results to categories which are actually in use:
-        related_model = f.remote_field.model
-        related_name = f.related_query_name()
+        related_model = field.remote_field.model
+        related_name = field.related_query_name()
 
         self.lookup_choices = sorted(
             (
@@ -84,20 +93,26 @@ class CategoryFieldListFilter(ChoicesFieldListFilter):
                     _related_count=Count(related_name)
                 ).exclude(_related_count=0)
             ),
-            key=lambda i: i[1],
+            key=itemgetter(1),
         )
 
-    def choices(self, cl):
+    def choices(self, changelist):
         yield {
             "selected": self.lookup_val is None,
-            "query_string": cl.get_query_string({}, [self.lookup_kwarg]),
+            "query_string": changelist.get_query_string({}, [self.lookup_kwarg]),
             "display": _("All"),
         }
 
+        # Pre Django 5 lookup_val would be a scalar, now it can do multiple
+        # selections and thus is a list. Deal with that.
+        lookup_vals = self.lookup_val
+        if lookup_vals is not None and django.VERSION < (5,):
+            lookup_vals = [lookup_vals]
+
         for pk, title in self.lookup_choices:
             yield {
-                "selected": pk == int(self.lookup_val or "0"),
-                "query_string": cl.get_query_string({self.lookup_kwarg: pk}),
+                "selected": lookup_vals is not None and str(pk) in lookup_vals,
+                "query_string": changelist.get_query_string({self.lookup_kwarg: pk}),
                 "display": mark_safe(smart_str(title)),
             }
 
