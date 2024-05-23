@@ -173,9 +173,11 @@ class ChangeList(main.ChangeList):
                 # Note: Django ORM is smart enough to drop additional
                 # clauses if the initial query set is unfiltered. This
                 # is good.
-                self.queryset |= self.model._default_manager.filter(
-                    reduce(lambda p, q: p | q, clauses)
-                )
+                self.queryset = self.queryset.union(
+                    self.model._default_manager.filter(
+                        reduce(lambda p, q: p | q, clauses)
+                    )
+                ).order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr)
 
         super().get_results(request)
 
