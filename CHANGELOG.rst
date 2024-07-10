@@ -6,16 +6,28 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+v24.7.1 (2024-07-10)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fixed the read the docs build.
+- Disabled the CKEditor 4 version nag.
+
+
+v24.4.2 (2024-04-18)
+~~~~~~~~~~~~~~~~~~~~
+
+- Fixed the filters to work with Django 5.
+
 
 v24.4.1 (2024-04-16)
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 - Forwarded cookies set by ``ApplicationContent`` apps to the final response.
 - Added support for webp image formats to the media library.
 
 
 v24.4.0 (2024-04-08)
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 - Fetched the CSRF token value from the input field instead of from the cookie.
   This allows making the CSRF cookie ``httponly``. Thanks to Samuel Lim for the
