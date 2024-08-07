@@ -1,4 +1,4 @@
-VERSION = (24, 7, 1)
+VERSION = (24, 8, 1)
 __version__ = ".".join(map(str, VERSION))
 
 

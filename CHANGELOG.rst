@@ -3,8 +3,12 @@
 Change log
 ==========
 
-`Next version`_
-~~~~~~~~~~~~~~~
+Next version
+~~~~~~~~~~~~
+
+
+v24.8.1 (2024-08-07)
+~~~~~~~~~~~~~~~~~~~~
 
 - Fixed another edge case: JPEGs cannot be saved as RGBA.
 - Added Django 5.1 to the CI.
