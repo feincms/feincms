@@ -6,6 +6,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Fixed another edge case: JPEGs cannot be saved as RGBA.
+
+
 v24.7.1 (2024-07-10)
 ~~~~~~~~~~~~~~~~~~~~
 

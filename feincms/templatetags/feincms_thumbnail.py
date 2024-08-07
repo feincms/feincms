@@ -23,8 +23,13 @@ register = template.Library()
 class Thumbnailer:
     THUMBNAIL_SIZE_RE = re.compile(r"^(?P<w>\d+)x(?P<h>\d+)$")
     MARKER = "_thumb_"
-    BROWSER_SUPPORTED_FORMATS = ("jpg", "jpeg", "png", "webp")  # browser supported image formats
-    TRANSPARENCY_SUPPORTING_FORMATS = ('png', 'webp')  # formats with alpha channel
+    BROWSER_SUPPORTED_FORMATS = (
+        "jpg",
+        "jpeg",
+        "png",
+        "webp",
+    )  # browser supported image formats
+    TRANSPARENCY_SUPPORTING_FORMATS = ("png", "webp")  # formats with alpha channel
 
     def __init__(self, filename, size="200x200"):
         self.filename = filename
@@ -122,13 +127,17 @@ class Thumbnailer:
                 format = image.format.lower()  # Save format for the save() call later
                 image.thumbnail([w, h], Image.Resampling.LANCZOS)
                 buf = BytesIO()
-                if format not in self.BROWSER_SUPPORTED_FORMATS:  # browser supported image formats
+                if (
+                    format not in self.BROWSER_SUPPORTED_FORMATS
+                ):  # browser supported image formats
                     format = "jpeg"
-                if image.mode not in ("RGBA", "RGB", "L"):
-                    if format in self.TRANSPARENCY_SUPPORTING_FORMATS:  # handles transparency?
-                        image = image.convert("RGBA")
-                    else:
-                        image = image.convert("RGB")
+                if (
+                    format in self.TRANSPARENCY_SUPPORTING_FORMATS
+                    and image.mode not in ("RGBA", "RGB", "L")
+                ):
+                    image = image.convert("RGBA")
+                elif image.mode not in ("RGB", "L"):
+                    image = image.convert("RGB")
                 image.save(buf, format, quality=90)
                 raw_data = buf.getvalue()
                 buf.close()
