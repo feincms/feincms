@@ -136,7 +136,7 @@ class Thumbnailer:
                     and image.mode not in ("RGBA", "RGB", "L")
                 ):
                     image = image.convert("RGBA")
-                elif image.mode not in ("RGB", "L"):
+                elif (format not in self.TRANSPARENCY_SUPPORTING_FORMATS and image.mode not in ("RGB", "L")):
                     image = image.convert("RGB")
                 image.save(buf, format, quality=90)
                 raw_data = buf.getvalue()
