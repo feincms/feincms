@@ -356,7 +356,7 @@ class ApplicationContent(models.Model):
 
                 application_cookies = output.cookies
                 if application_cookies:
-                    self.rendered_headers['X-Feincms-Cookie'] = application_cookies
+                    self.rendered_headers["X-Feincms-Cookie"] = application_cookies
 
         elif isinstance(output, tuple) and "view" in kw:
             kw["view"].template_name = output[0]
@@ -425,13 +425,20 @@ class ApplicationContent(models.Model):
             response["Expires"] = http_date(mktime(min(lm_list)))
 
         # Add all cookies
-        cookies = headers.get('X-Feincms-Cookie', None)
+        cookies = headers.get("X-Feincms-Cookie", None)
         if cookies:
             for kookie, val in cookies.items():
-                response.set_cookie(kookie, value=val.value,
-                        max_age=val['max-age'], expires=val['expires'], path=val['path'],
-                        domain=val['domain'], secure=val['secure'], httponly=val['httponly'],
-                        samesite=val['samesite'])
+                response.set_cookie(
+                    kookie,
+                    value=val.value,
+                    max_age=val["max-age"],
+                    expires=val["expires"],
+                    path=val["path"],
+                    domain=val["domain"],
+                    secure=val["secure"],
+                    httponly=val["httponly"],
+                    samesite=val["samesite"],
+                )
 
     @classmethod
     def app_reverse_cache_key(self, urlconf_path, **kwargs):

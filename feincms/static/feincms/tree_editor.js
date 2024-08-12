@@ -9,7 +9,10 @@ feincms.jQuery.ajaxSetup({
   crossDomain: false, // obviates need for sameOrigin test
   beforeSend(xhr, settings) {
     if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type)) {
-      xhr.setRequestHeader("X-CSRFToken", document.querySelector('input[name="csrfmiddlewaretoken"]').value);
+      xhr.setRequestHeader(
+        "X-CSRFToken",
+        document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+      )
     }
   },
 })
