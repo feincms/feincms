@@ -291,7 +291,7 @@ This allows for various actions dependent on page and request, for example a
 simple user access check can be implemented like this::
 
     def authenticated_request_processor(page, request):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             raise django.core.exceptions.PermissionDenied
 
     Page.register_request_processor(authenticated_request_processor)
