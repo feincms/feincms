@@ -1,4 +1,4 @@
-**NOTE! If you're starting a new project you may want to take a look at `feincms3 <https://feincms3.readthedocs.io/>__`. FeinCMS is still maintained and works well, but feincms3 is where current development is happening.**
+**NOTE! If you're starting a new project you may want to take a look at feincms3 (https://feincms3.readthedocs.io/). FeinCMS is still maintained and works well, but feincms3 is where current development is happening.**
 
 ========================================
 FeinCMS - An extensible Django-based CMS
