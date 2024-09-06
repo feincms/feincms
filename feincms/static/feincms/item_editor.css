@@ -133,15 +133,13 @@ textarea {
 
 .machine-control {
   padding: 5px 10px 5px 10px;
-  border: 1px solid #ccc;
-  background-color: #edf3fe;
+  border: 1px solid #eee;
+  background-color: #f8f8f8;
   position: absolute;
   left: -11px;
   bottom: -30px;
   width: 100%;
 
-  background: #f8f8f8;
-  border: 1px solid #eee;
   height: 55px;
 }
 

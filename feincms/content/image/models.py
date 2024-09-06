@@ -67,12 +67,12 @@ class ImageContent(models.Model):
         return AutoRenderTuple((templates, {"content": self}))
 
     def get_image(self):
-        type, separator, size = getattr(self, "format", "").partition(":")
+        img_type, _, size = getattr(self, "format", "").partition(":")
         if not size:
             return self.image
 
         thumbnailer = {"cropscale": feincms_thumbnail.CropscaleThumbnailer}.get(
-            type, feincms_thumbnail.Thumbnailer
+            img_type, feincms_thumbnail.Thumbnailer
         )
         return thumbnailer(self.image, size)
 

@@ -1,5 +1,4 @@
 # ------------------------------------------------------------------------
-# ------------------------------------------------------------------------
 #
 #  ct_tracker.py
 #  FeinCMS
@@ -82,7 +81,7 @@ class TrackerContentProxy(ContentProxy):
             # done late as opposed to at class definition time as not all
             # information is ready, especially when we are doing a "syncdb" the
             # ContentType table does not yet exist
-            map = {}
+            tmap = {}
             model_to_contenttype = ContentType.objects.get_for_models(
                 *self.item._feincms_content_types
             )
@@ -90,10 +89,10 @@ class TrackerContentProxy(ContentProxy):
                 dct = model_to_contenttype[fct]
 
                 # Rely on non-negative primary keys
-                map[-dct.id] = idx  # From-inventory map
-                map[idx] = dct.id  # To-inventory map
+                tmap[-dct.id] = idx  # From-inventory map
+                tmap[idx] = dct.id  # To-inventory map
 
-            _translation_map_cache[cls] = map
+            _translation_map_cache[cls] = tmap
         return _translation_map_cache[cls]
 
     def _from_inventory(self, inventory):
@@ -102,10 +101,10 @@ class TrackerContentProxy(ContentProxy):
         ContentProxy counts format.
         """
 
-        map = self._translation_map()
+        tmap = self._translation_map()
 
         return {
-            region: [(pk, map[-ct]) for pk, ct in items]
+            region: [(pk, tmap[-ct]) for pk, ct in items]
             for region, items in inventory.items()
             if region != "_version_"
         }

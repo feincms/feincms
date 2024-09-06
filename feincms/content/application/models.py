@@ -441,7 +441,7 @@ class ApplicationContent(models.Model):
                 )
 
     @classmethod
-    def app_reverse_cache_key(self, urlconf_path, **kwargs):
+    def app_reverse_cache_key(cls, urlconf_path, **kwargs):
         return "FEINCMS:{}:APPCONTENT:{}:{}".format(
             getattr(settings, "SITE_ID", 0),
             get_language(),
