@@ -6,7 +6,7 @@
   <script>
     (() => {
       const init = (field) => {
-        if (!field.dataset.initialized) {
+        if (!field.hasAttribute("data-initialized")) {
           tinymce.init({
             selector: `#${field.id}`,
             menubar: false,
@@ -15,13 +15,13 @@
             autoresize_bottom_margin: 20,
             toolbar: "styles | bold italic sub sup | bullist numlist | anchor link unlink",
           })
-          field.dataset.initialized = true
+          field.setAttribute("data-initialized", true)
         }
       }
 
       const destroy = (field) => {
         tinymce.remove(`#${field.id}`)
-        field.dataset.initialized = true
+        field.removeAttribute("data-initialized")
       }
 
       const selector = "textarea.item-richtext"
