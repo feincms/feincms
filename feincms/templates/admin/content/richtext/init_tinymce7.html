@@ -1,0 +1,37 @@
+{% block tinymce_script %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.6.0/tinymce.min.js" integrity="sha512-/4EpSbZW47rO/cUIb0AMRs/xWwE8pyOLf8eiDWQ6sQash5RP1Cl8Zi2aqa4QEufjeqnzTK8CLZWX7J5ZjLcc1Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
+{% block tinymce_init %}
+  <script>
+    (() => {
+      const init = (field) => {
+        if (!field.dataset.initialized) {
+          tinymce.init({
+            selector: `#${field.id}`,
+            menubar: false,
+          })
+          field.dataset.initialized = true
+        }
+      }
+
+      const destroy = (field) => {
+        tinymce.remove(`#${field.id}`)
+        field.dataset.initialized = true
+      }
+
+      const selector = "textarea.item-richtext"
+
+      contentblock_init_handlers.push(() => {
+        Array.from(document.querySelectorAll(`.order-machine ${selector}`)).forEach(init)
+      })
+
+      contentblock_move_handlers.poorify.push((item) => {
+        Array.from(item[0].querySelectorAll(selector)).forEach(destroy)
+      })
+      contentblock_move_handlers.richify.push((item) => {
+        Array.from(item[0].querySelectorAll(selector)).forEach(init)
+      })
+    })();
+	</script>
+{% endblock %}

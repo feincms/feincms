@@ -6,6 +6,8 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Added a tinymce 7 integration for the richtext content type.
+
 
 v24.8.1 (2024-08-07)
 ~~~~~~~~~~~~~~~~~~~~

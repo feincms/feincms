@@ -37,6 +37,7 @@ initialization snippet for the rich text editor. Bundled templates are:
 
 * ``admin/content/richtext/init_tinymce.html`` for TinyMCE 3.x.
 * ``admin/content/richtext/init_tinymce4.html`` for TinyMCE 4.x.
+* ``admin/content/richtext/init_tinymce7.html`` for TinyMCE 7.x.
 * ``admin/content/richtext/init_ckeditor.html`` for CKEditor.
 
 ``FEINCMS_RICHTEXT_INIT_CONTEXT``: Defaults to
