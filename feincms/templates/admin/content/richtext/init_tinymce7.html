@@ -10,6 +10,10 @@
           tinymce.init({
             selector: `#${field.id}`,
             menubar: false,
+            statusbar: false,
+            plugins: "anchor autoresize link",
+            autoresize_bottom_margin: 20,
+            toolbar: "styles | bold italic sub sup | bullist numlist | anchor link unlink",
           })
           field.dataset.initialized = true
         }
