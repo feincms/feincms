@@ -427,8 +427,18 @@ if (!Array.prototype.indexOf) {
       let panel = $(
         `<fieldset class="module aligned" style="clear: both; display: none" id="${id_base}_body"></fieldset>`,
       )
-      let $elem = $(elem)
-      panel.append($elem.children("div"))
+
+      /* Extract the panel from each fieldset and move it to the panel area */
+      const $elem = $(elem)
+      const details = $elem.children('details')
+      let divs
+      if(details.length == 1) { /* dj 5.1: ModelAdmin.fieldsets and InlineModelAdmin.fieldsets now includes <details> and <summary> elements */
+          divs = $(details).children('div')
+      } else { /* pre dj 5.1 */
+          divs = $elem.children("div")
+      }
+
+      panel.append(divs)
       $elem.remove() // Remove the rest
       panels.push(panel)
     })
