@@ -20,7 +20,7 @@ class PreviewHandler(Handler):
         # a page that doesn't exist, and now FeinCMS wants to
         # show a 404 page via FEINCMS_CMS_404_PAGE.
         if len(self.args) < 2:
-            raise Http404("Not found (not a preview page)")
+            return super().get_object()
 
         page = get_object_or_404(self.page_model, pk=self.args[1])
         breakpoint()
