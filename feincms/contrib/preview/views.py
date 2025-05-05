@@ -23,7 +23,6 @@ class PreviewHandler(Handler):
             return super().get_object()
 
         page = get_object_or_404(self.page_model, pk=self.args[1])
-        breakpoint()
         # Remove _preview/42/ from URL, the rest of the handler code should not
         # know that anything about previewing. Handler.prepare will still raise
         # a 404 if the extra_path isn't consumed by any content type
