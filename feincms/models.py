@@ -5,7 +5,6 @@ All models defined here are abstract, which means no tables are created in
 the feincms namespace.
 """
 
-
 import operator
 import sys
 import warnings

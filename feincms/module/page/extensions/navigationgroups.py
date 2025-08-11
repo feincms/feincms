@@ -3,7 +3,6 @@ Page navigation groups allow assigning pages to differing navigation lists
 such as header, footer and what else.
 """
 
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 

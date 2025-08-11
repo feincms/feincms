@@ -6,6 +6,7 @@ default views and the template tags.
 Depends on the page class having a "active_filters" list that will be used by
 the page's manager to determine which entries are to be considered active.
 """
+
 # ------------------------------------------------------------------------
 
 

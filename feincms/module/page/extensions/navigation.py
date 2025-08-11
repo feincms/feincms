@@ -7,7 +7,6 @@ which processes, modifies or adds subnavigation entries. The bundled
 be they real Page instances or extended navigation entries.
 """
 
-
 import types
 from collections import OrderedDict
 

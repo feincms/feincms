@@ -2,7 +2,6 @@
 Add a many-to-many relationship field to relate this page to other pages.
 """
 
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
