@@ -5,7 +5,6 @@ You can provide your own comment form by passing an additional
 ``form=YourClass`` argument to the ``create_content_type`` call.
 """
 
-
 from django import forms
 from django.core.mail import send_mail
 from django.db import models
@@ -62,7 +61,7 @@ class ContactFormContent(models.Model):
                 return HttpResponseRedirect("?_cf_thanks=1")
         else:
             initial = {"subject": self.subject}
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 initial["email"] = request.user.email
                 initial["name"] = request.user.get_full_name()
 

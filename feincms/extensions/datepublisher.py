@@ -8,7 +8,6 @@ the page's manager to determine which entries are to be considered active.
 """
 # ------------------------------------------------------------------------
 
-
 from datetime import datetime
 
 import django

@@ -396,8 +396,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(page2.content.main[0].__class__.__name__, "RawContent")
         self.assertEqual(
             force_str(page2.content.main[0]),
-            "RawContent<pk=1, parent=Page<pk=1, Test page>, region=main,"
-            " ordering=0>",
+            "RawContent<pk=1, parent=Page<pk=1, Test page>, region=main, ordering=0>",
         )
 
         self.assertEqual(len(page2.content.main), 1)
@@ -709,7 +708,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(t.render(context), "")
 
         t = template.Template(
-            "{% load feincms_page_tags %}" "{% feincms_breadcrumbs feincms_page %}"
+            "{% load feincms_page_tags %}{% feincms_breadcrumbs feincms_page %}"
         )
         rendered = t.render(context)
         self.assertTrue("Test child page" in rendered)
@@ -749,8 +748,7 @@ class PagesTestCase(TestCase):
         )
         self.assertEqual(
             t.render(context),
-            "/test-page/,/test-page/test-child-page/,/test-page/test-child"
-            "-page/page3/",
+            "/test-page/,/test-page/test-child-page/,/test-page/test-child-page/page3/",
         )
 
         t = template.Template(

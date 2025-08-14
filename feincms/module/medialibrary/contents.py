@@ -49,7 +49,7 @@ class MediaFileContent(ContentWithMediaFile):
     def initialize_type(cls, TYPE_CHOICES=None):
         if TYPE_CHOICES is None:
             raise ImproperlyConfigured(
-                "You have to set TYPE_CHOICES when" " creating a %s" % cls.__name__
+                "You have to set TYPE_CHOICES when creating a %s" % cls.__name__
             )
 
         cls.add_to_class(

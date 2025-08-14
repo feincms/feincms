@@ -14,9 +14,9 @@ PageFilerFileContent = Page.content_type_for(FilerFileContent)
 PageFilerImageContent = Page.content_type_for(FilerImageContent)
 
 
-assert all(
-    (PageMediaFileContent, PageFilerFileContent, PageFilerImageContent)
-), "Not all required models available"
+assert all((PageMediaFileContent, PageFilerFileContent, PageFilerImageContent)), (
+    "Not all required models available"
+)
 
 
 class Command(BaseCommand):

@@ -120,8 +120,7 @@ def app_reverse(parser, token):
     bits = token.split_contents()
     if len(bits) < 3:
         raise TemplateSyntaxError(
-            "'%s' takes at least two arguments"
-            " (path to a view and a urlconf)" % bits[0]
+            "'%s' takes at least two arguments (path to a view and a urlconf)" % bits[0]
         )
     viewname = parser.compile_filter(bits[1])
     urlconf = parser.compile_filter(bits[2])

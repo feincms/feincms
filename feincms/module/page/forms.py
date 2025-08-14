@@ -118,9 +118,7 @@ class PageAdminForm(MPTTAdminForm):
             # and that's good enough for us.
             field = self.page_model._meta.get_field("parent")
             self.fields["redirect_to"].widget = RedirectToWidget(
-                field.remote_field
-                if hasattr(field, "remote_field")
-                else field.rel,  # noqa
+                field.remote_field if hasattr(field, "remote_field") else field.rel,  # noqa
                 modeladmin.admin_site,
             )
 

@@ -7,7 +7,6 @@
 ``rebuild_mptt`` rebuilds your mptt pointers. Only use in emergencies.
 """
 
-
 from django.core.management.base import BaseCommand
 
 from feincms.module.page.models import Page

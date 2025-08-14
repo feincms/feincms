@@ -355,7 +355,7 @@ class TreeEditor(ExtensionModelAdmin):
 
         if not self.has_change_permission(request, obj=obj):
             logger.warning(
-                'Denied AJAX request by "%s" to toggle boolean %s for' " object %s",
+                'Denied AJAX request by "%s" to toggle boolean %s for object %s',
                 request.user,
                 attr,
                 item_id,

@@ -4,7 +4,6 @@ These are internal helpers. Do not rely on their presence.
 http://mail.python.org/pipermail/python-dev/2008-January/076194.html
 """
 
-
 __all__ = ("monkeypatch_method", "monkeypatch_property")
 
 

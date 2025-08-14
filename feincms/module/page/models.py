@@ -179,9 +179,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         _("redirect to"),
         max_length=255,
         blank=True,
-        help_text=_(
-            "Target URL for automatic redirects" " or the primary key of a page."
-        ),
+        help_text=_("Target URL for automatic redirects or the primary key of a page."),
     )
     _cached_url = models.CharField(
         _("Cached URL"),

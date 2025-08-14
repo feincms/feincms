@@ -196,7 +196,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             messages.add_message(
                 request,
                 messages.ERROR,
-                _("You don't have the necessary permissions to edit this" " object"),
+                _("You don't have the necessary permissions to edit this object"),
             )
         return HttpResponseRedirect(reverse("admin:page_page_changelist"))
 

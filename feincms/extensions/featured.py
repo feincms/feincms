@@ -2,7 +2,6 @@
 Add a "featured" field to objects so admins can better direct top content.
 """
 
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 

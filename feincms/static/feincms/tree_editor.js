@@ -29,7 +29,7 @@ if (!Array.prototype.indexOf) {
 
 feincms.jQuery(($) => {
   $(document.body).on("click", "[data-inplace]", function () {
-    let elem = $(this),
+    const elem = $(this),
       id = elem.data("inplace-id"),
       attr = elem.data("inplace-attribute")
 
@@ -43,8 +43,8 @@ feincms.jQuery(($) => {
         attr,
       },
       success(data) {
-        $.each(data, (i, html) => {
-          let r_id = $(html).attr("id")
+        $.each(data, (_i, html) => {
+          const r_id = $(html).attr("id")
           $(`#${r_id}`).replaceWith(html)
         })
       },
@@ -61,19 +61,19 @@ feincms.jQuery(($) => {
            extractItemId('foo_bar_baz-327') -> 327
      */
   function extractItemId(elem_id) {
-    let i = elem_id.indexOf("-")
+    const i = elem_id.indexOf("-")
     if (i >= 0) return parseInt(elem_id.slice(i + 1), 10)
 
     return 0
   }
 
   function isExpandedNode(id) {
-    return feincms.collapsed_nodes.indexOf(id) == -1
+    return feincms.collapsed_nodes.indexOf(id) === -1
   }
 
   function markNodeAsExpanded(id) {
     // remove itemId from array of collapsed nodes
-    let idx = feincms.collapsed_nodes.indexOf(id)
+    const idx = feincms.collapsed_nodes.indexOf(id)
     if (idx >= 0) feincms.collapsed_nodes.splice(idx, 1)
   }
 
@@ -83,9 +83,9 @@ feincms.jQuery(($) => {
 
   // toggle children
   function doToggle(id, show) {
-    let children = feincms.tree_structure[id] || []
+    const children = feincms.tree_structure[id] || []
     for (let i = 0; i < children.length; ++i) {
-      let childId = children[i]
+      const childId = children[i]
       if (show) {
         $(`#page_marker-${childId}`).closest("tr").show()
         // only reveal children if current node is not collapsed
@@ -101,7 +101,7 @@ feincms.jQuery(($) => {
   }
 
   function rowLevel($row) {
-    let level =
+    const level =
       feincms.node_levels[extractItemId($row.find(".page_marker").attr("id"))]
     return (level || 0) + 1
   }
@@ -121,21 +121,21 @@ feincms.jQuery(($) => {
       })
 
       $("div.drag_handle").bind("mousedown", (event) => {
-        let BEFORE = 0
-        let AFTER = 1
-        let CHILD = 2
-        let CHILD_PAD = 20
-        let originalRow = $(event.target).closest("tr")
-        let rowHeight = originalRow.height()
-        let moveTo = new Object()
+        const BEFORE = 0
+        const AFTER = 1
+        const CHILD = 2
+        const CHILD_PAD = 20
+        const originalRow = $(event.target).closest("tr")
+        const rowHeight = originalRow.height()
+        const moveTo = new Object()
 
         $("body")
           .addClass("dragging")
           .disableSelection()
           .bind("mousemove", (event) => {
             // attach dragged item to mouse
-            let cloned = originalRow.html()
-            if ($("#ghost").length == 0) {
+            const cloned = originalRow.html()
+            if ($("#ghost").length === 0) {
               $('<div id="ghost"></div>').appendTo("body")
             }
             $("#ghost")
@@ -170,9 +170,9 @@ feincms.jQuery(($) => {
             }
 
             // loop trough all rows
-            $("tr", originalRow.parent()).each((index, element) => {
+            $("tr", originalRow.parent()).each((_index, element) => {
               element = $(element)
-              let top = element.offset().top
+              const top = element.offset().top
 
               // check if mouse is over a row
               if (event.pageY >= top && event.pageY < top + rowHeight) {
@@ -187,7 +187,7 @@ feincms.jQuery(($) => {
                   event.pageY >= top + rowHeight / 3 &&
                   event.pageY < top + (rowHeight * 2) / 3
                 ) {
-                  let next = element.next()
+                  const next = element.next()
                   // there's no point in allowing adding children when there are some already
                   // better move the items to the correct place right away
                   if (!next.length || rowLevel(next) <= elementLevel) {
@@ -198,7 +198,7 @@ feincms.jQuery(($) => {
                   event.pageY >= top + (rowHeight * 2) / 3 &&
                   event.pageY < top + rowHeight
                 ) {
-                  let next = element.next()
+                  const next = element.next()
                   if (!next.length || rowLevel(next) <= elementLevel) {
                     targetRow = element
                     targetLoc = AFTER
@@ -206,17 +206,17 @@ feincms.jQuery(($) => {
                 }
 
                 if (targetRow) {
-                  let padding =
+                  const padding =
                     37 +
                     rowLevel(element) * CHILD_PAD +
-                    (targetLoc == CHILD ? CHILD_PAD : 0)
+                    (targetLoc === CHILD ? CHILD_PAD : 0)
 
                   $("#drag_line").css({
                     width: targetRow.width() - padding,
                     left: targetRow.offset().left + padding,
                     top:
                       targetRow.offset().top +
-                      (targetLoc == AFTER || targetLoc == CHILD
+                      (targetLoc === AFTER || targetLoc === CHILD
                         ? rowHeight
                         : 0) -
                       1,
@@ -234,7 +234,7 @@ feincms.jQuery(($) => {
           })
 
         $("body").keydown((event) => {
-          if (event.which == "27") {
+          if (event.which === "27") {
             $("#drag_line").remove()
             $("#ghost").remove()
             $("body")
@@ -248,23 +248,23 @@ feincms.jQuery(($) => {
 
         $("body").bind("mouseup", () => {
           if (moveTo.relativeTo) {
-            let cutItem = extractItemId(
+            const cutItem = extractItemId(
               originalRow.find(".page_marker").attr("id"),
             )
-            let pastedOn = extractItemId(
+            const pastedOn = extractItemId(
               moveTo.relativeTo.find(".page_marker").attr("id"),
             )
             // get out early if items are the same
-            if (cutItem != pastedOn) {
-              let isParent =
+            if (cutItem !== pastedOn) {
+              const isParent =
                 rowLevel(moveTo.relativeTo.next()) > rowLevel(moveTo.relativeTo)
 
               let position = ""
 
               // determine position
-              if (moveTo.side == CHILD && !isParent) {
+              if (moveTo.side === CHILD && !isParent) {
                 position = "last-child"
-              } else if (moveTo.side == BEFORE) {
+              } else if (moveTo.side === BEFORE) {
                 position = "left"
               } else {
                 position = "right"
@@ -321,7 +321,7 @@ feincms.jQuery(($) => {
 
     if (!item.hasClass("children")) return
 
-    let itemId = extractItemId(item.attr("id"))
+    const itemId = extractItemId(item.attr("id"))
 
     if (!isExpandedNode(itemId)) {
       item.removeClass("closed")
@@ -343,10 +343,10 @@ feincms.jQuery(($) => {
       $(this).click(() => {
         rlist = $("#result_list")
         rlist.hide()
-        $("tbody tr", rlist).each((i, el) => {
-          let marker = $(".page_marker", el)
+        $("tbody tr", rlist).each((_i, el) => {
+          const marker = $(".page_marker", el)
           if (marker.hasClass("children")) {
-            let itemId = extractItemId(marker.attr("id"))
+            const itemId = extractItemId(marker.attr("id"))
             doToggle(itemId, false)
             marker.addClass("closed")
             markNodeAsCollapsed(itemId)
@@ -365,10 +365,10 @@ feincms.jQuery(($) => {
       $(this).click(() => {
         rlist = $("#result_list")
         rlist.hide()
-        $("tbody tr", rlist).each((i, el) => {
-          let marker = $("span.page_marker", el)
+        $("tbody tr", rlist).each((_i, el) => {
+          const marker = $("span.page_marker", el)
           if (marker.hasClass("children")) {
-            let itemId = extractItemId($("span.page_marker", el).attr("id"))
+            const itemId = extractItemId($("span.page_marker", el).attr("id"))
             doToggle(itemId, true)
             marker.removeClass("closed")
             markNodeAsExpanded(itemId)
@@ -381,10 +381,10 @@ feincms.jQuery(($) => {
     }),
   )
 
-  let changelist_tab = function (elem, event, direction) {
+  const changelist_tab = (elem, event, direction) => {
     event.preventDefault()
     elem = $(elem)
-    let ne =
+    const ne =
       direction > 0
         ? elem.nextAll(":visible:first")
         : elem.prevAll(":visible:first")
@@ -409,7 +409,7 @@ feincms.jQuery(($) => {
         expandOrCollapseNode($(this).find(".page_marker"))
         break
       case 13: {
-        let where_to = extractItemId($("span", this).attr("id"))
+        const where_to = extractItemId($("span", this).attr("id"))
         document.location = `${document.location.pathname + where_to}/`
         break
       }
@@ -437,7 +437,9 @@ feincms.jQuery(($) => {
     $("#open_entire_tree").bindOpenTreeEvent()
 
     // Disable things user cannot do anyway (object level permissions)
-    let non_editable_fields = $(".tree-item-not-editable", rlist).parents("tr")
+    const non_editable_fields = $(".tree-item-not-editable", rlist).parents(
+      "tr",
+    )
     non_editable_fields.addClass("non-editable")
     $("input:checkbox", non_editable_fields).attr("disabled", "disabled")
     $("a:first", non_editable_fields).click((e) => {
@@ -451,7 +453,7 @@ feincms.jQuery(($) => {
     $("tr", rlist).keydown(keyboardNavigationHandler)
 
     feincms.collapsed_nodes = []
-    let storedNodes = retrieveCollapsedNodes()
+    const storedNodes = retrieveCollapsedNodes()
     if (storedNodes == null) {
       $("#collapse_entire_tree").click()
     } else {

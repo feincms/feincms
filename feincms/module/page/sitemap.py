@@ -26,7 +26,7 @@ class PageSitemap(Sitemap):
         extended_navigation=False,
         page_model=settings.FEINCMS_DEFAULT_PAGE_MODEL,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """
         The PageSitemap accepts the following parameters for customisation

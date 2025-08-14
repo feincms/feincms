@@ -5,7 +5,6 @@ All models defined here are abstract, which means no tables are created in
 the feincms namespace.
 """
 
-
 import operator
 import sys
 import warnings
@@ -472,9 +471,7 @@ def create_base_model(inherit_from=models.Model):
                 ordering = ["ordering"]
 
             def __str__(self):
-                return (
-                    "%s<pk=%s, parent=%s<pk=%s, %s>, region=%s," " ordering=%d>"
-                ) % (
+                return ("%s<pk=%s, parent=%s<pk=%s, %s>, region=%s, ordering=%d>") % (
                     self.__class__.__name__,
                     self.pk,
                     self.parent.__class__.__name__,
@@ -644,7 +641,7 @@ def create_base_model(inherit_from=models.Model):
 
             if not model._meta.abstract:
                 raise ImproperlyConfigured(
-                    "Cannot create content type from" " non-abstract model (yet)."
+                    "Cannot create content type from non-abstract model (yet)."
                 )
 
             if not hasattr(cls, "_feincms_content_model"):

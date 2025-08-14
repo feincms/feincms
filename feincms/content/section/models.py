@@ -54,7 +54,7 @@ class SectionContent(models.Model):
 
         if TYPE_CHOICES is None:
             raise ImproperlyConfigured(
-                "You need to set TYPE_CHOICES when creating a" " %s" % cls.__name__
+                "You need to set TYPE_CHOICES when creating a %s" % cls.__name__
             )
 
         cls.add_to_class(

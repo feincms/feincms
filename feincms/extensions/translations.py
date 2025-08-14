@@ -14,7 +14,6 @@ will be activated per user or session even for non-FeinCMS managed views such
 as Django's administration tool.
 """
 
-
 # ------------------------------------------------------------------------
 import logging
 from typing import Optional

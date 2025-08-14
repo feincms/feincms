@@ -54,7 +54,7 @@ class TranslationTestCase(TestCase):
             title=title,
             slug=kwargs.get("slug", slugify(title)),
             parent=parent,
-            **defaults
+            **defaults,
         )
 
     def create_default_page_set(self, **kwargs):

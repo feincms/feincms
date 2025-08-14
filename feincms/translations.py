@@ -28,7 +28,6 @@ Print all the titles of all news entries which have an english translation::
         print(news.translation.title)
 """
 
-
 from django.conf import settings
 from django.contrib import admin
 from django.core.cache import cache

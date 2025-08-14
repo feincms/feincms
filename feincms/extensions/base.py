@@ -2,7 +2,6 @@
 Base types for extensions refactor
 """
 
-
 import inspect
 from functools import wraps
 

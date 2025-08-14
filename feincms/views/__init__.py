@@ -61,7 +61,7 @@ class Handler(ContentView):
                     return response
                 except Http404:
                     logger.error(
-                        "Http404 raised while resolving" " FEINCMS_CMS_404_PAGE=%s",
+                        "Http404 raised while resolving FEINCMS_CMS_404_PAGE=%s",
                         settings.FEINCMS_CMS_404_PAGE,
                     )
                     raise e

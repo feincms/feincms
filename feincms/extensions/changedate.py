@@ -4,7 +4,6 @@
 Track the modification date for objects.
 """
 
-
 from email.utils import mktime_tz, parsedate_tz
 from time import mktime
 

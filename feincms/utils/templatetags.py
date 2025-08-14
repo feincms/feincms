@@ -9,7 +9,6 @@ They help implementing tags of the following forms::
     {% tag of template_var as var_name arg1,arg2,kwarg3=4 %}
 """
 
-
 from django import template
 
 

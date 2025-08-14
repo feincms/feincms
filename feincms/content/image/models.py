@@ -3,7 +3,6 @@ Simple image inclusion content: You should probably use the media library
 instead.
 """
 
-
 import os
 
 from django.db import models

@@ -7,7 +7,6 @@ All of these can be overridden by specifying them in the standard
 ``settings.py`` file.
 """
 
-
 from django.conf import settings
 
 
