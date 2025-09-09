@@ -1,0 +1,61 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.3/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "off" } } },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
+      "complexity": {
+        "noImportantStyles": "off"
+      },
+      "correctness": {
+        "noInnerDeclarations": "off",
+        "noUndeclaredVariables": "warn",
+        "noUnknownTypeSelector": "warn",
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "useHookAtTopLevel": "error"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "warn"
+      },
+      "style": {
+        "noDescendingSpecificity": "warn",
+        "noParameterAssign": "off",
+        "useForOf": "warn",
+        "useArrayLiterals": "error"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "warn",
+        "noAssignInExpressions": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "semicolons": "asNeeded"
+    },
+    "globals": ["django", "CKEDITOR"]
+  },
+  "css": {
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": false
+    }
+  }
+}

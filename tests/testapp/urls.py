@@ -20,7 +20,7 @@ urlpatterns = [
         serve,
         {"document_root": os.path.join(os.path.dirname(__file__), "media/")},
     ),
-    re_path(r"^sitemap\.xml$", sitemap, {"sitemaps": sitemaps}),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}),
     path("", include("feincms.contrib.preview.urls")),
     path("", include("feincms.urls")),
 ]
