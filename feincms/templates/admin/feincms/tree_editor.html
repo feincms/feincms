@@ -7,8 +7,8 @@
 
 {% include "admin/feincms/load-jquery.include" %}
 <script type="text/javascript">
-  feincms.tree_structure = {{ tree_structure|default:"{}" }};
-  feincms.node_levels = {{ node_levels|default:"{}" }};
+  feincms.tree_structure = JSON.parse('{{ tree_structure|default:"{}" }}');
+  feincms.node_levels = JSON.parse('{{ node_levels|default:"{}" }}');
 </script>
 
 <script type="text/javascript" src="{% static 'feincms/js.cookie.js' %}"></script>

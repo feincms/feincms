@@ -418,17 +418,26 @@ class TreeEditor(ExtensionModelAdmin):
             return HttpResponseBadRequest("Oops. AJAX request not understood.")
 
         extra_context = extra_context or {}
-        extra_context["tree_structure"] = mark_safe(
-            json.dumps(_build_tree_structure(self.get_queryset(request)))
-        )
-        extra_context["node_levels"] = mark_safe(
-            json.dumps(
-                dict(
-                    self.get_queryset(request)
-                    .order_by()
-                    .values_list("pk", self.model._mptt_meta.level_attr)
-                )
-            )
+
+        extra_context.update(
+            {
+                "tree_structure": mark_safe(
+                    json.dumps(
+                        obj=_build_tree_structure(self.get_queryset(request)),
+                        separators=(",", ":"),
+                    )
+                ),
+                "node_levels": mark_safe(
+                    json.dumps(
+                        dict(
+                            self.get_queryset(request)
+                            .order_by()
+                            .values_list("pk", self.model._mptt_meta.level_attr)
+                        ),
+                        separators=(",", ":"),
+                    )
+                ),
+            }
         )
 
         return super().changelist_view(request, extra_context, *args, **kwargs)
