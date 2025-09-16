@@ -419,22 +419,26 @@ class TreeEditor(ExtensionModelAdmin):
 
         extra_context = extra_context or {}
 
-        extra_context.update({
-            "tree_structure": mark_safe(
-                json.dumps(obj=_build_tree_structure(self.get_queryset(request)), separators=(",", ":"))
-            ),
-
-            "node_levels": mark_safe(
-                json.dumps(
-                    dict(
-                        self.get_queryset(request)
-                        .order_by()
-                        .values_list("pk", self.model._mptt_meta.level_attr)
-                    ),
-                    separators=(",", ":")
-                )
-            )
-        })
+        extra_context.update(
+            {
+                "tree_structure": mark_safe(
+                    json.dumps(
+                        obj=_build_tree_structure(self.get_queryset(request)),
+                        separators=(",", ":"),
+                    )
+                ),
+                "node_levels": mark_safe(
+                    json.dumps(
+                        dict(
+                            self.get_queryset(request)
+                            .order_by()
+                            .values_list("pk", self.model._mptt_meta.level_attr)
+                        ),
+                        separators=(",", ":"),
+                    )
+                ),
+            }
+        )
 
         return super().changelist_view(request, extra_context, *args, **kwargs)
 
