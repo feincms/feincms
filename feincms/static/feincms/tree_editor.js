@@ -17,16 +17,6 @@ feincms.jQuery.ajaxSetup({
   },
 })
 
-// IE<9 lacks Array.prototype.indexOf
-if (!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function (needle) {
-    for (let i = 0, l = this.length; i < l; ++i) {
-      if (this[i] === needle) return i
-    }
-    return -1
-  }
-}
-
 feincms.jQuery(($) => {
   $(document.body).on("click", "[data-inplace]", function () {
     const elem = $(this),
