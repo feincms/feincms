@@ -121,7 +121,9 @@ class TemplateChangeSeleniumTest(StaticLiveServerTestCase):
         username_input.send_keys(self.username)
         password_input.send_keys(self.password)
 
-        login_button = self.selenium.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
+        login_button = self.selenium.find_element(
+            By.CSS_SELECTOR, 'input[type="submit"]'
+        )
         login_button.click()
 
         # Wait for login to complete
