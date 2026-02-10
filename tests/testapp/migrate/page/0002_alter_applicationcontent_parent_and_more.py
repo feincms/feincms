@@ -5,40 +5,68 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('page', '0001_initial'),
+        ("page", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationcontent',
-            name='parent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_set', to='page.page'),
+            model_name="applicationcontent",
+            name="parent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="%(class)s_set",
+                to="page.page",
+            ),
         ),
         migrations.AlterField(
-            model_name='mediafilecontent',
-            name='parent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_set', to='page.page'),
+            model_name="mediafilecontent",
+            name="parent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="%(class)s_set",
+                to="page.page",
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='symlinked_page',
-            field=models.ForeignKey(blank=True, help_text='All content is inherited from this page if given.', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='%(app_label)s_%(class)s_symlinks', to='page.page', verbose_name='symlinked page'),
+            model_name="page",
+            name="symlinked_page",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="All content is inherited from this page if given.",
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="%(app_label)s_%(class)s_symlinks",
+                to="page.page",
+                verbose_name="symlinked page",
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='template_key',
-            field=models.CharField(choices=[('', '')], default='base', max_length=255, verbose_name='template'),
+            model_name="page",
+            name="template_key",
+            field=models.CharField(
+                choices=[("", "")],
+                default="base",
+                max_length=255,
+                verbose_name="template",
+            ),
         ),
         migrations.AlterField(
-            model_name='rawcontent',
-            name='parent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_set', to='page.page'),
+            model_name="rawcontent",
+            name="parent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="%(class)s_set",
+                to="page.page",
+            ),
         ),
         migrations.AlterField(
-            model_name='templatecontent',
-            name='parent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_set', to='page.page'),
+            model_name="templatecontent",
+            name="parent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="%(class)s_set",
+                to="page.page",
+            ),
         ),
     ]

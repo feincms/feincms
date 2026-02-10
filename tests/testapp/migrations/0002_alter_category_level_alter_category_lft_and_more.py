@@ -5,30 +5,33 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('testapp', '0001_initial'),
+        ("testapp", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='category',
-            name='level',
+            model_name="category",
+            name="level",
             field=models.PositiveIntegerField(editable=False),
         ),
         migrations.AlterField(
-            model_name='category',
-            name='lft',
+            model_name="category",
+            name="lft",
             field=models.PositiveIntegerField(editable=False),
         ),
         migrations.AlterField(
-            model_name='category',
-            name='rght',
+            model_name="category",
+            name="rght",
             field=models.PositiveIntegerField(editable=False),
         ),
         migrations.AlterField(
-            model_name='customcontenttype',
-            name='parent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)s_set', to='testapp.mymodel'),
+            model_name="customcontenttype",
+            name="parent",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="%(class)s_set",
+                to="testapp.mymodel",
+            ),
         ),
     ]
