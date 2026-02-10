@@ -537,7 +537,9 @@
                    invoked. See Issue #372 */
         form_element.find("[type=submit][name=_save]").click()
         /* Disable all submit buttons to prevent double submission while page reloads */
-        form_element.find("input[type=submit], button").attr("disabled", "disabled")
+        form_element
+          .find("input[type=submit], button")
+          .attr("disabled", "disabled")
       } else {
         // Restore original value
         form_element.val($(this).data("original_value"))

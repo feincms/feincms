@@ -16,7 +16,13 @@ class TemplateChangeFixTest(TestCase):
         """Verify that the fix line exists in item_editor.js"""
         # Use BASEDIR from settings to construct the path
         js_file_path = os.path.join(
-            settings.BASEDIR, '..', '..', 'feincms', 'static', 'feincms', 'item_editor.js'
+            settings.BASEDIR,
+            "..",
+            "..",
+            "feincms",
+            "static",
+            "feincms",
+            "item_editor.js",
         )
         js_file_path = os.path.normpath(js_file_path)
 
@@ -47,9 +53,11 @@ class TemplateChangeFixTest(TestCase):
 
     def test_fix_order_is_correct(self):
         """Verify that the disable happens AFTER the click, not before."""
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        base_dir = os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        )
         js_file_path = os.path.join(
-            base_dir, 'feincms', 'static', 'feincms', 'item_editor.js'
+            base_dir, "feincms", "static", "feincms", "item_editor.js"
         )
         js_file_path = os.path.normpath(js_file_path)
 
@@ -57,8 +65,12 @@ class TemplateChangeFixTest(TestCase):
             content = f.read()
 
         # Find positions of both statements
-        click_pos = content.find('form_element.find("[type=submit][name=_save]").click()')
-        disable_pos = content.find('form_element.find("input[type=submit]").attr("disabled", "disabled")')
+        click_pos = content.find(
+            'form_element.find("[type=submit][name=_save]").click()'
+        )
+        disable_pos = content.find(
+            'form_element.find("input[type=submit]").attr("disabled", "disabled")'
+        )
 
         self.assertGreater(click_pos, 0, "The click() statement should be present")
         self.assertGreater(disable_pos, 0, "The disable statement should be present")
