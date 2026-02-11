@@ -9,7 +9,6 @@ Run with: tox -e e2e
 """
 
 import os
-import unittest
 
 try:
     import pytest
