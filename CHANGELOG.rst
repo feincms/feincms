@@ -6,7 +6,50 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Fixed double submission issue when changing page templates in the admin by
+  disabling submit buttons after template change confirmation.
+- Added end-to-end tests using Playwright to verify browser-based functionality.
+  Run with ``tox -e e2e``.
+- Optimized JavaScript performance by using JSON strings instead of inline
+  JavaScript structures and removing whitespace from JSON output.
+- Removed IE8 compatibility shims (``Array.indexOf``).
+- Dropped legacy clearfix CSS hack.
+
+
+v25.5.1 (2025-05-05)
+~~~~~~~~~~~~~~~~~~~~
+
+- Added Python 3.13 support.
+- Fixed Django 5.1 compatibility issue with tab generation in admin (fieldsets
+  now include ``<details>`` and ``<summary>`` elements).
+- Fixed preview handler to properly return 404 instead of 500 when re-entering
+  with insufficient arguments.
+
+
+v24.12.3 (2024-12-21)
+~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed tinymce 7 state management.
+
+
+v24.12.2 (2024-12-20)
+~~~~~~~~~~~~~~~~~~~~~
+
+- Fixed tinymce 7 toolbar configuration.
+
+
+v24.12.1 (2024-12-17)
+~~~~~~~~~~~~~~~~~~~~~
+
 - Added a tinymce 7 integration for the richtext content type.
+- Fixed documentation example (``User.is_authenticated`` is now a boolean).
+- Minor code quality improvements.
+
+
+v24.8.2 (2024-08-08)
+~~~~~~~~~~~~~~~~~~~~
+
+- Minor fixes.
 
 
 v24.8.1 (2024-08-07)
