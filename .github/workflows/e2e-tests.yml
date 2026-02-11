@@ -1,0 +1,33 @@
+name: End-to-End Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  e2e-tests:
+    name: E2E Tests (Python 3.13, Django 5.2)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip wheel setuptools tox
+
+      - name: Install Playwright browsers
+        run: |
+          python -m pip install playwright
+          playwright install --with-deps chromium
+
+      - name: Run end-to-end tests
+        run: |
+          tox -e e2e

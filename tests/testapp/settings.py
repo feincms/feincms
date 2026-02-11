@@ -27,6 +27,10 @@ STATIC_URL = "/static/"
 BASEDIR = os.path.dirname(__file__)
 MEDIA_ROOT = os.path.join(BASEDIR, "media/")
 STATIC_ROOT = os.path.join(BASEDIR, "static/")
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 SECRET_KEY = "supersikret"
 USE_TZ = True
 TIME_ZONE = "Europe/Zurich"
