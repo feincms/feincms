@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
   "assist": { "actions": { "source": { "organizeImports": "off" } } },
   "formatter": {
     "enabled": true,
@@ -43,7 +43,7 @@
     "formatter": {
       "semicolons": "asNeeded"
     },
-    "globals": ["django", "CKEDITOR"]
+    "globals": ["Cookies", "django", "feincms", "CKEDITOR"]
   },
   "css": {
     "formatter": {
