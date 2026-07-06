@@ -14,24 +14,24 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.30.0
+    rev: 1.31.1
     hooks:
       - id: django-upgrade
         args: [--target-version, "3.2"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.15.16"
+    rev: "v0.15.20"
     hooks:
       - id: ruff
         args: [--unsafe-fixes]
       - id: ruff-format
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.4.16"
+    rev: "v2.5.2"
     hooks:
       - id: biome-check
         args: [--unsafe]
         verbose: true
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: v2.23.0
+    rev: v2.25.1
     hooks:
       - id: pyproject-fmt
   - repo: https://github.com/abravalheri/validate-pyproject
