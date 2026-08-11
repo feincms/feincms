@@ -1,0 +1,87 @@
+[tool.ruff]
+target-version = "py310"
+fix = true
+show-fixes = true
+lint.extend-select = [
+  # flake8-bugbear
+  "B",
+  # flake8-comprehensions
+  "C4",
+  # mmcabe
+  "C90",
+  # flake8-django
+  "DJ",
+  "E",
+  # pyflakes, pycodestyle
+  "F",
+  # flake8-boolean-trap
+  "FBT",
+  # flake8-logging-format
+  "G",
+  # isort
+  "I",
+  # flake8-gettext
+  "INT",
+  # pep8-naming
+  "N",
+  # pygrep-hooks
+  "PGH",
+  # flake8-pie
+  "PIE",
+  # pylint
+  "PLC",
+  "PLE",
+  # unused noqa
+  "RUF100",
+  # pyupgrade
+  "UP",
+  "W",
+  # flake8-2020
+  "YTT",
+]
+lint.extend-ignore = [
+  "B018",
+  "B026",
+  "B904",
+  # Allow zip() without strict=
+  "B905",
+  "BLE001",
+  "C901",
+  "DJ007",
+  "DJ008",
+  "DJ012",
+  "DTZ001",
+  # No line length errors
+  "E501",
+  "FBT",
+  "G004",
+  "N",
+  "N802",
+  "N806",
+  "PGH003",
+  "PGH004",
+  "PLC0415",
+  # Mutable class variables are fine
+  "RUF012",
+  "RUF059",
+  "S110",
+  "SIM102",
+  "SIM115",
+  "SIM117",
+  "TRY203",
+  "TRY401",
+  "UP031",
+]
+lint.per-file-ignores."*/migrat*/*" = [
+  # Allow using PascalCase model names in migrations
+  "N806",
+  # Ignore the fact that migration files are invalid module names
+  "N999",
+]
+lint.per-file-ignores."tests/*" = [
+  # Test helpers follow unittest's camelCase assertion naming
+  "N802",
+]
+lint.isort.combine-as-imports = true
+lint.isort.lines-after-imports = 2
+lint.mccabe.max-complexity = 15

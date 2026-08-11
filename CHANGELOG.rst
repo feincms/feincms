@@ -6,6 +6,8 @@ Change log
 Next version
 ~~~~~~~~~~~~
 
+- Dropped support for Python 3.8 and 3.9; both versions have reached their end
+  of life. Python 3.10 or better is required now.
 - Fixed double submission issue when changing page templates in the admin by
   disabling submit buttons after template change confirmation.
 - Added end-to-end tests using Playwright to verify browser-based functionality.
