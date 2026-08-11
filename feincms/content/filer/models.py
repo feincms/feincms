@@ -15,10 +15,10 @@ except ImportError:
 
 else:
     __all__ = (
-        "MediaFileContentInline",
         "ContentWithFilerFile",
         "FilerFileContent",
         "FilerImageContent",
+        "MediaFileContentInline",
     )
 
     class MediaFileContentInline(FeinCMSInline):
@@ -39,8 +39,8 @@ else:
                 (
                     [
                         f"content/filer/{self.file_type}_{self.type}.html",
-                        "content/filer/%s.html" % self.type,
-                        "content/filer/%s.html" % self.file_type,
+                        f"content/filer/{self.type}.html",
+                        f"content/filer/{self.file_type}.html",
                         "content/filer/default.html",
                     ],
                     {"content": self},
@@ -103,7 +103,7 @@ else:
         def initialize_type(cls, TYPE_CHOICES=None):
             if TYPE_CHOICES is None:
                 raise ImproperlyConfigured(
-                    "You have to set TYPE_CHOICES when creating a %s" % cls.__name__
+                    f"You have to set TYPE_CHOICES when creating a {cls.__name__}"
                 )
 
             cls.add_to_class(

@@ -96,8 +96,7 @@ class PageSitemap(Sitemap):
                             continue
                         cnt += 1
                         pages.insert(idx + cnt, p)
-                        if p.level > self.max_depth:
-                            self.max_depth = p.level
+                        self.max_depth = max(self.max_depth, p.level)
 
         self.per_level = 1.0 / (self.max_depth + 1.0)
         return pages
@@ -123,7 +122,7 @@ class PageSitemap(Sitemap):
         if obj.in_navigation:
             prio += 1.2 * self.per_level
 
-        return "%0.2g" % min(1.0, prio)
+        return f"{min(1.0, prio):0.2g}"
 
 
 # ------------------------------------------------------------------------

@@ -133,11 +133,10 @@ class MediaFileAdmin(ExtensionModelAdmin):
         image = admin_thumbnail(obj)
         if image:
             return mark_safe(
-                """
-                <a href="%(url)s" target="_blank">
-                    <img src="%(image)s" alt="" />
+                f"""
+                <a href="{obj.file.url}" target="_blank">
+                    <img src="{image}" alt="" />
                 </a>"""
-                % {"url": obj.file.url, "image": image}
             )
         return ""
 
@@ -173,7 +172,7 @@ class MediaFileAdmin(ExtensionModelAdmin):
                 if d:
                     t += " %d&times;%d" % (d[0], d[1])
             except (OSError, TypeError, ValueError) as e:
-                t += " (%s)" % e
+                t += f" ({e})"
         return mark_safe(t)
 
     @admin.display(

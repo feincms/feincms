@@ -42,7 +42,7 @@ FEINCMS_RICHTEXT_INIT_CONTEXT = getattr(
     settings,
     "FEINCMS_RICHTEXT_INIT_CONTEXT",
     {
-        "TINYMCE_JS_URL": "https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js",  # noqa
+        "TINYMCE_JS_URL": "https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js",
         "TINYMCE_DOMAIN": None,
         "TINYMCE_CONTENT_CSS_URL": None,
         "TINYMCE_LINK_LIST_URL": None,

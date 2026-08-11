@@ -60,8 +60,8 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
 
     queryset = feincms_page.__class__._default_manager.in_navigation().filter(
         **{
-            "%s__gte" % mptt_opts.level_attr: mptt_level_range[0],
-            "%s__lt" % mptt_opts.level_attr: mptt_level_range[1],
+            f"{mptt_opts.level_attr}__gte": mptt_level_range[0],
+            f"{mptt_opts.level_attr}__lt": mptt_level_range[1],
         }
     )
 
@@ -153,7 +153,7 @@ def feincms_nav(context, feincms_page, level=1, depth=1, group=None):
                             if this_level < level + depth - 1:
                                 yield extended
                     except Exception as e:
-                        logger.warn(
+                        logger.warning(
                             "feincms_nav caught exception in navigation"
                             " extension for page %d: %s",
                             current_navextension_node.id,
@@ -254,7 +254,7 @@ def _translate_page_into(page, language, default=None):
     except AttributeError:
         pass
 
-    if hasattr(default, "__call__"):
+    if callable(default):
         return default(page=page)
     return default
 
@@ -470,7 +470,7 @@ def siblings_along_path_to(page_list, page2):
 
             return siblings
         except (AttributeError, ValueError) as e:
-            logger.warn(
+            logger.warning(
                 "siblings_along_path_to caught exception: %s", format_exception(e)
             )
 

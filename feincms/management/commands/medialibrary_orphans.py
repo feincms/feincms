@@ -15,7 +15,7 @@ class Command(BaseCommand):
         root_len = len(settings.MEDIA_ROOT)
         medialib_path = os.path.join(settings.MEDIA_ROOT, "medialibrary")
 
-        for base, dirs, files in os.walk(medialib_path):
+        for base, _dirs, files in os.walk(medialib_path):
             for f in files:
                 if base.startswith(settings.MEDIA_ROOT):
                     base = base[root_len:]

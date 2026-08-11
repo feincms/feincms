@@ -7,8 +7,8 @@ from .base import (
 
 
 __all__ = (
-    "ExtensionsMixin",
     "Extension",
     "ExtensionModelAdmin",
+    "ExtensionsMixin",
     "prefetch_modeladmin_get_queryset",
 )

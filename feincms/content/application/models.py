@@ -33,10 +33,10 @@ APP_REVERSE_CACHE_TIMEOUT = 3
 
 __all__ = (
     "ApplicationContent",
+    "UnpackTemplateResponse",
     "app_reverse",
     "app_reverse_lazy",
     "permalink",
-    "UnpackTemplateResponse",
     "standalone",
     "unpack",
 )
@@ -147,7 +147,7 @@ def app_reverse(viewname, urlconf=None, args=None, kwargs=None, *vargs, **vkwarg
         finally:
             set_script_prefix(prefix)
 
-    raise NoReverseMatch("Unable to find ApplicationContent for %r" % urlconf)
+    raise NoReverseMatch(f"Unable to find ApplicationContent for {urlconf!r}")
 
 
 #: Lazy version of ``app_reverse``
@@ -466,11 +466,11 @@ class ApplicationContent(models.Model):
         if len(contents) > 1:
             try:
                 current = short_language_code(get_language())
-                return [
+                return next(
                     content
                     for content in contents
                     if short_language_code(content.parent.language) == current
-                ][0]
+                )
 
             except (AttributeError, IndexError):
                 pass

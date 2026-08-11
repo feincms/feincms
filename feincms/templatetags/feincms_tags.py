@@ -26,13 +26,13 @@ def _render_content(content, **kwargs):
                 f"Refusing to render {content!r}, render level is already {level}"
             )
             return
-        setattr(request, "feincms_render_level", level + 1)
+        request.feincms_render_level = level + 1
 
     r = content.render(**kwargs)
 
     if request is not None:
         level = getattr(request, "feincms_render_level", 1)
-        setattr(request, "feincms_render_level", max(level - 1, 0))
+        request.feincms_render_level = max(level - 1, 0)
 
     if isinstance(r, (list, tuple)):
         # Modeled after feincms3's TemplatePluginRenderer

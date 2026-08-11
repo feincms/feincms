@@ -157,7 +157,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
                 pass
 
             if trans:
-                trans = "%s" % trans
+                trans = f"{trans}"
                 if trans.strip():
                     return trans
 
@@ -179,7 +179,7 @@ class MediaFileBase(models.Model, ExtensionsMixin, TranslatedObjectMixin):
         >>> str(MediaFile().determine_file_type('foobar-jpg'))
         'other'
         """
-        for type_key, type_name, type_test in self.filetypes:
+        for type_key, _type_name, type_test in self.filetypes:
             if type_test(name):
                 return type_key
         return self.filetypes[-1][0]

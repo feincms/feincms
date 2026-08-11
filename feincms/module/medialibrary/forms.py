@@ -52,8 +52,7 @@ class MediaFileAdminForm(forms.ModelForm):
                 def _gen_fname(instance, filename):
                     if instance.id and hasattr(instance, "original_name"):
                         logger.info(
-                            "Overwriting file %s with new data"
-                            % (instance.original_name)
+                            f"Overwriting file {instance.original_name} with new data"
                         )
                         instance.file.storage.delete(instance.original_name)
                         return instance.original_name
@@ -65,8 +64,8 @@ class MediaFileAdminForm(forms.ModelForm):
 
     def clean_file(self):
         if settings.FEINCMS_MEDIAFILE_OVERWRITE and self.instance.id:
-            new_base, new_ext = os.path.splitext(self.cleaned_data["file"].name)
-            old_base, old_ext = os.path.splitext(self.instance.file.name)
+            _new_base, new_ext = os.path.splitext(self.cleaned_data["file"].name)
+            _old_base, old_ext = os.path.splitext(self.instance.file.name)
 
             if new_ext.lower() != old_ext.lower():
                 raise forms.ValidationError(

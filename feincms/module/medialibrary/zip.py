@@ -102,8 +102,10 @@ def import_zipfile(category_id, overwrite, data):
                     try:
                         for tr in info["translations"]:
                             found_metadata = True
-                            mt, mt_created = MediaFileTranslation.objects.get_or_create(
-                                parent=mf, language_code=tr["lang"]
+                            mt, _mt_created = (
+                                MediaFileTranslation.objects.get_or_create(
+                                    parent=mf, language_code=tr["lang"]
+                                )
                             )
                             mt.caption = tr["caption"]
                             mt.description = tr.get("description", None)

@@ -31,7 +31,7 @@ class FileContent(models.Model):
     def render(self, **kwargs):
         return AutoRenderTuple(
             (
-                ["content/file/%s.html" % self.region, "content/file/default.html"],
+                [f"content/file/{self.region}.html", "content/file/default.html"],
                 {"content": self},
             )
         )

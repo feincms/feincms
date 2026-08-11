@@ -61,7 +61,7 @@ class ImageContent(models.Model):
     def render(self, **kwargs):
         templates = ["content/image/default.html"]
         if hasattr(self, "position"):
-            templates.insert(0, "content/image/%s.html" % self.position)
+            templates.insert(0, f"content/image/{self.position}.html")
 
         return AutoRenderTuple((templates, {"content": self}))
 

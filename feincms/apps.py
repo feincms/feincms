@@ -14,4 +14,4 @@ def __getattr__(key):
 
         return getattr(models, key)
 
-    raise AttributeError("Unknown attribute '%s'" % key)
+    raise AttributeError(f"Unknown attribute '{key}'")

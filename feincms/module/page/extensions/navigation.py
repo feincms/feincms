@@ -108,7 +108,7 @@ def navigation_extension_choices():
 def get_extension_class(extension):
     extension = get_object(extension)
     if isinstance(extension, types.ModuleType):
-        return getattr(extension, "Extension")
+        return extension.Extension
     return extension
 
 

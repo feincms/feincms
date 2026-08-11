@@ -73,7 +73,7 @@ class TranslationTestCase(TestCase):
     def test_user_has_language_set_with_session(self):
         factory = RequestFactory()
         request = factory.get(self.page_en.get_navigation_url())
-        setattr(request, "session", dict())
+        request.session = {}
         request.session[self.language_session_key] = "en"
         self.assertEqual(user_has_language_set(request), True)
 
@@ -87,7 +87,7 @@ class TranslationTestCase(TestCase):
     def test_translation_set_language_to_session(self):
         factory = RequestFactory()
         request = factory.get(self.page_de.get_navigation_url())
-        setattr(request, "session", dict())
+        request.session = {}
         translation_set_language(request, "de")
 
         self.assertEqual(request.LANGUAGE_CODE, "de")
@@ -96,7 +96,7 @@ class TranslationTestCase(TestCase):
     def test_translation_set_language_to_session_primary(self):
         factory = RequestFactory()
         request = factory.get(self.page_en.get_navigation_url())
-        setattr(request, "session", dict())
+        request.session = {}
         translation_set_language(request, "en")
 
         self.assertEqual(request.LANGUAGE_CODE, "en")

@@ -14,7 +14,7 @@ from .models import MediaFile
 from .thumbnail import admin_thumbnail
 
 
-__all__ = ("MediaFileForeignKey", "ContentWithMediaFile")
+__all__ = ("ContentWithMediaFile", "MediaFileForeignKey")
 
 
 # ------------------------------------------------------------------------
@@ -31,12 +31,12 @@ class MediaFileForeignKeyRawIdWidget(ForeignKeyRawIdWidget):
                 .filter(**{key: value})
                 .first()
             )
-            label = ["&nbsp;<strong>%s</strong>" % escape(shorten_string(str(obj)))]
+            label = [f"&nbsp;<strong>{escape(shorten_string(str(obj)))}</strong>"]
             image = admin_thumbnail(obj)
 
             if image:
                 label.append(
-                    '<br /><img src="%s" alt="" style="margin:1em 0 0 170px"/>' % image
+                    f'<br /><img src="{image}" alt="" style="margin:1em 0 0 170px"/>'
                 )
 
             return mark_safe("".join(label)), url
@@ -92,9 +92,9 @@ class AdminFileWithPreviewWidget(AdminFileWidget):
             if image:
                 r = mark_safe(
                     (
-                        '<img src="%s" alt="" style="float: left; padding-right:'
+                        f'<img src="{image}" alt="" style="float: left; padding-right:'
                         '8px; border-right: 1px solid #ccc; margin-right: 8px"'
-                        ">" % image
+                        ">"
                     )
                     + r
                 )

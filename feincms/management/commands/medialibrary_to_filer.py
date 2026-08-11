@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 PageFilerImageContent
                 if mediafile.type == "image"
                 else PageFilerFileContent
-            )  # noqa
+            )
 
             filerfile = model.objects.create(
                 owner=user,

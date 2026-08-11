@@ -25,9 +25,8 @@ class RedirectToWidget(ForeignKeyRawIdWidget):
             model = apps.get_model(matches["app_label"], matches["model_name"])
             try:
                 instance = model._default_manager.get(pk=int(matches["pk"]))
-                return "&nbsp;<strong>{} ({})</strong>".format(
-                    instance,
-                    instance.get_absolute_url(),
+                return (
+                    f"&nbsp;<strong>{instance} ({instance.get_absolute_url()})</strong>"
                 )
 
             except model.DoesNotExist:
@@ -118,13 +117,13 @@ class PageAdminForm(MPTTAdminForm):
             # and that's good enough for us.
             field = self.page_model._meta.get_field("parent")
             self.fields["redirect_to"].widget = RedirectToWidget(
-                field.remote_field if hasattr(field, "remote_field") else field.rel,  # noqa
+                field.remote_field if hasattr(field, "remote_field") else field.rel,
                 modeladmin.admin_site,
             )
 
         if "template_key" in self.fields:
             choices = []
-            for key, template_name in self.page_model.TEMPLATE_CHOICES:
+            for key, _template_name in self.page_model.TEMPLATE_CHOICES:
                 template = self.page_model._feincms_templates[key]
                 pages_for_template = self.page_model._default_manager.filter(
                     template_key=key
@@ -138,8 +137,7 @@ class PageAdminForm(MPTTAdminForm):
                         (
                             template.key,
                             mark_safe(
-                                '<img src="%s" alt="%s" /> %s'
-                                % (template.preview_image, template.key, template.title)
+                                f'<img src="{template.preview_image}" alt="{template.key}" /> {template.title}'
                             ),
                         )
                     )
@@ -172,10 +170,8 @@ class PageAdminForm(MPTTAdminForm):
         redirect_to = cleaned_data.get("redirect_to")
         if redirect_to and re.match(r"^\d+$", redirect_to):
             opts = self.page_model._meta
-            cleaned_data["redirect_to"] = "{}.{}:{}".format(
-                opts.app_label,
-                opts.model_name,
-                redirect_to,
+            cleaned_data["redirect_to"] = (
+                f"{opts.app_label}.{opts.model_name}:{redirect_to}"
             )
 
         if "active" in cleaned_data and not cleaned_data["active"]:
@@ -186,7 +182,7 @@ class PageAdminForm(MPTTAdminForm):
             # really won't be active at the same time.
             return cleaned_data
 
-        if "override_url" in cleaned_data and cleaned_data["override_url"]:
+        if cleaned_data.get("override_url"):
             if active_pages.filter(_cached_url=cleaned_data["override_url"]).count():
                 self._errors["override_url"] = self.error_class(
                     [_("This URL is already taken by an active page.")]
@@ -205,7 +201,7 @@ class PageAdminForm(MPTTAdminForm):
         if parent:
             new_url = "{}{}/".format(parent._cached_url, cleaned_data["slug"])
         else:
-            new_url = "/%s/" % cleaned_data["slug"]
+            new_url = "/{}/".format(cleaned_data["slug"])
 
         if active_pages.filter(_cached_url=new_url).count():
             self._errors["active"] = self.error_class(

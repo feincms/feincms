@@ -197,8 +197,9 @@ class ContentObjectMixin(TemplateResponseMixin):
                 and not extra_context.get("app_config")
             ):
                 raise Http404(
-                    "Not found (extra_path %r on %r)"
-                    % (extra_context.get("extra_path", "/"), self.object)
+                    "Not found (extra_path {!r} on {!r})".format(
+                        extra_context.get("extra_path", "/"), self.object
+                    )
                 )
 
     def finalize_content_types(self, response):

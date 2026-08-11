@@ -52,7 +52,7 @@ class ExtensionsMixin:
             elif hasattr(extension, "register"):
                 extension = extension.register
 
-            elif hasattr(extension, "__call__"):
+            elif callable(extension):
                 pass
 
             else:
@@ -67,7 +67,7 @@ class ExtensionsMixin:
             if hasattr(extension, "handle_model"):
                 cls._extensions.append(extension(cls))
             else:
-                raise ImproperlyConfigured("%r is an invalid extension." % extension)
+                raise ImproperlyConfigured(f"{extension!r} is an invalid extension.")
 
 
 class Extension:
@@ -76,8 +76,7 @@ class Extension:
         for key, value in kwargs.items():
             if not hasattr(self, key):
                 raise TypeError(
-                    "%s() received an invalid keyword %r"
-                    % (self.__class__.__name__, key)
+                    f"{self.__class__.__name__}() received an invalid keyword {key!r}"
                 )
             setattr(self, key, value)
 

@@ -40,7 +40,7 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
         stripped = path.strip("/")
 
         try:
-            page = self.active().get(_cached_url="/%s/" % stripped if stripped else "/")
+            page = self.active().get(_cached_url=f"/{stripped}/" if stripped else "/")
 
             if not page.are_ancestors_active():
                 raise self.model.DoesNotExist("Parents are inactive.")
@@ -69,7 +69,9 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
 
         if path:
             tokens = path.split("/")
-            paths += ["/%s/" % "/".join(tokens[:i]) for i in range(1, len(tokens) + 1)]
+            paths += [
+                "/{}/".format("/".join(tokens[:i])) for i in range(1, len(tokens) + 1)
+            ]
 
         try:
             page = (
@@ -257,7 +259,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         if self.override_url:
             self._cached_url = self.override_url
         elif self.is_root_node():
-            self._cached_url = "/%s/" % self.slug
+            self._cached_url = f"/{self.slug}/"
         else:
             self._cached_url = f"{self.parent._cached_url}{self.slug}/"
 
@@ -278,9 +280,8 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
                         page._cached_url = page.override_url
                     else:
                         # cannot be root node by definition
-                        page._cached_url = "{}{}/".format(
-                            cached_page_urls[page.parent_id],
-                            page.slug,
+                        page._cached_url = (
+                            f"{cached_page_urls[page.parent_id]}{page.slug}/"
                         )
 
                     cached_page_urls[page.id] = page._cached_url
@@ -293,10 +294,9 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
             if self.template.singleton:
                 raise PermissionDenied(
                     _(
-                        "This %(page_class)s uses a singleton template, and "
+                        "This {page_class} uses a singleton template, and "
                         "FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False"
-                        % {"page_class": self._meta.verbose_name}
-                    )
+                    ).format(page_class=self._meta.verbose_name)
                 )
         super().delete(*args, **kwargs)
 
@@ -330,7 +330,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         give the same result, this default implementation returns None, which
         means "No etag please, thanks for asking".
         """
-        return None
+        return
 
     def last_modified(self, request):
         """
@@ -338,7 +338,7 @@ class BasePage(create_base_model(MPTTModel), ContentModelMixin):
         Since a standard page has no way of knowing this, we always return
         "no date" -- this is overridden by the changedate extension.
         """
-        return None
+        return
 
     def get_redirect_to_page(self):
         """

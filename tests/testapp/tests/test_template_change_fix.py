@@ -5,6 +5,7 @@ This test verifies that the JavaScript fix is in place and hasn't been accidenta
 """
 
 import os
+
 from django.conf import settings
 from django.test import TestCase
 
@@ -27,7 +28,7 @@ class TemplateChangeFixTest(TestCase):
         js_file_path = os.path.normpath(js_file_path)
 
         # Read the file
-        with open(js_file_path, "r") as f:
+        with open(js_file_path) as f:
             content = f.read()
 
         # Check that the fix is present (code is formatted across multiple lines)
@@ -66,7 +67,7 @@ class TemplateChangeFixTest(TestCase):
         )
         js_file_path = os.path.normpath(js_file_path)
 
-        with open(js_file_path, "r") as f:
+        with open(js_file_path) as f:
             content = f.read()
 
         # Find positions of both statements

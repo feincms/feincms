@@ -49,12 +49,12 @@ class SectionContent(models.Model):
         if "feincms.module.medialibrary" not in django_settings.INSTALLED_APPS:
             raise ImproperlyConfigured(
                 "You have to add 'feincms.module.medialibrary' to your"
-                " INSTALLED_APPS before creating a %s" % cls.__name__
+                f" INSTALLED_APPS before creating a {cls.__name__}"
             )
 
         if TYPE_CHOICES is None:
             raise ImproperlyConfigured(
-                "You need to set TYPE_CHOICES when creating a %s" % cls.__name__
+                f"You need to set TYPE_CHOICES when creating a {cls.__name__}"
             )
 
         cls.add_to_class(
@@ -85,8 +85,8 @@ class SectionContent(models.Model):
             (
                 [
                     f"content/section/{mediafile_type}_{self.type}.html",
-                    "content/section/%s.html" % mediafile_type,
-                    "content/section/%s.html" % self.type,
+                    f"content/section/{mediafile_type}.html",
+                    f"content/section/{self.type}.html",
                     "content/section/default.html",
                 ],
                 {"content": self},

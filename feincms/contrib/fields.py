@@ -42,7 +42,7 @@ class JSONField(models.TextField):
 
         if isinstance(value, dict):
             return value
-        elif isinstance(value, str) or isinstance(value, bytes):
+        elif isinstance(value, (str, bytes)):
             # Avoid asking the JSON decoder to handle empty values:
             if not value:
                 return {}

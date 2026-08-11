@@ -96,7 +96,7 @@ def get_fragment(parser, token):
     elif len(fragments) == 5 and fragments[3] == "as":
         return GetFragmentNode(fragments[1], fragments[2], fragments[4])
     raise template.TemplateSyntaxError(
-        "Invalid syntax for get_fragment: %s" % token.contents
+        f"Invalid syntax for get_fragment: {token.contents}"
     )
 
 

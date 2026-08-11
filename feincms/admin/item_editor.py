@@ -96,9 +96,10 @@ class ItemEditor(ExtensionModelAdmin):
 
                 if hasattr(content_type, "feincms_item_editor_form"):
                     warnings.warn(
-                        "feincms_item_editor_form on %s is ignored because "
-                        "feincms_item_editor_inline is set too" % content_type,
+                        f"feincms_item_editor_form on {content_type} is ignored because "
+                        "feincms_item_editor_inline is set too",
                         RuntimeWarning,
+                        stacklevel=2,
                     )
 
             else:
@@ -107,7 +108,7 @@ class ItemEditor(ExtensionModelAdmin):
                     content_type, "feincms_item_editor_form", inline.form
                 )
 
-            name = "%sFeinCMSInline" % content_type.__name__
+            name = f"{content_type.__name__}FeinCMSInline"
             # TODO: We generate a new class every time. Is that really wanted?
             inline_class = type(str(name), (inline,), attrs)
             inlines.append(inline_class)
@@ -200,9 +201,8 @@ class ItemEditor(ExtensionModelAdmin):
     def change_form_template(self):
         opts = self.model._meta
         return [
-            "admin/feincms/%s/%s/item_editor.html"
-            % (opts.app_label, opts.object_name.lower()),
-            "admin/feincms/%s/item_editor.html" % opts.app_label,
+            f"admin/feincms/{opts.app_label}/{opts.object_name.lower()}/item_editor.html",
+            f"admin/feincms/{opts.app_label}/item_editor.html",
             "admin/feincms/item_editor.html",
         ]
 

@@ -16,7 +16,6 @@ as Django's administration tool.
 
 # ------------------------------------------------------------------------
 import logging
-from typing import Optional
 
 from django.conf import settings as django_settings
 from django.db import models
@@ -55,9 +54,7 @@ def user_has_language_set(request: HttpRequest) -> bool:
         and request.session.get(LANGUAGE_SESSION_KEY) is not None
     ):
         return True
-    if LANGUAGE_COOKIE_NAME in request.COOKIES:
-        return True
-    return False
+    return LANGUAGE_COOKIE_NAME in request.COOKIES
 
 
 # ------------------------------------------------------------------------
@@ -74,7 +71,7 @@ def translation_allowed_language(select_language: str) -> str:
 # ------------------------------------------------------------------------
 def translation_set_language(
     request: HttpRequest, select_language: str
-) -> Optional[HttpResponseRedirect]:
+) -> HttpResponseRedirect | None:
     """
     Set and activate a language, if that language is available.
     """
@@ -287,20 +284,22 @@ class Extension(extensions.Extension):
 
             links = []
 
-            for key, title in django_settings.LANGUAGES:
+            for key, _title in django_settings.LANGUAGES:
                 if key == page.language:
                     continue
 
                 if key in translations:
                     links.append(
-                        '<a href="%s/" title="%s">%s</a>'
-                        % (translations[key], _("Edit translation"), key.upper())
+                        '<a href="{}/" title="{}">{}</a>'.format(
+                            translations[key], _("Edit translation"), key.upper()
+                        )
                     )
                 else:
                     links.append(
                         '<a style="color:#baa" href="add/?translation_of='
-                        '%s&amp;language=%s" title="%s">%s</a>'
-                        % (page.id, key, _("Create translation"), key.upper())
+                        '{}&amp;language={}" title="{}">{}</a>'.format(
+                            page.id, key, _("Create translation"), key.upper()
+                        )
                     )
 
             return mark_safe(" | ".join(links))

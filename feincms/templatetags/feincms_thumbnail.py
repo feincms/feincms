@@ -64,19 +64,10 @@ class Thumbnailer:
         except ValueError:
             basename, format = filename, "jpg"
 
-        miniature = "".join(
-            [
-                settings.FEINCMS_THUMBNAIL_DIR,
-                basename,
-                self.MARKER,
-                self.size,
-                ".",
-                format,
-            ]
-        )
+        miniature = f"{settings.FEINCMS_THUMBNAIL_DIR}{basename}{self.MARKER}{self.size}.{format}"
 
         if settings.FEINCMS_THUMBNAIL_CACHE_TIMEOUT != 0:
-            cache_key = "thumb_url_%s" % miniature
+            cache_key = f"thumb_url_{miniature}"
             url = cache.get(cache_key)
             if url:
                 return url

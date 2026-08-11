@@ -93,32 +93,26 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
     def _actions_column(self, page):
         addable = getattr(page, "feincms_addable", True)
 
-        preview_url = "../../r/{}/{}/".format(
-            ContentType.objects.get_for_model(self.model).id,
-            page.id,
+        preview_url = (
+            f"../../r/{ContentType.objects.get_for_model(self.model).id}/{page.id}/"
         )
         actions = super()._actions_column(page)
 
-        if addable:
-            if not page.template.enforce_leaf:
-                actions.insert(
-                    0,
-                    '<a href="add/?parent=%s" title="%s">'
-                    '<img src="%s" alt="%s" />'
-                    "</a>"
-                    % (
-                        page.pk,
-                        _("Add child page"),
-                        static("feincms/img/icon_addlink.gif"),
-                        _("Add child page"),
-                    ),
-                )
+        if addable and not page.template.enforce_leaf:
+            actions.insert(
+                0,
+                '<a href="add/?parent={}" title="{}">'
+                '<img src="{}" alt="{}" />'
+                "</a>".format(
+                    page.pk,
+                    _("Add child page"),
+                    static("feincms/img/icon_addlink.gif"),
+                    _("Add child page"),
+                ),
+            )
         actions.insert(
             0,
-            '<a href="%s" title="%s">'
-            '<img src="%s" alt="%s" />'
-            "</a>"
-            % (
+            '<a href="{}" title="{}"><img src="{}" alt="{}" /></a>'.format(
                 preview_url,
                 _("View on site"),
                 static("feincms/img/selector-search.gif"),
@@ -156,7 +150,7 @@ class PageAdmin(item_editor.ItemEditor, tree_editor.TreeEditor):
             and response.status_code in (301, 302)
         ):
             # Preserve GET parameters if we are about to add another page
-            response["Location"] += "?parent=%s" % request.GET["parent"]
+            response["Location"] += "?parent={}".format(request.GET["parent"])
 
         if (
             "translation_of" in request.GET

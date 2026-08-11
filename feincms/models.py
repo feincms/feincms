@@ -143,7 +143,7 @@ class ContentProxy:
                     )
 
                     counts.update(parent_counts)
-                    for key in parent_counts.keys():
+                    for key in parent_counts:
                         empty_inherited_regions.discard(key)
 
                     if not empty_inherited_regions:
@@ -224,7 +224,7 @@ class ContentProxy:
         # relationship to its siblings, etc.
         for objects in self._cache["cts"].values():
             for obj in objects:
-                setattr(obj.parent, "_content_proxy", self)
+                obj.parent._content_proxy = self
 
     def _fetch_regions(self):
         """
@@ -335,7 +335,9 @@ def create_base_model(inherit_from=models.Model):
 
             if hasattr(cls, "template"):
                 warnings.warn(
-                    "Ignoring second call to register_regions.", RuntimeWarning
+                    "Ignoring second call to register_regions.",
+                    RuntimeWarning,
+                    stacklevel=2,
                 )
                 return
 
@@ -390,7 +392,7 @@ def create_base_model(inherit_from=models.Model):
                         if field.name == "template_key"
                     )
                 )
-            except (StopIteration,):
+            except StopIteration:
                 cls.add_to_class(
                     "template_key",
                     ChoicesCharField(
@@ -413,7 +415,7 @@ def create_base_model(inherit_from=models.Model):
                         # return first template as a fallback if the template
                         # has changed in-between
                         return self._feincms_templates[
-                            list(self._feincms_templates.keys())[0]
+                            next(iter(self._feincms_templates.keys()))
                         ]
 
                 cls.template = property(_template)
@@ -490,7 +492,7 @@ def create_base_model(inherit_from=models.Model):
                 time instead of adding region-specific render methods.
                 """
 
-                render_fn = getattr(self, "render_%s" % self.region, None)
+                render_fn = getattr(self, f"render_{self.region}", None)
 
                 if render_fn:
                     return render_fn(**kwargs)
@@ -524,14 +526,14 @@ def create_base_model(inherit_from=models.Model):
 
             # create content base type and save reference on CMS class
 
-            name = "_Internal%sContentTypeBase" % cls.__name__
+            name = f"_Internal{cls.__name__}ContentTypeBase"
             if hasattr(sys.modules[cls.__module__], name):
                 warnings.warn(
-                    "The class %s.%s has the same name as the class that "
-                    "FeinCMS auto-generates based on %s.%s. To avoid database"
-                    "errors and import clashes, rename one of these classes."
-                    % (cls.__module__, name, cls.__module__, cls.__name__),
+                    f"The class {cls.__module__}.{name} has the same name as the class that "
+                    f"FeinCMS auto-generates based on {cls.__module__}.{cls.__name__}. To avoid database"
+                    "errors and import clashes, rename one of these classes.",
                     RuntimeWarning,
+                    stacklevel=2,
                 )
 
             cls._feincms_content_model = type(str(name), (models.Model,), attrs)
@@ -621,18 +623,12 @@ def create_base_model(inherit_from=models.Model):
             # content types with the same class name because of related_name
             # clashes
             try:
-                getattr(cls, "%s_set" % class_name.lower())
+                getattr(cls, f"{class_name.lower()}_set")
                 warnings.warn(
-                    "Cannot create content type using %s.%s for %s.%s,"
-                    " because %s_set is already taken."
-                    % (
-                        model.__module__,
-                        class_name,
-                        cls.__module__,
-                        cls.__name__,
-                        class_name.lower(),
-                    ),
+                    f"Cannot create content type using {model.__module__}.{class_name} for {cls.__module__}.{cls.__name__},"
+                    f" because {class_name.lower()}_set is already taken.",
                     RuntimeWarning,
+                    stacklevel=2,
                 )
                 return
             except AttributeError:
@@ -670,9 +666,9 @@ def create_base_model(inherit_from=models.Model):
             new_type = type(str(class_name), (model, feincms_content_base), attrs)
             cls._feincms_content_types.append(new_type)
 
-            if hasattr(getattr(new_type, "process", None), "__call__"):
+            if callable(getattr(new_type, "process", None)):
                 cls._feincms_content_types_with_process.append(new_type)
-            if hasattr(getattr(new_type, "finalize", None), "__call__"):
+            if callable(getattr(new_type, "finalize", None)):
                 cls._feincms_content_types_with_finalize.append(new_type)
 
             # content types can be limited to a subset of regions
@@ -747,9 +743,8 @@ def create_base_model(inherit_from=models.Model):
                 return None
 
             for type in cls._feincms_content_types:
-                if issubclass(type, model):
-                    if type.__base__ is model:
-                        return type
+                if issubclass(type, model) and type.__base__ is model:
+                    return type
             return None
 
         @classmethod
@@ -759,7 +754,7 @@ def create_base_model(inherit_from=models.Model):
             if not hasattr(cls, "template"):
                 raise ImproperlyConfigured(
                     "You need to register at least one"
-                    " template or one region on %s." % cls.__name__
+                    f" template or one region on {cls.__name__}."
                 )
 
         @classmethod
@@ -769,7 +764,7 @@ def create_base_model(inherit_from=models.Model):
             if not getattr(cls, "_feincms_content_types", None):
                 raise ImproperlyConfigured(
                     "You need to create at least one"
-                    " content type for the %s model." % cls.__name__
+                    f" content type for the {cls.__name__} model."
                 )
 
         def copy_content_from(self, obj):
@@ -809,7 +804,7 @@ def create_base_model(inherit_from=models.Model):
 
             follow = []
             for content_type in cls._feincms_content_types:
-                follow.append("%s_set" % content_type.__name__.lower())
+                follow.append(f"{content_type.__name__.lower()}_set")
                 register(content_type, **kwargs)
             register(cls, follow=follow, **kwargs)
 

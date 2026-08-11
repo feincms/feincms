@@ -42,10 +42,10 @@ def django_boolean_icon(field_val, alt_text=None, title=None):
     BOOLEAN_MAPPING = {True: "yes", False: "no", None: "unknown"}
     alt_text = alt_text or BOOLEAN_MAPPING[field_val]
     if title is not None:
-        title = 'title="%s" ' % title
+        title = f'title="{title}" '
     else:
         title = ""
-    icon_url = static("feincms/img/icon-%s.gif" % BOOLEAN_MAPPING[field_val])
+    icon_url = static(f"feincms/img/icon-{BOOLEAN_MAPPING[field_val]}.gif")
     return mark_safe(f'<img src="{icon_url}" alt="{alt_text}" {title}/>')
 
 
@@ -65,7 +65,7 @@ def _build_tree_structure(queryset):
 
     mptt_opts = queryset.model._mptt_meta
     items = queryset.order_by(mptt_opts.tree_id_attr, mptt_opts.left_attr).values_list(
-        "pk", "%s_id" % mptt_opts.parent_attr
+        "pk", f"{mptt_opts.parent_attr}_id"
     )
     for p_id, parent_id in items:
         all_nodes.setdefault(str(parent_id) if parent_id else 0, []).append(p_id)
@@ -88,16 +88,17 @@ def ajax_editable_boolean_cell(item, attr, text="", override=None):
     (useful for "disabled and you can't change it" situations).
     """
     if text:
-        text = "&nbsp;(%s)" % text
+        text = f"&nbsp;({text})"
 
     if override is not None:
         a = [django_boolean_icon(override, text), text]
     else:
         value = getattr(item, attr)
         a = [
-            '<input type="checkbox" data-inplace data-inplace-id="%s"'
-            ' data-inplace-attribute="%s" %s>'
-            % (item.pk, attr, 'checked="checked"' if value else "")
+            '<input type="checkbox" data-inplace data-inplace-id="{}"'
+            ' data-inplace-attribute="{}" {}>'.format(
+                item.pk, attr, 'checked="checked"' if value else ""
+            )
         ]
 
     a.insert(0, '<div id="wrap_%s_%d">' % (attr, item.pk))
@@ -225,9 +226,8 @@ class TreeEditor(ExtensionModelAdmin):
 
         opts = self.model._meta
         self.change_list_template = [
-            "admin/feincms/%s/%s/tree_editor.html"
-            % (opts.app_label, opts.object_name.lower()),
-            "admin/feincms/%s/tree_editor.html" % opts.app_label,
+            f"admin/feincms/{opts.app_label}/{opts.object_name.lower()}/tree_editor.html",
+            f"admin/feincms/{opts.app_label}/tree_editor.html",
             "admin/feincms/tree_editor.html",
         ]
         self.object_change_permission = (
@@ -252,7 +252,7 @@ class TreeEditor(ExtensionModelAdmin):
         r = ""
         try:
             url = item.get_absolute_url()
-        except (AttributeError,):
+        except AttributeError:
             url = None
 
         if url:
@@ -282,7 +282,7 @@ class TreeEditor(ExtensionModelAdmin):
         if hasattr(item, "short_title") and callable(item.short_title):
             r += escape(item.short_title())
         else:
-            r += escape("%s" % item)
+            r += escape(f"{item}")
         #        r += '</span>'
         return mark_safe(r)
 
@@ -346,7 +346,7 @@ class TreeEditor(ExtensionModelAdmin):
         self._collect_editable_booleans()
 
         if attr not in self._ajax_editable_booleans:
-            return HttpResponseBadRequest("not a valid attribute %s" % attr)
+            return HttpResponseBadRequest(f"not a valid attribute {attr}")
 
         try:
             obj = self.model._default_manager.get(pk=item_id)
@@ -500,7 +500,7 @@ class TreeEditor(ExtensionModelAdmin):
             try:
                 tree_manager.move_node(cut_item, pasted_on, position)
             except InvalidMove as e:
-                self.message_user(request, "%s" % e)
+                self.message_user(request, f"{e}")
                 return HttpResponse("FAIL")
 
             # Ensure that model save methods have been run (required to

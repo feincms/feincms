@@ -54,7 +54,7 @@ class VideoContent(models.Model):
 
     def get_templates(self, portal="unknown"):
         "Extend/override this if you want to modify the templates used"
-        return ["content/video/%s.html" % portal, "content/video/unknown.html"]
+        return [f"content/video/{portal}.html", "content/video/unknown.html"]
 
     def ctx_for_video(self, vurl):
         "Get a context dict for a given video URL"

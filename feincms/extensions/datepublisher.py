@@ -126,8 +126,7 @@ class Extension(extensions.Extension):
     def handle_modeladmin(self, modeladmin):
         def datepublisher_admin(self, obj):
             return mark_safe(
-                "%s &ndash; %s"
-                % (
+                "{} &ndash; {}".format(
                     format_date(obj.publication_date),
                     format_date(obj.publication_end_date, "&infin;"),
                 )

@@ -10,6 +10,7 @@ Run with: tox -e e2e
 
 import os
 
+
 try:
     import pytest
     from playwright.sync_api import expect
@@ -21,6 +22,7 @@ except ImportError:
     expect = None
 
 from django.contrib.auth.models import User
+
 from feincms.module.page.models import Page
 
 
@@ -133,7 +135,7 @@ if PLAYWRIGHT_AVAILABLE:
         else:
             # It's radio buttons - use JavaScript to trigger the change since inputs are hidden
             radios = page.locator('input[name="template_key"]').all()
-            for i, radio in enumerate(radios):
+            for _i, radio in enumerate(radios):
                 if not radio.is_checked():
                     # Use JavaScript to check the radio and trigger the change event
                     radio.evaluate(

@@ -49,7 +49,7 @@ class MediaFileContent(ContentWithMediaFile):
     def initialize_type(cls, TYPE_CHOICES=None):
         if TYPE_CHOICES is None:
             raise ImproperlyConfigured(
-                "You have to set TYPE_CHOICES when creating a %s" % cls.__name__
+                f"You have to set TYPE_CHOICES when creating a {cls.__name__}"
             )
 
         cls.add_to_class(
@@ -67,8 +67,8 @@ class MediaFileContent(ContentWithMediaFile):
             (
                 [
                     f"content/mediafile/{self.mediafile.type}_{self.type}.html",
-                    "content/mediafile/%s.html" % self.mediafile.type,
-                    "content/mediafile/%s.html" % self.type,
+                    f"content/mediafile/{self.mediafile.type}.html",
+                    f"content/mediafile/{self.type}.html",
                     "content/mediafile/default.html",
                 ],
                 {"content": self},

@@ -120,7 +120,7 @@ def get_singleton(template_key, cls=None, raise_exception=True):
     try:
         model = apps.get_model(*cls.split("."))
         if not model:
-            raise ImproperlyConfigured('Cannot load model "%s"' % cls)
+            raise ImproperlyConfigured(f'Cannot load model "{cls}"')
         try:
             assert model._feincms_templates[template_key].singleton
         except AttributeError as e:
@@ -164,6 +164,6 @@ class ChoicesCharField(CharField):
         super().__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super().deconstruct()
+        name, _path, args, kwargs = super().deconstruct()
         kwargs["choices"] = [("", "")]
         return name, "django.db.models.CharField", args, kwargs

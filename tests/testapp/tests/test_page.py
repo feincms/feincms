@@ -429,7 +429,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(force_str(mediafile), "somefile.jpg")
 
         mediafile.translations.create(
-            caption="something", language_code="%s-ha" % short_language_code()
+            caption="something", language_code=f"{short_language_code()}-ha"
         )
         mediafile.purge_translation_cache()
 
@@ -447,12 +447,12 @@ class PagesTestCase(TestCase):
         self.assertEqual(MediaFile.objects.only_language("en").count(), 0)
         self.assertEqual(
             MediaFile.objects.only_language(
-                lambda: "%s-ha" % short_language_code()
+                lambda: f"{short_language_code()}-ha"
             ).count(),
             1,
         )
 
-        self.assertTrue("%s-ha" % short_language_code() in mf.available_translations)
+        self.assertTrue(f"{short_language_code()}-ha" in mf.available_translations)
 
         # this should not raise
         self.client.get(reverse("admin:page_page_change", args=(1,)))
@@ -552,7 +552,7 @@ class PagesTestCase(TestCase):
             self.assertNumQueries(
                 4, lambda: [page2.content.main, page2.content.sidebar]
             )
-            self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
+            self.assertNumQueries(0, page2.content.sidebar[0].render)
 
         self.assertEqual(
             "".join(c.render() for c in page2.content.main), "Something elseWhatever"
@@ -577,7 +577,7 @@ class PagesTestCase(TestCase):
             self.assertNumQueries(
                 5, lambda: [page2.content.main, page2.content.sidebar]
             )
-            self.assertNumQueries(0, lambda: page2.content.sidebar[0].render())
+            self.assertNumQueries(0, page2.content.sidebar[0].render)
 
         self.assertEqual(page2.content.sidebar[0].render(), "Something")
 
@@ -840,49 +840,67 @@ class PagesTestCase(TestCase):
         tests = [
             (
                 {"feincms_page": Page.objects.get(pk=1)},
-                "{% load feincms_page_tags %}"
-                "{% feincms_nav feincms_page level=1 depth=2 as nav %}"
-                "{% for p in nav %}{{ p.get_absolute_url }}"
-                "{% if not forloop.last %},{% endif %}{% endfor %}",
-                "/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/"
-                ",/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-"
-                "3/page-31/,/page-3/page-32/,/page-3/page-33/",
+                (
+                    "{% load feincms_page_tags %}"
+                    "{% feincms_nav feincms_page level=1 depth=2 as nav %}"
+                    "{% for p in nav %}{{ p.get_absolute_url }}"
+                    "{% if not forloop.last %},{% endif %}{% endfor %}"
+                ),
+                (
+                    "/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13/"
+                    ",/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/page-"
+                    "3/page-31/,/page-3/page-32/,/page-3/page-33/"
+                ),
             ),
             (
                 {"feincms_page": Page.objects.get(pk=14)},
-                "{% load feincms_page_tags %}"
-                "{% feincms_nav feincms_page level=2 depth=2 as nav %}"
-                "{% for p in nav %}{{ p.get_absolute_url }}"
-                "{% if not forloop.last %},{% endif %}{% endfor %}",
-                "/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/"
-                "page-33/page-331/,/page-3/page-33/page-332/",
+                (
+                    "{% load feincms_page_tags %}"
+                    "{% feincms_nav feincms_page level=2 depth=2 as nav %}"
+                    "{% for p in nav %}{{ p.get_absolute_url }}"
+                    "{% if not forloop.last %},{% endif %}{% endfor %}"
+                ),
+                (
+                    "/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/"
+                    "page-33/page-331/,/page-3/page-33/page-332/"
+                ),
             ),
             (
                 {"feincms_page": Page.objects.get(pk=14)},
-                "{% load feincms_page_tags %}"
-                "{% feincms_nav feincms_page level=2 depth=3 as nav %}"
-                "{% for p in nav %}{{ p.get_absolute_url }}"
-                "{% if not forloop.last %},{% endif %}{% endfor %}",
-                "/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/"
-                "page-33/page-331/,/page-3/page-33/page-331/page-3311/,/page"
-                "-3/page-33/page-332/",
+                (
+                    "{% load feincms_page_tags %}"
+                    "{% feincms_nav feincms_page level=2 depth=3 as nav %}"
+                    "{% for p in nav %}{{ p.get_absolute_url }}"
+                    "{% if not forloop.last %},{% endif %}{% endfor %}"
+                ),
+                (
+                    "/page-3/page-31/,/page-3/page-32/,/page-3/page-33/,/page-3/"
+                    "page-33/page-331/,/page-3/page-33/page-331/page-3311/,/page"
+                    "-3/page-33/page-332/"
+                ),
             ),
             (
                 {"feincms_page": Page.objects.get(pk=19)},
-                "{% load feincms_page_tags %}"
-                "{% feincms_nav feincms_page level=1 depth=2 as nav %}"
-                "{% for p in nav %}{{ p.get_absolute_url }}"
-                "{% if not forloop.last %},{% endif %}{% endfor %}",
-                "/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13"
-                "/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/pag"
-                "e-3/page-31/,/page-3/page-32/,/page-3/page-33/",
+                (
+                    "{% load feincms_page_tags %}"
+                    "{% feincms_nav feincms_page level=1 depth=2 as nav %}"
+                    "{% for p in nav %}{{ p.get_absolute_url }}"
+                    "{% if not forloop.last %},{% endif %}{% endfor %}"
+                ),
+                (
+                    "/page-1/,/page-1/page-11/,/page-1/page-12/,/page-1/page-13"
+                    "/,/page-2/,/page-2/page-22/,/page-2/page-23/,/page-3/,/pag"
+                    "e-3/page-31/,/page-3/page-32/,/page-3/page-33/"
+                ),
             ),
             (
                 {"feincms_page": Page.objects.get(pk=1)},
-                "{% load feincms_page_tags %}"
-                "{% feincms_nav feincms_page level=3 depth=1 as nav %}"
-                "{% for p in nav %}{{ p.get_absolute_url }}"
-                "{% if not forloop.last %},{% endif %}{% endfor %}",
+                (
+                    "{% load feincms_page_tags %}"
+                    "{% feincms_nav feincms_page level=3 depth=1 as nav %}"
+                    "{% for p in nav %}{{ p.get_absolute_url }}"
+                    "{% if not forloop.last %},{% endif %}{% endfor %}"
+                ),
                 "",
             ),
         ]
