@@ -13,6 +13,7 @@
 
 ## Conventions
 
+- Run the hooks with `prek` (not `pre-commit`), e.g. `prek run --all-files`.
 - Add user-facing changes to the "Next version" section of `CHANGELOG.rst`.
 
 ## Commits
