@@ -1557,6 +1557,25 @@ class PagesTestCase(TestCase):
 
         feincms_settings.FEINCMS_ALLOW_EXTRA_PATH = old
 
+    def test_35_redirect_to_inactive_translation(self):
+        welcome = self.create_page(title="welcome", active=True, language="en")
+        self.create_page(
+            title="willkommen", active=False, language="de", translation_of=welcome
+        )
+        self.create_page(
+            title="landing",
+            override_url="/",
+            redirect_to=welcome.get_absolute_url(),
+            active=True,
+        )
+
+        r = self.client.get("/", HTTP_ACCEPT_LANGUAGE="de")
+        self.assertRedirects(r, "/welcome/", fetch_redirect_response=False)
+
+        Page.objects.filter(language="de").update(active=True)
+        r = self.client.get("/", HTTP_ACCEPT_LANGUAGE="de")
+        self.assertRedirects(r, "/willkommen/", fetch_redirect_response=False)
+
     def test_36_sitemaps(self):
         response = self.client.get("/sitemap.xml")
         self.assertContains(response, "<urlset", status_code=200)

@@ -194,8 +194,10 @@ class Extension(extensions.Extension):
                         language = get_current_language_code(request)
                         language = translation_allowed_language(language)
                         page = page.get_translation(language)
-                        # Note: Does not care about active status?
-                        target = page.get_absolute_url()
+                        # Fall back to the original target if the
+                        # translation isn't available to visitors.
+                        if page.is_active():
+                            target = page.get_absolute_url()
                     except cls.DoesNotExist:
                         pass
                 return target

@@ -24,6 +24,8 @@ Next version
 - Clarified the migrations documentation: ``makemigrations`` creates the
   packages referenced in ``MIGRATION_MODULES`` and has to run first.
 - Improved the documentation of the ``ct_tracker`` extension.
+- Redirects to a page's translation now fall back to the original target if
+  the translation is inactive instead of redirecting to a 404.
 
 
 v25.5.1 (2025-05-05)
