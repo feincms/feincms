@@ -21,6 +21,8 @@ Next version
   databases without a ``LENGTH`` function such as MSSQL.
 - The translations extension no longer stores the language in the session;
   it only uses the language cookie, like Django itself since Django 4.0.
+- Clarified the migrations documentation: ``makemigrations`` creates the
+  packages referenced in ``MIGRATION_MODULES`` and has to run first.
 
 
 v25.5.1 (2025-05-05)
