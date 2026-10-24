@@ -19,6 +19,8 @@ Next version
 - Replaced the raw SQL ``LENGTH()`` in ``Page.objects.best_match_for_path``
   with Django's ``Length`` database function, fixing page lookups on
   databases without a ``LENGTH`` function such as MSSQL.
+- The translations extension no longer stores the language in the session;
+  it only uses the language cookie, like Django itself since Django 4.0.
 
 
 v25.5.1 (2025-05-05)

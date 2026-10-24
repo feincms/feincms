@@ -10,7 +10,7 @@ deeplinks between translated pages.
 
 It is recommended to activate
 :class:`django.middleware.locale.LocaleMiddleware` so that the correct language
-will be activated per user or session even for non-FeinCMS managed views such
+will be activated per user even for non-FeinCMS managed views such
 as Django's administration tool.
 """
 
@@ -33,11 +33,6 @@ from feincms.translations import is_primary_language
 logger = logging.getLogger(__name__)
 
 LANGUAGE_COOKIE_NAME: str = django_settings.LANGUAGE_COOKIE_NAME
-if hasattr(translation, "LANGUAGE_SESSION_KEY"):
-    LANGUAGE_SESSION_KEY = translation.LANGUAGE_SESSION_KEY
-else:
-    # stopgap measure for django >= 4, need to revisit this later
-    LANGUAGE_SESSION_KEY = LANGUAGE_COOKIE_NAME
 
 PRIMARY_LANGUAGE: str = django_settings.LANGUAGES[0][0]
 
@@ -49,11 +44,6 @@ def user_has_language_set(request: HttpRequest) -> bool:
     This is taken later on as an indication that we should not mess with the
     site's language settings, after all, the user's decision is what counts.
     """
-    if (
-        hasattr(request, "session")
-        and request.session.get(LANGUAGE_SESSION_KEY) is not None
-    ):
-        return True
     return LANGUAGE_COOKIE_NAME in request.COOKIES
 
 
@@ -92,18 +82,9 @@ def translation_set_language(
     translation.activate(select_language)
     request.LANGUAGE_CODE = translation.get_language()  # type: ignore
 
-    if hasattr(request, "session"):
-        # User has a session, then set this language there
-        current_session_language = request.session.get(
-            LANGUAGE_SESSION_KEY, PRIMARY_LANGUAGE
-        )
-
-        if select_language != current_session_language:
-            request.session[LANGUAGE_SESSION_KEY] = select_language
-    elif request.method == "GET" and not fallback:
-        # No session is active. We need to set a cookie for the language
-        # so that it persists when users change their location to somewhere
-        # not under the control of the CMS.
+    if request.method == "GET" and not fallback:
+        # Set a cookie for the language so that it persists when users change
+        # their location to somewhere not under the control of the CMS.
         # Only do this when request method is GET (mainly, do not abort
         # POST requests)
         response = HttpResponseRedirect(request.get_full_path())
