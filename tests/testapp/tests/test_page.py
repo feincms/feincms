@@ -101,6 +101,9 @@ class PagesTestCase(TestCase):
             "applicationcontent_set-TOTAL_FORMS": 0,
             "applicationcontent_set-INITIAL_FORMS": 0,
             "applicationcontent_set-MAX_NUM_FORMS": 10,
+            "categoriescontent_set-TOTAL_FORMS": 0,
+            "categoriescontent_set-INITIAL_FORMS": 0,
+            "categoriescontent_set-MAX_NUM_FORMS": 10,
         }
         dic.update(kwargs)
         return self.client.post("/admin/page/page/add/", dic)
@@ -370,6 +373,9 @@ class PagesTestCase(TestCase):
             "applicationcontent_set-TOTAL_FORMS": 1,
             "applicationcontent_set-INITIAL_FORMS": 0,
             "applicationcontent_set-MAX_NUM_FORMS": 10,
+            "categoriescontent_set-TOTAL_FORMS": 0,
+            "categoriescontent_set-INITIAL_FORMS": 0,
+            "categoriescontent_set-MAX_NUM_FORMS": 10,
         }
         data.update(kwargs)
 

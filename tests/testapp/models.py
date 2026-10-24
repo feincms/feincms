@@ -11,7 +11,7 @@ from feincms.module.medialibrary.contents import MediaFileContent
 from feincms.module.page import processors
 from feincms.module.page.models import Page
 
-from .content import CustomContentType
+from .content import CategoriesContent, CustomContentType
 
 
 Page.register_templates(
@@ -29,6 +29,7 @@ Page.create_content_type(
 Page.create_content_type(
     TemplateContent, TEMPLATES=[("templatecontent_1.html", "template 1")]
 )
+Page.create_content_type(CategoriesContent)
 Page.register_request_processor(processors.etag_request_processor)
 Page.register_response_processor(processors.etag_response_processor)
 Page.register_response_processor(processors.debug_sql_queries_response_processor())
