@@ -16,6 +16,9 @@ Next version
   JavaScript structures and removing whitespace from JSON output.
 - Removed IE8 compatibility shims (``Array.indexOf``).
 - Dropped legacy clearfix CSS hack.
+- Replaced the raw SQL ``LENGTH()`` in ``Page.objects.best_match_for_path``
+  with Django's ``Length`` database function, fixing page lookups on
+  databases without a ``LENGTH`` function such as MSSQL.
 
 
 v25.5.1 (2025-05-05)

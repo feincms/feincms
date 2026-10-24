@@ -5,6 +5,7 @@
 from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
 from django.db.models import Q
+from django.db.models.functions import Length
 from django.http import Http404
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -77,7 +78,7 @@ class BasePageManager(ActiveAwareContentManagerMixin, TreeManager):
             page = (
                 self.active()
                 .filter(_cached_url__in=paths)
-                .extra(select={"_url_length": "LENGTH(_cached_url)"})
+                .annotate(_url_length=Length("_cached_url"))
                 .order_by("-_url_length")[0]
             )
 
