@@ -23,6 +23,7 @@ Next version
   it only uses the language cookie, like Django itself since Django 4.0.
 - Clarified the migrations documentation: ``makemigrations`` creates the
   packages referenced in ``MIGRATION_MODULES`` and has to run first.
+- Improved the documentation of the ``ct_tracker`` extension.
 
 
 v25.5.1 (2025-05-05)

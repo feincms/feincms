@@ -181,8 +181,12 @@ The following extensions are available currently:
 
 * :mod:`feincms.extensions.ct_tracker` --- Content type cache
 
-  Helps reduce database queries if you have three or more content types by
-  caching in the database which content types are available on each page.
+  Helps reduce database queries by caching in the database which content
+  blocks exist on each page. Without this extension, FeinCMS has to query
+  all registered content types (using a large ``UNION`` query) to find out
+  which of them are used on a page; with it, only the content types actually
+  used are queried. Using this extension is recommended; it adds
+  a field to the page model, so a migration is required when activating it.
   If this extension is used, ``Page._ct_inventory`` has to be nullified
   after adding and/or removing content blocks, otherwise changes might not
   be visible in the frontend. Saving the page instance accomplishes this.
