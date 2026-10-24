@@ -23,3 +23,9 @@
 - No attribution lines (no `Co-Authored-By` etc.).
 - Keep commit messages short and don't repeat what the diff or changelog
   already says; a concise subject line is usually enough.
+
+## Releases
+
+- Pushing a tag publishes the release to PyPI
+  (`.github/workflows/publish.yml`, trusted publishing via the `release`
+  environment).
