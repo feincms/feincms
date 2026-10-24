@@ -97,17 +97,10 @@ if PLAYWRIGHT_AVAILABLE:
         page.wait_for_load_state("networkidle")
         page.wait_for_selector('form[method="post"]')
 
-        # Verify jQuery and JavaScript are loaded
-        jquery_loaded = page.evaluate("typeof jQuery !== 'undefined'")
-        template_regions_loaded = page.evaluate(
-            "typeof template_regions !== 'undefined'"
-        )
-
-        if not jquery_loaded or not template_regions_loaded:
-            pytest.skip(
-                f"JavaScript not properly loaded (jQuery: {jquery_loaded}, "
-                f"template_regions: {template_regions_loaded}). This test requires full admin static files."
-            )
+        # Verify that the item editor JavaScript is loaded, otherwise this
+        # test doesn't test anything. FeinCMS doesn't define a global jQuery.
+        assert page.evaluate("typeof feincms.jQuery") == "function"
+        assert page.evaluate("typeof template_regions") == "object"
 
         # Find the template key input - could be either select or radio buttons
         template_inputs = page.locator('input[name="template_key"]').count()
@@ -120,6 +113,11 @@ if PLAYWRIGHT_AVAILABLE:
             dialog_accepted.append(True)
 
         page.on("dialog", handle_dialog)
+
+        # Cancel the actual form submission, otherwise the browser loads the
+        # response (a fresh change form with enabled buttons) before we check
+        # the buttons. The click handlers still run.
+        page.evaluate("document.addEventListener('submit', (e) => e.preventDefault())")
 
         if template_inputs == 0:
             # It's a select dropdown
@@ -150,10 +148,4 @@ if PLAYWRIGHT_AVAILABLE:
         assert len(dialog_accepted) > 0, "Expected confirmation dialog did not appear"
 
         # CRITICAL ASSERTION: Verify that the Save button is disabled
-        # This should happen immediately after accepting the dialog
-        # Give a bit of time for the JavaScript to disable the button
-        page.wait_for_timeout(100)
-        save_button = page.locator('input[name="_save"]')
-
-        # Check if the button is disabled (it should be to prevent double submission)
-        expect(save_button).to_be_disabled(timeout=1000)
+        expect(page.locator('input[name="_save"]')).to_be_disabled(timeout=1000)
