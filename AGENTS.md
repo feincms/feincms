@@ -5,7 +5,7 @@
 - Quick run: `tox -e py313-dj52` (Django's test runner via
   `tests/manage.py test testapp`; there's no local virtualenv).
 - Full matrix: `tox` (environments are listed in `tox.ini`, e.g.
-  `tox -e py312-dj51`). CI (`.github/workflows/tests.yml`) runs every
+  `tox -e py312-dj61`). CI (`.github/workflows/tests.yml`) runs every
   `py<version>-*` environment for each Python version in its matrix, so keep
   the CI matrix, the tox envlist and the classifiers in `setup.cfg` in sync.
 - Browser tests: `tox -e e2e` (Playwright, tests marked with `e2e`; runs in
