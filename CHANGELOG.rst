@@ -26,6 +26,7 @@ Next version
 - Improved the documentation of the ``ct_tracker`` extension.
 - Redirects to a page's translation now fall back to the original target if
   the translation is inactive instead of redirecting to a 404.
+- Added Django 6.0 and 6.1 and Python 3.14 and 3.15 support.
 
 
 v25.5.1 (2025-05-05)
